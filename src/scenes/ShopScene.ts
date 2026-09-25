@@ -4,6 +4,7 @@ import { PALETTE } from '../config/palette';
 import { RARITY_NAMES, STAT_SHORT, STRINGS, TAG_NAMES } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { getItem } from '../data/items';
+import { SHAKE } from '../data/juice';
 import type { Tag } from '../data/synergies';
 import { formatStatDelta, formatStatValue } from '../logic/format';
 import type { ShopOffer } from '../logic/shop';
@@ -295,7 +296,7 @@ export class ShopScene extends Phaser.Scene {
 		const offer = this.d.offers[i];
 		if (!offer || offer.sold) return;
 		if (!this.d.buy(i)) {
-			this.cameras.main.shake(80, 0.004);
+			this.cameras.main.shake(SHAKE.uiError.ms, SHAKE.uiError.intensity);
 			return;
 		}
 		playSfx(SFX.buy);

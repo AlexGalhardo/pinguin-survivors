@@ -11,6 +11,7 @@ import { addStarfield } from '../ui/backdrop';
 import { MenuList } from '../ui/MenuList';
 import { addPanel } from '../ui/PixelPanel';
 import { addText } from '../ui/text';
+import { pixelIn, pixelOut } from '../ui/transition';
 
 const PANEL_W = 150;
 const PANEL_H = 170;
@@ -65,11 +66,14 @@ export class RecordsScene extends Phaser.Scene {
 				label: MENU.back,
 				onSelect: () => {
 					playSfx(SFX.uiClick);
-					this.scene.start('MainMenu');
+					pixelOut(this, () => this.scene.start('MainMenu'));
 				},
 			},
 		]);
-		this.input.keyboard?.on('keydown-ESC', () => this.scene.start('MainMenu'));
+		this.input.keyboard?.on('keydown-ESC', () =>
+			pixelOut(this, () => this.scene.start('MainMenu')),
+		);
+		pixelIn(this);
 		fitUiCamera(this, (view) => {
 			const cx = Math.round(view.width / 2);
 			const top = Math.max(30, Math.round(view.height / 2 - PANEL_H / 2 - 10));

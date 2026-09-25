@@ -6,6 +6,7 @@ import { fitUiCamera } from '../core/viewport';
 import { addStarfield } from '../ui/backdrop';
 import { MenuList } from '../ui/MenuList';
 import { addText } from '../ui/text';
+import { pixelIn, pixelOut } from '../ui/transition';
 
 declare const __APP_VERSION__: string;
 
@@ -30,8 +31,14 @@ export class MainMenuScene extends Phaser.Scene {
 				.setFlipX(i === 2),
 		);
 		const menu = new MenuList(this, [
-			{ label: MENU.play, onSelect: () => this.scene.start('CharacterSelect') },
-			{ label: MENU.records, onSelect: () => this.scene.start('Records') },
+			{
+				label: MENU.play,
+				onSelect: () => pixelOut(this, () => this.scene.start('CharacterSelect')),
+			},
+			{
+				label: MENU.records,
+				onSelect: () => pixelOut(this, () => this.scene.start('Records')),
+			},
 			{
 				label: MENU.settings,
 				onSelect: () => {
@@ -58,5 +65,6 @@ export class MainMenuScene extends Phaser.Scene {
 			hint.setPosition(cx, view.height - 16);
 			version.setPosition(view.width - 4, view.height - 4);
 		});
+		pixelIn(this);
 	}
 }

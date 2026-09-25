@@ -10,6 +10,7 @@ import { addIcon } from '../ui/IconFactory';
 import { MenuList } from '../ui/MenuList';
 import { addPanel } from '../ui/PixelPanel';
 import { addText } from '../ui/text';
+import { pixelOut } from '../ui/transition';
 
 export interface GameOverData {
 	character: CharacterId;
@@ -102,15 +103,19 @@ export class GameOverScene extends Phaser.Scene {
 	}
 
 	private retry(): void {
-		this.scene.stop('Hud');
-		this.scene.stop();
-		this.scene.start('Game', { character: this.d.character });
+		pixelOut(this, () => {
+			this.scene.stop('Hud');
+			this.scene.stop();
+			this.scene.start('Game', { character: this.d.character });
+		});
 	}
 
 	private toMenu(): void {
-		this.scene.stop('Hud');
-		this.scene.stop('Game');
-		this.scene.stop();
-		this.scene.start('MainMenu');
+		pixelOut(this, () => {
+			this.scene.stop('Hud');
+			this.scene.stop('Game');
+			this.scene.stop();
+			this.scene.start('MainMenu');
+		});
 	}
 }

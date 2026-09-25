@@ -11,6 +11,7 @@ import {
 } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { CHARACTER_IDS, CHARACTERS, type CharacterId } from '../data/characters';
+import { SHAKE } from '../data/juice';
 import { formatStatValue } from '../logic/format';
 import { isUnlocked } from '../logic/meta';
 import { computeStats, type StatKey } from '../logic/stats';
@@ -19,6 +20,7 @@ import { SaveSystem } from '../systems/SaveSystem';
 import { addStarfield } from '../ui/backdrop';
 import { addPanel } from '../ui/PixelPanel';
 import { addText } from '../ui/text';
+import { pixelIn, pixelOut } from '../ui/transition';
 
 const CARD_W = 132;
 const CARD_H = 204;
@@ -68,6 +70,7 @@ export class CharacterSelectScene extends Phaser.Scene {
 		});
 		this.input.keyboard?.on('keydown', (e: KeyboardEvent) => this.onKey(e));
 		this.setFocus(0, false);
+		pixelIn(this);
 	}
 
 	private buildCard(id: CharacterId, index: number): ClassCard {
@@ -176,7 +179,7 @@ export class CharacterSelectScene extends Phaser.Scene {
 				break;
 			case 'Escape':
 				playSfx(SFX.uiClick);
-				this.scene.start('MainMenu');
+				pixelOut(this, () => this.scene.start('MainMenu'));
 				break;
 		}
 	}
@@ -185,10 +188,10 @@ export class CharacterSelectScene extends Phaser.Scene {
 		const card = this.cards[i];
 		if (!card) return;
 		if (!isUnlocked(SaveSystem.get(), card.id)) {
-			this.cameras.main.shake(100, 0.004);
+			this.cameras.main.shake(SHAKE.uiError.ms, SHAKE.uiError.intensity);
 			return;
 		}
 		playSfx(SFX.uiClick);
-		this.scene.start('Game', { character: card.id });
+		pixelOut(this, () => this.scene.start('Game', { character: card.id }));
 	}
 }
