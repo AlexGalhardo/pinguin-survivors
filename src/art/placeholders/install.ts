@@ -24,7 +24,8 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 
 /** Generates every 16x16 icon (icon.<id>). */
 export function installIcons(scene: Phaser.Scene): void {
-	for (const id of Object.keys(ICONS)) installPixels(scene, iconKey(id), renderIcon(id));
+	for (const id of [...Object.keys(ICONS), 'unknown'])
+		installPixels(scene, iconKey(id), renderIcon(id));
 }
 
 /** Registers any extra generated texture (e.g. icons) under a manifest-style key. */
