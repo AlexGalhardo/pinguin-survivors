@@ -11,7 +11,7 @@ import { bus, type EventBus, GameEvent } from '../core/events';
 import { createMoveKeys, type MoveKeys } from '../core/input';
 import { getView } from '../core/viewport';
 import { CHARACTERS } from '../data/characters';
-import { CONTACT_COOLDOWN, type EnemyType } from '../data/enemies';
+import { CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
 import { debugStats } from '../debug/debug-stats';
 import type { DebugParams } from '../debug/params';
 import { createArena, PLAY_AREA } from '../entities/Arena';
@@ -27,6 +27,7 @@ import { FxSystem } from '../systems/FxSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
+import { WaveSystem } from '../systems/WaveSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 
 /** Main gameplay scene: arena, player and every combat system. */
@@ -45,6 +46,7 @@ export class GameScene extends Phaser.Scene {
 	fx!: FxSystem;
 	pickups!: PickupSystem;
 	weapons!: WeaponSystem;
+	waves!: WaveSystem;
 	/** True once the run ended (game over); gameplay updates stop. */
 	runOver = false;
 	private keys!: MoveKeys;
@@ -91,7 +93,17 @@ export class GameScene extends Phaser.Scene {
 
 		this.refreshStats();
 		this.weapons = new WeaponSystem(this);
+		this.waves = new WaveSystem(this);
 		this.setupCamera();
+
+		this.scene.launch('Hud');
+		if (this.params.debug) this.scene.bringToTop('Debug');
+		this.waves.start(this.state.wave);
+	}
+
+	/** Between waves: card pick (1.6) and shop (1.10); for now straight to the next wave. */
+	onWaveEnded(wave: number): void {
+		this.time.delayedCall(WAVE_FLOW.intermission * 1000, () => this.waves.start(wave + 1));
 	}
 
 	/** Plays a sound effect (wired to the AudioSystem in 1.9). */
@@ -101,8 +113,9 @@ export class GameScene extends Phaser.Scene {
 		this.cameras.main.shake(durationMs, intensity);
 	}
 
-	/** Boss HP bar hook (1.5). */
-	onBossDamaged(_boss: Enemy): void {}
+	onBossDamaged(boss: Enemy): void {
+		this.events$.emit(GameEvent.BossHpChanged, { hp: Math.max(0, boss.hp), maxHp: boss.maxHp });
+	}
 
 	/** Rare medkit drop (1.10). */
 	maybeDropMedkit(_x: number, _y: number): void {}
@@ -183,17 +196,22 @@ export class GameScene extends Phaser.Scene {
 		const dt = Math.min(deltaMs, 50) / 1000;
 		this.fx.update(dt);
 		if (this.runOver) return;
-		this.state.totals.timeSec += dt;
-		this.player.handleInput(this.keys);
-		this.player.tick(dt);
-		this.spawner.tick(dt, time);
-		this.enemies.rebuildGrid();
-		this.enemies.update(dt);
-		this.weapons.update(dt);
-		this.enemyShots.update(dt);
-		this.playerShots.update(dt);
 		this.pickups.update(dt, this.stats.pickupRange);
-		this.combat.update(dt);
+		this.player.tick(dt);
+		if (!this.waves.inCombat) {
+			this.player.arcadeBody.setVelocity(0, 0);
+		} else {
+			this.state.totals.timeSec += dt;
+			this.player.handleInput(this.keys);
+			this.waves.update(dt);
+			this.spawner.tick(dt, time);
+			this.enemies.rebuildGrid();
+			this.enemies.update(dt);
+			this.weapons.update(dt);
+			this.enemyShots.update(dt);
+			this.playerShots.update(dt);
+			this.combat.update(dt);
+		}
 
 		debugStats.enemies = this.enemies.aliveCount;
 		debugStats.projectiles = this.playerShots.activeCount;

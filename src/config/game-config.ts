@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
 import { DebugScene } from '../scenes/DebugScene';
 import { GameScene } from '../scenes/GameScene';
+import { HudScene } from '../scenes/HudScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -22,5 +23,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	},
 	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
 	disableContextMenu: true,
-	scene: [BootScene, GameScene, DebugScene],
+	scene: [BootScene, GameScene, HudScene, DebugScene],
 };

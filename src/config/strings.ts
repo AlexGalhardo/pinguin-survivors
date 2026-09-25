@@ -3,4 +3,6 @@ export const STRINGS = {
 	gameTitle: 'STARFALL SURVIVORS',
 	dodge: 'DODGE',
 	youDied: 'YOU DIED',
+	wave: 'WAVE',
+	waveCleared: 'WAVE CLEARED',
 } as const;
