@@ -35,6 +35,10 @@ export interface CardViewContent {
 	/** Extra line at the bottom (e.g. a price). */
 	footer?: string;
 	footerColor?: number;
+	/** Colored description lines (used instead of `desc` when present, e.g. item effects). */
+	lines?: { text: string; color: number }[];
+	/** Icon scale (default 2). */
+	iconScale?: number;
 }
 
 /** Pixel-art card: rarity frame (9-slice), icon, title, description and tags. */
@@ -57,19 +61,37 @@ export class CardView extends Phaser.GameObjects.Container {
 		this.frame = scene.add.nineslice(0, 0, RARITY_FRAME[c.rarity], undefined, w, h, s, s, s, s);
 		const color = RARITY_COLOR[c.rarity];
 		const top = -h / 2;
-		const icon = scene.add.image(0, top + 30, iconKey(c.icon)).setScale(2);
+		const iconScale = c.iconScale ?? 2;
+		const icon = scene.add
+			.image(0, top + 14 + 8 * iconScale, iconKey(c.icon))
+			.setScale(iconScale);
+		const textTop = top + 22 + 16 * iconScale;
 		const rarity = addText(scene, 0, top + 6, c.rarityLabel, { color, originX: 0.5 });
-		const title = addText(scene, 0, top + 52, c.title, {
+		const title = addText(scene, 0, textTop, c.title, {
 			color: PALETTE.white,
 			originX: 0.5,
 			align: 'center',
 		}).setMaxWidth(w - 12);
-		const desc = addText(scene, 0, top + 76, c.desc, {
-			color: PALETTE.silver,
-			originX: 0.5,
-			align: 'center',
-		}).setMaxWidth(w - 12);
-		this.add([this.frame, icon, rarity, title, desc]);
+		this.add([this.frame, icon, rarity, title]);
+		const descTop = textTop + title.height + 8;
+		if (c.lines) {
+			c.lines.forEach((line, i) => {
+				this.add(
+					addText(scene, 0, descTop + i * 10, line.text, {
+						color: line.color,
+						originX: 0.5,
+					}),
+				);
+			});
+		} else {
+			this.add(
+				addText(scene, 0, descTop, c.desc, {
+					color: PALETTE.silver,
+					originX: 0.5,
+					align: 'center',
+				}).setMaxWidth(w - 12),
+			);
+		}
 		if (c.tag) {
 			this.add(addText(scene, 0, h / 2 - 22, c.tag, { color: PALETTE.green, originX: 0.5 }));
 		}
@@ -93,6 +115,11 @@ export class CardView extends Phaser.GameObjects.Container {
 	place(x: number, y: number): void {
 		this.baseY = y;
 		this.setPosition(x, y - (this.focused ? HOVER_LIFT : 0));
+	}
+
+	/** Greys the card out (e.g. a sold shop item). */
+	setDimmed(dimmed: boolean): void {
+		this.setAlpha(dimmed ? 0.35 : 1);
 	}
 
 	setFocused(focused: boolean): void {

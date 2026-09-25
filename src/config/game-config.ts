@@ -4,6 +4,7 @@ import { CardPickScene } from '../scenes/CardPickScene';
 import { DebugScene } from '../scenes/DebugScene';
 import { GameScene } from '../scenes/GameScene';
 import { HudScene } from '../scenes/HudScene';
+import { ShopScene } from '../scenes/ShopScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -24,5 +25,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	},
 	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
 	disableContextMenu: true,
-	scene: [BootScene, GameScene, HudScene, CardPickScene, DebugScene],
+	scene: [BootScene, GameScene, HudScene, CardPickScene, ShopScene, DebugScene],
 };

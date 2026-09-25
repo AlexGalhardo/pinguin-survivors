@@ -19,6 +19,10 @@ export const STRINGS = {
 	revived: 'REVIVED!',
 	pickHint: '1/2/3 OR ARROWS + ENTER',
 	boss: 'BOSS',
+	shop: 'SHOP',
+	continue: 'CONTINUE',
+	sold: 'SOLD',
+	shopHint: '1-4 BUY  R REROLL  ENTER',
 } as const;
 
 export const RARITY_NAMES: Record<Rarity, string> = {
@@ -81,4 +85,25 @@ export const ABILITY_TEXT: Record<AbilityId, { name: string; desc: string }> = {
 	cryo_field: { name: 'CRYO FIELD', desc: 'AURA THAT SLOWS AND CHILLS' },
 	homing_missiles: { name: 'HOMING MISSILES', desc: 'MISSILES SEEK RANDOM TARGETS' },
 	laser_beam: { name: 'LASER BEAM', desc: 'BEAM TOWARD THE DENSEST CROWD' },
+};
+
+/** Compact stat labels for narrow panels (shop cards, stats panel). */
+export const STAT_SHORT: Record<StatKey, string> = {
+	maxHp: 'MAX HP',
+	maxHpPct: 'MAX HP',
+	hpRegen: 'REGEN',
+	lifesteal: 'LIFESTEAL',
+	damage: 'DAMAGE',
+	attackSpeed: 'ATK SPD',
+	critChance: 'CRIT',
+	critDamage: 'CRIT DMG',
+	abilityPower: 'ABILITY',
+	range: 'RANGE',
+	moveSpeed: 'SPEED',
+	armor: 'ARMOR',
+	dodge: 'DODGE',
+	pickupRange: 'PICKUP',
+	luck: 'LUCK',
+	projectiles: 'PROJ',
+	pierce: 'PIERCE',
 };
