@@ -42,6 +42,7 @@ Decisões tomadas com o usuário na entrevista (`grill-me`, 2026-09-25). Para mu
 | D-36 | **Suporte a gamepad** (Gamepad API/Phaser; alvo: DualSense do PS5). Substitui a parte "sem gamepad" de D-03 | Pedido do usuário (2026-09-25) |
 | D-37 | Blaster 5→10, Psi Orb 4→6 e cooldown 1.0→0.8 s; taxa de spawn conta inimigos (não grupos) | Simulação de 1.12 (Ranger/Mage morriam nas ondas 4–6) |
 | D-38 | agent-browser usado via `bunx agent-browser@0.38.1` (o CLI global não está no PATH) e teclas simuladas com `__GAME__.hold/press` (o CLI envia `keyCode` 0) | Achado de QA |
+| D-39 | Venda de itens **implementada** (reembolso de 50% do preço atual, clique no item possuído na loja); lock mantém o item no re-roll e na próxima loja | Decisão do agente (usuário pediu para seguir o caminho recomendado); dá saída para builds erradas, como a reciclagem do Brotato |
 
 ## Em aberto (decidir quando a fase chegar)
 

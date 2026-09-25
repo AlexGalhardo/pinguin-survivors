@@ -156,11 +156,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 ## FASE 2 — BETA (melhorar detalhes)
 
 ### 2.1 Profundidade de build
-- [ ] Evoluções: habilidade nível 5 + item específico → habilidade evoluída (1 por habilidade)
-- [ ] Sinergias por tags (`energy`, `cryo`, `psi`, `kinetic`…) com bônus por quantidade
-- [ ] +4 habilidades (total de ~10)
-- [ ] Itens até ~40; lock de item na loja
-- [ ] Venda de item (opcional; decidir com o usuário)
+- [x] Evoluções: habilidade nível 5 + item específico → habilidade evoluída (1 por habilidade)
+- [x] Sinergias por tags (`energy`, `cryo`, `psi`, `kinetic`…) com bônus por quantidade
+- [x] +4 habilidades (total de ~10)
+- [x] Itens até ~40; lock de item na loja
+- [x] Venda de item (opcional; decidido: implementada, 50% de reembolso — D-39)
 
 ### 2.2 Conteúdo de inimigos
 - [ ] +4 tipos (ex.: Splitter, Bomber suicida, Healer, Burrower com teleporte)
@@ -194,6 +194,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [ ] Tooltips de stats (o que cada stat faz) e comparação antes/depois ao escolher uma carta ou item
 - [ ] Opções: reduzir flashes, tamanho do texto de dano, pausar ao perder o foco da janela
 - [ ] Pausa automática ao trocar de aba (`visibilitychange`)
+- [ ] Suporte a gamepad (DualSense do PS5 / layout padrão): movimento analógico, menus, pausa e re-roll (pedido do usuário, D-36)
 
 ### 2.8 Balanceamento e performance
 - [ ] Rodar a simulação para as ondas 1–60 nas 3 classes; ajustar as curvas até atingir as metas §10
@@ -279,6 +280,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.11**: MainMenu (título em fonte bitmap, versão), CharacterSelect (stats, arma, recorde), Pause (ESC, confirmação de saída), Settings (volumes, fullscreen, shake, números de dano), GameOver (estatísticas, build, NEW BEST, Retry/Menu); SaveSystem versionado em localStorage com try/catch (testes).
 - **2026-09-25 · v1.0.0-alpha.12**: Estresse: 300 inimigos + 500 projéteis a 60 FPS (Chrome, 1920×1080, p95 18,5 ms). Simulação headless (`bun scripts/sim.ts`): mediana da build aleatória Warrior 19 / Ranger 13 / Mage 15; build boa 55–58.
 - **2026-09-25 · v1.0.0-alpha.12**: Correções: taxa de spawn conta inimigos (bando de Runners), Blaster 5→10 e Psi Orb 4→6 (0.8 s), Cryo Field sem flash/números. Playtest com bot até a onda 10 nas 3 classes sem erros de console; boss da onda 10 tanque demais (vai para o balanceamento final). Som mudo via `.env` (`SOUND_MUTED=true`). **Fim da FASE 1 (Alpha).**
+- **2026-09-25 · v1.0.0-beta.1**: Profundidade de build: 10 evoluções (nível 5 + item), sinergias por 6 tags (tiers 2/4/6), +4 habilidades (Arc Turret, Saw Disc, Gravity Well, Nanite Swarm), 40 itens, lock e venda na loja. Testes de metas do §10 pausados até o balanceamento final (o modelo cura demais e as sinergias deixaram builds boas fortes demais).
 
 ---
 
@@ -289,4 +291,3 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **Firefox e Edge (1.12)**: o Firefox não está instalado nesta máquina e o agent-browser travou ao abrir o Edge (`--executable-path`). Abrir `bun run dev` manualmente no Firefox e no Edge e conferir: tela cheia sem scroll, WebGL, sem erros no console. (O Edge usa o mesmo motor do Chrome, então o risco é baixo.)
 - **Playtest humano (1.12, 2.8)**: jogar uma run por classe e anotar o que está fácil/difícil. Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
 - **agent-browser**: o CLI global não está no PATH; o agente usa `bunx agent-browser@0.38.1`. Opcional: `bun add -g agent-browser` para deixar global.
-
