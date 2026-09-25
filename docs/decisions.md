@@ -62,7 +62,7 @@ Decisões tomadas com o usuário na entrevista (`grill-me`, 2026-09-25). Para mu
 ## Em aberto (decidir quando a fase chegar)
 
 - [ ] Nome final do jogo (hoje é "Starfall Survivors").
-- [ ] Ferramenta de música no 1.0 (o Higgsfield gera música? Se não, qual ferramenta?).
+- [ ] Ferramenta de música no 1.0 (adiado pelo usuário em D-54; hoje: chiptune próprio + jsfxr).
 - [x] Conteúdo exato da árvore de upgrades permanentes (1.0): decidido em D-42.
-- [ ] Onde publicar o jogo no 1.0 — pesquisa em [game-market.md](game-market.md) (recomendação: itch.io primeiro).
+- [ ] Onde publicar o jogo no 1.0 — pesquisa em [game-market.md](game-market.md) (recomendação: itch.io primeiro). Por ora só build + tag (D-53).
 - [ ] Orçamento de créditos para arte (Retro Diffusion: ~US$3–4 cobrem o resto dos assets).

@@ -27,7 +27,7 @@ Pixel art 32px, tema sci-fi retrô, tela cheia. Ondas infinitas → 3 cartas de 
 
 ## Comandos
 
-`bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run check` (Biome). Use Bun, não npm/node (exceto se a ferramenta não suportar Bun).
+`bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run check` (Biome) · `bun scripts/qa-browsers.ts` (QA cross-browser do build). Use Bun, não npm/node (exceto se a ferramenta não suportar Bun).
 
 ## Regras
 

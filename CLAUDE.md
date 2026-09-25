@@ -26,6 +26,7 @@ bun run build      # build de produção (dist/)
 bun test           # bun:test (lógica pura)
 bun run typecheck  # tsc --noEmit
 bun run check      # Biome (lint + format); check:fix corrige
+bun scripts/qa-browsers.ts  # QA do build (Chrome/Edge/Firefox) com `vite preview --port 4173` rodando
 ```
 
 ## Regras essenciais

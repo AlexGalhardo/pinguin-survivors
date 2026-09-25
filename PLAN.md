@@ -147,7 +147,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Teste de estresse: 300 inimigos + 500 projéteis em `?debug=1` → 60 FPS no Chrome (registrar o resultado no changelog)
 - [x] `logic/sim`: simulação headless de runs (3 classes, builds aleatórias) comparada com as metas de docs/balancing.md §10 (`bun scripts/sim.ts`)
 - [x] Playtest guiado com agent-browser: uma run por classe até a onda 10 (screenshots, erros)
-- [~] Teste em Firefox e Edge (tela cheia, sem scroll, áudio): Firefox não está instalado e o agent-browser travou ao abrir o Edge; ver Pendências
+- [x] Teste em Firefox e Edge (tela cheia, sem scroll, áudio): feito na 3.5 com Playwright (`scripts/qa-browsers.ts`)
 - [~] Playtest humano do usuário + feedback → ajustes (ação do usuário)
 - [x] Atualizar docs (balancing/decisions) com o que mudou; marco do Alpha: versão final `1.0.0-alpha.N` com tag e push
 
@@ -208,7 +208,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 ## FASE 3 — 1.0 (assets oficiais finais)
 
 ### 3.1 Setup de assets
-- [~] Usuário: conta e créditos no Higgsfield; `claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp` + login OAuth via `/mcp`
+- [x] ~~Usuário: conta e créditos no Higgsfield~~: substituído pelo Retro Diffusion (D-45)
 - [x] `scripts/pixelize.ts` (sharp): chroma key → trim → downscale nearest → quantizar para Endesga 32 → contorno → âncora
 - [x] `scripts/pack-atlas.ts`: atlas PNG+JSON (formato Phaser) com as chaves do manifest
 - [x] `PreloadScene` carregando o atlas real com fallback para o placeholder (por chave)
@@ -219,19 +219,19 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [~] Estudo de estilo: 3 personagens em pose base (gerados; falta a aprovação do usuário)
 - [x] Personagens: idle 2f, walk 4f (×3) (`rd_animation__small_sprites`; frame de hit fica por código: flash)
 - [x] Inimigos: 4 básicos + 4 do Beta (elites usam tint por código); `enemy.splitling` ainda por código
-- [~] Bosses 64×64: boss 1 feito; Warden e Void Titan ainda por código (créditos do RD acabaram)
-- [ ] Projéteis, efeitos de habilidades e pickups
-- [~] Tileset da arena + decorações (chão e parede feitos; decorações por código)
-- [ ] UI: painel 9-slice, botões, 4 molduras de carta, barras, cursor
-- [ ] Ícones 16×16: stats, habilidades, itens
-- [ ] Fonte bitmap final (manter a 5×7 ou gerar uma nova)
-- [ ] Logo + key art do menu (skill `canvas-design` + Higgsfield)
-- [ ] Trocar todos os placeholders; auditoria: nenhuma textura gerada por código visível no jogo
+- [~] Bosses 64×64: boss 1 feito; Warden e Void Titan seguem por código até haver créditos (D-52)
+- [~] Projéteis, efeitos de habilidades e pickups: seguem por código até haver créditos de IA (D-52)
+- [~] Tileset da arena + decorações (chão e parede feitos; decorações seguem por código, D-52)
+- [~] UI: painel 9-slice, botões, 4 molduras de carta, barras, cursor: os 9-slices por código ficam até haver créditos (D-52)
+- [~] Ícones 16×16: stats, habilidades, itens: seguem por código até haver créditos (D-52)
+- [x] Fonte bitmap final: mantida a 5×7 (D-52); o logo usa a mesma fonte em blocos 3×3
+- [x] Logo + key art do menu + favicon: pixel art por código (`src/art/placeholders/keyart.ts`, filosofia em `art-src/keyart/PHILOSOPHY.md`, PNGs com `bun scripts/render-keyart.ts`)
+- [~] Trocar todos os placeholders; auditoria: nenhuma textura gerada por código visível no jogo. Auditado: 23 chaves vêm do atlas; o resto (lista em `docs/art-prompts.md`) segue por código até haver créditos (D-52)
 
 ### 3.3 Áudio final
-- [~] Escolher a ferramenta de música de IA (Higgsfield se suportar; senão, outra) e aprovar com o usuário
-- [ ] Trilha: menu, combate (2–3 loops com intensidade), boss, game over
-- [ ] SFX finais exportados (WAV/OGG) ou refinados, com mixagem de volumes
+- [~] Escolher a ferramenta de música de IA: adiado pelo usuário (D-54)
+- [~] Trilha: menu, combate (2–3 loops com intensidade), boss, game over: adiado (D-54); ficam as músicas chiptune do sequenciador atual
+- [~] SFX finais exportados (WAV/OGG) ou refinados, com mixagem de volumes: adiado (D-54); ficam os SFX jsfxr atuais
 
 ### 3.4 Meta e conteúdo final
 - [x] Definir a árvore de upgrades permanentes (decidido pelo agente a pedido do usuário: D-41/D-42)
@@ -239,12 +239,12 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Conquistas simples (locais)
 
 ### 3.5 Polish, QA e release
-- [ ] QA completo em Chrome, Firefox e Edge (Windows) + Safari/macOS se possível
-- [ ] Performance final (60 FPS com a arte final; tamanho do build e tempo de load)
+- [x] QA completo em Chrome 153, Edge 153 e Firefox 155 (build de produção, `scripts/qa-browsers.ts`): sem erros de console nem 4xx, WebGL, sem scroll, 60 FPS em combate, 1366×768 e 1920×1080. Safari/macOS fica sem teste (não há Mac)
+- [x] Performance final: 60 FPS no estresse (300 inimigos + 500 projéteis, `scripts/profile.sh`); build de 1,6 MB (JS 1,57 MB / 418 KB gzip, atlas 10 KB); carga local até o canvas em 0,95–1,4 s
 - [x] Tela de loading com barra em pixel art
 - [x] Créditos e licenças (paleta, libs, ferramentas de IA)
-- [~] Definir a plataforma de publicação (itch.io/GitHub Pages) e o remoto git (ação do usuário)
-- [ ] Build de produção e publicação; `chore(release): 1.0.0` + tag `v1.0.0` + push
+- [x] Definir a plataforma de publicação: por enquanto só build + tag, sem publicação (D-53); recomendação para depois: itch.io (`docs/game-market.md`)
+- [x] Build de produção; `chore(release): 1.0.0-rc.1` + tag `v1.0.0-rc.1` + push (D-53). O `1.0.0` sai com a arte final
 
 ---
 
@@ -283,6 +283,8 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25**: Cura total no início de cada onda (`WAVE.waveStartHeal`, D-49) com teste.
 - **2026-09-25**: Profiling (`scripts/profile.sh`): no estresse de 300 inimigos + 500 projéteis a CPU do frame caiu de 41% para 26% (acertos de projéteis pela grade espacial, Arcade sem RTree, separação sem `sqrt` desnecessário, query reentrante). p50 16,7 ms / p95 17,8 ms.
 - **2026-09-25 · v1.0.0-beta.8**: Playtest com bot nas 3 classes até a onda 20 sem erros de console (Warrior sobreviveu à 20). Art spike do Higgsfield substituído pelo Retro Diffusion. **Fim da FASE 2 (Beta).**
+- **2026-09-25**: Loja sem tremor de tela (D-51). Logo em pixel art, key art do planeta no menu e favicon, todos por código (`keyart.ts`).
+- **2026-09-25 · v1.0.0-rc.1**: QA de produção em Chrome, Edge e Firefox (`scripts/qa-browsers.ts`, Playwright 1.63.0): 0 erros, WebGL, 60 FPS; build de 1,6 MB. Arte que falta e áudio final adiados (D-52, D-54); release candidate sem publicação (D-53). **Fim da FASE 3 (até a 3.5).**
 
 ---
 
@@ -290,7 +292,9 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 
 > Tarefas que precisam de ação, conta ou decisão do desenvolvedor. Atualizado pelo agente a cada seção.
 
-- **Firefox e Edge (1.12)**: o Firefox não está instalado nesta máquina e o agent-browser travou ao abrir o Edge (`--executable-path`). Abrir `bun run dev` manualmente no Firefox e no Edge e conferir: tela cheia sem scroll, WebGL, sem erros no console. (O Edge usa o mesmo motor do Chrome, então o risco é baixo.)
+- **Arte com IA (3.2, D-52)**: quando houver créditos no Retro Diffusion (~US$3–4), gerar o que está listado em `docs/art-prompts.md` ("Ainda com placeholder") e fechar o `1.0.0`.
+- **Publicação (D-53)**: quando quiser publicar, criar a página no itch.io (recomendado em `docs/game-market.md`) e fazer o upload do `dist/` (zip) ou pedir ao agente para preparar o butler.
+- **Safari/macOS**: sem Mac para testar; se tiver acesso a um, abrir o build e conferir a tela cheia e o áudio.
 - **Playtest humano (contínuo)**: seguir jogando com a arte atual e anotar o que está fácil/difícil por classe (o bot morre cedo com Ranger e Mage, então seu feedback manda no balanceamento). Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
 - **agent-browser**: o CLI global não está no PATH; o agente usa `bunx agent-browser@0.38.1`. Opcional: `bun add -g agent-browser` para deixar global.
 - **Balanceamento**: o balanceamento está sendo feito com o bot de playtest. Para rodar: `bun run dev` e `bash scripts/playtest.sh <warrior|ranger|mage> <seed> <ondaAlvo> <velocidade>`. O bot é melhor com Ranger/Mage do que com o Warrior (corpo a corpo); seu playtest humano do Warrior é o dado mais valioso agora.
