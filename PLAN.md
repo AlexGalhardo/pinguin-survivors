@@ -173,11 +173,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Estatísticas globais e histórico das últimas runs
 
 ### 2.4 Game feel (juice)
-- [ ] Hit-stop curto em crit e morte de elite
-- [ ] Partículas (Phaser 4 particles) em hit, morte, coleta, nova e explosões
-- [ ] Squash/stretch e bob no movimento; morte com explosão de pixels
-- [ ] Transições de cena pixeladas; tremor de tela calibrado
-- [ ] Indicadores fora da tela (setas) para o boss e os elites
+- [x] Hit-stop curto em crit e morte de elite
+- [x] Partículas (Phaser 4 particles) em hit, morte, coleta, nova e explosões
+- [x] Squash/stretch e bob no movimento; morte com explosão de pixels
+- [x] Transições de cena pixeladas; tremor de tela calibrado
+- [x] Indicadores fora da tela (setas) para o boss e os elites
 
 ### 2.5 Arte (ainda por código) + art spike
 - [ ] Placeholders melhores: silhuetas com sombreamento de 2–3 tons, frames de walk/idle gerados por código
@@ -283,6 +283,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-beta.1**: Profundidade de build: 10 evoluções (nível 5 + item), sinergias por 6 tags (tiers 2/4/6), +4 habilidades (Arc Turret, Saw Disc, Gravity Well, Nanite Swarm), 40 itens, lock e venda na loja. Testes de metas do §10 pausados até o balanceamento final (o modelo cura demais e as sinergias deixaram builds boas fortes demais).
 - **2026-09-25 · v1.0.0-beta.2**: +4 inimigos (Splitter se divide, Bomber com pavio e explosão, Healer cura aliados, Burrower some e reaparece perto do jogador); bosses Warden (espiral + invocações) e Void Titan (slams telegrafados + tiro em leque) em rotação a cada 10 ondas; modificadores de onda Swarm/Armored/Fast a partir da onda 6.
 - **2026-09-25 · v1.0.0-beta.3**: Desbloqueio do Ranger (onda 10 com o Warrior) e do Mage (matar um boss) com tela própria; passivas de classe (Warrior: armor por inimigo próximo; Ranger: +20% atk speed em movimento; Mage: +1% ability por abate na onda); save v2 com migração (desbloqueios, histórico das últimas 10 runs, bosses mortos) e tela RECORDS. `?unlockAll=1` para testes.
+- **2026-09-25 · v1.0.0-beta.4**: Juice: hit-stop (crit com cooldown, morte de elite e de boss), partículas do Phaser 4 em mortes/coleta/explosões, squash/stretch e bob no jogador e inimigos, transição pixelada entre cenas, presets de tremor calibrados (`src/data/juice.ts`) e setas nas bordas para boss e elites fora da tela.
 
 ---
 
