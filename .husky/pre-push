@@ -1,0 +1,5 @@
+# Full gate before pushing: lint/format of the whole repo, types, tests and production build.
+bunx biome ci .
+bun run typecheck
+bun test
+bun run build

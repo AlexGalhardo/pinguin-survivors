@@ -1,0 +1,2 @@
+# Enforce Conventional Commits 1.0.0 on the commit message.
+bunx --no-install commitlint --edit "$1"

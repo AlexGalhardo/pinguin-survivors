@@ -1,0 +1,4 @@
+# Lint + format (Biome) on staged files, then type check and unit tests (bun:test).
+bunx biome check --staged --no-errors-on-unmatched
+bun run typecheck
+bun test
