@@ -41,7 +41,7 @@ font.pixel
 - Pickups: 2
 - Tileset da arena: 4 variações de chão + parede + 3–5 decorações
 - UI: painel 9-slice, botão (normal/hover/pressed), 4 molduras de carta, barra de HP, ícones 16×16 (stats ~15, habilidades 6–10, itens 12–40)
-- Logo "Starfall Survivors" + key art do menu (a skill `canvas-design` pode compor a key art)
+- Logo "Starfall Survivors" (`ui.logo`, 176×58) + key art do menu (`ui.keyart`, 640×150, horizonte do planeta ancorado no rodapé): pixel art por código determinístico em `src/art/placeholders/keyart.ts` (filosofia em `art-src/keyart/PHILOSOPHY.md`); `bun scripts/render-keyart.ts` exporta os PNGs para lojas
 
 ## Pipeline Retro Diffusion → atlas (padrão desde 2026-09-25)
 

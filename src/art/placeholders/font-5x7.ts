@@ -84,7 +84,7 @@ const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 /** Characters in atlas order (RetroFont reads them left to right, top to bottom). */
 export const FONT_CHARS = `${Object.keys(G).join('')}${UPPER.toLowerCase()}`;
 
-function glyphFor(ch: string): readonly string[] {
+export function glyphFor(ch: string): readonly string[] {
 	return G[ch] ?? G[ch.toUpperCase()] ?? G[' '] ?? [];
 }
 

@@ -55,6 +55,9 @@ Decisões tomadas com o usuário na entrevista (`grill-me`, 2026-09-25). Para mu
 | D-49 | **Cura total no início de cada onda** (`WAVE.waveStartHeal = 1`, fração do Max HP), estilo Brotato | Reduz a punição acumulada entre ondas; ajustável para cura parcial no balanceamento |
 | D-50 | **Acertos de projéteis pela grade espacial** do EnemySystem e Arcade com `useTree: false` (overlaps restantes são 1×grupo); projéteis atravessam Burrowers enterrados | Profiling no estresse (300 inimigos + 500 projéteis): CPU ocupada 41% → 26% do frame |
 | D-51 | **Sem tremor de tela na loja** (compra sem ouro suficiente não sacode mais a câmera; o botão desabilitado já sinaliza) | Pedido do usuário |
+| D-52 | **Sem créditos de IA, a arte que falta fica por código** (projéteis, efeitos, pickups, bosses 2/3, splitling, decorações, UI, ícones); a fonte 5×7 vira a fonte final; logo e key art do menu desenhados por código (`keyart.ts`) | Pedido do usuário (RD e PixelLab sem saldo) |
+| D-53 | **Fechamento da 3.5 como `1.0.0-rc.1`**, só build + tag, sem publicação; o `1.0.0` sai quando a arte final estiver pronta | Pedido do usuário |
+| D-54 | **Áudio final (3.3) adiado**: ficam os SFX jsfxr e o chiptune atuais | Pedido do usuário |
 
 ## Em aberto (decidir quando a fase chegar)
 

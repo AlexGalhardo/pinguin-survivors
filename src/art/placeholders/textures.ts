@@ -1,5 +1,6 @@
 import { PALETTE as P } from '../../config/palette';
 import { TEX, type TextureKey } from '../manifest';
+import { drawKeyArt, drawLogo, KEYART_H, KEYART_W, LOGO_H, LOGO_W } from './keyart';
 import { PixelCanvas } from './pixel-canvas';
 import { RAMPS, SHEETS } from './sheets';
 
@@ -514,6 +515,8 @@ export const PLACEHOLDERS: Record<TextureKey, PlaceholderSpec> = {
 	[TEX.uiCardRare]: { w: 12, h: 12, draw: panel(P.midnight, P.navy, P.void, P.blue) },
 	[TEX.uiCardEpic]: { w: 12, h: 12, draw: panel(P.midnight, P.plum, P.void, P.orchid) },
 	[TEX.uiCardLegendary]: { w: 12, h: 12, draw: panel(P.midnight, P.brown, P.void, P.amber) },
+	[TEX.uiLogo]: { w: LOGO_W, h: LOGO_H, draw: drawLogo },
+	[TEX.uiKeyArt]: { w: KEYART_W, h: KEYART_H, draw: drawKeyArt },
 };
 
 /** Draws one placeholder into a fresh buffer. */

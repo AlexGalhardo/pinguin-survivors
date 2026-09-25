@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { TEX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import { MENU, STRINGS } from '../config/strings';
+import { MENU } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { MusicSystem } from '../systems/MusicSystem';
 import { addStarfield } from '../ui/backdrop';
@@ -21,12 +21,9 @@ export class MainMenuScene extends Phaser.Scene {
 		addStarfield(this);
 		MusicSystem.get()?.duck(false);
 		MusicSystem.get()?.play('menu');
-		const title = addText(this, 0, 0, STRINGS.gameTitle, {
-			scale: 4,
-			color: PALETTE.amber,
-			originX: 0.5,
-		});
-		const subtitle = addText(this, 0, 0, MENU.subtitle, { color: PALETTE.cyan, originX: 0.5 });
+		const keyArt = this.add.image(0, 0, TEX.uiKeyArt).setOrigin(0.5, 1);
+		const title = this.add.image(0, 0, TEX.uiLogo).setOrigin(0.5, 0);
+		const subtitle = addText(this, 0, 0, MENU.subtitle, { color: PALETTE.steel, originX: 0.5 });
 		const heroes = [TEX.playerWarrior, TEX.playerRanger, TEX.playerMage].map((key, i) =>
 			this.add
 				.image(0, 0, key)
@@ -70,15 +67,16 @@ export class MainMenuScene extends Phaser.Scene {
 		});
 		fitUiCamera(this, (view) => {
 			const cx = Math.round(view.width / 2);
-			const top = Math.round(view.height * 0.18);
-			title.setPosition(cx, top);
-			subtitle.setPosition(cx, top + 34);
+			const top = Math.round(view.height * 0.18) - 18;
+			keyArt.setPosition(cx, view.height);
+			title.setPosition(cx, top - 12);
+			subtitle.setPosition(cx, top + 48);
 			// Small views drop the hero row so the 6 buttons fit.
 			const roomy = view.height >= 340;
 			heroes.forEach((h, i) => {
-				h.setPosition(cx + (i - 1) * 48, top + 78).setVisible(roomy);
+				h.setPosition(cx + (i - 1) * 48, top + 92).setVisible(roomy);
 			});
-			menu.layout(cx, top + (roomy ? 112 : 50));
+			menu.layout(cx, top + (roomy ? 126 : 78));
 			hint.setPosition(cx, view.height - 16);
 			version.setPosition(view.width - 4, view.height - 4);
 		});

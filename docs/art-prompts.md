@@ -52,4 +52,4 @@ bun scripts/rd-slice.ts && bun scripts/pack-atlas.ts   # recorta, quantiza, cont
 
 ### Ainda com placeholder por código (próximo lote)
 
-`enemy.boss2`, `enemy.boss3`, `enemy.splitling`, projéteis e efeitos (`proj.*`, `fx.*`, `ability.*`), pickups, decorações (`deco.*`), UI (painel, botões, molduras de carta, seta) e ícones 16×16. Estimativa com os preços acima: ~US$3–4 para cobrir tudo (ícones em lote de 16 com `rd_plus__skill_icon`/`rd_mini__topdown_item`).
+`enemy.boss2`, `enemy.boss3`, `enemy.splitling`, projéteis e efeitos (`proj.*`, `fx.*`, `ability.*`), pickups, decorações (`deco.*`), UI (painel, botões, molduras de carta, seta) e ícones 16×16. Decisão do usuário (D-52): ficam por código até haver créditos. O logo e a key art do menu não são IA: são pixel art por código (`keyart.ts`). Estimativa com os preços acima: ~US$3–4 para cobrir tudo (ícones em lote de 16 com `rd_plus__skill_icon`/`rd_mini__topdown_item`).

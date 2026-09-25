@@ -63,6 +63,8 @@ export const TEX = {
 	uiCardRare: 'ui.card.rare',
 	uiCardEpic: 'ui.card.epic',
 	uiCardLegendary: 'ui.card.legendary',
+	uiLogo: 'ui.logo',
+	uiKeyArt: 'ui.keyart',
 } as const;
 
 export type TextureKey = (typeof TEX)[keyof typeof TEX];
