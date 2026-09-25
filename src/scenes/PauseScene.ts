@@ -4,6 +4,7 @@ import { PALETTE } from '../config/palette';
 import { MENU } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { playSfx } from '../systems/AudioSystem';
+import { MusicSystem } from '../systems/MusicSystem';
 import { MenuList } from '../ui/MenuList';
 import { addPanel } from '../ui/PixelPanel';
 import { addText } from '../ui/text';
@@ -81,6 +82,7 @@ export class PauseScene extends Phaser.Scene {
 	private resume(): void {
 		playSfx(SFX.uiClick);
 		this.scene.stop();
+		MusicSystem.get()?.duck(false);
 		this.scene.resume('Game');
 	}
 

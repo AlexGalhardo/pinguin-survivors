@@ -6,6 +6,7 @@ import { bus, GameEvent } from '../core/events';
 import { settings } from '../core/settings';
 import { fitUiCamera } from '../core/viewport';
 import { AudioSystem, playSfx } from '../systems/AudioSystem';
+import { MusicSystem } from '../systems/MusicSystem';
 import { SaveSystem } from '../systems/SaveSystem';
 import { MenuList } from '../ui/MenuList';
 import { addPanel } from '../ui/PixelPanel';
@@ -45,6 +46,7 @@ export class SettingsScene extends Phaser.Scene {
 			if (wrap && v > 1) v = 0;
 			settings[key] = Math.min(1, Math.max(0, v));
 			if (key === 'sfxVolume') AudioSystem.get()?.setVolume(settings.sfxVolume);
+			else MusicSystem.get()?.applyVolume();
 			this.changed();
 		};
 		const toggle = (key: 'screenShake' | 'damageNumbers') => {

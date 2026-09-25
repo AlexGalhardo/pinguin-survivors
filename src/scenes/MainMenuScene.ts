@@ -3,6 +3,7 @@ import { TEX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { MENU, STRINGS } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
+import { MusicSystem } from '../systems/MusicSystem';
 import { addStarfield } from '../ui/backdrop';
 import { MenuList } from '../ui/MenuList';
 import { addText } from '../ui/text';
@@ -18,6 +19,8 @@ export class MainMenuScene extends Phaser.Scene {
 
 	create(): void {
 		addStarfield(this);
+		MusicSystem.get()?.duck(false);
+		MusicSystem.get()?.play('menu');
 		const title = addText(this, 0, 0, STRINGS.gameTitle, {
 			scale: 4,
 			color: PALETTE.amber,

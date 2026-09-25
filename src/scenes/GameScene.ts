@@ -32,6 +32,7 @@ import { applyCard, cardRerollCost, generateCards } from '../logic/cards';
 import { medkitChance, shopRerollCost } from '../logic/economy';
 import { Rng, randomSeed } from '../logic/rng';
 import { createRunState, type RunState } from '../logic/run-state';
+import { isBossWave } from '../logic/scaling';
 import { buyOffer, generateShop, lockedIds, sellItem, sellValue } from '../logic/shop';
 import {
 	computeStats,
@@ -45,6 +46,7 @@ import { playSfx } from '../systems/AudioSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
+import { MusicSystem } from '../systems/MusicSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { SaveSystem } from '../systems/SaveSystem';
@@ -162,6 +164,7 @@ export class GameScene extends Phaser.Scene {
 			this.rng,
 		);
 		this.scene.pause();
+		this.music?.duck(true);
 		let rerolls = 0;
 		const cost = () => cardRerollCost(wave, rerolls);
 		const data: CardPickData = {
@@ -338,6 +341,8 @@ export class GameScene extends Phaser.Scene {
 	/** Wave start hook: unlocks by wave, resets the Mage passive. */
 	onWaveStart(wave: number): void {
 		this.waveKills = 0;
+		this.music?.duck(false);
+		this.music?.play(isBossWave(wave) ? 'boss' : 'combat');
 		this.handleUnlocks(
 			SaveSystem.unlock({ kind: 'wave', character: this.state.character, wave }),
 		);
@@ -364,6 +369,11 @@ export class GameScene extends Phaser.Scene {
 			};
 			this.scene.launch('Unlock', data);
 		});
+	}
+
+	/** Chiptune music (null before boot). */
+	get music(): MusicSystem | null {
+		return MusicSystem.get();
 	}
 
 	/** Remaining hit-stop (ms of real time). */
@@ -449,6 +459,7 @@ export class GameScene extends Phaser.Scene {
 	private openPause(): void {
 		if (this.runOver || !this.waves.inCombat || this.scene.isPaused()) return;
 		this.sfx(SFX.uiClick);
+		this.music?.duck(true);
 		this.scene.pause();
 		this.scene.launch('Pause');
 	}
@@ -456,6 +467,7 @@ export class GameScene extends Phaser.Scene {
 	/** Game over: record the run and show the summary. */
 	endRun(): void {
 		this.runOver = true;
+		this.music?.stop();
 		this.sfx(SFX.gameOver);
 		this.physics.pause();
 		this.player.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setAlpha(0.6);
