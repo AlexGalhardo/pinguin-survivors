@@ -46,6 +46,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	aiState = 0;
 	/** Tint restored after the hit flash (elites are tinted by modifier). */
 	baseTint: number | null = null;
+	/** Burrower underground: untargetable and harmless. */
+	burrowed = false;
 	/** Locked charge direction (boss). */
 	chargeX = 0;
 	chargeY = 0;
@@ -86,7 +88,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 		this.aiTimer2 = 0;
 		this.aiState = 0;
 		this.baseTint = null;
-		this.setDepth(def.type === 'boss' ? 6 : 5);
+		this.burrowed = false;
+		this.setDepth(def.isBoss ? 6 : 5);
 		return this;
 	}
 

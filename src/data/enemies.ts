@@ -1,7 +1,19 @@
 import { TEX } from '../art/manifest';
 
-export type EnemyType = 'chaser' | 'runner' | 'shooter' | 'tank' | 'boss';
-export type EnemyAi = 'chase' | 'keepDistance' | 'boss';
+export type EnemyType =
+	| 'chaser'
+	| 'runner'
+	| 'shooter'
+	| 'tank'
+	| 'splitter'
+	| 'splitling'
+	| 'bomber'
+	| 'healer'
+	| 'burrower'
+	| 'boss'
+	| 'boss2'
+	| 'boss3';
+export type EnemyAi = 'chase' | 'keepDistance' | 'boss' | 'bomber' | 'burrower';
 
 export interface EnemyDef {
 	type: EnemyType;
@@ -23,6 +35,11 @@ export interface EnemyDef {
 	fromWave: number;
 	/** Spawns in groups of [min, max]. */
 	group?: [number, number];
+	/** Bosses: HUD bar, wave end condition, immune to pulls. */
+	isBoss?: boolean;
+	/** Special behaviors handled by SpecialAi (split on death, heal allies). */
+	splitInto?: EnemyType;
+	heals?: boolean;
 	/** Ranged attack (shooter). */
 	ranged?: { keepDistance: number; cooldown: number; projectileSpeed: number; damage: number };
 }
@@ -83,6 +100,74 @@ export const ENEMIES: Record<EnemyType, EnemyDef> = {
 		weight: 10,
 		fromWave: 4,
 	},
+	splitter: {
+		type: 'splitter',
+		texture: TEX.enemySplitter,
+		ai: 'chase',
+		hp: 18,
+		damage: 5,
+		speed: 55,
+		radius: 11,
+		gold: 2,
+		knockbackTaken: 1,
+		weight: 10,
+		fromWave: 6,
+		splitInto: 'splitling',
+	},
+	splitling: {
+		type: 'splitling',
+		texture: TEX.enemySplitling,
+		ai: 'chase',
+		hp: 4,
+		damage: 2,
+		speed: 95,
+		radius: 6,
+		gold: 0,
+		knockbackTaken: 1,
+		weight: 0,
+		fromWave: 99,
+	},
+	bomber: {
+		type: 'bomber',
+		texture: TEX.enemyBomber,
+		ai: 'bomber',
+		hp: 8,
+		damage: 0,
+		speed: 80,
+		radius: 9,
+		gold: 1,
+		knockbackTaken: 1,
+		weight: 8,
+		fromWave: 7,
+	},
+	healer: {
+		type: 'healer',
+		texture: TEX.enemyHealer,
+		ai: 'keepDistance',
+		hp: 16,
+		damage: 3,
+		speed: 40,
+		radius: 10,
+		gold: 3,
+		knockbackTaken: 1,
+		weight: 6,
+		fromWave: 8,
+		heals: true,
+		ranged: { keepDistance: 120, cooldown: 99, projectileSpeed: 0, damage: 0 },
+	},
+	burrower: {
+		type: 'burrower',
+		texture: TEX.enemyBurrower,
+		ai: 'burrower',
+		hp: 20,
+		damage: 7,
+		speed: 50,
+		radius: 10,
+		gold: 2,
+		knockbackTaken: 0.6,
+		weight: 8,
+		fromWave: 9,
+	},
 	boss: {
 		type: 'boss',
 		texture: TEX.enemyBoss,
@@ -95,10 +180,93 @@ export const ENEMIES: Record<EnemyType, EnemyDef> = {
 		knockbackTaken: 0,
 		weight: 0,
 		fromWave: 10,
+		isBoss: true,
+	},
+	boss2: {
+		type: 'boss2',
+		texture: TEX.enemyBoss2,
+		ai: 'boss',
+		hp: 450,
+		damage: 15,
+		speed: 45,
+		radius: 26,
+		gold: 60,
+		knockbackTaken: 0,
+		weight: 0,
+		fromWave: 20,
+		isBoss: true,
+	},
+	boss3: {
+		type: 'boss3',
+		texture: TEX.enemyBoss3,
+		ai: 'boss',
+		hp: 520,
+		damage: 18,
+		speed: 35,
+		radius: 28,
+		gold: 70,
+		knockbackTaken: 0,
+		weight: 0,
+		fromWave: 30,
+		isBoss: true,
 	},
 };
 
-export const POOL_TYPES: readonly EnemyType[] = ['chaser', 'runner', 'shooter', 'tank'];
+/** Boss rotation: wave 10 -> boss, 20 -> boss2, 30 -> boss3, 40 -> boss… */
+export const BOSS_ROTATION: readonly EnemyType[] = ['boss', 'boss2', 'boss3'];
+
+/** Special enemy behaviors (Beta). */
+export const SPECIAL = {
+	splitCount: 2,
+	bomberFuse: 0.6,
+	bomberTrigger: 28,
+	bomberRadius: 44,
+	bomberDamage: 12,
+	healEvery: 3,
+	healRadius: 70,
+	healPct: 0.2,
+	burrowEvery: 4,
+	burrowTime: 0.8,
+	/** The burrower resurfaces this far from the player. */
+	burrowMin: 50,
+	burrowMax: 80,
+} as const;
+
+/** Second and third boss patterns. */
+export const BOSS2 = {
+	spiralEvery: 6,
+	spiralDuration: 3,
+	spiralShotEvery: 0.1,
+	spiralTurn: 0.45,
+	shotSpeed: 100,
+	shotDamage: 7,
+	summonEvery: 8,
+	summonCount: 4,
+} as const;
+
+export const BOSS3 = {
+	slamEvery: 3,
+	slamCount: 3,
+	slamWarn: 1,
+	slamRadius: 36,
+	slamDamage: 16,
+	shotgunEvery: 2,
+	shotgunPellets: 5,
+	shotgunSpread: 0.5,
+	shotSpeed: 150,
+	shotDamage: 7,
+} as const;
+
+export const POOL_TYPES: readonly EnemyType[] = [
+	'chaser',
+	'runner',
+	'shooter',
+	'tank',
+	'splitter',
+	'bomber',
+	'healer',
+	'burrower',
+];
 
 /** Contact damage cooldown per enemy (s) and player invulnerability after a hit (s). */
 export const CONTACT_COOLDOWN = 0.5;

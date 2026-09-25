@@ -51,7 +51,7 @@ export class CombatSystem {
 		kb?: Knockback,
 		silent: boolean | 'dot' = false,
 	): boolean {
-		if (!e.active || e.hp <= 0) return false;
+		if (!e.active || e.hp <= 0 || e.burrowed) return false;
 		const g = this.game;
 		let dmg = amount;
 		if (e.shield > 0) {
@@ -68,7 +68,7 @@ export class CombatSystem {
 		if (kb && kb.force > 0) e.knockback(kb.dirX, kb.dirY, kb.force);
 		if (!silent) g.sfx(SFX.enemyHit);
 		this.tryLifesteal();
-		if (e.def.type === 'boss') g.onBossDamaged(e);
+		if (e.def.isBoss) g.onBossDamaged(e);
 		if (e.hp <= 0) {
 			this.killEnemy(e);
 			return true;

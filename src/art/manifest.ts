@@ -12,6 +12,13 @@ export const TEX = {
 	enemyShooter: 'enemy.shooter',
 	enemyTank: 'enemy.tank',
 	enemyBoss: 'enemy.boss',
+	enemyBoss2: 'enemy.boss2',
+	enemyBoss3: 'enemy.boss3',
+	enemySplitter: 'enemy.splitter',
+	enemySplitling: 'enemy.splitling',
+	enemyBomber: 'enemy.bomber',
+	enemyHealer: 'enemy.healer',
+	enemyBurrower: 'enemy.burrower',
 
 	projBlaster: 'proj.blaster',
 	projPsiOrb: 'proj.psi_orb',

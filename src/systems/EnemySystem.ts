@@ -12,6 +12,11 @@ const GRID_CELL = 64;
 /** Largest enemy radius, used to size the separation query. */
 const MAX_RADIUS = ENEMIES.boss.radius;
 const FLASH_TIME = 0.08;
+
+/** Active and not underground (burrowers). */
+function targetable(e: Enemy): boolean {
+	return e.active && !e.burrowed;
+}
 /** Damage-over-time tick (s). */
 const DOT_TICK = 0.5;
 
@@ -70,14 +75,14 @@ export class EnemySystem {
 		accept?: (e: Enemy) => boolean,
 	): Enemy | undefined {
 		if (this.activeList.length > GRID_TARGET_THRESHOLD) {
-			return this.grid.nearest(x, y, radius, (e) => e.active && (!accept || accept(e)));
+			return this.grid.nearest(x, y, radius, (e) => targetable(e) && (!accept || accept(e)));
 		}
 		return nearestLinear(
 			this.activeList,
 			x,
 			y,
 			radius,
-			(e) => e.active && (!accept || accept(e)),
+			(e) => targetable(e) && (!accept || accept(e)),
 		);
 	}
 
@@ -86,7 +91,7 @@ export class EnemySystem {
 		this.query.length = 0;
 		this.grid.queryRadius(x, y, radius + MAX_RADIUS, this.query);
 		for (const e of this.query) {
-			if (!e.active) continue;
+			if (!targetable(e)) continue;
 			if (Math.hypot(e.x - x, e.y - y) <= radius + e.radius) fn(e);
 		}
 	}

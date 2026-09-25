@@ -567,7 +567,7 @@ class GravityWell extends CooldownAbility {
 			const dx = this.x - e.x;
 			const dy = this.y - e.y;
 			const len = Math.hypot(dx, dy) || 1;
-			if (len > 6 && e.def.type !== 'boss') {
+			if (len > 6 && !e.def.isBoss) {
 				e.pullX += (dx / len) * d.pull;
 				e.pullY += (dy / len) * d.pull;
 			}

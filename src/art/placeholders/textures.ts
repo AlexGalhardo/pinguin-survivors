@@ -124,6 +124,77 @@ function boss(c: PixelCanvas): void {
 	c.outline(OUTLINE);
 }
 
+function splitter(c: PixelCanvas): void {
+	c.ellipse(11, 17, 8, 8, P.pine);
+	c.ellipse(21, 17, 8, 8, P.forest);
+	c.ellipse(16, 15, 7, 6, P.green);
+	c.rect(12, 13, 2, 2, P.yellow);
+	c.rect(18, 13, 2, 2, P.yellow);
+	c.line(16, 9, 16, 24, P.deepTeal);
+	c.outline(OUTLINE);
+}
+
+function splitling(c: PixelCanvas): void {
+	c.ellipse(16, 17, 6, 5, P.green);
+	c.px(14, 16, P.yellow);
+	c.px(18, 16, P.yellow);
+	c.outline(OUTLINE);
+}
+
+function bomber(c: PixelCanvas): void {
+	c.circle(16, 17, 8, P.darkSlate);
+	c.circle(16, 17, 6, P.plum);
+	c.rect(14, 6, 4, 4, P.slate);
+	c.line(17, 6, 20, 3, P.amber);
+	c.px(20, 2, P.yellow);
+	c.rect(13, 15, 6, 2, P.red);
+	c.outline(OUTLINE);
+}
+
+function healer(c: PixelCanvas): void {
+	c.ellipse(16, 17, 9, 8, P.deepTeal);
+	c.ellipse(16, 16, 7, 6, P.pine);
+	c.rect(15, 11, 2, 10, P.green);
+	c.rect(11, 15, 10, 2, P.green);
+	c.ring(16, 16, 12, 1, P.green, 160);
+	c.outline(OUTLINE);
+}
+
+function burrower(c: PixelCanvas): void {
+	c.ellipse(16, 19, 9, 7, P.brown);
+	c.ellipse(16, 17, 7, 5, P.clay);
+	c.line(9, 10, 13, 14, P.sand);
+	c.line(23, 10, 19, 14, P.sand);
+	c.px(14, 17, P.red);
+	c.px(18, 17, P.red);
+	c.outline(OUTLINE);
+}
+
+function boss2(c: PixelCanvas): void {
+	c.rect(10, 14, 44, 36, P.darkSlate);
+	c.rect(12, 16, 40, 32, P.slate);
+	c.rect(14, 18, 36, 4, P.steel);
+	c.circle(32, 34, 9, P.midnight);
+	c.circle(32, 34, 6, P.red);
+	c.circle(31, 33, 2, P.yellow);
+	c.rect(4, 26, 8, 12, P.darkSlate);
+	c.rect(52, 26, 8, 12, P.darkSlate);
+	c.rect(26, 50, 12, 6, P.darkSlate);
+	c.outline(OUTLINE);
+}
+
+function boss3(c: PixelCanvas): void {
+	c.ellipse(32, 38, 28, 22, P.navy);
+	c.ellipse(32, 34, 22, 16, P.darkSlate);
+	c.rect(8, 16, 10, 16, P.slate);
+	c.rect(46, 16, 10, 16, P.slate);
+	c.circle(24, 34, 4, P.cyan);
+	c.circle(40, 34, 4, P.cyan);
+	c.rect(22, 44, 20, 3, P.magenta);
+	c.ellipse(32, 14, 10, 6, P.plum);
+	c.outline(OUTLINE);
+}
+
 function bladeArc(c: PixelCanvas): void {
 	// Arc of 120 degrees facing +X, radius 45, centered on the texture.
 	const cx = 48;
@@ -201,6 +272,13 @@ export const PLACEHOLDERS: Record<TextureKey, PlaceholderSpec> = {
 	[TEX.enemyShooter]: { w: 32, h: 32, draw: shooter },
 	[TEX.enemyTank]: { w: 32, h: 32, draw: tank },
 	[TEX.enemyBoss]: { w: 64, h: 64, draw: boss },
+	[TEX.enemyBoss2]: { w: 64, h: 64, draw: boss2 },
+	[TEX.enemyBoss3]: { w: 64, h: 64, draw: boss3 },
+	[TEX.enemySplitter]: { w: 32, h: 32, draw: splitter },
+	[TEX.enemySplitling]: { w: 32, h: 32, draw: splitling },
+	[TEX.enemyBomber]: { w: 32, h: 32, draw: bomber },
+	[TEX.enemyHealer]: { w: 32, h: 32, draw: healer },
+	[TEX.enemyBurrower]: { w: 32, h: 32, draw: burrower },
 
 	[TEX.projBlaster]: {
 		w: 8,

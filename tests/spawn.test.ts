@@ -14,7 +14,7 @@ describe('spawn pool', () => {
 		const rng = new Rng(11);
 		const counts: Record<string, number> = {};
 		for (let i = 0; i < 10_000; i++) {
-			const t = pickEnemyType(10, rng);
+			const t = pickEnemyType(4, rng);
 			counts[t] = (counts[t] ?? 0) + 1;
 		}
 		expect(counts.chaser ?? 0).toBeGreaterThan(4500);
@@ -31,5 +31,23 @@ describe('spawn pool', () => {
 			expect(n).toBeLessThanOrEqual(5);
 		}
 		expect(groupSize('chaser', rng)).toBe(1);
+	});
+});
+
+describe('beta enemies', () => {
+	it('unlock from wave 6 to 9 and never include bosses or splitlings', () => {
+		expect(unlockedTypes(6)).toContain('splitter');
+		expect(unlockedTypes(9)).toEqual([
+			'chaser',
+			'runner',
+			'shooter',
+			'tank',
+			'splitter',
+			'bomber',
+			'healer',
+			'burrower',
+		]);
+		expect(unlockedTypes(99)).not.toContain('splitling');
+		expect(unlockedTypes(99)).not.toContain('boss2');
 	});
 });
