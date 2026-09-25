@@ -85,13 +85,13 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Dano de contato no jogador (cooldown por inimigo) + 0.4 s de invulnerabilidade + flash
 
 ### 1.4 Combate e armas
-- [ ] `logic/stats.ts`: fórmulas de dano, crit, armor, dodge, cooldown, lifesteal, regen (docs/balancing.md §4) + testes
-- [ ] Auto-target: inimigo mais próximo no alcance (grade espacial se houver > 150 inimigos)
-- [ ] Energy Blade (Warrior): arco de 120°, knockback, acerta todos no arco
-- [ ] Blaster (Ranger): projétil em pool, alcance 260
-- [ ] Psi Orb (Mage): projétil lento com pierce 3
-- [ ] `CombatSystem`: aplicar dano → flash branco → número de dano (pool) → morte do inimigo → drop de ouro
-- [ ] Morte do jogador → evento `PLAYER_DIED` (revive ou game over)
+- [x] `logic/stats.ts`: fórmulas de dano, crit, armor, dodge, cooldown, lifesteal, regen (docs/balancing.md §4) + testes
+- [x] Auto-target: inimigo mais próximo no alcance (grade espacial se houver > 150 inimigos)
+- [x] Energy Blade (Warrior): arco de 120°, knockback, acerta todos no arco
+- [x] Blaster (Ranger): projétil em pool, alcance 260
+- [x] Psi Orb (Mage): projétil lento com pierce 3
+- [x] `CombatSystem`: aplicar dano → flash branco → número de dano (pool) → morte do inimigo → drop de ouro
+- [x] Morte do jogador → evento `PLAYER_DIED` (revive ou game over)
 
 ### 1.5 Ondas e escala infinita
 - [ ] `logic/scaling.ts`: duração, taxa de spawn, hpMul, dmgMul, spdMul, conversão do excedente acima do teto + testes
@@ -269,3 +269,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.2**: Arena 960×540 com paredes (static bodies) e chão em tiles; Player com WASD/setas normalizado; câmera com deadzone e limites; RunState + modelo de stats das 3 classes (testes).
 - **2026-09-25**: o agent-browser envia `keyCode` 0 (o Phaser ignora); para QA use `__GAME__.hold('KeyD', ms)` / `__GAME__.press('Enter')`.
 - **2026-09-25 · v1.0.0-alpha.3**: Inimigos em pool (Chaser/Runner/Shooter/Tank) com seek, keep-distance e separação via grade espacial; spawner com telegraph de 0.8 s e teto de 300; dano de contato + i-frames. Estresse: 300 inimigos a 60 FPS (Chrome, 1366×768).
+- **2026-09-25 · v1.0.0-alpha.4**: Fórmulas de combate (dano, crit, armor, dodge, cooldown, lifesteal, regen) com testes; auto-target (grade acima de 150 inimigos); Energy Blade, Blaster e Psi Orb; CombatSystem com flash, números de dano em pool, drop de ouro e evento PLAYER_DIED.
