@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { TEX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { MODIFIER_NAMES, STRINGS } from '../config/strings';
 import { type AbilitySlotInfo, bus, GameEvent } from '../core/events';
@@ -10,6 +11,7 @@ import { Bar } from '../ui/Bar';
 import { addIcon } from '../ui/IconFactory';
 import { addPanel } from '../ui/PixelPanel';
 import { addText } from '../ui/text';
+import { pixelIn } from '../ui/transition';
 import type { GameScene } from './GameScene';
 
 const MARGIN = 4;
@@ -18,6 +20,8 @@ const SLOT = 20;
 const BOSS_W = 180;
 /** Timer turns red (and blinks) in the last seconds. */
 const TIMER_WARN = 5;
+const MAX_ARROWS = 6;
+const ARROW_INSET = 10;
 
 interface SlotView {
 	panel: Phaser.GameObjects.NineSlice;
@@ -40,6 +44,10 @@ export class HudScene extends Phaser.Scene {
 	private bossBar!: Bar;
 	private bossLabel!: Phaser.GameObjects.BitmapText;
 	private slots: SlotView[] = [];
+	/** Off-screen indicators for the boss and elites. */
+	private arrows: Phaser.GameObjects.Image[] = [];
+	private viewW = 480;
+	private viewH = 270;
 	private remaining = 0;
 
 	constructor() {
@@ -48,6 +56,9 @@ export class HudScene extends Phaser.Scene {
 
 	create(): void {
 		this.slots = [];
+		this.arrows = Array.from({ length: MAX_ARROWS }, () =>
+			this.add.image(0, 0, TEX.uiArrow).setVisible(false).setDepth(5),
+		);
 		this.hpBar = new Bar(this, 0, 0, HP_W, 10, PALETTE.red);
 		this.hpText = addText(this, 0, 0, '', { originX: 0.5 });
 		this.reviveIcon = addIcon(this, 0, 0, 'revive').setVisible(false);
@@ -77,6 +88,7 @@ export class HudScene extends Phaser.Scene {
 		fitUiCamera(this, (view) => this.layout(view));
 		this.bindEvents();
 		this.syncFromGame();
+		pixelIn(this);
 	}
 
 	private bindEvents(): void {
@@ -124,6 +136,8 @@ export class HudScene extends Phaser.Scene {
 	}
 
 	private layout(view: ViewSize): void {
+		this.viewW = view.width;
+		this.viewH = view.height;
 		const cx = Math.round(view.width / 2);
 		this.hpBar.setPosition(MARGIN, MARGIN);
 		this.hpText.setPosition(MARGIN + HP_W / 2, MARGIN + 2);
@@ -190,9 +204,45 @@ export class HudScene extends Phaser.Scene {
 		});
 	}
 
+	/** Arrows at the screen edge pointing to off-screen bosses and elites. */
+	private updateArrows(game: GameScene, time: number): void {
+		const view = game.cameras.main.worldView;
+		const cx = view.centerX;
+		const cy = view.centerY;
+		let n = 0;
+		for (const e of game.enemies.active) {
+			if (n >= MAX_ARROWS) break;
+			if (!e.active || (!e.def.isBoss && !e.elite)) continue;
+			if (view.contains(e.x, e.y)) continue;
+			const dx = e.x - cx;
+			const dy = e.y - cy;
+			const hw = this.viewW / 2 - ARROW_INSET;
+			const hh = this.viewH / 2 - ARROW_INSET;
+			const t = Math.min(
+				hw / Math.max(1e-3, Math.abs(dx)),
+				hh / Math.max(1e-3, Math.abs(dy)),
+			);
+			const arrow = this.arrows[n++];
+			if (!arrow) break;
+			const pulse = Math.floor(time / 200) % 2 === 0 ? 1 : 0.6;
+			arrow
+				.setVisible(true)
+				.setPosition(
+					Math.round(this.viewW / 2 + dx * t),
+					Math.round(this.viewH / 2 + dy * t),
+				)
+				.setRotation(Math.atan2(dy, dx))
+				.setTint(e.def.isBoss ? PALETTE.red : PALETTE.amber)
+				.setScale(e.def.isBoss ? 2 : 1)
+				.setAlpha(pulse);
+		}
+		for (let i = n; i < this.arrows.length; i++) this.arrows[i]?.setVisible(false);
+	}
+
 	override update(time: number): void {
 		// Cooldown fills are polled (cheap) instead of evented every frame.
 		const game = this.gameScene;
+		if (game?.enemies) this.updateArrows(game, time);
 		if (game?.abilities) {
 			const infos = game.abilities.slots();
 			this.slots.forEach((s, i) => {

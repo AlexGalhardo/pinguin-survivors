@@ -49,6 +49,7 @@ export const TEX = {
 	tileWall: 'tile.wall',
 
 	uiPanel: 'ui.panel',
+	uiArrow: 'ui.arrow',
 	uiButton: 'ui.button',
 	uiButtonHover: 'ui.button.hover',
 	uiButtonPressed: 'ui.button.pressed',

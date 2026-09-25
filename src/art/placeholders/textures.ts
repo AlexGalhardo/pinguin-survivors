@@ -449,6 +449,30 @@ export const PLACEHOLDERS: Record<TextureKey, PlaceholderSpec> = {
 	[TEX.tileFloor3]: { w: 32, h: 32, draw: floor(3) },
 	[TEX.tileWall]: { w: 32, h: 32, draw: wall },
 
+	[TEX.uiArrow]: {
+		w: 9,
+		h: 9,
+		draw: (c) => {
+			c.pattern(
+				0,
+				0,
+				[
+					'##.......',
+					'####.....',
+					'######...',
+					'########.',
+					'#########',
+					'########.',
+					'######...',
+					'####.....',
+					'##.......',
+				],
+				{
+					'#': P.white,
+				},
+			);
+		},
+	},
 	[TEX.uiPanel]: { w: 12, h: 12, draw: panel(P.midnight, P.darkSlate, P.void, P.slate) },
 	[TEX.uiButton]: { w: 12, h: 12, draw: panel(P.darkSlate, P.slate, P.midnight, P.steel) },
 	[TEX.uiButtonHover]: { w: 12, h: 12, draw: panel(P.slate, P.steel, P.darkSlate, P.yellow) },
