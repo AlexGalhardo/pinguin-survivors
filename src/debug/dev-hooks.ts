@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { keyEvent } from '../core/synthetic-keys';
 import type { RunState } from '../logic/run-state';
 import { AudioSystem } from '../systems/AudioSystem';
 import type { DebugParams } from './params';
@@ -18,31 +19,6 @@ export interface DevHandle {
 	hold(code: string, ms: number): Promise<void>;
 	/** Single key press (keydown + keyup). */
 	press(code: string): void;
-}
-
-const KEY_CODES: Record<string, number> = {
-	KeyW: 87,
-	KeyA: 65,
-	KeyS: 83,
-	KeyD: 68,
-	ArrowUp: 38,
-	ArrowDown: 40,
-	ArrowLeft: 37,
-	ArrowRight: 39,
-	Enter: 13,
-	Space: 32,
-	Escape: 27,
-	Digit1: 49,
-	Digit2: 50,
-	Digit3: 51,
-	KeyR: 82,
-};
-
-function keyEvent(type: 'keydown' | 'keyup', code: string): void {
-	const keyCode = KEY_CODES[code] ?? 0;
-	window.dispatchEvent(
-		new KeyboardEvent(type, { code, key: code, keyCode, which: keyCode } as KeyboardEventInit),
-	);
 }
 
 declare global {

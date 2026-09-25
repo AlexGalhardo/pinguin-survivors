@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
+import { gamepadMove } from '../core/gamepad';
 import { anyDown, type MoveKeys } from '../core/input';
+import { settings } from '../core/settings';
 import type { CharacterDef } from '../data/characters';
 import { ANIM } from '../data/juice';
 import { moveVector } from '../logic/movement';
@@ -37,7 +39,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	hurt(invulnSeconds: number): void {
 		this.invuln = Math.max(this.invuln, invulnSeconds);
 		this.hurtFlash = 0.1;
-		this.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+		if (settings.reduceFlashes) this.setTint(0xff8080);
+		else this.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
 	}
 
 	/** Visual timers: hit flash and blinking while invulnerable. */
@@ -61,12 +64,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
 	/** Reads WASD/arrows and sets the velocity (normalized, so diagonals are not faster). */
 	handleInput(keys: MoveKeys): void {
-		const dir = moveVector(
+		let dir = moveVector(
 			anyDown(keys.up),
 			anyDown(keys.down),
 			anyDown(keys.left),
 			anyDown(keys.right),
 		);
+		// Gamepad left stick (analog) when the keyboard is idle.
+		if (dir.x === 0 && dir.y === 0 && (gamepadMove.x !== 0 || gamepadMove.y !== 0)) {
+			dir = { x: gamepadMove.x, y: gamepadMove.y };
+		}
 		this.arcadeBody.setVelocity(dir.x * this.speed, dir.y * this.speed);
 		const anim = `${this.def.texture}.${dir.x !== 0 || dir.y !== 0 ? 'walk' : 'idle'}`;
 		if (this.anims.currentAnim?.key !== anim && this.scene.anims.exists(anim)) this.play(anim);
