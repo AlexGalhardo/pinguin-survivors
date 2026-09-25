@@ -19,6 +19,7 @@ import { CHARACTERS, type CharacterId } from '../data/characters';
 import { CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
 import { MEDKIT } from '../data/items';
 import { TAGS } from '../data/synergies';
+import { PASSIVES } from '../data/unlocks';
 import { debugStats } from '../debug/debug-stats';
 import type { DebugParams } from '../debug/params';
 import { createArena, PLAY_AREA } from '../entities/Arena';
@@ -31,7 +32,13 @@ import { medkitChance, shopRerollCost } from '../logic/economy';
 import { Rng, randomSeed } from '../logic/rng';
 import { createRunState, type RunState } from '../logic/run-state';
 import { buyOffer, generateShop, lockedIds, sellItem, sellValue } from '../logic/shop';
-import { finalMaxHp, finalMoveSpeed, type Stats } from '../logic/stats';
+import {
+	computeStats,
+	finalMaxHp,
+	finalMoveSpeed,
+	type StatMods,
+	type Stats,
+} from '../logic/stats';
 import { AbilitySystem } from '../systems/AbilitySystem';
 import { playSfx } from '../systems/AudioSystem';
 import { CombatSystem } from '../systems/CombatSystem';
@@ -46,6 +53,7 @@ import { WeaponSystem } from '../systems/WeaponSystem';
 import type { CardPickData } from './CardPickScene';
 import type { GameOverData } from './GameOverScene';
 import type { ShopData } from './ShopScene';
+import type { UnlockData } from './UnlockScene';
 
 /** Delay between the death and the game over screen. */
 const GAME_OVER_DELAY_MS = 1200;
@@ -129,6 +137,9 @@ export class GameScene extends Phaser.Scene {
 		this.syncAbilities();
 		this.setupCamera();
 
+		this.events$.onScene(this, GameEvent.EnemyKilled, () => {
+			this.waveKills++;
+		});
 		this.scene.launch('Hud');
 		if (this.params.debug) this.scene.bringToTop('Debug');
 		this.waves.start(this.state.wave);
@@ -286,6 +297,74 @@ export class GameScene extends Phaser.Scene {
 		this.events$.emit(GameEvent.GoldChanged, { gold });
 	}
 
+	/** Class passive: recomputed a few times per second. */
+	private updatePassive(dt: number): void {
+		this.passiveTimer -= dt;
+		if (this.passiveTimer > 0) return;
+		this.passiveTimer = 0.25;
+		const c = this.state.character;
+		let next: StatMods = {};
+		if (c === 'warrior') {
+			let n = 0;
+			this.enemies.forEachInRadius(
+				this.player.x,
+				this.player.y,
+				PASSIVES.warrior.radius,
+				() => {
+					n++;
+				},
+			);
+			next = { armor: Math.min(PASSIVES.warrior.max, n * PASSIVES.warrior.armorPerEnemy) };
+		} else if (c === 'ranger') {
+			const moving = this.player.arcadeBody.velocity.lengthSq() > 1;
+			next = { attackSpeed: moving ? PASSIVES.ranger.attackSpeedMoving : 0 };
+		} else {
+			next = {
+				abilityPower: Math.min(
+					PASSIVES.mage.max,
+					this.waveKills * PASSIVES.mage.abilityPowerPerKill,
+				),
+			};
+		}
+		const changed = Object.entries(next).some(
+			([k, v]) => (this.passive[k as keyof StatMods] ?? 0) !== v,
+		);
+		if (!changed) return;
+		this.passive = next;
+		this.stats = computeStats(this.baseStats, this.passive);
+	}
+
+	/** Wave start hook: unlocks by wave, resets the Mage passive. */
+	onWaveStart(wave: number): void {
+		this.waveKills = 0;
+		this.handleUnlocks(
+			SaveSystem.unlock({ kind: 'wave', character: this.state.character, wave }),
+		);
+	}
+
+	onBossKilled(): void {
+		SaveSystem.bossKilled();
+		this.handleUnlocks(SaveSystem.unlock({ kind: 'bossKilled' }));
+	}
+
+	/** Shows the unlock screen for each new character (the game waits). */
+	private handleUnlocks(chars: CharacterId[]): void {
+		const next = chars.shift();
+		if (!next) return;
+		this.time.delayedCall(300, () => {
+			if (this.runOver) return;
+			this.scene.pause();
+			const data: UnlockData = {
+				character: next,
+				onClose: () => {
+					this.scene.resume();
+					this.handleUnlocks(chars);
+				},
+			};
+			this.scene.launch('Unlock', data);
+		});
+	}
+
 	/** Plays a sound effect (jsfxr, pre-rendered). */
 	sfx(key: string): void {
 		playSfx(key);
@@ -369,6 +448,7 @@ export class GameScene extends Phaser.Scene {
 			goldEarned: s.totals.goldEarned,
 			damageDealt: s.totals.damageDealt,
 			timeSec: s.totals.timeSec,
+			at: Date.now(),
 		});
 		const data: GameOverData = {
 			character: s.character,
@@ -382,9 +462,17 @@ export class GameScene extends Phaser.Scene {
 		this.time.delayedCall(GAME_OVER_DELAY_MS, () => this.scene.launch('GameOver', data));
 	}
 
+	/** Stats before the class passive (cards + items + synergies). */
+	private baseStats!: Stats;
+	private passive: StatMods = {};
+	private passiveTimer = 0;
+	/** Kills in the current wave (Mage passive). */
+	private waveKills = 0;
+
 	/** Re-applies derived stats (speed, max HP…) after cards/items change the run. */
 	refreshStats(): void {
-		this.stats = buildStats(this.state);
+		this.baseStats = buildStats(this.state);
+		this.stats = computeStats(this.baseStats, this.passive);
 		this.player.speed = finalMoveSpeed(this.player.def.speed, this.stats);
 		this.state.hp = Math.min(this.state.hp, this.maxHp);
 		this.emitHp();
@@ -455,6 +543,7 @@ export class GameScene extends Phaser.Scene {
 			this.enemyShots.update(dt);
 			this.playerShots.update(dt);
 			this.combat.update(dt);
+			this.updatePassive(dt);
 		}
 
 		debugStats.enemies = this.enemies.aliveCount;

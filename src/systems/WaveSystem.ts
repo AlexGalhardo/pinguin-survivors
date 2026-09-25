@@ -93,6 +93,7 @@ export class WaveSystem {
 			modifier: this.modifier,
 		});
 		g.sfx(SFX.waveStart);
+		g.onWaveStart(wave);
 		g.time.delayedCall(WAVE_FLOW.bannerTime * 1000, () => {
 			if (g.runOver) return;
 			g.physics.resume();
@@ -178,6 +179,7 @@ export class WaveSystem {
 			g.shake(400, 0.01);
 			this.bossLine.setVisible(false);
 			g.events$.emit(GameEvent.BossDied, undefined);
+			g.onBossKilled();
 		}
 		if (e.elite === 'volatile') this.explode(e.x, e.y, e.damage);
 		this.special.onDeath(e);
