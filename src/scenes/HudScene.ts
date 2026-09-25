@@ -117,6 +117,7 @@ export class HudScene extends Phaser.Scene {
 		events.onScene(this, GameEvent.BossDied, () => this.setBoss(false, 0));
 		events.onScene(this, GameEvent.AbilitiesChanged, ({ slots }) => this.setSlots(slots));
 		events.onScene(this, GameEvent.PlayerDied, () => this.setBoss(false, 0));
+		events.onScene(this, GameEvent.RunEnded, () => this.setBoss(false, 0));
 	}
 
 	/** The HUD may start after the first events were emitted: pull the current state once. */
@@ -126,7 +127,7 @@ export class HudScene extends Phaser.Scene {
 		const s = game.state;
 		this.setHp(s.hp, game.maxHp, s.revives);
 		this.goldText.setText(`${s.gold}`);
-		if (game.waves.schedule) this.setWave(s.wave, game.waves.remaining);
+		if (game.waves.schedule) this.setWave(s.wave, game.waves.shownRemaining);
 		this.setSlots(game.abilities.slots());
 		const boss = game.waves.boss;
 		this.setBoss(!!boss, boss ? boss.hp / boss.maxHp : 0);

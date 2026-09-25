@@ -17,6 +17,8 @@ export const WAVE = {
 	bossEvery: 10,
 	/** Boss appears this many seconds into its wave. */
 	bossDelay: 5,
+	/** Seconds the player has to kill a boss after it spawns; running out ends the run. */
+	bossTimeLimit: 300,
 } as const;
 
 /** When elites appear inside their wave: first at 3 s, then every 6 s. */

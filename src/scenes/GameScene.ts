@@ -527,8 +527,9 @@ export class GameScene extends Phaser.Scene {
 		this.scene.launch('Pause');
 	}
 
-	/** Game over: record the run and show the summary. */
-	endRun(): void {
+	/** Game over (death or boss time limit): record the run and show the summary. */
+	endRun(reason: 'died' | 'timeUp' = 'died'): void {
+		if (this.runOver) return;
 		this.runOver = true;
 		this.music?.stop();
 		this.sfx(SFX.gameOver);
@@ -564,7 +565,11 @@ export class GameScene extends Phaser.Scene {
 			bestWave: SaveSystem.get().best[s.character].wave,
 			cores: reward.cores,
 			achievements: reward.achievements,
+			reason,
 		};
+		if (reason === 'timeUp') {
+			this.fx.floatText(this.player.x, this.player.y - 16, STRINGS.timeUp, PALETTE.red, 2);
+		}
 		this.time.delayedCall(GAME_OVER_DELAY_MS, () => this.scene.launch('GameOver', data));
 	}
 

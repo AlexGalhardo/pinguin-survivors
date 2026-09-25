@@ -10,6 +10,7 @@ export const STRINGS = {
 	loading: 'LOADING',
 	dodge: 'DODGE',
 	youDied: 'YOU DIED',
+	timeUp: 'TIME UP',
 	wave: 'WAVE',
 	waveCleared: 'WAVE CLEARED',
 	cleared: 'CLEARED',

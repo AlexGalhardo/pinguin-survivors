@@ -18,6 +18,7 @@ import type { EliteMod, Enemy } from '../entities/Enemy';
 import { dmgMul } from '../logic/scaling';
 import { unlockedTypes } from '../logic/spawn';
 import {
+	bossTimeLeft,
 	isWaveComplete,
 	modifierMul,
 	rollWaveModifier,
@@ -48,6 +49,8 @@ export class WaveSystem {
 	private elitesSpawned = 0;
 	private bossQueued = false;
 	boss: Enemy | null = null;
+	/** Seconds since the current boss spawned (time limit). */
+	private bossClock = 0;
 	private bossLine: Phaser.GameObjects.Image;
 	private readonly special: SpecialAi;
 	/** Pending telegraphed slams of the third boss. */
@@ -80,6 +83,20 @@ export class WaveSystem {
 		return Math.max(0, this.schedule.duration - this.elapsed);
 	}
 
+	/** HUD countdown: the boss time limit while a boss is alive, else the wave timer. */
+	get shownRemaining(): number {
+		return this.boss ? bossTimeLeft(this.bossClock) : this.remaining;
+	}
+
+	/** Boss time limit over: the run ends (game over). */
+	private timeUp(): void {
+		const g = this.game;
+		this.phase = 'ending';
+		g.spawner.enabled = false;
+		this.bossLine.setVisible(false);
+		g.endRun('timeUp');
+	}
+
 	/** Starts wave N: banner with the physics paused, then combat. */
 	start(wave: number): void {
 		const g = this.game;
@@ -90,6 +107,7 @@ export class WaveSystem {
 		this.elitesSpawned = 0;
 		this.bossQueued = false;
 		this.boss = null;
+		this.bossClock = 0;
 		g.spawner.setWave(wave);
 		this.modifier = rollWaveModifier(wave, g.rng);
 		g.spawner.mods = modifierMul(this.modifier);
@@ -129,7 +147,14 @@ export class WaveSystem {
 			this.bossQueued = true;
 			this.spawnBoss();
 		}
-		const second = Math.ceil(this.remaining);
+		if (this.boss) {
+			this.bossClock += dt;
+			if (bossTimeLeft(this.bossClock) <= 0) {
+				this.timeUp();
+				return;
+			}
+		}
+		const second = Math.ceil(this.shownRemaining);
 		if (second !== this.lastSecond) {
 			this.lastSecond = second;
 			g.events$.emit(GameEvent.WaveTimer, { wave: s.wave, remaining: second });
@@ -154,6 +179,7 @@ export class WaveSystem {
 			Math.max(0, Math.floor(g.state.wave / WAVE.bossEvery) - 1) % BOSS_ROTATION.length;
 		g.spawner.queueGroup(BOSS_ROTATION[index] ?? 'boss', 1, (e) => {
 			this.boss = e;
+			this.bossClock = 0;
 			e.aiTimer = BOSS.burstEvery * 0.5;
 			g.events$.emit(GameEvent.BossSpawned, { maxHp: e.maxHp });
 		});

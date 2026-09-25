@@ -22,9 +22,14 @@ export interface GameOverData {
 	bestWave: number;
 	cores?: number;
 	achievements?: string[];
+	/** Why the run ended (defaults to death). */
+	reason?: 'died' | 'timeUp';
 }
 
 const PANEL_W = 250;
+const ICON_COLS = 12;
+const ICON_STEP = 18;
+const MENU_SPACING = 22;
 
 /** "YOU DIED — WAVE N", run statistics, build, record; Retry / Main Menu. */
 export class GameOverScene extends Phaser.Scene {
@@ -41,8 +46,8 @@ export class GameOverScene extends Phaser.Scene {
 	create(): void {
 		const d = this.d;
 		const dim = this.add.rectangle(0, 0, 10, 10, PALETTE.void, 0.85).setOrigin(0, 0);
-		const panel = addPanel(this, 0, 0, PANEL_W, 206);
-		const title = addText(this, 0, 0, `${STRINGS.youDied} - ${STRINGS.wave} ${d.wave}`, {
+		const headline = d.reason === 'timeUp' ? STRINGS.timeUp : STRINGS.youDied;
+		const title = addText(this, 0, 0, `${headline} - ${STRINGS.wave} ${d.wave}`, {
 			scale: 2,
 			color: PALETTE.red,
 			originX: 0.5,
@@ -77,31 +82,46 @@ export class GameOverScene extends Phaser.Scene {
 			img: addIcon(this, 0, 0, b.icon),
 			lvl: addText(this, 0, 0, b.level, { color: PALETTE.yellow, originX: 1, originY: 1 }),
 		}));
-		const menu = new MenuList(this, [
-			{ label: MENU.retry, onSelect: () => this.retry() },
-			{ label: MENU.mainMenu, onSelect: () => this.toMenu() },
-		]);
+		// Layout is derived from the build size so the buttons never cover the icons.
+		const rowsTop = 44;
+		const buildTop = rowsTop + rows.length * 10 + 4;
+		const iconRows = Math.max(1, Math.ceil(icons.length / ICON_COLS));
+		const menuTop = buildTop + 12 + iconRows * ICON_STEP + 14;
+		const panelH = menuTop + MENU_SPACING * 2 + 4;
+		const panel = addPanel(this, 0, 0, PANEL_W, panelH);
+		this.children.sendToBack(panel);
+		this.children.sendToBack(dim);
+		const menu = new MenuList(
+			this,
+			[
+				{ label: MENU.retry, onSelect: () => this.retry() },
+				{ label: MENU.mainMenu, onSelect: () => this.toMenu() },
+			],
+			140,
+			MENU_SPACING,
+		);
 		fitUiCamera(this, (view) => {
 			const cx = Math.round(view.width / 2);
-			const top = Math.round(view.height / 2 - 98);
+			const top = Math.max(4, Math.round(view.height / 2 - panelH / 2));
 			const left = cx - PANEL_W / 2;
 			dim.setSize(view.width, view.height);
 			panel.setPosition(left, top);
 			title.setPosition(cx, top + 8);
 			best.setPosition(cx, top + 28);
 			rowTexts.forEach(([l, v], i) => {
-				l?.setPosition(left + 10, top + 44 + i * 10);
-				v?.setPosition(left + PANEL_W - 10, top + 44 + i * 10);
+				l?.setPosition(left + 10, top + rowsTop + i * 10);
+				v?.setPosition(left + PANEL_W - 10, top + rowsTop + i * 10);
 			});
-			const by = top + 44 + rows.length * 10 + 4;
+			const by = top + buildTop;
 			buildLabel.setPosition(left + 10, by);
 			icons.forEach((ic, i) => {
-				const x = left + 10 + (i % 12) * 18;
-				const y = by + 12 + Math.floor(i / 12) * 18;
+				const x = left + 10 + (i % ICON_COLS) * ICON_STEP;
+				const y = by + 12 + Math.floor(i / ICON_COLS) * ICON_STEP;
 				ic.img.setPosition(x + 8, y + 8);
 				ic.lvl.setPosition(x + 17, y + 17);
 			});
-			menu.layout(cx, top + 160);
+			// MenuList positions button centers; buttons are 18 px tall.
+			menu.layout(cx, top + menuTop + 9);
 		});
 	}
 

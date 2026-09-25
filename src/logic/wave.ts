@@ -30,6 +30,11 @@ export function isWaveComplete(remaining: number, bossPending: boolean): boolean
 	return remaining <= 0 && !bossPending;
 }
 
+/** Seconds left to kill the boss, given the seconds since it spawned (0 = time up). */
+export function bossTimeLeft(sinceSpawn: number): number {
+	return Math.max(0, WAVE.bossTimeLimit - sinceSpawn);
+}
+
 /** Rolls the wave modifier (null most of the time; never before wave 6 or on boss waves). */
 export function rollWaveModifier(wave: number, rng: Rng): WaveModifier {
 	if (wave < MODIFIER_RULES.fromWave || isBossWave(wave)) return null;
