@@ -81,10 +81,10 @@ describe('shop lock and sell', () => {
 	it('sells one copy for half of the current price', () => {
 		const s = createRunState('warrior', 1, 11);
 		s.items = ['gravity_magnet', 'gravity_magnet'];
-		expect(sellValue('gravity_magnet', 11)).toBe(10);
-		expect(sellItem(s, 'gravity_magnet')).toBe(10);
+		expect(sellValue('gravity_magnet', 11)).toBe(12);
+		expect(sellItem(s, 'gravity_magnet')).toBe(12);
 		expect(s.items).toEqual(['gravity_magnet']);
-		expect(s.gold).toBe(10);
+		expect(s.gold).toBe(12);
 		expect(sellItem(s, 'nope')).toBe(0);
 	});
 });

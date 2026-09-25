@@ -31,7 +31,7 @@ export class WeaponSystem {
 		const count = 1 + Math.max(0, Math.floor(g.stats.projectiles));
 		const angles = spreadAngles(angle, count, (w.spread ?? 10) * DEG);
 		if (w.kind === 'melee') this.swing(angles, range);
-		else this.shoot(angles, range);
+		else this.shoot(angles, range, target);
 		g.sfx(w.sfx);
 	}
 
@@ -63,12 +63,12 @@ export class WeaponSystem {
 		}
 	}
 
-	private shoot(angles: number[], range: number): void {
+	private shoot(angles: number[], range: number, target: Enemy): void {
 		const g = this.game;
 		const w = this.weapon;
 		for (const a of angles) {
 			const crit = g.rng.chance(g.stats.critChance);
-			g.playerShots.fire({
+			const shot = g.playerShots.fire({
 				texture: w.projectileTexture ?? TEX.projBlaster,
 				x: g.player.x + Math.cos(a) * 8,
 				y: g.player.y + Math.sin(a) * 8,
@@ -80,8 +80,10 @@ export class WeaponSystem {
 				range: range * 1.15,
 				pierce: (w.pierce ?? 0) + Math.max(0, Math.floor(g.stats.pierce)),
 				source: w.id,
-				spin: w.id === 'psi_orb' ? 360 : 0,
+				spin: w.id === 'psi_orb' && !w.homing ? 360 : 0,
+				homing: w.homing ?? 0,
 			});
+			if (shot && w.homing) shot.target = target;
 		}
 	}
 }

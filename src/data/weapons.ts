@@ -15,6 +15,8 @@ export interface WeaponDef {
 	projectileSpeed?: number;
 	projectileTexture?: string;
 	pierce?: number;
+	/** Projectile homing turn rate (rad/s) toward the aimed enemy. */
+	homing?: number;
 	/** Spread between multiple projectiles, degrees. */
 	spread?: number;
 	sfx: string;
@@ -51,7 +53,8 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
 		damage: 6,
 		cooldown: 0.8,
 		range: 220,
-		projectileSpeed: 140,
+		projectileSpeed: 180,
+		homing: 3,
 		projectileTexture: TEX.projPsiOrb,
 		pierce: 3,
 		spread: 15,

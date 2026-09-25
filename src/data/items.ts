@@ -395,7 +395,7 @@ export function itemMods(id: string): StatMods | undefined {
 export const SHOP = {
 	slots: 4,
 	/** price = basePrice · (1 + 0.1(N-1)) */
-	pricePerWave: 0.1,
+	pricePerWave: 0.15,
 	/** re-roll = 1 + N (+1 per re-roll) */
 	rerollBase: 1,
 	rerollPerWave: 1,

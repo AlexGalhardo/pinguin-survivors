@@ -7,10 +7,10 @@ import { buyOffer, generateShop } from '../src/logic/shop';
 import { finalMaxHp } from '../src/logic/stats';
 
 describe('economy (balancing §7, §9)', () => {
-	it('prices grow 10% per wave', () => {
+	it('prices grow 15% per wave', () => {
 		expect(itemPrice(30, 1)).toBe(30);
-		expect(itemPrice(30, 11)).toBe(60);
-		expect(itemPrice(15, 4)).toBe(20);
+		expect(itemPrice(30, 11)).toBe(75);
+		expect(itemPrice(15, 4)).toBe(22);
 	});
 
 	it('shop re-roll costs 1 + N and grows per re-roll', () => {
