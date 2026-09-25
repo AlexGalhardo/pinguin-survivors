@@ -67,7 +67,8 @@ export class EnemySystem {
 	}
 
 	private readonly activeList: Enemy[] = [];
-	private readonly query: Enemy[] = [];
+	private readonly queryPool: Enemy[][] = [];
+	private queryDepth = 0;
 
 	/** Nearest active enemy within `radius` (grid search above 150 enemies, linear below). */
 	nearest(
@@ -88,13 +89,29 @@ export class EnemySystem {
 		);
 	}
 
-	/** Calls fn for every active enemy whose center is within `radius` (+ its own radius). */
+	/**
+	 * Calls fn for every active enemy whose center is within `radius` (+ its own radius).
+	 * Reentrant: fn may kill enemies whose death effects run another query.
+	 */
 	forEachInRadius(x: number, y: number, radius: number, fn: (e: Enemy) => void): void {
-		this.query.length = 0;
-		this.grid.queryRadius(x, y, radius + MAX_RADIUS, this.query);
-		for (const e of this.query) {
-			if (!targetable(e)) continue;
-			if (Math.hypot(e.x - x, e.y - y) <= radius + e.radius) fn(e);
+		let buf = this.queryPool[this.queryDepth];
+		if (!buf) {
+			buf = [];
+			this.queryPool.push(buf);
+		}
+		this.queryDepth++;
+		buf.length = 0;
+		this.grid.queryRadius(x, y, radius + MAX_RADIUS, buf);
+		try {
+			for (const e of buf) {
+				if (!targetable(e)) continue;
+				const dx = e.x - x;
+				const dy = e.y - y;
+				const reach = radius + e.radius;
+				if (dx * dx + dy * dy <= reach * reach) fn(e);
+			}
+		} finally {
+			this.queryDepth--;
 		}
 	}
 
@@ -187,12 +204,14 @@ export class EnemySystem {
 				if (n === e) continue;
 				const ox = e.x - n.x;
 				const oy = e.y - n.y;
-				const d = Math.hypot(ox, oy) || 0.01;
-				const overlap = e.radius + n.radius - d;
-				if (overlap > 0) {
-					vx += (ox / d) * overlap * STEERING.separation;
-					vy += (oy / d) * overlap * STEERING.separation;
-				}
+				const minD = e.radius + n.radius;
+				const d2 = ox * ox + oy * oy;
+				// Most neighbors from the grid query don't overlap: skip them before the sqrt.
+				if (d2 >= minD * minD) continue;
+				const d = Math.sqrt(d2) || 0.01;
+				const push = ((minD - d) * STEERING.separation) / d;
+				vx += ox * push;
+				vy += oy * push;
 			}
 
 			vx += e.knockX + e.pullX;

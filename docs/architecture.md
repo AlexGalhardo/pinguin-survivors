@@ -87,7 +87,8 @@ update(dt):
   SpawnSystem.tick (telegraph → spawn via pool)
   Enemy AI (seek / keep-distance / charge)
   WeaponSystem + AbilitySystem (auto-target: inimigo mais próximo; spatial hash se necessário)
-  Arcade overlaps: projectile×enemy, enemy×player, pickup×player-magnet
+  Acertos projétil×inimigo pela grade espacial (CombatSystem.resolveProjectileHits)
+  Arcade overlaps: enemy×player, enemyShot×player (1×grupo; sem RTree: `useTree: false`)
   CombatSystem aplica dano (logic/stats) → FxSystem (flash, número, shake) → AudioSystem
   WaveSystem: timer → ao zerar: purge, coletar ouro, emitir WAVE_END → CardPick → Shop → WAVE_START
 ```
@@ -96,6 +97,9 @@ update(dt):
 
 - Pooling; corpos circulares; desligar `collideWorldBounds` de projéteis e matá-los fora da arena.
 - Mira: busca do mais próximo em uma **grade espacial** simples (células de 64 px) quando houver mais de 150 inimigos.
+- A mesma grade (reconstruída 1× por frame) resolve separação, habilidades de área e os acertos de projéteis do jogador. A Arcade roda com `useTree: false`: a RTree dela, refeita todo frame para ~800 corpos, era o maior custo de CPU no estresse (D-50).
+- Arena de 960×540 fica quase toda na tela: culling manual de sprites não compensa.
+- Profiling: `bash scripts/profile.sh [segundos]` (com `bun run dev` rodando) mantém 300 inimigos + 500 projéteis e imprime p50/p95/p99 do frame e as funções com mais self time.
 - Números de dano: BitmapText em pool; limitar a ~60 simultâneos.
 - Overlay de debug (`?debug=1`): FPS, contagem de inimigos/projéteis, corpos da física.
 

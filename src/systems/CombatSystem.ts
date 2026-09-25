@@ -27,7 +27,21 @@ export class CombatSystem {
 
 	constructor(private readonly game: GameScene) {}
 
-	/** Player projectile hits an enemy (called from the Arcade overlap). */
+	/**
+	 * Player projectiles vs enemies through the enemy grid. Replaces an Arcade group overlap,
+	 * whose per-frame RTree over ~800 bodies was the top CPU cost in the stress profile.
+	 * Call after `enemies.rebuildGrid()`.
+	 */
+	resolveProjectileHits(): void {
+		const g = this.game;
+		g.playerShots.forEachActive((p) => {
+			g.enemies.forEachInRadius(p.x, p.y, p.arcadeBody.halfWidth, (e) =>
+				this.projectileHit(p, e),
+			);
+		});
+	}
+
+	/** Player projectile hits an enemy. */
 	projectileHit(p: Projectile, e: Enemy): void {
 		if (!p.active || !e.active || p.hitSet.has(e)) return;
 		p.hitSet.add(e);

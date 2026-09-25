@@ -32,7 +32,13 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	},
 	physics: {
 		default: 'arcade',
-		arcade: { gravity: { x: 0, y: 0 }, debug: false },
+		arcade: {
+			gravity: { x: 0, y: 0 },
+			debug: false,
+			// Projectile hits use our own SpatialGrid; the remaining overlaps are 1-vs-group, so
+			// the RTree rebuilt every frame only cost CPU.
+			useTree: false,
+		},
 	},
 	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
 	disableContextMenu: true,

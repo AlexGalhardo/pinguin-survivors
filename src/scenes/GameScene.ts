@@ -155,10 +155,6 @@ export class GameScene extends Phaser.Scene {
 			this.onEnemyShot(s as Projectile),
 		);
 
-		this.physics.add.overlap(this.playerShots.group, this.enemies.group, (s, e) =>
-			this.combat.projectileHit(s as Projectile, e as Enemy),
-		);
-
 		this.refreshStats();
 		this.weapons = new WeaponSystem(this);
 		this.waves = new WaveSystem(this);
@@ -666,6 +662,7 @@ export class GameScene extends Phaser.Scene {
 			this.weapons.update(dt);
 			this.enemyShots.update(dt);
 			this.playerShots.update(dt);
+			this.combat.resolveProjectileHits();
 			this.combat.update(dt);
 			this.updatePassive(dt);
 		}
