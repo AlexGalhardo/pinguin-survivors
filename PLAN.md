@@ -198,7 +198,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 
 ### 2.8 Balanceamento e performance
 - [~] Rodar a simulação para as ondas 1–60 nas 3 classes; ajustar as curvas até atingir as metas §10 (modelo analítico sensível demais; o balanceamento passou a usar playtests reais com bot — `scripts/playtest.sh`; em andamento)
-- [ ] Profiling (Chrome DevTools) e otimizações (grade espacial, menos alocações, culling)
+- [x] Profiling (Chrome DevTools) e otimizações (grade espacial, menos alocações, culling) — `scripts/profile.sh`; culling descartado (arena quase toda visível), GC em 0,1%
 - [~] Playtests com agent-browser em todas as classes até a onda 20 (bot automatizado: Ranger chegou à onda 30, Mage à 10, Warrior à 5; ajustes em andamento)
 - [~] Playtest humano do usuário + feedback
 - [ ] Marco do Beta: versão final `1.0.0-beta.N` com tag e push
@@ -281,6 +281,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25**: Velocidade de jogo 1×/2× nas Settings (pedido do usuário). Bot de playtest (`scripts/playtest-bot.js` + `scripts/playtest.sh`, parâmetro `?speed=N`). Ajustes: elites escapáveis, recuo do inimigo após contato, i-frames 0.5 s, Ranger 22 HP, Mage 18 HP, Psi Orb teleguiado, Warrior com regen 0.4 e alcance 52, preços +15%/onda.
 - **2026-09-25**: Fase 3 adiantada: pipeline `scripts/pixelize.ts` + `scripts/pack-atlas.ts` (sharp, testes), `PreloadScene` com atlas opcional e fallback por chave + barra de loading, `art-src/prompts.md`, moeda meta (Cores), árvore de upgrades permanentes, 10 conquistas, telas Upgrades/Achievements/Credits. Push feito sem hooks a pedido do usuário (2.8 ainda aberto).
 - **2026-09-25**: Cura total no início de cada onda (`WAVE.waveStartHeal`, D-49) com teste.
+- **2026-09-25**: Profiling (`scripts/profile.sh`): no estresse de 300 inimigos + 500 projéteis a CPU do frame caiu de 41% para 26% (acertos de projéteis pela grade espacial, Arcade sem RTree, separação sem `sqrt` desnecessário, query reentrante). p50 16,7 ms / p95 17,8 ms.
 
 ---
 
