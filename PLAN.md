@@ -117,10 +117,10 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Laser Beam
 
 ### 1.8 HUD e UI (pixel art por código)
-- [ ] Componentes `ui/`: PixelPanel (9-slice gerado), PixelButton (normal/hover/pressed/disabled), Bar, IconFactory (ícones 16×16 por código), CardView
-- [ ] `HudScene`: HP + número, ícone de revive, onda + timer (vermelho nos últimos 5 s), ouro, 6 slots de habilidade com nível, barra do boss
-- [ ] Números de dano (crit maior/amarelo), respeitando a Setting
-- [ ] Ancoragem responsiva da HUD em todas as resoluções (testar 1366×768, 1920×1080, 2560×1440, janela estreita)
+- [x] Componentes `ui/`: PixelPanel (9-slice gerado), PixelButton (normal/hover/pressed/disabled), Bar, IconFactory (ícones 16×16 por código), CardView
+- [x] `HudScene`: HP + número, ícone de revive, onda + timer (vermelho nos últimos 5 s), ouro, 6 slots de habilidade com nível, barra do boss
+- [x] Números de dano (crit maior/amarelo), respeitando a Setting
+- [x] Ancoragem responsiva da HUD em todas as resoluções (testar 1366×768, 1920×1080, 2560×1440, janela estreita)
 
 ### 1.9 Áudio (jsfxr)
 - [ ] `AudioSystem`: pré-renderizar os SFX do catálogo (docs/audio.md) em AudioBuffers no Boot
@@ -273,3 +273,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.5**: WaveSystem (timer, desbloqueio de tipos, purge + coleta de ouro), elites a cada 5 ondas (fast/shielded/volatile), boss a cada 10 (rajada radial de 16 + investida telegrafada), banner "WAVE N" com física pausada.
 - **2026-09-25 · v1.0.0-alpha.6**: Cartas (stat/habilidade/especial) com raridade por onda + Luck e regras de slots/nível/revive (testes); CardPickScene (mouse, 1/2/3, setas + Enter); ícones 16×16 por código; revive com 50% HP, 2 s de i-frames e onda de choque.
 - **2026-09-25 · v1.0.0-alpha.7**: AbilitySystem com as 6 habilidades (níveis 1–5, escala com Ability Power e Range): Orbital Drones, Chain Lightning, Plasma Nova, Cryo Field (lentidão), Homing Missiles e Laser Beam (mira na maior aglomeração).
+- **2026-09-25 · v1.0.0-alpha.8**: Componentes de UI (PixelPanel, PixelButton, Bar, IconFactory, CardView); HudScene com HP, revive, onda + timer (vermelho nos últimos 5 s), ouro, 6 slots com nível e cooldown, barra do boss; números de dano respeitam a Setting. Validado em 1366×768, 1920×1080, 2560×1440 e 700×900 (arena centralizada).
