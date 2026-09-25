@@ -16,7 +16,7 @@ import { settings } from '../core/settings';
 import { getView } from '../core/viewport';
 import { type Card, REVIVE } from '../data/cards';
 import { CHARACTERS, type CharacterId } from '../data/characters';
-import { CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
+import { CONTACT_BOUNCE, CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
 import { MEDKIT } from '../data/items';
 import { HIT_STOP, SHAKE, type ShakePreset } from '../data/juice';
 import { TAGS } from '../data/synergies';
@@ -578,7 +578,10 @@ export class GameScene extends Phaser.Scene {
 
 	private onEnemyContact(e: Enemy): void {
 		if (!e.active || e.contactCooldown > 0 || e.burrowed || e.damage <= 0) return;
-		if (this.combat.hurtPlayer(e.damage)) e.contactCooldown = CONTACT_COOLDOWN;
+		if (!this.combat.hurtPlayer(e.damage)) return;
+		e.contactCooldown = CONTACT_COOLDOWN;
+		const d = Math.hypot(e.x - this.player.x, e.y - this.player.y) || 1;
+		e.knockback((e.x - this.player.x) / d, (e.y - this.player.y) / d, CONTACT_BOUNCE);
 	}
 
 	private onEnemyShot(s: Projectile): void {

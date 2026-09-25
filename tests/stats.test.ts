@@ -29,7 +29,7 @@ describe('stats model', () => {
 		expect(w.critChance).toBeCloseTo(0.05);
 		expect(computeStats(CHARACTERS.ranger.stats).critChance).toBeCloseTo(0.08);
 		expect(computeStats(CHARACTERS.mage.stats).abilityPower).toBeCloseTo(0.5);
-		expect(computeStats(CHARACTERS.mage.stats).maxHp).toBe(15);
+		expect(computeStats(CHARACTERS.mage.stats).maxHp).toBe(18);
 		expect(CHARACTERS.ranger.speed).toBe(105);
 	});
 

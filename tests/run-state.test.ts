@@ -15,7 +15,7 @@ describe('RunState', () => {
 		s.cardMods = { maxHp: 5 };
 		s.items = ['heavy_boots'];
 		const stats = runStats(s, (id) => (id === 'heavy_boots' ? { maxHp: 8 } : undefined));
-		expect(stats.maxHp).toBe(33);
+		expect(stats.maxHp).toBe(35);
 	});
 
 	it('round-trips through JSON and rejects other versions', () => {

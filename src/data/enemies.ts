@@ -270,7 +270,12 @@ export const POOL_TYPES: readonly EnemyType[] = [
 
 /** Contact damage cooldown per enemy (s) and player invulnerability after a hit (s). */
 export const CONTACT_COOLDOWN = 0.5;
-export const PLAYER_INVULN = 0.4;
+export const PLAYER_INVULN = 0.5;
+/** Knockback applied to an enemy right after it hits the player (breathing room). */
+export const CONTACT_BOUNCE = 160;
+
+/** Types that can become elites (fast/small types would be impossible to escape). */
+export const ELITE_BASES: readonly EnemyType[] = ['chaser', 'shooter', 'tank', 'splitter'];
 
 /** Spawn rules. */
 export const SPAWN = {
@@ -294,12 +299,12 @@ export const STEERING = {
 /** Elite multipliers over the base type (balancing §2). */
 export const ELITE = {
 	hp: 8,
-	damage: 1.5,
+	damage: 1.25,
 	speed: 1.1,
 	size: 1.5,
 	gold: 15,
 	/** `fast` modifier: extra speed multiplier. */
-	fastSpeed: 1.4,
+	fastSpeed: 1.2,
 	/** `shielded` modifier: shield = 30% of HP (absorbs damage first). */
 	shieldPct: 0.3,
 	/** `volatile` modifier: explodes on death. */

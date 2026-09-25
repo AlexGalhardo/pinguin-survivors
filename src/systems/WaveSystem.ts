@@ -2,7 +2,16 @@ import type Phaser from 'phaser';
 import { SFX, TEX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { GameEvent } from '../core/events';
-import { BOSS, BOSS_ROTATION, BOSS2, BOSS3, ELITE, ENEMIES, WAVE_FLOW } from '../data/enemies';
+import {
+	BOSS,
+	BOSS_ROTATION,
+	BOSS2,
+	BOSS3,
+	ELITE,
+	ELITE_BASES,
+	ENEMIES,
+	WAVE_FLOW,
+} from '../data/enemies';
 import { HIT_STOP, SHAKE } from '../data/juice';
 import { WAVE, type WaveModifier } from '../data/waves';
 import type { EliteMod, Enemy } from '../entities/Enemy';
@@ -131,7 +140,8 @@ export class WaveSystem {
 
 	private spawnElite(): void {
 		const g = this.game;
-		const type = g.rng.pick(unlockedTypes(g.state.wave));
+		const bases = unlockedTypes(g.state.wave).filter((t) => ELITE_BASES.includes(t));
+		const type = g.rng.pick(bases.length > 0 ? bases : ['chaser' as const]);
 		const mod = g.rng.pick(ELITE_MODS);
 		g.spawner.queueGroup(type, 1, (e) => e.makeElite(mod, ELITE_TINT[mod]));
 	}

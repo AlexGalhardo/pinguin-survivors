@@ -119,7 +119,7 @@ describe('applyCard', () => {
 		applyCard(s, sp('revive'), maxHp);
 		expect(s.revives).toBe(1);
 		applyCard(s, sp('full_heal'), maxHp);
-		expect(s.hp).toBe(20);
+		expect(s.hp).toBe(22);
 		applyCard(s, sp('projectile'), maxHp);
 		applyCard(s, sp('pierce'), maxHp);
 		expect(runStats(s).projectiles).toBe(1);

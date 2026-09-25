@@ -26,14 +26,14 @@ export const CHARACTERS: Record<CharacterId, CharacterDef> = {
 		texture: 'player.ranger',
 		weapon: 'blaster',
 		speed: 105,
-		stats: { maxHp: 20, armor: 0, pickupRange: 40, critChance: 0.08 },
+		stats: { maxHp: 22, armor: 0, pickupRange: 40, critChance: 0.08 },
 	},
 	mage: {
 		id: 'mage',
 		texture: 'player.mage',
 		weapon: 'psi_orb',
 		speed: 95,
-		stats: { maxHp: 15, armor: 0, pickupRange: 40, critChance: 0.05, abilityPower: 0.5 },
+		stats: { maxHp: 18, armor: 0, pickupRange: 40, critChance: 0.05, abilityPower: 0.5 },
 	},
 };
 
