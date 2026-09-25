@@ -180,8 +180,8 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Indicadores fora da tela (setas) para o boss e os elites
 
 ### 2.5 Arte (ainda por código) + art spike
-- [ ] Placeholders melhores: silhuetas com sombreamento de 2–3 tons, frames de walk/idle gerados por código
-- [ ] Decoração da arena (não bloqueante) e variação de chão
+- [x] Placeholders melhores: silhuetas com sombreamento de 2–3 tons, frames de walk/idle gerados por código
+- [x] Decoração da arena (não bloqueante) e variação de chão
 - [~] **Art spike Higgsfield** (opcional, depende do usuário configurar o MCP antes): 5–10 sprites testando o pipeline de pixelização
 
 ### 2.6 Áudio
@@ -284,6 +284,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-beta.2**: +4 inimigos (Splitter se divide, Bomber com pavio e explosão, Healer cura aliados, Burrower some e reaparece perto do jogador); bosses Warden (espiral + invocações) e Void Titan (slams telegrafados + tiro em leque) em rotação a cada 10 ondas; modificadores de onda Swarm/Armored/Fast a partir da onda 6.
 - **2026-09-25 · v1.0.0-beta.3**: Desbloqueio do Ranger (onda 10 com o Warrior) e do Mage (matar um boss) com tela própria; passivas de classe (Warrior: armor por inimigo próximo; Ranger: +20% atk speed em movimento; Mage: +1% ability por abate na onda); save v2 com migração (desbloqueios, histórico das últimas 10 runs, bosses mortos) e tela RECORDS. `?unlockAll=1` para testes.
 - **2026-09-25 · v1.0.0-beta.4**: Juice: hit-stop (crit com cooldown, morte de elite e de boss), partículas do Phaser 4 em mortes/coleta/explosões, squash/stretch e bob no jogador e inimigos, transição pixelada entre cenas, presets de tremor calibrados (`src/data/juice.ts`) e setas nas bordas para boss e elites fora da tela.
+- **2026-09-25 · v1.0.0-beta.5**: Arte por código melhorada: sombreamento de 2–3 tons (rampas da Endesga 32) em jogadores e inimigos, sheets de idle (2f) e walk (4f) geradas por código com animações do Phaser, decoração da arena (rochas, cristais, dutos, ossos, crateras). Art spike do Higgsfield segue pendente (MCP não configurado).
 
 ---
 
