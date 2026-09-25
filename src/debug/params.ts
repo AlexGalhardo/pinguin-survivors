@@ -10,6 +10,8 @@ export interface DebugParams {
 	skipMenu: boolean;
 	/** Unlocks every character (tests). */
 	unlockAll: boolean;
+	/** Game speed multiplier for automated playtests (1-8). */
+	speed: number;
 }
 
 function flag(value: string | null): boolean {
@@ -34,5 +36,6 @@ export function parseDebugParams(search: string): DebugParams {
 		debug: flag(p.get('debug')),
 		skipMenu: flag(p.get('skipMenu')),
 		unlockAll: flag(p.get('unlockAll')),
+		speed: Math.min(8, Math.max(1, positiveInt(p.get('speed')) ?? 1)),
 	};
 }

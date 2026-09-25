@@ -11,6 +11,7 @@ describe('parseDebugParams', () => {
 			debug: false,
 			skipMenu: false,
 			unlockAll: false,
+			speed: 1,
 		});
 	});
 
@@ -24,6 +25,7 @@ describe('parseDebugParams', () => {
 				debug: true,
 				skipMenu: true,
 				unlockAll: false,
+				speed: 1,
 			},
 		);
 	});

@@ -24,13 +24,17 @@ export function installGamepad(game: Phaser.Game, isGameplay: () => boolean): vo
 	game.events.on('prestep', () => {
 		const pads = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : [];
 		const pad = Array.from(pads).find((p) => p?.connected) ?? null;
-		gamepadMove.connected = pad !== null;
 		if (!pad) {
-			gamepadMove.x = 0;
-			gamepadMove.y = 0;
+			// Only clear the stick when a pad was just disconnected (dev bots may drive it).
+			if (gamepadMove.connected) {
+				gamepadMove.x = 0;
+				gamepadMove.y = 0;
+			}
+			gamepadMove.connected = false;
 			prev = [];
 			return;
 		}
+		gamepadMove.connected = true;
 		const stick = applyDeadzone(pad.axes[0] ?? 0, pad.axes[1] ?? 0, DEADZONE);
 		gamepadMove.x = stick.x;
 		gamepadMove.y = stick.y;

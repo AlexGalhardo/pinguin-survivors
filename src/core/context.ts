@@ -15,6 +15,7 @@ export function getParams(scene: Phaser.Scene): DebugParams {
 			debug: false,
 			skipMenu: false,
 			unlockAll: false,
+			speed: 1,
 		}
 	);
 }

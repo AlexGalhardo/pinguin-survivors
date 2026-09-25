@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { gamepadMove } from '../core/gamepad';
 import { keyEvent } from '../core/synthetic-keys';
 import type { RunState } from '../logic/run-state';
 import { AudioSystem } from '../systems/AudioSystem';
@@ -12,6 +13,8 @@ export interface DevHandle {
 	readonly scene: Phaser.Scene | undefined;
 	readonly state: RunState | undefined;
 	readonly audio: AudioSystem | null;
+	/** Virtual analog stick (x, y in -1..1) for playtest bots. */
+	pad: { x: number; y: number };
 	/**
 	 * Holds a key for `ms` (synthetic events with keyCode; the agent-browser CLI sends keyCode 0,
 	 * which Phaser ignores). Example: __GAME__.hold('KeyD', 1000).
@@ -38,6 +41,7 @@ export function installDevHooks(game: Phaser.Game, params: DebugParams): void {
 		get state() {
 			return (this.scene as { state?: RunState } | undefined)?.state;
 		},
+		pad: gamepadMove,
 		get audio() {
 			return AudioSystem.get();
 		},
