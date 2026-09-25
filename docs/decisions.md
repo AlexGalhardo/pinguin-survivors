@@ -54,6 +54,7 @@ Decisões tomadas com o usuário na entrevista (`grill-me`, 2026-09-25). Para mu
 | D-48 | Gamepad aprovado no playtest real do usuário; seção "Backlog" removida do PLAN | Pedido do usuário |
 | D-49 | **Cura total no início de cada onda** (`WAVE.waveStartHeal = 1`, fração do Max HP), estilo Brotato | Reduz a punição acumulada entre ondas; ajustável para cura parcial no balanceamento |
 | D-50 | **Acertos de projéteis pela grade espacial** do EnemySystem e Arcade com `useTree: false` (overlaps restantes são 1×grupo); projéteis atravessam Burrowers enterrados | Profiling no estresse (300 inimigos + 500 projéteis): CPU ocupada 41% → 26% do frame |
+| D-51 | **Sem tremor de tela na loja** (compra sem ouro suficiente não sacode mais a câmera; o botão desabilitado já sinaliza) | Pedido do usuário |
 
 ## Em aberto (decidir quando a fase chegar)
 

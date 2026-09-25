@@ -11,7 +11,6 @@ import {
 } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { getItem } from '../data/items';
-import { SHAKE } from '../data/juice';
 import type { Tag } from '../data/synergies';
 import { formatStatDelta, formatStatValue } from '../logic/format';
 import type { ShopOffer } from '../logic/shop';
@@ -318,10 +317,7 @@ export class ShopScene extends Phaser.Scene {
 	private doBuy(i: number): void {
 		const offer = this.d.offers[i];
 		if (!offer || offer.sold) return;
-		if (!this.d.buy(i)) {
-			this.cameras.main.shake(SHAKE.uiError.ms, SHAKE.uiError.intensity);
-			return;
-		}
+		if (!this.d.buy(i)) return;
 		playSfx(SFX.buy);
 		this.buildCards();
 		this.layout(this.view);
