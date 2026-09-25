@@ -1,7 +1,21 @@
 import type Phaser from 'phaser';
 import { SFX } from '../art/manifest';
+import { claimKeyEvent } from '../logic/key-claim';
 import { playSfx } from '../systems/AudioSystem';
 import { PixelButton } from './PixelButton';
+
+const MENU_KEYS = new Set([
+	'ArrowUp',
+	'KeyW',
+	'ArrowDown',
+	'KeyS',
+	'ArrowLeft',
+	'KeyA',
+	'ArrowRight',
+	'KeyD',
+	'Enter',
+	'Space',
+]);
 
 export interface MenuItem {
 	label: string;
@@ -73,6 +87,7 @@ export class MenuList {
 
 	private handleKey(e: KeyboardEvent): void {
 		if (!this.active || !this.scene.scene.isActive()) return;
+		if (!MENU_KEYS.has(e.code) || !claimKeyEvent(e)) return;
 		const n = this.items.length;
 		switch (e.code) {
 			case 'ArrowUp':

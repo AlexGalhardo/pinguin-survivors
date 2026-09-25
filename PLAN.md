@@ -285,6 +285,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-beta.8**: Playtest com bot nas 3 classes até a onda 20 sem erros de console (Warrior sobreviveu à 20). Art spike do Higgsfield substituído pelo Retro Diffusion. **Fim da FASE 2 (Beta).**
 - **2026-09-25**: Loja sem tremor de tela (D-51). Logo em pixel art, key art do planeta no menu e favicon, todos por código (`keyart.ts`).
 - **2026-09-25 · v1.0.0-rc.1**: QA de produção em Chrome, Edge e Firefox (`scripts/qa-browsers.ts`, Playwright 1.63.0): 0 erros, WebGL, 60 FPS; build de 1,6 MB. Arte que falta e áudio final adiados (D-52, D-54); release candidate sem publicação (D-53). **Fim da FASE 3 (até a 3.5).**
+- **2026-09-25**: Corrigido o QUIT RUN da pausa com Enter/✕ do gamepad: o mesmo Enter abria a confirmação e já escolhia "NO"; agora cada tecla é consumida por um só menu (`src/logic/key-claim.ts`, com teste).
 
 ---
 
