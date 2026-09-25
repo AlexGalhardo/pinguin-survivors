@@ -94,11 +94,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Morte do jogador → evento `PLAYER_DIED` (revive ou game over)
 
 ### 1.5 Ondas e escala infinita
-- [ ] `logic/scaling.ts`: duração, taxa de spawn, hpMul, dmgMul, spdMul, conversão do excedente acima do teto + testes
-- [ ] `WaveSystem`: timer, liberação de tipos por onda, fim da onda (purge com efeito + coleta automática de ouro)
-- [ ] Elite a cada 5 ondas (×8 HP, modificador fast/shielded/volatile)
-- [ ] Boss a cada 10 ondas (64×64): rajada radial + investida telegrafada; a onda só termina com o boss morto
-- [ ] Transição de onda: "WAVE N" na tela + pausa da física
+- [x] `logic/scaling.ts`: duração, taxa de spawn, hpMul, dmgMul, spdMul, conversão do excedente acima do teto + testes
+- [x] `WaveSystem`: timer, liberação de tipos por onda, fim da onda (purge com efeito + coleta automática de ouro)
+- [x] Elite a cada 5 ondas (×8 HP, modificador fast/shielded/volatile)
+- [x] Boss a cada 10 ondas (64×64): rajada radial + investida telegrafada; a onda só termina com o boss morto
+- [x] Transição de onda: "WAVE N" na tela + pausa da física
 
 ### 1.6 Cartas e revive
 - [ ] `data/cards.ts` (stat cards, ability cards, specials) e `logic/rarity.ts` (pesos por onda + Luck; Legendary ≥ onda 5) + testes
@@ -270,3 +270,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25**: o agent-browser envia `keyCode` 0 (o Phaser ignora); para QA use `__GAME__.hold('KeyD', ms)` / `__GAME__.press('Enter')`.
 - **2026-09-25 · v1.0.0-alpha.3**: Inimigos em pool (Chaser/Runner/Shooter/Tank) com seek, keep-distance e separação via grade espacial; spawner com telegraph de 0.8 s e teto de 300; dano de contato + i-frames. Estresse: 300 inimigos a 60 FPS (Chrome, 1366×768).
 - **2026-09-25 · v1.0.0-alpha.4**: Fórmulas de combate (dano, crit, armor, dodge, cooldown, lifesteal, regen) com testes; auto-target (grade acima de 150 inimigos); Energy Blade, Blaster e Psi Orb; CombatSystem com flash, números de dano em pool, drop de ouro e evento PLAYER_DIED.
+- **2026-09-25 · v1.0.0-alpha.5**: WaveSystem (timer, desbloqueio de tipos, purge + coleta de ouro), elites a cada 5 ondas (fast/shielded/volatile), boss a cada 10 (rajada radial de 16 + investida telegrafada), banner "WAVE N" com física pausada.
