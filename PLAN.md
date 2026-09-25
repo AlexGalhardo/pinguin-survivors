@@ -108,13 +108,13 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Revive: 50% de HP + 2 s de invulnerabilidade + onda de choque (knockback radial)
 
 ### 1.7 Habilidades (6)
-- [ ] `AbilitySystem` + `data/abilities.ts` (níveis 1–5, escala com Ability Power)
-- [ ] Orbital Drones
-- [ ] Chain Lightning
-- [ ] Plasma Nova
-- [ ] Cryo Field (lentidão)
-- [ ] Homing Missiles
-- [ ] Laser Beam
+- [x] `AbilitySystem` + `data/abilities.ts` (níveis 1–5, escala com Ability Power)
+- [x] Orbital Drones
+- [x] Chain Lightning
+- [x] Plasma Nova
+- [x] Cryo Field (lentidão)
+- [x] Homing Missiles
+- [x] Laser Beam
 
 ### 1.8 HUD e UI (pixel art por código)
 - [ ] Componentes `ui/`: PixelPanel (9-slice gerado), PixelButton (normal/hover/pressed/disabled), Bar, IconFactory (ícones 16×16 por código), CardView
@@ -272,3 +272,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.4**: Fórmulas de combate (dano, crit, armor, dodge, cooldown, lifesteal, regen) com testes; auto-target (grade acima de 150 inimigos); Energy Blade, Blaster e Psi Orb; CombatSystem com flash, números de dano em pool, drop de ouro e evento PLAYER_DIED.
 - **2026-09-25 · v1.0.0-alpha.5**: WaveSystem (timer, desbloqueio de tipos, purge + coleta de ouro), elites a cada 5 ondas (fast/shielded/volatile), boss a cada 10 (rajada radial de 16 + investida telegrafada), banner "WAVE N" com física pausada.
 - **2026-09-25 · v1.0.0-alpha.6**: Cartas (stat/habilidade/especial) com raridade por onda + Luck e regras de slots/nível/revive (testes); CardPickScene (mouse, 1/2/3, setas + Enter); ícones 16×16 por código; revive com 50% HP, 2 s de i-frames e onda de choque.
+- **2026-09-25 · v1.0.0-alpha.7**: AbilitySystem com as 6 habilidades (níveis 1–5, escala com Ability Power e Range): Orbital Drones, Chain Lightning, Plasma Nova, Cryo Field (lentidão), Homing Missiles e Laser Beam (mira na maior aglomeração).
