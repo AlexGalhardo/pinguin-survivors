@@ -72,10 +72,10 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Overlay de debug (`?debug=1`): FPS, inimigos, projéteis
 
 ### 1.2 Jogador, arena e câmera
-- [ ] Arena 960×540 com paredes (static bodies) e chão em tiles placeholder
-- [ ] `Player` com movimento WASD/setas normalizado (diagonal ≠ mais rápida), colisão com paredes
-- [ ] Câmera segue com deadzone e fica limitada à arena
-- [ ] `RunState` (objeto serializável da run) + `logic/stats.ts` com os stats base das 3 classes (data/characters.ts) + testes
+- [x] Arena 960×540 com paredes (static bodies) e chão em tiles placeholder
+- [x] `Player` com movimento WASD/setas normalizado (diagonal ≠ mais rápida), colisão com paredes
+- [x] Câmera segue com deadzone e fica limitada à arena
+- [x] `RunState` (objeto serializável da run) + `logic/stats.ts` com os stats base das 3 classes (data/characters.ts) + testes
 
 ### 1.3 Inimigos e spawn
 - [ ] `Enemy` com pool (Group `maxSize`) e dados de `data/enemies.ts`
@@ -266,3 +266,5 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v0.1.0**: Biome v2 (TAB/4) + .editorconfig; Husky + commitlint; Conventional Commits + SemVer; remoto GitHub. Fase 0 concluída.
 - **2026-09-25 · v1.0.0-alpha.1**: Núcleo da engine: WebGL pixel-art, zoom inteiro responsivo, placeholders por código para todas as chaves do manifest, fonte bitmap 5×7 (RetroFont), eventos tipados e overlay de debug.
 - **2026-09-25**: agent-browser não está no PATH; usado via `bunx agent-browser@0.38.1`.
+- **2026-09-25 · v1.0.0-alpha.2**: Arena 960×540 com paredes (static bodies) e chão em tiles; Player com WASD/setas normalizado; câmera com deadzone e limites; RunState + modelo de stats das 3 classes (testes).
+- **2026-09-25**: o agent-browser envia `keyCode` 0 (o Phaser ignora); para QA use `__GAME__.hold('KeyD', ms)` / `__GAME__.press('Enter')`.
