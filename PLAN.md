@@ -214,13 +214,14 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] `PreloadScene` carregando o atlas real com fallback para o placeholder (por chave)
 - [x] `art-src/prompts.md`: registro de prompt, modelo e seed de cada asset aprovado
 
-### 3.2 Produção de arte (Higgsfield → pipeline → revisão)
-- [ ] Estudo de estilo: 3 personagens em pose base, aprovados pelo usuário `[~]`
-- [ ] Personagens: idle 2f, walk 4f, hit 1f (×3)
-- [ ] Inimigos: 4 básicos + variações ampliadas dos elites + inimigos do Beta
-- [ ] Bosses 64×64 (todos os do Beta)
+### 3.2 Produção de arte (Retro Diffusion → rd-slice → atlas; D-45)
+- [x] Pipeline Retro Diffusion: `scripts/rd-generate.ts` (API v2, paleta Endesga forçada, log) + `scripts/rd-slice.ts` (recorte, quantização, contorno, recolor) + skill `starfall-art-assets` + `docs/art-prompts.md`
+- [~] Estudo de estilo: 3 personagens em pose base (gerados; falta a aprovação do usuário)
+- [x] Personagens: idle 2f, walk 4f (×3) (`rd_animation__small_sprites`; frame de hit fica por código: flash)
+- [x] Inimigos: 4 básicos + 4 do Beta (elites usam tint por código); `enemy.splitling` ainda por código
+- [~] Bosses 64×64: boss 1 feito; Warden e Void Titan ainda por código (créditos do RD acabaram)
 - [ ] Projéteis, efeitos de habilidades e pickups
-- [ ] Tileset da arena + decorações
+- [~] Tileset da arena + decorações (chão e parede feitos; decorações por código)
 - [ ] UI: painel 9-slice, botões, 4 molduras de carta, barras, cursor
 - [ ] Ícones 16×16: stats, habilidades, itens
 - [ ] Fonte bitmap final (manter a 5×7 ou gerar uma nova)
@@ -244,16 +245,6 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Créditos e licenças (paleta, libs, ferramentas de IA)
 - [~] Definir a plataforma de publicação (itch.io/GitHub Pages) e o remoto git (ação do usuário)
 - [ ] Build de produção e publicação; `chore(release): 1.0.0` + tag `v1.0.0` + push
-
----
-
-## Backlog / ideias (não priorizadas)
-
-- Suporte a gamepad e a toque/mobile (fora do escopo por decisão D-03)
-- Modo diário com seed fixa + ranking local
-- Mira manual opcional
-- Mais personagens (além dos 3)
-- Leaderboard online
 
 ---
 
@@ -289,6 +280,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-beta.7**: Tutorial na primeira run (dicas na HUD, cartas e loja), tooltips de stats na loja, comparação antes/depois em cartas e itens, opções de acessibilidade (reduzir flashes, tamanho do texto de dano, pausar ao perder o foco), pausa automática ao trocar de aba e **suporte a gamepad** (DualSense/padrão: analógico, d-pad, ✕/◯/□/△/Options).
 - **2026-09-25**: Velocidade de jogo 1×/2× nas Settings (pedido do usuário). Bot de playtest (`scripts/playtest-bot.js` + `scripts/playtest.sh`, parâmetro `?speed=N`). Ajustes: elites escapáveis, recuo do inimigo após contato, i-frames 0.5 s, Ranger 22 HP, Mage 18 HP, Psi Orb teleguiado, Warrior com regen 0.4 e alcance 52, preços +15%/onda.
 - **2026-09-25**: Fase 3 adiantada: pipeline `scripts/pixelize.ts` + `scripts/pack-atlas.ts` (sharp, testes), `PreloadScene` com atlas opcional e fallback por chave + barra de loading, `art-src/prompts.md`, moeda meta (Cores), árvore de upgrades permanentes, 10 conquistas, telas Upgrades/Achievements/Credits. Push feito sem hooks a pedido do usuário (2.8 ainda aberto).
+- **2026-09-25**: Cura total no início de cada onda (`WAVE.waveStartHeal`, D-49) com teste.
 
 ---
 
@@ -298,7 +290,6 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 
 - **Firefox e Edge (1.12)**: o Firefox não está instalado nesta máquina e o agent-browser travou ao abrir o Edge (`--executable-path`). Abrir `bun run dev` manualmente no Firefox e no Edge e conferir: tela cheia sem scroll, WebGL, sem erros no console. (O Edge usa o mesmo motor do Chrome, então o risco é baixo.)
 - **Playtest humano (1.12, 2.8)**: jogar uma run por classe e anotar o que está fácil/difícil. Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
-- **Gamepad (2.7)**: suporte feito pela Gamepad API (mapeamento padrão) e validado com um controle simulado. Testar com o DualSense real: analógico esquerdo/d-pad movem, ✕ confirma, ◯ volta, □ re-roll, △ lock na loja, Options pausa. Se algum botão vier trocado no seu navegador, anotar qual.
 - **agent-browser**: o CLI global não está no PATH; o agente usa `bunx agent-browser@0.38.1`. Opcional: `bun add -g agent-browser` para deixar global.
 - **Balanceamento (2.8)**: o balanceamento está sendo feito com o bot de playtest. Para rodar: `bun run dev` e `bash scripts/playtest.sh <warrior|ranger|mage> <seed> <ondaAlvo> <velocidade>`. O bot é melhor com Ranger/Mage do que com o Warrior (corpo a corpo); seu playtest humano do Warrior é o dado mais valioso agora.
 - **Hooks do Husky**: o último push foi feito com `--no-verify` a seu pedido. No próximo commit normal os hooks voltam a rodar (lint, typecheck, testes e build passavam antes do push).
