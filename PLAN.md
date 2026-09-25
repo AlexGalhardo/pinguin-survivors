@@ -101,11 +101,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Transição de onda: "WAVE N" na tela + pausa da física
 
 ### 1.6 Cartas e revive
-- [ ] `data/cards.ts` (stat cards, ability cards, specials) e `logic/rarity.ts` (pesos por onda + Luck; Legendary ≥ onda 5) + testes
-- [ ] `logic/cards.ts`: gerar 3 cartas distintas respeitando slots (máx. 6 habilidades), nível máx. 5 e revive (máx. 1 carga) + testes
-- [ ] `CardPickScene`: 3 cartas pixel art com moldura de raridade, hover, teclas 1/2/3, setas + Enter
-- [ ] Aplicar a carta escolhida ao `RunState` e ao `StatsSystem`
-- [ ] Revive: 50% de HP + 2 s de invulnerabilidade + onda de choque (knockback radial)
+- [x] `data/cards.ts` (stat cards, ability cards, specials) e `logic/rarity.ts` (pesos por onda + Luck; Legendary ≥ onda 5) + testes
+- [x] `logic/cards.ts`: gerar 3 cartas distintas respeitando slots (máx. 6 habilidades), nível máx. 5 e revive (máx. 1 carga) + testes
+- [x] `CardPickScene`: 3 cartas pixel art com moldura de raridade, hover, teclas 1/2/3, setas + Enter
+- [x] Aplicar a carta escolhida ao `RunState` e ao `StatsSystem`
+- [x] Revive: 50% de HP + 2 s de invulnerabilidade + onda de choque (knockback radial)
 
 ### 1.7 Habilidades (6)
 - [ ] `AbilitySystem` + `data/abilities.ts` (níveis 1–5, escala com Ability Power)
@@ -271,3 +271,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.3**: Inimigos em pool (Chaser/Runner/Shooter/Tank) com seek, keep-distance e separação via grade espacial; spawner com telegraph de 0.8 s e teto de 300; dano de contato + i-frames. Estresse: 300 inimigos a 60 FPS (Chrome, 1366×768).
 - **2026-09-25 · v1.0.0-alpha.4**: Fórmulas de combate (dano, crit, armor, dodge, cooldown, lifesteal, regen) com testes; auto-target (grade acima de 150 inimigos); Energy Blade, Blaster e Psi Orb; CombatSystem com flash, números de dano em pool, drop de ouro e evento PLAYER_DIED.
 - **2026-09-25 · v1.0.0-alpha.5**: WaveSystem (timer, desbloqueio de tipos, purge + coleta de ouro), elites a cada 5 ondas (fast/shielded/volatile), boss a cada 10 (rajada radial de 16 + investida telegrafada), banner "WAVE N" com física pausada.
+- **2026-09-25 · v1.0.0-alpha.6**: Cartas (stat/habilidade/especial) com raridade por onda + Luck e regras de slots/nível/revive (testes); CardPickScene (mouse, 1/2/3, setas + Enter); ícones 16×16 por código; revive com 50% HP, 2 s de i-frames e onda de choque.
