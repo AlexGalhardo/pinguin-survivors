@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { TEX } from '../art/manifest';
 import { ARENA_H, ARENA_W, MAX_ENEMIES_ALIVE } from '../config/constants';
+import { settings } from '../core/settings';
 import { ENEMIES, type EnemyDef, STEERING } from '../data/enemies';
 import { ANIM } from '../data/juice';
 import { GRID_TARGET_THRESHOLD } from '../data/weapons';
@@ -209,6 +210,7 @@ export class EnemySystem {
 
 	/** White hit flash. */
 	flash(e: Enemy): void {
+		if (settings.reduceFlashes) return;
 		e.flashTime = FLASH_TIME;
 		e.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
 	}

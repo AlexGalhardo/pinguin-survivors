@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { FONT, TEX } from '../art/manifest';
 import { CELL_W } from '../art/placeholders/font-5x7';
 import { PALETTE } from '../config/palette';
+import { settings } from '../core/settings';
 
 /** Max floating damage numbers alive at once (docs/architecture.md). */
 const MAX_NUMBERS = 60;
@@ -29,13 +30,9 @@ export class FxSystem {
 	damageNumber(x: number, y: number, amount: number, crit: boolean): void {
 		if (!this.showNumbers) return;
 		const value = Math.max(1, Math.round(amount));
-		this.floatText(
-			x,
-			y,
-			crit ? `${value}!` : `${value}`,
-			crit ? PALETTE.yellow : PALETTE.white,
-			crit ? 2 : 1,
-		);
+		const size = settings.damageTextSize >= 2 ? 2 : 1;
+		const label = crit ? `${value}!` : `${value}`;
+		this.floatText(x, y, label, crit ? PALETTE.yellow : PALETTE.white, crit ? size + 1 : size);
 	}
 
 	/** Floating text that rises and fades (pooled, max 60). */

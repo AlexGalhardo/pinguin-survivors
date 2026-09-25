@@ -5,6 +5,12 @@ export interface Settings {
 	fullscreen: boolean;
 	screenShake: boolean;
 	damageNumbers: boolean;
+	/** Accessibility: no white hit flashes and softer effects. */
+	reduceFlashes: boolean;
+	/** Damage number scale (1 = small, 2 = large). */
+	damageTextSize: number;
+	/** Pause the run when the window loses focus. */
+	pauseOnBlur: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -13,6 +19,9 @@ export const DEFAULT_SETTINGS: Settings = {
 	fullscreen: false,
 	screenShake: true,
 	damageNumbers: true,
+	reduceFlashes: false,
+	damageTextSize: 1,
+	pauseOnBlur: true,
 };
 
 /** In-memory current settings shared by every scene. */

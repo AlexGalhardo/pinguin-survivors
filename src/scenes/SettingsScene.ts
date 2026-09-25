@@ -18,7 +18,7 @@ export interface SettingsData {
 }
 
 const VOLUME_STEP = 0.1;
-const PANEL_W = 200;
+const PANEL_W = 220;
 
 /** SFX/music volume, fullscreen, screen shake and damage numbers; everything is persisted. */
 export class SettingsScene extends Phaser.Scene {
@@ -35,7 +35,7 @@ export class SettingsScene extends Phaser.Scene {
 
 	create(): void {
 		const dim = this.add.rectangle(0, 0, 10, 10, PALETTE.void, 0.8).setOrigin(0, 0);
-		const panel = addPanel(this, 0, 0, PANEL_W, 176);
+		const panel = addPanel(this, 0, 0, PANEL_W, 242);
 		const title = addText(this, 0, 0, MENU.settings, {
 			scale: 2,
 			color: PALETTE.amber,
@@ -49,7 +49,7 @@ export class SettingsScene extends Phaser.Scene {
 			else MusicSystem.get()?.applyVolume();
 			this.changed();
 		};
-		const toggle = (key: 'screenShake' | 'damageNumbers') => {
+		const toggle = (key: 'screenShake' | 'damageNumbers' | 'reduceFlashes' | 'pauseOnBlur') => {
 			settings[key] = !settings[key];
 			this.changed();
 		};
@@ -81,6 +81,17 @@ export class SettingsScene extends Phaser.Scene {
 					onSelect: () => toggle('damageNumbers'),
 					onAdjust: () => toggle('damageNumbers'),
 				},
+				{ label: '', onSelect: () => this.textSize(), onAdjust: () => this.textSize() },
+				{
+					label: '',
+					onSelect: () => toggle('reduceFlashes'),
+					onAdjust: () => toggle('reduceFlashes'),
+				},
+				{
+					label: '',
+					onSelect: () => toggle('pauseOnBlur'),
+					onAdjust: () => toggle('pauseOnBlur'),
+				},
 				{ label: MENU.back, onSelect: () => this.close() },
 			],
 			PANEL_W - 16,
@@ -95,7 +106,7 @@ export class SettingsScene extends Phaser.Scene {
 		});
 		fitUiCamera(this, (view) => {
 			const cx = Math.round(view.width / 2);
-			const top = Math.round(view.height / 2 - 88);
+			const top = Math.round(view.height / 2 - 121);
 			dim.setSize(view.width, view.height);
 			panel.setPosition(cx - PANEL_W / 2, top);
 			title.setPosition(cx, top + 8);
@@ -130,6 +141,17 @@ export class SettingsScene extends Phaser.Scene {
 		this.menu.setLabel(2, `${MENU.fullscreen} ${onOff(settings.fullscreen)}`);
 		this.menu.setLabel(3, `${MENU.screenShake} ${onOff(settings.screenShake)}`);
 		this.menu.setLabel(4, `${MENU.damageNumbers} ${onOff(settings.damageNumbers)}`);
+		this.menu.setLabel(
+			5,
+			`${MENU.textSize} ${settings.damageTextSize >= 2 ? MENU.large : MENU.small}`,
+		);
+		this.menu.setLabel(6, `${MENU.reduceFlashes} ${onOff(settings.reduceFlashes)}`);
+		this.menu.setLabel(7, `${MENU.pauseOnBlur} ${onOff(settings.pauseOnBlur)}`);
+	}
+
+	private textSize(): void {
+		settings.damageTextSize = settings.damageTextSize >= 2 ? 1 : 2;
+		this.changed();
 	}
 
 	private close(): void {
