@@ -1,6 +1,4 @@
-export type CharacterId = 'warrior' | 'ranger' | 'mage';
-
-const CHARACTERS: readonly CharacterId[] = ['warrior', 'ranger', 'mage'];
+import { CHARACTER_IDS, type CharacterId } from '../data/characters';
 
 /** Debug/test options read from the URL, e.g. ?seed=1&char=mage&wave=10&god=1&debug=1&skipMenu=1 */
 export interface DebugParams {
@@ -28,7 +26,7 @@ export function parseDebugParams(search: string): DebugParams {
 	const wave = positiveInt(p.get('wave'));
 	return {
 		seed: positiveInt(p.get('seed')),
-		char: CHARACTERS.find((c) => c === char),
+		char: CHARACTER_IDS.find((c) => c === char),
 		wave: wave !== undefined && wave >= 1 ? wave : undefined,
 		god: flag(p.get('god')),
 		debug: flag(p.get('debug')),
