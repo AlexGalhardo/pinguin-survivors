@@ -123,10 +123,10 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Ancoragem responsiva da HUD em todas as resoluções (testar 1366×768, 1920×1080, 2560×1440, janela estreita)
 
 ### 1.9 Áudio (jsfxr)
-- [ ] `AudioSystem`: pré-renderizar os SFX do catálogo (docs/audio.md) em AudioBuffers no Boot
-- [ ] Limite de vozes, intervalo mínimo e variação de pitch
-- [ ] Ligar SFX a todas as ações (armas, hits, mortes, coleta, UI, onda, dano no jogador, revive, game over)
-- [ ] Desbloqueio do AudioContext no primeiro input
+- [x] `AudioSystem`: pré-renderizar os SFX do catálogo (docs/audio.md) em AudioBuffers no Boot
+- [x] Limite de vozes, intervalo mínimo e variação de pitch
+- [x] Ligar SFX a todas as ações (armas, hits, mortes, coleta, UI, onda, dano no jogador, revive, game over)
+- [x] Desbloqueio do AudioContext no primeiro input
 
 ### 1.10 Economia: ouro, loja, itens, re-roll (final do Alpha)
 - [ ] Pickup de ouro em pool + ímã (Pickup Range) + medkit raro
@@ -274,3 +274,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.6**: Cartas (stat/habilidade/especial) com raridade por onda + Luck e regras de slots/nível/revive (testes); CardPickScene (mouse, 1/2/3, setas + Enter); ícones 16×16 por código; revive com 50% HP, 2 s de i-frames e onda de choque.
 - **2026-09-25 · v1.0.0-alpha.7**: AbilitySystem com as 6 habilidades (níveis 1–5, escala com Ability Power e Range): Orbital Drones, Chain Lightning, Plasma Nova, Cryo Field (lentidão), Homing Missiles e Laser Beam (mira na maior aglomeração).
 - **2026-09-25 · v1.0.0-alpha.8**: Componentes de UI (PixelPanel, PixelButton, Bar, IconFactory, CardView); HudScene com HP, revive, onda + timer (vermelho nos últimos 5 s), ouro, 6 slots com nível e cooldown, barra do boss; números de dano respeitam a Setting. Validado em 1366×768, 1920×1080, 2560×1440 e 700×900 (arena centralizada).
+- **2026-09-25 · v1.0.0-alpha.9**: AudioSystem com jsfxr: 17 SFX pré-renderizados em AudioBuffers no Boot, limite de vozes + intervalo mínimo de 40 ms + variação de pitch ±8% (testes), SFX ligados a armas, hits, mortes, ouro, UI, onda, dano, revive e game over; AudioContext destravado no primeiro input.
