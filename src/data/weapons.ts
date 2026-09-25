@@ -22,14 +22,17 @@ export interface WeaponDef {
 	sfx: string;
 }
 
-/** Starting weapons (docs/balancing.md §3; Blaster and Psi Orb buffed after the 1.12 sim). */
+/**
+ * Starting weapons (docs/balancing.md §3). User playtest 2026-09-25: Energy Blade +50% damage,
+ * attack speed and range; Psi Orb +25% damage and attack speed; Blaster −20% damage and attack speed.
+ */
 export const WEAPONS: Record<WeaponId, WeaponDef> = {
 	energy_blade: {
 		id: 'energy_blade',
 		kind: 'melee',
-		damage: 12,
-		cooldown: 0.9,
-		range: 52,
+		damage: 18,
+		cooldown: 0.6,
+		range: 78,
 		arc: 120,
 		knockback: 120,
 		spread: 30,
@@ -38,8 +41,8 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
 	blaster: {
 		id: 'blaster',
 		kind: 'projectile',
-		damage: 10,
-		cooldown: 0.35,
+		damage: 8,
+		cooldown: 0.44,
 		range: 260,
 		projectileSpeed: 380,
 		projectileTexture: TEX.projBlaster,
@@ -50,8 +53,8 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
 	psi_orb: {
 		id: 'psi_orb',
 		kind: 'projectile',
-		damage: 6,
-		cooldown: 0.8,
+		damage: 7.5,
+		cooldown: 0.64,
 		range: 220,
 		projectileSpeed: 180,
 		homing: 3,

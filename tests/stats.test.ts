@@ -24,12 +24,12 @@ describe('stats model', () => {
 
 	it('computes the class base stats (balancing §3)', () => {
 		const w = computeStats(CHARACTERS.warrior.stats);
-		expect(w.maxHp).toBe(30);
+		expect(w.maxHp).toBe(45);
 		expect(w.armor).toBe(3);
 		expect(w.critChance).toBeCloseTo(0.05);
 		expect(computeStats(CHARACTERS.ranger.stats).critChance).toBeCloseTo(0.08);
-		expect(computeStats(CHARACTERS.mage.stats).abilityPower).toBeCloseTo(0.5);
-		expect(computeStats(CHARACTERS.mage.stats).maxHp).toBe(18);
+		expect(computeStats(CHARACTERS.mage.stats).abilityPower).toBeCloseTo(0.875);
+		expect(computeStats(CHARACTERS.mage.stats).maxHp).toBe(23);
 		expect(CHARACTERS.ranger.speed).toBe(105);
 	});
 

@@ -18,13 +18,14 @@ describe('balance simulation (balancing §10)', () => {
 		expect(simulateRun('mage', 'random', 42)).toEqual(simulateRun('mage', 'random', 42));
 	});
 
-	it('starting weapons have comparable DPS', () => {
+	// Melee out-DPSes the ranged weapons on purpose (it must touch enemies; user playtest 2026-09-25).
+	it('starting weapons stay within 4x DPS of each other', () => {
 		const dps = (['warrior', 'ranger', 'mage'] as const).map((c) => {
 			const st = createRunState(c, 1);
 			return weaponDps(st, runStats(st));
 		});
 		const max = Math.max(...dps);
-		for (const d of dps) expect(d / max).toBeGreaterThan(0.45);
+		for (const d of dps) expect(d / max).toBeGreaterThan(0.25);
 	});
 
 	// Re-enabled in the final balance pass (PLAN: last playtest to wave 30).

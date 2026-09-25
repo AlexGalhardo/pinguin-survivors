@@ -4,7 +4,7 @@ import { createRunState, deserializeRun, runStats, serializeRun } from '../src/l
 describe('RunState', () => {
 	it('starts at full HP for the chosen class', () => {
 		const s = createRunState('warrior', 42);
-		expect(s.hp).toBe(30);
+		expect(s.hp).toBe(45);
 		expect(s.wave).toBe(1);
 		expect(s.gold).toBe(0);
 		expect(s.revives).toBe(0);
@@ -15,7 +15,7 @@ describe('RunState', () => {
 		s.cardMods = { maxHp: 5 };
 		s.items = ['heavy_boots'];
 		const stats = runStats(s, (id) => (id === 'heavy_boots' ? { maxHp: 8 } : undefined));
-		expect(stats.maxHp).toBe(35);
+		expect(stats.maxHp).toBe(31);
 	});
 
 	it('round-trips through JSON and rejects other versions', () => {

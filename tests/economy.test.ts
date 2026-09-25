@@ -43,7 +43,7 @@ describe('items', () => {
 		const stats = runStats(s, itemMods);
 		expect(stats.attackSpeed).toBeCloseTo(0.25);
 		expect(stats.damage).toBeCloseTo(0.4);
-		expect(finalMaxHp(stats)).toBe(Math.round(30 * (1 - 0.35)));
+		expect(finalMaxHp(stats)).toBe(Math.round(45 * (1 - 0.35)));
 		expect(getItem('singularity_shard')?.rarity).toBe('legendary');
 	});
 });

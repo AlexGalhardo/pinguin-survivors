@@ -33,22 +33,29 @@ Contato: o inimigo causa dano no máximo 1 vez a cada 0.5 s por inimigo. O jogad
 
 ## 3. Personagens (stats base)
 
+> **Playtest humano (2026-09-25)**: Warrior fraco no começo (+50% em HP, dano, atk speed e alcance da Energy Blade),
+> Mage morrendo cedo (+25% em HP, dano, atk speed e multiplicador de habilidades ×1.25: 1.5 → 1.875),
+> Ranger forte demais após o 1º boss (−20% em HP, dano e atk speed do Blaster).
+> "+X% de attack speed" = cooldown ÷ (1 + X). Os valores abaixo já incluem esses ajustes.
+
 | | Warrior | Ranger | Mage |
 |---|---|---|---|
-| Max HP | 30 | 20 | 15 |
+| Max HP | **45** (era 30) | **18** (era 22) | **23** (era 18) |
 | Armor | 3 | 0 | 0 |
+| HP Regen | 0.4/s | 0 | 0 |
 | Move Speed | 90 | 105 | 95 |
-| Ability Power | +0% | +0% | **+50%** |
+| Ability Power | +0% | +0% | **+87.5%** (era +50%) |
 | Pickup Range | 40 | 40 | 40 |
 | Crit Chance | 5% | 8% | 5% |
 
 | Arma inicial | Dano | Cooldown | Alcance | Especial |
 |---|---|---|---|---|
-| Energy Blade (Warrior) | 12 | 0.9 s | 45 (arco de 120°) | knockback 120, acerta todos no arco |
-| Blaster (Ranger) | **10** (era 5) | 0.35 s | 260 | projétil a 380 px/s |
-| Psi Orb (Mage) | **6** (era 4) | **0.8 s** (era 1.0) | 220 | projétil a 140 px/s, pierce 3 |
+| Energy Blade (Warrior) | **18** (era 12) | **0.6 s** (era 0.9) | **78** (era 52), arco de 120° | knockback 120, acerta todos no arco |
+| Blaster (Ranger) | **8** (era 10) | **0.44 s** (era 0.35) | 260 | projétil a 380 px/s |
+| Psi Orb (Mage) | **7.5** (era 6) | **0.64 s** (era 0.8) | 220 | projétil a 180 px/s, pierce 3, teleguiado |
 
 > Ajuste de 1.12: com os valores originais, a simulação mostrava Ranger e Mage morrendo nas ondas 4–6 (DPS inicial 2–4× menor que o da Energy Blade).
+> Boss: o jogador tem **5 min** (300 s, `WAVE.bossTimeLimit`) para matar cada boss depois que ele aparece; se o tempo acabar é game over ("TIME UP").
 
 ### Detalhes implementados no Alpha (não estavam no plano original)
 
