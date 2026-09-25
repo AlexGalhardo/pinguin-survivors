@@ -1,8 +1,9 @@
-import { sfxr } from 'jsfxr';
+import { type SfxrParams, sfxr } from 'jsfxr';
 import type Phaser from 'phaser';
 import type { SfxKey } from '../art/manifest';
 import { settings } from '../core/settings';
 import { AUDIO_RULES, SFX_PRESETS } from '../data/sfx';
+import { SFX_PARAMS } from '../data/sfx-params';
 import { pitchRate, VoiceLimiter } from '../logic/voice-limiter';
 
 /** SOUND_MUTED=true in .env silences the whole game (quiet dev/test machine). */
@@ -46,12 +47,9 @@ export class AudioSystem {
 		if (!this.ctx) return;
 		for (const [key, preset] of Object.entries(SFX_PRESETS)) {
 			try {
-				const p = sfxr.generate(preset.algorithm);
-				if (preset.freqMul) p.p_base_freq = Math.min(1, p.p_base_freq * preset.freqMul);
-				if (preset.decayMul) p.p_env_decay = Math.min(1, p.p_env_decay * preset.decayMul);
-				if (preset.sustainMul)
-					p.p_env_sustain = Math.min(1, p.p_env_sustain * preset.sustainMul);
-				p.sound_vol = 0.5;
+				// Frozen params (scripts/gen-sfx.ts) so every session sounds the same.
+				const frozen = SFX_PARAMS[key];
+				const p = (frozen ? { ...frozen } : sfxr.generate(preset.algorithm)) as SfxrParams;
 				const source = sfxr.toWebAudio(p, this.ctx);
 				if (source.buffer) this.buffers.set(key, source.buffer);
 			} catch (err) {
