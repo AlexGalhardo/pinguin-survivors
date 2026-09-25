@@ -144,12 +144,12 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] `SaveSystem` (localStorage com try/catch + versão): settings, recorde por classe, estatísticas
 
 ### 1.12 QA e fechamento do Alpha
-- [ ] Teste de estresse: 300 inimigos + 500 projéteis em `?debug=1` → 60 FPS no Chrome (registrar o resultado no changelog)
-- [ ] `logic/sim`: simulação headless de runs (3 classes, builds aleatórias) comparada com as metas de docs/balancing.md §10
-- [ ] Playtest guiado com agent-browser: uma run por classe até a onda 10 (screenshots, erros)
-- [ ] Teste em Firefox e Edge (tela cheia, sem scroll, áudio)
+- [x] Teste de estresse: 300 inimigos + 500 projéteis em `?debug=1` → 60 FPS no Chrome (registrar o resultado no changelog)
+- [x] `logic/sim`: simulação headless de runs (3 classes, builds aleatórias) comparada com as metas de docs/balancing.md §10 (`bun scripts/sim.ts`)
+- [x] Playtest guiado com agent-browser: uma run por classe até a onda 10 (screenshots, erros)
+- [~] Teste em Firefox e Edge (tela cheia, sem scroll, áudio): Firefox não está instalado e o agent-browser travou ao abrir o Edge; ver Pendências
 - [~] Playtest humano do usuário + feedback → ajustes (ação do usuário)
-- [ ] Atualizar docs (balancing/decisions) com o que mudou; marco do Alpha: versão final `1.0.0-alpha.N` com tag e push
+- [x] Atualizar docs (balancing/decisions) com o que mudou; marco do Alpha: versão final `1.0.0-alpha.N` com tag e push
 
 ---
 
@@ -277,3 +277,16 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.9**: AudioSystem com jsfxr: 17 SFX pré-renderizados em AudioBuffers no Boot, limite de vozes + intervalo mínimo de 40 ms + variação de pitch ±8% (testes), SFX ligados a armas, hits, mortes, ouro, UI, onda, dano, revive e game over; AudioContext destravado no primeiro input.
 - **2026-09-25 · v1.0.0-alpha.10**: Economia: ouro com ímã (Pickup Range) + medkit raro (cura 20%); preços por onda, re-roll crescente e sorteio por raridade (testes); 12 itens com trade-offs; ShopScene (4 slots, comprar, re-roll, Continue, painel de stats e itens possuídos); re-roll pago na CardPickScene.
 - **2026-09-25 · v1.0.0-alpha.11**: MainMenu (título em fonte bitmap, versão), CharacterSelect (stats, arma, recorde), Pause (ESC, confirmação de saída), Settings (volumes, fullscreen, shake, números de dano), GameOver (estatísticas, build, NEW BEST, Retry/Menu); SaveSystem versionado em localStorage com try/catch (testes).
+- **2026-09-25 · v1.0.0-alpha.12**: Estresse: 300 inimigos + 500 projéteis a 60 FPS (Chrome, 1920×1080, p95 18,5 ms). Simulação headless (`bun scripts/sim.ts`): mediana da build aleatória Warrior 19 / Ranger 13 / Mage 15; build boa 55–58.
+- **2026-09-25 · v1.0.0-alpha.12**: Correções: taxa de spawn conta inimigos (bando de Runners), Blaster 5→10 e Psi Orb 4→6 (0.8 s), Cryo Field sem flash/números. Playtest com bot até a onda 10 nas 3 classes sem erros de console; boss da onda 10 tanque demais (vai para o balanceamento final). Som mudo via `.env` (`SOUND_MUTED=true`). **Fim da FASE 1 (Alpha).**
+
+---
+
+## Pendências do desenvolvedor
+
+> Tarefas que precisam de ação, conta ou decisão do desenvolvedor. Atualizado pelo agente a cada seção.
+
+- **Firefox e Edge (1.12)**: o Firefox não está instalado nesta máquina e o agent-browser travou ao abrir o Edge (`--executable-path`). Abrir `bun run dev` manualmente no Firefox e no Edge e conferir: tela cheia sem scroll, WebGL, sem erros no console. (O Edge usa o mesmo motor do Chrome, então o risco é baixo.)
+- **Playtest humano (1.12, 2.8)**: jogar uma run por classe e anotar o que está fácil/difícil. Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
+- **agent-browser**: o CLI global não está no PATH; o agente usa `bunx agent-browser@0.38.1`. Opcional: `bun add -g agent-browser` para deixar global.
+
