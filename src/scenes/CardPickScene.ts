@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { SFX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import { STRINGS } from '../config/strings';
+import { STRINGS, TUTORIAL } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import type { Card } from '../data/cards';
 import type { ViewSize } from '../logic/viewport';
@@ -18,6 +18,10 @@ export interface CardPickData {
 	onPick: (index: number) => void;
 	/** Sound hook (AudioSystem). */
 	sfx?: (key: string) => void;
+	/** Before/after text for a card (e.g. "DAMAGE 0% > 8%"). */
+	preview?: (card: Card) => string;
+	/** Shows the first-run tutorial line. */
+	tutorial?: boolean;
 	/** Paid re-roll: returns new cards, or null when not affordable. */
 	reroll?: () => Card[] | null;
 	rerollCost?: () => number;
@@ -61,7 +65,10 @@ export class CardPickScene extends Phaser.Scene {
 			color: PALETTE.white,
 			originX: 0.5,
 		});
-		this.hint = addText(this, 0, 0, STRINGS.pickHint, { color: PALETTE.steel, originX: 0.5 });
+		this.hint = addText(this, 0, 0, this.data$.tutorial ? TUTORIAL.cards : STRINGS.pickHint, {
+			color: this.data$.tutorial ? PALETTE.yellow : PALETTE.steel,
+			originX: 0.5,
+		});
 		this.buildCards();
 		if (this.data$.reroll) {
 			this.rerollBtn = new PixelButton(this, 0, 0, '', () => this.doReroll(), 120);
@@ -104,6 +111,8 @@ export class CardPickScene extends Phaser.Scene {
 				tag: t.tag,
 				icon: t.icon,
 				hint: String(i + 1),
+				footer: this.data$.preview?.(card) || undefined,
+				footerColor: PALETTE.green,
 			});
 			view.frame.on('pointerover', () => this.setFocus(i));
 			view.frame.on('pointerdown', () => this.choose(i));

@@ -20,3 +20,16 @@ describe('format', () => {
 		expect(formatTime(65.7)).toBe('1:05');
 	});
 });
+
+describe('stat compare', () => {
+	it('lists only the stats that change', async () => {
+		const { statChanges } = await import('../src/logic/compare');
+		const { computeStats } = await import('../src/logic/stats');
+		const a = computeStats({ maxHp: 10, damage: 0.1 });
+		const b = computeStats({ maxHp: 15, damage: 0.1, armor: 1 });
+		expect(statChanges(a, b)).toEqual([
+			{ stat: 'maxHp', before: 10, after: 15 },
+			{ stat: 'armor', before: 0, after: 1 },
+		]);
+	});
+});

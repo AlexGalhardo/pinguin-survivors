@@ -122,6 +122,38 @@ export const TAG_NAMES: Record<Tag, string> = {
 	tech: 'TECH',
 };
 
+/** What each stat does (tooltips). */
+export const STAT_DESC: Record<StatKey, string> = {
+	maxHp: 'MAXIMUM HEALTH',
+	maxHpPct: 'MAXIMUM HEALTH',
+	hpRegen: 'HEALTH RECOVERED PER SECOND',
+	lifesteal: 'CHANCE TO HEAL 1 HP ON HIT',
+	damage: 'MULTIPLIES ALL DAMAGE',
+	attackSpeed: 'WEAPONS ATTACK FASTER',
+	critChance: 'CHANCE OF A CRITICAL HIT',
+	critDamage: 'EXTRA DAMAGE OF CRITS (BASE 150%)',
+	abilityPower: 'MULTIPLIES ABILITY DAMAGE',
+	range: 'WEAPON AND ABILITY REACH',
+	moveSpeed: 'MOVEMENT SPEED',
+	armor: 'REDUCES DAMAGE TAKEN',
+	dodge: 'CHANCE TO IGNORE A HIT (MAX 60%)',
+	pickupRange: 'GOLD MAGNET RADIUS',
+	luck: 'BETTER CARDS, ITEMS AND MEDKITS',
+	projectiles: 'EXTRA PROJECTILES OR SWINGS',
+	pierce: 'ENEMIES A SHOT PASSES THROUGH',
+};
+
+export const TUTORIAL = {
+	hints: [
+		'MOVE: WASD / ARROWS / LEFT STICK',
+		'YOU ATTACK AUTOMATICALLY',
+		'SURVIVE UNTIL THE TIMER ENDS',
+		'GOLD IS SPENT IN THE SHOP',
+	],
+	cards: 'CARDS ARE FREE: PICK ONE',
+	shop: 'SPEND GOLD ON ITEMS, THEN CONTINUE',
+} as const;
+
 /** Compact stat labels for narrow panels (shop cards, stats panel). */
 export const STAT_SHORT: Record<StatKey, string> = {
 	maxHp: 'MAX HP',
@@ -167,6 +199,11 @@ export const MENU = {
 	fullscreen: 'FULLSCREEN',
 	screenShake: 'SCREEN SHAKE',
 	damageNumbers: 'DAMAGE NUMBERS',
+	textSize: 'DAMAGE TEXT',
+	large: 'LARGE',
+	small: 'SMALL',
+	reduceFlashes: 'REDUCE FLASHES',
+	pauseOnBlur: 'PAUSE ON BLUR',
 	on: 'ON',
 	off: 'OFF',
 	waveReached: 'WAVE',

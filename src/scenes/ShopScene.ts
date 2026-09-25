@@ -1,7 +1,14 @@
 import Phaser from 'phaser';
 import { SFX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import { RARITY_NAMES, STAT_SHORT, STRINGS, TAG_NAMES } from '../config/strings';
+import {
+	RARITY_NAMES,
+	STAT_DESC,
+	STAT_SHORT,
+	STRINGS,
+	TAG_NAMES,
+	TUTORIAL,
+} from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { getItem } from '../data/items';
 import { SHAKE } from '../data/juice';
@@ -36,6 +43,10 @@ export interface ShopData {
 	/** Sells one owned item; returns the refund. */
 	sell(itemId: string): number;
 	sellValue(itemId: string): number;
+	/** Before/after text for buying an item. */
+	compare(itemId: string): string;
+	/** Shows the first-run tutorial line. */
+	tutorial?: boolean;
 	/** Tag counts and reached tier (synergies panel). */
 	synergies(): { tag: Tag; count: number; tier: number }[];
 }
@@ -88,7 +99,7 @@ export class ShopScene extends Phaser.Scene {
 		this.statsPanel = addPanel(this, 0, 0, STATS_W, 10);
 		this.reroll = new PixelButton(this, 0, 0, '', () => this.doReroll(), 110);
 		this.cont = new PixelButton(this, 0, 0, STRINGS.continue, () => this.doContinue(), 90);
-		this.hint = addText(this, 0, 0, STRINGS.shopHint, { color: PALETTE.steel, originX: 0.5 });
+		this.hint = addText(this, 0, 0, this.baseHint(), { color: PALETTE.steel, originX: 0.5 });
 		this.buildCards();
 		fitUiCamera(this, (view) => this.layout(view));
 		this.bindKeys();
@@ -122,7 +133,11 @@ export class ShopScene extends Phaser.Scene {
 				ITEM_W,
 				ITEM_H,
 			);
-			card.frame.on('pointerover', () => this.setFocus(i));
+			card.frame.on('pointerover', () => {
+				this.setFocus(i);
+				this.hint.setText(offer.sold ? this.baseHint() : this.d.compare(offer.itemId));
+			});
+			card.frame.on('pointerout', () => this.hint.setText(this.baseHint()));
 			card.frame.on('pointerdown', (p: Phaser.Input.Pointer) => {
 				if (p.rightButtonDown()) this.doLock(i);
 				else this.doBuy(i);
@@ -165,7 +180,11 @@ export class ShopScene extends Phaser.Scene {
 		let y = this.statsPanel.y + 6;
 		for (const k of PANEL_STATS) {
 			const value = k === 'maxHp' ? `${this.d.maxHp()}` : formatStatValue(k, stats[k]);
-			this.statsTexts.push(addText(this, x, y, STAT_SHORT[k], { color: PALETTE.steel }));
+			const label = addText(this, x, y, STAT_SHORT[k], { color: PALETTE.steel });
+			label.setInteractive();
+			label.on('pointerover', () => this.hint.setText(STAT_DESC[k]));
+			label.on('pointerout', () => this.hint.setText(this.baseHint()));
+			this.statsTexts.push(label);
 			this.statsTexts.push(
 				addText(this, x + STATS_W - 10, y, value, { color: PALETTE.white, originX: 1 }),
 			);
@@ -184,6 +203,10 @@ export class ShopScene extends Phaser.Scene {
 			);
 			y += 9;
 		}
+	}
+
+	private baseHint(): string {
+		return this.d.tutorial ? TUTORIAL.shop : STRINGS.shopHint;
 	}
 
 	private synergyRows(): number {
@@ -206,7 +229,7 @@ export class ShopScene extends Phaser.Scene {
 			icon.on('pointerover', () =>
 				this.hint.setText(`${item?.name ?? id}: ${STRINGS.sell} +${this.d.sellValue(id)}`),
 			);
-			icon.on('pointerout', () => this.hint.setText(STRINGS.shopHint));
+			icon.on('pointerout', () => this.hint.setText(this.baseHint()));
 			icon.on('pointerdown', () => this.doSell(id));
 			this.ownedIcons.push(icon);
 			if (n > 1) {
@@ -319,7 +342,7 @@ export class ShopScene extends Phaser.Scene {
 	private doSell(itemId: string): void {
 		if (this.d.sell(itemId) <= 0) return;
 		playSfx(SFX.buy);
-		this.hint.setText(STRINGS.shopHint);
+		this.hint.setText(this.baseHint());
 		this.rebuild();
 	}
 

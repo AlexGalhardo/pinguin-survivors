@@ -1,12 +1,13 @@
 import Phaser from 'phaser';
 import { TEX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import { MODIFIER_NAMES, STRINGS } from '../config/strings';
+import { MODIFIER_NAMES, STRINGS, TUTORIAL } from '../config/strings';
 import { type AbilitySlotInfo, bus, GameEvent } from '../core/events';
 import { fitUiCamera } from '../core/viewport';
 import { MAX_ABILITIES } from '../data/abilities';
 import { formatTime } from '../logic/format';
 import type { ViewSize } from '../logic/viewport';
+import { SaveSystem } from '../systems/SaveSystem';
 import { Bar } from '../ui/Bar';
 import { addIcon } from '../ui/IconFactory';
 import { addPanel } from '../ui/PixelPanel';
@@ -88,6 +89,7 @@ export class HudScene extends Phaser.Scene {
 		fitUiCamera(this, (view) => this.layout(view));
 		this.bindEvents();
 		this.syncFromGame();
+		this.startTutorial();
 		pixelIn(this);
 	}
 
@@ -253,6 +255,24 @@ export class HudScene extends Phaser.Scene {
 		if (this.remaining <= TIMER_WARN && this.remaining > 0) {
 			this.timerText.setVisible(Math.floor(time / 250) % 2 === 0);
 		} else this.timerText.setVisible(true);
+	}
+
+	/** First run only: cycles short hints at the bottom of the screen during wave 1. */
+	private startTutorial(): void {
+		if (SaveSystem.get().tutorialDone) return;
+		const text = addText(this, 0, 0, '', { color: PALETTE.yellow, originX: 0.5 });
+		let i = 0;
+		const show = () => {
+			const hint = TUTORIAL.hints[i];
+			if (!hint || SaveSystem.get().tutorialDone) {
+				text.destroy();
+				return;
+			}
+			text.setText(hint).setPosition(Math.round(this.viewW / 2), this.viewH - 40);
+			i++;
+			this.time.delayedCall(4500, show);
+		};
+		this.time.delayedCall(1500, show);
 	}
 
 	private showBanner(text: string, color: number = PALETTE.amber): void {

@@ -8,7 +8,7 @@ import {
 	MAX_PROJECTILES,
 } from '../config/constants';
 import { PALETTE } from '../config/palette';
-import { EVOLVED_NAMES, STRINGS } from '../config/strings';
+import { EVOLVED_NAMES, STAT_SHORT, STRINGS } from '../config/strings';
 import { getParams } from '../core/context';
 import { bus, type EventBus, GameEvent } from '../core/events';
 import { createMoveKeys, type MoveKeys } from '../core/input';
@@ -29,7 +29,9 @@ import { Player } from '../entities/Player';
 import type { Projectile } from '../entities/Projectile';
 import { applyEvolutions, buildStats, synergyTiers, tagCounts } from '../logic/build';
 import { applyCard, cardRerollCost, generateCards } from '../logic/cards';
+import { statChanges } from '../logic/compare';
 import { medkitChance, shopRerollCost } from '../logic/economy';
+import { formatStatValue } from '../logic/format';
 import { Rng, randomSeed } from '../logic/rng';
 import { createRunState, type RunState } from '../logic/run-state';
 import { isBossWave } from '../logic/scaling';
@@ -109,6 +111,19 @@ export class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.player, walls);
 		this.keys = createMoveKeys(this);
 		this.input.keyboard?.on('keydown-ESC', () => this.openPause());
+		// Auto-pause when the tab is hidden (always) or the window loses focus (setting).
+		const onHidden = () => {
+			if (document.hidden) this.openPause();
+		};
+		const onBlur = () => {
+			if (settings.pauseOnBlur) this.openPause();
+		};
+		document.addEventListener('visibilitychange', onHidden);
+		window.addEventListener('blur', onBlur);
+		this.events.once('shutdown', () => {
+			document.removeEventListener('visibilitychange', onHidden);
+			window.removeEventListener('blur', onBlur);
+		});
 
 		this.enemyShots = new ProjectileSystem(this, MAX_PROJECTILES, 9);
 		this.playerShots = new ProjectileSystem(this, MAX_PROJECTILES, 8);
@@ -172,6 +187,8 @@ export class GameScene extends Phaser.Scene {
 			cards,
 			sfx: (key) => this.sfx(key),
 			gold: () => this.state.gold,
+			preview: (card) => this.previewCard(card),
+			tutorial: !SaveSystem.get().tutorialDone,
 			rerollCost: cost,
 			reroll: () => {
 				if (this.state.gold < cost()) return null;
@@ -205,6 +222,25 @@ export class GameScene extends Phaser.Scene {
 		this.refreshStats();
 		this.checkEvolutions();
 		this.syncAbilities();
+	}
+
+	/** "STAT a > b" for the stats a change would modify (max 2 shown). */
+	private compareText(change: (s: RunState) => void): string {
+		const copy = structuredClone(this.state);
+		change(copy);
+		const lines = statChanges(this.baseStats, buildStats(copy))
+			.filter((c) => c.stat !== 'maxHpPct')
+			.slice(0, 2)
+			.map(
+				(c) =>
+					`${STAT_SHORT[c.stat]} ${formatStatValue(c.stat, c.before)}>${formatStatValue(c.stat, c.after)}`,
+			);
+		return lines.join('  ');
+	}
+
+	private previewCard(card: Card): string {
+		if (card.kind === 'ability') return '';
+		return this.compareText((s) => applyCard(s, card, (x) => finalMaxHp(buildStats(x))));
 	}
 
 	/** Evolves abilities at level 5 whose evolution item is owned. */
@@ -264,6 +300,8 @@ export class GameScene extends Phaser.Scene {
 				return refund;
 			},
 			sellValue: (id) => sellValue(id, wave),
+			compare: (id) => this.compareText((s) => s.items.push(id)),
+			tutorial: !SaveSystem.get().tutorialDone,
 			synergies: () => {
 				const counts = tagCounts(this.state);
 				const tiers = synergyTiers(counts);
@@ -287,6 +325,10 @@ export class GameScene extends Phaser.Scene {
 			maxHp: () => this.maxHp,
 			items: () => this.state.items,
 			onContinue: () => {
+				if (!SaveSystem.get().tutorialDone) {
+					SaveSystem.get().tutorialDone = true;
+					SaveSystem.persist();
+				}
 				this.state.shopLocks = lockedIds(shop.offers);
 				this.scene.resume();
 				this.waves.start(wave + 1);

@@ -93,7 +93,12 @@ export class CardView extends Phaser.GameObjects.Container {
 			);
 		}
 		if (c.tag) {
-			this.add(addText(scene, 0, h / 2 - 22, c.tag, { color: PALETTE.green, originX: 0.5 }));
+			this.add(
+				addText(scene, 0, h / 2 - (c.footer ? 22 : 12), c.tag, {
+					color: PALETTE.green,
+					originX: 0.5,
+				}),
+			);
 		}
 		if (c.hint) {
 			this.add(addText(scene, -w / 2 + 5, top + 6, c.hint, { color: PALETTE.steel }));
