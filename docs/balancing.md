@@ -166,3 +166,25 @@ Modelo analítico por onda em `src/logic/sim` (constantes em `src/data/sim.ts`, 
 - "Nenhuma build passa da onda 60": **não atendido** — algumas builds boas sobrevivem às 60 ondas. A escala tardia fica para o balanceamento final.
 - Achado do playtest com bot: o boss da onda 10 (400 × 3.3 = 1338 HP) é tanque demais para builds fracas.
 
+
+## 11. Beta (Fase 2) — conteúdo e ajustes
+
+**Inimigos novos** (`src/data/enemies.ts`): Splitter (18 HP, divide em 2 Splitlings de 4 HP, onda 6), Bomber (8 HP, pavio 0.6 s a 28 px, explosão raio 44 e 12 × dmgMul, onda 7), Healer (16 HP, cura 20% do Max HP de aliados num raio de 70 a cada 3 s, onda 8), Burrower (20 HP, some por 0.8 s a cada 4 s e reaparece a 50–80 px do jogador, onda 9). Pesos no sorteio: 10 / 8 / 6 / 8.
+
+**Bosses**: rotação a cada 10 ondas — Hive Queen (400 HP), Warden (450 HP: espiral de 2 tiros a cada 0.1 s por 3 s a cada 6 s; invoca 4 Chasers a cada 8 s), Void Titan (520 HP: 3 slams telegrafados de raio 36 e 16 × dmgMul a cada 3 s; leque de 5 tiros a cada 2 s).
+
+**Modificadores de onda** (a partir da onda 6, 25%, nunca em onda de boss): Swarm (spawn ×1.6, HP ×0.65), Armored (spawn ×0.85, HP ×1.5, velocidade ×0.9), Fast (HP ×0.9, velocidade ×1.3).
+
+**Sinergias** (`src/data/synergies.ts`, tiers 2/4/6 por tag de habilidades + itens): Energy +10/25/40% dano; Kinetic +10/25/35% atk speed (+1 projétil no tier 3); Cryo +1/3/5 armor e +5/10/15% dodge; Psi +15/35/60% ability power; Bio +0.5/1.5/2.5 regen (+3/6% lifesteal); Tech pickup/luck/crit.
+
+**Evoluções**: nível 5 + item específico → dano ×1.75, +2 contagem (drones, saltos, mísseis, discos), área ×1.35, Cryo com 70% de lentidão.
+
+**Habilidades novas** (nível 1 → +por nível): Arc Turret (5 → +2 dano, 1 torreta +0.5/nv, tiro a cada 0.7 s, dura 10 s, nova a cada 5 s); Saw Disc (6 → +3, 1 disco +0.5/nv, 2.2 s, perfura tudo); Gravity Well (3 → +1.5 por tick de 0.5 s, raio 60 → +8, 2.5 s a cada 5 s, puxa 90 px/s); Nanite Swarm (4 → +2 dps por 3 s, 1 alvo +0.5/nv, a cada 3 s).
+
+**Loja**: 40 itens; lock mantém o item no re-roll e na próxima loja; venda devolve 50% do preço atual. Preço por onda: **+15%** (era +10%; o bot terminava a onda 30 com ~3.800 de ouro sobrando).
+
+**Ajustes do playtest com bot (`scripts/playtest.sh`)**: elites só de Chaser/Shooter/Tank/Splitter; elite ×1.25 de dano (era ×1.5) e `fast` ×1.2 (era ×1.4); inimigo recua 160 ao acertar o jogador; i-frames 0.5 s (era 0.4); Ranger 22 HP (era 20), Mage 18 HP (era 15); Warrior +0.4 HP/s de regen base e lâmina com alcance 52 (era 45); Psi Orb a 180 px/s e teleguiado (3 rad/s); lifesteal limitado a 10 curas/s.
+
+**Passivas de classe**: Warrior +1 armor por inimigo a até 60 px (máx. +5); Ranger +20% atk speed em movimento; Mage +1% ability power por abate na onda (máx. +30%).
+
+**Meta (1.0)**: Cores por run = `2·onda + abates/50 + 10·bosses`. Upgrades permanentes pequenos (ver D-42) para não quebrar a curva.

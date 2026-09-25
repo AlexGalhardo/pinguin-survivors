@@ -197,9 +197,9 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Suporte a gamepad (DualSense do PS5 / layout padrão): movimento analógico, menus, pausa e re-roll (pedido do usuário, D-36)
 
 ### 2.8 Balanceamento e performance
-- [ ] Rodar a simulação para as ondas 1–60 nas 3 classes; ajustar as curvas até atingir as metas §10
+- [~] Rodar a simulação para as ondas 1–60 nas 3 classes; ajustar as curvas até atingir as metas §10 (modelo analítico sensível demais; o balanceamento passou a usar playtests reais com bot — `scripts/playtest.sh`; em andamento)
 - [ ] Profiling (Chrome DevTools) e otimizações (grade espacial, menos alocações, culling)
-- [ ] Playtests com agent-browser em todas as classes até a onda 20
+- [~] Playtests com agent-browser em todas as classes até a onda 20 (bot automatizado: Ranger chegou à onda 30, Mage à 10, Warrior à 5; ajustes em andamento)
 - [~] Playtest humano do usuário + feedback
 - [ ] Marco do Beta: versão final `1.0.0-beta.N` com tag e push
 
@@ -209,10 +209,10 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 
 ### 3.1 Setup de assets
 - [~] Usuário: conta e créditos no Higgsfield; `claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp` + login OAuth via `/mcp`
-- [ ] `scripts/pixelize.ts` (sharp): chroma key → trim → downscale nearest → quantizar para Endesga 32 → contorno → âncora
-- [ ] `scripts/pack-atlas.ts`: atlas PNG+JSON (formato Phaser) com as chaves do manifest
-- [ ] `PreloadScene` carregando o atlas real com fallback para o placeholder (por chave)
-- [ ] `art-src/prompts.md`: registro de prompt, modelo e seed de cada asset aprovado
+- [x] `scripts/pixelize.ts` (sharp): chroma key → trim → downscale nearest → quantizar para Endesga 32 → contorno → âncora
+- [x] `scripts/pack-atlas.ts`: atlas PNG+JSON (formato Phaser) com as chaves do manifest
+- [x] `PreloadScene` carregando o atlas real com fallback para o placeholder (por chave)
+- [x] `art-src/prompts.md`: registro de prompt, modelo e seed de cada asset aprovado
 
 ### 3.2 Produção de arte (Higgsfield → pipeline → revisão)
 - [ ] Estudo de estilo: 3 personagens em pose base, aprovados pelo usuário `[~]`
@@ -233,15 +233,15 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [ ] SFX finais exportados (WAV/OGG) ou refinados, com mixagem de volumes
 
 ### 3.4 Meta e conteúdo final
-- [~] Definir com o usuário a árvore de upgrades permanentes
-- [ ] Implementar a moeda meta + a árvore + a tela de upgrades
-- [ ] Conquistas simples (locais)
+- [x] Definir a árvore de upgrades permanentes (decidido pelo agente a pedido do usuário: D-41/D-42)
+- [x] Implementar a moeda meta + a árvore + a tela de upgrades
+- [x] Conquistas simples (locais)
 
 ### 3.5 Polish, QA e release
 - [ ] QA completo em Chrome, Firefox e Edge (Windows) + Safari/macOS se possível
 - [ ] Performance final (60 FPS com a arte final; tamanho do build e tempo de load)
-- [ ] Tela de loading com barra em pixel art
-- [ ] Créditos e licenças (paleta, libs, ferramentas de IA)
+- [x] Tela de loading com barra em pixel art
+- [x] Créditos e licenças (paleta, libs, ferramentas de IA)
 - [~] Definir a plataforma de publicação (itch.io/GitHub Pages) e o remoto git (ação do usuário)
 - [ ] Build de produção e publicação; `chore(release): 1.0.0` + tag `v1.0.0` + push
 
@@ -287,6 +287,8 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-beta.5**: Arte por código melhorada: sombreamento de 2–3 tons (rampas da Endesga 32) em jogadores e inimigos, sheets de idle (2f) e walk (4f) geradas por código com animações do Phaser, decoração da arena (rochas, cristais, dutos, ossos, crateras). Art spike do Higgsfield segue pendente (MCP não configurado).
 - **2026-09-25 · v1.0.0-beta.6**: SFX com parâmetros jsfxr congelados em `src/data/sfx-params.ts` (`bun scripts/gen-sfx.ts`); sequenciador chiptune próprio em Web Audio (lead quadrada, baixo triangular, arpejo, bateria de ruído) com músicas de menu, combate e boss, volume próprio e ducking em cartas/loja/pausa. Continua mudo com `SOUND_MUTED=true` (música validada só por testes e estado, sem ouvir).
 - **2026-09-25 · v1.0.0-beta.7**: Tutorial na primeira run (dicas na HUD, cartas e loja), tooltips de stats na loja, comparação antes/depois em cartas e itens, opções de acessibilidade (reduzir flashes, tamanho do texto de dano, pausar ao perder o foco), pausa automática ao trocar de aba e **suporte a gamepad** (DualSense/padrão: analógico, d-pad, ✕/◯/□/△/Options).
+- **2026-09-25**: Velocidade de jogo 1×/2× nas Settings (pedido do usuário). Bot de playtest (`scripts/playtest-bot.js` + `scripts/playtest.sh`, parâmetro `?speed=N`). Ajustes: elites escapáveis, recuo do inimigo após contato, i-frames 0.5 s, Ranger 22 HP, Mage 18 HP, Psi Orb teleguiado, Warrior com regen 0.4 e alcance 52, preços +15%/onda.
+- **2026-09-25**: Fase 3 adiantada: pipeline `scripts/pixelize.ts` + `scripts/pack-atlas.ts` (sharp, testes), `PreloadScene` com atlas opcional e fallback por chave + barra de loading, `art-src/prompts.md`, moeda meta (Cores), árvore de upgrades permanentes, 10 conquistas, telas Upgrades/Achievements/Credits. Push feito sem hooks a pedido do usuário (2.8 ainda aberto).
 
 ---
 
@@ -298,3 +300,6 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **Playtest humano (1.12, 2.8)**: jogar uma run por classe e anotar o que está fácil/difícil. Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
 - **Gamepad (2.7)**: suporte feito pela Gamepad API (mapeamento padrão) e validado com um controle simulado. Testar com o DualSense real: analógico esquerdo/d-pad movem, ✕ confirma, ◯ volta, □ re-roll, △ lock na loja, Options pausa. Se algum botão vier trocado no seu navegador, anotar qual.
 - **agent-browser**: o CLI global não está no PATH; o agente usa `bunx agent-browser@0.38.1`. Opcional: `bun add -g agent-browser` para deixar global.
+- **Balanceamento (2.8)**: o balanceamento está sendo feito com o bot de playtest. Para rodar: `bun run dev` e `bash scripts/playtest.sh <warrior|ranger|mage> <seed> <ondaAlvo> <velocidade>`. O bot é melhor com Ranger/Mage do que com o Warrior (corpo a corpo); seu playtest humano do Warrior é o dado mais valioso agora.
+- **Hooks do Husky**: o último push foi feito com `--no-verify` a seu pedido. No próximo commit normal os hooks voltam a rodar (lint, typecheck, testes e build passavam antes do push).
+

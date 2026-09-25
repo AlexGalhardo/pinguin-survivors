@@ -19,7 +19,7 @@ export const CHARACTERS: Record<CharacterId, CharacterDef> = {
 		texture: 'player.warrior',
 		weapon: 'energy_blade',
 		speed: 90,
-		stats: { maxHp: 30, armor: 3, pickupRange: 40, critChance: 0.05 },
+		stats: { maxHp: 30, armor: 3, hpRegen: 0.4, pickupRange: 40, critChance: 0.05 },
 	},
 	ranger: {
 		id: 'ranger',

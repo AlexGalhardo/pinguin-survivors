@@ -165,7 +165,12 @@
 		fy += wall(p.y, 32, 508) * 2;
 		let mag = Math.hypot(fx, fy);
 		const safe = mag < 0.2 && crowd <= (melee ? 2 : 1) && hpRatio > 0.35;
-		if (safe && melee && nearest && nd > 32) {
+		if (melee && nearest && nd < 30) {
+			// Hit and run: never let a melee enemy stay glued to us.
+			fx += (p.x - nearest.x) * 2;
+			fy += (p.y - nearest.y) * 2;
+			mag = Math.hypot(fx, fy) || 1;
+		} else if (safe && melee && nearest && nd > 44) {
 			// Close in on the nearest enemy to use the blade.
 			fx = nearest.x - p.x;
 			fy = nearest.y - p.y;

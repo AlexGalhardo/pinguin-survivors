@@ -29,7 +29,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
 		kind: 'melee',
 		damage: 12,
 		cooldown: 0.9,
-		range: 45,
+		range: 52,
 		arc: 120,
 		knockback: 120,
 		spread: 30,
