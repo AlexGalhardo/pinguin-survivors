@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../../config/palette';
-import { FONT, type TextureKey } from '../manifest';
+import { FONT, iconKey, type TextureKey } from '../manifest';
 import { CELL_H, CELL_W, CHARS_PER_ROW, FONT_CHARS, renderFontAtlas } from './font-5x7';
+import { ICONS, renderIcon } from './icons';
 import type { PixelCanvas } from './pixel-canvas';
 import { PLACEHOLDERS, renderPlaceholder } from './textures';
 
@@ -19,6 +20,11 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 	for (const key of Object.keys(PLACEHOLDERS) as TextureKey[]) {
 		if (!scene.textures.exists(key)) toTexture(scene, key, renderPlaceholder(key));
 	}
+}
+
+/** Generates every 16x16 icon (icon.<id>). */
+export function installIcons(scene: Phaser.Scene): void {
+	for (const id of Object.keys(ICONS)) installPixels(scene, iconKey(id), renderIcon(id));
 }
 
 /** Registers any extra generated texture (e.g. icons) under a manifest-style key. */
