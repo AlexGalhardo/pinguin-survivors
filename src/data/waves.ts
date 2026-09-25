@@ -18,3 +18,6 @@ export const WAVE = {
 	/** Boss appears this many seconds into its wave. */
 	bossDelay: 5,
 } as const;
+
+/** When elites appear inside their wave: first at 3 s, then every 6 s. */
+export const ELITE_SCHEDULE = { first: 3, every: 6 } as const;
