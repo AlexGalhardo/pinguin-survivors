@@ -6,6 +6,8 @@ export const RUN_STATE_VERSION = 1;
 export interface AbilityState {
 	id: string;
 	level: number;
+	/** Evolved (level 5 + evolution item). */
+	evolved?: boolean;
 }
 
 export interface RunTotals {
@@ -28,6 +30,8 @@ export interface RunState {
 	items: string[];
 	/** Sum of every stat card picked so far. */
 	cardMods: StatMods;
+	/** Item ids locked in the shop (kept for the next shop). */
+	shopLocks: string[];
 	totals: RunTotals;
 }
 
@@ -43,6 +47,7 @@ export function createRunState(character: CharacterId, seed: number, wave = 1): 
 		abilities: [],
 		items: [],
 		cardMods: {},
+		shopLocks: [],
 		totals: { kills: 0, damageDealt: 0, goldEarned: 0, timeSec: 0 },
 	};
 	state.hp = finalMaxHp(runStats(state));
