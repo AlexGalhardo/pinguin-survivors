@@ -47,6 +47,11 @@ export const TEX = {
 	tileFloor2: 'tile.floor_2',
 	tileFloor3: 'tile.floor_3',
 	tileWall: 'tile.wall',
+	decoRock: 'deco.rock',
+	decoCrystal: 'deco.crystal',
+	decoVent: 'deco.vent',
+	decoBones: 'deco.bones',
+	decoCrater: 'deco.crater',
 
 	uiPanel: 'ui.panel',
 	uiArrow: 'ui.arrow',
@@ -61,6 +66,14 @@ export const TEX = {
 } as const;
 
 export type TextureKey = (typeof TEX)[keyof typeof TEX];
+
+export const DECORATIONS: readonly TextureKey[] = [
+	TEX.decoRock,
+	TEX.decoCrystal,
+	TEX.decoVent,
+	TEX.decoBones,
+	TEX.decoCrater,
+];
 
 export const FLOOR_TILES: readonly TextureKey[] = [
 	TEX.tileFloor0,

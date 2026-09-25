@@ -1,5 +1,9 @@
 import Phaser from 'phaser';
-import { FLOOR_TILES, TEX } from '../art/manifest';
+import { DECORATIONS, FLOOR_TILES, TEX } from '../art/manifest';
+
+/** Decorations stamped on the floor. */
+const DECOR_COUNT = 42;
+
 import { ARENA_H, ARENA_W, ARENA_WALL, TILE } from '../config/constants';
 import type { Rng } from '../logic/rng';
 
@@ -29,6 +33,15 @@ export function createArena(scene: Phaser.Scene, rng: Rng): Phaser.Physics.Arcad
 					: rng.pick(FLOOR_TILES);
 			rt.stamp(key, undefined, x * TILE, y * TILE, { originX: 0, originY: 0 });
 		}
+	}
+	// Non-blocking decoration, kept away from the center where the player starts.
+	for (let i = 0; i < DECOR_COUNT; i++) {
+		const x = rng.range(ARENA_WALL + 16, ARENA_W - ARENA_WALL - 16);
+		const y = rng.range(ARENA_WALL + 16, ARENA_H - ARENA_WALL - 16);
+		if (Math.hypot(x - ARENA_W / 2, y - ARENA_H / 2) < 90) continue;
+		rt.stamp(rng.pick(DECORATIONS), undefined, Math.round(x), Math.round(y), {
+			alpha: 0.9,
+		});
 	}
 	rt.render();
 
