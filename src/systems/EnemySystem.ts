@@ -2,8 +2,9 @@ import Phaser from 'phaser';
 import { TEX } from '../art/manifest';
 import { ARENA_H, ARENA_W, MAX_ENEMIES_ALIVE } from '../config/constants';
 import { ENEMIES, type EnemyDef, STEERING } from '../data/enemies';
+import { GRID_TARGET_THRESHOLD } from '../data/weapons';
 import { Enemy, type EnemyScaling } from '../entities/Enemy';
-import { SpatialGrid } from '../logic/spatial-grid';
+import { nearestLinear, SpatialGrid } from '../logic/spatial-grid';
 import type { ProjectileSystem } from './ProjectileSystem';
 
 /** Grid cell size used for separation and targeting. */
@@ -54,10 +55,51 @@ export class EnemySystem {
 		}
 	}
 
+	private readonly activeList: Enemy[] = [];
+	private readonly query: Enemy[] = [];
+
+	/** Nearest active enemy within `radius` (grid search above 150 enemies, linear below). */
+	nearest(
+		x: number,
+		y: number,
+		radius: number,
+		accept?: (e: Enemy) => boolean,
+	): Enemy | undefined {
+		if (this.activeList.length > GRID_TARGET_THRESHOLD) {
+			return this.grid.nearest(x, y, radius, (e) => e.active && (!accept || accept(e)));
+		}
+		return nearestLinear(
+			this.activeList,
+			x,
+			y,
+			radius,
+			(e) => e.active && (!accept || accept(e)),
+		);
+	}
+
+	/** Calls fn for every active enemy whose center is within `radius` (+ its own radius). */
+	forEachInRadius(x: number, y: number, radius: number, fn: (e: Enemy) => void): void {
+		this.query.length = 0;
+		this.grid.queryRadius(x, y, radius + MAX_RADIUS, this.query);
+		for (const e of this.query) {
+			if (!e.active) continue;
+			if (Math.hypot(e.x - x, e.y - y) <= radius + e.radius) fn(e);
+		}
+	}
+
+	/** Snapshot of active enemies (rebuilt with the grid). */
+	get active(): readonly Enemy[] {
+		return this.activeList;
+	}
+
 	/** Rebuilds the grid; call once per frame before any query. */
 	rebuildGrid(): void {
 		this.grid.clear();
-		this.forEachActive((e) => this.grid.insert(e));
+		this.activeList.length = 0;
+		this.forEachActive((e) => {
+			this.grid.insert(e);
+			this.activeList.push(e);
+		});
 	}
 
 	update(dt: number): void {
