@@ -14,7 +14,8 @@ export class BootScene extends Phaser.Scene {
 		installPlaceholders(this);
 		installPixelFont(this);
 		installIcons(this);
-		SaveSystem.load();
+		const save = SaveSystem.load();
+		if (getParams(this).unlockAll) save.unlocked = ['warrior', 'ranger', 'mage'];
 		AudioSystem.init(this.game);
 		const params = getParams(this);
 		if (params.debug) this.scene.launch('Debug');

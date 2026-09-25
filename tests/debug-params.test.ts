@@ -10,6 +10,7 @@ describe('parseDebugParams', () => {
 			god: false,
 			debug: false,
 			skipMenu: false,
+			unlockAll: false,
 		});
 	});
 
@@ -22,6 +23,7 @@ describe('parseDebugParams', () => {
 				god: true,
 				debug: true,
 				skipMenu: true,
+				unlockAll: false,
 			},
 		);
 	});

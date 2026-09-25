@@ -14,6 +14,7 @@ export function getParams(scene: Phaser.Scene): DebugParams {
 			god: false,
 			debug: false,
 			skipMenu: false,
+			unlockAll: false,
 		}
 	);
 }

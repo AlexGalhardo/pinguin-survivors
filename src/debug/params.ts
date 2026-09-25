@@ -8,6 +8,8 @@ export interface DebugParams {
 	god: boolean;
 	debug: boolean;
 	skipMenu: boolean;
+	/** Unlocks every character (tests). */
+	unlockAll: boolean;
 }
 
 function flag(value: string | null): boolean {
@@ -31,5 +33,6 @@ export function parseDebugParams(search: string): DebugParams {
 		god: flag(p.get('god')),
 		debug: flag(p.get('debug')),
 		skipMenu: flag(p.get('skipMenu')),
+		unlockAll: flag(p.get('unlockAll')),
 	};
 }
