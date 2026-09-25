@@ -23,8 +23,11 @@ import { createRunState, type RunState, runStats } from '../logic/run-state';
 import { finalMaxHp, finalMoveSpeed, type Stats } from '../logic/stats';
 import { CombatSystem } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
+import { FxSystem } from '../systems/FxSystem';
+import { PickupSystem } from '../systems/PickupSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
+import { WeaponSystem } from '../systems/WeaponSystem';
 
 /** Main gameplay scene: arena, player and every combat system. */
 export class GameScene extends Phaser.Scene {
@@ -39,6 +42,11 @@ export class GameScene extends Phaser.Scene {
 	playerShots!: ProjectileSystem;
 	spawner!: SpawnSystem;
 	combat!: CombatSystem;
+	fx!: FxSystem;
+	pickups!: PickupSystem;
+	weapons!: WeaponSystem;
+	/** True once the run ended (game over); gameplay updates stop. */
+	runOver = false;
 	private keys!: MoveKeys;
 
 	constructor() {
@@ -65,6 +73,10 @@ export class GameScene extends Phaser.Scene {
 		this.spawner = new SpawnSystem(this, this.enemies, this.player, this.rng);
 		this.spawner.setWave(this.state.wave);
 		this.combat = new CombatSystem(this);
+		this.fx = new FxSystem(this);
+		this.pickups = new PickupSystem(this, this.player);
+		this.pickups.onCollect = (kind, value) => this.onPickup(kind, value);
+		this.runOver = false;
 
 		this.physics.add.overlap(this.player, this.enemies.group, (_p, e) =>
 			this.onEnemyContact(e as Enemy),
@@ -73,8 +85,49 @@ export class GameScene extends Phaser.Scene {
 			this.onEnemyShot(s as Projectile),
 		);
 
+		this.physics.add.overlap(this.playerShots.group, this.enemies.group, (s, e) =>
+			this.combat.projectileHit(s as Projectile, e as Enemy),
+		);
+
 		this.refreshStats();
+		this.weapons = new WeaponSystem(this);
 		this.setupCamera();
+	}
+
+	/** Plays a sound effect (wired to the AudioSystem in 1.9). */
+	sfx(_key: string): void {}
+
+	shake(durationMs: number, intensity: number): void {
+		this.cameras.main.shake(durationMs, intensity);
+	}
+
+	/** Boss HP bar hook (1.5). */
+	onBossDamaged(_boss: Enemy): void {}
+
+	/** Rare medkit drop (1.10). */
+	maybeDropMedkit(_x: number, _y: number): void {}
+
+	private onPickup(kind: 'gold' | 'medkit', value: number): void {
+		if (kind === 'gold') {
+			this.state.gold += value;
+			this.state.totals.goldEarned += value;
+			this.events$.emit(GameEvent.GoldChanged, { gold: this.state.gold });
+		}
+	}
+
+	/** Called when HP reaches 0: emits PLAYER_DIED; revive (1.6) or game over. */
+	onPlayerDied(): void {
+		const canRevive = this.state.revives > 0;
+		this.events$.emit(GameEvent.PlayerDied, { canRevive });
+		if (!canRevive) this.endRun();
+	}
+
+	/** Stops the run (the GameOverScene arrives in 1.11). */
+	endRun(): void {
+		this.runOver = true;
+		this.physics.pause();
+		this.player.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setAlpha(0.6);
+		this.events$.emit(GameEvent.RunEnded, undefined);
 	}
 
 	/** Re-applies derived stats (speed, max HP…) after cards/items change the run. */
@@ -128,13 +181,19 @@ export class GameScene extends Phaser.Scene {
 
 	override update(time: number, deltaMs: number): void {
 		const dt = Math.min(deltaMs, 50) / 1000;
+		this.fx.update(dt);
+		if (this.runOver) return;
+		this.state.totals.timeSec += dt;
 		this.player.handleInput(this.keys);
 		this.player.tick(dt);
 		this.spawner.tick(dt, time);
 		this.enemies.rebuildGrid();
 		this.enemies.update(dt);
+		this.weapons.update(dt);
 		this.enemyShots.update(dt);
 		this.playerShots.update(dt);
+		this.pickups.update(dt, this.stats.pickupRange);
+		this.combat.update(dt);
 
 		debugStats.enemies = this.enemies.aliveCount;
 		debugStats.projectiles = this.playerShots.activeCount;
