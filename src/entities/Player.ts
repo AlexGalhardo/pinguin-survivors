@@ -10,6 +10,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	/** Last non-zero facing direction (used by aim fallbacks and the sprite flip). */
 	readonly facing = new Phaser.Math.Vector2(1, 0);
 	speed = 0;
+	/** Seconds of invulnerability left (after a hit or a revive). */
+	invuln = 0;
+	private hurtFlash = 0;
 
 	constructor(
 		scene: Phaser.Scene,
@@ -27,6 +30,25 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
 	get arcadeBody(): Phaser.Physics.Arcade.Body {
 		return this.body as Phaser.Physics.Arcade.Body;
+	}
+
+	/** Starts the post-hit invulnerability and a short red flash. */
+	hurt(invulnSeconds: number): void {
+		this.invuln = Math.max(this.invuln, invulnSeconds);
+		this.hurtFlash = 0.1;
+		this.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+	}
+
+	/** Visual timers: hit flash and blinking while invulnerable. */
+	tick(dt: number): void {
+		if (this.hurtFlash > 0) {
+			this.hurtFlash -= dt;
+			if (this.hurtFlash <= 0) this.setTintMode(Phaser.TintModes.MULTIPLY).clearTint();
+		}
+		if (this.invuln > 0) {
+			this.invuln -= dt;
+			this.setAlpha(this.invuln > 0 && Math.floor(this.invuln * 20) % 2 === 0 ? 0.4 : 1);
+		}
 	}
 
 	/** Reads WASD/arrows and sets the velocity (normalized, so diagonals are not faster). */
