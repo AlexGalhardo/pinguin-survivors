@@ -12,6 +12,7 @@ import { STRINGS } from '../config/strings';
 import { getParams } from '../core/context';
 import { bus, type EventBus, GameEvent } from '../core/events';
 import { createMoveKeys, type MoveKeys } from '../core/input';
+import { settings } from '../core/settings';
 import { getView } from '../core/viewport';
 import { type Card, REVIVE } from '../data/cards';
 import { CHARACTERS } from '../data/characters';
@@ -84,6 +85,7 @@ export class GameScene extends Phaser.Scene {
 		this.spawner.setWave(this.state.wave);
 		this.combat = new CombatSystem(this);
 		this.fx = new FxSystem(this);
+		this.fx.showNumbers = settings.damageNumbers;
 		this.pickups = new PickupSystem(this, this.player);
 		this.pickups.onCollect = (kind, value) => this.onPickup(kind, value);
 		this.runOver = false;
@@ -170,7 +172,7 @@ export class GameScene extends Phaser.Scene {
 	sfx(_key: string): void {}
 
 	shake(durationMs: number, intensity: number): void {
-		this.cameras.main.shake(durationMs, intensity);
+		if (settings.screenShake) this.cameras.main.shake(durationMs, intensity);
 	}
 
 	onBossDamaged(boss: Enemy): void {
@@ -264,12 +266,16 @@ export class GameScene extends Phaser.Scene {
 
 	private setupCamera(): void {
 		const cam = this.cameras.main;
-		cam.setBounds(0, 0, ARENA_W, ARENA_H);
 		cam.startFollow(this.player, true);
 		cam.setDeadzone(CAMERA_DEADZONE_W, CAMERA_DEADZONE_H);
 		const apply = () => {
+			const view = getView(this);
 			cam.setSize(this.scale.width, this.scale.height);
-			cam.setZoom(getView(this).zoom);
+			cam.setZoom(view.zoom);
+			// When the view is larger than the arena, grow the bounds so the arena is centered.
+			const bw = Math.max(ARENA_W, view.width);
+			const bh = Math.max(ARENA_H, view.height);
+			cam.setBounds(-Math.floor((bw - ARENA_W) / 2), -Math.floor((bh - ARENA_H) / 2), bw, bh);
 		};
 		apply();
 		this.scale.on('resize', apply);
