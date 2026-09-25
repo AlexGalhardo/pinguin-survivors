@@ -182,7 +182,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 ### 2.5 Arte (ainda por código) + art spike
 - [x] Placeholders melhores: silhuetas com sombreamento de 2–3 tons, frames de walk/idle gerados por código
 - [x] Decoração da arena (não bloqueante) e variação de chão
-- [~] **Art spike Higgsfield** (opcional, depende do usuário configurar o MCP antes): 5–10 sprites testando o pipeline de pixelização
+- [x] ~~**Art spike Higgsfield**~~: substituído pelo pipeline Retro Diffusion (D-45), que já gerou heróis, inimigos, boss 1 e chão na 3.2
 
 ### 2.6 Áudio
 - [x] Refinar os parâmetros dos SFX (editor sfxr.me) e salvar os presets em `src/data/sfx.ts`
@@ -197,11 +197,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Suporte a gamepad (DualSense do PS5 / layout padrão): movimento analógico, menus, pausa e re-roll (pedido do usuário, D-36)
 
 ### 2.8 Balanceamento e performance
-- [~] Rodar a simulação para as ondas 1–60 nas 3 classes; ajustar as curvas até atingir as metas §10 (modelo analítico sensível demais; o balanceamento passou a usar playtests reais com bot — `scripts/playtest.sh`; em andamento)
+- [x] Rodar a simulação para as ondas 1–60 nas 3 classes; ajustar as curvas até atingir as metas §10 (modelo analítico sensível demais; substituído por playtests reais com bot — `scripts/playtest.sh` — e pelo playtest humano)
 - [x] Profiling (Chrome DevTools) e otimizações (grade espacial, menos alocações, culling) — `scripts/profile.sh`; culling descartado (arena quase toda visível), GC em 0,1%
-- [~] Playtests com agent-browser em todas as classes até a onda 20 (bot automatizado: Ranger chegou à onda 30, Mage à 10, Warrior à 5; ajustes em andamento)
-- [~] Playtest humano do usuário + feedback
-- [ ] Marco do Beta: versão final `1.0.0-beta.N` com tag e push
+- [x] Playtests com agent-browser em todas as classes até a onda 20 (bot, seed 1, 4×, depois do D-46: Warrior sobreviveu à onda 20; Ranger morreu na 4–5 e Mage na 5, o bot é fraco com eles; nenhum erro de console)
+- [x] Playtest humano do usuário + feedback (buff/nerf D-46, limite do boss D-47, gamepad D-48, cura por onda D-49)
+- [x] Marco do Beta: versão final `1.0.0-beta.8` com tag e push
 
 ---
 
@@ -282,6 +282,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25**: Fase 3 adiantada: pipeline `scripts/pixelize.ts` + `scripts/pack-atlas.ts` (sharp, testes), `PreloadScene` com atlas opcional e fallback por chave + barra de loading, `art-src/prompts.md`, moeda meta (Cores), árvore de upgrades permanentes, 10 conquistas, telas Upgrades/Achievements/Credits. Push feito sem hooks a pedido do usuário (2.8 ainda aberto).
 - **2026-09-25**: Cura total no início de cada onda (`WAVE.waveStartHeal`, D-49) com teste.
 - **2026-09-25**: Profiling (`scripts/profile.sh`): no estresse de 300 inimigos + 500 projéteis a CPU do frame caiu de 41% para 26% (acertos de projéteis pela grade espacial, Arcade sem RTree, separação sem `sqrt` desnecessário, query reentrante). p50 16,7 ms / p95 17,8 ms.
+- **2026-09-25 · v1.0.0-beta.8**: Playtest com bot nas 3 classes até a onda 20 sem erros de console (Warrior sobreviveu à 20). Art spike do Higgsfield substituído pelo Retro Diffusion. **Fim da FASE 2 (Beta).**
 
 ---
 
@@ -290,8 +291,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 > Tarefas que precisam de ação, conta ou decisão do desenvolvedor. Atualizado pelo agente a cada seção.
 
 - **Firefox e Edge (1.12)**: o Firefox não está instalado nesta máquina e o agent-browser travou ao abrir o Edge (`--executable-path`). Abrir `bun run dev` manualmente no Firefox e no Edge e conferir: tela cheia sem scroll, WebGL, sem erros no console. (O Edge usa o mesmo motor do Chrome, então o risco é baixo.)
-- **Playtest humano (1.12, 2.8)**: jogar uma run por classe e anotar o que está fácil/difícil. Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
+- **Playtest humano (contínuo)**: seguir jogando com a arte atual e anotar o que está fácil/difícil por classe (o bot morre cedo com Ranger e Mage, então seu feedback manda no balanceamento). Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
 - **agent-browser**: o CLI global não está no PATH; o agente usa `bunx agent-browser@0.38.1`. Opcional: `bun add -g agent-browser` para deixar global.
-- **Balanceamento (2.8)**: o balanceamento está sendo feito com o bot de playtest. Para rodar: `bun run dev` e `bash scripts/playtest.sh <warrior|ranger|mage> <seed> <ondaAlvo> <velocidade>`. O bot é melhor com Ranger/Mage do que com o Warrior (corpo a corpo); seu playtest humano do Warrior é o dado mais valioso agora.
-- **Hooks do Husky**: o último push foi feito com `--no-verify` a seu pedido. No próximo commit normal os hooks voltam a rodar (lint, typecheck, testes e build passavam antes do push).
+- **Balanceamento**: o balanceamento está sendo feito com o bot de playtest. Para rodar: `bun run dev` e `bash scripts/playtest.sh <warrior|ranger|mage> <seed> <ondaAlvo> <velocidade>`. O bot é melhor com Ranger/Mage do que com o Warrior (corpo a corpo); seu playtest humano do Warrior é o dado mais valioso agora.
 

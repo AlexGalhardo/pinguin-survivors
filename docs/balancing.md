@@ -56,6 +56,7 @@ Contato: o inimigo causa dano no máximo 1 vez a cada 0.5 s por inimigo. O jogad
 
 > Ajuste de 1.12: com os valores originais, a simulação mostrava Ranger e Mage morrendo nas ondas 4–6 (DPS inicial 2–4× menor que o da Energy Blade).
 > Boss: o jogador tem **5 min** (300 s, `WAVE.bossTimeLimit`) para matar cada boss depois que ele aparece; se o tempo acabar é game over ("TIME UP").
+> Playtest com bot pós-D-46 (seed 1, 4×): Warrior sobreviveu à onda 20; Ranger morreu na 4–5 e Mage na 5 (o bot desvia mal; o playtest humano é a referência).
 > Início de onda: o jogador recupera `WAVE.waveStartHeal` × Max HP (hoje **1** = cura total, D-49), sem passar do Max HP.
 
 ### Detalhes implementados no Alpha (não estavam no plano original)
