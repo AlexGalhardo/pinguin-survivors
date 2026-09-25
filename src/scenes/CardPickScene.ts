@@ -8,6 +8,7 @@ import type { ViewSize } from '../logic/viewport';
 import { playSfx } from '../systems/AudioSystem';
 import { CARD_H, CARD_W, CardView } from '../ui/CardView';
 import { cardText } from '../ui/card-text';
+import { PixelButton } from '../ui/PixelButton';
 import { addText } from '../ui/text';
 
 export interface CardPickData {
@@ -17,6 +18,10 @@ export interface CardPickData {
 	onPick: (index: number) => void;
 	/** Sound hook (AudioSystem). */
 	sfx?: (key: string) => void;
+	/** Paid re-roll: returns new cards, or null when not affordable. */
+	reroll?: () => Card[] | null;
+	rerollCost?: () => number;
+	gold?: () => number;
 }
 
 const GAP = 10;
@@ -31,6 +36,8 @@ export class CardPickScene extends Phaser.Scene {
 	private title!: Phaser.GameObjects.BitmapText;
 	private subtitle!: Phaser.GameObjects.BitmapText;
 	private hint!: Phaser.GameObjects.BitmapText;
+	private rerollBtn: PixelButton | null = null;
+	private view!: ViewSize;
 
 	constructor() {
 		super('CardPick');
@@ -56,9 +63,34 @@ export class CardPickScene extends Phaser.Scene {
 		});
 		this.hint = addText(this, 0, 0, STRINGS.pickHint, { color: PALETTE.steel, originX: 0.5 });
 		this.buildCards();
+		if (this.data$.reroll) {
+			this.rerollBtn = new PixelButton(this, 0, 0, '', () => this.doReroll(), 120);
+			this.updateReroll();
+		} else this.rerollBtn = null;
 		fitUiCamera(this, (view) => this.layout(view));
 		this.bindKeys();
 		this.setFocus(0);
+	}
+
+	private updateReroll(): void {
+		if (!this.rerollBtn) return;
+		const cost = this.data$.rerollCost?.() ?? 0;
+		const gold = this.data$.gold?.() ?? 0;
+		this.rerollBtn
+			.setText(`${STRINGS.reroll} (${cost} ${STRINGS.gold})`)
+			.setEnabled(gold >= cost);
+	}
+
+	private doReroll(): void {
+		if (this.done) return;
+		const cards = this.data$.reroll?.();
+		if (!cards) return;
+		this.data$.cards = cards;
+		for (const v of this.views) v.destroy();
+		this.views = [];
+		this.buildCards();
+		this.layout(this.view);
+		this.updateReroll();
 	}
 
 	private buildCards(): void {
@@ -80,6 +112,7 @@ export class CardPickScene extends Phaser.Scene {
 	}
 
 	private layout(view: ViewSize): void {
+		this.view = view;
 		this.dim.setSize(view.width, view.height);
 		const cx = Math.round(view.width / 2);
 		const totalW = this.views.length * CARD_W + (this.views.length - 1) * GAP;
@@ -89,7 +122,8 @@ export class CardPickScene extends Phaser.Scene {
 		});
 		this.title.setPosition(cx, cardY - CARD_H / 2 - 36);
 		this.subtitle.setPosition(cx, cardY - CARD_H / 2 - 16);
-		this.hint.setPosition(cx, cardY + CARD_H / 2 + 10);
+		this.hint.setPosition(cx, cardY + CARD_H / 2 + 8);
+		this.rerollBtn?.setPosition(cx, cardY + CARD_H / 2 + 30);
 	}
 
 	private bindKeys(): void {
@@ -119,6 +153,9 @@ export class CardPickScene extends Phaser.Scene {
 				case 'Enter':
 				case 'Space':
 					this.choose(this.focus);
+					break;
+				case 'KeyR':
+					this.doReroll();
 					break;
 			}
 		});

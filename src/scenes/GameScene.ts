@@ -17,15 +17,18 @@ import { getView } from '../core/viewport';
 import { type Card, REVIVE } from '../data/cards';
 import { CHARACTERS } from '../data/characters';
 import { CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
+import { itemMods, MEDKIT } from '../data/items';
 import { debugStats } from '../debug/debug-stats';
 import type { DebugParams } from '../debug/params';
 import { createArena, PLAY_AREA } from '../entities/Arena';
 import type { Enemy } from '../entities/Enemy';
 import { Player } from '../entities/Player';
 import type { Projectile } from '../entities/Projectile';
-import { applyCard, generateCards } from '../logic/cards';
+import { applyCard, cardRerollCost, generateCards } from '../logic/cards';
+import { medkitChance, shopRerollCost } from '../logic/economy';
 import { Rng, randomSeed } from '../logic/rng';
 import { createRunState, type RunState, runStats } from '../logic/run-state';
+import { buyOffer, generateShop } from '../logic/shop';
 import { finalMaxHp, finalMoveSpeed, type Stats } from '../logic/stats';
 import { AbilitySystem } from '../systems/AbilitySystem';
 import { playSfx } from '../systems/AudioSystem';
@@ -38,6 +41,7 @@ import { SpawnSystem } from '../systems/SpawnSystem';
 import { WaveSystem } from '../systems/WaveSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import type { CardPickData } from './CardPickScene';
+import type { ShopData } from './ShopScene';
 
 /** Main gameplay scene: arena, player and every combat system. */
 export class GameScene extends Phaser.Scene {
@@ -130,10 +134,30 @@ export class GameScene extends Phaser.Scene {
 			this.rng,
 		);
 		this.scene.pause();
+		let rerolls = 0;
+		const cost = () => cardRerollCost(wave, rerolls);
 		const data: CardPickData = {
 			wave,
 			cards,
 			sfx: (key) => this.sfx(key),
+			gold: () => this.state.gold,
+			rerollCost: cost,
+			reroll: () => {
+				if (this.state.gold < cost()) return null;
+				this.setGold(this.state.gold - cost());
+				rerolls++;
+				const next = generateCards(
+					{
+						wave,
+						luck: this.stats.luck,
+						abilities: this.state.abilities,
+						revives: this.state.revives,
+					},
+					this.rng,
+				);
+				cards.splice(0, cards.length, ...next);
+				return next;
+			},
 			onPick: (index) => {
 				const card = cards[index];
 				if (card) this.applyPickedCard(card);
@@ -145,7 +169,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	applyPickedCard(card: Card): void {
-		applyCard(this.state, card, (s) => finalMaxHp(runStats(s)));
+		applyCard(this.state, card, (s) => finalMaxHp(runStats(s, itemMods)));
 		this.events$.emit(GameEvent.CardPicked, { cardId: card.id, index: 0 });
 		this.refreshStats();
 		this.syncAbilities();
@@ -164,9 +188,45 @@ export class GameScene extends Phaser.Scene {
 		this.syncAbilities();
 	}
 
-	/** After the card: shop (1.10) and then the next wave. */
+	/** After the card: the shop, then the next wave. */
 	private afterCardPick(): void {
-		this.waves.start(this.state.wave + 1);
+		const wave = this.state.wave;
+		let rerolls = 0;
+		const cost = () => shopRerollCost(wave, rerolls);
+		const shop: ShopData = {
+			wave,
+			offers: generateShop(this.rng, wave, this.stats.luck),
+			gold: () => this.state.gold,
+			buy: (i) => {
+				const offer = shop.offers[i];
+				if (!offer || !buyOffer(this.state, offer)) return false;
+				this.setGold(this.state.gold);
+				this.refreshStats();
+				return true;
+			},
+			rerollCost: cost,
+			reroll: () => {
+				if (this.state.gold < cost()) return null;
+				this.setGold(this.state.gold - cost());
+				rerolls++;
+				shop.offers = generateShop(this.rng, wave, this.stats.luck);
+				return shop.offers;
+			},
+			stats: () => this.stats,
+			maxHp: () => this.maxHp,
+			items: () => this.state.items,
+			onContinue: () => {
+				this.scene.resume();
+				this.waves.start(wave + 1);
+			},
+		};
+		this.scene.pause();
+		this.scene.launch('Shop', shop);
+	}
+
+	setGold(gold: number): void {
+		this.state.gold = gold;
+		this.events$.emit(GameEvent.GoldChanged, { gold });
 	}
 
 	/** Plays a sound effect (jsfxr, pre-rendered). */
@@ -182,15 +242,19 @@ export class GameScene extends Phaser.Scene {
 		this.events$.emit(GameEvent.BossHpChanged, { hp: Math.max(0, boss.hp), maxHp: boss.maxHp });
 	}
 
-	/** Rare medkit drop (1.10). */
-	maybeDropMedkit(_x: number, _y: number): void {}
+	/** Rare medkit drop: 0.5% · (1 + Luck/100) per kill. */
+	maybeDropMedkit(x: number, y: number): void {
+		if (this.rng.chance(medkitChance(this.stats.luck))) this.pickups.spawn('medkit', x, y, 0);
+	}
 
 	private onPickup(kind: 'gold' | 'medkit', value: number): void {
 		if (kind === 'gold') {
 			this.sfx(SFX.gold);
-			this.state.gold += value;
 			this.state.totals.goldEarned += value;
-			this.events$.emit(GameEvent.GoldChanged, { gold: this.state.gold });
+			this.setGold(this.state.gold + value);
+		} else {
+			this.sfx(SFX.heal);
+			this.combat.heal(Math.max(1, Math.round(this.maxHp * MEDKIT.healPct)));
 		}
 	}
 
@@ -236,7 +300,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** Re-applies derived stats (speed, max HP…) after cards/items change the run. */
 	refreshStats(): void {
-		this.stats = runStats(this.state);
+		this.stats = runStats(this.state, itemMods);
 		this.player.speed = finalMoveSpeed(this.player.def.speed, this.stats);
 		this.state.hp = Math.min(this.state.hp, this.maxHp);
 		this.emitHp();
