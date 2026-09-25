@@ -43,11 +43,16 @@ Decisões tomadas com o usuário na entrevista (`grill-me`, 2026-09-25). Para mu
 | D-37 | Blaster 5→10, Psi Orb 4→6 e cooldown 1.0→0.8 s; taxa de spawn conta inimigos (não grupos) | Simulação de 1.12 (Ranger/Mage morriam nas ondas 4–6) |
 | D-38 | agent-browser usado via `bunx agent-browser@0.38.1` (o CLI global não está no PATH) e teclas simuladas com `__GAME__.hold/press` (o CLI envia `keyCode` 0) | Achado de QA |
 | D-39 | Venda de itens **implementada** (reembolso de 50% do preço atual, clique no item possuído na loja); lock mantém o item no re-roll e na próxima loja | Decisão do agente (usuário pediu para seguir o caminho recomendado); dá saída para builds erradas, como a reciclagem do Brotato |
+| D-40 | **Velocidade de jogo 1×/2×** nas Settings (e `?speed=N` só para testes) | Pedido do usuário |
+| D-41 | **Moeda meta "Cores"** ganha ao fim de cada run: `2·onda + abates/50 + 10·bosses` (arredondado para baixo) | Decisão do agente (3.4; usuário pediu o caminho recomendado) |
+| D-42 | **Árvore de upgrades permanentes** em trilhas lineares de até 5 níveis: Vitality (+3 Max HP), Firepower (+3% Damage), Reflexes (+3% Attack Speed), Plating (+1 Armor, máx. 3), Fortune (+5 Luck), Magnet (+10 Pickup), Funding (+10 ouro inicial) e Second Wind (começa com 1 revive, 1 nível). Custos crescentes; bônus pequenos para não quebrar o balanceamento | Decisão do agente; modelo Brotato/VS de meta leve (D-22) |
+| D-43 | **Conquistas locais** (10), salvas no save v2 e mostradas na tela Records + toast na HUD | Decisão do agente (3.4) |
+| D-44 | **Elites só de tipos lentos/pesados** (Chaser, Shooter, Tank, Splitter), elite ×1.25 de dano e `fast` ×1.2; inimigo é repelido ao acertar; i-frames 0.5 s; Ranger 22 HP e Mage 18 HP | Playtest com bot: elite de Runner na onda 5 era impossível de despistar |
 
 ## Em aberto (decidir quando a fase chegar)
 
 - [ ] Nome final do jogo (hoje é "Starfall Survivors").
 - [ ] Ferramenta de música no 1.0 (o Higgsfield gera música? Se não, qual ferramenta?).
-- [ ] Conteúdo exato da árvore de upgrades permanentes (1.0).
+- [x] Conteúdo exato da árvore de upgrades permanentes (1.0): decidido em D-42.
 - [ ] Onde publicar o jogo no 1.0 (itch.io? GitHub Pages?).
 - [ ] Orçamento de créditos no Higgsfield.

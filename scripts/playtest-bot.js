@@ -116,19 +116,37 @@
 		});
 	}
 
+	/**
+	 * Steering: repel from enemies (predicting their next position) and enemy shots,
+	 * avoid walls; when safe, melee classes close in on the nearest isolated enemy and
+	 * ranged classes keep a comfortable distance while collecting gold.
+	 */
 	function steer() {
 		const g = G.scene;
 		const p = g.player;
+		const melee = G.state.character === 'warrior';
+		const hpRatio = G.state.hp / Math.max(1, g.maxHp);
+		const danger = melee ? 55 : 85;
 		let fx = 0;
 		let fy = 0;
+		let crowd = 0;
+		let nearest = null;
+		let nd = 1e9;
 		for (const e of g.enemies.active) {
-			if (!e.active) continue;
-			const dx = p.x - e.x;
-			const dy = p.y - e.y;
+			if (!e.active || e.burrowed) continue;
+			const vx = e.body.velocity.x * 0.25;
+			const vy = e.body.velocity.y * 0.25;
+			const dx = p.x - (e.x + vx);
+			const dy = p.y - (e.y + vy);
 			const d = Math.hypot(dx, dy) || 1;
-			const reach = 95 + e.radius * 2;
+			if (d < nd) {
+				nd = d;
+				nearest = e;
+			}
+			const reach = danger + e.radius * 1.5 + (e.def.isBoss ? 40 : 0) + (e.elite ? 20 : 0);
 			if (d > reach) continue;
-			const w = ((reach - d) / reach) ** 2 * (e.def.isBoss ? 3 : 1);
+			crowd++;
+			const w = ((reach - d) / reach) ** 2 * (e.def.isBoss ? 3 : e.elite ? 2 : 1);
 			fx += (dx / d) * w;
 			fy += (dy / d) * w;
 		}
@@ -137,18 +155,22 @@
 			const dy = p.y - s.y;
 			const d = Math.hypot(dx, dy) || 1;
 			if (d > 60) return;
-			const w = ((60 - d) / 60) ** 2 * 2;
+			const w = ((60 - d) / 60) ** 2 * 3;
 			fx += (dx / d) * w;
 			fy += (dy / d) * w;
 		});
-		// Walls (play area 32..928 x 32..508).
 		const wall = (v, lo, hi) =>
 			v < lo + 70 ? (lo + 70 - v) / 70 : v > hi - 70 ? -(v - (hi - 70)) / 70 : 0;
-		fx += wall(p.x, 32, 928) * 1.5;
-		fy += wall(p.y, 32, 508) * 1.5;
+		fx += wall(p.x, 32, 928) * 2;
+		fy += wall(p.y, 32, 508) * 2;
 		let mag = Math.hypot(fx, fy);
-		if (mag < 0.15) {
-			// Calm: go for gold, else orbit the center.
+		const safe = mag < 0.2 && crowd <= (melee ? 2 : 1) && hpRatio > 0.35;
+		if (safe && melee && nearest && nd > 32) {
+			// Close in on the nearest enemy to use the blade.
+			fx = nearest.x - p.x;
+			fy = nearest.y - p.y;
+			mag = Math.hypot(fx, fy) || 1;
+		} else if (mag < 0.15) {
 			let best = null;
 			let bd = 170;
 			g.pickups.forEachActive((c) => {
