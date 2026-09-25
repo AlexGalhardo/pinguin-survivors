@@ -18,6 +18,7 @@ export const STRINGS = {
 	gold: 'GOLD',
 	revived: 'REVIVED!',
 	pickHint: '1/2/3 OR ARROWS + ENTER',
+	boss: 'BOSS',
 } as const;
 
 export const RARITY_NAMES: Record<Rarity, string> = {
