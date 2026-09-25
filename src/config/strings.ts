@@ -107,3 +107,50 @@ export const STAT_SHORT: Record<StatKey, string> = {
 	projectiles: 'PROJ',
 	pierce: 'PIERCE',
 };
+
+export const MENU = {
+	play: 'PLAY',
+	settings: 'SETTINGS',
+	back: 'BACK',
+	resume: 'RESUME',
+	quitRun: 'QUIT RUN',
+	quitConfirm: 'QUIT THIS RUN?',
+	yes: 'YES',
+	no: 'NO',
+	paused: 'PAUSED',
+	chooseClass: 'CHOOSE YOUR SURVIVOR',
+	start: 'START',
+	retry: 'RETRY',
+	mainMenu: 'MAIN MENU',
+	newBest: 'NEW BEST!',
+	best: 'BEST',
+	subtitle: 'SURVIVE THE ENDLESS SWARM',
+	menuHint: 'ARROWS/WASD + ENTER',
+	selectHint: '1/2/3 OR ARROWS + ENTER   ESC BACK',
+	sfxVolume: 'SFX VOLUME',
+	musicVolume: 'MUSIC VOLUME',
+	fullscreen: 'FULLSCREEN',
+	screenShake: 'SCREEN SHAKE',
+	damageNumbers: 'DAMAGE NUMBERS',
+	on: 'ON',
+	off: 'OFF',
+	waveReached: 'WAVE',
+	time: 'TIME',
+	kills: 'KILLS',
+	damage: 'DAMAGE',
+	goldTotal: 'GOLD',
+	build: 'BUILD',
+} as const;
+
+export const CHARACTER_TEXT: Record<'warrior' | 'ranger' | 'mage', { name: string; desc: string }> =
+	{
+		warrior: { name: 'WARRIOR', desc: 'HEAVY ARMOR, ENERGY BLADE. TOUGH BUT SHORT RANGE.' },
+		ranger: { name: 'RANGER', desc: 'AGILE SCOUT WITH A RAPID BLASTER.' },
+		mage: { name: 'MAGE', desc: 'PSIONIC. +50% ABILITY POWER, FRAGILE.' },
+	};
+
+export const WEAPON_NAMES: Record<'energy_blade' | 'blaster' | 'psi_orb', string> = {
+	energy_blade: 'ENERGY BLADE',
+	blaster: 'BLASTER',
+	psi_orb: 'PSI ORB',
+};
