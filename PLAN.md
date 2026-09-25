@@ -63,13 +63,13 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 ## FASE 1 — ALPHA (protótipo; arte só por código)
 
 ### 1.1 Núcleo da engine
-- [ ] `game-config.ts`: WebGL, `pixelArt: true`, `roundPixels`, Scale `RESIZE`, Arcade Physics (sem gravidade)
-- [ ] Zoom inteiro responsivo (`floor(min(w/480, h/270))`) aplicado às câmeras e recalculado no `resize`
-- [ ] `BootScene`: gerar texturas placeholder por canvas para todas as chaves do `art/manifest.ts`
-- [ ] Fonte bitmap 5×7 gerada por código (A–Z, 0–9, pontuação) → BitmapText/RetroFont
-- [ ] `art/manifest.ts` com todas as chaves previstas (ver docs/art-and-assets.md)
-- [ ] Sistema de eventos tipado entre cenas (enum de eventos)
-- [ ] Overlay de debug (`?debug=1`): FPS, inimigos, projéteis
+- [x] `game-config.ts`: WebGL, `pixelArt: true`, `roundPixels`, Scale `RESIZE`, Arcade Physics (sem gravidade)
+- [x] Zoom inteiro responsivo (`floor(min(w/480, h/270))`) aplicado às câmeras e recalculado no `resize`
+- [x] `BootScene`: gerar texturas placeholder por canvas para todas as chaves do `art/manifest.ts`
+- [x] Fonte bitmap 5×7 gerada por código (A–Z, 0–9, pontuação) → BitmapText/RetroFont
+- [x] `art/manifest.ts` com todas as chaves previstas (ver docs/art-and-assets.md)
+- [x] Sistema de eventos tipado entre cenas (enum de eventos)
+- [x] Overlay de debug (`?debug=1`): FPS, inimigos, projéteis
 
 ### 1.2 Jogador, arena e câmera
 - [ ] Arena 960×540 com paredes (static bodies) e chão em tiles placeholder
@@ -264,3 +264,5 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25**: Criados `docs/` (10 arquivos), `CLAUDE.md`, `AGENTS.md` e `PLAN.md`. Fase 0.1 concluída.
 - **2026-09-25 · v0.1.0**: Scaffold (Bun 1.4.2 + Vite 8 + TS 6 + Phaser 4.2.1 + bun:test), RNG com seed, debug params, cena Boot em tela cheia (smoke test OK).
 - **2026-09-25 · v0.1.0**: Biome v2 (TAB/4) + .editorconfig; Husky + commitlint; Conventional Commits + SemVer; remoto GitHub. Fase 0 concluída.
+- **2026-09-25 · v1.0.0-alpha.1**: Núcleo da engine: WebGL pixel-art, zoom inteiro responsivo, placeholders por código para todas as chaves do manifest, fonte bitmap 5×7 (RetroFont), eventos tipados e overlay de debug.
+- **2026-09-25**: agent-browser não está no PATH; usado via `bunx agent-browser@0.38.1`.
