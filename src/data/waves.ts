@@ -19,6 +19,8 @@ export const WAVE = {
 	bossDelay: 5,
 	/** Seconds the player has to kill a boss after it spawns; running out ends the run. */
 	bossTimeLimit: 300,
+	/** Fraction of Max HP restored when a new wave starts (Brotato-style recovery; 1 = full). */
+	waveStartHeal: 1,
 } as const;
 
 /** When elites appear inside their wave: first at 3 s, then every 6 s. */

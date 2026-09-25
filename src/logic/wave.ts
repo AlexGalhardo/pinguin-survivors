@@ -30,6 +30,11 @@ export function isWaveComplete(remaining: number, bossPending: boolean): boolean
 	return remaining <= 0 && !bossPending;
 }
 
+/** HP at the start of a wave: heals WAVE.waveStartHeal of Max HP (never above Max HP). */
+export function waveStartHp(hp: number, maxHp: number): number {
+	return Math.min(maxHp, hp + Math.ceil(maxHp * WAVE.waveStartHeal));
+}
+
 /** Seconds left to kill the boss, given the seconds since it spawned (0 = time up). */
 export function bossTimeLeft(sinceSpawn: number): number {
 	return Math.max(0, WAVE.bossTimeLimit - sinceSpawn);

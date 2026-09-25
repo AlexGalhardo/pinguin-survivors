@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { WAVE } from '../src/data/waves';
-import { bossTimeLeft, isWaveComplete, waveSchedule } from '../src/logic/wave';
+import { bossTimeLeft, isWaveComplete, waveSchedule, waveStartHp } from '../src/logic/wave';
 
 describe('wave schedule', () => {
 	it('plain waves have no elites or boss', () => {
@@ -56,5 +56,13 @@ describe('boss time limit', () => {
 
 	it('the limit is 5 minutes', () => {
 		expect(WAVE.bossTimeLimit).toBe(300);
+	});
+});
+
+describe('wave start heal', () => {
+	it('restores the configured fraction of Max HP without overhealing', () => {
+		expect(waveStartHp(40, 40)).toBe(40);
+		expect(waveStartHp(1, 40)).toBe(Math.min(40, 1 + Math.ceil(40 * WAVE.waveStartHeal)));
+		expect(waveStartHp(0, 23)).toBeLessThanOrEqual(23);
 	});
 });

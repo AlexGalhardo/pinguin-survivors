@@ -44,6 +44,7 @@ import {
 	type StatMods,
 	type Stats,
 } from '../logic/stats';
+import { waveStartHp } from '../logic/wave';
 import { AbilitySystem } from '../systems/AbilitySystem';
 import { playSfx } from '../systems/AudioSystem';
 import { CombatSystem } from '../systems/CombatSystem';
@@ -393,6 +394,8 @@ export class GameScene extends Phaser.Scene {
 	/** Wave start hook: unlocks by wave, resets the Mage passive. */
 	onWaveStart(wave: number): void {
 		this.waveKills = 0;
+		this.state.hp = waveStartHp(this.state.hp, this.maxHp);
+		this.emitHp();
 		this.music?.duck(false);
 		this.music?.play(isBossWave(wave) ? 'boss' : 'combat');
 		this.handleUnlocks(
