@@ -78,11 +78,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] `RunState` (objeto serializável da run) + `logic/stats.ts` com os stats base das 3 classes (data/characters.ts) + testes
 
 ### 1.3 Inimigos e spawn
-- [ ] `Enemy` com pool (Group `maxSize`) e dados de `data/enemies.ts`
-- [ ] IA do Chaser (seek) e separação simples entre inimigos (evitar empilhamento)
-- [ ] `SpawnSystem`: telegraph de 0.8 s → spawn nas bordas/longe do jogador, pesos por tipo, teto de 300 vivos
-- [ ] Runner (grupos), Shooter (mantém distância + projéteis inimigos em pool), Tank (resistente a knockback)
-- [ ] Dano de contato no jogador (cooldown por inimigo) + 0.4 s de invulnerabilidade + flash
+- [x] `Enemy` com pool (Group `maxSize`) e dados de `data/enemies.ts`
+- [x] IA do Chaser (seek) e separação simples entre inimigos (evitar empilhamento)
+- [x] `SpawnSystem`: telegraph de 0.8 s → spawn nas bordas/longe do jogador, pesos por tipo, teto de 300 vivos
+- [x] Runner (grupos), Shooter (mantém distância + projéteis inimigos em pool), Tank (resistente a knockback)
+- [x] Dano de contato no jogador (cooldown por inimigo) + 0.4 s de invulnerabilidade + flash
 
 ### 1.4 Combate e armas
 - [ ] `logic/stats.ts`: fórmulas de dano, crit, armor, dodge, cooldown, lifesteal, regen (docs/balancing.md §4) + testes
@@ -268,3 +268,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25**: agent-browser não está no PATH; usado via `bunx agent-browser@0.38.1`.
 - **2026-09-25 · v1.0.0-alpha.2**: Arena 960×540 com paredes (static bodies) e chão em tiles; Player com WASD/setas normalizado; câmera com deadzone e limites; RunState + modelo de stats das 3 classes (testes).
 - **2026-09-25**: o agent-browser envia `keyCode` 0 (o Phaser ignora); para QA use `__GAME__.hold('KeyD', ms)` / `__GAME__.press('Enter')`.
+- **2026-09-25 · v1.0.0-alpha.3**: Inimigos em pool (Chaser/Runner/Shooter/Tank) com seek, keep-distance e separação via grade espacial; spawner com telegraph de 0.8 s e teto de 300; dano de contato + i-frames. Estresse: 300 inimigos a 60 FPS (Chrome, 1366×768).
