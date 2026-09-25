@@ -9,6 +9,8 @@ export interface ShopOffer {
 	itemId: string;
 	price: number;
 	sold: boolean;
+	/** Locked offers survive re-rolls and carry over to the next shop. */
+	locked?: boolean;
 }
 
 /** Items of a rarity, falling back to the closest lower rarity that has any. */
@@ -29,10 +31,22 @@ export function generateShop(
 	wave: number,
 	luck: number,
 	slots = SHOP.slots,
+	locked: readonly string[] = [],
 ): ShopOffer[] {
 	const used = new Set<string>();
 	const offers: ShopOffer[] = [];
-	for (let i = 0; i < slots; i++) {
+	for (const id of locked.slice(0, slots)) {
+		const item = ITEMS.find((i) => i.id === id);
+		if (!item) continue;
+		used.add(id);
+		offers.push({
+			itemId: id,
+			price: itemPrice(item.basePrice, wave),
+			sold: false,
+			locked: true,
+		});
+	}
+	for (let i = offers.length; i < slots; i++) {
 		const pool = poolFor(rollRarity(rng, wave, luck), used, wave);
 		if (pool.length === 0) break;
 		const item = rng.pick(pool);
@@ -48,5 +62,27 @@ export function buyOffer(state: RunState, offer: ShopOffer): boolean {
 	state.gold -= offer.price;
 	state.items.push(offer.itemId);
 	offer.sold = true;
+	offer.locked = false;
 	return true;
+}
+
+/** Gold refunded when selling (recycling) an owned item: 50% of its current price. */
+export function sellValue(itemId: string, wave: number): number {
+	const item = ITEMS.find((i) => i.id === itemId);
+	return item ? Math.floor(itemPrice(item.basePrice, wave) * SHOP.sellRefund) : 0;
+}
+
+/** Sells one copy of an owned item. Returns the refund (0 if not owned). */
+export function sellItem(state: RunState, itemId: string): number {
+	const i = state.items.indexOf(itemId);
+	if (i < 0) return 0;
+	state.items.splice(i, 1);
+	const refund = sellValue(itemId, state.wave);
+	state.gold += refund;
+	return refund;
+}
+
+/** Locked offer ids (to carry over). */
+export function lockedIds(offers: readonly ShopOffer[]): string[] {
+	return offers.filter((o) => o.locked && !o.sold).map((o) => o.itemId);
 }
