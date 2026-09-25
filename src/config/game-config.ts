@@ -8,8 +8,10 @@ import { GameScene } from '../scenes/GameScene';
 import { HudScene } from '../scenes/HudScene';
 import { MainMenuScene } from '../scenes/MainMenuScene';
 import { PauseScene } from '../scenes/PauseScene';
+import { RecordsScene } from '../scenes/RecordsScene';
 import { SettingsScene } from '../scenes/SettingsScene';
 import { ShopScene } from '../scenes/ShopScene';
+import { UnlockScene } from '../scenes/UnlockScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -41,6 +43,8 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		PauseScene,
 		SettingsScene,
 		GameOverScene,
+		UnlockScene,
+		RecordsScene,
 		DebugScene,
 	],
 };

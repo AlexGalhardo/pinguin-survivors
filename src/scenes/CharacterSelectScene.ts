@@ -1,10 +1,18 @@
 import Phaser from 'phaser';
 import { SFX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import { CHARACTER_TEXT, MENU, STAT_SHORT, WEAPON_NAMES } from '../config/strings';
+import {
+	CHARACTER_TEXT,
+	MENU,
+	PASSIVE_TEXT,
+	STAT_SHORT,
+	UNLOCK_TEXT,
+	WEAPON_NAMES,
+} from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { CHARACTER_IDS, CHARACTERS, type CharacterId } from '../data/characters';
 import { formatStatValue } from '../logic/format';
+import { isUnlocked } from '../logic/meta';
 import { computeStats, type StatKey } from '../logic/stats';
 import { playSfx } from '../systems/AudioSystem';
 import { SaveSystem } from '../systems/SaveSystem';
@@ -13,7 +21,7 @@ import { addPanel } from '../ui/PixelPanel';
 import { addText } from '../ui/text';
 
 const CARD_W = 132;
-const CARD_H = 176;
+const CARD_H = 204;
 const GAP = 10;
 const SHOWN_STATS: readonly StatKey[] = ['maxHp', 'armor', 'critChance', 'abilityPower'];
 
@@ -99,6 +107,29 @@ export class CharacterSelectScene extends Phaser.Scene {
 			);
 			y += 9;
 		}
+		const passive = addText(this, CARD_W / 2, 124 + 5 * 9 + 5, PASSIVE_TEXT[id], {
+			color: PALETTE.green,
+			originX: 0.5,
+			align: 'center',
+		}).setMaxWidth(CARD_W - 10);
+		container.add(passive);
+		if (!isUnlocked(SaveSystem.get(), id)) {
+			sprite.setTint(PALETTE.void);
+			const veil = this.add
+				.rectangle(0, 0, CARD_W, CARD_H, PALETTE.void, 0.88)
+				.setOrigin(0, 0);
+			const lock = addText(this, CARD_W / 2, 30, MENU.locked, {
+				scale: 2,
+				color: PALETTE.red,
+				originX: 0.5,
+			});
+			const how = addText(this, CARD_W / 2, 56, UNLOCK_TEXT[id], {
+				color: PALETTE.silver,
+				originX: 0.5,
+				align: 'center',
+			}).setMaxWidth(CARD_W - 16);
+			container.add([veil, lock, how]);
+		}
 		const best = SaveSystem.get().best[id];
 		if (best.wave > 0) {
 			container.add(
@@ -153,6 +184,10 @@ export class CharacterSelectScene extends Phaser.Scene {
 	private start(i: number): void {
 		const card = this.cards[i];
 		if (!card) return;
+		if (!isUnlocked(SaveSystem.get(), card.id)) {
+			this.cameras.main.shake(100, 0.004);
+			return;
+		}
 		playSfx(SFX.uiClick);
 		this.scene.start('Game', { character: card.id });
 	}

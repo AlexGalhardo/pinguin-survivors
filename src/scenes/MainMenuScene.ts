@@ -31,6 +31,7 @@ export class MainMenuScene extends Phaser.Scene {
 		);
 		const menu = new MenuList(this, [
 			{ label: MENU.play, onSelect: () => this.scene.start('CharacterSelect') },
+			{ label: MENU.records, onSelect: () => this.scene.start('Records') },
 			{
 				label: MENU.settings,
 				onSelect: () => {

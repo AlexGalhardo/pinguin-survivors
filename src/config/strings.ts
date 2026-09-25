@@ -175,7 +175,29 @@ export const MENU = {
 	damage: 'DAMAGE',
 	goldTotal: 'GOLD',
 	build: 'BUILD',
+	unlocked: 'NEW SURVIVOR!',
+	continueLabel: 'CONTINUE',
+	records: 'RECORDS',
+	runs: 'RUNS',
+	bosses: 'BOSSES KILLED',
+	lastRuns: 'LAST RUNS',
+	noRuns: 'NO RUNS YET',
+	locked: 'LOCKED',
+	passive: 'PASSIVE',
 } as const;
+
+/** How to unlock each class (character select). */
+export const UNLOCK_TEXT: Record<'warrior' | 'ranger' | 'mage', string> = {
+	warrior: '',
+	ranger: 'REACH WAVE 10 WITH THE WARRIOR',
+	mage: 'KILL A BOSS',
+};
+
+export const PASSIVE_TEXT: Record<'warrior' | 'ranger' | 'mage', string> = {
+	warrior: '+1 ARMOR PER NEARBY ENEMY (MAX 5)',
+	ranger: '+20% ATK SPEED WHILE MOVING',
+	mage: '+1% ABILITY PER KILL IN THE WAVE',
+};
 
 export const CHARACTER_TEXT: Record<'warrior' | 'ranger' | 'mage', { name: string; desc: string }> =
 	{
