@@ -242,7 +242,7 @@ class CryoField implements AbilityRuntime {
 					abilityDamage(dps * ABILITY_DATA.cryo_field.tick, g.stats),
 					false,
 					undefined,
-					true,
+					'dot',
 				);
 			}
 		});

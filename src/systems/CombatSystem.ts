@@ -40,8 +40,17 @@ export class CombatSystem {
 		else p.pierceLeft--;
 	}
 
-	/** Deals damage to an enemy. Returns true if it died. */
-	damageEnemy(e: Enemy, amount: number, crit: boolean, kb?: Knockback, silent = false): boolean {
+	/**
+	 * Deals damage to an enemy. Returns true if it died.
+	 * `silent`: no hit sound; `'dot'`: damage over time (no sound, flash or number).
+	 */
+	damageEnemy(
+		e: Enemy,
+		amount: number,
+		crit: boolean,
+		kb?: Knockback,
+		silent: boolean | 'dot' = false,
+	): boolean {
 		if (!e.active || e.hp <= 0) return false;
 		const g = this.game;
 		let dmg = amount;
@@ -52,8 +61,10 @@ export class CombatSystem {
 		}
 		e.hp -= dmg;
 		g.state.totals.damageDealt += amount;
-		g.enemies.flash(e);
-		g.fx.damageNumber(e.x, e.y - e.radius, amount, crit);
+		if (silent !== 'dot') {
+			g.enemies.flash(e);
+			g.fx.damageNumber(e.x, e.y - e.radius, amount, crit);
+		}
 		if (kb && kb.force > 0) e.knockback(kb.dirX, kb.dirY, kb.force);
 		if (!silent) g.sfx(SFX.enemyHit);
 		this.tryLifesteal();
