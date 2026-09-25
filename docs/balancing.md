@@ -8,7 +8,7 @@
 | Grandeza | Fórmula (N = número da onda, começa em 1) |
 |---|---|
 | Duração | `min(20 + 5·(N−1), 60)` s |
-| Taxa de spawn | `1.2 + 0.25·(N−1)` inimigos/s (distribuída entre os tipos liberados) |
+| Taxa de spawn | `1.2 + 0.25·(N−1)` inimigos/s (distribuída entre os tipos liberados; um bando de Runners consome 1 unidade por inimigo) |
 | Máximo de inimigos vivos | 300. O excedente vira bônus de HP: `hpMul *= 1 + excesso/300` |
 | Multiplicador de HP | `hpMul(N) = (1 + 0.15·(N−1)) · 1.04^(N−1)` → onda 10 ≈ 3.3×, onda 20 ≈ 8.1×, onda 40 ≈ 32× |
 | Multiplicador de dano | `dmgMul(N) = (1 + 0.08·(N−1)) · 1.02^(N−1)` → onda 10 ≈ 2.1×, onda 20 ≈ 3.7× |
@@ -45,8 +45,23 @@ Contato: o inimigo causa dano no máximo 1 vez a cada 0.5 s por inimigo. O jogad
 | Arma inicial | Dano | Cooldown | Alcance | Especial |
 |---|---|---|---|---|
 | Energy Blade (Warrior) | 12 | 0.9 s | 45 (arco de 120°) | knockback 120, acerta todos no arco |
-| Blaster (Ranger) | 5 | 0.35 s | 260 | projétil a 380 px/s |
-| Psi Orb (Mage) | 4 | 1.0 s | 220 | projétil a 140 px/s, pierce 3 |
+| Blaster (Ranger) | **10** (era 5) | 0.35 s | 260 | projétil a 380 px/s |
+| Psi Orb (Mage) | **6** (era 4) | **0.8 s** (era 1.0) | 220 | projétil a 140 px/s, pierce 3 |
+
+> Ajuste de 1.12: com os valores originais, a simulação mostrava Ranger e Mage morrendo nas ondas 4–6 (DPS inicial 2–4× menor que o da Energy Blade).
+
+### Detalhes implementados no Alpha (não estavam no plano original)
+
+| Grandeza | Valor |
+|---|---|
+| Elite `fast` | velocidade ×1.4 extra |
+| Elite `volatile` | explode 0.5 s depois de morrer, raio 48, dano 10 (× dmgMul do inimigo) |
+| Elites na onda | o 1º aos 3 s, depois a cada 6 s |
+| Boss: tiro da rajada | 8 de dano (× dmgMul), 110 px/s |
+| Boss: investida | 280 px/s por 0.7 s, depois de 1 s de aviso (linha vermelha) |
+| Banner "WAVE N" | 1.2 s com a física pausada |
+| Revive | onda de choque de raio 140 e knockback 450 |
+| Chance de família de carta | stat 55 · habilidade 35 · especial 10 |
 
 ## 4. Fórmulas de combate
 
@@ -122,6 +137,8 @@ Preço: `basePrice · (1 + 0.1·(N−1))`, arredondado. Re-roll da loja: `1 + N`
 | Homing Missiles | 2 mísseis, 7 dano | +1 míssil, +2 dano | 2.5 s |
 | Laser Beam | 5 dano/tick, 0.8 s de duração, largura 6 | +0.2 s, +2 largura, +2 dano | 4.0 s |
 
+Parâmetros extras das habilidades (`src/data/abilities.ts`): Orbital Drones orbitam a raio 40 (×Range), giro 3 rad/s, raio de acerto 7. Chain Lightning: alcance inicial 180, salto 90. Plasma Nova: knockback 80. Cryo Field: tick de dano a cada 0.5 s (sem flash nem número). Homing Missiles: 200 px/s, curva 6 rad/s, alcance 420, alvo até 300 px. Laser Beam: tick 0.15 s, comprimento 260 (×Range), mira no inimigo com mais vizinhos num raio de 48.
+
 ## 9. Ouro e meta
 
 - Ouro dropado pelos inimigos (tabela §2). O ouro não coletado no fim da onda é coletado automaticamente.
@@ -133,3 +150,19 @@ Preço: `basePrice · (1 + 0.1·(N−1))`, arredondado. Re-roll da loja: `1 + N`
 - Warrior sem upgrades vence a onda 1 com folga (TTK de um Chaser ≤ 1 golpe).
 - Build média (1 carta/onda, compras aleatórias) morre entre as ondas 12 e 18.
 - Build boa chega à onda 25+. Nenhuma build passa da onda 60 (a progressão infinita precisa terminar).
+
+### Resultado da simulação (1.12, `bun scripts/sim.ts 300`)
+
+Modelo analítico por onda em `src/logic/sim` (constantes em `src/data/sim.ts`, ainda **não calibradas** com playtest humano).
+
+| Classe | Build aleatória (mediana) | Build boa (mediana) |
+|---|---|---|
+| Warrior | 19 | 58 |
+| Ranger | 13 | 55 |
+| Mage | 15 | 55 |
+
+- Build aleatória: dentro ou perto da faixa 12–18. ✔
+- Build boa: passa da onda 25. ✔
+- "Nenhuma build passa da onda 60": **não atendido** — algumas builds boas sobrevivem às 60 ondas. A escala tardia fica para o balanceamento final.
+- Achado do playtest com bot: o boss da onda 10 (400 × 3.3 = 1338 HP) é tanque demais para builds fracas.
+

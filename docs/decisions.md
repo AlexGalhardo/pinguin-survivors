@@ -38,6 +38,10 @@ Decisões tomadas com o usuário na entrevista (`grill-me`, 2026-09-25). Para mu
 | D-32 | Remoto GitHub `origin` (substitui D-15); micro-commits e push para `main` ao fim de cada seção do PLAN | Pedido do usuário |
 | D-33 | **Bun 1.4.2** no lugar de node/npm (runtime, pacotes, scripts). node/npm só quando uma ferramenta não suportar Bun | Pedido do usuário |
 | D-34 | **`bun:test`** no lugar do Vitest (substitui o test runner de D-10) | Pedido do usuário; funcionou sem problemas |
+| D-35 | **Som mudo** por `.env` (`SOUND_MUTED=true`, arquivo local fora do git) nos testes até o fim da fase 3 | Pedido do usuário (PC precisa ficar em silêncio) |
+| D-36 | **Suporte a gamepad** (Gamepad API/Phaser; alvo: DualSense do PS5). Substitui a parte "sem gamepad" de D-03 | Pedido do usuário (2026-09-25) |
+| D-37 | Blaster 5→10, Psi Orb 4→6 e cooldown 1.0→0.8 s; taxa de spawn conta inimigos (não grupos) | Simulação de 1.12 (Ranger/Mage morriam nas ondas 4–6) |
+| D-38 | agent-browser usado via `bunx agent-browser@0.38.1` (o CLI global não está no PATH) e teclas simuladas com `__GAME__.hold/press` (o CLI envia `keyCode` 0) | Achado de QA |
 
 ## Em aberto (decidir quando a fase chegar)
 
