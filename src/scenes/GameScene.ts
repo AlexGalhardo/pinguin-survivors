@@ -32,6 +32,7 @@ import { applyCard, cardRerollCost, generateCards } from '../logic/cards';
 import { statChanges } from '../logic/compare';
 import { medkitChance, shopRerollCost } from '../logic/economy';
 import { formatStatValue } from '../logic/format';
+import { metaBonus } from '../logic/meta-upgrades';
 import { Rng, randomSeed } from '../logic/rng';
 import { createRunState, type RunState } from '../logic/run-state';
 import { isBossWave } from '../logic/scaling';
@@ -96,6 +97,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	create(): void {
+		this.runBossKills = 0;
 		this.params = getParams(this);
 		this.events$ = bus(this.game);
 		const seed = this.params.seed ?? randomSeed();
@@ -103,6 +105,12 @@ export class GameScene extends Phaser.Scene {
 		const character = this.startCharacter ?? this.params.char ?? 'warrior';
 		this.state = createRunState(character, seed, this.params.wave ?? 1);
 		this.physics.resume();
+		// Permanent upgrades (1.0).
+		const meta = metaBonus(SaveSystem.get());
+		this.state.metaMods = meta.mods;
+		this.state.gold += meta.startGold;
+		if (meta.startRevive) this.state.revives = 1;
+		this.state.hp = finalMaxHp(buildStats(this.state));
 		this.applySpeed();
 		this.events$.onScene(this, GameEvent.SettingsChanged, () => this.applySpeed());
 
@@ -393,6 +401,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	onBossKilled(): void {
+		this.runBossKills++;
 		SaveSystem.bossKilled();
 		this.handleUnlocks(SaveSystem.unlock({ kind: 'bossKilled' }));
 	}
@@ -527,6 +536,15 @@ export class GameScene extends Phaser.Scene {
 		this.player.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setAlpha(0.6);
 		this.events$.emit(GameEvent.RunEnded, undefined);
 		const s = this.state;
+		const reward = SaveSystem.finishRun({
+			character: s.character,
+			wave: s.wave,
+			kills: s.totals.kills,
+			goldEarned: s.totals.goldEarned,
+			bossKills: this.runBossKills,
+			evolved: s.abilities.filter((a) => a.evolved).length,
+			abilities: s.abilities.length,
+		});
 		const newBest = SaveSystem.recordRun({
 			character: s.character,
 			wave: s.wave,
@@ -544,6 +562,8 @@ export class GameScene extends Phaser.Scene {
 			items: [...s.items],
 			newBest,
 			bestWave: SaveSystem.get().best[s.character].wave,
+			cores: reward.cores,
+			achievements: reward.achievements,
 		};
 		this.time.delayedCall(GAME_OVER_DELAY_MS, () => this.scene.launch('GameOver', data));
 	}
@@ -552,6 +572,8 @@ export class GameScene extends Phaser.Scene {
 	private baseStats!: Stats;
 	private passive: StatMods = {};
 	private passiveTimer = 0;
+	/** Bosses killed in this run (Cores, achievements). */
+	private runBossKills = 0;
 	/** Kills in the current wave (Mage passive). */
 	private waveKills = 0;
 

@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
+import { AchievementsScene } from '../scenes/AchievementsScene';
 import { BootScene } from '../scenes/BootScene';
 import { CardPickScene } from '../scenes/CardPickScene';
 import { CharacterSelectScene } from '../scenes/CharacterSelectScene';
+import { CreditsScene } from '../scenes/CreditsScene';
 import { DebugScene } from '../scenes/DebugScene';
 import { GameOverScene } from '../scenes/GameOverScene';
 import { GameScene } from '../scenes/GameScene';
@@ -13,6 +15,7 @@ import { RecordsScene } from '../scenes/RecordsScene';
 import { SettingsScene } from '../scenes/SettingsScene';
 import { ShopScene } from '../scenes/ShopScene';
 import { UnlockScene } from '../scenes/UnlockScene';
+import { UpgradesScene } from '../scenes/UpgradesScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -47,6 +50,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		GameOverScene,
 		UnlockScene,
 		RecordsScene,
+		UpgradesScene,
+		AchievementsScene,
+		CreditsScene,
 		DebugScene,
 	],
 };

@@ -30,6 +30,8 @@ export interface RunState {
 	items: string[];
 	/** Sum of every stat card picked so far. */
 	cardMods: StatMods;
+	/** Permanent upgrade bonuses applied to this run (1.0). */
+	metaMods?: StatMods;
 	/** Item ids locked in the shop (kept for the next shop). */
 	shopLocks: string[];
 	totals: RunTotals;
@@ -60,7 +62,12 @@ export type ItemModsLookup = (itemId: string) => StatMods | undefined;
 /** Current stats: character base + stat cards + items. */
 export function runStats(state: RunState, itemMods: ItemModsLookup = () => undefined): Stats {
 	const items = state.items.map(itemMods).filter((m): m is StatMods => m !== undefined);
-	return computeStats(CHARACTERS[state.character].stats, state.cardMods, ...items);
+	return computeStats(
+		CHARACTERS[state.character].stats,
+		state.cardMods,
+		state.metaMods ?? {},
+		...items,
+	);
 }
 
 export function serializeRun(state: RunState): string {

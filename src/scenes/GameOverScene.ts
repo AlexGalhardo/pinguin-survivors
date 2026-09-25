@@ -20,6 +20,8 @@ export interface GameOverData {
 	items: string[];
 	newBest: boolean;
 	bestWave: number;
+	cores?: number;
+	achievements?: string[];
 }
 
 const PANEL_W = 250;
@@ -39,7 +41,7 @@ export class GameOverScene extends Phaser.Scene {
 	create(): void {
 		const d = this.d;
 		const dim = this.add.rectangle(0, 0, 10, 10, PALETTE.void, 0.85).setOrigin(0, 0);
-		const panel = addPanel(this, 0, 0, PANEL_W, 196);
+		const panel = addPanel(this, 0, 0, PANEL_W, 206);
 		const title = addText(this, 0, 0, `${STRINGS.youDied} - ${STRINGS.wave} ${d.wave}`, {
 			scale: 2,
 			color: PALETTE.red,
@@ -61,6 +63,7 @@ export class GameOverScene extends Phaser.Scene {
 			[MENU.kills, `${d.totals.kills}`],
 			[MENU.damage, `${Math.round(d.totals.damageDealt)}`],
 			[MENU.goldTotal, `${d.totals.goldEarned}`],
+			[MENU.coresEarned, `+${d.cores ?? 0}`],
 		];
 		const rowTexts = rows.map(([l, v]) => [
 			addText(this, 0, 0, l, { color: PALETTE.steel }),
@@ -98,7 +101,7 @@ export class GameOverScene extends Phaser.Scene {
 				ic.img.setPosition(x + 8, y + 8);
 				ic.lvl.setPosition(x + 17, y + 17);
 			});
-			menu.layout(cx, top + 150);
+			menu.layout(cx, top + 160);
 		});
 	}
 

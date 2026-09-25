@@ -215,6 +215,14 @@ export const MENU = {
 	goldTotal: 'GOLD',
 	build: 'BUILD',
 	unlocked: 'NEW SURVIVOR!',
+	upgrades: 'UPGRADES',
+	upgradesHint: 'SPEND CORES ON PERMANENT UPGRADES',
+	cores: 'CORES',
+	max: 'MAX',
+	achievements: 'ACHIEVEMENTS',
+	credits: 'CREDITS',
+	coresEarned: 'CORES EARNED',
+	achievementUnlocked: 'ACHIEVEMENT',
 	continueLabel: 'CONTINUE',
 	records: 'RECORDS',
 	runs: 'RUNS',
@@ -250,3 +258,15 @@ export const WEAPON_NAMES: Record<'energy_blade' | 'blaster' | 'psi_orb', string
 	blaster: 'BLASTER',
 	psi_orb: 'PSI ORB',
 };
+
+/** Credits and licenses (1.0). */
+export const CREDITS: readonly [string, string][] = [
+	['GAME', 'STARFALL SURVIVORS - ALEX GALHARDO'],
+	['BUILT WITH', 'CLAUDE CODE (ANTHROPIC)'],
+	['ENGINE', 'PHASER 4 (MIT)'],
+	['SOUND', 'JSFXR (UNLICENSE) + WEB AUDIO CHIPTUNE'],
+	['PALETTE', 'ENDESGA 32 BY ENDESGA'],
+	['TOOLS', 'BUN, VITE, TYPESCRIPT, BIOME, SHARP'],
+	['ART', 'PIXEL ART DRAWN BY CODE'],
+	['THANKS', 'BROTATO AND VAMPIRE SURVIVORS FOR THE INSPIRATION'],
+];

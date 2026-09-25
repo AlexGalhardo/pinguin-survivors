@@ -1,6 +1,8 @@
 import { applySettings, settings } from '../core/settings';
 import type { CharacterId } from '../data/characters';
+import { type AchievementRun, checkAchievements } from '../logic/achievements';
 import { checkUnlocks, type UnlockEvent } from '../logic/meta';
+import { coresForRun } from '../logic/meta-upgrades';
 import {
 	parseSave,
 	type RunSummary,
@@ -45,6 +47,16 @@ export const SaveSystem = {
 		const out = checkUnlocks(SaveSystem.get(), event);
 		if (out.length > 0) SaveSystem.persist();
 		return out;
+	},
+
+	/** Adds meta currency and unlocks achievements for a finished run; returns both. */
+	finishRun(run: AchievementRun): { cores: number; achievements: string[] } {
+		const save = SaveSystem.get();
+		const cores = coresForRun(run);
+		save.meta.cores += cores;
+		const achievements = checkAchievements(save, run);
+		SaveSystem.persist();
+		return { cores, achievements };
 	},
 
 	/** Counts a boss kill (lifetime) and saves. */

@@ -39,8 +39,16 @@ export class MainMenuScene extends Phaser.Scene {
 				onSelect: () => pixelOut(this, () => this.scene.start('CharacterSelect')),
 			},
 			{
+				label: MENU.upgrades,
+				onSelect: () => pixelOut(this, () => this.scene.start('Upgrades')),
+			},
+			{
 				label: MENU.records,
 				onSelect: () => pixelOut(this, () => this.scene.start('Records')),
+			},
+			{
+				label: MENU.achievements,
+				onSelect: () => pixelOut(this, () => this.scene.start('Achievements')),
 			},
 			{
 				label: MENU.settings,
@@ -48,6 +56,10 @@ export class MainMenuScene extends Phaser.Scene {
 					this.scene.pause();
 					this.scene.launch('Settings', { from: 'MainMenu' });
 				},
+			},
+			{
+				label: MENU.credits,
+				onSelect: () => pixelOut(this, () => this.scene.start('Credits')),
 			},
 		]);
 		const hint = addText(this, 0, 0, MENU.menuHint, { color: PALETTE.steel, originX: 0.5 });
@@ -61,10 +73,12 @@ export class MainMenuScene extends Phaser.Scene {
 			const top = Math.round(view.height * 0.18);
 			title.setPosition(cx, top);
 			subtitle.setPosition(cx, top + 34);
+			// Small views drop the hero row so the 6 buttons fit.
+			const roomy = view.height >= 340;
 			heroes.forEach((h, i) => {
-				h.setPosition(cx + (i - 1) * 48, top + 78);
+				h.setPosition(cx + (i - 1) * 48, top + 78).setVisible(roomy);
 			});
-			menu.layout(cx, top + 124);
+			menu.layout(cx, top + (roomy ? 112 : 50));
 			hint.setPosition(cx, view.height - 16);
 			version.setPosition(view.width - 4, view.height - 4);
 		});
