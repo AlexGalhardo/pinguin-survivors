@@ -136,12 +136,12 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Re-roll pago na `CardPickScene`
 
 ### 1.11 Menus, pausa e persistência
-- [ ] `MainMenuScene` (Play, Settings) com título em fonte bitmap
-- [ ] `CharacterSelectScene`: 3 classes com stats e arma inicial
-- [ ] `PauseScene` (ESC): Resume, Settings, Quit run (com confirmação)
-- [ ] `SettingsScene`: volume de SFX e música, fullscreen, screen shake, números de dano
-- [ ] `GameOverScene`: estatísticas da run, recorde, Retry, Main Menu
-- [ ] `SaveSystem` (localStorage com try/catch + versão): settings, recorde por classe, estatísticas
+- [x] `MainMenuScene` (Play, Settings) com título em fonte bitmap
+- [x] `CharacterSelectScene`: 3 classes com stats e arma inicial
+- [x] `PauseScene` (ESC): Resume, Settings, Quit run (com confirmação)
+- [x] `SettingsScene`: volume de SFX e música, fullscreen, screen shake, números de dano
+- [x] `GameOverScene`: estatísticas da run, recorde, Retry, Main Menu
+- [x] `SaveSystem` (localStorage com try/catch + versão): settings, recorde por classe, estatísticas
 
 ### 1.12 QA e fechamento do Alpha
 - [ ] Teste de estresse: 300 inimigos + 500 projéteis em `?debug=1` → 60 FPS no Chrome (registrar o resultado no changelog)
@@ -276,3 +276,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.8**: Componentes de UI (PixelPanel, PixelButton, Bar, IconFactory, CardView); HudScene com HP, revive, onda + timer (vermelho nos últimos 5 s), ouro, 6 slots com nível e cooldown, barra do boss; números de dano respeitam a Setting. Validado em 1366×768, 1920×1080, 2560×1440 e 700×900 (arena centralizada).
 - **2026-09-25 · v1.0.0-alpha.9**: AudioSystem com jsfxr: 17 SFX pré-renderizados em AudioBuffers no Boot, limite de vozes + intervalo mínimo de 40 ms + variação de pitch ±8% (testes), SFX ligados a armas, hits, mortes, ouro, UI, onda, dano, revive e game over; AudioContext destravado no primeiro input.
 - **2026-09-25 · v1.0.0-alpha.10**: Economia: ouro com ímã (Pickup Range) + medkit raro (cura 20%); preços por onda, re-roll crescente e sorteio por raridade (testes); 12 itens com trade-offs; ShopScene (4 slots, comprar, re-roll, Continue, painel de stats e itens possuídos); re-roll pago na CardPickScene.
+- **2026-09-25 · v1.0.0-alpha.11**: MainMenu (título em fonte bitmap, versão), CharacterSelect (stats, arma, recorde), Pause (ESC, confirmação de saída), Settings (volumes, fullscreen, shake, números de dano), GameOver (estatísticas, build, NEW BEST, Retry/Menu); SaveSystem versionado em localStorage com try/catch (testes).
