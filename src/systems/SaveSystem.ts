@@ -1,4 +1,6 @@
 import { applySettings, settings } from '../core/settings';
+import type { CharacterId } from '../data/characters';
+import { checkUnlocks, type UnlockEvent } from '../logic/meta';
 import {
 	parseSave,
 	type RunSummary,
@@ -36,6 +38,19 @@ export const SaveSystem = {
 		} catch {
 			// Storage unavailable: keep playing with the in-memory save.
 		}
+	},
+
+	/** Applies an unlock event; saves and returns the newly unlocked characters. */
+	unlock(event: UnlockEvent): CharacterId[] {
+		const out = checkUnlocks(SaveSystem.get(), event);
+		if (out.length > 0) SaveSystem.persist();
+		return out;
+	},
+
+	/** Counts a boss kill (lifetime) and saves. */
+	bossKilled(): void {
+		SaveSystem.get().bossKills++;
+		SaveSystem.persist();
 	},
 
 	/** Records a finished run and saves. Returns true on a new class record. */

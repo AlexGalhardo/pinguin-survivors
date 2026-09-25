@@ -2,7 +2,9 @@ import { DEFAULT_SETTINGS, type Settings } from '../core/settings';
 import { CHARACTER_IDS, type CharacterId } from '../data/characters';
 
 /** Bump when the saved format changes (SemVer public API: see docs/git-and-versioning.md). */
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
+/** Runs kept in the history. */
+export const HISTORY_SIZE = 10;
 export const SAVE_KEY = 'starfall-survivors.save';
 
 export interface BestRun {
@@ -19,11 +21,38 @@ export interface LifetimeStats {
 	timeSec: number;
 }
 
+export interface RunRecord {
+	character: CharacterId;
+	wave: number;
+	kills: number;
+	timeSec: number;
+	/** Unix time (ms) when the run ended. */
+	at: number;
+}
+
+export interface MetaProgress {
+	/** Meta currency (1.0): earned at the end of every run. */
+	cores: number;
+	/** Permanent upgrade levels by id (1.0). */
+	upgrades: Record<string, number>;
+}
+
 export interface SaveData {
 	version: number;
 	settings: Settings;
 	best: Record<CharacterId, BestRun>;
 	stats: LifetimeStats;
+	/** Unlocked characters (v2). */
+	unlocked: CharacterId[];
+	/** Last runs, newest first (v2). */
+	history: RunRecord[];
+	/** Bosses killed across all runs (v2). */
+	bossKills: number;
+	meta: MetaProgress;
+	/** Local achievements unlocked (ids, 1.0). */
+	achievements: string[];
+	/** True once the tutorial was shown (Beta). */
+	tutorialDone: boolean;
 }
 
 export interface RunSummary {
@@ -33,6 +62,8 @@ export interface RunSummary {
 	goldEarned: number;
 	damageDealt: number;
 	timeSec: number;
+	/** Unix time (ms) of the end of the run. */
+	at?: number;
 }
 
 function emptyBest(): BestRun {
@@ -47,6 +78,12 @@ export function defaultSave(): SaveData {
 		settings: { ...DEFAULT_SETTINGS },
 		best,
 		stats: { runs: 0, kills: 0, goldEarned: 0, damageDealt: 0, timeSec: 0 },
+		unlocked: ['warrior'],
+		history: [],
+		bossKills: 0,
+		meta: { cores: 0, upgrades: {} },
+		achievements: [],
+		tutorialDone: false,
 	};
 }
 
@@ -95,6 +132,33 @@ export function parseSave(json: string | null): SaveData {
 		damageDealt: num(st.damageDealt, 0),
 		timeSec: num(st.timeSec, 0),
 	};
+	// v2 fields (a v1 save migrates with Ranger/Mage unlocked if it already has runs with them).
+	const unlocked = Array.isArray(r.unlocked) ? (r.unlocked as unknown[]) : [];
+	base.unlocked = CHARACTER_IDS.filter(
+		(c) => c === 'warrior' || unlocked.includes(c) || base.best[c].wave > 0,
+	);
+	const history = Array.isArray(r.history) ? (r.history as Partial<RunRecord>[]) : [];
+	base.history = history
+		.filter((h) => CHARACTER_IDS.includes(h.character as CharacterId))
+		.slice(0, HISTORY_SIZE)
+		.map((h) => ({
+			character: h.character as CharacterId,
+			wave: num(h.wave, 0),
+			kills: num(h.kills, 0),
+			timeSec: num(h.timeSec, 0),
+			at: num(h.at, 0),
+		}));
+	base.bossKills = num(r.bossKills, 0);
+	const meta = (r.meta ?? {}) as Partial<MetaProgress>;
+	base.meta = {
+		cores: num(meta.cores, 0),
+		upgrades:
+			typeof meta.upgrades === 'object' && meta.upgrades !== null ? { ...meta.upgrades } : {},
+	};
+	base.achievements = Array.isArray(r.achievements)
+		? (r.achievements as unknown[]).filter((a): a is string => typeof a === 'string')
+		: [];
+	base.tutorialDone = bool(r.tutorialDone, false);
 	return base;
 }
 
@@ -114,6 +178,16 @@ export function recordRun(save: SaveData, run: RunSummary): { save: SaveData; ne
 				? { wave: run.wave, kills: run.kills, timeSec: Math.round(run.timeSec) }
 				: prev,
 		},
+		history: [
+			{
+				character: run.character,
+				wave: run.wave,
+				kills: run.kills,
+				timeSec: Math.round(run.timeSec),
+				at: run.at ?? 0,
+			},
+			...save.history,
+		].slice(0, HISTORY_SIZE),
 		stats: {
 			runs: save.stats.runs + 1,
 			kills: save.stats.kills + run.kills,
