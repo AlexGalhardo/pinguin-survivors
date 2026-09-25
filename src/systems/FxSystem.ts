@@ -103,31 +103,29 @@ export class FxSystem {
 		return img;
 	}
 
-	/** Small burst of pixels (enemy death / hits). */
-	burst(x: number, y: number, color: number, count = 6): void {
-		for (let i = 0; i < count; i++) {
-			const img = this.sprites.get(x, y, TEX.fxPixel) as Phaser.GameObjects.Image | null;
-			if (!img) return;
-			const a = Math.random() * Math.PI * 2;
-			const d = 6 + Math.random() * 10;
-			img.setTexture(TEX.fxPixel)
-				.setActive(true)
-				.setVisible(true)
-				.setPosition(x, y)
-				.setScale(1)
-				.setRotation(0)
-				.setAlpha(1)
-				.setTint(color)
-				.setDepth(11);
-			this.scene.tweens.add({
-				targets: img,
-				x: x + Math.cos(a) * d,
-				y: y + Math.sin(a) * d,
-				alpha: 0,
-				duration: 250 + Math.random() * 150,
-				onComplete: () => img.setActive(false).setVisible(false),
+	private readonly emitters = new Map<number, Phaser.GameObjects.Particles.ParticleEmitter>();
+
+	/** One pooled particle emitter per color (Phaser particles, explode mode). */
+	private emitter(color: number): Phaser.GameObjects.Particles.ParticleEmitter {
+		let em = this.emitters.get(color);
+		if (!em) {
+			em = this.scene.add.particles(0, 0, TEX.fxPixel, {
+				speed: { min: 30, max: 110 },
+				lifespan: { min: 220, max: 420 },
+				scale: { start: 1.5, end: 0 },
+				alpha: { start: 1, end: 0.2 },
+				tint: color,
+				emitting: false,
 			});
+			em.setDepth(11);
+			this.emitters.set(color, em);
 		}
+		return em;
+	}
+
+	/** Burst of pixels (deaths, pickups, explosions). */
+	burst(x: number, y: number, color: number, count = 6): void {
+		this.emitter(color).explode(count, x, y);
 	}
 
 	update(dt: number): void {

@@ -3,6 +3,7 @@ import { PALETTE } from '../config/palette';
 import { STRINGS } from '../config/strings';
 import { GameEvent } from '../core/events';
 import { PLAYER_INVULN } from '../data/enemies';
+import { HIT_STOP, SHAKE } from '../data/juice';
 import type { Enemy } from '../entities/Enemy';
 import type { Projectile } from '../entities/Projectile';
 import { damageTaken, dodgeChance, LifestealLimiter, RegenAccumulator } from '../logic/stats';
@@ -61,6 +62,7 @@ export class CombatSystem {
 		}
 		e.hp -= dmg;
 		g.state.totals.damageDealt += amount;
+		if (crit) g.critHitStop();
 		if (silent !== 'dot') {
 			g.enemies.flash(e);
 			g.fx.damageNumber(e.x, e.y - e.radius, amount, crit);
@@ -79,7 +81,8 @@ export class CombatSystem {
 	killEnemy(e: Enemy): void {
 		const g = this.game;
 		g.state.totals.kills++;
-		g.fx.burst(e.x, e.y, e.elite ? PALETTE.amber : PALETTE.green, e.elite ? 12 : 6);
+		g.fx.burst(e.x, e.y, e.elite ? PALETTE.amber : PALETTE.green, e.elite ? 18 : 7);
+		if (e.elite) g.hitStop(HIT_STOP.eliteDeath);
 		g.pickups.dropGold(e.x, e.y, e.gold);
 		g.maybeDropMedkit(e.x, e.y);
 		g.sfx(SFX.enemyDie);
@@ -100,7 +103,7 @@ export class CombatSystem {
 		const taken = damageTaken(raw, g.stats.armor);
 		g.state.hp = Math.max(0, g.state.hp - taken);
 		g.player.hurt(PLAYER_INVULN);
-		g.shake(80, 0.004);
+		g.shake(SHAKE.hurt);
 		g.sfx(SFX.playerHurt);
 		g.emitHp();
 		if (g.state.hp <= 0) g.onPlayerDied();

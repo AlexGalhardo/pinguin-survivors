@@ -18,6 +18,7 @@ import { type Card, REVIVE } from '../data/cards';
 import { CHARACTERS, type CharacterId } from '../data/characters';
 import { CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
 import { MEDKIT } from '../data/items';
+import { HIT_STOP, SHAKE, type ShakePreset } from '../data/juice';
 import { TAGS } from '../data/synergies';
 import { PASSIVES } from '../data/unlocks';
 import { debugStats } from '../debug/debug-stats';
@@ -365,13 +366,31 @@ export class GameScene extends Phaser.Scene {
 		});
 	}
 
+	/** Remaining hit-stop (ms of real time). */
+	private hitStopMs = 0;
+	private lastCritStop = 0;
+
+	/** Freezes the action for a few ms (big hits). */
+	hitStop(ms: number): void {
+		if (ms <= 0) return;
+		if (this.hitStopMs <= 0) this.physics.world.pause();
+		this.hitStopMs = Math.max(this.hitStopMs, ms);
+	}
+
+	/** Crit hit-stop with a cooldown so fast weapons do not stutter. */
+	critHitStop(): void {
+		if (this.time.now - this.lastCritStop < HIT_STOP.critCooldown) return;
+		this.lastCritStop = this.time.now;
+		this.hitStop(HIT_STOP.crit);
+	}
+
 	/** Plays a sound effect (jsfxr, pre-rendered). */
 	sfx(key: string): void {
 		playSfx(key);
 	}
 
-	shake(durationMs: number, intensity: number): void {
-		if (settings.screenShake) this.cameras.main.shake(durationMs, intensity);
+	shake(preset: ShakePreset): void {
+		if (settings.screenShake) this.cameras.main.shake(preset.ms, preset.intensity);
 	}
 
 	onBossDamaged(boss: Enemy): void {
@@ -386,6 +405,7 @@ export class GameScene extends Phaser.Scene {
 	private onPickup(kind: 'gold' | 'medkit', value: number): void {
 		if (kind === 'gold') {
 			this.sfx(SFX.gold);
+			this.fx.burst(this.player.x, this.player.y - 4, PALETTE.amber, 2);
 			this.state.totals.goldEarned += value;
 			this.setGold(this.state.gold + value);
 		} else {
@@ -419,7 +439,7 @@ export class GameScene extends Phaser.Scene {
 		});
 		this.enemyShots.clear();
 		this.fx.floatText(p.x, p.y - 16, STRINGS.revived, PALETTE.amber, 2);
-		this.shake(250, 0.008);
+		this.shake(SHAKE.revive);
 		this.sfx(SFX.revive);
 		this.emitHp();
 		this.events$.emit(GameEvent.PlayerRevived, undefined);
@@ -524,6 +544,11 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	override update(time: number, deltaMs: number): void {
+		if (this.hitStopMs > 0) {
+			this.hitStopMs -= deltaMs;
+			if (this.hitStopMs > 0) return;
+			if (this.waves.inCombat || this.waves.phase === 'ending') this.physics.world.resume();
+		}
 		const dt = Math.min(deltaMs, 50) / 1000;
 		this.fx.update(dt);
 		if (this.runOver) return;

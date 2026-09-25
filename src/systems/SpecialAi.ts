@@ -1,6 +1,7 @@
 import { TEX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { ENEMIES, SPECIAL } from '../data/enemies';
+import { SHAKE } from '../data/juice';
 import { PLAY_AREA } from '../entities/Arena';
 import type { Enemy } from '../entities/Enemy';
 import type { GameScene } from '../scenes/GameScene';
@@ -58,7 +59,7 @@ export class SpecialAi {
 				scale: (SPECIAL.bomberRadius * 2) / 64,
 				tint: PALETTE.orange,
 			});
-			this.g.shake(120, 0.006);
+			this.g.shake(SHAKE.explosion);
 			if (dist <= SPECIAL.bomberRadius) this.g.combat.hurtPlayer(damage);
 			// A self-destruct gives no gold.
 			e.release();

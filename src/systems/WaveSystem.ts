@@ -3,6 +3,7 @@ import { SFX, TEX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { GameEvent } from '../core/events';
 import { BOSS, BOSS_ROTATION, BOSS2, BOSS3, ELITE, ENEMIES, WAVE_FLOW } from '../data/enemies';
+import { HIT_STOP, SHAKE } from '../data/juice';
 import { WAVE, type WaveModifier } from '../data/waves';
 import type { EliteMod, Enemy } from '../entities/Enemy';
 import { dmgMul } from '../logic/scaling';
@@ -138,7 +139,7 @@ export class WaveSystem {
 	private spawnBoss(): void {
 		const g = this.game;
 		g.sfx(SFX.bossWarn);
-		g.shake(300, 0.006);
+		g.shake(SHAKE.bossSpawn);
 		const index =
 			Math.max(0, Math.floor(g.state.wave / WAVE.bossEvery) - 1) % BOSS_ROTATION.length;
 		g.spawner.queueGroup(BOSS_ROTATION[index] ?? 'boss', 1, (e) => {
@@ -176,7 +177,8 @@ export class WaveSystem {
 		const g = this.game;
 		if (e === this.boss) {
 			this.boss = null;
-			g.shake(400, 0.01);
+			g.shake(SHAKE.bossDeath);
+			g.hitStop(HIT_STOP.bossDeath);
 			this.bossLine.setVisible(false);
 			g.events$.emit(GameEvent.BossDied, undefined);
 			g.onBossKilled();
@@ -201,7 +203,7 @@ export class WaveSystem {
 				scale: (radius * 2) / 64,
 				tint: PALETTE.orange,
 			});
-			g.shake(120, 0.006);
+			g.shake(SHAKE.explosion);
 			if (Math.hypot(g.player.x - x, g.player.y - y) <= radius) g.combat.hurtPlayer(damage);
 		});
 	}
@@ -310,7 +312,7 @@ export class WaveSystem {
 				scale: (BOSS3.slamRadius * 2) / 64,
 				tint: PALETTE.orange,
 			});
-			g.shake(100, 0.006);
+			g.shake(SHAKE.slam);
 			if (Math.hypot(g.player.x - s.x, g.player.y - s.y) <= BOSS3.slamRadius) {
 				g.combat.hurtPlayer(BOSS3.slamDamage * dmgMul(g.state.wave));
 			}
