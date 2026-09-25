@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import { SFX } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import { RARITY_NAMES, STAT_SHORT, STRINGS } from '../config/strings';
+import { RARITY_NAMES, STAT_SHORT, STRINGS, TAG_NAMES } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import { getItem } from '../data/items';
+import type { Tag } from '../data/synergies';
 import { formatStatDelta, formatStatValue } from '../logic/format';
 import type { ShopOffer } from '../logic/shop';
 import { STAT_KEYS, type StatKey, type Stats } from '../logic/stats';
@@ -29,6 +30,13 @@ export interface ShopData {
 	maxHp(): number;
 	items(): readonly string[];
 	onContinue(): void;
+	/** Toggles the lock of offer i (kept on re-roll and in the next shop). */
+	toggleLock(index: number): void;
+	/** Sells one owned item; returns the refund. */
+	sell(itemId: string): number;
+	sellValue(itemId: string): number;
+	/** Tag counts and reached tier (synergies panel). */
+	synergies(): { tag: Tag; count: number; tier: number }[];
 }
 
 const ITEM_W = 84;
@@ -108,12 +116,16 @@ export class ShopScene extends Phaser.Scene {
 					iconScale: 1,
 					hint: String(i + 1),
 					footer: offer.sold ? STRINGS.sold : `${offer.price} ${STRINGS.gold}`,
+					tag: offer.locked && !offer.sold ? STRINGS.locked : '',
 				},
 				ITEM_W,
 				ITEM_H,
 			);
 			card.frame.on('pointerover', () => this.setFocus(i));
-			card.frame.on('pointerdown', () => this.doBuy(i));
+			card.frame.on('pointerdown', (p: Phaser.Input.Pointer) => {
+				if (p.rightButtonDown()) this.doLock(i);
+				else this.doBuy(i);
+			});
 			return card;
 		});
 	}
@@ -128,7 +140,7 @@ export class ShopScene extends Phaser.Scene {
 		const top = Math.max(28, Math.round(view.height / 2 - 100));
 		this.title.setPosition(cx, top - 24);
 		this.statsPanel.setPosition(left, top);
-		this.statsPanel.setSize(STATS_W, 12 + PANEL_STATS.length * 9);
+		this.statsPanel.setSize(STATS_W, 12 + (PANEL_STATS.length + this.synergyRows()) * 9);
 		const cardsLeft = left + STATS_W + 8;
 		this.cards.forEach((c, i) => {
 			c.place(Math.round(cardsLeft + ITEM_W / 2 + i * (ITEM_W + GAP)), top + ITEM_H / 2);
@@ -140,7 +152,7 @@ export class ShopScene extends Phaser.Scene {
 		this.cont.setPosition(cardsLeft + cardsW - 45, by);
 		this.layoutStats();
 		const ownedBottom = this.layoutOwned(cardsLeft, by + 16, cardsW);
-		const statsBottom = top + 12 + PANEL_STATS.length * 9;
+		const statsBottom = top + 12 + (PANEL_STATS.length + this.synergyRows()) * 9;
 		this.hint.setPosition(cx, Math.max(ownedBottom, statsBottom) + 8);
 	}
 
@@ -158,6 +170,24 @@ export class ShopScene extends Phaser.Scene {
 			);
 			y += 9;
 		}
+		const active = this.d.synergies().filter((s) => s.count > 0);
+		if (active.length > 0) {
+			this.statsTexts.push(addText(this, x, y, STRINGS.synergies, { color: PALETTE.amber }));
+			y += 9;
+		}
+		for (const s of active) {
+			const color = s.tier > 0 ? PALETTE.green : PALETTE.steel;
+			this.statsTexts.push(addText(this, x, y, TAG_NAMES[s.tag], { color }));
+			this.statsTexts.push(
+				addText(this, x + STATS_W - 10, y, `${s.count}`, { color, originX: 1 }),
+			);
+			y += 9;
+		}
+	}
+
+	private synergyRows(): number {
+		const n = this.d.synergies().filter((s) => s.count > 0).length;
+		return n > 0 ? n + 1 : 0;
 	}
 
 	/** Draws the owned item icons; returns the bottom Y. */
@@ -171,6 +201,12 @@ export class ShopScene extends Phaser.Scene {
 		for (const [id, n] of counts) {
 			const item = getItem(id);
 			const icon = addIcon(this, cx + 8, cy + 8, item?.icon ?? 'unknown');
+			icon.setInteractive({ useHandCursor: true });
+			icon.on('pointerover', () =>
+				this.hint.setText(`${item?.name ?? id}: ${STRINGS.sell} +${this.d.sellValue(id)}`),
+			);
+			icon.on('pointerout', () => this.hint.setText(STRINGS.shopHint));
+			icon.on('pointerdown', () => this.doSell(id));
 			this.ownedIcons.push(icon);
 			if (n > 1) {
 				this.ownedIcons.push(
@@ -210,6 +246,9 @@ export class ShopScene extends Phaser.Scene {
 				case 'Digit3':
 				case 'Digit4':
 					this.doBuy(Number(e.code.slice(-1)) - 1);
+					break;
+				case 'KeyL':
+					if (this.focus < this.cards.length) this.doLock(this.focus);
 					break;
 				case 'KeyR':
 					this.doReroll();
@@ -265,6 +304,27 @@ export class ShopScene extends Phaser.Scene {
 		// Move the focus to the next item still for sale, or to Continue.
 		const next = this.d.offers.findIndex((o) => !o.sold);
 		this.focus = next >= 0 ? next : this.cards.length + 1;
+		this.refresh();
+	}
+
+	private doLock(i: number): void {
+		const offer = this.d.offers[i];
+		if (!offer || offer.sold) return;
+		this.d.toggleLock(i);
+		playSfx(SFX.uiClick);
+		this.rebuild();
+	}
+
+	private doSell(itemId: string): void {
+		if (this.d.sell(itemId) <= 0) return;
+		playSfx(SFX.buy);
+		this.hint.setText(STRINGS.shopHint);
+		this.rebuild();
+	}
+
+	private rebuild(): void {
+		this.buildCards();
+		this.layout(this.view);
 		this.refresh();
 	}
 

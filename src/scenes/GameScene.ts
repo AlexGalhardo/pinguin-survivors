@@ -8,7 +8,7 @@ import {
 	MAX_PROJECTILES,
 } from '../config/constants';
 import { PALETTE } from '../config/palette';
-import { STRINGS } from '../config/strings';
+import { EVOLVED_NAMES, STRINGS } from '../config/strings';
 import { getParams } from '../core/context';
 import { bus, type EventBus, GameEvent } from '../core/events';
 import { createMoveKeys, type MoveKeys } from '../core/input';
@@ -17,18 +17,20 @@ import { getView } from '../core/viewport';
 import { type Card, REVIVE } from '../data/cards';
 import { CHARACTERS, type CharacterId } from '../data/characters';
 import { CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
-import { itemMods, MEDKIT } from '../data/items';
+import { MEDKIT } from '../data/items';
+import { TAGS } from '../data/synergies';
 import { debugStats } from '../debug/debug-stats';
 import type { DebugParams } from '../debug/params';
 import { createArena, PLAY_AREA } from '../entities/Arena';
 import type { Enemy } from '../entities/Enemy';
 import { Player } from '../entities/Player';
 import type { Projectile } from '../entities/Projectile';
+import { applyEvolutions, buildStats, synergyTiers, tagCounts } from '../logic/build';
 import { applyCard, cardRerollCost, generateCards } from '../logic/cards';
 import { medkitChance, shopRerollCost } from '../logic/economy';
 import { Rng, randomSeed } from '../logic/rng';
-import { createRunState, type RunState, runStats } from '../logic/run-state';
-import { buyOffer, generateShop } from '../logic/shop';
+import { createRunState, type RunState } from '../logic/run-state';
+import { buyOffer, generateShop, lockedIds, sellItem, sellValue } from '../logic/shop';
 import { finalMaxHp, finalMoveSpeed, type Stats } from '../logic/stats';
 import { AbilitySystem } from '../systems/AbilitySystem';
 import { playSfx } from '../systems/AudioSystem';
@@ -183,9 +185,26 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	applyPickedCard(card: Card): void {
-		applyCard(this.state, card, (s) => finalMaxHp(runStats(s, itemMods)));
+		applyCard(this.state, card, (s) => finalMaxHp(buildStats(s)));
 		this.events$.emit(GameEvent.CardPicked, { cardId: card.id, index: 0 });
 		this.refreshStats();
+		this.checkEvolutions();
+		this.syncAbilities();
+	}
+
+	/** Evolves abilities at level 5 whose evolution item is owned. */
+	checkEvolutions(): void {
+		const evolved = applyEvolutions(this.state);
+		if (evolved.length === 0) return;
+		for (const id of evolved) {
+			this.fx.floatText(
+				this.player.x,
+				this.player.y - 20,
+				`${STRINGS.evolved}: ${EVOLVED_NAMES[id]}`,
+				PALETTE.amber,
+			);
+		}
+		this.sfx(SFX.cardPick);
 		this.syncAbilities();
 	}
 
@@ -209,27 +228,51 @@ export class GameScene extends Phaser.Scene {
 		const cost = () => shopRerollCost(wave, rerolls);
 		const shop: ShopData = {
 			wave,
-			offers: generateShop(this.rng, wave, this.stats.luck),
+			offers: generateShop(this.rng, wave, this.stats.luck, undefined, this.state.shopLocks),
 			gold: () => this.state.gold,
 			buy: (i) => {
 				const offer = shop.offers[i];
 				if (!offer || !buyOffer(this.state, offer)) return false;
 				this.setGold(this.state.gold);
 				this.refreshStats();
+				this.checkEvolutions();
 				return true;
+			},
+			toggleLock: (i) => {
+				const offer = shop.offers[i];
+				if (offer) offer.locked = !offer.locked;
+			},
+			sell: (id) => {
+				const refund = sellItem(this.state, id);
+				this.setGold(this.state.gold);
+				this.refreshStats();
+				return refund;
+			},
+			sellValue: (id) => sellValue(id, wave),
+			synergies: () => {
+				const counts = tagCounts(this.state);
+				const tiers = synergyTiers(counts);
+				return TAGS.map((tag) => ({ tag, count: counts[tag], tier: tiers[tag] }));
 			},
 			rerollCost: cost,
 			reroll: () => {
 				if (this.state.gold < cost()) return null;
 				this.setGold(this.state.gold - cost());
 				rerolls++;
-				shop.offers = generateShop(this.rng, wave, this.stats.luck);
+				shop.offers = generateShop(
+					this.rng,
+					wave,
+					this.stats.luck,
+					undefined,
+					lockedIds(shop.offers),
+				);
 				return shop.offers;
 			},
 			stats: () => this.stats,
 			maxHp: () => this.maxHp,
 			items: () => this.state.items,
 			onContinue: () => {
+				this.state.shopLocks = lockedIds(shop.offers);
 				this.scene.resume();
 				this.waves.start(wave + 1);
 			},
@@ -341,7 +384,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** Re-applies derived stats (speed, max HP…) after cards/items change the run. */
 	refreshStats(): void {
-		this.stats = runStats(this.state, itemMods);
+		this.stats = buildStats(this.state);
 		this.player.speed = finalMoveSpeed(this.player.def.speed, this.stats);
 		this.state.hp = Math.min(this.state.hp, this.maxHp);
 		this.emitHp();

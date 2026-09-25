@@ -1,6 +1,7 @@
 import type { AbilityId } from '../data/abilities';
 import type { SpecialCardId } from '../data/cards';
 import type { Rarity } from '../data/rarity';
+import type { Tag } from '../data/synergies';
 import type { StatKey } from '../logic/stats';
 
 /** All player-facing text lives here (English only, see docs/decisions.md D-14). */
@@ -19,10 +20,15 @@ export const STRINGS = {
 	revived: 'REVIVED!',
 	pickHint: '1/2/3 OR ARROWS + ENTER',
 	boss: 'BOSS',
+	evolved: 'EVOLVED',
+	sell: 'SELL',
+	lock: 'LOCK',
+	locked: 'LOCKED',
+	synergies: 'SYNERGIES',
 	shop: 'SHOP',
 	continue: 'CONTINUE',
 	sold: 'SOLD',
-	shopHint: '1-4 BUY  R REROLL  ENTER',
+	shopHint: '1-4 BUY  L LOCK  R REROLL  CLICK OWNED: SELL',
 } as const;
 
 export const RARITY_NAMES: Record<Rarity, string> = {
@@ -85,6 +91,33 @@ export const ABILITY_TEXT: Record<AbilityId, { name: string; desc: string }> = {
 	cryo_field: { name: 'CRYO FIELD', desc: 'AURA THAT SLOWS AND CHILLS' },
 	homing_missiles: { name: 'HOMING MISSILES', desc: 'MISSILES SEEK RANDOM TARGETS' },
 	laser_beam: { name: 'LASER BEAM', desc: 'BEAM TOWARD THE DENSEST CROWD' },
+	arc_turret: { name: 'ARC TURRET', desc: 'DEPLOYS TURRETS THAT SHOOT NEARBY FOES' },
+	saw_disc: { name: 'SAW DISC', desc: 'SPINNING DISCS CUT THROUGH EVERYTHING' },
+	gravity_well: { name: 'GRAVITY WELL', desc: 'VORTEX THAT PULLS AND CRUSHES FOES' },
+	nanite_swarm: { name: 'NANITE SWARM', desc: 'NANITES EAT ENEMIES OVER TIME' },
+};
+
+/** Names of the evolved abilities. */
+export const EVOLVED_NAMES: Record<AbilityId, string> = {
+	orbital_drones: 'DRONE STORM',
+	chain_lightning: 'THUNDER GRID',
+	plasma_nova: 'SUPERNOVA',
+	cryo_field: 'ABSOLUTE ZERO',
+	homing_missiles: 'SWARM BARRAGE',
+	laser_beam: 'DEATH RAY',
+	arc_turret: 'TESLA FORTRESS',
+	saw_disc: 'BUZZ STORM',
+	gravity_well: 'BLACK HOLE',
+	nanite_swarm: 'GREY GOO',
+};
+
+export const TAG_NAMES: Record<Tag, string> = {
+	energy: 'ENERGY',
+	kinetic: 'KINETIC',
+	cryo: 'CRYO',
+	psi: 'PSI',
+	bio: 'BIO',
+	tech: 'TECH',
 };
 
 /** Compact stat labels for narrow panels (shop cards, stats panel). */

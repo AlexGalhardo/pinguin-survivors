@@ -182,7 +182,8 @@ export class HudScene extends Phaser.Scene {
 				this.children.bringToTop(s.cooldown);
 				this.children.bringToTop(s.level);
 			}
-			s.level.setText(`${info.level}`);
+			s.level.setText(info.evolved ? '*' : `${info.level}`);
+			s.panel.setTint(info.evolved ? PALETTE.amber : 0xffffff);
 		});
 	}
 
