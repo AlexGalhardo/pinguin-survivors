@@ -129,11 +129,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Desbloqueio do AudioContext no primeiro input
 
 ### 1.10 Economia: ouro, loja, itens, re-roll (final do Alpha)
-- [ ] Pickup de ouro em pool + ímã (Pickup Range) + medkit raro
-- [ ] `logic/shop.ts` + `logic/economy.ts`: preços por onda, re-roll crescente, sorteio por raridade + testes
-- [ ] `data/items.ts`: 12 itens do Alpha (docs/balancing.md §7) com trade-offs
-- [ ] `ShopScene`: 4 slots, comprar, re-roll, Continue, painel de stats e de itens possuídos
-- [ ] Re-roll pago na `CardPickScene`
+- [x] Pickup de ouro em pool + ímã (Pickup Range) + medkit raro
+- [x] `logic/shop.ts` + `logic/economy.ts`: preços por onda, re-roll crescente, sorteio por raridade + testes
+- [x] `data/items.ts`: 12 itens do Alpha (docs/balancing.md §7) com trade-offs
+- [x] `ShopScene`: 4 slots, comprar, re-roll, Continue, painel de stats e de itens possuídos
+- [x] Re-roll pago na `CardPickScene`
 
 ### 1.11 Menus, pausa e persistência
 - [ ] `MainMenuScene` (Play, Settings) com título em fonte bitmap
@@ -275,3 +275,4 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-alpha.7**: AbilitySystem com as 6 habilidades (níveis 1–5, escala com Ability Power e Range): Orbital Drones, Chain Lightning, Plasma Nova, Cryo Field (lentidão), Homing Missiles e Laser Beam (mira na maior aglomeração).
 - **2026-09-25 · v1.0.0-alpha.8**: Componentes de UI (PixelPanel, PixelButton, Bar, IconFactory, CardView); HudScene com HP, revive, onda + timer (vermelho nos últimos 5 s), ouro, 6 slots com nível e cooldown, barra do boss; números de dano respeitam a Setting. Validado em 1366×768, 1920×1080, 2560×1440 e 700×900 (arena centralizada).
 - **2026-09-25 · v1.0.0-alpha.9**: AudioSystem com jsfxr: 17 SFX pré-renderizados em AudioBuffers no Boot, limite de vozes + intervalo mínimo de 40 ms + variação de pitch ±8% (testes), SFX ligados a armas, hits, mortes, ouro, UI, onda, dano, revive e game over; AudioContext destravado no primeiro input.
+- **2026-09-25 · v1.0.0-alpha.10**: Economia: ouro com ímã (Pickup Range) + medkit raro (cura 20%); preços por onda, re-roll crescente e sorteio por raridade (testes); 12 itens com trade-offs; ShopScene (4 slots, comprar, re-roll, Continue, painel de stats e itens possuídos); re-roll pago na CardPickScene.
