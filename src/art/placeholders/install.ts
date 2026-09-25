@@ -4,6 +4,7 @@ import { FONT, iconKey, type TextureKey } from '../manifest';
 import { CELL_H, CELL_W, CHARS_PER_ROW, FONT_CHARS, renderFontAtlas } from './font-5x7';
 import { ICONS, renderIcon } from './icons';
 import type { PixelCanvas } from './pixel-canvas';
+import { renderSheet, SHEETS } from './sheets';
 import { PLACEHOLDERS, renderPlaceholder } from './textures';
 
 function toTexture(scene: Phaser.Scene, key: string, pixels: PixelCanvas): void {
@@ -19,6 +20,26 @@ function toTexture(scene: Phaser.Scene, key: string, pixels: PixelCanvas): void 
 export function installPlaceholders(scene: Phaser.Scene): void {
 	for (const key of Object.keys(PLACEHOLDERS) as TextureKey[]) {
 		if (!scene.textures.exists(key)) toTexture(scene, key, renderPlaceholder(key));
+	}
+}
+
+/** Generates the animated sheets (idle/walk) and registers one animation per sheet. */
+export function installSheets(scene: Phaser.Scene): void {
+	for (const [key, spec] of Object.entries(SHEETS)) {
+		if (!scene.textures.exists(key)) {
+			toTexture(scene, key, renderSheet(key));
+			const tex = scene.textures.get(key);
+			for (let f = 0; f < spec.frames; f++)
+				tex.add(f, 0, f * spec.frameW, 0, spec.frameW, spec.frameH);
+		}
+		if (!scene.anims.exists(key)) {
+			scene.anims.create({
+				key,
+				frames: scene.anims.generateFrameNumbers(key, { start: 0, end: spec.frames - 1 }),
+				frameRate: spec.fps,
+				repeat: -1,
+			});
+		}
 	}
 }
 

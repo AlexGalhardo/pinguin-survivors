@@ -39,3 +39,25 @@ describe('pixel font', () => {
 		expect(textWidth('WAVE 1')).toBe(6 * CELL_W);
 	});
 });
+
+describe('animated sheets (beta)', () => {
+	it('renders idle (2) and walk (4) frames for every class', async () => {
+		const { SHEETS, renderSheet } = await import('../src/art/placeholders/sheets');
+		for (const c of ['warrior', 'ranger', 'mage']) {
+			expect(SHEETS[`player.${c}.idle`]?.frames).toBe(2);
+			expect(SHEETS[`player.${c}.walk`]?.frames).toBe(4);
+			const sheet = renderSheet(`player.${c}.walk`);
+			expect(sheet.width).toBe(128);
+			expect(sheet.opaqueCount()).toBeGreaterThan(400);
+		}
+	});
+
+	it('shade keeps the palette (only ramp colors are written)', () => {
+		const c = new PixelCanvas(8, 8);
+		c.rect(2, 2, 4, 4, 0x8b9bb4);
+		c.shade({ [0x8b9bb4]: [0x5a6988, 0xc0cbdc] });
+		expect(c.colorAt(3, 2)).toBe(0xc0cbdc);
+		expect(c.colorAt(3, 5)).toBe(0x5a6988);
+		expect(c.colorAt(3, 3)).toBe(0x8b9bb4);
+	});
+});

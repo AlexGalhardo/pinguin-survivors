@@ -126,6 +126,43 @@ export class PixelCanvas {
 		for (let i = 0; i < marks.length; i += 2) this.px(marks[i] ?? 0, marks[i + 1] ?? 0, color);
 	}
 
+	colorAt(x: number, y: number): number {
+		const i = (y * this.width + x) * 4;
+		return (
+			((this.data[i] ?? 0) << 16) | ((this.data[i + 1] ?? 0) << 8) | (this.data[i + 2] ?? 0)
+		);
+	}
+
+	/**
+	 * 2-3 tone shading: pixels on the top edge of a shape get the ramp highlight and pixels
+	 * on the bottom edge get the ramp shadow. `edge` (e.g. the outline color) counts as empty.
+	 */
+	shade(ramps: Record<number, [number, number]>, edge?: number): void {
+		const empty = (x: number, y: number) =>
+			this.alphaAt(x, y) === 0 || (edge !== undefined && this.colorAt(x, y) === edge);
+		const changes: [number, number, number][] = [];
+		for (let y = 0; y < this.height; y++) {
+			for (let x = 0; x < this.width; x++) {
+				if (empty(x, y)) continue;
+				const ramp = ramps[this.colorAt(x, y)];
+				if (!ramp) continue;
+				if (empty(x, y - 1)) changes.push([x, y, ramp[1]]);
+				else if (empty(x, y + 1) || empty(x + 1, y + 1)) changes.push([x, y, ramp[0]]);
+			}
+		}
+		for (const [x, y, c] of changes) this.px(x, y, c);
+	}
+
+	/** Copies another canvas at (x, y) (opaque pixels only). */
+	blit(src: PixelCanvas, x: number, y: number): void {
+		for (let j = 0; j < src.height; j++) {
+			for (let i = 0; i < src.width; i++) {
+				if (src.alphaAt(i, j) > 0)
+					this.px(x + i, y + j, src.colorAt(i, j), src.alphaAt(i, j));
+			}
+		}
+	}
+
 	/** Count of pixels with alpha > 0 (used by tests). */
 	opaqueCount(): number {
 		let n = 0;

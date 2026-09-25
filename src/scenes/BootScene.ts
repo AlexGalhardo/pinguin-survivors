@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
-import { installIcons, installPixelFont, installPlaceholders } from '../art/placeholders/install';
+import {
+	installIcons,
+	installPixelFont,
+	installPlaceholders,
+	installSheets,
+} from '../art/placeholders/install';
 import { getParams } from '../core/context';
 import { AudioSystem } from '../systems/AudioSystem';
 import { SaveSystem } from '../systems/SaveSystem';
@@ -14,6 +19,7 @@ export class BootScene extends Phaser.Scene {
 		installPlaceholders(this);
 		installPixelFont(this);
 		installIcons(this);
+		installSheets(this);
 		const save = SaveSystem.load();
 		if (getParams(this).unlockAll) save.unlocked = ['warrior', 'ranger', 'mage'];
 		AudioSystem.init(this.game);

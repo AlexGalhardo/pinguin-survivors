@@ -68,6 +68,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 			anyDown(keys.right),
 		);
 		this.arcadeBody.setVelocity(dir.x * this.speed, dir.y * this.speed);
+		const anim = `${this.def.texture}.${dir.x !== 0 || dir.y !== 0 ? 'walk' : 'idle'}`;
+		if (this.anims.currentAnim?.key !== anim && this.scene.anims.exists(anim)) this.play(anim);
 		if (dir.x !== 0 || dir.y !== 0) {
 			this.facing.set(dir.x, dir.y);
 			if (dir.x !== 0) this.setFlipX(dir.x < 0);

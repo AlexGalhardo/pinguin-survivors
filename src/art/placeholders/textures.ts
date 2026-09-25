@@ -1,6 +1,7 @@
 import { PALETTE as P } from '../../config/palette';
 import { TEX, type TextureKey } from '../manifest';
 import { PixelCanvas } from './pixel-canvas';
+import { RAMPS, SHEETS } from './sheets';
 
 /**
  * Placeholder art drawn by code (Alpha). One generator per texture key of the manifest.
@@ -15,49 +16,12 @@ export interface PlaceholderSpec {
 
 const OUTLINE = P.void;
 
-function warrior(c: PixelCanvas): void {
-	c.rect(11, 25, 4, 5, P.darkSlate);
-	c.rect(17, 25, 4, 5, P.darkSlate);
-	c.ellipse(16, 20, 8, 7, P.slate);
-	c.ellipse(16, 19, 6, 5, P.steel);
-	c.circle(8.5, 17.5, 3.5, P.silver);
-	c.circle(23.5, 17.5, 3.5, P.silver);
-	c.circle(16, 11, 6, P.silver);
-	c.rect(11, 9, 10, 3, P.orange);
-	c.rect(12, 9, 3, 1, P.yellow);
-	c.line(27, 5, 27, 21, P.cyan);
-	c.line(28, 6, 28, 20, P.white);
-	c.rect(26, 22, 3, 3, P.amber);
-	c.outline(OUTLINE);
-}
-
-function ranger(c: PixelCanvas): void {
-	c.rect(12, 25, 3, 5, P.pine);
-	c.rect(17, 25, 3, 5, P.pine);
-	c.ellipse(16, 20, 6, 6, P.forest);
-	c.ellipse(16, 19, 4, 4, P.green);
-	c.rect(10, 16, 12, 2, P.amber);
-	c.circle(16, 11, 5, P.peach);
-	c.rect(11, 6, 10, 4, P.brown);
-	c.rect(12, 11, 8, 2, P.darkBrown);
-	c.rect(13, 11, 2, 1, P.yellow);
-	c.rect(17, 11, 2, 1, P.yellow);
-	c.rect(22, 18, 7, 3, P.darkSlate);
-	c.rect(28, 18, 2, 2, P.orange);
-	c.outline(OUTLINE);
-}
-
-function mage(c: PixelCanvas): void {
-	c.ellipse(16, 22, 8, 8, P.plum);
-	c.ellipse(16, 21, 6, 6, P.orchid);
-	c.rect(15, 15, 2, 14, P.amber);
-	c.circle(16, 11, 6, P.plum);
-	c.circle(16, 12, 4, P.darkBrown);
-	c.rect(13, 11, 2, 2, P.cyan);
-	c.rect(17, 11, 2, 2, P.cyan);
-	c.circle(26, 9, 3, P.orchid);
-	c.px(26, 8, P.white);
-	c.outline(OUTLINE);
+/** Adds 2-3 tone shading after the outline pass. */
+function shaded(draw: (c: PixelCanvas) => void): (c: PixelCanvas) => void {
+	return (c) => {
+		draw(c);
+		c.shade(RAMPS, OUTLINE);
+	};
 }
 
 function chaser(c: PixelCanvas): void {
@@ -263,22 +227,22 @@ function wall(c: PixelCanvas): void {
 }
 
 export const PLACEHOLDERS: Record<TextureKey, PlaceholderSpec> = {
-	[TEX.playerWarrior]: { w: 32, h: 32, draw: warrior },
-	[TEX.playerRanger]: { w: 32, h: 32, draw: ranger },
-	[TEX.playerMage]: { w: 32, h: 32, draw: mage },
+	[TEX.playerWarrior]: { w: 32, h: 32, draw: (c) => SHEETS['player.warrior.idle']?.draw(c, 0) },
+	[TEX.playerRanger]: { w: 32, h: 32, draw: (c) => SHEETS['player.ranger.idle']?.draw(c, 0) },
+	[TEX.playerMage]: { w: 32, h: 32, draw: (c) => SHEETS['player.mage.idle']?.draw(c, 0) },
 
-	[TEX.enemyChaser]: { w: 32, h: 32, draw: chaser },
-	[TEX.enemyRunner]: { w: 32, h: 32, draw: runner },
-	[TEX.enemyShooter]: { w: 32, h: 32, draw: shooter },
-	[TEX.enemyTank]: { w: 32, h: 32, draw: tank },
-	[TEX.enemyBoss]: { w: 64, h: 64, draw: boss },
-	[TEX.enemyBoss2]: { w: 64, h: 64, draw: boss2 },
-	[TEX.enemyBoss3]: { w: 64, h: 64, draw: boss3 },
-	[TEX.enemySplitter]: { w: 32, h: 32, draw: splitter },
-	[TEX.enemySplitling]: { w: 32, h: 32, draw: splitling },
-	[TEX.enemyBomber]: { w: 32, h: 32, draw: bomber },
-	[TEX.enemyHealer]: { w: 32, h: 32, draw: healer },
-	[TEX.enemyBurrower]: { w: 32, h: 32, draw: burrower },
+	[TEX.enemyChaser]: { w: 32, h: 32, draw: shaded(chaser) },
+	[TEX.enemyRunner]: { w: 32, h: 32, draw: shaded(runner) },
+	[TEX.enemyShooter]: { w: 32, h: 32, draw: shaded(shooter) },
+	[TEX.enemyTank]: { w: 32, h: 32, draw: shaded(tank) },
+	[TEX.enemyBoss]: { w: 64, h: 64, draw: shaded(boss) },
+	[TEX.enemyBoss2]: { w: 64, h: 64, draw: shaded(boss2) },
+	[TEX.enemyBoss3]: { w: 64, h: 64, draw: shaded(boss3) },
+	[TEX.enemySplitter]: { w: 32, h: 32, draw: shaded(splitter) },
+	[TEX.enemySplitling]: { w: 32, h: 32, draw: shaded(splitling) },
+	[TEX.enemyBomber]: { w: 32, h: 32, draw: shaded(bomber) },
+	[TEX.enemyHealer]: { w: 32, h: 32, draw: shaded(healer) },
+	[TEX.enemyBurrower]: { w: 32, h: 32, draw: shaded(burrower) },
 
 	[TEX.projBlaster]: {
 		w: 8,
@@ -448,6 +412,70 @@ export const PLACEHOLDERS: Record<TextureKey, PlaceholderSpec> = {
 	[TEX.tileFloor2]: { w: 32, h: 32, draw: floor(2) },
 	[TEX.tileFloor3]: { w: 32, h: 32, draw: floor(3) },
 	[TEX.tileWall]: { w: 32, h: 32, draw: wall },
+	[TEX.decoRock]: {
+		w: 16,
+		h: 12,
+		draw: (c) => {
+			c.ellipse(8, 7, 7, 5, P.slate);
+			c.ellipse(7, 6, 4, 3, P.steel);
+			c.shade(RAMPS);
+			c.outline(OUTLINE);
+		},
+	},
+	[TEX.decoCrystal]: {
+		w: 12,
+		h: 16,
+		draw: (c) => {
+			c.pattern(
+				2,
+				1,
+				[
+					'...a...',
+					'..aba..',
+					'..aba..',
+					'.aabaa.',
+					'.aabaa.',
+					'aaabaaa',
+					'aaabaaa',
+					'.aaaaa.',
+				],
+				{
+					a: P.plum,
+					b: P.orchid,
+				},
+			);
+			c.pattern(0, 8, ['.a.', 'aba', 'aba', 'aaa'], { a: P.navy, b: P.cyan });
+			c.outline(OUTLINE);
+		},
+	},
+	[TEX.decoVent]: {
+		w: 16,
+		h: 16,
+		draw: (c) => {
+			c.rect(1, 1, 14, 14, P.darkSlate);
+			for (let y = 3; y < 14; y += 3) c.rect(3, y, 10, 1, P.void);
+			c.strokeRect(1, 1, 14, 14, P.slate);
+		},
+	},
+	[TEX.decoBones]: {
+		w: 16,
+		h: 10,
+		draw: (c) => {
+			c.line(2, 7, 13, 3, P.sand);
+			c.circle(2.5, 7.5, 1.5, P.sand);
+			c.circle(13.5, 2.5, 1.5, P.sand);
+			c.line(5, 2, 9, 8, P.peach);
+		},
+	},
+	[TEX.decoCrater]: {
+		w: 24,
+		h: 14,
+		draw: (c) => {
+			c.ellipse(12, 7, 11, 6, P.void, 120);
+			c.ellipse(12, 7, 8, 4, P.midnight);
+			c.ellipse(11, 6, 5, 2, P.void, 160);
+		},
+	},
 
 	[TEX.uiArrow]: {
 		w: 9,
