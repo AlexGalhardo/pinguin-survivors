@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { SFX, TEX } from '../art/manifest';
 import { UI_SLICE } from '../art/placeholders/textures';
 import { PALETTE } from '../config/palette';
+import { playSfx } from '../systems/AudioSystem';
 import { addText } from './text';
 
 export type ButtonState = 'normal' | 'hover' | 'pressed' | 'disabled';
@@ -20,8 +21,8 @@ export class PixelButton extends Phaser.GameObjects.Container {
 	private btnState: ButtonState = 'normal';
 	private enabled = true;
 	private focused = false;
-	/** Optional sound hook. */
-	sfx?: (key: string) => void;
+	/** Sound hook (defaults to the AudioSystem). */
+	sfx: (key: string) => void = playSfx;
 
 	constructor(
 		scene: Phaser.Scene,
@@ -40,7 +41,7 @@ export class PixelButton extends Phaser.GameObjects.Container {
 		this.bg.setInteractive({ useHandCursor: true });
 		this.bg.on('pointerover', () => {
 			if (!this.enabled) return;
-			this.sfx?.(SFX.uiHover);
+			this.sfx(SFX.uiHover);
 			this.apply('hover');
 		});
 		this.bg.on('pointerout', () => this.apply(this.focused ? 'hover' : 'normal'));
@@ -55,7 +56,7 @@ export class PixelButton extends Phaser.GameObjects.Container {
 
 	click(): void {
 		if (!this.enabled) return;
-		this.sfx?.(SFX.uiClick);
+		this.sfx(SFX.uiClick);
 		this.onClick();
 	}
 

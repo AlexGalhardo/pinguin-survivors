@@ -5,6 +5,7 @@ import { STRINGS } from '../config/strings';
 import { fitUiCamera } from '../core/viewport';
 import type { Card } from '../data/cards';
 import type { ViewSize } from '../logic/viewport';
+import { playSfx } from '../systems/AudioSystem';
 import { CARD_H, CARD_W, CardView } from '../ui/CardView';
 import { cardText } from '../ui/card-text';
 import { addText } from '../ui/text';
@@ -124,7 +125,7 @@ export class CardPickScene extends Phaser.Scene {
 	}
 
 	private setFocus(i: number): void {
-		if (i !== this.focus) this.data$.sfx?.(SFX.uiHover);
+		if (i !== this.focus) (this.data$.sfx ?? playSfx)(SFX.uiHover);
 		this.focus = i;
 		this.views.forEach((v, j) => {
 			v.setFocused(j === i);
@@ -134,7 +135,7 @@ export class CardPickScene extends Phaser.Scene {
 	private choose(i: number): void {
 		if (this.done || !this.views[i]) return;
 		this.done = true;
-		this.data$.sfx?.(SFX.cardPick);
+		(this.data$.sfx ?? playSfx)(SFX.cardPick);
 		const view = this.views[i];
 		this.tweens.add({
 			targets: view,

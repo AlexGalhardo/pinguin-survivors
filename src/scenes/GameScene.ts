@@ -28,6 +28,7 @@ import { Rng, randomSeed } from '../logic/rng';
 import { createRunState, type RunState, runStats } from '../logic/run-state';
 import { finalMaxHp, finalMoveSpeed, type Stats } from '../logic/stats';
 import { AbilitySystem } from '../systems/AbilitySystem';
+import { playSfx } from '../systems/AudioSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
@@ -168,8 +169,10 @@ export class GameScene extends Phaser.Scene {
 		this.waves.start(this.state.wave + 1);
 	}
 
-	/** Plays a sound effect (wired to the AudioSystem in 1.9). */
-	sfx(_key: string): void {}
+	/** Plays a sound effect (jsfxr, pre-rendered). */
+	sfx(key: string): void {
+		playSfx(key);
+	}
 
 	shake(durationMs: number, intensity: number): void {
 		if (settings.screenShake) this.cameras.main.shake(durationMs, intensity);
@@ -184,6 +187,7 @@ export class GameScene extends Phaser.Scene {
 
 	private onPickup(kind: 'gold' | 'medkit', value: number): void {
 		if (kind === 'gold') {
+			this.sfx(SFX.gold);
 			this.state.gold += value;
 			this.state.totals.goldEarned += value;
 			this.events$.emit(GameEvent.GoldChanged, { gold: this.state.gold });
@@ -224,6 +228,7 @@ export class GameScene extends Phaser.Scene {
 	/** Stops the run (the GameOverScene arrives in 1.11). */
 	endRun(): void {
 		this.runOver = true;
+		this.sfx(SFX.gameOver);
 		this.physics.pause();
 		this.player.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setAlpha(0.6);
 		this.events$.emit(GameEvent.RunEnded, undefined);
