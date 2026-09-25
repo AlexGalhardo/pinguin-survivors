@@ -31,6 +31,14 @@ Para restaurar numa máquina nova: `bunx skills experimental_install`.
 - Runtime/gerenciador: **Bun 1.4.2** (`bun install`, `bun run`, `bunx`, `bun test`).
 - `typescript`, `vite`, `@types/bun`, `@biomejs/biome` (v2, lint + format), `husky`, `@commitlint/cli` + `@commitlint/config-conventional`: dev.
 - 1.0: `sharp` (pipeline de pixelização), um empacotador de atlas (script próprio ou `free-tex-packer-core`).
+- `playwright` (1.63.0, dev): QA cross-browser do build de produção (`scripts/qa-browsers.ts`: Chrome, Edge e o Firefox do Playwright).
+
+## Scripts de QA e performance
+
+- `bash scripts/playtest.sh <classe> [seed] [onda] [velocidade]`: bot de playtest (dev server).
+- `bash scripts/profile.sh [segundos]`: CPU profile do estresse 300 inimigos + 500 projéteis (dev server).
+- `bun run build` + `bunx --bun vite preview --port 4173` → `bun scripts/qa-browsers.ts`: carga, sem scroll, WebGL, FPS, erros e 4xx por navegador. Na 1ª vez: `bunx playwright install firefox`.
+- `bun scripts/render-keyart.ts [escala]`: exporta logo, key art e favicon (pixel art por código).
 
 ## Ferramentas externas úteis
 
