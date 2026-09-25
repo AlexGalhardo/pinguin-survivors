@@ -1,9 +1,14 @@
 import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
 import { CardPickScene } from '../scenes/CardPickScene';
+import { CharacterSelectScene } from '../scenes/CharacterSelectScene';
 import { DebugScene } from '../scenes/DebugScene';
+import { GameOverScene } from '../scenes/GameOverScene';
 import { GameScene } from '../scenes/GameScene';
 import { HudScene } from '../scenes/HudScene';
+import { MainMenuScene } from '../scenes/MainMenuScene';
+import { PauseScene } from '../scenes/PauseScene';
+import { SettingsScene } from '../scenes/SettingsScene';
 import { ShopScene } from '../scenes/ShopScene';
 import { PALETTE, toCss } from './palette';
 
@@ -25,5 +30,17 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	},
 	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
 	disableContextMenu: true,
-	scene: [BootScene, GameScene, HudScene, CardPickScene, ShopScene, DebugScene],
+	scene: [
+		BootScene,
+		MainMenuScene,
+		CharacterSelectScene,
+		GameScene,
+		HudScene,
+		CardPickScene,
+		ShopScene,
+		PauseScene,
+		SettingsScene,
+		GameOverScene,
+		DebugScene,
+	],
 };

@@ -15,7 +15,7 @@ import { createMoveKeys, type MoveKeys } from '../core/input';
 import { settings } from '../core/settings';
 import { getView } from '../core/viewport';
 import { type Card, REVIVE } from '../data/cards';
-import { CHARACTERS } from '../data/characters';
+import { CHARACTERS, type CharacterId } from '../data/characters';
 import { CONTACT_COOLDOWN, type EnemyType, WAVE_FLOW } from '../data/enemies';
 import { itemMods, MEDKIT } from '../data/items';
 import { debugStats } from '../debug/debug-stats';
@@ -37,11 +37,16 @@ import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
+import { SaveSystem } from '../systems/SaveSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
 import { WaveSystem } from '../systems/WaveSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import type { CardPickData } from './CardPickScene';
+import type { GameOverData } from './GameOverScene';
 import type { ShopData } from './ShopScene';
+
+/** Delay between the death and the game over screen. */
+const GAME_OVER_DELAY_MS = 1200;
 
 /** Main gameplay scene: arena, player and every combat system. */
 export class GameScene extends Phaser.Scene {
@@ -65,8 +70,14 @@ export class GameScene extends Phaser.Scene {
 	runOver = false;
 	private keys!: MoveKeys;
 
+	private startCharacter: CharacterId | undefined;
+
 	constructor() {
 		super('Game');
+	}
+
+	init(data: { character?: CharacterId }): void {
+		this.startCharacter = data?.character;
 	}
 
 	create(): void {
@@ -74,7 +85,9 @@ export class GameScene extends Phaser.Scene {
 		this.events$ = bus(this.game);
 		const seed = this.params.seed ?? randomSeed();
 		this.rng = new Rng(seed);
-		this.state = createRunState(this.params.char ?? 'warrior', seed, this.params.wave ?? 1);
+		const character = this.startCharacter ?? this.params.char ?? 'warrior';
+		this.state = createRunState(character, seed, this.params.wave ?? 1);
+		this.physics.resume();
 
 		const walls = createArena(this, this.rng);
 		this.physics.world.setBounds(PLAY_AREA.x, PLAY_AREA.y, PLAY_AREA.width, PLAY_AREA.height);
@@ -82,6 +95,7 @@ export class GameScene extends Phaser.Scene {
 		this.player = new Player(this, ARENA_W / 2, ARENA_H / 2, def);
 		this.physics.add.collider(this.player, walls);
 		this.keys = createMoveKeys(this);
+		this.input.keyboard?.on('keydown-ESC', () => this.openPause());
 
 		this.enemyShots = new ProjectileSystem(this, MAX_PROJECTILES, 9);
 		this.playerShots = new ProjectileSystem(this, MAX_PROJECTILES, 8);
@@ -289,13 +303,40 @@ export class GameScene extends Phaser.Scene {
 		this.events$.emit(GameEvent.PlayerRevived, undefined);
 	}
 
-	/** Stops the run (the GameOverScene arrives in 1.11). */
+	/** ESC during combat: pause the game and show the pause menu. */
+	private openPause(): void {
+		if (this.runOver || !this.waves.inCombat || this.scene.isPaused()) return;
+		this.sfx(SFX.uiClick);
+		this.scene.pause();
+		this.scene.launch('Pause');
+	}
+
+	/** Game over: record the run and show the summary. */
 	endRun(): void {
 		this.runOver = true;
 		this.sfx(SFX.gameOver);
 		this.physics.pause();
 		this.player.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setAlpha(0.6);
 		this.events$.emit(GameEvent.RunEnded, undefined);
+		const s = this.state;
+		const newBest = SaveSystem.recordRun({
+			character: s.character,
+			wave: s.wave,
+			kills: s.totals.kills,
+			goldEarned: s.totals.goldEarned,
+			damageDealt: s.totals.damageDealt,
+			timeSec: s.totals.timeSec,
+		});
+		const data: GameOverData = {
+			character: s.character,
+			wave: s.wave,
+			totals: { ...s.totals },
+			abilities: s.abilities.map((a) => ({ ...a })),
+			items: [...s.items],
+			newBest,
+			bestWave: SaveSystem.get().best[s.character].wave,
+		};
+		this.time.delayedCall(GAME_OVER_DELAY_MS, () => this.scene.launch('GameOver', data));
 	}
 
 	/** Re-applies derived stats (speed, max HP…) after cards/items change the run. */
