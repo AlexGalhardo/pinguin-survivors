@@ -40,6 +40,9 @@ export class SpawnSystem {
 		this.markers = scene.add.group({ classType: Phaser.GameObjects.Image, maxSize: 400 });
 	}
 
+	/** Current wave modifier multipliers (swarm / armored / fast). */
+	mods = { spawn: 1, hp: 1, spd: 1 };
+
 	setWave(wave: number): void {
 		this.wave = wave;
 		this.budget = 0;
@@ -53,15 +56,15 @@ export class SpawnSystem {
 	/** Current multipliers for new enemies (wave scaling + overflow). */
 	scaling(): { hp: number; dmg: number; spd: number } {
 		return {
-			hp: hpMul(this.wave) * overflowHpMul(this.overflow),
+			hp: hpMul(this.wave) * overflowHpMul(this.overflow) * this.mods.hp,
 			dmg: dmgMul(this.wave),
-			spd: spdMul(this.wave),
+			spd: spdMul(this.wave) * this.mods.spd,
 		};
 	}
 
 	tick(dt: number, time: number): void {
 		if (this.enabled) {
-			this.budget += spawnRate(this.wave) * dt;
+			this.budget += spawnRate(this.wave) * this.mods.spawn * dt;
 			// The spawn rate is in enemies/s: a pack of runners consumes one unit per enemy.
 			while (this.budget >= 1) {
 				const type = pickEnemyType(this.wave, this.rng);

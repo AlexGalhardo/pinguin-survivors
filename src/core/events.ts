@@ -36,7 +36,7 @@ export interface GameEventMap {
 	[GameEvent.PlayerDied]: { canRevive: boolean };
 	[GameEvent.PlayerRevived]: undefined;
 	[GameEvent.GoldChanged]: { gold: number };
-	[GameEvent.WaveStarted]: { wave: number; duration: number };
+	[GameEvent.WaveStarted]: { wave: number; duration: number; modifier?: string | null };
 	[GameEvent.WaveTimer]: { wave: number; remaining: number };
 	[GameEvent.WaveEnded]: { wave: number };
 	[GameEvent.BossSpawned]: { maxHp: number };

@@ -27,3 +27,21 @@ describe('wave schedule', () => {
 		expect(isWaveComplete(3, false)).toBe(false);
 	});
 });
+
+describe('wave modifiers (beta)', () => {
+	it('never rolls before wave 6 or on boss waves, and sometimes rolls later', async () => {
+		const { rollWaveModifier, modifierMul } = await import('../src/logic/wave');
+		const { Rng } = await import('../src/logic/rng');
+		const rng = new Rng(3);
+		for (let i = 0; i < 200; i++) {
+			expect(rollWaveModifier(5, rng)).toBeNull();
+			expect(rollWaveModifier(20, rng)).toBeNull();
+		}
+		let rolled = 0;
+		for (let i = 0; i < 1000; i++) if (rollWaveModifier(7, rng)) rolled++;
+		expect(rolled).toBeGreaterThan(180);
+		expect(rolled).toBeLessThan(320);
+		expect(modifierMul(null)).toEqual({ spawn: 1, hp: 1, spd: 1 });
+		expect(modifierMul('swarm').spawn).toBeGreaterThan(1);
+	});
+});

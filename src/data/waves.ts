@@ -21,3 +21,18 @@ export const WAVE = {
 
 /** When elites appear inside their wave: first at 3 s, then every 6 s. */
 export const ELITE_SCHEDULE = { first: 3, every: 6 } as const;
+
+export type WaveModifier = 'swarm' | 'armored' | 'fast' | null;
+
+/** Occasional wave modifiers (Beta): multipliers over the normal wave. */
+export const WAVE_MODIFIERS: Record<
+	Exclude<WaveModifier, null>,
+	{ spawn: number; hp: number; spd: number }
+> = {
+	swarm: { spawn: 1.6, hp: 0.65, spd: 1 },
+	armored: { spawn: 0.85, hp: 1.5, spd: 0.9 },
+	fast: { spawn: 1, hp: 0.9, spd: 1.3 },
+};
+
+/** Modifiers start at this wave, never on boss waves, with this chance. */
+export const MODIFIER_RULES = { fromWave: 6, chance: 0.25 } as const;
