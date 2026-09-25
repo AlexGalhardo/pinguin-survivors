@@ -1,0 +1,232 @@
+[
+	{
+		"out": "player.warrior",
+		"src": "art-src/rd/player.warrior/2026-09-25T21-02-15-980Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]]
+	},
+	{
+		"out": "player.warrior.idle",
+		"src": "art-src/rd/player.warrior/2026-09-25T21-02-15-980Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0], [1, 0]]
+	},
+	{
+		"out": "player.warrior.walk",
+		"src": "art-src/rd/player.warrior/2026-09-25T21-02-15-980Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 1], [1, 1], [0, 1], [2, 1]],
+		"flip": false
+	},
+	{
+		"out": "player.ranger",
+		"src": "art-src/rd/player.ranger/2026-09-25T21-03-14-143Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]]
+	},
+	{
+		"out": "player.ranger.idle",
+		"src": "art-src/rd/player.ranger/2026-09-25T21-03-14-143Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0], [1, 0]]
+	},
+	{
+		"out": "player.ranger.walk",
+		"src": "art-src/rd/player.ranger/2026-09-25T21-03-14-143Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 1], [1, 1], [0, 1], [2, 1]],
+		"flip": true
+	},
+	{
+		"out": "player.mage",
+		"src": "art-src/rd/player.mage/2026-09-25T21-03-40-625Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]]
+	},
+	{
+		"out": "player.mage.idle",
+		"src": "art-src/rd/player.mage/2026-09-25T21-03-40-625Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0], [1, 0]]
+	},
+	{
+		"out": "player.mage.walk",
+		"src": "art-src/rd/player.mage/2026-09-25T21-03-40-625Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 1], [1, 1], [0, 1], [2, 1]],
+		"flip": true
+	},
+	{
+		"out": "enemy.chaser",
+		"src": "art-src/rd/enemy.chaser/2026-09-25T21-05-44-865Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	},
+	{
+		"out": "enemy.runner",
+		"src": "art-src/rd/enemy.runner/2026-09-25T21-05-56-343Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	},
+	{
+		"out": "enemy.shooter",
+		"src": "art-src/rd/enemy.shooter/2026-09-25T21-06-11-915Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	},
+	{
+		"out": "enemy.tank",
+		"src": "art-src/rd/enemy.tank/2026-09-25T21-06-29-744Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	},
+	{
+		"out": "enemy.boss",
+		"src": "art-src/rd/enemy.boss/2026-09-25T21-06-41-230Z_0.png",
+		"cell": [64, 64],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 64
+	},
+	{
+		"out": "tile.floor_0",
+		"src": "art-src/rd/tile.floor/2026-09-25T21-07-13-837Z_1.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"replace": {
+			"265c42": "262b44",
+			"193c3e": "262b44",
+			"5a6988": "3a4466",
+			"ff0044": "3a4466",
+			"f6757a": "3a4466",
+			"a22633": "3a4466",
+			"e43b44": "3a4466",
+			"733e39": "262b44",
+			"3e2731": "181425",
+			"8b9bb4": "3a4466",
+			"3a4466": "3a4466"
+		}
+	},
+	{
+		"out": "tile.floor_1",
+		"src": "art-src/rd/tile.floor/2026-09-25T21-07-13-837Z_1.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"flip": true,
+		"replace": {
+			"265c42": "262b44",
+			"193c3e": "262b44",
+			"5a6988": "3a4466",
+			"ff0044": "3a4466",
+			"f6757a": "3a4466",
+			"a22633": "3a4466",
+			"e43b44": "3a4466",
+			"733e39": "262b44",
+			"3e2731": "181425",
+			"8b9bb4": "3a4466",
+			"3a4466": "3a4466"
+		}
+	},
+	{
+		"out": "tile.wall",
+		"src": "art-src/rd/tile.floor/2026-09-25T21-07-13-837Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"replace": {
+			"193c3e": "262b44",
+			"a22633": "3a4466",
+			"e43b44": "3a4466",
+			"ff0044": "3a4466",
+			"f6757a": "5a6988",
+			"733e39": "3a4466"
+		}
+	},
+	{
+		"out": "tile.floor_2",
+		"src": "art-src/rd/tile.floor/2026-09-25T21-07-13-837Z_1.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"replace": {
+			"265c42": "262b44",
+			"193c3e": "262b44",
+			"5a6988": "3a4466",
+			"ff0044": "3a4466",
+			"f6757a": "3a4466",
+			"a22633": "3a4466",
+			"e43b44": "3a4466",
+			"733e39": "262b44",
+			"3e2731": "181425",
+			"8b9bb4": "3a4466",
+			"3a4466": "3a4466"
+		}
+	},
+	{
+		"out": "tile.floor_3",
+		"src": "art-src/rd/tile.floor/2026-09-25T21-07-13-837Z_1.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"flip": true,
+		"replace": {
+			"265c42": "262b44",
+			"193c3e": "262b44",
+			"5a6988": "3a4466",
+			"ff0044": "3a4466",
+			"f6757a": "3a4466",
+			"a22633": "3a4466",
+			"e43b44": "3a4466",
+			"733e39": "262b44",
+			"3e2731": "181425",
+			"8b9bb4": "3a4466",
+			"3a4466": "3a4466"
+		}
+	},
+	{
+		"out": "enemy.splitter",
+		"src": "art-src/rd/enemy.splitter/2026-09-25T21-09-50-664Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	},
+	{
+		"out": "enemy.bomber",
+		"src": "art-src/rd/enemy.bomber/2026-09-25T21-10-12-729Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	},
+	{
+		"out": "enemy.healer",
+		"src": "art-src/rd/enemy.healer/2026-09-25T21-10-30-630Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	},
+	{
+		"out": "enemy.burrower",
+		"src": "art-src/rd/enemy.burrower/2026-09-25T21-10-46-388Z_0.png",
+		"cell": [32, 32],
+		"frames": [[0, 0]],
+		"anchor": true,
+		"outline": true,
+		"size": 32
+	}
+]
