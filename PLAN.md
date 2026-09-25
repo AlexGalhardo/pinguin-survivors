@@ -190,11 +190,11 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - [x] Ducking da música em pausa/cartas/loja
 
 ### 2.7 UX e acessibilidade
-- [ ] Tutorial rápido na primeira run (WASD, auto-ataque, cartas, loja)
-- [ ] Tooltips de stats (o que cada stat faz) e comparação antes/depois ao escolher uma carta ou item
-- [ ] Opções: reduzir flashes, tamanho do texto de dano, pausar ao perder o foco da janela
-- [ ] Pausa automática ao trocar de aba (`visibilitychange`)
-- [ ] Suporte a gamepad (DualSense do PS5 / layout padrão): movimento analógico, menus, pausa e re-roll (pedido do usuário, D-36)
+- [x] Tutorial rápido na primeira run (WASD, auto-ataque, cartas, loja)
+- [x] Tooltips de stats (o que cada stat faz) e comparação antes/depois ao escolher uma carta ou item
+- [x] Opções: reduzir flashes, tamanho do texto de dano, pausar ao perder o foco da janela
+- [x] Pausa automática ao trocar de aba (`visibilitychange`)
+- [x] Suporte a gamepad (DualSense do PS5 / layout padrão): movimento analógico, menus, pausa e re-roll (pedido do usuário, D-36)
 
 ### 2.8 Balanceamento e performance
 - [ ] Rodar a simulação para as ondas 1–60 nas 3 classes; ajustar as curvas até atingir as metas §10
@@ -286,6 +286,7 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 - **2026-09-25 · v1.0.0-beta.4**: Juice: hit-stop (crit com cooldown, morte de elite e de boss), partículas do Phaser 4 em mortes/coleta/explosões, squash/stretch e bob no jogador e inimigos, transição pixelada entre cenas, presets de tremor calibrados (`src/data/juice.ts`) e setas nas bordas para boss e elites fora da tela.
 - **2026-09-25 · v1.0.0-beta.5**: Arte por código melhorada: sombreamento de 2–3 tons (rampas da Endesga 32) em jogadores e inimigos, sheets de idle (2f) e walk (4f) geradas por código com animações do Phaser, decoração da arena (rochas, cristais, dutos, ossos, crateras). Art spike do Higgsfield segue pendente (MCP não configurado).
 - **2026-09-25 · v1.0.0-beta.6**: SFX com parâmetros jsfxr congelados em `src/data/sfx-params.ts` (`bun scripts/gen-sfx.ts`); sequenciador chiptune próprio em Web Audio (lead quadrada, baixo triangular, arpejo, bateria de ruído) com músicas de menu, combate e boss, volume próprio e ducking em cartas/loja/pausa. Continua mudo com `SOUND_MUTED=true` (música validada só por testes e estado, sem ouvir).
+- **2026-09-25 · v1.0.0-beta.7**: Tutorial na primeira run (dicas na HUD, cartas e loja), tooltips de stats na loja, comparação antes/depois em cartas e itens, opções de acessibilidade (reduzir flashes, tamanho do texto de dano, pausar ao perder o foco), pausa automática ao trocar de aba e **suporte a gamepad** (DualSense/padrão: analógico, d-pad, ✕/◯/□/△/Options).
 
 ---
 
@@ -295,4 +296,5 @@ Stack: **TypeScript + Vite + Phaser 4.2.x (Arcade) + bun:test + jsfxr** sobre **
 
 - **Firefox e Edge (1.12)**: o Firefox não está instalado nesta máquina e o agent-browser travou ao abrir o Edge (`--executable-path`). Abrir `bun run dev` manualmente no Firefox e no Edge e conferir: tela cheia sem scroll, WebGL, sem erros no console. (O Edge usa o mesmo motor do Chrome, então o risco é baixo.)
 - **Playtest humano (1.12, 2.8)**: jogar uma run por classe e anotar o que está fácil/difícil. Para ouvir o jogo, trocar `SOUND_MUTED=false` no `.env`.
+- **Gamepad (2.7)**: suporte feito pela Gamepad API (mapeamento padrão) e validado com um controle simulado. Testar com o DualSense real: analógico esquerdo/d-pad movem, ✕ confirma, ◯ volta, □ re-roll, △ lock na loja, Options pausa. Se algum botão vier trocado no seu navegador, anotar qual.
 - **agent-browser**: o CLI global não está no PATH; o agente usa `bunx agent-browser@0.38.1`. Opcional: `bun add -g agent-browser` para deixar global.
