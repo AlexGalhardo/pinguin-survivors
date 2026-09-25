@@ -62,10 +62,12 @@ export class SpawnSystem {
 	tick(dt: number, time: number): void {
 		if (this.enabled) {
 			this.budget += spawnRate(this.wave) * dt;
+			// The spawn rate is in enemies/s: a pack of runners consumes one unit per enemy.
 			while (this.budget >= 1) {
-				this.budget -= 1;
 				const type = pickEnemyType(this.wave, this.rng);
-				this.queueGroup(type, groupSize(type, this.rng));
+				const size = groupSize(type, this.rng);
+				this.budget -= size;
+				this.queueGroup(type, size);
 			}
 		}
 
