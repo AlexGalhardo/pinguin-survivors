@@ -231,3 +231,35 @@ export function drawKeyArt(c: PixelCanvas): void {
 		c.px(hx, hy - 1, P.white);
 	}
 }
+
+export const FAVICON_SIZE = 32;
+
+/** Browser tab icon: the logo's falling star over a night tile with a sliver of planet. */
+export function drawFavicon(c: PixelCanvas): void {
+	const s = FAVICON_SIZE;
+	c.rect(1, 0, s - 2, s, P.void);
+	c.rect(0, 1, s, s - 2, P.void);
+	c.ellipse(s / 2, s + 20, 30, 28, P.navy);
+	c.ellipse(s / 2, s + 21, 29, 27, P.midnight);
+	for (let x = 0; x < s; x++) {
+		for (let y = 0; y < s; y++) if (c.colorAt(x, y) === P.navy && y > 20) c.px(x, y, P.blue);
+	}
+	for (let i = 16; i >= 3; i--) {
+		const t = i / 16;
+		const x = 20 - i;
+		const y = 14 - Math.round(i * 0.55);
+		const color = t > 0.6 ? P.orange : t > 0.3 ? P.amber : P.yellow;
+		c.px(x, y, color);
+		c.px(x, y + 1, color);
+	}
+	c.pattern(
+		17,
+		11,
+		['...#...', '..#Y#..', '.#YWY#.', '#YWWWY#', '.#YWY#.', '..#Y#..', '...#...'],
+		{
+			'#': P.amber,
+			Y: P.yellow,
+			W: P.white,
+		},
+	);
+}
