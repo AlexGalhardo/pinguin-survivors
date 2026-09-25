@@ -11,6 +11,8 @@ export interface Settings {
 	damageTextSize: number;
 	/** Pause the run when the window loses focus. */
 	pauseOnBlur: boolean;
+	/** Game speed during runs (1 = normal, 2 = double). */
+	gameSpeed: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -22,6 +24,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	reduceFlashes: false,
 	damageTextSize: 1,
 	pauseOnBlur: true,
+	gameSpeed: 1,
 };
 
 /** In-memory current settings shared by every scene. */

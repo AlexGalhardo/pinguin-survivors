@@ -103,11 +103,8 @@ export class GameScene extends Phaser.Scene {
 		const character = this.startCharacter ?? this.params.char ?? 'warrior';
 		this.state = createRunState(character, seed, this.params.wave ?? 1);
 		this.physics.resume();
-		// ?speed=N fast-forwards the whole run (automated playtests).
-		const speed = this.params.speed;
-		this.time.timeScale = speed;
-		this.tweens.timeScale = speed;
-		this.physics.world.timeScale = 1 / speed;
+		this.applySpeed();
+		this.events$.onScene(this, GameEvent.SettingsChanged, () => this.applySpeed());
 
 		const walls = createArena(this, this.rng);
 		this.physics.world.setBounds(PLAY_AREA.x, PLAY_AREA.y, PLAY_AREA.width, PLAY_AREA.height);
@@ -418,6 +415,16 @@ export class GameScene extends Phaser.Scene {
 		});
 	}
 
+	/** Current game speed: ?speed=N (playtests) or the Game speed setting (1x/2x). */
+	speed = 1;
+
+	private applySpeed(): void {
+		this.speed = this.params.speed > 1 ? this.params.speed : settings.gameSpeed >= 2 ? 2 : 1;
+		this.time.timeScale = this.speed;
+		this.tweens.timeScale = this.speed;
+		this.physics.world.timeScale = 1 / this.speed;
+	}
+
 	/** Chiptune music (null before boot). */
 	get music(): MusicSystem | null {
 		return MusicSystem.get();
@@ -608,7 +615,7 @@ export class GameScene extends Phaser.Scene {
 			if (this.hitStopMs > 0) return;
 			if (this.waves.inCombat || this.waves.phase === 'ending') this.physics.world.resume();
 		}
-		const dt = (Math.min(deltaMs, 50) / 1000) * this.params.speed;
+		const dt = (Math.min(deltaMs, 50) / 1000) * this.speed;
 		this.fx.update(dt);
 		if (this.runOver) return;
 		this.pickups.update(dt, this.stats.pickupRange);

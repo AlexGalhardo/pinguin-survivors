@@ -121,6 +121,7 @@ export function parseSave(json: string | null): SaveData {
 		reduceFlashes: bool(s.reduceFlashes, DEFAULT_SETTINGS.reduceFlashes),
 		damageTextSize: num(s.damageTextSize, DEFAULT_SETTINGS.damageTextSize) >= 2 ? 2 : 1,
 		pauseOnBlur: bool(s.pauseOnBlur, DEFAULT_SETTINGS.pauseOnBlur),
+		gameSpeed: num(s.gameSpeed, DEFAULT_SETTINGS.gameSpeed) >= 2 ? 2 : 1,
 	};
 	const best = (r.best ?? {}) as Partial<Record<CharacterId, Partial<BestRun>>>;
 	for (const c of CHARACTER_IDS) {

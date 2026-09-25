@@ -35,7 +35,7 @@ export class SettingsScene extends Phaser.Scene {
 
 	create(): void {
 		const dim = this.add.rectangle(0, 0, 10, 10, PALETTE.void, 0.8).setOrigin(0, 0);
-		const panel = addPanel(this, 0, 0, PANEL_W, 242);
+		const panel = addPanel(this, 0, 0, PANEL_W, 264);
 		const title = addText(this, 0, 0, MENU.settings, {
 			scale: 2,
 			color: PALETTE.amber,
@@ -92,6 +92,7 @@ export class SettingsScene extends Phaser.Scene {
 					onSelect: () => toggle('pauseOnBlur'),
 					onAdjust: () => toggle('pauseOnBlur'),
 				},
+				{ label: '', onSelect: () => this.gameSpeed(), onAdjust: () => this.gameSpeed() },
 				{ label: MENU.back, onSelect: () => this.close() },
 			],
 			PANEL_W - 16,
@@ -106,7 +107,7 @@ export class SettingsScene extends Phaser.Scene {
 		});
 		fitUiCamera(this, (view) => {
 			const cx = Math.round(view.width / 2);
-			const top = Math.round(view.height / 2 - 121);
+			const top = Math.round(view.height / 2 - 132);
 			dim.setSize(view.width, view.height);
 			panel.setPosition(cx - PANEL_W / 2, top);
 			title.setPosition(cx, top + 8);
@@ -147,6 +148,12 @@ export class SettingsScene extends Phaser.Scene {
 		);
 		this.menu.setLabel(6, `${MENU.reduceFlashes} ${onOff(settings.reduceFlashes)}`);
 		this.menu.setLabel(7, `${MENU.pauseOnBlur} ${onOff(settings.pauseOnBlur)}`);
+		this.menu.setLabel(8, `${MENU.gameSpeed} ${settings.gameSpeed >= 2 ? '2X' : '1X'}`);
+	}
+
+	private gameSpeed(): void {
+		settings.gameSpeed = settings.gameSpeed >= 2 ? 1 : 2;
+		this.changed();
 	}
 
 	private textSize(): void {

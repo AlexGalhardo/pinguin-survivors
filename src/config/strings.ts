@@ -204,6 +204,7 @@ export const MENU = {
 	small: 'SMALL',
 	reduceFlashes: 'REDUCE FLASHES',
 	pauseOnBlur: 'PAUSE ON BLUR',
+	gameSpeed: 'GAME SPEED',
 	on: 'ON',
 	off: 'OFF',
 	waveReached: 'WAVE',
