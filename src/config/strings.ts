@@ -111,6 +111,8 @@ export const EVOLVED_NAMES: Record<AbilityId, string> = {
 	nanite_swarm: 'GREY GOO',
 };
 
+export const MODIFIER_NAMES = { swarm: 'SWARM', armored: 'ARMORED', fast: 'FAST' } as const;
+
 export const TAG_NAMES: Record<Tag, string> = {
 	energy: 'ENERGY',
 	kinetic: 'KINETIC',

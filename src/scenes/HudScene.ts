@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../config/palette';
-import { STRINGS } from '../config/strings';
+import { MODIFIER_NAMES, STRINGS } from '../config/strings';
 import { type AbilitySlotInfo, bus, GameEvent } from '../core/events';
 import { fitUiCamera } from '../core/viewport';
 import { MAX_ABILITIES } from '../data/abilities';
@@ -81,9 +81,12 @@ export class HudScene extends Phaser.Scene {
 
 	private bindEvents(): void {
 		const events = bus(this.game);
-		events.onScene(this, GameEvent.WaveStarted, ({ wave, duration }) => {
+		events.onScene(this, GameEvent.WaveStarted, ({ wave, duration, modifier }) => {
 			this.setWave(wave, duration);
-			this.showBanner(`${STRINGS.wave} ${wave}`);
+			const mod = modifier
+				? ` - ${MODIFIER_NAMES[modifier as keyof typeof MODIFIER_NAMES] ?? ''}`
+				: '';
+			this.showBanner(`${STRINGS.wave} ${wave}${mod}`);
 		});
 		events.onScene(this, GameEvent.WaveEnded, () =>
 			this.showBanner(STRINGS.waveCleared, PALETTE.green),

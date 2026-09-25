@@ -403,7 +403,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private onEnemyContact(e: Enemy): void {
-		if (!e.active || e.contactCooldown > 0) return;
+		if (!e.active || e.contactCooldown > 0 || e.burrowed || e.damage <= 0) return;
 		if (this.combat.hurtPlayer(e.damage)) e.contactCooldown = CONTACT_COOLDOWN;
 	}
 
