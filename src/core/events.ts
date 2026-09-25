@@ -43,7 +43,7 @@ export interface GameEventMap {
 	[GameEvent.BossDied]: undefined;
 	[GameEvent.EnemyKilled]: { type: string; x: number; y: number };
 	[GameEvent.AbilitiesChanged]: { slots: AbilitySlotInfo[] };
-	[GameEvent.CardPicked]: { cardId: string };
+	[GameEvent.CardPicked]: { cardId: string; index: number };
 	[GameEvent.ShopClosed]: undefined;
 	[GameEvent.RunEnded]: undefined;
 	[GameEvent.SettingsChanged]: undefined;
