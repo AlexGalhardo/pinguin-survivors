@@ -7,3 +7,5 @@ Thumbs.db
 graphify-out/
 art-src/raw/
 .vite/
+.env
+.env.local

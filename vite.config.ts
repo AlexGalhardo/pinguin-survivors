@@ -7,6 +7,8 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 
 export default defineConfig({
 	base: './',
+	// SOUND_* variables from .env are exposed to the game (import.meta.env.SOUND_MUTED).
+	envPrefix: ['VITE_', 'SOUND_'],
 	define: {
 		__APP_VERSION__: JSON.stringify(pkg.version),
 	},

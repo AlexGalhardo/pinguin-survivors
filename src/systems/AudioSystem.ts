@@ -5,6 +5,9 @@ import { settings } from '../core/settings';
 import { AUDIO_RULES, SFX_PRESETS } from '../data/sfx';
 import { pitchRate, VoiceLimiter } from '../logic/voice-limiter';
 
+/** SOUND_MUTED=true in .env silences the whole game (quiet dev/test machine). */
+export const SOUND_MUTED = import.meta.env.SOUND_MUTED === 'true';
+
 /**
  * Procedural SFX (jsfxr): every sound of the catalog is rendered once to an AudioBuffer
  * at boot and played from the cache, with a voice limit, a minimum interval and pitch
@@ -77,13 +80,14 @@ export class AudioSystem {
 	}
 
 	setVolume(volume: number): void {
-		if (this.master) this.master.gain.value = Math.max(0, Math.min(1, volume));
+		if (!this.master) return;
+		this.master.gain.value = SOUND_MUTED ? 0 : Math.max(0, Math.min(1, volume));
 	}
 
 	play(key: SfxKey | string): void {
 		const ctx = this.ctx;
 		const buffer = this.buffers.get(key);
-		if (!ctx || !this.master || !buffer || ctx.state !== 'running') return;
+		if (SOUND_MUTED || !ctx || !this.master || !buffer || ctx.state !== 'running') return;
 		const preset = SFX_PRESETS[key as SfxKey];
 		const voices = preset?.voices ?? AUDIO_RULES.defaultVoices;
 		const now = ctx.currentTime * 1000;
