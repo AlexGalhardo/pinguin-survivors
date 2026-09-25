@@ -26,6 +26,7 @@ import { applyCard, generateCards } from '../logic/cards';
 import { Rng, randomSeed } from '../logic/rng';
 import { createRunState, type RunState, runStats } from '../logic/run-state';
 import { finalMaxHp, finalMoveSpeed, type Stats } from '../logic/stats';
+import { AbilitySystem } from '../systems/AbilitySystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
@@ -53,6 +54,7 @@ export class GameScene extends Phaser.Scene {
 	pickups!: PickupSystem;
 	weapons!: WeaponSystem;
 	waves!: WaveSystem;
+	abilities!: AbilitySystem;
 	/** True once the run ended (game over); gameplay updates stop. */
 	runOver = false;
 	private keys!: MoveKeys;
@@ -100,6 +102,8 @@ export class GameScene extends Phaser.Scene {
 		this.refreshStats();
 		this.weapons = new WeaponSystem(this);
 		this.waves = new WaveSystem(this);
+		this.abilities = new AbilitySystem(this);
+		this.syncAbilities();
 		this.setupCamera();
 
 		this.scene.launch('Hud');
@@ -141,6 +145,20 @@ export class GameScene extends Phaser.Scene {
 		applyCard(this.state, card, (s) => finalMaxHp(runStats(s)));
 		this.events$.emit(GameEvent.CardPicked, { cardId: card.id, index: 0 });
 		this.refreshStats();
+		this.syncAbilities();
+	}
+
+	syncAbilities(): void {
+		this.abilities.sync(this.state.abilities);
+		this.events$.emit(GameEvent.AbilitiesChanged, { slots: this.abilities.slots() });
+	}
+
+	/** Debug helper: learns or sets an ability level. */
+	debugAbility(id: string, level = 1): void {
+		const a = this.state.abilities.find((x) => x.id === id);
+		if (a) a.level = level;
+		else this.state.abilities.push({ id, level });
+		this.syncAbilities();
 	}
 
 	/** After the card: shop (1.10) and then the next wave. */
@@ -272,6 +290,7 @@ export class GameScene extends Phaser.Scene {
 			this.waves.update(dt);
 			this.spawner.tick(dt, time);
 			this.enemies.rebuildGrid();
+			this.abilities.update(dt);
 			this.enemies.update(dt);
 			this.weapons.update(dt);
 			this.enemyShots.update(dt);
