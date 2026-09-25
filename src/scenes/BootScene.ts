@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { installIcons, installPixelFont, installPlaceholders } from '../art/placeholders/install';
 import { getParams } from '../core/context';
+import { AudioSystem } from '../systems/AudioSystem';
 
 /** First scene: generates every placeholder texture and the bitmap font, then starts the game. */
 export class BootScene extends Phaser.Scene {
@@ -12,6 +13,7 @@ export class BootScene extends Phaser.Scene {
 		installPlaceholders(this);
 		installPixelFont(this);
 		installIcons(this);
+		AudioSystem.init(this.game);
 		const params = getParams(this);
 		if (params.debug) this.scene.launch('Debug');
 		this.scene.start('Game');
