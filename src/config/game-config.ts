@@ -1,12 +1,16 @@
 import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
+import { DebugScene } from '../scenes/DebugScene';
+import { GameScene } from '../scenes/GameScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
-	type: Phaser.AUTO,
+	type: Phaser.WEBGL,
 	parent: 'game',
 	backgroundColor: toCss(PALETTE.void),
 	pixelArt: true,
+	roundPixels: true,
+	antialias: false,
 	scale: {
 		mode: Phaser.Scale.RESIZE,
 		width: '100%',
@@ -16,5 +20,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		default: 'arcade',
 		arcade: { gravity: { x: 0, y: 0 }, debug: false },
 	},
-	scene: [BootScene],
+	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
+	disableContextMenu: true,
+	scene: [BootScene, GameScene, DebugScene],
 };
