@@ -12,7 +12,7 @@ export const SIM = {
 	/** Extra targets per point of Pierce (projectile weapons). */
 	pierceTargets: 0.6,
 	/** Average targets of area abilities. */
-	abilityTargets: { nova: 4, cryo: 3, laser: 3, drones: 2 },
+	abilityTargets: { nova: 4, cryo: 3, laser: 3, drones: 2, saw: 3, gravity: 5 },
 	/** Contact hits per second while the arena is under control (kiting chip damage). */
 	baseHitsPerSecond: 0.02,
 	/** Extra hits per second per fraction of the wave's HP left alive (overwhelmed). */

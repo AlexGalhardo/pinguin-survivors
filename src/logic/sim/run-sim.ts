@@ -1,14 +1,26 @@
-import { ABILITY_DATA, type AbilityId } from '../../data/abilities';
+import { ABILITY_DATA, type AbilityId, EVOLUTION } from '../../data/abilities';
 import type { Card } from '../../data/cards';
 import { CHARACTERS, type CharacterId } from '../../data/characters';
 import { ELITE, ENEMIES } from '../../data/enemies';
-import { getItem, itemMods } from '../../data/items';
+import { getItem } from '../../data/items';
 import { SIM } from '../../data/sim';
 import { WEAPONS } from '../../data/weapons';
-import { chainAt, cryoAt, dronesAt, laserAt, missilesAt, novaAt } from '../abilities';
+import {
+	chainAt,
+	cryoAt,
+	dronesAt,
+	gravityAt,
+	laserAt,
+	missilesAt,
+	nanitesAt,
+	novaAt,
+	sawAt,
+	turretAt,
+} from '../abilities';
+import { applyEvolutions, buildStats } from '../build';
 import { applyCard, generateCards } from '../cards';
 import { Rng } from '../rng';
-import { createRunState, type RunState, runStats } from '../run-state';
+import { createRunState, type RunState } from '../run-state';
 import { dmgMul, elitesForWave, hpMul, isBossWave, spawnRate, waveDuration } from '../scaling';
 import { buyOffer, generateShop } from '../shop';
 import { unlockedTypes } from '../spawn';
@@ -46,10 +58,11 @@ export function weaponDps(state: RunState, s: Stats): number {
 
 /** Expected DPS of the owned abilities. */
 export function abilitiesDps(state: RunState, s: Stats): number {
-	let dps = 0;
+	let total = 0;
 	const t = SIM.abilityTargets;
 	for (const a of state.abilities) {
 		const l = a.level;
+		let dps = 0;
 		switch (a.id as AbilityId) {
 			case 'orbital_drones': {
 				const d = dronesAt(l);
@@ -81,9 +94,32 @@ export function abilitiesDps(state: RunState, s: Stats): number {
 					(z.damage * ticks * t.laser) / (ABILITY_DATA.laser_beam.cooldown + z.duration);
 				break;
 			}
+			case 'arc_turret': {
+				const u = turretAt(l);
+				dps += (u.turrets * u.damage) / ABILITY_DATA.arc_turret.fireEvery;
+				break;
+			}
+			case 'saw_disc': {
+				const w = sawAt(l);
+				dps += (w.count * w.damage * t.saw) / ABILITY_DATA.saw_disc.cooldown;
+				break;
+			}
+			case 'gravity_well': {
+				const gw = ABILITY_DATA.gravity_well;
+				const ticks = gw.duration / gw.tick;
+				dps += (gravityAt(l).damage * ticks * t.gravity) / gw.cooldown;
+				break;
+			}
+			case 'nanite_swarm': {
+				const n = nanitesAt(l);
+				const ns = ABILITY_DATA.nanite_swarm;
+				dps += (n.targets * n.dps * ns.duration) / ns.cooldown;
+				break;
+			}
 		}
+		total += dps * (a.evolved ? EVOLUTION.damageMul * 1.3 : 1);
 	}
-	return abilityDamage(dps, s);
+	return abilityDamage(total, s);
 }
 
 /** Average enemy of the wave's pool, weighted by spawn weight. */
@@ -108,10 +144,10 @@ function averageEnemy(wave: number): { hp: number; damage: number; gold: number 
 
 /** Heuristic value of a card for the "good" strategy (DPS gain + survivability). */
 function scoreCard(state: RunState, card: Card): number {
-	const before = runStats(state, itemMods);
+	const before = buildStats(state);
 	const copy: RunState = structuredClone(state);
-	applyCard(copy, card, (s) => finalMaxHp(runStats(s, itemMods)));
-	const after = runStats(copy, itemMods);
+	applyCard(copy, card, (s) => finalMaxHp(buildStats(s)));
+	const after = buildStats(copy);
 	const dps = (x: RunState, s: Stats) => weaponDps(x, s) + abilitiesDps(x, s);
 	const dpsGain = dps(copy, after) / Math.max(1, dps(state, before)) - 1;
 	const ehp = (s: Stats) =>
@@ -122,16 +158,29 @@ function scoreCard(state: RunState, card: Card): number {
 }
 
 /** Simulates one run until death (or the wave cap). Deterministic for a seed. */
+export interface WaveTrace {
+	wave: number;
+	hp: number;
+	maxHp: number;
+	dps: number;
+	killed: number;
+	taken: number;
+	gold: number;
+	items: number;
+	abilities: string;
+}
+
 export function simulateRun(
 	character: CharacterId,
 	strategy: BuildStrategy,
 	seed: number,
+	trace?: (t: WaveTrace) => void,
 ): SimResult {
 	const rng = new Rng(seed);
 	const state = createRunState(character, seed);
 	for (let wave = 1; wave <= SIM.maxWave; wave++) {
 		state.wave = wave;
-		const s = runStats(state, itemMods);
+		const s = buildStats(state);
 		const maxHp = finalMaxHp(s);
 		const duration = waveDuration(wave);
 		const avg = averageEnemy(wave);
@@ -160,6 +209,17 @@ export function simulateRun(
 		const taken = hitsPerSecond * (1 - dodgeChance(s)) * perHit * duration;
 		const healed = s.hpRegen * duration + Math.min(10, s.lifesteal * 3) * duration;
 		state.hp = Math.min(maxHp, state.hp - taken + healed);
+		trace?.({
+			wave,
+			hp: Math.round(state.hp),
+			maxHp,
+			dps: Math.round(dps),
+			killed: Math.round(killed * 100) / 100,
+			taken: Math.round(taken),
+			gold: state.gold,
+			items: state.items.length,
+			abilities: state.abilities.map((a) => `${a.id}:${a.level}`).join(','),
+		});
 		if (state.hp <= 0) {
 			if (state.revives > 0) {
 				state.revives--;
@@ -185,7 +245,7 @@ export function simulateRun(
 				: cards.reduce((best, c) =>
 						scoreCard(state, c) > scoreCard(state, best) ? c : best,
 					);
-		applyCard(state, pick, (x) => finalMaxHp(runStats(x, itemMods)));
+		applyCard(state, pick, (x) => finalMaxHp(buildStats(x)));
 
 		// Shop
 		const offers = generateShop(rng, wave, s.luck);
@@ -200,7 +260,8 @@ export function simulateRun(
 				continue;
 			buyOffer(state, o);
 		}
-		state.hp = Math.min(state.hp, finalMaxHp(runStats(state, itemMods)));
+		applyEvolutions(state);
+		state.hp = Math.min(state.hp, finalMaxHp(buildStats(state)));
 	}
 	return { character, strategy, deathWave: SIM.maxWave + 1 };
 }
