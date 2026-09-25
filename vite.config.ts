@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8')) as {
@@ -11,6 +11,8 @@ export default defineConfig({
 	envPrefix: ['VITE_', 'SOUND_'],
 	define: {
 		__APP_VERSION__: JSON.stringify(pkg.version),
+		// Final art atlas (1.0): loaded only when it exists; placeholders cover the rest.
+		__HAS_ATLAS__: JSON.stringify(existsSync('public/assets/atlas.json')),
 	},
 	build: {
 		target: 'es2022',

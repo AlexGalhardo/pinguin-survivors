@@ -8,6 +8,7 @@ import { GameScene } from '../scenes/GameScene';
 import { HudScene } from '../scenes/HudScene';
 import { MainMenuScene } from '../scenes/MainMenuScene';
 import { PauseScene } from '../scenes/PauseScene';
+import { PreloadScene } from '../scenes/PreloadScene';
 import { RecordsScene } from '../scenes/RecordsScene';
 import { SettingsScene } from '../scenes/SettingsScene';
 import { ShopScene } from '../scenes/ShopScene';
@@ -34,6 +35,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	disableContextMenu: true,
 	scene: [
 		BootScene,
+		PreloadScene,
 		MainMenuScene,
 		CharacterSelectScene,
 		GameScene,
