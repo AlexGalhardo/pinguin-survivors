@@ -75,3 +75,23 @@ export function distToSegmentSq(
 	const dy = ay + aby * t - py;
 	return dx * dx + dy * dy;
 }
+
+export function turretAt(level: number) {
+	const d = ABILITY_DATA.arc_turret;
+	return { damage: atLevel(d.damage, level), turrets: Math.floor(atLevel(d.turrets, level)) };
+}
+
+export function sawAt(level: number) {
+	const d = ABILITY_DATA.saw_disc;
+	return { damage: atLevel(d.damage, level), count: Math.floor(atLevel(d.count, level)) };
+}
+
+export function gravityAt(level: number) {
+	const d = ABILITY_DATA.gravity_well;
+	return { damage: atLevel(d.damage, level), radius: atLevel(d.radius, level) };
+}
+
+export function nanitesAt(level: number) {
+	const d = ABILITY_DATA.nanite_swarm;
+	return { dps: atLevel(d.dps, level), targets: Math.floor(atLevel(d.targets, level)) };
+}

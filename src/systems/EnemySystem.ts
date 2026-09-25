@@ -12,6 +12,8 @@ const GRID_CELL = 64;
 /** Largest enemy radius, used to size the separation query. */
 const MAX_RADIUS = ENEMIES.boss.radius;
 const FLASH_TIME = 0.08;
+/** Damage-over-time tick (s). */
+const DOT_TICK = 0.5;
 
 /**
  * Owns the enemy pool and runs their steering every frame:
@@ -21,6 +23,8 @@ export class EnemySystem {
 	readonly group: Phaser.Physics.Arcade.Group;
 	readonly grid = new SpatialGrid<Enemy>(GRID_CELL, ARENA_W, ARENA_H);
 	private readonly neighbors: Enemy[] = [];
+	/** Damage-over-time hook (nanites): called every DOT_TICK with the damage to apply. */
+	onDot?: (e: Enemy, amount: number) => void;
 	/** Custom AI hook for special enemies (boss). Returns true when it handled the enemy. */
 	customAi?: (e: Enemy, dt: number) => boolean;
 
@@ -112,6 +116,19 @@ export class EnemySystem {
 				e.flashTime -= dt;
 				if (e.flashTime <= 0) e.restoreTint();
 			}
+			if (e.dotTime > 0) {
+				e.dotTime -= dt;
+				e.dotTick -= dt;
+				if (e.dotTick <= 0) {
+					e.dotTick = DOT_TICK;
+					this.onDot?.(e, e.dotDps * DOT_TICK);
+					if (!e.active) return;
+				}
+				if (e.dotTime <= 0) {
+					e.dotDps = 0;
+					e.restoreTint();
+				}
+			}
 			if (this.customAi?.(e, dt)) {
 				e.slow = 0;
 				return;
@@ -168,8 +185,10 @@ export class EnemySystem {
 				}
 			}
 
-			vx += e.knockX;
-			vy += e.knockY;
+			vx += e.knockX + e.pullX;
+			vy += e.knockY + e.pullY;
+			e.pullX = 0;
+			e.pullY = 0;
 			e.knockX *= decay;
 			e.knockY *= decay;
 			e.arcadeBody.setVelocity(vx, vy);

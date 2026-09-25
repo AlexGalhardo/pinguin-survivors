@@ -242,6 +242,51 @@ export const ICONS: Record<string, Draw> = {
 		c.rect(5, 4, 2, 2, P.steel);
 		c.rect(5, 9, 2, 2, P.steel);
 	},
+	arc_turret: (c) => {
+		c.rect(4, 9, 8, 5, P.slate);
+		c.rect(5, 10, 6, 3, P.steel);
+		c.rect(7, 4, 2, 6, P.darkSlate);
+		c.rect(6, 2, 4, 3, P.cyan);
+		c.px(7, 3, P.white);
+	},
+	saw_disc: (c) => {
+		c.circle(8, 8, 6, P.silver);
+		c.circle(8, 8, 2, P.darkSlate);
+		for (const [x, y] of [
+			[8, 1],
+			[15, 8],
+			[8, 15],
+			[1, 8],
+			[3, 3],
+			[13, 3],
+			[3, 13],
+			[13, 13],
+		] as const)
+			c.px(x, y, P.white);
+	},
+	gravity_well: (c) => {
+		c.ring(8, 8, 7, 1, P.plum);
+		c.ring(8, 8, 5, 1, P.orchid);
+		c.circle(8, 8, 2.5, P.void);
+		c.px(3, 6, P.white);
+		c.px(12, 10, P.white);
+	},
+	nanite_swarm: (c) => {
+		for (const [x, y] of [
+			[3, 4],
+			[7, 3],
+			[11, 5],
+			[4, 9],
+			[9, 8],
+			[12, 11],
+			[6, 12],
+			[10, 13],
+			[2, 12],
+		] as const) {
+			c.rect(x, y, 2, 2, P.green);
+		}
+		c.px(8, 8, P.yellow);
+	},
 	laser_beam: (c) => {
 		c.rect(0, 6, 16, 4, P.cyan);
 		c.rect(0, 7, 16, 2, P.white);

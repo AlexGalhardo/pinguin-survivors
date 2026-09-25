@@ -20,6 +20,8 @@ export const TEX = {
 
 	abilityDrone: 'ability.drone',
 	abilityMissile: 'ability.missile',
+	abilityTurret: 'ability.turret',
+	abilitySaw: 'ability.saw',
 	fxLightning: 'fx.lightning',
 	fxNova: 'fx.nova',
 	fxCryo: 'fx.cryo',

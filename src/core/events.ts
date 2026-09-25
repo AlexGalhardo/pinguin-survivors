@@ -26,6 +26,7 @@ export interface AbilitySlotInfo {
 	level: number;
 	/** 0..1 cooldown fill (1 = ready). */
 	ready: number;
+	evolved?: boolean;
 }
 
 /** Payload of each event. */

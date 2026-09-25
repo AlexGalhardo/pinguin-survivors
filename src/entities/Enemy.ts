@@ -9,6 +9,9 @@ export interface EnemyScaling {
 
 export type EliteMod = 'fast' | 'shielded' | 'volatile';
 
+/** Tint of enemies infected by nanites (Endesga green). */
+const INFECTED_TINT = 0x63c74d;
+
 /** Pooled enemy (Arcade sprite). Activated with spawn(), released with release(). */
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	def!: EnemyDef;
@@ -28,6 +31,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	slow = 0;
 	knockX = 0;
 	knockY = 0;
+	/** Per-frame pull velocity (gravity well); reset every frame by the system. */
+	pullX = 0;
+	pullY = 0;
+	/** Damage over time (nanites): damage per second and seconds left. */
+	dotDps = 0;
+	dotTime = 0;
+	dotTick = 0;
 	/** Seconds left of the white hit flash. */
 	flashTime = 0;
 	/** Free-form AI timers (boss patterns). */
@@ -66,6 +76,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 		this.slow = 0;
 		this.knockX = 0;
 		this.knockY = 0;
+		this.pullX = 0;
+		this.pullY = 0;
+		this.dotDps = 0;
+		this.dotTime = 0;
+		this.dotTick = 0;
 		this.flashTime = 0;
 		this.aiTimer = 0;
 		this.aiTimer2 = 0;
@@ -90,9 +105,17 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 		this.restoreTint();
 	}
 
+	/** Starts a damage-over-time effect (nanites). */
+	infect(dps: number, seconds: number): void {
+		this.dotDps = Math.max(this.dotDps, dps);
+		this.dotTime = Math.max(this.dotTime, seconds);
+		this.restoreTint();
+	}
+
 	restoreTint(): void {
 		this.setTintMode(Phaser.TintModes.MULTIPLY);
-		if (this.baseTint === null) this.clearTint();
+		if (this.dotTime > 0) this.setTint(INFECTED_TINT);
+		else if (this.baseTint === null) this.clearTint();
 		else this.setTint(this.baseTint);
 	}
 

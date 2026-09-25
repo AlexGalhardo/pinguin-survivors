@@ -250,6 +250,34 @@ export const PLACEHOLDERS: Record<TextureKey, PlaceholderSpec> = {
 			c.px(0, 2, P.yellow);
 		},
 	},
+	[TEX.abilityTurret]: {
+		w: 16,
+		h: 16,
+		draw: (c) => {
+			c.rect(3, 10, 10, 5, P.slate);
+			c.rect(4, 11, 8, 3, P.steel);
+			c.rect(7, 4, 2, 7, P.darkSlate);
+			c.circle(8, 4, 3, P.cyan);
+			c.px(7, 3, P.white);
+			c.outline(OUTLINE);
+		},
+	},
+	[TEX.abilitySaw]: {
+		w: 14,
+		h: 14,
+		draw: (c) => {
+			c.circle(7, 7, 6, P.silver);
+			c.circle(7, 7, 2, P.darkSlate);
+			for (const [x, y] of [
+				[7, 0],
+				[13, 7],
+				[7, 13],
+				[0, 7],
+			] as const) {
+				c.px(x, y, P.white);
+			}
+		},
+	},
 	[TEX.fxLightning]: {
 		w: 8,
 		h: 8,
