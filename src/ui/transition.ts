@@ -43,6 +43,8 @@ function blocks(scene: Phaser.Scene, cover: boolean, onDone?: () => void): void 
 export function pixelOut(scene: Phaser.Scene, onDone: () => void): void {
 	if (scene.data.get('transitioning')) return;
 	scene.data.set('transitioning', true);
+	// scene.data survives a stop/start; scenes without pixelIn (GameOver) would stay locked forever.
+	scene.events.once('shutdown', () => scene.data.set('transitioning', false));
 	blocks(scene, true, onDone);
 }
 
