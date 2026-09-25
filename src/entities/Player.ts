@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { anyDown, type MoveKeys } from '../core/input';
 import type { CharacterDef } from '../data/characters';
+import { ANIM } from '../data/juice';
 import { moveVector } from '../logic/movement';
 
 /** Collision circle of the player (the feet area of the 32x32 sprite). */
@@ -40,7 +41,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	/** Visual timers: hit flash and blinking while invulnerable. */
+	private animTime = 0;
+
 	tick(dt: number): void {
+		this.animTime += dt;
+		const moving = this.arcadeBody.velocity.lengthSq() > 1;
+		const wave = Math.sin(this.animTime * (moving ? ANIM.playerBobSpeed : 3));
+		const amount = moving ? ANIM.playerSquash : ANIM.playerBreath;
+		this.setScale(1 + wave * amount * 0.6, 1 - wave * amount);
 		if (this.hurtFlash > 0) {
 			this.hurtFlash -= dt;
 			if (this.hurtFlash <= 0) this.setTintMode(Phaser.TintModes.MULTIPLY).clearTint();

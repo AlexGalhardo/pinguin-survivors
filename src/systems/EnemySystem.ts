@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { TEX } from '../art/manifest';
 import { ARENA_H, ARENA_W, MAX_ENEMIES_ALIVE } from '../config/constants';
 import { ENEMIES, type EnemyDef, STEERING } from '../data/enemies';
+import { ANIM } from '../data/juice';
 import { GRID_TARGET_THRESHOLD } from '../data/weapons';
 import { Enemy, type EnemyScaling } from '../entities/Enemy';
 import { nearestLinear, SpatialGrid } from '../logic/spatial-grid';
@@ -111,7 +112,10 @@ export class EnemySystem {
 		});
 	}
 
+	private time = 0;
+
 	update(dt: number): void {
+		this.time += dt;
 		const px = this.target.x;
 		const py = this.target.y;
 		const decay = Math.exp(-STEERING.knockbackDecay * dt);
@@ -197,6 +201,8 @@ export class EnemySystem {
 			e.knockX *= decay;
 			e.knockY *= decay;
 			e.arcadeBody.setVelocity(vx, vy);
+			const bob = Math.sin(this.time * ANIM.enemyBobSpeed + e.bobPhase) * ANIM.enemySquash;
+			e.setScale(e.baseScale * (1 - bob * 0.5), e.baseScale * (1 + bob));
 			if (Math.abs(dx) > 2) e.setFlipX(dx < 0);
 		});
 	}

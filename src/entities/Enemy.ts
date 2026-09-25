@@ -46,6 +46,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	aiState = 0;
 	/** Tint restored after the hit flash (elites are tinted by modifier). */
 	baseTint: number | null = null;
+	/** Scale before the bob animation (elites are bigger). */
+	baseScale = 1;
+	/** Random phase so enemies do not bob in sync. */
+	bobPhase = 0;
 	/** Burrower underground: untargetable and harmless. */
 	burrowed = false;
 	/** Locked charge direction (boss). */
@@ -62,6 +66,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 		this.enableBody(true, x, y, true, true);
 		this.setActive(true).setVisible(true).setAlpha(1).setAngle(0).clearTint();
 		this.setScale(sizeMul);
+		this.baseScale = sizeMul;
+		this.bobPhase = Math.random() * Math.PI * 2;
 		this.radius = def.radius * sizeMul;
 		// The body is defined in unscaled texture space: Arcade multiplies it by the sprite scale.
 		this.setCircle(def.radius, this.width / 2 - def.radius, this.height / 2 - def.radius);
@@ -103,6 +109,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 		this.gold = ELITE.gold;
 		this.shield = mod === 'shielded' ? Math.round(this.maxHp * ELITE.shieldPct) : 0;
 		this.setScale(ELITE.size);
+		this.baseScale = ELITE.size;
 		this.radius = this.def.radius * ELITE.size;
 		this.baseTint = tint;
 		this.restoreTint();
