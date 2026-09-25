@@ -48,11 +48,15 @@ Decisões tomadas com o usuário na entrevista (`grill-me`, 2026-09-25). Para mu
 | D-42 | **Árvore de upgrades permanentes** em trilhas lineares de até 5 níveis: Vitality (+3 Max HP), Firepower (+3% Damage), Reflexes (+3% Attack Speed), Plating (+1 Armor, máx. 3), Fortune (+5 Luck), Magnet (+10 Pickup), Funding (+10 ouro inicial) e Second Wind (começa com 1 revive, 1 nível). Custos crescentes; bônus pequenos para não quebrar o balanceamento | Decisão do agente; modelo Brotato/VS de meta leve (D-22) |
 | D-43 | **Conquistas locais** (10), salvas no save v2 e mostradas na tela Records + toast na HUD | Decisão do agente (3.4) |
 | D-44 | **Elites só de tipos lentos/pesados** (Chaser, Shooter, Tank, Splitter), elite ×1.25 de dano e `fast` ×1.2; inimigo é repelido ao acertar; i-frames 0.5 s; Ranger 22 HP e Mage 18 HP | Playtest com bot: elite de Runner na onda 5 era impossível de despistar |
+| D-45 | **Retro Diffusion** vira a ferramenta padrão de arte (API v2 + `scripts/rd-generate.ts`/`rd-slice.ts`), com paleta Endesga 32 forçada, heróis em `rd_animation__small_sprites` e inimigos em `rd_plus__topdown_item`; PixelLab como fallback; Scenario, pixel-mcp e Higgsfield adiados | Pedido do usuário (testar RD/pixel-mcp/Scenario, ignorar Higgsfield); piloto de US$0,50 aprovado |
+| D-46 | **Buff Warrior** (+50% HP, dano, atk speed e alcance da Energy Blade), **buff Mage** (+25% HP, dano, atk speed e habilidades ×1.25), **nerf Ranger** (−20% HP, dano e atk speed) | Playtest humano do usuário |
+| D-47 | **Limite de 5 min por boss** (conta desde o spawn; o timer da HUD mostra o tempo do boss); tempo esgotado = game over "TIME UP" | Pedido do usuário |
+| D-48 | Gamepad aprovado no playtest real do usuário; seção "Backlog" removida do PLAN | Pedido do usuário |
 
 ## Em aberto (decidir quando a fase chegar)
 
 - [ ] Nome final do jogo (hoje é "Starfall Survivors").
 - [ ] Ferramenta de música no 1.0 (o Higgsfield gera música? Se não, qual ferramenta?).
 - [x] Conteúdo exato da árvore de upgrades permanentes (1.0): decidido em D-42.
-- [ ] Onde publicar o jogo no 1.0 (itch.io? GitHub Pages?).
-- [ ] Orçamento de créditos no Higgsfield.
+- [ ] Onde publicar o jogo no 1.0 — pesquisa em [game-market.md](game-market.md) (recomendação: itch.io primeiro).
+- [ ] Orçamento de créditos para arte (Retro Diffusion: ~US$3–4 cobrem o resto dos assets).

@@ -13,5 +13,7 @@
 | [decisions.md](decisions.md) | Decisões tomadas com o usuário (D-01…) e questões em aberto |
 | [tooling.md](tooling.md) | Skills instaladas, MCPs, libs npm, ferramentas externas |
 | [agent-workflow.md](agent-workflow.md) | Protocolo de sessão, convenções, definição de pronto, prompts prontos |
+| [art-prompts.md](art-prompts.md) | Histórico de prompts de arte por IA (ferramenta, estilo, seed, custo, resultado) |
+| [game-market.md](game-market.md) | Pesquisa de mercado: itch.io, Poki, CrazyGames (público, números, monetização, requisitos) |
 | [research.md](research.md) | Pesquisa de mercado com fontes (Phaser 4, Higgsfield, pixel art com IA, áudio) |
 | [git-and-versioning.md](git-and-versioning.md) | Conventional Commits, SemVer, hooks Husky, fluxo de push, estilo (Biome/TAB 4) |

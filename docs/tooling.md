@@ -19,7 +19,10 @@ Para restaurar numa máquina nova: `bunx skills experimental_install`.
 
 | MCP | Status | Notas |
 |---|---|---|
-| Higgsfield | `[~]` configurar no **1.0** | `claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp`, depois autenticar via `/mcp` (OAuth na conta do usuário, que consome créditos) |
+| Retro Diffusion | ✅ API v2 via `scripts/rd-generate.ts` (chave em `.env`); MCP opcional | Ver skill `starfall-art-assets` → `references/tools-setup.md` |
+| PixelLab | fallback (trial esgotado) | MCP `pixellab` já configurado no usuário |
+| Scenario / pixel-mcp (Aseprite) | não configurados | Passo a passo em `references/tools-setup.md` da skill |
+| Higgsfield | `[~]` adiado pelo usuário | `claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp`, depois autenticar via `/mcp` (OAuth na conta do usuário, que consome créditos) |
 | Phaser Game Agent | **não usar** | Pago e só em projetos na nuvem da Phaser (ver `research.md`) |
 
 ## Bibliotecas npm previstas

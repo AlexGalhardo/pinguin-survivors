@@ -17,7 +17,8 @@ Pixel art 32px, tema sci-fi retrô, tela cheia. Ondas infinitas → 3 cartas de 
 | Regras do jogo, classes, cartas, inimigos | [docs/game-design.md](docs/game-design.md) |
 | Fórmulas e números | [docs/balancing.md](docs/balancing.md) |
 | Estrutura do código e padrões | [docs/architecture.md](docs/architecture.md) |
-| Pixel art, paleta, pipeline Higgsfield | [docs/art-and-assets.md](docs/art-and-assets.md) |
+| Pixel art, paleta, pipeline de arte por IA | [docs/art-and-assets.md](docs/art-and-assets.md) · [docs/art-prompts.md](docs/art-prompts.md) · skill `.claude/skills/starfall-art-assets` |
+| Onde publicar (itch.io, Poki, CrazyGames) | [docs/game-market.md](docs/game-market.md) |
 | Sons | [docs/audio.md](docs/audio.md) |
 | Telas e HUD | [docs/ui-hud.md](docs/ui-hud.md) |
 | Por que algo foi decidido | [docs/decisions.md](docs/decisions.md) |
@@ -34,7 +35,7 @@ Pixel art 32px, tema sci-fi retrô, tela cheia. Ondas infinitas → 3 cartas de 
 2. Phaser **4** (a API mudou em relação ao v3). Skills de referência em `.claude/skills/`.
 3. Regras de jogo em `src/logic/` (TS puro, testado); números em `src/data/`; textos em `src/config/strings.ts`;
    cores em `src/config/palette.ts`; chaves de assets em `src/art/manifest.ts`.
-4. Alpha/Beta: arte 100% gerada por código (canvas). Assets finais (Higgsfield) só no 1.0, com as mesmas chaves.
+4. Placeholders por código (canvas) cobrem todas as chaves; a arte final (Retro Diffusion, via `scripts/rd-*.ts` + `pack-atlas.ts`) entra no atlas com as mesmas chaves e substitui o placeholder chave a chave. Todo prompt vai para `docs/art-prompts.md`.
 5. Tela cheia sem scroll, zoom inteiro, pixel-perfect. Pooling de objetos. Meta: 60 FPS com 300 inimigos.
 6. Valide visualmente no browser (agent-browser) com os query params de debug descritos em architecture.md.
 7. Mudou um número? Atualize docs/balancing.md. Tomou uma decisão de design? Registre em docs/decisions.md.

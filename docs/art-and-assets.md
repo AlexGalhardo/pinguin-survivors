@@ -16,7 +16,7 @@
 |---|---|
 | **Alpha** | 100% gerada por código (canvas / `Graphics.generateTexture`): formas simples em pixels, cores da paleta, fonte bitmap 5×7 desenhada por código. **Nenhum arquivo de imagem.** |
 | **Beta** | Placeholders melhores (ainda por código: silhuetas com sombreamento, frames de animação simples) + **art spike** opcional no Higgsfield para validar o pipeline `[~]`. |
-| **1.0** | Assets finais gerados no **Higgsfield** e pós-processados, trocados pelo contrato de chaves (`src/art/manifest.ts`). |
+| **1.0** | Assets finais gerados por IA (**Retro Diffusion**, D-45) já no grid de pixels, recortados/quantizados e trocados pelo contrato de chaves (`src/art/manifest.ts`). Higgsfield adiado. |
 
 ## Contrato de chaves (manifest)
 
@@ -43,7 +43,16 @@ font.pixel
 - UI: painel 9-slice, botão (normal/hover/pressed), 4 molduras de carta, barra de HP, ícones 16×16 (stats ~15, habilidades 6–10, itens 12–40)
 - Logo "Starfall Survivors" + key art do menu (a skill `canvas-design` pode compor a key art)
 
-## Pipeline Higgsfield → sprite pronto (1.0)
+## Pipeline Retro Diffusion → atlas (padrão desde 2026-09-25)
+
+O Retro Diffusion gera pixel art **nativa** (32 px de verdade, paleta forçada), então não precisa do downscale do pipeline abaixo. Passo a passo completo, estilos e preços na skill `.claude/skills/starfall-art-assets`.
+
+1. `bun scripts/rd-generate.ts --key <chave> --style <estilo> --size <px> --palette [--no-bg] [--sheet] --seed <n> --prompt "..."` → `art-src/rd/<chave>/` + `art-src/rd-log.jsonl`.
+2. Receita em `art-src/rd-slices.json` (células `[col,row]`, `flip`, `anchor`, `outline`, `replace`) → `bun scripts/rd-slice.ts` → `art-src/processed/<chave>.png`.
+3. `bun scripts/pack-atlas.ts` → `public/assets/atlas.{png,json}`; a `PreloadScene` troca o placeholder chave a chave.
+4. Registrar o prompt em [art-prompts.md](art-prompts.md) e conferir no jogo (agent-browser).
+
+## Pipeline Higgsfield/Scenario → sprite pronto (imagens que não estão no grid)
 
 A IA gera imagens "no estilo pixel art", mas **não** gera pixels num grid exato. Por isso todo asset passa por pós-processamento automático:
 

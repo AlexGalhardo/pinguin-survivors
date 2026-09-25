@@ -11,7 +11,8 @@ Stack: TypeScript + Vite + **Phaser 4.2.x** (Arcade Physics) + jsfxr, rodando em
    - Design do jogo → [docs/game-design.md](docs/game-design.md)
    - Números e fórmulas → [docs/balancing.md](docs/balancing.md)
    - Arquitetura e pastas → [docs/architecture.md](docs/architecture.md)
-   - Arte e assets → [docs/art-and-assets.md](docs/art-and-assets.md)
+   - Arte e assets → [docs/art-and-assets.md](docs/art-and-assets.md) · histórico de prompts → [docs/art-prompts.md](docs/art-prompts.md)
+   - Plataformas de publicação → [docs/game-market.md](docs/game-market.md)
    - Áudio → [docs/audio.md](docs/audio.md) · UI/HUD → [docs/ui-hud.md](docs/ui-hud.md)
    - Decisões do usuário → [docs/decisions.md](docs/decisions.md) · Ferramentas → [docs/tooling.md](docs/tooling.md)
    - Commits, versões e hooks → [docs/git-and-versioning.md](docs/git-and-versioning.md)
@@ -37,7 +38,7 @@ bun run check      # Biome (lint + format); check:fix corrige
 - Object pooling para inimigos, projéteis, pickups e números de dano. Meta: 60 FPS com 300 inimigos.
 - Verifique mudanças visíveis com a skill **agent-browser** (`?skipMenu=1&char=warrior&wave=5&seed=1&debug=1`).
 - Ao terminar: marque o checklist no PLAN.md e adicione 1–3 linhas curtas no Changelog.
-- Não use o Phaser MCP (Game Agent). O Higgsfield MCP só entra na fase 1.0.
+- Não use o Phaser MCP (Game Agent). Arte por IA: **Retro Diffusion** é a ferramenta padrão (`scripts/rd-generate.ts` → `rd-slice.ts` → `pack-atlas.ts`); siga a skill **`starfall-art-assets`** e registre todo prompt em [docs/art-prompts.md](docs/art-prompts.md). Higgsfield adiado.
 - **Conventional Commits 1.0.0** e **SemVer 2.0.0** obrigatórios. Micro-commits; ao concluir cada seção do PLAN:
   `docs(plan)` → `chore(release): X.Y.Z` + tag → `git push origin main --follow-tags`. Nunca `--no-verify`.
 - **Bun** no lugar de npm/node (`bun`, `bunx`); node/npm só se uma ferramenta não suportar Bun.
@@ -46,4 +47,4 @@ bun run check      # Biome (lint + format); check:fix corrige
 ## Skills úteis
 
 Phaser 4 (28, ex.: `physics-arcade`, `scenes`, `scale-and-responsive`, `particles`), `agent-browser` (QA),
-`canvas-design` (key art/logo), `graphify` (mapa do código), `find-skills`, `grilling` (entrevistar o usuário).
+`starfall-art-assets` (gerar/trocar arte com IA), `canvas-design` (key art/logo), `graphify` (mapa do código), `find-skills`, `grilling` (entrevistar o usuário).
