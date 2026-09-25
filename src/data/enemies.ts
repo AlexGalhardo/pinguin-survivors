@@ -122,3 +122,41 @@ export const STEERING = {
 	/** Shooter band around keepDistance where it stops moving. */
 	keepBand: 12,
 } as const;
+
+/** Elite multipliers over the base type (balancing §2). */
+export const ELITE = {
+	hp: 8,
+	damage: 1.5,
+	speed: 1.1,
+	size: 1.5,
+	gold: 15,
+	/** `fast` modifier: extra speed multiplier. */
+	fastSpeed: 1.4,
+	/** `shielded` modifier: shield = 30% of HP (absorbs damage first). */
+	shieldPct: 0.3,
+	/** `volatile` modifier: explodes on death. */
+	volatileRadius: 48,
+	volatileDamage: 10,
+	/** Delay between the death and the explosion (telegraph), seconds. */
+	volatileDelay: 0.5,
+} as const;
+
+/** Boss patterns (balancing §2). */
+export const BOSS = {
+	burstShots: 16,
+	burstEvery: 4,
+	burstSpeed: 110,
+	burstDamage: 8,
+	chargeEvery: 7,
+	chargeWarn: 1,
+	chargeSpeed: 280,
+	chargeDuration: 0.7,
+} as const;
+
+/** Wave transitions (seconds). */
+export const WAVE_FLOW = {
+	bannerTime: 1.2,
+	purgeCollectTime: 1.0,
+	/** Placeholder pause between waves until the card pick / shop exist. */
+	intermission: 1.0,
+} as const;

@@ -110,7 +110,7 @@ export class EnemySystem {
 			if (e.contactCooldown > 0) e.contactCooldown -= dt;
 			if (e.flashTime > 0) {
 				e.flashTime -= dt;
-				if (e.flashTime <= 0) e.setTintMode(Phaser.TintModes.MULTIPLY).clearTint();
+				if (e.flashTime <= 0) e.restoreTint();
 			}
 			if (this.customAi?.(e, dt)) {
 				e.slow = 0;

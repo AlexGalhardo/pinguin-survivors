@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { EnemyDef } from '../data/enemies';
+import { ELITE, type EnemyDef } from '../data/enemies';
 
 export interface EnemyScaling {
 	hp: number;
@@ -34,6 +34,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 	aiTimer = 0;
 	aiTimer2 = 0;
 	aiState = 0;
+	/** Tint restored after the hit flash (elites are tinted by modifier). */
+	baseTint: number | null = null;
+	/** Locked charge direction (boss). */
+	chargeX = 0;
+	chargeY = 0;
 
 	get arcadeBody(): Phaser.Physics.Arcade.Body {
 		return this.body as Phaser.Physics.Arcade.Body;
@@ -65,8 +70,30 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 		this.aiTimer = 0;
 		this.aiTimer2 = 0;
 		this.aiState = 0;
-		this.setDepth(5);
+		this.baseTint = null;
+		this.setDepth(def.type === 'boss' ? 6 : 5);
 		return this;
+	}
+
+	/** Turns this enemy into an elite with a modifier (balancing §2). */
+	makeElite(mod: EliteMod, tint: number): void {
+		this.elite = mod;
+		this.maxHp = Math.round(this.maxHp * ELITE.hp);
+		this.hp = this.maxHp;
+		this.damage *= ELITE.damage;
+		this.speed *= ELITE.speed * (mod === 'fast' ? ELITE.fastSpeed : 1);
+		this.gold = ELITE.gold;
+		this.shield = mod === 'shielded' ? Math.round(this.maxHp * ELITE.shieldPct) : 0;
+		this.setScale(ELITE.size);
+		this.radius = this.def.radius * ELITE.size;
+		this.baseTint = tint;
+		this.restoreTint();
+	}
+
+	restoreTint(): void {
+		this.setTintMode(Phaser.TintModes.MULTIPLY);
+		if (this.baseTint === null) this.clearTint();
+		else this.setTint(this.baseTint);
 	}
 
 	/** Returns the enemy to the pool. */
