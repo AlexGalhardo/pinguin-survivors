@@ -207,7 +207,9 @@ export function simulateRun(
 		);
 		const perHit = Math.max(1, avg.damage * dmgMul(wave) * (1 - armorReduction(s.armor)));
 		const taken = hitsPerSecond * (1 - dodgeChance(s)) * perHit * duration;
-		const healed = s.hpRegen * duration + Math.min(10, s.lifesteal * 3) * duration;
+		const healed =
+			Math.max(0, s.hpRegen) * duration +
+			Math.min(10, Math.max(0, s.lifesteal) * 3) * duration;
 		state.hp = Math.min(maxHp, state.hp - taken + healed);
 		trace?.({
 			wave,
