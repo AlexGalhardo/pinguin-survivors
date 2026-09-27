@@ -7,6 +7,7 @@ import {
 	type LifetimeStat,
 	RUN_BESTS,
 } from '../data/achievements';
+import { RESOLUTION_IDS, type ResolutionId } from '../data/display';
 import {
 	GAMBIT_CONDITIONS,
 	GAMBIT_SLOTS,
@@ -39,6 +40,7 @@ export interface Settings {
 	gore: GoreMode;
 	screenShake: boolean;
 	damageNumbers: boolean;
+	resolution: ResolutionId;
 }
 
 export interface HeroSave {
@@ -111,6 +113,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			gore: 'max',
 			screenShake: true,
 			damageNumbers: true,
+			resolution: 'auto',
 		},
 		heroes: Object.fromEntries(
 			HERO_IDS.map((h) => [h, { unlocked: h === 'jack', level: 1, xp: 0, points: {} }]),
@@ -179,6 +182,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		gore: oneOf(s.gore, ['max', 'reduced', 'goo'] as const, base.settings.gore),
 		screenShake: bool(s.screenShake, base.settings.screenShake),
 		damageNumbers: bool(s.damageNumbers, base.settings.damageNumbers),
+		resolution: oneOf(s.resolution, RESOLUTION_IDS, base.settings.resolution),
 	};
 
 	const rh = isObj(r.heroes) ? r.heroes : {};

@@ -11,10 +11,11 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	parent: 'game',
 	backgroundColor: toCss(PALETTE.night),
 	pixelArt: true,
+	// Size and zoom are driven by core/display.ts (render resolution setting).
 	scale: {
-		mode: Phaser.Scale.RESIZE,
-		width: '100%',
-		height: '100%',
+		mode: Phaser.Scale.NONE,
+		width: 1280,
+		height: 720,
 	},
 	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
 	disableContextMenu: true,
