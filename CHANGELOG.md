@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Balance: softer station biome (enemies 1–2 less damage, 5–10% less HP), sturdier Bob (120 HP, 6 armor, +1 damage per shotgun pellet) and a gentler kraken (less damage, slower swipes, 5-shot ink volley).
+
 ## [0.1.0-beta.7] - 2026-09-27
 
 Playtest build **playdev-6**.

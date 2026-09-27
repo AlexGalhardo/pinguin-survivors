@@ -231,7 +231,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] +6 armas secundárias (bumerangue de peixe, mina, anel de chamas, totem de raios, nuvem de veneno, besta perfurante) e 3 cartas on-hit novas (chance de queimar, gelar e eletrocutar em corrente)
 - [x] Obstáculos sólidos leves (P-11): as decorações do chão viram círculos sólidos (`src/logic/obstacles.ts` + testes); herói e inimigos que andam deslizam em volta (voadores e bosses ignoram)
 - [x] Recordes por herói (seleção) e conquistas dos biomas 2–3 (`bossBiome2`/`bossBiome3` ao matar Kraken/Abominação)
-- [~] Balanceamento com sim + playtest (metas §9): volta do endless, bosses 20/30 e saltos de bioma ajustados (§10.1); falta lote com prioridade de alvo no boss + cura de fim de round e mais seeds
+- [~] Balanceamento com sim + playtest (metas §9, critério de saída §9.1): endless, bosses, biomas, Bob e kraken ajustados (§10.1–10.2); pendente: Lucia L10 (#1), Bob L1 forte demais (#3), endless até o 60 (#4), EASY/HARD (#5) e equipamentos na sim
 
 ---
 

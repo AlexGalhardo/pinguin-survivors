@@ -273,3 +273,26 @@ Perfis: **bot médio** = reação 0,2 s e 5% de movimentos errados (proxy de um 
 Com o ajuste de ciclo/bosses, a sim prevê (L10, sem Oficina): Jack ~37, Lucia ~29, Bob ~22 (a sim subestima o Bob: o bot hábil com Bob L1 chegou ao 26). 1ª run do bot médio depois do ajuste: Jack L10 morreu no boss 20 (80% de HP restante) → o kraken continua sendo o funil do Jack.
 
 **Pendente:** (a) lote com a prioridade de alvo no boss/elite e a cura de fim de round (sistemas, `ROUND_END_HEAL`) e mais seeds; (b) velocidade dos inimigos por volta do endless (`speedMul` via mods de dificuldade); (c) conferir Bob/Lucia no bioma 2 e o boss 30.
+
+### 10.2 Estado ao fim da sessão (passadas b5–b7, bot médio, NORMAL)
+
+Com a prioridade de alvo boss/elite, a cura de 25% entre rounds, o alcance novo do Jack e o nerf do kraken (dano 22 → 17, patada a cada 3,2 s, rajada de 5):
+
+| Perfil | Jack | Bob | Lucia |
+|---|---|---|---|
+| L1, sem Oficina/poções | 20 / 20 (boss 20) | **45 / 51** | 24 |
+| L10, Oficina 2, poções | 55+ / 42 | 27 / 56+ | **24 / 26** |
+| L20, Oficina 4, poções | 55+ | 68+ | (inválido) |
+
+`+` = vivo no limite de tempo do bot. Runs da Lucia no b6 ficaram inválidas (o jogo andou ~0,3× por concorrência de CPU/GPU; repetida isoladamente, a run anda normalmente).
+
+Contra o critério §9.1: **#1** ✗ (Lucia morre nos rounds 24–26 com L10); **#2** Jack e Bob ✓, Lucia não medida; **#3** ✗ (Bob L1 chega aos rounds 45–51: forte demais para jogador novo); **#4** ✗ (Bob L20 passou do 60; falta o `speedPerLoop` e/ou dano por volta maior); **#5** não medido.
+
+**Próximos passos (pendentes):**
+1. Lucia: +sobrevivência (HP 85 → ~100, armadura 1 → 3) e medir de novo o #1.
+2. Bob: devolver parte do buff (escopeta cano duplo 8 → 7 por bago) e medir L1 com 2 seeds.
+3. Endless: `speedPerLoop` 1 → ~1,1 e/ou `dmgPerLoop` 1,5 → 1,8 até o #4 passar.
+4. Incluir no bot/sim os equipamentos e packs de vida (v0.1.0-beta.7, `src/data/equipment.ts`): o bot já os recebe do jogo real se forem automáticos; a sim ainda não os modela.
+5. Rodar o #5 (EASY/HARD) com L10.
+
+A política de cartas deixa de escolher a Nova Glacial como arma (ela só dispara quando o herói é atingido).
