@@ -101,3 +101,4 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 
 - Jack (`6babb578…`), Bob (`ae2516ed…`) e Lucia (`452419ff…`): `breathing-idle` (4 frames), `walking-8-frames` (8), `taking-punch` (6) e `falling-back-death` (7) em template nas 5 direções geradas + 3 espelhadas. Falta só o superpoder (1 direção, v3).
 - Walks de inimigos (template `scary-walk`, 8 frames): zombieSailor, zombieSeaLion completos; demais em geração.
+- Walks `scary-walk` completos também para fuelBloater, zombieWalrus, zombieNarwhal, zombieCitizen, zombieRiotCop e zombieSoldier.
