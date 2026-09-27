@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Playable horde loop with placeholder art: enemies spawn just outside the visible screen and crowd around the hero without stacking.
+- Six Antarctica zombie enemies and the Zombie Polar Bear boss on round 10, with a boss health bar and a 3 minute timer.
+- Purple and orange elite auras on elite rounds.
+- Signature tier 1 weapons: Jack's machete arcs, Bob's double-barrel shotgun spread and Lucia's elemental staff bolts.
+- Critical hits, armor, elemental resistances, dodge and parry, with floating damage numbers and blood puddles on the snow.
+- HUD with health bar, kills, round number and round timer.
+
 ## [0.1.0-alpha.1] - 2026-09-27
 
 ### Added
