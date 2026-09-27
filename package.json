@@ -1,8 +1,8 @@
 {
 	"name": "pinguin-survivors",
 	"private": true,
-	"version": "0.1.0-beta.3",
-	"buildName": "playdev-2",
+	"version": "0.1.0-beta.4",
+	"buildName": "playdev-3",
 	"type": "module",
 	"scripts": {
 		"dev": "bunx --bun vite",
