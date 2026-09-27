@@ -45,8 +45,8 @@ export const SIM = {
 	hits: { arc: 3.2, spread: 2.6, bolt: 1.6 },
 	/** Alive enemies at which the hero reaches half of that crowd factor (kiting = fewer targets). */
 	engageHalf: { arc: 75, spread: 30, bolt: 25 },
-	/** Share of the damage aimed at the boss while the horde keeps coming. */
-	bossFocus: 0.55,
+	/** Share of the damage aimed at the boss (weapons target it first when in range). */
+	bossFocus: 0.8,
 	/** Boss hits per second on the hero (telegraphed swipes, charges) and share that lands. */
 	bossHitRate: 0.33,
 	bossLand: 0.1,
@@ -334,6 +334,7 @@ export function simulateRun(config: SimConfig): SimResult {
 		}
 		perRound.push(taken);
 		if (isBossRound(round) && bossHp > 0) return result(round, true);
+		hp = Math.min(stats.maxHp, hp + stats.maxHp * ROUNDS.roundEndHeal);
 		fish += roundEndFish(round);
 		const offers = drawCards(rng, {
 			hero: config.hero,
