@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Difficulty levels picked on the hero select: easy (zombies deal, have, move and drop 25% less), normal and hard (25% more).
 - Extras shop: spend achievement points on ten small permanent bonuses for every penguin (max HP, regen, armor, critical chance and damage, dodge, parry, attack speed, damage, move speed), up to level 10 each.
 - Final art (PixelLab): the 9 signature weapons and the auxiliary pistol, XP gems, fish and meat pickups, and the orb, spit, molotov, grenade and meteor projectiles, packed into group atlases that replace the code placeholders key by key.
 

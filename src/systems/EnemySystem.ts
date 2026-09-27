@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { MAX_ENEMIES } from '../config/constants';
+import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
 import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { Enemy } from '../entities/Enemy';
 import { bossForRound } from '../logic/biome';
@@ -34,6 +35,8 @@ export class EnemySystem {
 	private readonly scratch: Enemy[] = [];
 	private spawnBudget = 0;
 	boss: Enemy | null = null;
+	/** Difficulty multipliers on enemy HP, damage and speed (P-62). */
+	mods: DifficultyMods = DIFFICULTY.normal;
 	/** Solid decorations walkers slide around (flyers and bosses ignore them). */
 	obstacles: ObstacleField | null = null;
 	private readonly tick: Tick = { bleed: 0, poison: 0, burn: 0 };
@@ -50,7 +53,16 @@ export class EnemySystem {
 	/** Extra spawn outside the normal flow (boss summons). */
 	spawnAt(def: EnemyDef, x: number, y: number): void {
 		if (this.active.length >= MAX_ENEMIES) return;
-		this.take().spawn(def, x, y, hpMul(this.round), dmgMul(this.round), null);
+		const m = this.mods;
+		this.take().spawn(
+			def,
+			x,
+			y,
+			hpMul(this.round) * m.hp,
+			dmgMul(this.round) * m.damage,
+			null,
+			m.speed,
+		);
 	}
 
 	startRound(round: number, hero: Vec2, view: { width: number; height: number }): void {
@@ -60,7 +72,16 @@ export class EnemySystem {
 			const def = bossForRound(round);
 			const p = spawnPosition(this.rng, hero, view.width * 0.6, view.height * 0.6);
 			this.boss = this.take();
-			this.boss.spawn(def, p.x, p.y, bossHpMul(round), dmgMul(round), null);
+			const m = this.mods;
+			this.boss.spawn(
+				def,
+				p.x,
+				p.y,
+				bossHpMul(round) * m.hp,
+				dmgMul(round) * m.damage,
+				null,
+				m.speed,
+			);
 		}
 	}
 
@@ -76,9 +97,10 @@ export class EnemySystem {
 				def,
 				p.x,
 				p.y,
-				hpMul(round),
-				dmgMul(round),
+				hpMul(round) * this.mods.hp,
+				dmgMul(round) * this.mods.damage,
 				rollElite(round, this.rng.next()),
+				this.mods.speed,
 			);
 		}
 

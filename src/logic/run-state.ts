@@ -1,4 +1,5 @@
 import type { HeroId } from '../config/constants';
+import type { Difficulty } from '../data/difficulty';
 import type { HeroDef } from '../data/heroes';
 import { roundDuration } from './round';
 import type { RunCounters } from './save';
@@ -7,6 +8,8 @@ import type { RunCounters } from './save';
 export interface RunState {
 	hero: HeroId;
 	tier: 1 | 2 | 3;
+	/** Chosen before the run (P-62); missing in snapshots older than the feature = normal. */
+	difficulty?: Difficulty;
 	seed: number;
 	round: number;
 	/** Seconds left in the current round. */
@@ -26,12 +29,13 @@ export interface RunState {
 
 export function createRunState(
 	hero: HeroDef,
-	opts: { seed: number; round?: number; tier?: 1 | 2 | 3 },
+	opts: { seed: number; round?: number; tier?: 1 | 2 | 3; difficulty?: Difficulty },
 ): RunState {
 	const round = opts.round ?? 1;
 	return {
 		hero: hero.id,
 		tier: opts.tier ?? 1,
+		difficulty: opts.difficulty ?? 'normal',
 		seed: opts.seed,
 		round,
 		timeLeft: roundDuration(round),

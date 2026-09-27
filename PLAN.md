@@ -161,6 +161,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ### 2.4 Desbloqueios e seleção
 - [x] Bob ao vencer o boss 10, Lucia ao vencer o boss 20 (banner na tela) e tela de desbloqueio dedicada (`UnlockScene`, depois da run)
 - [x] `HeroSelectScene` com retratos (concepts aprovados), bloqueio com dica de desbloqueio e nível
+- [x] Dificuldade EASY/NORMAL/HARD (P-62) na seleção: ±25% em dano, vida, velocidade e drops dos inimigos (`src/data/difficulty.ts`, `src/logic/difficulty.ts` + testes; `?difficulty=` no debug)
 
 ### 2.5 Menus e settings
 - [x] `MainMenuScene` (key art animada, carteira de Fish/pontos, versão no rodapé), `PauseScene` (Continuar / Configurações / Desistir com confirmação), `GameOverScene` (XP, levels, Fish, recorde; Enter = de novo, Esc = menu)

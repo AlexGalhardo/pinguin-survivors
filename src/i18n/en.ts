@@ -26,7 +26,16 @@ export const en = {
 	'select.unlockLucia': 'Beat the round 20 boss',
 	'select.level': 'Level {n}',
 	'select.best': 'Best: round {n}',
-	'select.start': 'ENTER  start · ← → choose · ESC back',
+	'select.start': 'ENTER  start · ← → hero · ↑ ↓ difficulty · ESC back',
+	'select.difficulty': '↑ DIFFICULTY: {v} ↓',
+	'difficulty.easy': 'EASY',
+	'difficulty.normal': 'NORMAL',
+	'difficulty.hard': 'HARD',
+	'difficulty.easy.desc':
+		'Zombies hit 25% softer, have 25% less HP, move 25% slower and drop 25% less fish/XP',
+	'difficulty.normal.desc': 'The intended challenge',
+	'difficulty.hard.desc':
+		'Zombies hit 25% harder, have 25% more HP, move 25% faster and drop 25% more fish/XP',
 	'role.jack': 'Melee · tanky · parry',
 	'role.bob': 'Firearms · fast · crits',
 	'role.lucia': 'Magic · fragile · elemental',

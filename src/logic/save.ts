@@ -7,6 +7,7 @@ import {
 	type LifetimeStat,
 	RUN_BESTS,
 } from '../data/achievements';
+import { DIFFICULTIES, type Difficulty } from '../data/difficulty';
 import { RESOLUTION_IDS, type ResolutionId } from '../data/display';
 import {
 	GAMBIT_CONDITIONS,
@@ -48,6 +49,8 @@ export interface Settings {
 	numberSize: NumberSize;
 	reducedFlashes: boolean;
 	keys: KeyBinds;
+	/** Last difficulty picked in the hero select (P-62). */
+	difficulty: Difficulty;
 	damageNumbers: boolean;
 	resolution: ResolutionId;
 }
@@ -126,6 +129,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			numberSize: 'normal',
 			reducedFlashes: false,
 			keys: { ...DEFAULT_BINDS },
+			difficulty: 'normal',
 			damageNumbers: true,
 			resolution: 'auto',
 		},
@@ -200,6 +204,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		numberSize: oneOf(s.numberSize, NUMBER_SIZES, base.settings.numberSize),
 		reducedFlashes: bool(s.reducedFlashes, base.settings.reducedFlashes),
 		keys: parseBinds(s.keys),
+		difficulty: oneOf(s.difficulty, DIFFICULTIES, base.settings.difficulty),
 		damageNumbers: bool(s.damageNumbers, base.settings.damageNumbers),
 		resolution: oneOf(s.resolution, RESOLUTION_IDS, base.settings.resolution),
 	};

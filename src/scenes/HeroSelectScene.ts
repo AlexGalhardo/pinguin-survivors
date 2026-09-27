@@ -2,8 +2,9 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { HERO_IDS, type HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
-import { getSave, setRunHero } from '../core/context';
+import { getSave, persist, setRunHero } from '../core/context';
 import { type I18nKey, t } from '../i18n';
+import { nextDifficulty } from '../logic/difficulty';
 import { setupScreen, text } from '../ui/screen';
 
 const UNLOCK_HINT: Record<HeroId, I18nKey | null> = {
@@ -26,7 +27,7 @@ export class HeroSelectScene extends Phaser.Scene {
 		const cards = HERO_IDS.map((hero) => {
 			const unlocked = save.heroes[hero].unlocked;
 			const frame = this.add
-				.rectangle(0, 0, 150, 190, 0x151a24, 0.95)
+				.rectangle(0, 8, 150, 214, 0x151a24, 0.95)
 				.setStrokeStyle(2, PALETTE.rarityCommon);
 			const hasPortrait = this.textures.exists(KEYS.portrait(hero));
 			const sprite = hasPortrait
@@ -61,6 +62,20 @@ ${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 		const help = this.add
 			.text(0, 0, t('select.start'), text(9, PALETTE.textDim))
 			.setOrigin(0.5, 0);
+		const diff = this.add.text(0, 0, '', text(12, PALETTE.crit)).setOrigin(0.5, 0);
+		const diffInfo = this.add.text(0, 0, '', text(8, PALETTE.textDim, 360)).setOrigin(0.5, 0);
+		const showDifficulty = () => {
+			const d = save.settings.difficulty;
+			diff.setText(t('select.difficulty', { v: t(`difficulty.${d}` as I18nKey) }));
+			diffInfo.setText(t(`difficulty.${d}.desc` as I18nKey));
+		};
+		const changeDifficulty = (dir: -1 | 1) => {
+			save.settings.difficulty = nextDifficulty(save.settings.difficulty, dir);
+			persist(this);
+			showDifficulty();
+		};
+		showDifficulty();
+		diff.setInteractive({ useHandCursor: true }).on('pointerdown', () => changeDifficulty(1));
 		const highlight = () =>
 			cards.forEach((c, i) => {
 				c.frame.setStrokeStyle(2, i === this.index ? PALETTE.crit : PALETTE.rarityCommon);
@@ -75,6 +90,10 @@ ${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 		kb?.on('keydown-A', () => move(-1));
 		kb?.on('keydown-RIGHT', () => move(1));
 		kb?.on('keydown-D', () => move(1));
+		kb?.on('keydown-UP', () => changeDifficulty(-1));
+		kb?.on('keydown-W', () => changeDifficulty(-1));
+		kb?.on('keydown-DOWN', () => changeDifficulty(1));
+		kb?.on('keydown-S', () => changeDifficulty(1));
 		kb?.on('keydown-ENTER', () => this.start());
 		kb?.on('keydown-SPACE', () => this.start());
 		kb?.on('keydown-ESC', () => this.scene.start('MainMenu'));
@@ -83,7 +102,9 @@ ${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 			cards.forEach((c, i) => {
 				c.box.setPosition(cx + (i - 1) * 170, cy);
 			});
-			help.setPosition(cx, cy + 120);
+			diff.setPosition(cx, cy + 124);
+			diffInfo.setPosition(cx, cy + 142);
+			help.setPosition(cx, cy + 170);
 		});
 		highlight();
 	}

@@ -58,6 +58,7 @@ export class Enemy implements Mover {
 		hpMul: number,
 		dmgMul: number,
 		elite: EliteTier | null,
+		speedMul = 1,
 	): void {
 		const e = elite ? ROUNDS.elite[elite] : null;
 		const scale = e?.scale ?? 1;
@@ -66,7 +67,7 @@ export class Enemy implements Mover {
 		this.y = y;
 		this.z = def.behavior === 'flyer' ? 18 : 0;
 		this.radius = def.radius * scale;
-		this.speed = def.speed;
+		this.speed = def.speed * speedMul;
 		this.maxHp = def.hp * hpMul * (e?.hp ?? 1);
 		this.hp = this.maxHp;
 		this.damage = def.damage * dmgMul * (e?.damage ?? 1);

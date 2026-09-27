@@ -9,6 +9,7 @@ import { GameInput } from '../core/input';
 import { playMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
 import { playVoice } from '../core/voice';
+import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
 import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { HEROES } from '../data/heroes';
@@ -26,6 +27,7 @@ import { biomeForRound, isBiomeStart } from '../logic/biome';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
+import { difficultyMods, scaleFish } from '../logic/difficulty';
 import { inArc } from '../logic/geometry';
 import { inputToWorld, isoDepth, worldToScreen } from '../logic/iso';
 import { ObstacleField, pushOut } from '../logic/obstacles';
@@ -111,6 +113,7 @@ export class GameScene extends Phaser.Scene {
 	speed: GameSpeed = 1;
 	private controls!: GameInput;
 	private obstacles!: ObstacleField;
+	private mods: DifficultyMods = DIFFICULTY.normal;
 	private voiceDirector = new VoiceDirector();
 	private readonly collideHero = (hero: Hero): void => {
 		pushOut(hero, HERO_RADIUS, this.obstacles.near(hero.x, hero.y, HERO_RADIUS));
@@ -214,7 +217,12 @@ export class GameScene extends Phaser.Scene {
 				save.achievements,
 			);
 			this.build = emptyBuild(tier);
-			this.run = createRunState(heroDef, { seed, round: params.round, tier });
+			this.run = createRunState(heroDef, {
+				seed,
+				round: params.round,
+				tier,
+				difficulty: params.difficulty ?? save.settings.difficulty,
+			});
 			this.run.maxHp = this.stats.maxHp;
 			this.run.hp = this.stats.maxHp;
 		}
@@ -333,6 +341,8 @@ export class GameScene extends Phaser.Scene {
 		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
 		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);
 		this.enemies.obstacles = this.obstacles;
+		this.mods = difficultyMods(this.run.difficulty);
+		this.enemies.mods = this.mods;
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
 
@@ -702,13 +712,15 @@ export class GameScene extends Phaser.Scene {
 		const kind = e.def.behavior === 'boss' ? 'boss' : e.elite ? 'elite' : 'common';
 		run.superCharge = addCharge(run.superCharge, chargeFor(kind));
 		if (this.superpower.active) this.superpower.killsThisCast++;
-		this.pickups.drop('xp', orbXp(e.def.xp, run.round), e.x, e.y);
+		this.pickups.drop('xp', orbXp(e.def.xp, run.round) * this.mods.rewards, e.x, e.y);
 		const f = ECONOMY.fish;
 		let fish = 0;
 		if (kind === 'boss') fish = f.bossPerCycle * (1 + cycle(run.round));
 		else if (e.elite === 'orange') fish = f.eliteOrange;
 		else if (e.elite === 'purple') fish = f.elitePurple;
 		else if (this.rng.next() < f.commonChance) fish = 1;
+		// Normal skips the extra roll so seeded runs keep the same RNG sequence.
+		if (fish > 0 && this.mods.rewards !== 1) fish = scaleFish(fish, this.mods, this.rng.next());
 		if (fish > 0) this.pickups.drop('fish', fish, e.x + 6, e.y + 6);
 		const p = this.build.perks;
 		if (
@@ -831,7 +843,7 @@ export class GameScene extends Phaser.Scene {
 		this.area.clear();
 		this.hostile.clear();
 		this.secondaries.clear();
-		this.run.fish += roundEndFish(this.run.round);
+		this.run.fish += Math.round(roundEndFish(this.run.round) * this.mods.rewards);
 		this.pickups.collectAll();
 		const offers = drawCards(this.rng, {
 			hero: this.run.hero,
