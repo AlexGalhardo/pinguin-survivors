@@ -185,9 +185,9 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Testes da lógica de pose/ângulo e do tempo do golpe vs. cadência (`tests/weapon-anim.test.ts`)
 
 ### 3.2 Simulação headless e balanceamento
-- [ ] `src/logic/sim/`: run simulada (herói, level, build aleatória por seed, rounds 1–30) usando as fórmulas reais (stats, combate, status, escala, spawn)
-- [ ] `scripts/sim.ts`: tabela por herói × level (1/10/30) com round médio de morte, DPS, dano recebido, Fish/XP por run
-- [ ] Ajustar `src/data` e `docs/balancing.md` pelas metas (§9); usar a skill `ccgs-balance-check`
+- [x] `src/logic/sim/run-sim.ts`: run simulada (herói, level, cartas por seed) com as fórmulas reais; [ ] calibrar o contato com o bot (hoje prevê rounds 3–4)
+- [x] `scripts/sim.ts` (tabela herói × level) e `scripts/playtest-bot.ts` (bot no jogo real, foge do grupo, 2×)
+- [x] 1ª passada de balanceamento pelo bot (balancing §10): heróis nível 1 morrem entre os rounds 7 e 10; [ ] passada com níveis 10/30 e cartas
 - [ ] Teste de sanidade da sim (determinística por seed)
 
 ### 3.3 Polimento de sistemas

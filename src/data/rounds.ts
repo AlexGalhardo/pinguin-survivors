@@ -20,8 +20,8 @@ export const ROUNDS = {
 		dmgPerRound: 0.08,
 		dmgPerCycle: 1.15,
 		bossHpPerCycle: 1.6,
-		spawnBase: 2,
-		spawnPerRound: 0.6,
+		spawnBase: 1.5,
+		spawnPerRound: 0.5,
 		spawnMax: 25,
 	},
 } as const;

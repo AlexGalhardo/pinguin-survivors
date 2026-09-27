@@ -4,7 +4,7 @@ import { createRunState, damageHero, healHero, startRound } from '../src/logic/r
 
 test('run starts with the hero profile and round timer', () => {
 	const s = createRunState(HEROES.lucia, { seed: 5, round: 3 });
-	expect(s.hp).toBe(70);
+	expect(s.hp).toBe(HEROES.lucia.hp);
 	expect(s.timeLeft).toBe(30);
 	startRound(s, 10);
 	expect(s.timeLeft).toBe(180);

@@ -155,3 +155,21 @@ Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de 
 - Run média de um jogador novo: morrer entre os rounds 6 e 9 (5–7 min).
 - Boss do round 10 vencível por ~50% dos jogadores com Jack level 5–8.
 - 60 FPS com 300 inimigos + 2.000 decalques de sangue.
+
+## 10. Calibração (2026-09-27)
+
+Ferramentas: `bun scripts/sim.ts [runs]` (modelo analítico, `src/logic/sim/run-sim.ts`) e `bun scripts/playtest-bot.ts <url> [runs] [segundos]` (bot no jogo real, 2×, foge do grupo mais próximo e escolhe a 1ª carta).
+
+Ajustes da 1ª passada (o jogo estava difícil demais: bot morria nos rounds 1–3):
+
+| O quê | Antes | Depois |
+|---|---|---|
+| Invulnerabilidade do herói após golpe | 0,35 s | **0,6 s** |
+| Dano de contato (pinguim/skua/foca/cientista/inchado/morsa/urso) | 6/5/12/8/20/16/30 | **4/3/8/6/14/12/25** |
+| Spawn | 2 + 0,6·N | **1,5 + 0,5·N** (teto 25) |
+| HP Bob / Lucia | 100 / 70 | **110 / 85** |
+| Escopeta cano duplo (cadência) | 0,9/s | **1,1/s** |
+| Cajado dos 4 elementos | 1,1/s, sem perfuração | **1,3/s, perfura 1** |
+
+Resultado do bot (nível 1, seed 100): Jack vivo no round 7 no limite de 4 min; Bob morre no **boss do round 10**; Lucia morre no round 9 → dentro da meta (§9: morrer entre 6 e 9).
+Pendente: o modelo analítico ainda prevê rounds 3–4 (não modela a fuga do jogador); calibrar `SIM.contactShare` com o bot antes de usá-lo para decisões finas.

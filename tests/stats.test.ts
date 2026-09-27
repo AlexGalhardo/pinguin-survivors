@@ -22,7 +22,7 @@ describe('stats', () => {
 
 	test('level growth and spent points', () => {
 		const lucia = heroStats(HEROES.lucia, 11, { crit: 4, maxHp: 2, bogus: 9 });
-		expect(lucia.maxHp).toBeCloseTo(70 + 1.5 * 10 + 10);
+		expect(lucia.maxHp).toBeCloseTo(HEROES.lucia.hp + 1.5 * 10 + 10);
 		expect(lucia.tagMul.magic).toBeCloseTo(1.5 + 0.06);
 		expect(lucia.crit).toBeCloseTo(0.05 + 0.02);
 		expect(heroStats(HEROES.jack, 1, {}).armor).toBe(12);

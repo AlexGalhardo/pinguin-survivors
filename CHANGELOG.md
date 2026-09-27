@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Gore mode (maximum, reduced, green goo), screen shake and damage number settings now apply in game.
+- First balance pass: longer invulnerability after a hit, lower contact damage, slower early spawns, more health for Bob and Lucia, faster shotgun and a piercing staff.
+- Menu, round and boss music now come from the ElevenLabs music model.
 
 ## [0.1.0-alpha.2] - 2026-09-27
 

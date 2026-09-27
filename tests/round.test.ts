@@ -57,7 +57,7 @@ describe('scaling', () => {
 	});
 
 	test('spawn rate is capped', () => {
-		expect(spawnRate(1)).toBeCloseTo(2.6);
+		expect(spawnRate(1)).toBeCloseTo(2);
 		expect(spawnRate(100)).toBe(25);
 	});
 });

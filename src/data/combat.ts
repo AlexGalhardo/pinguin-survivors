@@ -6,7 +6,7 @@ export const COMBAT = {
 	dodgeCap: 0.6,
 	parryCap: 0.4,
 	parryReflect: 0.5,
-	heroIFrames: 0.35,
+	heroIFrames: 0.6,
 	knockback: 140,
 } as const;
 

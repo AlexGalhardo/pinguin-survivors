@@ -36,7 +36,7 @@ export const HEROES: Record<HeroId, HeroDef> = {
 	bob: {
 		id: 'bob',
 		pixellabId: '61a0d0eb-21f7-4bc9-ac2d-69f42c8bcbd3',
-		hp: 100,
+		hp: 110,
 		regen: 0.4,
 		armor: 4,
 		moveSpeed: 135,
@@ -50,7 +50,7 @@ export const HEROES: Record<HeroId, HeroDef> = {
 	lucia: {
 		id: 'lucia',
 		pixellabId: '68a38f74-4a05-4de5-a38b-d990780b7414',
-		hp: 70,
+		hp: 85,
 		regen: 0.3,
 		armor: 1,
 		moveSpeed: 115,
