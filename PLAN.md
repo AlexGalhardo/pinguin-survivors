@@ -219,7 +219,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 - [x] `scripts/el-sfx.ts` + cliente `scripts/lib/elevenlabs.ts`; 18 SFX; `sfx()` com limite de vozes, pitch e volumes
 - [x] Música (plano Starter): `music.menu`, `music.round`, `music.boss` pela Music API; `core/music.ts` com crossfade e volume ao vivo
-- [ ] Canal de voz (`vo.*`) e gatilhos por evento (início de run, level up, HP baixo, poção, boss, morte) com legendas i18n — tocando placeholders silenciosos até 7.2
+- [x] Canal de voz (`vo.*`, `src/core/voice.ts`) e gatilhos por evento (início de run, level up, HP baixo, poção, boss, superpoder, morte) com `VoiceDirector` (cooldowns + intervalo global, testado), 2 falas por evento/herói e legendas i18n na HUD (opção em Configurações) — sem áudio até 7.2
 
 ---
 

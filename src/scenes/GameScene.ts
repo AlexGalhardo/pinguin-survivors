@@ -9,12 +9,14 @@ import { gamepadMove } from '../core/gamepad';
 import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
 import { playMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
+import { playVoice } from '../core/voice';
 import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { levelScale, PERKS } from '../data/secondaries';
 import { SUPER } from '../data/superpowers';
+import type { VoEvent } from '../data/voice';
 import { SIGNATURE, type SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
@@ -51,6 +53,7 @@ import { nextSpeed } from '../logic/speed';
 import { heroStats, type PlayerStats } from '../logic/stats';
 import { addCharge, chargeFor, superReady, superUnlocked } from '../logic/superpower';
 import { applyUpgrades } from '../logic/upgrades';
+import { VoiceDirector } from '../logic/voice';
 import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
 import { CombatSystem, HERO_RADIUS } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
@@ -109,6 +112,7 @@ export class GameScene extends Phaser.Scene {
 	speed: GameSpeed = 1;
 	private keys!: MoveKeys;
 	private obstacles!: ObstacleField;
+	private voiceDirector = new VoiceDirector();
 	private readonly collideHero = (hero: Hero): void => {
 		pushOut(hero, HERO_RADIUS, this.obstacles.near(hero.x, hero.y, HERO_RADIUS));
 	};
@@ -331,6 +335,9 @@ export class GameScene extends Phaser.Scene {
 		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
 
 		this.scene.launch('Hud');
+		this.voiceDirector = new VoiceDirector();
+		// After the HUD exists, so the subtitle is not lost.
+		this.time.delayedCall(700, () => this.say(this.enemies.boss ? 'boss' : 'runStart'));
 		this.events.once('shutdown', () => this.chunks.destroy());
 	}
 
@@ -364,6 +371,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.moving) this.weaponView.face(Math.atan2(move.y, move.x));
 		this.weaponView.update(dt, this.hero.x, this.hero.y);
 		healHero(run, this.stats.regen * dt);
+		if (this.voiceDirector.checkLowHp(run.hp / run.maxHp)) this.say('lowHp');
 		this.updatePotions(dt);
 
 		const grid = this.enemies.grid;
@@ -407,6 +415,11 @@ export class GameScene extends Phaser.Scene {
 				out.push({ x: e.x, y: e.y, radius: e.radius * 3, strength: 0.55 });
 		}
 		return out;
+	}
+
+	private say(event: VoEvent): void {
+		// Cosmetic roll: keeps the run RNG sequence deterministic per seed.
+		playVoice(this, this.voiceDirector, this.run.hero, event, Math.random());
 	}
 
 	private requestHitStop(seconds: number): void {
@@ -547,6 +560,7 @@ export class GameScene extends Phaser.Scene {
 		const run = this.run;
 		countRun(run, 'potionsUsed');
 		this.fx.play('sfx.potion');
+		this.say('potion');
 		this.potionsThisRound++;
 		if (this.potionsThisRound >= 3) addFeat(getSave(this), 'gambitTriple');
 		const e = POTION_EFFECTS;
@@ -726,6 +740,7 @@ export class GameScene extends Phaser.Scene {
 			this.levelsGained += gained;
 			this.fx.banner(this.hero.x, this.hero.y, 'fx.levelUp');
 			this.fx.play('sfx.levelUp');
+			this.say('levelUp');
 			if (!wasUnlocked && this.superIsUnlocked)
 				this.fx.banner(this.hero.x, this.hero.y, 'fx.superUnlocked');
 		}
@@ -739,6 +754,7 @@ export class GameScene extends Phaser.Scene {
 		this.combat.iFrames = Math.max(this.combat.iFrames, SUPER.invulnerable);
 		this.superpower.cast(this.run.hero, this.hero.x, this.hero.y, this);
 		this.fx.play('sfx.super');
+		this.say('super');
 		this.hero.super();
 	}
 
@@ -840,7 +856,10 @@ export class GameScene extends Phaser.Scene {
 		startRound(this.run, this.run.round + 1);
 		if (isBiomeStart(this.run.round)) this.enterBiome();
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
-		if (this.enemies.boss) this.fx.play('sfx.bossRoar');
+		if (this.enemies.boss) {
+			this.fx.play('sfx.bossRoar');
+			this.say('boss');
+		}
 		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
@@ -905,6 +924,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.deadFor >= 0) return;
 		this.outcome = outcome;
 		this.deadFor = 0;
+		if (outcome !== 'quit') this.say('death');
 		this.hero.die();
 		this.fx.bloodAt(this.hero.x, this.hero.y, 2);
 	}

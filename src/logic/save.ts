@@ -39,6 +39,7 @@ export interface Settings {
 	volume: { master: number; music: number; sfx: number; voice: number };
 	gore: GoreMode;
 	screenShake: boolean;
+	subtitles: boolean;
 	damageNumbers: boolean;
 	resolution: ResolutionId;
 }
@@ -112,6 +113,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			volume: { master: 0.8, music: 0.6, sfx: 0.8, voice: 0.8 },
 			gore: 'max',
 			screenShake: true,
+			subtitles: true,
 			damageNumbers: true,
 			resolution: 'auto',
 		},
@@ -181,6 +183,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		},
 		gore: oneOf(s.gore, ['max', 'reduced', 'goo'] as const, base.settings.gore),
 		screenShake: bool(s.screenShake, base.settings.screenShake),
+		subtitles: bool(s.subtitles, base.settings.subtitles),
 		damageNumbers: bool(s.damageNumbers, base.settings.damageNumbers),
 		resolution: oneOf(s.resolution, RESOLUTION_IDS, base.settings.resolution),
 	};

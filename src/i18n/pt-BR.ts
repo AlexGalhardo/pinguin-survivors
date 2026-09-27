@@ -1,10 +1,12 @@
 import { achPtBR } from './achievements.pt-BR';
 import { cardsPtBR } from './cards.pt-BR';
 import type { I18nKey } from './en';
+import { voicePtBR } from './voice.pt-BR';
 
 export const ptBR: Record<I18nKey, string> = {
 	...achPtBR,
 	...cardsPtBR,
+	...voicePtBR,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Carregando…',
 	'hud.round': 'ROUND {n}',
@@ -33,6 +35,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'settings.language': 'Idioma: {v}',
 	'settings.resolution': 'Resolução: {v}',
 	'settings.fullscreen': 'Tela cheia: {v}',
+	'settings.subtitles': 'Legendas das falas: {v}',
 	'settings.master': 'Volume geral: {v}',
 	'settings.music': 'Música: {v}',
 	'settings.sfx': 'Efeitos sonoros: {v}',

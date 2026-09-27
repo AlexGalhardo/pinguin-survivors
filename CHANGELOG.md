@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blood and gibs now stay on the ground for the whole run, with blood spurts and hit-stop on big hits.
 - Polar night darkness with light around the hero, fire, explosions and elites.
 - 18 sound effects (weapons, gore, pickups, level up, boss roar, superpower, menus, game over).
+- Hero voice lines with subtitles (run start, level up, low HP, potion, boss, superpower, death), two lines per event for each penguin; subtitles can be turned off in the settings.
 - Rocks, crates and rubble are now light solid obstacles: the hero and walking zombies slide around them.
 - Six new secondary weapons: fish boomerang, proximity mines, ring of fire, lightning totem, poison cloud and a piercing crossbow.
 - Three new on-hit cards: chance to burn, chill and chain lightning.

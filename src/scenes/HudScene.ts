@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
 import { PALETTE, toCss } from '../config/palette';
-import { getParams } from '../core/context';
+import { getParams, getSave } from '../core/context';
 import { GameEvents } from '../core/events';
 import { trackZoom } from '../core/viewport';
+import type { VoiceLine } from '../core/voice';
 import type { AchievementDef } from '../data/achievements';
 import { SUPER } from '../data/superpowers';
+import { VOICE } from '../data/voice';
 import { type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
 import { worldToScreen } from '../logic/iso';
@@ -97,9 +99,27 @@ export class HudScene extends Phaser.Scene {
 		const toast = new AchievementToast(this);
 		const onUnlock = (defs: AchievementDef[]) => toast.show(defs);
 		this.game.events.on(GameEvents.AchievementsUnlocked, onUnlock);
-		this.events.once('shutdown', () =>
-			this.game.events.off(GameEvents.AchievementsUnlocked, onUnlock),
-		);
+		const subtitle = this.add
+			.text(0, 0, '', { ...text(10, PALETTE.textLight), align: 'center' })
+			.setOrigin(0.5, 1)
+			.setVisible(false);
+		let subtitleTimer: Phaser.Time.TimerEvent | null = null;
+		const onVoice = (line: VoiceLine) => {
+			if (!getSave(this).settings.subtitles) return;
+			const name = t(`hero.${line.hero}` as I18nKey);
+			subtitle
+				.setText(`${name}: ${t(`vo.${line.hero}.${line.event}.${line.n}` as I18nKey)}`)
+				.setVisible(true);
+			subtitleTimer?.remove();
+			subtitleTimer = this.time.delayedCall(VOICE.subtitleSeconds * 1000, () =>
+				subtitle.setVisible(false),
+			);
+		};
+		this.game.events.on(GameEvents.Voice, onVoice);
+		this.events.once('shutdown', () => {
+			this.game.events.off(GameEvents.AchievementsUnlocked, onUnlock);
+			this.game.events.off(GameEvents.Voice, onVoice);
+		});
 
 		const cam = this.cameras.main;
 		trackZoom(this, cam, (view) => {
@@ -110,6 +130,7 @@ export class HudScene extends Phaser.Scene {
 			this.boss.setX(cx);
 			this.speedText.setX(view.width - 8);
 			this.superBox.setPosition(cx, view.height - 24);
+			subtitle.setPosition(cx, view.height - 46);
 			this.buildText.setY(view.height - 8);
 			this.potionText.setPosition(view.width - 8, view.height - 8);
 			this.eliteText.setX(cx);

@@ -93,6 +93,13 @@ export class SettingsScene extends Phaser.Scene {
 					},
 				},
 				{
+					label: () => t('settings.subtitles', { v: onOff(s.subtitles) }),
+					onAdjust: () => {
+						s.subtitles = !s.subtitles;
+						persist(this);
+					},
+				},
+				{
 					label: () => t('settings.numbers', { v: onOff(s.damageNumbers) }),
 					onAdjust: () => {
 						s.damageNumbers = !s.damageNumbers;

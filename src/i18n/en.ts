@@ -1,9 +1,11 @@
 import { achEn } from './achievements.en';
 import { cardsEn } from './cards.en';
+import { voiceEn } from './voice.en';
 
 export const en = {
 	...achEn,
 	...cardsEn,
+	...voiceEn,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
@@ -32,6 +34,7 @@ export const en = {
 	'settings.language': 'Language: {v}',
 	'settings.resolution': 'Resolution: {v}',
 	'settings.fullscreen': 'Fullscreen: {v}',
+	'settings.subtitles': 'Voice subtitles: {v}',
 	'settings.master': 'Master volume: {v}',
 	'settings.music': 'Music: {v}',
 	'settings.sfx': 'Sound effects: {v}',
