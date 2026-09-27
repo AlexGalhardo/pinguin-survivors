@@ -14,13 +14,14 @@
 
 | Asset | Canvas PixelLab | Conteúdo aprox. | Direções | Frames/anim |
 |---|---|---|---|---|
-| Herói (por tier) | 96×96 | ~64 px de altura | 8 | 12–16 |
-| Inimigo comum | 64×64 | ~48 px | 8 | 12 |
+| Herói (por tier) | 96×96 | ~88 px de altura (concepts aprovados) | 8 | 12–16 |
+| Inimigo comum | 64–80 | ~56–64 px | 8 | 12 |
 | Elite | mesmo sprite do inimigo, escala 1,25/1,4 + aura | — | 8 | 12 |
-| Boss | 128–192 | 128–192 px | 8 | 12–16 |
+| Boss | 160–256 | 160–256 px | 8 | 12–16 |
 | Tile de chão iso | 64×32 (tile) | — | — | — |
 | Decoração / objeto | 32–128 | — | 1 | — |
 | Arma secundária / projétil | 16–48 | — | 1 ou 8 | 8–12 |
+| Badge de conquista (`ui.achievement`) | 64×64 | — | 1 | — |
 | VFX (sangue, explosão, magia) | 32–128 | — | 1 | ≥ 12 |
 
 Tela lógica: altura 540, zoom inteiro (2560×1080 → ×2).

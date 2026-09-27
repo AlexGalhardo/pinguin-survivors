@@ -3,6 +3,8 @@ import type { HeroId } from '../config/constants';
 /** Level-1 hero profiles (docs/balancing.md §4). */
 export interface HeroDef {
 	id: HeroId;
+	/** Approved PixelLab concept (docs/art-prompts.md); tiers and animations derive from it. */
+	pixellabId: string;
 	hp: number;
 	regen: number;
 	armor: number;
@@ -19,6 +21,7 @@ export interface HeroDef {
 export const HEROES: Record<HeroId, HeroDef> = {
 	jack: {
 		id: 'jack',
+		pixellabId: '74719afa-d601-4428-8510-d199eef347de',
 		hp: 140,
 		regen: 0.8,
 		armor: 12,
@@ -32,6 +35,7 @@ export const HEROES: Record<HeroId, HeroDef> = {
 	},
 	bob: {
 		id: 'bob',
+		pixellabId: '61a0d0eb-21f7-4bc9-ac2d-69f42c8bcbd3',
 		hp: 100,
 		regen: 0.4,
 		armor: 4,
@@ -45,6 +49,7 @@ export const HEROES: Record<HeroId, HeroDef> = {
 	},
 	lucia: {
 		id: 'lucia',
+		pixellabId: '68a38f74-4a05-4de5-a38b-d990780b7414',
 		hp: 70,
 		regen: 0.3,
 		armor: 1,

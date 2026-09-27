@@ -20,4 +20,12 @@ Log bruto e completo em `art-src/pixellab/log.jsonl` (gerado pelos scripts). Aqu
 
 **Observações**: os v3 ocupam quase todo o canvas (~88 px de altura, acima da meta de ~64 px); os Pro saíram menores (~55–60 px) e com menos detalhe. As rotações v3 são consistentes nas 8 direções.
 
-**Status**: ⏳ aguardando aprovação do usuário (escolher 1 por herói + tamanho final). Nenhuma animação antes disso.
+**Status**: ✅ **aprovados pelo usuário em 2026-09-27** ("pode aprovar e seguir com esses concept arts na versão final"). Variantes escolhidas pelo agente (o usuário pode trocar):
+
+| Herói | Concept | character_id (PixelLab) | Seed |
+|---|---|---|---|
+| Jack | `jack-v3-a` | `74719afa-d601-4428-8510-d199eef347de` | 101 |
+| Bob | `bob-v3-a` | `61a0d0eb-21f7-4bc9-ac2d-69f42c8bcbd3` | 101 |
+| Lucia | `lucia-v3-b` | `68a38f74-4a05-4de5-a38b-d990780b7414` | 202 |
+
+Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 atualizado). Os tiers T2/T3 saem desses personagens via `/create-character-state`.
