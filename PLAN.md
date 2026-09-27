@@ -150,13 +150,13 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] XP e Fish da run somados ao save no fim da run (mantém tudo); level sobe ao vivo durante a run
 
 ### 2.2 Tela Hero (pontos, poções, upgrades)
-- [ ] Distribuir pontos de stat com prévia
-- [ ] Loja de poções (Fish) e upgrades permanentes
-- [ ] Editor de gambits: 3 slots, tipo + condição
+- [x] Distribuir pontos de stat com prévia (tela Heróis e Poções)
+- [x] Loja de poções (Fish); [ ] upgrades permanentes
+- [x] Editor de gambits: 3 slots, poção (← →) + condição (Enter)
 
 ### 2.3 Poções em jogo
-- [ ] `src/logic/potions.ts`: avaliação das condições em ordem a cada 0,25 s + testes
-- [ ] `PotionSystem`: efeitos (cura, mega cura, escudo, fúria, antídoto, pressa) + feedback na HUD
+- [x] `src/logic/potions.ts`: avaliação das condições em ordem a cada 0,25 s, estoque consumido/devolvido + testes
+- [x] Efeitos das poções no `GameScene` (cura, mega cura, escudo, fúria, antídoto, pressa) + slots na HUD; veneno no herói (cuspe do cientista)
 
 ### 2.4 Desbloqueios e seleção
 - [x] Bob ao vencer o boss 10, Lucia ao vencer o boss 20 (banner na tela); [ ] tela de desbloqueio dedicada
@@ -164,7 +164,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 2.5 Menus e settings
 - [x] `MainMenuScene` (key art animada, carteira de Fish/pontos, versão no rodapé), `PauseScene` (Continuar / Configurações / Desistir com confirmação), `GameOverScene` (XP, levels, Fish, recorde; Enter = de novo, Esc = menu)
-- [x] `SettingsScene`: idioma EN/PT-BR, **resolução (auto/SD/HD/FHD/2K/3K/4K)**, volumes, gore, tremor de tela, números de dano, exportar/importar save; [ ] aplicar gore/tremor/números no jogo; [ ] fullscreen
+- [x] `SettingsScene`: idioma EN/PT-BR, **resolução (auto/SD/HD/FHD/2K/3K/4K)**, volumes, gore, tremor de tela, números de dano, exportar/importar save; gore (reduzido/gosma), tremor e números de dano aplicados no jogo; [ ] fullscreen
 - [ ] Records (melhor round por herói)
 
 ### 2.6 i18n e balanceamento

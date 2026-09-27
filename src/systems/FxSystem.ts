@@ -1,8 +1,9 @@
-import type Phaser from 'phaser';
+import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
 import { type I18nKey, t } from '../i18n';
 import { isoDepth, worldToScreen } from '../logic/iso';
+import type { Settings } from '../logic/save';
 import { UI_FONT } from '../ui/font';
 import { GROUND_DEPTH } from '../world/ChunkManager';
 
@@ -28,9 +29,14 @@ export class FxSystem {
 	private bloodNext = 0;
 	private readonly slashes: { img: Phaser.GameObjects.Image; life: number }[] = [];
 
-	constructor(private readonly scene: Phaser.Scene) {}
+	constructor(
+		private readonly scene: Phaser.Scene,
+		private readonly settings: Settings,
+	) {}
 
 	damage(x: number, y: number, amount: number, crit: boolean, color?: number): void {
+		// Labels/banners call this with amount 0 and must still show.
+		if (!this.settings.damageNumbers && amount > 0) return;
 		let n = this.numbers.find((f) => f.life <= 0);
 		if (!n) {
 			if (this.numbers.length >= MAX_NUMBERS) return;
@@ -74,6 +80,8 @@ export class FxSystem {
 	}
 
 	bloodAt(x: number, y: number, size: number): void {
+		const gore = this.settings.gore;
+		if (gore === 'reduced' && Math.random() < 0.5) return;
 		let img = this.blood[this.bloodNext];
 		if (!img) {
 			img = this.scene.add.image(0, 0, KEYS.blood);
@@ -82,7 +90,10 @@ export class FxSystem {
 		this.bloodNext = (this.bloodNext + 1) % MAX_BLOOD;
 		const s = worldToScreen(x, y);
 		img.setPosition(Math.round(s.x), Math.round(s.y))
-			.setScale(size * (0.8 + Math.random() * 0.6))
+			.setScale(size * (gore === 'reduced' ? 0.6 : 1) * (0.8 + Math.random() * 0.6))
+			// FILL for goo: multiplying green over the red puddle would give black.
+			.setTint(gore === 'goo' ? PALETTE.goo : 0xffffff)
+			.setTintMode(gore === 'goo' ? Phaser.TintModes.FILL : Phaser.TintModes.MULTIPLY)
 			.setFlipX(Math.random() < 0.5)
 			.setDepth(GROUND_DEPTH + 1)
 			.setVisible(true);

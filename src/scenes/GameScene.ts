@@ -4,6 +4,7 @@ import type { GameSpeed, HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import { getParams, getRunHero, getSave, persist } from '../core/context';
 import { GameEvents } from '../core/events';
+import { shake } from '../core/feel';
 import { gamepadMove } from '../core/gamepad';
 import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
 import { trackZoom } from '../core/viewport';
@@ -167,7 +168,7 @@ export class GameScene extends Phaser.Scene {
 		kb?.on('keydown-P', () => this.pause());
 
 		this.chunks = new ChunkManager(this, seed, 'antarctica');
-		this.fx = new FxSystem(this);
+		this.fx = new FxSystem(this, save.settings);
 		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
 		this.hero = new Hero(this, heroId, tier, this.stats);
 		this.barrier = this.add.image(0, 0, KEYS.barrier).setVisible(false);
@@ -500,7 +501,7 @@ export class GameScene extends Phaser.Scene {
 		const c = Math.cos(angle);
 		const s = Math.sin(angle);
 		this.fx.slash(e.x, e.y, Math.atan2((c + s) / 2, c - s), reach * 1.4);
-		this.cameras.main.shake(120, 0.004);
+		shake(this, 120, 0.004);
 		if (inArc(e.x, e.y, angle, Math.PI * 0.8, reach, this.hero.x, this.hero.y, HERO_RADIUS))
 			this.combat.heroHit(e.damage * 1.5, true, undefined, e);
 	}
@@ -508,7 +509,7 @@ export class GameScene extends Phaser.Scene {
 	/** Boss roar: zombie penguins burst out around the bear. */
 	private summon(e: Enemy): void {
 		this.area.flash(e.x, e.y, 140, PALETTE.textLight, 0.5);
-		this.cameras.main.shake(300, 0.005);
+		shake(this, 300, 0.005);
 		for (let i = 0; i < 6; i++) {
 			const a = (i / 6) * Math.PI * 2;
 			this.enemies.spawnAt(

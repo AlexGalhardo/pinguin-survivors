@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
+import { shake } from '../core/feel';
 import { SUPER, SUPERPOWERS, type SuperpowerDef } from '../data/superpowers';
 import type { SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
@@ -56,7 +57,7 @@ export class SuperpowerSystem {
 		this.tick = 0;
 		this.killsThisCast = 0;
 		this.bombsLeft = this.def.explosions ?? 0;
-		scene.cameras.main.shake(250, 0.006);
+		shake(scene, 250, 0.006);
 		this.area.flash(
 			hx,
 			hy,
