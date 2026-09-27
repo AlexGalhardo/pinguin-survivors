@@ -79,7 +79,11 @@ await page.keyboard.press('Escape');
 await waitFor(page, 'back to the main menu', (p) => p.active.includes('MainMenu'));
 await page.waitForTimeout(300);
 // Play, Heroes & Potions, Workshop, Achievements, Match history.
-for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowDown');
+await page.waitForTimeout(700);
+for (let i = 0; i < 4; i++) {
+	await page.keyboard.press('ArrowDown');
+	await page.waitForTimeout(120);
+}
 await page.keyboard.press('Enter');
 await waitFor(page, 'match history lists the run', (p) => p.active.includes('History'));
 

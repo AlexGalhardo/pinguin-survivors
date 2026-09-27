@@ -3,8 +3,9 @@ import { PALETTE, toCss } from '../config/palette';
 import type { ViewSize } from '../logic/viewport';
 import { UI_FONT } from './font';
 
-export function buildLabel(version: string, dev: boolean): string {
-	return dev ? `v${version} (dev)` : `v${version}`;
+export function buildLabel(version: string, dev: boolean, name = ''): string {
+	const label = name ? `v${version} · ${name}` : `v${version}`;
+	return dev ? `${label} (dev)` : label;
 }
 
 /**
@@ -13,7 +14,7 @@ export function buildLabel(version: string, dev: boolean): string {
  */
 export function addVersionFooter(scene: Phaser.Scene): { layout: (view: ViewSize) => void } {
 	const text = scene.add
-		.text(0, 0, buildLabel(__APP_VERSION__, import.meta.env.DEV), {
+		.text(0, 0, buildLabel(__APP_VERSION__, import.meta.env.DEV, __BUILD_NAME__), {
 			fontFamily: UI_FONT,
 			fontSize: '8px',
 			color: toCss(PALETTE.textDim),

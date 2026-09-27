@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8')) as {
 	version: string;
+	buildName?: string;
 };
 
 /** Files under public/assets (relative, e.g. "assets/ui/x.png"): Boot loads only what exists. */
@@ -22,6 +23,8 @@ export default defineConfig({
 	envPrefix: ['VITE_', 'SOUND_'],
 	define: {
 		__APP_VERSION__: JSON.stringify(pkg.version),
+		// Playtest build nickname shown next to the version (package.json "buildName").
+		__BUILD_NAME__: JSON.stringify(pkg.buildName ?? ''),
 		// Final art atlas (1.0): loaded only when it exists; placeholders cover the rest.
 		__HAS_ATLAS__: JSON.stringify(existsSync('public/assets/atlas')),
 		__ASSET_FILES__: JSON.stringify(assetFiles()),

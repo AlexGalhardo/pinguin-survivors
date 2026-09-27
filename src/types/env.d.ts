@@ -11,6 +11,7 @@ interface ImportMeta {
 
 /** package.json version injected by Vite (SemVer build shown in the footer). */
 declare const __APP_VERSION__: string;
+declare const __BUILD_NAME__: string;
 /** True when public/assets/atlas/ (group atlases) exists at build time (final art available). */
 declare const __HAS_ATLAS__: boolean;
 
