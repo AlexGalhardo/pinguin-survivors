@@ -40,6 +40,7 @@ bun scripts/qa-browsers.ts           # QA do build (com `vite preview --port 417
 - Tela cheia sem scroll, **zoom inteiro pela altura** (altura lógica 540; 2560×1080 → ×2), `pixelArt: true`.
 - Object pooling para inimigos, projéteis, pickups, gibs, decalques e números. Meta: 60 FPS com 300 inimigos + 2.000 decalques.
 - Verifique mudanças visíveis com **agent-browser** (`?skipMenu=1&hero=jack&round=5&seed=1&debug=1`).
+- **Assets só no fim da Fase 7 (P-57):** até lá, nada de gerar arte/áudio novos; sistemas usam placeholders por código com as chaves do manifest.
 - **Arte: PixelLab** (skill `pinguin-art-assets`). Todo personagem novo passa por **concept → aprovação do usuário → animação**. Vista `low top-down`, 8 direções (**5 geradas + 3 espelhadas**); animações **`template`** (1 geração/direção). **Ataques estilo Brotato (P-56):** herói animado **sem arma**; a arma é um sprite separado animado por código, e cada tier é só uma nova imagem de arma. Registre prompts em docs/art-prompts.md. `GET /balance` antes de lotes.
 - **Áudio: ElevenLabs** (skill `pinguin-audio-assets`).
 - Chaves (`PIXELLAB_API_TOKEN`, `ELEVENLABS_API_KEY`) **só no `.env`**; `TODO.md` é local (gitignored).

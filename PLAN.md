@@ -18,11 +18,11 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 | 0 | `0.1.0-alpha.1` | Refundação: entrevista, docs, limpeza, pipeline PixelLab, concepts dos heróis |
 | 1 | `0.1.0-alpha.N` | Engine iso + loop jogável com placeholders (herói, hordas, combate, rounds, cartas, boss) |
 | 2 | `0.1.0-alpha.N` | RPG e meta: save, level 1–100, pontos, Fish, poções/gambits, desbloqueios, menus, i18n |
-| 3 | `0.1.0-beta.N` | Arte PixelLab: heróis (3 tiers), inimigos, boss, tiles, VFX, UI |
+| 3 | `0.1.0-beta.N` | Armas estilo Brotato, simulação headless e balanceamento, polimento de sistemas |
 | 4 | `0.1.0-beta.N` | Gore persistente, iluminação estilo D4, juice |
 | 5 | `0.1.0-beta.N` | Áudio ElevenLabs: SFX, música metal, vozes EN/PT-BR |
 | 6 | `0.1.0-beta.N` | Conteúdo endless: biomas 2–3, pool de bosses, mais armas/cartas, balanceamento |
-| 7 | `1.0.0-rc.N` → `1.0.0` | Polish, QA, performance, release |
+| 7 | `1.0.0-rc.N` → `1.0.0` | QA e RC com placeholders; **só então** produção e troca de todos os assets finais; release |
 
 **Ordem acordada (P-34):** concepts aprovados → loop jogável com placeholders → animações e assets finais em paralelo. A Fase 3 pode começar assim que os concepts forem aprovados, intercalada com as Fases 1–2.
 
@@ -174,43 +174,28 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ---
 
-## FASE 3 — BETA: arte PixelLab
+## FASE 3 — BETA: armas estilo Brotato, simulação e balanceamento (placeholders)
 
-> Siga a skill `pinguin-art-assets`. `GET /balance` antes de cada lote; piloto de 1 direção antes de lotes grandes.
+> **Regra do usuário (P-57, 2026-09-27): nenhum asset novo até o fim da Fase 7.** Tudo com placeholders por código usando as chaves do manifest; arte e áudio finais entram só na seção 7.2.
 
-### 3.1 Heróis
-- [ ] (depende da aprovação 0.2) Regerar/ajustar os escolhidos no tamanho final, se preciso
-- [x] Piloto: `walk` de Jack T1 em 1 direção nos modos v3 (12 frames, 45 gerações), template (6 frames, 1) e skeleton-v3 (6 frames, 3) → anotado em art-and-assets
-- [x] `scripts/pl-animate.ts` (modo v3 por direção, `--fetch` para baixar frames); [ ] suporte a `template`/`skeleton-v3` e espelhamento de direções
-- [ ] Jack T1: idle, walk, attack, hurt, death, super × 8 dir
-- [ ] Jack T2 (katana) e T3 (espada-motosserra) via `/create-character-state` + animações
-- [ ] Bob T1–T3 (escopeta cano duplo → automática → foguete) + animações
-- [ ] Lucia T1–T3 (cajado dos 4 elementos → arcano → Quatro Tempestades) + animações
-- [ ] Retratos dos heróis para HeroSelect/HUD
+### 3.1 Armas como sprites separados (P-56)
+- [ ] `WeaponView`: sprite da arma assinada ao lado do herói, mira no alvo, animação por código (corte em arco com rastro, recuo + clarão de tiro, brilho/pulso do cajado)
+- [ ] Placeholders por código das 9 armas assinadas (T1–T3 × 3 heróis) e das secundárias visíveis na mão (pistola)
+- [ ] Remover a dependência de animação de ataque do herói (`Hero.attack` só vira para o alvo); corpo sem arma no placeholder
+- [ ] Testes da lógica de mira/ângulo e do tempo de animação vs. cadência
 
-### 3.2 Inimigos e boss (Antártida)
-- [ ] Concepts dos 6 inimigos (64 px) → **aprovação do usuário**
-- [ ] Animações walk/attack/death × 8 dir dos 6 inimigos
-- [ ] Concept do boss urso polar (128–192 px) → aprovação → idle/walk/attack/special/death × 8 dir
+### 3.2 Simulação headless e balanceamento
+- [ ] `src/logic/sim/`: run simulada (herói, level, build aleatória por seed, rounds 1–30) usando as fórmulas reais (stats, combate, status, escala, spawn)
+- [ ] `scripts/sim.ts`: tabela por herói × level (1/10/30) com round médio de morte, DPS, dano recebido, Fish/XP por run
+- [ ] Ajustar `src/data` e `docs/balancing.md` pelas metas (§9); usar a skill `ccgs-balance-check`
+- [ ] Teste de sanidade da sim (determinística por seed)
 
-### 3.3 Mundo
-- [ ] Tiles iso 64×32 da Antártida (neve, gelo, neve suja, rocha) com variações
-- [ ] Decorações (blocos de gelo, carcaças, placas, barris, destroços da base)
-
-### 3.4 Armas, projéteis e pickups
-- [ ] Sprites das secundárias e projéteis (bagos, foguete, 4 elementos, facas, molotov, drone)
-- [ ] Orbe de XP, Fish, ícones de poções
-
-### 3.5 VFX (≥ 12 frames)
-- [ ] Jorros de sangue (3 variações), decalques de poça (8+ variações), gibs (pedaços por tipo de inimigo)
-- [ ] Explosões, impactos, 4 elementos, auras de elite roxa/laranja, level up, cura
-- [ ] **VFX exclusivos dos superpoderes**: Colheita Rubra (Jack), Bombardeio (Bob), Cataclismo Elemental (Lucia)
-- [ ] VFX das cartas exclusivas (redemoinho, pisão, drone, granada, corrente arcana, nova glacial, meteoros, barreira, nuvem tóxica)
-
-### 3.6 UI e integração
-- [ ] Painéis, botões, molduras de carta por raridade, ícones de stats/cartas (`/create-ui-asset`), logo
-- [ ] `pack-atlas` por grupo (heróis, bioma, fx, ui) + carregamento sob demanda por herói/bioma
-- [ ] Trocar todos os placeholders pelas chaves finais; QA visual a 2560×1080
+### 3.3 Polimento de sistemas
+- [ ] Zoom-punch do boss, luz nos projéteis mágicos e bloom (filtros do Phaser 4)
+- [ ] Performance: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 (medir e anotar)
+- [ ] Tela de desbloqueio dedicada (Bob/Lucia) e fullscreen nas configurações
+- [ ] Loja de extras das conquistas: mecânica pronta; itens a definir com o usuário
+- [ ] Auditoria de i18n (nenhum texto fora de `src/i18n`; skill `ccgs-localize`)
 
 ---
 
@@ -223,46 +208,51 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 4.2 Iluminação estilo Diablo 4
 - [x] Escuridão (RenderTexture na HUD) com luzes carimbadas em modo ERASE (`world/Lighting.ts`)
-- [x] Luzes no herói, fogo, explosões/flashes, elites e boss, superpoder; [ ] luz nos projéteis; [ ] bloom
+- [x] Luzes no herói, fogo, explosões/flashes, elites e boss, superpoder (luz de projéteis e bloom → 3.3)
 
 ### 4.3 Juice
-- [x] Hit-stop (crítico com limite, elite, boss), screen shake, flash, knockback; [ ] zoom-punch do boss
-
-### 4.4 Performance
-- [ ] 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 (medir no Chrome; anotar)
+- [x] Hit-stop (crítico com limite, elite, boss), screen shake, flash, knockback (zoom-punch → 3.3)
 
 ---
 
-## FASE 5 — BETA: áudio ElevenLabs
+## FASE 5 — BETA: sistemas de áudio
 
-> Siga a skill `pinguin-audio-assets`.
-
-- [x] Endpoint de SFX conferido e `scripts/el-sfx.ts` (cliente `scripts/lib/elevenlabs.ts`); [ ] `el-music.ts`, `el-voice.ts`
-- [x] Catálogo de 18 SFX (armas, impacto, sangue, morte, explosão, pickups, UI, level up, carta, poção, boss, superpoder, game over); [ ] variações extras dos mais repetidos
-- [x] Música: loops de menu, round e boss via SFX com `loop` (a Music API exige plano pago); game over é um SFX; [ ] round tardio
-- [ ] Vozes EN + PT-BR dos 3 heróis (desenho de voz por herói + falas por evento)
-- [x] `sfx()` com limite de vozes, pitch e volumes (geral × efeitos); `core/music.ts` (crossfade menu/round/boss, volume ao vivo); [ ] canal de voz
+- [x] `scripts/el-sfx.ts` + cliente `scripts/lib/elevenlabs.ts`; 18 SFX; `sfx()` com limite de vozes, pitch e volumes
+- [x] Música (plano Starter): `music.menu`, `music.round`, `music.boss` pela Music API; `core/music.ts` com crossfade e volume ao vivo
+- [ ] Canal de voz (`vo.*`) e gatilhos por evento (início de run, level up, HP baixo, poção, boss, morte) com legendas i18n — tocando placeholders silenciosos até 7.2
 
 ---
 
-## FASE 6 — BETA: conteúdo endless
+## FASE 6 — BETA: conteúdo endless (sistemas com placeholders)
 
-- [ ] Pool rotativo de bosses com escala por ciclo (`1,6^ciclo`)
-- [ ] Bioma 2 (estação de pesquisa/porto): tiles, decoração, 4–6 inimigos, boss do round 20
-- [ ] Bioma 3 (cidade em ruínas): tiles, decoração, 4–6 inimigos, boss do round 30
-- [ ] +6 armas secundárias (bumerangue de peixe, pistola auxiliar, mina, anel de chamas, totem de raios, nuvem de veneno) e mais cartas on-hit
+- [ ] Pool rotativo de bosses com escala por ciclo (`1,6^ciclo`); bosses 2 e 3 com IA própria (placeholders)
+- [ ] Biomas 2 (estação de pesquisa/porto) e 3 (cidade em ruínas): troca de bioma a cada 10 rounds, paleta/decoração por código, 4–6 inimigos novos cada (placeholders)
+- [ ] +6 armas secundárias (bumerangue de peixe, mina, anel de chamas, totem de raios, nuvem de veneno, besta) e mais cartas on-hit
 - [ ] Obstáculos sólidos leves (P-11) com desvio simples
-- [ ] Conquistas e recordes por herói
+- [ ] Recordes por herói e conquistas que dependem dos biomas 2–3
 - [ ] Balanceamento com sim + playtest (metas §9)
 
 ---
 
 ## FASE 7 — RC → 1.0.0
 
-- [ ] QA cross-browser (`scripts/qa-browsers.ts`) e resoluções (1366×768 → 3840×2160, ultrawide)
-- [ ] Tamanho do build e carregamento por grupos; tela de loading
+### 7.1 QA e release candidate (ainda com placeholders)
+- [ ] QA cross-browser (`scripts/qa-browsers.ts`) e resoluções (1366×768 → 3840×2160, ultrawide, Retina)
 - [ ] Gamepad completo, rebind de teclas, acessibilidade (tamanho dos números, flashes reduzidos)
-- [ ] Revisão final de docs, créditos (PixelLab, ElevenLabs), build publicável (itch.io; modo gore reduzido para portais)
+- [ ] Testes E2E com Playwright (skills `gc-game-qa`/`gc-qa-game`): menu → run → cartas → morte → histórico
+- [ ] `1.0.0-rc.1`
+
+### 7.2 Produção e troca dos assets finais (só aqui — P-57)
+> Siga as skills `pinguin-art-assets` e `pinguin-audio-assets`. `GET /balance` antes de cada lote; piloto antes de lotes grandes.
+- [ ] Heróis **sem arma** via `/create-character-state` + templates (idle, walk8, hurt, death) × 5 direções + espelho; superpoder (1 direção)
+- [ ] 9 armas assinadas + secundárias como imagens (`/create-image-pixflux`), animadas por código (P-56)
+- [ ] Inimigos: aprovar concepts (já gerados em `art-src/pixellab/concepts/enemies/`) → templates walk/attack/death; boss urso polar (skeleton-v3); bosses/inimigos dos biomas 2–3
+- [ ] Tiles iso e decorações dos 3 biomas (`scripts/pl-tiles.ts`)
+- [ ] Projéteis, pickups, ícones de cartas/stats/poções, molduras de UI
+- [ ] VFX dos 3 superpoderes (demais efeitos seguem por código)
+- [ ] Vozes EN + PT-BR dos 3 heróis; variações extras de SFX; música do round tardio
+- [ ] `pack-heroes`/`pack-atlas` por grupo + carregamento sob demanda; trocar todos os placeholders; QA visual a 2560×1080 e no M1
+- [ ] Revisão final de docs, créditos (PixelLab, ElevenLabs), build publicável (itch.io; gore reduzido para portais)
 - [ ] `1.0.0`
 
 ---
@@ -274,6 +264,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - 2026-09-27 — Pedido do usuário: identidade forte por herói (P-37), 6 cartas exclusivas cada (P-38) e superpoderes no level 5 com VFX próprios (P-39/P-40) → GDD, balancing, art, HUD e PLAN (1.8b).
 - 2026-09-27 — Engine iso: projeção 2:1, zoom inteiro pela altura, chunks infinitos em DynamicTexture, herói placeholder 8 direções, i18n EN/PT-BR, fonte Pixelify Sans (60 FPS a 1366×768).
 - 2026-09-27 — Pedidos do usuário: TAB 2×, versão no rodapé, 131 conquistas + pontos, toast com som (ElevenLabs), save/histórico/export; histórico da `main` recomeçado e push por commit.
+- 2026-09-27 — Pedido do usuário: ataques estilo Brotato (P-56) e **assets só no fim da Fase 7** (P-57). PLAN reorganizado: Fase 3 vira armas/simulação/balanceamento; arte e vozes movidas para 7.2. Scripts de arte parados (Jack T1 com idle/walk/hurt/death/ataque gerados, fora do jogo).
 - 2026-09-27 — Heróis e Poções (pontos, loja, gambits), poções na run, Continuar (autosave por round), configurações aplicadas no jogo, 40 skills de gamedev de terceiros curadas, piloto de animação no PixelLab com custos medidos.
 - 2026-09-27 — Menus (principal com key art animada do PixelLab, heróis, configurações com resolução, pausa, conquistas, histórico); badge final de conquista; render nativo em Retina (M1 com zoom 3).
 - 2026-09-27 — Fase 1 quase completa: efeitos de status, PlayerStats, CombatSystem, pickups/level/Fish, save ligado ao jogo, Game Over, cartas (48), secundárias e exclusivas, perks, superpoderes, IA especial dos inimigos e ataques do boss. 300 inimigos a 60 FPS. Alcance do Jack +50% (pedido do usuário).
