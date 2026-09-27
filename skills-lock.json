@@ -157,12 +157,6 @@
       "skillPath": "skills/scenes/SKILL.md",
       "computedHash": "3074badaa83649550b218788638c4811bfa3dc9b21f1139e99661f36d1bcdc9e"
     },
-    "setup-matt-pocock-skills": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "skillPath": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
-      "computedHash": "a45163cba56f72f5f224c46557c047d51547147a29e383e5a769ec39eecd1188"
-    },
     "sprites-and-images": {
       "source": "phaserjs/phaser",
       "sourceType": "github",
