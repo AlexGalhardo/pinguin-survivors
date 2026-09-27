@@ -251,7 +251,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Tiles iso e decorações dos 3 biomas (`create-tiles-pro` reprojetado por `scripts/pack-iso-tile.ts`; decos pixflux)
 - [~] Projéteis, pickups, ícones de cartas/stats/poções, molduras de UI (projéteis e pickups prontos; ícones e molduras pendentes)
 - [ ] VFX dos 3 superpoderes (demais efeitos seguem por código)
-- [ ] Vozes EN + PT-BR dos 3 heróis; variações extras de SFX; música do round tardio
+- [x] Vozes EN + PT-BR dos 3 heróis (`scripts/el-voice.ts`: 1 voz desenhada por herói, 84 falas, carregadas por idioma); variações extras de SFX (`--variants`, 9 takes em rotação); música do round tardio (`scripts/el-music.ts`, `music.late` a partir do round 21)
 - [ ] `pack-heroes`/`pack-atlas` por grupo + carregamento sob demanda; trocar todos os placeholders; QA visual a 2560×1080 e no M1
 - [ ] Revisão final de docs, créditos (PixelLab, ElevenLabs), build publicável (itch.io; gore reduzido para portais)
 - [ ] `1.0.0`

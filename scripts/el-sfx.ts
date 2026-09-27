@@ -2,8 +2,10 @@
 // the chosen one (default: 1) is copied to public/assets/audio/sfx/<key>.mp3.
 // Usage: bun scripts/el-sfx.ts [key ...]      (no args = every key not generated yet)
 //        bun scripts/el-sfx.ts --pick <key> <n>
+//        bun scripts/el-sfx.ts --variants     (extra takes of SFX_VARIANTS → <key>.<n>.mp3)
 
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import { SFX_VARIANTS } from '../src/data/sfx';
 import { logAudio, soundEffect } from './lib/elevenlabs';
 
 interface SfxDef {
@@ -133,6 +135,37 @@ if (args[0] === '--pick') {
 	const [, key, n] = args;
 	copyFileSync(`${RAW}/${key}/${n}.mp3`, `${OUT}/${key}.mp3`);
 	console.log(`picked ${key} #${n}`);
+	process.exit(0);
+}
+
+if (args[0] === '--variants') {
+	for (const [key, count] of Object.entries(SFX_VARIANTS)) {
+		const def = SFX.find((s) => s.key === key);
+		if (!def) continue;
+		mkdirSync(`${RAW}/${key}`, { recursive: true });
+		for (let n = 2; n <= (count ?? 1); n++) {
+			const out = `${OUT}/${key}.${n}.mp3`;
+			if (existsSync(out)) continue;
+			const raw = `${RAW}/${key}/${n}.mp3`;
+			if (!existsSync(raw)) {
+				const audio = await soundEffect({
+					text: def.text,
+					durationSeconds: def.durationSeconds,
+				});
+				await Bun.write(raw, audio);
+				logAudio({
+					kind: 'sfx',
+					key,
+					variant: n,
+					endpoint: '/v1/sound-generation',
+					text: def.text,
+					durationSeconds: def.durationSeconds,
+				});
+			}
+			copyFileSync(raw, out);
+			console.log(`${key} variant ${n}`);
+		}
+	}
 	process.exit(0);
 }
 

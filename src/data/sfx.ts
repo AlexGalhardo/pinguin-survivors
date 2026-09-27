@@ -9,6 +9,18 @@ export interface SfxDef {
 	ms: number;
 }
 
+/**
+ * Extra takes of the most repeated sounds, rotated at random so hordes don't sound mechanical
+ * (files <key>.<n>.mp3 for n = 2…count; the base file is take 1).
+ */
+export const SFX_VARIANTS: Partial<Record<string, number>> = {
+	'sfx.hit': 3,
+	'sfx.shotgun': 3,
+	'sfx.splat': 3,
+	'sfx.zombieDeath': 3,
+	'sfx.swing': 2,
+};
+
 export const SFX = {
 	'sfx.achievement': { volume: 0.8, voices: 1, pitch: 0, ms: 2500 },
 	'sfx.hit': { volume: 0.45, voices: 4, pitch: 0.12, ms: 500 },

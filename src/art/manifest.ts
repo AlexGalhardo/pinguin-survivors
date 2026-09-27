@@ -1,6 +1,6 @@
 import { type BiomeId, HERO_IDS, type HeroId } from '../config/constants';
 import { MUSIC_KEYS } from '../core/music';
-import { SFX } from '../data/sfx';
+import { SFX, SFX_VARIANTS } from '../data/sfx';
 import { VO_EVENTS, VOICE } from '../data/voice';
 import type { Dir } from '../logic/iso';
 
@@ -58,6 +58,12 @@ export const FILES = {
 	},
 	audio: Object.fromEntries([
 		...Object.keys(SFX).map((k) => [k, `assets/audio/sfx/${k}.mp3`]),
+		...Object.entries(SFX_VARIANTS).flatMap(([k, count]) =>
+			Array.from({ length: (count ?? 1) - 1 }, (_, i) => [
+				`${k}.${i + 2}`,
+				`assets/audio/sfx/${k}.${i + 2}.mp3`,
+			]),
+		),
 		...MUSIC_KEYS.map((k) => [k, `assets/audio/music/${k}.mp3`]),
 	]) as Record<string, string>,
 } as const;

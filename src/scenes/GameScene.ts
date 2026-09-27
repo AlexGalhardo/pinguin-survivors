@@ -6,7 +6,7 @@ import { getParams, getRunHero, getSave, persist } from '../core/context';
 import { GameEvents } from '../core/events';
 import { applyBloom, shake, zoomPunch } from '../core/feel';
 import { GameInput } from '../core/input';
-import { playMusic } from '../core/music';
+import { musicForRound, playMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
 import { playVoice } from '../core/voice';
 import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
@@ -344,7 +344,7 @@ export class GameScene extends Phaser.Scene {
 		this.mods = difficultyMods(this.run.difficulty);
 		this.enemies.mods = this.mods;
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
-		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
+		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
 
 		this.scene.launch('Hud');
 		this.voiceDirector = new VoiceDirector();
@@ -882,7 +882,7 @@ export class GameScene extends Phaser.Scene {
 			this.say('boss');
 			zoomPunch(this, 0.08, 400);
 		}
-		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
+		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
 		this.saveSnapshot();

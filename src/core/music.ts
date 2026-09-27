@@ -1,8 +1,22 @@
 import type Phaser from 'phaser';
 import { getSave } from './context';
 
-export type MusicKey = 'music.menu' | 'music.round' | 'music.boss';
-export const MUSIC_KEYS: readonly MusicKey[] = ['music.menu', 'music.round', 'music.boss'];
+export type MusicKey = 'music.menu' | 'music.round' | 'music.boss' | 'music.late';
+export const MUSIC_KEYS: readonly MusicKey[] = [
+	'music.menu',
+	'music.round',
+	'music.boss',
+	'music.late',
+];
+
+/** First round of the late-game track (the ruined city onwards). */
+export const LATE_MUSIC_FROM = 21;
+
+/** Track for a gameplay round: boss fights, then the late-game track, else the round loop. */
+export function musicForRound(round: number, boss: boolean): MusicKey {
+	if (boss) return 'music.boss';
+	return round >= LATE_MUSIC_FROM ? 'music.late' : 'music.round';
+}
 
 const FADE_MS = 800;
 /** Music sits under the SFX in the mix. */
@@ -19,7 +33,11 @@ function targetVolume(scene: Phaser.Scene): number {
 export function playMusic(scene: Phaser.Scene, key: MusicKey): void {
 	if (import.meta.env.SOUND_MUTED === 'true') return;
 	if (current?.key === key && current.sound.isPlaying) return;
-	if (!scene.cache.audio.exists(key)) return;
+	// A missing late track falls back to the regular round loop.
+	if (!scene.cache.audio.exists(key)) {
+		if (key === 'music.late') playMusic(scene, 'music.round');
+		return;
+	}
 	stopMusic(scene);
 	const sound = scene.sound.add(key, { loop: true, volume: 0 });
 	sound.play();

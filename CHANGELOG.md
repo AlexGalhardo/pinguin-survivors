@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Recorded hero voices in English and Portuguese: one designed voice per penguin, 84 lines matching the subtitles.
+- Extra takes of the most repeated sounds (hits, shots, splats, zombie deaths, swings), rotated at random.
+- Late-game music track from round 21 onwards.
+
 ## [0.1.0-beta.2] - 2026-09-27
 
 Playtest build **playdev-1** (the nickname is shown next to the version in the footer).
