@@ -15,22 +15,55 @@
 
 ## 2. Escala dos inimigos
 
-- `hpMul(N) = (1 + 0,15·(N−1)) · 1,25^ciclo`, com `ciclo = floor((N−1)/10)`
-- `dmgMul(N) = (1 + 0,08·(N−1)) · 1,15^ciclo`
-- `spawnRate(N)` (inimigos/s) = `min(2 + 0,6·N, 25)`; teto de **300 vivos**
-- Bosses: HP base × `1,6^ciclo` quando voltam no pool rotativo
+- `hpMul(N) = (1 + 0,15·(N−1)) · 1,12^ciclo · 1,6^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/30)` (endless: a cada volta completa pelos 3 biomas)
+- `dmgMul(N) = (1 + 0,08·(N−1)) · 1,08^ciclo · 1,5^volta`
+- `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos**
+- Bosses: HP base × `1,35^ciclo` (round 10 ×1, 20 ×1,35, 30 ×1,82…)
+- Biomas: rounds 1–10 Antártida, 11–20 estação/porto, 21–30 cidade em ruínas, depois repete (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
 
-### 2.1 Inimigos da Antártida (`src/data/enemies.ts`)
+### 2.1 Antártida (rounds 1–10)
 
-| Inimigo | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
+| Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
 |---|---|---|---|---|---|---|---|---|
-| Pinguim zumbi | perseguidor | 12 | 80 | 6 | 10 | 1 | 1 | 10 |
-| Skua zumbi | voador | 10 | 115 | 5 | 9 | 1 | 2 | 5 |
-| Foca zumbi | tanque | 45 | 40 | 12 | 16 | 3 | 3 | 4 |
-| Cientista zumbi | à distância (220 u, 2,5 s) | 20 | 55 | 8 | 11 | 2 | 4 | 3 |
-| Pinguim inchado | explosivo (40 u) | 18 | 60 | 20 | 12 | 2 | 5 | 3 |
-| Morsa zumbi | investida (200 u, 4 s) | 60 | 50 | 16 | 18 | 4 | 7 | 2 |
-| **Urso polar zumbi** (boss) | boss (90 u, 3 s) | 3.000 | 70 | 30 | 40 | 100 | round 10 | — |
+| zombiePenguin | perseguidor | 12 | 80 | 4 | 10 | 1 | 1 | 10 |
+| zombieSkua | voador | 10 | 115 | 3 | 9 | 1 | 2 | 5 |
+| zombieSeal | tanque | 45 | 40 | 8 | 16 | 3 | 3 | 4 |
+| zombieScientist | à distância (220 u, 2,5 s) | 20 | 55 | 6 | 11 | 2 | 4 | 3 |
+| bloaterPenguin | explosivo (40 u) | 18 | 60 | 14 | 12 | 2 | 5 | 3 |
+| zombieWalrus | investida (200 u, 4 s) | 60 | 50 | 12 | 18 | 4 | 7 | 2 |
+
+### 2.2 Estação de pesquisa / porto (rounds 11–20)
+
+| Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
+|---|---|---|---|---|---|---|---|---|
+| zombieSailor | perseguidor | 16 | 85 | 5 | 10 | 1 | 11 | 10 |
+| zombieGull | voador | 12 | 125 | 4 | 9 | 1 | 11 | 5 |
+| zombieSeaLion | tanque | 60 | 45 | 10 | 17 | 3 | 12 | 4 |
+| zombieMedic | à distância (240 u, 2,2 s) | 24 | 55 | 7 | 11 | 2 | 13 | 3 |
+| fuelBloater | explosivo (42 u) | 22 | 62 | 16 | 12 | 2 | 14 | 3 |
+| zombieNarwhal | investida (220 u, 3,5 s) | 70 | 55 | 14 | 18 | 4 | 16 | 2 |
+
+### 2.3 Cidade em ruínas (rounds 21–30)
+
+| Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
+|---|---|---|---|---|---|---|---|---|
+| zombieCitizen | perseguidor | 20 | 85 | 6 | 10 | 1 | 21 | 9 |
+| zombieRat | perseguidor | 8 | 130 | 3 | 7 | 1 | 21 | 6 |
+| zombiePigeon | voador | 14 | 125 | 5 | 9 | 1 | 22 | 4 |
+| zombieRiotCop | tanque | 80 | 45 | 12 | 16 | 3 | 22 | 4 |
+| zombieSoldier | à distância (260 u, 2 s) | 30 | 60 | 8 | 11 | 2 | 23 | 3 |
+| acidBloater | explosivo (44 u) | 26 | 64 | 18 | 12 | 2 | 24 | 3 |
+| zombieBrute | investida (220 u, 3,5 s) | 90 | 55 | 16 | 19 | 5 | 26 | 2 |
+
+### 2.4 Bosses (pool rotativo)
+
+| Boss | Round | HP base | Vel. | Dano | Raio | Alcance | Recarga | Padrão |
+|---|---|---|---|---|---|---|---|---|
+| polarBear | 10 (+30·k) | 3000 | 70 | 25 | 40 | 90 u | 3 s | patada 0,4 s de preparo, alcance ×1,3; investida a cada 8 s; rugido a cada 12 s invoca 6× zombiePenguin |
+| kraken | 20 (+30·k) | 3000 | 45 | 22 | 44 | 150 u | 2,6 s | patada 0,55 s de preparo, alcance ×1,2; rajada de 7 projéteis a cada 4 s; rugido a cada 14 s invoca 6× zombieSailor |
+| abomination | 30 (+30·k) | 3500 | 80 | 28 | 42 | 95 u | 2,6 s | patada 0,35 s de preparo, alcance ×1,3; investida a cada 5 s; 4 poças de ácido a cada 6 s; rugido a cada 13 s invoca 10× zombieRat |
+
+Rajada do kraken: 170 u/s, alcance 520 u, dano 35% do dano do boss. Poças da abominação: raio 46 u, 4 s, 35% do dano do boss por segundo.
 
 Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultrawide incluso).
 
@@ -49,13 +82,13 @@ Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultraw
 | Gelo | −10% vel. por acúmulo; 5 acúmulos = congelado por 1,5 s |
 | Terra | knockback ×1,5; 10% de chance de atordoar 0,5 s; −10% armadura por 4 s |
 | Energia | salta para até 2 alvos a 90 u com 60% do dano |
-| Invulnerabilidade após ser atingido | 0,35 s |
+| Invulnerabilidade após ser atingido | 0,6 s |
 
 ## 4. Heróis (level 1)
 
 | Stat | Jack | Bob | Lucia |
 |---|---|---|---|
-| HP | **140** | 100 | **70** |
+| HP | **140** | 110 | **85** |
 | Regen/s | 0,8 | 0,4 | 0,3 |
 | Armadura | **12** | 4 | 1 |
 | Vel. movimento (u/s) | **95** (lento) | **135** (rápido) | 115 |
@@ -121,11 +154,11 @@ Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de 
 |---|---|---|---|---|---|
 | Machete (T1) | melee | 14 | 1,4 | arco 110° · 105 u | 15% sangramento |
 | Katana (T2) | melee | 26 | 1,8 | arco 140° · 128 u | 25% sangramento, golpe duplo |
-| Espada-motosserra (T3) | melee | 12 × 4 | 2,2 | arco 160° · 135 u | contínuo, 40% sangramento |
-| Escopeta cano duplo (T1) | firearm | 7 × 6 bagos | 0,9 | 220 u · 30° | knockback |
+| Espada-motosserra (T3) | melee | 48 (12 × 4) | 2,2 | arco 160° · 135 u | contínuo, 40% sangramento |
+| Escopeta cano duplo (T1) | firearm | 7 × 6 bagos | 1,1 | 220 u · 30° | knockback |
 | Escopeta automática (T2) | firearm | 8 × 7 | 1,6 | 240 u · 35° | perfura 1 |
 | Escopeta-foguete (T3) | firearm | 10 × 7 + explosão 30 | 1,4 | 260 u | explosão em área |
-| Cajado dos 4 elementos (T1) | magic | 16 | 1,1 | 260 u | alterna elemento a cada disparo |
+| Cajado dos 4 elementos (T1) | magic | 16 | 1,3 | 260 u | alterna elemento a cada disparo; perfura 1 |
 | Cajado arcano (T2) | magic | 24 | 1,4 | 280 u | projéteis em área 40 u |
 | Cajado das Quatro Tempestades (T3) | magic | 30 | 1,8 | 300 u | 4 elementos simultâneos |
 
@@ -150,6 +183,24 @@ Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de 
 | Escudo / Pressa / Fúria | 25 |
 | Mega Cura | 40 |
 
+## 8b. Oficina (upgrades permanentes com Fish, `src/data/upgrades.ts`)
+
+Compartilhados pelos heróis; aplicados aos stats iniciais de toda run. Preço do nível L+1 = `base · crescimento^L`.
+
+| Upgrade | Stat | Por nível | Nível máx. | Preço base | Crescimento |
+|---|---|---|---|---|---|
+| vitality | maxHp | +5 | 10 | 30 | ×1,35 |
+| might | damage | +0,03 | 10 | 40 | ×1,4 |
+| haste | attackSpeed | +0,02 | 10 | 40 | ×1,4 |
+| plating | armor | +1 | 8 | 35 | ×1,4 |
+| recovery | regen | +0,1 | 8 | 35 | ×1,4 |
+| swiftness | moveSpeed | +3 | 5 | 45 | ×1,5 |
+| magnet | pickupRange | +8 | 5 | 25 | ×1,4 |
+| wisdom | xpGain | +0,04 | 10 | 45 | ×1,4 |
+| fortune | luck | +0,02 | 5 | 60 | ×1,5 |
+
+A loja de extras das conquistas (`ACHIEVEMENT_SHOP`, P-61) soma no máximo +10 HP, +0,2 regen, +1 armadura, +1% crítico, +10% dano crítico, +1% esquiva, +1% aparar, +2% vel. de ataque, +2% dano e +5 vel.; é pequena demais para mudar a curva e fica fora da sim.
+
 ## 9. Metas de sessão
 
 - Run média de um jogador novo: morrer entre os rounds 6 e 9 (5–7 min).
@@ -157,6 +208,8 @@ Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de 
 - 60 FPS com 300 inimigos + 2.000 decalques de sangue.
 
 ## 10. Calibração (2026-09-27)
+
+### 10.0 1ª passada
 
 Ferramentas: `bun scripts/sim.ts [runs]` (modelo analítico, `src/logic/sim/run-sim.ts`) e `bun scripts/playtest-bot.ts <url> [runs] [segundos]` (bot no jogo real, 2×, foge do grupo mais próximo e escolhe a 1ª carta).
 
@@ -173,3 +226,34 @@ Ajustes da 1ª passada (o jogo estava difícil demais: bot morria nos rounds 1�
 
 Resultado do bot (nível 1, seed 100): Jack vivo no round 7 no limite de 4 min; Bob morre no **boss do round 10**; Lucia morre no round 9 → dentro da meta (§9: morrer entre 6 e 9).
 Pendente: o modelo analítico ainda prevê rounds 3–4 (não modela a fuga do jogador); calibrar `SIM.contactShare` com o bot antes de usá-lo para decisões finas.
+
+### 10.1 2ª passada (sim calibrada + bot com build)
+
+**Ferramentas.** `bun scripts/sim.ts [runs] [--rounds]` imprime herói × level (1/5/10/20/30) com round médio, mediana e % que passa do round 30. A sim modela secundárias, superpoder, elites, biomas, bosses rotativos e upgrades da Oficina; escolhe cartas com a mesma política do bot (`src/logic/sim/card-policy.ts`). As constantes de contato (`SIM.safeCrowd = 100`, `hitPerExtra = 0,001`, `bossLand = 0,1`, `engageHalf`) foram ajustadas por *grid fit* contra os logs do bot (erro de dano por faixa de rounds + round de morte). A sim é determinística por seed (`tests/sim.test.ts`).
+
+`bun scripts/playtest-bot.ts --url <url> --heroes jack,bob,lucia --levels 1,10 --runs 2 --react 0.2 --mistakes 0.05 --upgrades all:2 --potions --json out.jsonl` joga o build real: cérebro dentro da página (escolhe a cada frame a direção de menor "perigo" entre 8, mantém o inimigo mais próximo no alcance da arma quando o HP > 50%, luta contra o boss no alcance e sai da frente na preparação, desvia de projéteis, poças e obstáculos), usa o superpoder em boss/multidão, escolhe cartas pela política, injeta level/pontos/poções/upgrades pelo save e roda N substeps por frame (`--speed 4`, mesmo dt do 1×). Use um build DEV congelado (`NODE_ENV=development vite build --mode development` + `vite preview`) para editar o código sem recarregar as runs, e no máximo 2 instâncias em paralelo.
+
+Perfis: **bot médio** = reação 0,2 s e 5% de movimentos errados (proxy de um jogador razoável); **bot hábil** = reação por frame, sem erros.
+
+**Achados** (bot, antes desta passada): o bot hábil de level 10 com Oficina 2 chegava aos rounds 49–63; os biomas recomeçavam na volta do endless (round 31 = Antártida de novo) e a curva desabava; os bosses 10/20 eram o funil (arma mira o inimigo mais próximo, então o boss quase não apanha no meio da horda); o salto do round 10→11 somava ciclo ×1,25 à base maior dos inimigos da estação.
+
+| O quê | Antes | Depois |
+|---|---|---|
+| Escala por volta do endless (a cada 30 rounds) | — | **HP ×1,6, dano ×1,5** |
+| Spawn nos rounds de boss | 100% | **50%** |
+| HP / dano por ciclo | ×1,25 / ×1,15 | **×1,12 / ×1,08** |
+| HP do boss por ciclo | ×1,6 | **×1,35** |
+| Kraken / Abominação (HP base) | 3.400 / 3.800 | **3.000 / 3.500** |
+| Rajada de tinta do kraken | 45% do dano | **35%** |
+
+**Resultados do bot médio** (build com a volta do endless, antes do ajuste de ciclo/bosses; 1–2 seeds por célula, variância alta):
+
+| Perfil | Jack | Bob | Lucia |
+|---|---|---|---|
+| L1, sem Oficina/poções | 10 / 20 (boss) | 13 / 14 | 13 / 15 |
+| L10, Oficina 2, poções | 14 / 20 (boss 20) | 18 / 39 | — |
+| L20, Oficina 4, poções | 42 | — | — |
+
+Com o ajuste de ciclo/bosses, a sim prevê (L10, sem Oficina): Jack ~37, Lucia ~29, Bob ~22 (a sim subestima o Bob: o bot hábil com Bob L1 chegou ao 26). 1ª run do bot médio depois do ajuste: Jack L10 morreu no boss 20 (80% de HP restante) → o kraken continua sendo o funil do Jack.
+
+**Pendente:** (a) lote com a prioridade de alvo no boss/elite e a cura de fim de round (sistemas, `ROUND_END_HEAL`) e mais seeds; (b) velocidade dos inimigos por volta do endless (`speedMul` via mods de dificuldade); (c) conferir Bob/Lucia no bioma 2 e o boss 30.
