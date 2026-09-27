@@ -207,6 +207,22 @@ A loja de extras das conquistas (`ACHIEVEMENT_SHOP`, P-61) soma no máximo +10 H
 - Boss do round 10 vencível por ~50% dos jogadores com Jack level 5–8.
 - 60 FPS com 300 inimigos + 2.000 decalques de sangue.
 
+### 9.1 Critério de saída do balanceamento (milestone "Balance 1.0")
+
+O trabalho de balanceamento da frente `wt/balance` **termina** quando o lote abaixo passar, ou quando o orçamento acabar (o que vier primeiro). Medido com o **bot médio** (`--react 0.2 --mistakes 0.05`, dificuldade NORMAL, seeds 100 e 101, build DEV congelado):
+
+| # | Perfil | Meta |
+|---|---|---|
+| 1 | L10 + Oficina `all:2` + poções | cada herói passa do round 30 (vence o boss 30) em **≥ 1 de 2 seeds**, e nenhum herói morre antes do round 20 em ambas |
+| 2 | L20 + Oficina `all:4` + poções | os 3 heróis passam do round 30 |
+| 3 | L1 sem Oficina/poções (jogador novo) | mediana de morte entre os rounds **8 e 20** (nenhum herói passa do 30) |
+| 4 | Endless (L20) | a run termina antes do round 60 (a volta do endless mata) |
+| 5 | EASY / HARD (L10, 1 seed) | EASY chega pelo menos tão longe quanto NORMAL; HARD morre antes do NORMAL |
+
+A sim (`bun scripts/sim.ts`) é só apoio: serve para comparar mudanças antes de gastar tempo no bot, não para aprovar o milestone.
+
+**Orçamento:** no máximo **3 passadas do bot** depois da b6 (cerca de 1 h de relógio cada, 2 Chromes). Se a meta não fechar dentro disso, a frente para, integra o que tiver no `dev` e registra aqui o que ficou fora da meta e por quê.
+
 ## 10. Calibração (2026-09-27)
 
 ### 10.0 1ª passada
