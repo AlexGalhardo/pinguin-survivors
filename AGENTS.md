@@ -8,7 +8,7 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 
 ## Fonte da verdade
 
-- **[PLAN.md](PLAN.md)**: fases 0–7, microtarefas com checklist, changelog, pendências do usuário. Leia primeiro, sempre.
+- **[PLAN.md](PLAN.md)**: fases 0–7 e microtarefas com checklist. Leia primeiro, sempre.
 - **[docs/README.md](docs/README.md)**: índice da documentação.
 
 | Preciso de… | Leia |
@@ -31,7 +31,7 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 
 ## Regras
 
-1. Microtarefas na ordem do PLAN.md. Ao concluir: `[x]` + 1–3 linhas no Changelog. Bloqueado: `[~]` + motivo.
+1. Microtarefas na ordem do PLAN.md. Ao concluir: `[x]` (e `[Unreleased]` do CHANGELOG.md se relevante). Bloqueado: `[~]` + motivo.
 2. Phaser **4** (API diferente do v3). Skills de referência em `.claude/skills/`.
 3. Mundo simulado em coordenadas cartesianas; a tela é projeção iso 2:1 (`docs/architecture.md`). Sem Arcade Physics.
 4. Regras em `src/logic/` (TS puro, testado); números em `src/data/`; textos em `src/i18n/` (EN + PT-BR juntos); cores em `src/config/palette.ts`; chaves de assets em `src/art/manifest.ts`.

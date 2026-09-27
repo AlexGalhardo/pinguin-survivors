@@ -6,7 +6,7 @@ O jogo anterior (Starfall Survivors) vive na branch `starfall-survivors-legacy` 
 
 ## Comece aqui (toda sessão)
 
-1. Leia **[PLAN.md](PLAN.md)**: fases, microtarefas `[ ]`/`[x]`/`[~]`, changelog e pendências do usuário. É a fonte da verdade.
+1. Leia **[PLAN.md](PLAN.md)**: fases e microtarefas `[ ]`/`[x]`/`[~]`. É a fonte da verdade.
 2. Siga o protocolo em [docs/agent-workflow.md](docs/agent-workflow.md).
 3. Consulte o doc relevante antes de codar:
    - Design → [docs/game-design.md](docs/game-design.md) · Números → [docs/balancing.md](docs/balancing.md)
@@ -44,7 +44,7 @@ bun scripts/qa-browsers.ts           # QA do build (com `vite preview --port 417
 - **Arte: PixelLab** (skill `pinguin-art-assets`). Todo personagem novo passa por **concept → aprovação do usuário → animação**. Vista `low top-down`, 8 direções (**5 geradas + 3 espelhadas**); animações **`template`** (1 geração/direção). **Ataques estilo Brotato (P-56):** herói animado **sem arma**; a arma é um sprite separado animado por código, e cada tier é só uma nova imagem de arma. Registre prompts em docs/art-prompts.md. `GET /balance` antes de lotes.
 - **Áudio: ElevenLabs** (skill `pinguin-audio-assets`).
 - Chaves (`PIXELLAB_API_TOKEN`, `ELEVENLABS_API_KEY`) **só no `.env`**; `TODO.md` é local (gitignored).
-- Ao terminar: marque o checklist no PLAN.md e adicione 1–3 linhas no Changelog; decisão nova → docs/decisions.md.
+- Ao terminar: marque o checklist no PLAN.md; mudanças relevantes em `[Unreleased]` do CHANGELOG.md; decisão nova → docs/decisions.md.
 - **Conventional Commits 1.0.0** e **SemVer 2.0.0** (`0.1.0-alpha.N`). Micro-commits; ao concluir cada seção: `docs(plan)` → `chore(release): X` + tag → `git push origin main --follow-tags`. Os hooks Husky estão vazios por escolha do usuário: rode `check`/`typecheck`/`test` (e `build` antes de push) à mão. Nunca `--no-verify`.
 - **Push após cada commit** (depois dos gates). **`CHANGELOG.md`** na raiz no padrão **Keep a Changelog 1.1.0** (registre em `[Unreleased]`; mova para a versão no release).
 - **Bun** no lugar de npm/node. Estilo **Biome v2**, TAB largura 4.

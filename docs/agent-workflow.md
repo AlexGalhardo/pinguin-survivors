@@ -9,7 +9,7 @@
    - `bun run check`, `bun run typecheck` e `bun test` passam (os hooks Husky estão vazios por escolha do usuário — rode os gates à mão antes de commitar; `bun run build` antes de pushar).
    - Mudou algo visível? Rodar `bun run dev` e validar com a skill **agent-browser** (screenshot + console sem erros). Usar os query params de debug (`?skipMenu=1&hero=jack&round=5&seed=1&debug=1`).
 5. Atualizar o **`PLAN.md`**: `[x]` feito · `[~]` incompleto ou bloqueado (dizer o motivo em uma linha) · `[ ]` pendente.
-6. Adicionar **1–3 linhas curtas** no **Changelog** do fim do `PLAN.md` (data + o que mudou).
+6. Registrar mudanças relevantes em `[Unreleased]` do **`CHANGELOG.md`** (Keep a Changelog 1.1.0).
 7. Se mudou números, atualizar `docs/balancing.md`. Se tomou uma decisão de design, registrar em `docs/decisions.md`.
 8. **Micro-commits em Conventional Commits** durante o trabalho. Ao fechar cada **seção** do PLAN (0.1, 1.1, …): `docs(plan)` → bump SemVer + `chore(release): X.Y.Z` + tag → `git push origin main --follow-tags`. Detalhes em [git-and-versioning.md](git-and-versioning.md). O usuário autorizou os commits e pushes desse fluxo.
 
@@ -29,7 +29,7 @@
 
 - Funciona no Chrome em tela cheia, sem scroll, sem erros no console.
 - Lógica nova coberta por teste `bun:test` (quando for lógica pura).
-- PLAN.md e Changelog atualizados; commits em Conventional Commits; gates passando (sem `--no-verify`).
+- PLAN.md e CHANGELOG.md atualizados; commits em Conventional Commits; gates passando (sem `--no-verify`).
 - Asset novo: chave no manifest, prompt registrado em `docs/art-prompts.md` (ou log do ElevenLabs).
 
 ## Prompts prontos

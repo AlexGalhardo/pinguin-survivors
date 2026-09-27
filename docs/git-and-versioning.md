@@ -53,7 +53,6 @@ Nunca use `--no-verify`. Se um gate falhar, corrija a causa.
 ## CHANGELOG.md (Keep a Changelog 1.1.0)
 
 `CHANGELOG.md` na raiz segue **estritamente** <https://keepachangelog.com/en/1.1.0/>: seção `[Unreleased]` no topo; uma seção por versão (`## [X.Y.Z] - AAAA-MM-DD`, mais nova primeiro); grupos só `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`; frases para humanos (em inglês), sem hashes de commit; links de comparação no fim. Registre mudanças relevantes em `[Unreleased]` durante o trabalho e mova-as para a nova versão no commit `chore(release)`.
-É diferente do changelog curto do fim do `PLAN.md` (log de tarefas dos agentes).
 
 ## Push
 
@@ -62,7 +61,7 @@ Nunca use `--no-verify`. Se um gate falhar, corrija a causa.
 ## Fluxo ao concluir uma seção do PLAN (0.1, 1.1, 1.2, …)
 
 1. Micro-commits durante o trabalho (`feat(...)`, `test(...)`, `build(...)`…).
-2. Marcar `[x]` no PLAN.md + linha no Changelog do PLAN → `docs(plan): complete <seção>`.
+2. Marcar `[x]` no PLAN.md → `docs(plan): complete <seção>`.
 3. Subir a versão no `package.json` (`bun pm version <versão> --no-git-tag-version` ou manualmente) conforme a tabela acima e mover `[Unreleased]` do `CHANGELOG.md` para `## [<versão>] - <data>` (+ links) → `chore(release): <versão>` + `git tag -a v<versão> -m "<versão>"`.
 4. `git push origin main --follow-tags`.
 
