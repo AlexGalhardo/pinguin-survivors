@@ -49,6 +49,8 @@ export class Enemy implements Mover {
 	private readonly sprite: Phaser.GameObjects.Sprite;
 	/** PixelLab animation atlas of this enemy (enemy.<id>), null for the code placeholder. */
 	private anims: Record<string, AnimMeta> | null = null;
+	private baseScale = 1;
+	private swayPhase = 0;
 	private facing: Dir = 's';
 	private lastX = 0;
 	private lastY = 0;
@@ -104,7 +106,14 @@ export class Enemy implements Mover {
 		this.telegraph = false;
 		this.lastDot = null;
 		this.sprite.anims.stop();
-		this.sprite.setTexture(KEYS.enemy(def.id)).setScale(scale).setVisible(true).clearTint();
+		this.baseScale = scale;
+		this.swayPhase = Math.random() * Math.PI * 2;
+		this.sprite
+			.setTexture(KEYS.enemy(def.id))
+			.setScale(scale)
+			.setAngle(0)
+			.setVisible(true)
+			.clearTint();
 		this.anims = registerCharacterAnims(this.scene, KEYS.enemy(def.id), ANIM_FPS, ANIM_LOOPS);
 		this.sprite.setOrigin(0.5, this.anims?.walk?.anchorY ?? 0.95);
 		this.facing = 's';
@@ -148,6 +157,7 @@ export class Enemy implements Mover {
 			.setDepth(depth);
 		if (this.anims) this.animate();
 		else this.sprite.setFlipX(facingLeft);
+		if (!this.hasWalkFrames()) this.sway(dt);
 		if (this.bar && this.elite) this.syncBar(ground.x, ground.y - this.z, depth);
 		if (this.telegraph && this.hitFlash <= 0) {
 			// Reddish over the art (not a solid fill) so the telegraph never hides the sprite.
@@ -176,6 +186,24 @@ export class Enemy implements Mover {
 	}
 
 	/** Faces the movement direction (5 drawn + 3 mirrored) and walks, or winds up an attack. */
+	/** True when the art has a real multi-frame walk (else the sprite is a still image). */
+	private hasWalkFrames(): boolean {
+		return (this.anims?.walk?.frames ?? 0) > 1;
+	}
+
+	/**
+	 * Procedural gait for still images (placeholder or rotation-only art, e.g. a boss before its
+	 * walk is drawn): a waddle tilt and a squash-and-stretch step, so it never glides rigidly.
+	 */
+	private sway(dt: number): void {
+		this.swayPhase += dt * (this.def.behavior === 'boss' ? 5 : 9);
+		const step = Math.sin(this.swayPhase);
+		const squash = 0.05 * Math.abs(Math.sin(this.swayPhase));
+		this.sprite
+			.setAngle(step * (this.def.behavior === 'flyer' ? 3 : 6))
+			.setScale(this.baseScale * (1 + squash), this.baseScale * (1 - squash));
+	}
+
 	private animate(): void {
 		const dx = this.x - this.lastX;
 		const dy = this.y - this.lastY;

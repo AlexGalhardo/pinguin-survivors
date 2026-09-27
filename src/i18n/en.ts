@@ -1,11 +1,13 @@
 import { achEn } from './achievements.en';
 import { cardsEn } from './cards.en';
+import { gearEn } from './gear.en';
 import { voiceEn } from './voice.en';
 
 export const en = {
 	...achEn,
 	...cardsEn,
 	...voiceEn,
+	...gearEn,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
@@ -89,6 +91,24 @@ export const en = {
 	'res.3k': '3K 1620p',
 	'res.4k': '4K 2160p',
 	'pause.title': 'PAUSED',
+	'pause.stats': 'STATS',
+	'pause.weapons': 'WEAPONS',
+	'pause.cards': 'CARDS',
+	'pause.gear': 'EQUIPMENT',
+	'pause.bag': 'BAG',
+	'pause.bagEmpty': 'empty: step on items dropped by zombies',
+	'pause.equipHint': 'ENTER / click: equip',
+	'pause.unequipHint': 'ENTER / click: take off',
+	'pause.help': 'TAB switch column · ↑↓ choose · ENTER use · ESC resume',
+	'sig.machete': 'Machete',
+	'sig.katana': 'Katana',
+	'sig.chainsword': 'Chainsword',
+	'sig.doubleBarrel': 'Double-Barrel Shotgun',
+	'sig.autoShotgun': 'Auto Shotgun',
+	'sig.rocketShotgun': 'Rocket Shotgun',
+	'sig.elementStaff': 'Elemental Staff',
+	'sig.arcaneStaff': 'Arcane Staff',
+	'sig.stormStaff': 'Storm Staff',
 	'pause.resume': 'RESUME',
 	'pause.quit': 'QUIT RUN',
 	'pause.confirm': 'QUIT? YOU KEEP XP AND FISH',
@@ -176,6 +196,9 @@ export const en = {
 	'fx.block': 'BLOCK',
 	'hud.fish': 'FISH {n}',
 	'fx.levelUp': 'LEVEL UP!',
+	'fx.heal': '+{n}% HP',
+	'fx.gearEquipped': '{name} equipped!',
+	'fx.gearBag': '{name} → bag (pause to equip)',
 	'hud.level': 'LV {n}',
 	'over.title': 'YOU DIED',
 	'over.bossTimeout': 'THE BOSS OUTLASTED YOU',

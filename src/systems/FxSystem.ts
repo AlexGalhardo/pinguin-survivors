@@ -164,12 +164,12 @@ export class FxSystem {
 	}
 
 	/** Big floating message over the hero (level up, unlocks). */
-	banner(x: number, y: number, key: I18nKey): void {
+	banner(x: number, y: number, key: I18nKey, vars?: Record<string, string | number>): void {
 		this.damage(x, y, 0, false, PALETTE.crit);
 		const n = this.numbers.find((f) => f.life === NUMBER_LIFE);
 		if (!n) return;
 		n.life = NUMBER_LIFE * 2.5;
-		n.text.setText(t(key)).setFontSize(18);
+		n.text.setText(t(key, vars)).setFontSize(18);
 	}
 
 	/** A puddle baked into the ground (stays for the whole run). */

@@ -1,6 +1,7 @@
 import type { HeroId } from '../config/constants';
 import type { Difficulty } from '../data/difficulty';
 import type { HeroDef } from '../data/heroes';
+import type { RunGear } from './equipment';
 import { roundDuration } from './round';
 import type { RunCounters } from './save';
 
@@ -23,6 +24,8 @@ export interface RunState {
 	superCharge: number;
 	elapsed: number;
 	damageDealt: number;
+	/** Equipment found this run (bag + worn); missing in older snapshots. */
+	gear?: RunGear;
 	/** Lifetime counters gathered this run; added to the save when the run ends. */
 	counters: RunCounters;
 }

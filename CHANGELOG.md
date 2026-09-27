@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Equipment: helmets, armor, legs, rings and amulets (10 of each: 3 common, 4 rare, 3 legendary) dropped by zombies (commons), elites (rares) and bosses (legendaries); they blink on the ground until you step on them.
+- Health packs dropped by enemies: +25% (most common), +50% or +75% of max HP.
+- Brotato-style pause screen: your stats, weapons and cards, and the equipment slots and bag, where items can be worn or taken off.
+- Secondary weapons now float around the hero (up to 4 weapons with the signature one), each aiming at the nearest enemy in its range.
+- Zombies and bosses without a drawn walk now waddle procedurally instead of gliding rigidly.
+
 ### Changed
 
 - Each superpower cast makes the next one cost 5 more kills (100, 105, 110…); the HUD shows the current cost.

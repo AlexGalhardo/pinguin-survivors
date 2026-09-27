@@ -27,6 +27,12 @@ export const KEYS = {
 	weapon: (id: string) => `weapon.${id}`,
 	muzzle: 'fx.muzzle',
 	pickup: (kind: 'xp' | 'fish' | 'meat') => `pickup.${kind}`,
+	/** Health pack healing `percent`% of max HP (25/50/75). */
+	healPack: (percent: number) => `pickup.heal.${percent}`,
+	/** Equipment icon (ground and pause menu): `item.<slot>.<name>`. */
+	gear: (id: string) => `item.${id}`,
+	/** Glow under dropped gear, tinted by rarity. */
+	gearGlow: 'fx.gearGlow',
 	ring: 'fx.ring',
 	zone: 'fx.zone',
 	drone: 'fx.drone',

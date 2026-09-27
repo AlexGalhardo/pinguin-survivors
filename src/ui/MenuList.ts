@@ -19,6 +19,8 @@ export interface MenuOptions {
 	spacing?: number;
 	align?: 'left' | 'center';
 	onBack?: () => void;
+	/** Item focused at creation (clamped); defaults to the first enabled one. */
+	startFocus?: number;
 }
 
 /**
@@ -74,7 +76,12 @@ export class MenuList {
 		on(['ENTER', 'SPACE'], () => this.select());
 		on(['ESC', 'BACKSPACE'], () => opts.onBack?.());
 		this.layout(opts.x, opts.y);
-		this.setFocus(this.firstEnabled());
+		const start = opts.startFocus;
+		this.setFocus(
+			start !== undefined && items.length > 0
+				? Math.min(Math.max(0, start), items.length - 1)
+				: this.firstEnabled(),
+		);
 	}
 
 	layout(x: number, y: number): void {
@@ -108,12 +115,17 @@ export class MenuList {
 
 	private setFocus(i: number): void {
 		this.focus = i;
-		this.onFocus?.();
+		this.onFocus?.(i);
 		this.refresh();
 	}
 
 	/** Called when the mouse or keyboard focuses an item (lets two-column screens switch). */
-	onFocus?: () => void;
+	onFocus?: (index: number) => void;
+
+	/** Index of the focused item. */
+	get focused(): number {
+		return this.focus;
+	}
 
 	setActive(active: boolean): void {
 		this.active = active;

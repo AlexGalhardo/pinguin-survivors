@@ -2,12 +2,14 @@ import type Phaser from 'phaser';
 import { HERO_IDS, TILE_H, TILE_W } from '../config/constants';
 import { PALETTE, toCss } from '../config/palette';
 import { ENEMY_LIST } from '../data/enemies';
+import { GEAR } from '../data/equipment';
 import { DIRS, type Dir } from '../logic/iso';
 import { BIOMES, KEYS } from './manifest';
 
 /** Code-drawn stand-ins for every key until the PixelLab art lands (phase 3). */
 export function installPlaceholders(scene: Phaser.Scene): void {
 	biomePlaceholders(scene);
+	gearPlaceholders(scene);
 	const biome = BIOMES.antarctica;
 	const tileColors = [PALETTE.snow, PALETTE.snowDark, PALETTE.snowLight, PALETTE.ice];
 	for (let v = 0; v < biome.tileVariants; v++) {
@@ -258,6 +260,23 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 	staff('elementStaff', 30, ['#ff7a2f', '#6fdc4a', '#8fd8ff', '#fff27a']);
 	staff('arcaneStaff', 34, ['#b347ff', '#b347ff', '#e8d8ff', '#b347ff']);
 	staff('stormStaff', 38, ['#ff7a2f', '#6fdc4a', '#8fd8ff', '#fff27a']);
+	// Secondary weapons shown around the hero (P-67), until PixelLab sprites land.
+	blade('knives', 16, '#d8dee8', '#f2f4f8');
+	blade('fishBoomerang', 18, '#6fa3c7', '#8fd8ff');
+	blade('bladeWhirl', 22, '#dfe5ee', '#ffffff');
+	blade('seismicStomp', 20, '#8a6f5a', '#b08a4f');
+	gun('crossbow', 22, '#6b4a2f', 1, '#c8a870');
+	gun('molotov', 14, '#5c8a3a', 1, '#ff7a2f');
+	gun('mine', 14, '#3a4152', 1, '#ff3b3b');
+	gun('grenadeBelt', 16, '#3f5a2a', 2, '#9aa3b5');
+	gun('droneSentinel', 18, '#3a4152', 1, '#ff3b3b');
+	staff('iceShards', 22, ['#8fd8ff', '#e8fbff']);
+	staff('flameRing', 22, ['#ff7a2f', '#ffb13b']);
+	staff('lightningTotem', 24, ['#fff27a', '#fff27a']);
+	staff('poisonCloud', 22, ['#6fdc4a', '#6fdc4a']);
+	staff('arcaneChain', 24, ['#fff27a', '#b347ff']);
+	staff('meteorShower', 24, ['#ff7a2f', '#c4161c']);
+	staff('frostNova', 24, ['#8fd8ff', '#ffffff']);
 	canvas(scene, KEYS.muzzle, 12, 10, (ctx) => {
 		ctx.fillStyle = '#ffe07a';
 		ctx.beginPath();
@@ -480,4 +499,85 @@ function biomePlaceholders(scene: Phaser.Scene): void {
 			});
 		}
 	}
+}
+
+/** Health packs (3 sizes), equipment icons (shape per slot, color per rarity) and their glow. */
+export function gearPlaceholders(scene: Phaser.Scene): void {
+	for (const [percent, size] of [
+		[25, 10],
+		[50, 12],
+		[75, 14],
+	] as const) {
+		canvas(scene, KEYS.healPack(percent), size, size, (ctx) => {
+			ctx.fillStyle = '#f2f4f8';
+			ctx.fillRect(0, 0, size, size);
+			ctx.fillStyle = toCss(PALETTE.blood);
+			const t = Math.max(2, Math.round(size / 4));
+			ctx.fillRect((size - t) / 2, 2, t, size - 4);
+			ctx.fillRect(2, (size - t) / 2, size - 4, t);
+		});
+	}
+	const rarityColor = {
+		common: PALETTE.rarityCommon,
+		rare: PALETTE.rarityRare,
+		legendary: PALETTE.rarityLegendary,
+	} as const;
+	for (const item of GEAR) {
+		const c = toCss(rarityColor[item.rarity]);
+		canvas(scene, KEYS.gear(item.id), 20, 20, (ctx) => {
+			ctx.fillStyle = '#10131a';
+			ctx.fillRect(0, 0, 20, 20);
+			ctx.strokeStyle = c;
+			ctx.fillStyle = c;
+			ctx.lineWidth = 2;
+			switch (item.slot) {
+				case 'helmet':
+					ctx.beginPath();
+					ctx.arc(10, 12, 7, Math.PI, 0);
+					ctx.fill();
+					ctx.fillRect(3, 12, 14, 3);
+					break;
+				case 'armor':
+					ctx.fillRect(5, 5, 10, 12);
+					ctx.fillRect(2, 5, 16, 4);
+					break;
+				case 'legs':
+					ctx.fillRect(5, 3, 4, 14);
+					ctx.fillRect(11, 3, 4, 14);
+					ctx.fillRect(5, 3, 10, 4);
+					break;
+				case 'ring':
+					ctx.beginPath();
+					ctx.arc(10, 11, 6, 0, Math.PI * 2);
+					ctx.stroke();
+					ctx.fillRect(8, 2, 4, 4);
+					break;
+				case 'amulet':
+					ctx.beginPath();
+					ctx.moveTo(4, 2);
+					ctx.lineTo(10, 10);
+					ctx.lineTo(16, 2);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.arc(10, 13, 4, 0, Math.PI * 2);
+					ctx.fill();
+					break;
+			}
+			ctx.strokeStyle = c;
+			ctx.lineWidth = 1;
+			ctx.strokeRect(0.5, 0.5, 19, 19);
+		});
+	}
+	canvas(scene, KEYS.gearGlow, 48, 24, (ctx) => {
+		const g = ctx.createRadialGradient(24, 12, 1, 24, 12, 23);
+		g.addColorStop(0, 'rgba(255,255,255,0.95)');
+		g.addColorStop(1, 'rgba(255,255,255,0)');
+		ctx.fillStyle = g;
+		ctx.save();
+		ctx.scale(1, 0.5);
+		ctx.beginPath();
+		ctx.arc(24, 24, 23, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.restore();
+	});
 }

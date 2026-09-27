@@ -15,20 +15,22 @@ import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { ROUNDS } from '../data/rounds';
-import { levelScale, PERKS } from '../data/secondaries';
+import { levelScale, PERKS, type SecondaryId } from '../data/secondaries';
 import { SUPER } from '../data/superpowers';
 import type { VoEvent } from '../data/voice';
 import { MAGIC_FIRE_SPLASH, SIGNATURE, type SignatureWeapon } from '../data/weapons';
 import { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
+import { WeaponRing } from '../entities/WeaponRing';
 import { WeaponView } from '../entities/WeaponView';
-import type { I18nKey } from '../i18n';
+import { type I18nKey, t } from '../i18n';
 import { applyExtras, evaluateAchievements } from '../logic/achievements';
 import { biomeForRound, isBiomeStart } from '../logic/biome';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
 import { difficultyMods, scaleFish } from '../logic/difficulty';
+import { emptyGear, pickUpGear, rollGearDrop, rollHealDrop } from '../logic/equipment';
 import { inArc } from '../logic/geometry';
 import { inputToWorld, isoDepth, worldToScreen } from '../logic/iso';
 import { ObstacleField, pushOut } from '../logic/obstacles';
@@ -121,6 +123,7 @@ export class GameScene extends Phaser.Scene {
 	};
 	private weapons!: WeaponSystem;
 	private weaponView!: WeaponView;
+	private weaponRing!: WeaponRing;
 	private secondaries!: SecondarySystem;
 	private pool!: ProjectilePool;
 	private area!: AreaSystem;
@@ -167,6 +170,11 @@ export class GameScene extends Phaser.Scene {
 	/** Kills needed for the next superpower (grows by 5 per cast this run). */
 	get superCost(): number {
 		return superCost(this.run.counters.superUses ?? 0);
+	}
+
+	/** Id of the current signature weapon (pause screen). */
+	get signatureId(): string {
+		return this.weapons.weapon.id;
 	}
 
 	get superIsUnlocked(): boolean {
@@ -244,7 +252,10 @@ export class GameScene extends Phaser.Scene {
 		this.chunks = new ChunkManager(this, seed, biome);
 		this.obstacles = new ObstacleField(seed, BIOMES[biome]);
 		this.fx = new FxSystem(this, save.settings, this.chunks);
-		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
+		this.pickups = new PickupSystem(this, (kind, value, gearId) =>
+			this.collect(kind, value, gearId),
+		);
+		this.run.gear ??= emptyGear();
 		this.hero = new Hero(this, heroId, tier, this.stats);
 		this.barrier = this.add.image(0, 0, KEYS.barrier).setVisible(false);
 		this.hostile = new HostileSystem(this, (damage, kind) => {
@@ -323,6 +334,7 @@ export class GameScene extends Phaser.Scene {
 			},
 		);
 		this.weaponView = new WeaponView(this, this.weapons.weapon);
+		this.weaponRing = new WeaponRing(this);
 		this.secondaries = new SecondarySystem(
 			this,
 			this.rng,
@@ -382,6 +394,13 @@ export class GameScene extends Phaser.Scene {
 		this.hero.update(dt, move, this.collideHero);
 		if (this.moving) this.weaponView.face(Math.atan2(move.y, move.x));
 		this.weaponView.update(dt, this.hero.x, this.hero.y);
+		this.weaponRing.update(
+			dt,
+			Object.keys(this.build.secondaries) as SecondaryId[],
+			this.hero.x,
+			this.hero.y,
+			this.enemies.grid,
+		);
 		healHero(run, this.stats.regen * dt);
 		if (this.voiceDirector.checkLowHp(run.hp / run.maxHp)) this.say('lowHp');
 		this.updatePotions(dt);
@@ -728,6 +747,10 @@ export class GameScene extends Phaser.Scene {
 		// Normal skips the extra roll so seeded runs keep the same RNG sequence.
 		if (fish > 0 && this.mods.rewards !== 1) fish = scaleFish(fish, this.mods, this.rng.next());
 		if (fish > 0) this.pickups.drop('fish', fish, e.x + 6, e.y + 6);
+		const heal = rollHealDrop(this.rng, kind);
+		if (heal > 0) this.pickups.drop('heal', heal, e.x - 8, e.y + 4);
+		const gear = rollGearDrop(this.rng, kind);
+		if (gear) this.pickups.drop('gear', 0, e.x + 4, e.y - 8, gear.id);
 		const p = this.build.perks;
 		if (
 			p.butcher &&
@@ -748,7 +771,17 @@ export class GameScene extends Phaser.Scene {
 		}
 	}
 
-	private collect(kind: PickupKind, value: number): void {
+	private collect(kind: PickupKind, value: number, gearId: string | null): void {
+		if (kind === 'heal') {
+			healHero(this.run, this.run.maxHp * value);
+			this.fx.play('sfx.potion');
+			this.fx.banner(this.hero.x, this.hero.y, 'fx.heal', { n: Math.round(value * 100) });
+			return;
+		}
+		if (kind === 'gear') {
+			if (gearId) this.pickUpGear(gearId);
+			return;
+		}
 		if (kind === 'fish') {
 			this.run.fish += value;
 			this.fx.play('sfx.pickupFish');
@@ -771,6 +804,31 @@ export class GameScene extends Phaser.Scene {
 			if (!wasUnlocked && this.superIsUnlocked)
 				this.fx.banner(this.hero.x, this.hero.y, 'fx.superUnlocked');
 		}
+	}
+
+	/** Stepped on a gear drop: into the bag, worn at once when its slot is free. */
+	private pickUpGear(id: string): void {
+		const gear = this.run.gear ?? emptyGear();
+		this.run.gear = gear;
+		const result = pickUpGear(gear, this.stats, id);
+		this.syncMaxHp();
+		this.fx.play('sfx.card');
+		this.fx.banner(
+			this.hero.x,
+			this.hero.y,
+			result === 'equipped' ? 'fx.gearEquipped' : 'fx.gearBag',
+			{
+				name: t(`gear.${id}` as I18nKey),
+			},
+		);
+	}
+
+	/** Max HP follows the stats (gear, cards); current HP is kept within it. */
+	syncMaxHp(): void {
+		const before = this.run.maxHp;
+		this.run.maxHp = this.stats.maxHp;
+		if (this.run.maxHp > before) healHero(this.run, this.run.maxHp - before);
+		this.run.hp = Math.min(this.run.hp, this.run.maxHp);
 	}
 
 	private castSuper(): void {

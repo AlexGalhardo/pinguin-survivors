@@ -1,12 +1,14 @@
 import { achPtBR } from './achievements.pt-BR';
 import { cardsPtBR } from './cards.pt-BR';
 import type { I18nKey } from './en';
+import { gearPtBR } from './gear.pt-BR';
 import { voicePtBR } from './voice.pt-BR';
 
 export const ptBR: Record<I18nKey, string> = {
 	...achPtBR,
 	...cardsPtBR,
 	...voicePtBR,
+	...gearPtBR,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Carregando…',
 	'hud.round': 'ROUND {n}',
@@ -89,6 +91,24 @@ export const ptBR: Record<I18nKey, string> = {
 	'res.qhd': '2K 1440p',
 	'res.3k': '3K 1620p',
 	'res.4k': '4K 2160p',
+	'pause.stats': 'ATRIBUTOS',
+	'pause.weapons': 'ARMAS',
+	'pause.cards': 'CARTAS',
+	'pause.gear': 'EQUIPAMENTO',
+	'pause.bag': 'MOCHILA',
+	'pause.bagEmpty': 'vazia: pise nos itens que os zumbis dropam',
+	'pause.equipHint': 'ENTER / clique: equipar',
+	'pause.unequipHint': 'ENTER / clique: tirar',
+	'pause.help': 'TAB troca de coluna · ↑↓ escolher · ENTER usar · ESC continuar',
+	'sig.machete': 'Facão',
+	'sig.katana': 'Katana',
+	'sig.chainsword': 'Espada-motosserra',
+	'sig.doubleBarrel': 'Escopeta de Cano Duplo',
+	'sig.autoShotgun': 'Escopeta Automática',
+	'sig.rocketShotgun': 'Escopeta-foguete',
+	'sig.elementStaff': 'Cajado Elemental',
+	'sig.arcaneStaff': 'Cajado Arcano',
+	'sig.stormStaff': 'Cajado da Tempestade',
 	'pause.title': 'PAUSADO',
 	'pause.resume': 'CONTINUAR',
 	'pause.quit': 'DESISTIR DA PARTIDA',
@@ -177,6 +197,9 @@ export const ptBR: Record<I18nKey, string> = {
 	'hud.superReady': 'SUPER · SPACE',
 	'fx.block': 'BLOQUEIO',
 	'hud.fish': 'PEIXES {n}',
+	'fx.heal': '+{n}% HP',
+	'fx.gearEquipped': '{name} equipado!',
+	'fx.gearBag': '{name} → mochila (pause para equipar)',
 	'fx.levelUp': 'SUBIU DE NÍVEL!',
 	'hud.level': 'NV {n}',
 	'over.title': 'VOCÊ MORREU',

@@ -235,6 +235,17 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ---
 
+## FASE 6b — Pedidos do usuário (2026-09-27, playdev)
+
+- [x] Custo do superpoder +5 abates por uso (P-68)
+- [x] Título do menu no canto superior esquerdo, sem subtítulo
+- [x] Menu de pausa com atributos, armas/cartas e equipamento com equipar/desequipar (P-67)
+- [x] Armas secundárias ao redor do herói, até 4 (P-67); [~] sprites finais das secundárias (frente de assets)
+- [x] Packs de vida +25/50/75% (P-66)
+- [x] Equipamentos em 5 slots × 10 itens, drops por tipo de inimigo, pegos pisando (P-66); [~] ícones finais (frente de assets)
+- [~] Kraken com movimento animado: gait procedural por código para arte estática (feito); walk desenhado em produção na frente de assets
+- [x] Anel de chamas: dano 8 a cada 0,4 s e sem números "0" de ticks fracionários
+
 ## FASE 7 — RC → 1.0.0
 
 ### 7.1 QA e release candidate (ainda com placeholders)
