@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.DS_Store
+Thumbs.db
+*.log
+graphify-out/
+art-src/raw/
+.vite/
+.env
+.env.local
