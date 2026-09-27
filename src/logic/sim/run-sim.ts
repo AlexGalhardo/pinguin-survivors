@@ -1,11 +1,12 @@
 import type { HeroId } from '../../config/constants';
 import { COMBAT } from '../../data/combat';
-import { BOSS_BY_BIOME, ENEMIES, ENEMY_LIST } from '../../data/enemies';
+import { ENEMY_LIST } from '../../data/enemies';
 import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
 import { levelScale, SECONDARIES, type SecondaryId } from '../../data/secondaries';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import { SIGNATURE, type SignatureWeapon } from '../../data/weapons';
+import { biomeForRound, bossForRound } from '../biome';
 import { applyCard, type Build, emptyBuild } from '../build';
 import { drawCards } from '../cards';
 import { armorReduction } from '../combat';
@@ -21,6 +22,7 @@ import {
 	spawnRate,
 } from '../round';
 import { heroStats, type PlayerStats, type PointStat } from '../stats';
+import { applyUpgrades } from '../upgrades';
 import { pickBest } from './card-policy';
 
 /**
@@ -59,6 +61,8 @@ export interface SimConfig {
 	pointPlan?: PointStat[];
 	/** Start from this weapon tier (debug). */
 	tier?: 1 | 2 | 3;
+	/** Workshop upgrade levels by id (applied to the starting stats like the game). */
+	upgrades?: Record<string, number>;
 }
 
 export interface SimResult {
@@ -168,7 +172,10 @@ interface AverageEnemy {
 
 /** Average enemy of the pool available in `round`, elites included. */
 function averageEnemy(round: number): AverageEnemy {
-	const pool = ENEMY_LIST.filter((e) => e.fromRound > 0 && e.fromRound <= round);
+	const biome = biomeForRound(round);
+	const pool = ENEMY_LIST.filter(
+		(e) => e.biome === biome && e.fromRound > 0 && e.fromRound <= round,
+	);
 	const total = pool.reduce((a, e) => a + e.weight, 0);
 	const out = { hp: 0, damage: 0, xp: 0, speed: 0 };
 	for (const e of pool) {
@@ -209,6 +216,7 @@ export function simulateRun(config: SimConfig): SimResult {
 		config.level,
 		spendPoints(config.level, config.pointPlan ?? POINT_PLANS[config.hero]),
 	);
+	applyUpgrades(stats, config.upgrades ?? {});
 	const tier = config.tier ?? 1;
 	const build = emptyBuild(tier);
 	let weapon = SIGNATURE[config.hero][tier - 1] as SignatureWeapon;
@@ -239,7 +247,7 @@ export function simulateRun(config: SimConfig): SimResult {
 	for (let round = 1; round <= SIM.maxRound; round++) {
 		const duration = roundDuration(round);
 		const enemy = averageEnemy(round);
-		const boss = ENEMIES[BOSS_BY_BIOME.antarctica];
+		const boss = bossForRound(round);
 		let bossHp = isBossRound(round) ? boss.hp * bossHpMul(round) : 0;
 		const bossDmg = boss.damage * dmgMul(round);
 		let alive = 0;
@@ -337,9 +345,15 @@ export interface SimSummary {
 	avgXp: number;
 }
 
-export function simulateMany(hero: HeroId, level: number, runs: number, seed = 1): SimSummary {
+export function simulateMany(
+	hero: HeroId,
+	level: number,
+	runs: number,
+	seed = 1,
+	upgrades: Record<string, number> = {},
+): SimSummary {
 	const results = Array.from({ length: runs }, (_, i) =>
-		simulateRun({ hero, level, seed: seed + i }),
+		simulateRun({ hero, level, seed: seed + i, upgrades }),
 	);
 	const rounds = results.map((r) => r.round).sort((a, b) => a - b);
 	const avg = (f: (r: SimResult) => number) => results.reduce((a, r) => a + f(r), 0) / runs;

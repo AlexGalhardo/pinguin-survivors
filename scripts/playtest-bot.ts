@@ -14,6 +14,7 @@ import { chromium, type Page } from 'playwright';
 import { HERO_IDS, type HeroId } from '../src/config/constants';
 import { ALL_CARDS, type CardDef, type Rarity } from '../src/data/cards';
 import { SUPER } from '../src/data/superpowers';
+import { UPGRADES } from '../src/data/upgrades';
 import type { Build } from '../src/logic/build';
 import { SAVE_KEY } from '../src/logic/save';
 import { pickBest } from '../src/logic/sim/card-policy';
@@ -40,6 +41,19 @@ const react = Number(arg('react', '0'));
 const mistakes = Number(arg('mistakes', '0'));
 /** Start round (debug `?round=`): cards are not granted, so use it for boss checks only. */
 const startRound = arg('round', '');
+/** Workshop levels: `all:3` or `vitality:5,might:3`. */
+const upgrades = parseUpgrades(arg('upgrades', ''));
+
+function parseUpgrades(spec: string): Record<string, number> {
+	const out: Record<string, number> = {};
+	for (const part of spec.split(',').filter(Boolean)) {
+		const [id, n] = part.split(':');
+		const level = Number(n ?? 1);
+		if (id === 'all') for (const u of UPGRADES) out[u.id] = Math.min(u.maxLevel, level);
+		else if (id) out[id] = level;
+	}
+	return out;
+}
 
 export interface RoundLog {
 	round: number;
@@ -92,6 +106,7 @@ function saveFor(hero: HeroId, level: number): string {
 			resolution: 'auto',
 		},
 		heroes,
+		upgrades,
 		fish: 0,
 		potions: potions ? { ...none, heal: 1, megaHeal: 1, shield: 1 } : none,
 		gambits: potions
@@ -146,6 +161,7 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				weapons: { weapon: { range: number; kind: string } };
 				hostile: {
 					shots: { x: number; y: number; vx: number; vy: number; alive: boolean }[];
+					pools?: { x: number; y: number; radius: number; alive: boolean }[];
 				};
 				castSuper(): void;
 			};
@@ -238,6 +254,20 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 					const d = Math.hypot(e.x - h.x, e.y - h.y);
 					if (d < 320) near.push(e);
 				}
+				// Healthy heroes keep the closest enemy near weapon range instead of running away
+				// from everything (players fight the edge of the horde).
+				let nearest: E | null = null;
+				let nearestD = Number.POSITIVE_INFINITY;
+				for (const e of near) {
+					if (e === boss) continue;
+					const d = Math.hypot(e.x - h.x, e.y - h.y);
+					if (d < nearestD) {
+						nearestD = d;
+						nearest = e;
+					}
+				}
+				const engage = !boss && nearest && run.hp / run.maxHp > 0.5;
+				const prefer = w.kind === 'arc' ? w.range * 0.8 : w.range * 0.75;
 				let best = -1;
 				let bestScore = Number.POSITIVE_INFINITY;
 				for (let i = -1; i < dirs.length; i++) {
@@ -263,6 +293,15 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 								18,
 						);
 						danger += 1.5 / (d * d);
+					}
+					for (const pool of s.hostile.pools ?? []) {
+						if (!pool.alive) continue;
+						const d = Math.hypot(pool.x - px, pool.y - py) - pool.radius - 12;
+						if (d < 0) danger += 0.05 * (1 - d / pool.radius);
+					}
+					if (engage && nearest) {
+						const d = Math.hypot(nearest.x - px, nearest.y - py) - nearest.radius;
+						danger += 0.0004 * ((d - prefer) / 100) ** 2;
 					}
 					if (i === last) danger *= 0.9;
 					if (danger < bestScore) {
