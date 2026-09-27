@@ -288,7 +288,7 @@
 		"anims": {
 			"walk": {
 				"frames": 8,
-				"anchorY": 0.921875,
+				"anchorY": 0.953125,
 				"dirs": ["e", "n", "ne", "s", "se"],
 				"size": 64
 			}

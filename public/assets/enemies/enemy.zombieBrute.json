@@ -1,0 +1,52 @@
+{
+	"frames": {
+		"walk.e.00": {
+			"frame": { "x": 0, "y": 0, "w": 80, "h": 80 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+			"sourceSize": { "w": 80, "h": 80 }
+		},
+		"walk.n.00": {
+			"frame": { "x": 81, "y": 0, "w": 80, "h": 80 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+			"sourceSize": { "w": 80, "h": 80 }
+		},
+		"walk.ne.00": {
+			"frame": { "x": 162, "y": 0, "w": 80, "h": 80 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+			"sourceSize": { "w": 80, "h": 80 }
+		},
+		"walk.s.00": {
+			"frame": { "x": 243, "y": 0, "w": 80, "h": 80 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+			"sourceSize": { "w": 80, "h": 80 }
+		},
+		"walk.se.00": {
+			"frame": { "x": 324, "y": 0, "w": 80, "h": 80 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+			"sourceSize": { "w": 80, "h": 80 }
+		}
+	},
+	"meta": {
+		"image": "enemy.zombieBrute.png",
+		"size": { "w": 512, "h": 128 },
+		"scale": "1",
+		"anims": {
+			"walk": {
+				"frames": 1,
+				"anchorY": 0.9625,
+				"dirs": ["e", "n", "ne", "s", "se"],
+				"size": 80
+			}
+		}
+	}
+}
