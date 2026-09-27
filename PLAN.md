@@ -170,7 +170,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 2.6 i18n e balanceamento
 - [x] Todas as strings em `en.ts` e `pt-BR.ts` (+ `cards`, `achievements`, `voice`); layouts conferidos nos dois idiomas
-- [ ] `src/logic/sim/`: simulação headless de runs (3 heróis, rounds 1–30, levels 1/10/30) + script `scripts/sim.ts`
+- [x] `src/logic/sim/`: simulação headless de runs (3 heróis, rounds 1–60, levels 1/5/10/20/30, biomas, bosses, Oficina) + script `scripts/sim.ts`
 - [ ] Ajustar `balancing.md` e `src/data` pelas metas (§9)
 
 ---
@@ -186,10 +186,10 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Testes da lógica de pose/ângulo e do tempo do golpe vs. cadência (`tests/weapon-anim.test.ts`)
 
 ### 3.2 Simulação headless e balanceamento
-- [x] `src/logic/sim/run-sim.ts`: run simulada (herói, level, cartas por seed) com as fórmulas reais; [ ] calibrar o contato com o bot (hoje prevê rounds 3–4)
+- [x] `src/logic/sim/run-sim.ts`: run simulada (herói, level, cartas por seed) com as fórmulas reais; [x] contato calibrado com o bot por grid fit (balancing §10.1)
 - [x] `scripts/sim.ts` (tabela herói × level) e `scripts/playtest-bot.ts` (bot no jogo real, foge do grupo, 2×)
-- [x] 1ª passada de balanceamento pelo bot (balancing §10): heróis nível 1 morrem entre os rounds 7 e 10; [ ] passada com níveis 10/30 e cartas
-- [ ] Teste de sanidade da sim (determinística por seed)
+- [x] 1ª passada de balanceamento pelo bot (balancing §10): heróis nível 1 morrem entre os rounds 7 e 10; [x] 2ª passada com níveis 1/10/20, cartas, poções e Oficina (§10.1)
+- [x] Teste de sanidade da sim (determinística por seed, level monotônico; `tests/sim.test.ts`)
 
 ### 3.3 Polimento de sistemas
 - [x] Zoom-punch do boss (chegada, patada que acerta, morte; respeita "tremor de tela"), luz nos projéteis mágicos (até 40) e bloom por `ParallelFilters` (threshold + blur + ADD), com opção em Configurações
@@ -231,7 +231,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] +6 armas secundárias (bumerangue de peixe, mina, anel de chamas, totem de raios, nuvem de veneno, besta perfurante) e 3 cartas on-hit novas (chance de queimar, gelar e eletrocutar em corrente)
 - [x] Obstáculos sólidos leves (P-11): as decorações do chão viram círculos sólidos (`src/logic/obstacles.ts` + testes); herói e inimigos que andam deslizam em volta (voadores e bosses ignoram)
 - [x] Recordes por herói (seleção) e conquistas dos biomas 2–3 (`bossBiome2`/`bossBiome3` ao matar Kraken/Abominação)
-- [ ] Balanceamento com sim + playtest (metas §9)
+- [~] Balanceamento com sim + playtest (metas §9): volta do endless, bosses 20/30 e saltos de bioma ajustados (§10.1); falta lote com prioridade de alvo no boss + cura de fim de round e mais seeds
 
 ---
 

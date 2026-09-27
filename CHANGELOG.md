@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Balance: the endless mode gets harder every full tour of the three biomes (enemy HP ×1.6 and damage ×1.5 every 30 rounds), boss rounds spawn half the horde, the jump into biomes 2–3 is softer and the kraken and abomination have less HP (docs/balancing.md §10.1).
+
 ### Added
 
 - Recorded hero voices in English and Portuguese: one designed voice per penguin, 84 lines matching the subtitles.
 - Extra takes of the most repeated sounds (hits, shots, splats, zombie deaths, swings), rotated at random.
 - Late-game music track from round 21 onwards.
+- Headless run sim with secondaries, superpowers, elites, biomes, rotating bosses and workshop upgrades, calibrated against the playtest bot; the bot now plays with a per-frame dodging brain, fights bosses at weapon range, picks cards like the sim and takes level, stat points, potions and upgrades through the save.
 
 ## [0.1.0-beta.2] - 2026-09-27
 
