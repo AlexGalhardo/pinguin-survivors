@@ -102,3 +102,10 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 - Jack (`6babb578…`), Bob (`ae2516ed…`) e Lucia (`452419ff…`): `breathing-idle` (4 frames), `walking-8-frames` (8), `taking-punch` (6) e `falling-back-death` (7) em template nas 5 direções geradas + 3 espelhadas. Falta só o superpoder (1 direção, v3).
 - Walks de inimigos (template `scary-walk`, 8 frames): zombieSailor, zombieSeaLion completos; demais em geração.
 - Walks `scary-walk` completos também para fuelBloater, zombieWalrus, zombieNarwhal, zombieCitizen, zombieRiotCop e zombieSoldier.
+
+## 2026-09-27 — Armas secundárias, ícones, walks restantes e rework do kraken
+
+- **Armas secundárias visíveis** (`weapon.<id>`, pixflux 48×24 ou 32×32, apontando para a direita, 1 geração cada; prompts em `log.jsonl`): knives, molotov, iceShards, fishBoomerang, mine, flameRing, lightningTotem, poisonCloud, crossbow, bladeWhirl, seismicStomp, droneSentinel, grenadeBelt, arcaneChain, meteorShower, frostNova (+ auxPistol já existente).
+- **Ícones** `icon.<cardId>` 32×32 (atlas `ui`): primeiros 5 (maxHp, regen, armor, moveSpeed, attackSpeed); os demais cards, poções, secundárias e perks em geração. Chave nova `KEYS.icon` no manifest (sem placeholder: checar `textures.exists`).
+- **Walks**: zombieRat, zombieBrute, acidBloater (norte pendente) em `scary-walk`.
+- **Kraken**: o template em cima do concept com chão/base deformou o personagem a cada frame (descartado, frames em `anim-raw/enemy.kraken/walk-template`). A pedido do usuário, o sul foi limpo com `edit_image` (sem terra/pedras, duas pernas visíveis, `images/enemy.kraken.south-clean/`) e virou referência de um kraken v3 novo (`2532dba9-c07f-4172-a677-12debea25cb6`, 160 px) que recebe `walking-8-frames`. Até lá o jogo usa as rotações estáticas antigas. Abomination: o template também deformou; será refeito.

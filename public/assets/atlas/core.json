@@ -1,145 +1,257 @@
 {
 	"frames": {
+		"weapon.mine": {
+			"frame": { "x": 0, "y": 0, "w": 24, "h": 31 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 31 },
+			"sourceSize": { "w": 24, "h": 31 }
+		},
+		"weapon.molotov": {
+			"frame": { "x": 25, "y": 0, "w": 27, "h": 30 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 30 },
+			"sourceSize": { "w": 27, "h": 30 }
+		},
 		"proj.meteor": {
-			"frame": { "x": 0, "y": 0, "w": 27, "h": 28 },
+			"frame": { "x": 53, "y": 0, "w": 27, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 28 },
 			"sourceSize": { "w": 27, "h": 28 }
 		},
+		"weapon.fishBoomerang": {
+			"frame": { "x": 81, "y": 0, "w": 25, "h": 28 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 25, "h": 28 },
+			"sourceSize": { "w": 25, "h": 28 }
+		},
+		"weapon.seismicStomp": {
+			"frame": { "x": 107, "y": 0, "w": 48, "h": 24 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 24 },
+			"sourceSize": { "w": 48, "h": 24 }
+		},
+		"weapon.bladeWhirl": {
+			"frame": { "x": 156, "y": 0, "w": 24, "h": 24 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
+			"sourceSize": { "w": 24, "h": 24 }
+		},
+		"weapon.flameRing": {
+			"frame": { "x": 181, "y": 0, "w": 20, "h": 24 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 20, "h": 24 },
+			"sourceSize": { "w": 20, "h": 24 }
+		},
+		"weapon.arcaneChain": {
+			"frame": { "x": 202, "y": 0, "w": 45, "h": 23 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 45, "h": 23 },
+			"sourceSize": { "w": 45, "h": 23 }
+		},
+		"weapon.iceShards": {
+			"frame": { "x": 248, "y": 0, "w": 44, "h": 22 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 22 },
+			"sourceSize": { "w": 44, "h": 22 }
+		},
+		"weapon.lightningTotem": {
+			"frame": { "x": 293, "y": 0, "w": 44, "h": 22 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 22 },
+			"sourceSize": { "w": 44, "h": 22 }
+		},
+		"weapon.poisonCloud": {
+			"frame": { "x": 338, "y": 0, "w": 22, "h": 22 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 22 },
+			"sourceSize": { "w": 22, "h": 22 }
+		},
+		"weapon.frostNova": {
+			"frame": { "x": 361, "y": 0, "w": 46, "h": 20 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 46, "h": 20 },
+			"sourceSize": { "w": 46, "h": 20 }
+		},
 		"weapon.autoShotgun": {
-			"frame": { "x": 28, "y": 0, "w": 72, "h": 19 },
+			"frame": { "x": 408, "y": 0, "w": 72, "h": 19 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 72, "h": 19 },
 			"sourceSize": { "w": 72, "h": 19 }
 		},
 		"weapon.arcaneStaff": {
-			"frame": { "x": 101, "y": 0, "w": 64, "h": 18 },
+			"frame": { "x": 481, "y": 0, "w": 64, "h": 18 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 18 },
 			"sourceSize": { "w": 64, "h": 18 }
 		},
+		"weapon.crossbow": {
+			"frame": { "x": 546, "y": 0, "w": 48, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
+			"sourceSize": { "w": 48, "h": 18 }
+		},
+		"weapon.grenadeBelt": {
+			"frame": { "x": 595, "y": 0, "w": 48, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
+			"sourceSize": { "w": 48, "h": 18 }
+		},
 		"weapon.chainsword": {
-			"frame": { "x": 166, "y": 0, "w": 63, "h": 16 },
+			"frame": { "x": 644, "y": 0, "w": 63, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 63, "h": 16 },
 			"sourceSize": { "w": 63, "h": 16 }
 		},
+		"weapon.droneSentinel": {
+			"frame": { "x": 708, "y": 0, "w": 27, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 16 },
+			"sourceSize": { "w": 27, "h": 16 }
+		},
 		"weapon.auxPistol": {
-			"frame": { "x": 230, "y": 0, "w": 23, "h": 16 },
+			"frame": { "x": 736, "y": 0, "w": 23, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 23, "h": 16 },
 			"sourceSize": { "w": 23, "h": 16 }
 		},
 		"proj.grenade": {
-			"frame": { "x": 254, "y": 0, "w": 11, "h": 16 },
+			"frame": { "x": 760, "y": 0, "w": 11, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 11, "h": 16 },
 			"sourceSize": { "w": 11, "h": 16 }
 		},
 		"proj.bottle": {
-			"frame": { "x": 266, "y": 0, "w": 9, "h": 16 },
+			"frame": { "x": 772, "y": 0, "w": 9, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 9, "h": 16 },
 			"sourceSize": { "w": 9, "h": 16 }
 		},
 		"weapon.rocketShotgun": {
-			"frame": { "x": 276, "y": 0, "w": 73, "h": 15 },
+			"frame": { "x": 782, "y": 0, "w": 73, "h": 15 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 73, "h": 15 },
 			"sourceSize": { "w": 73, "h": 15 }
 		},
+		"weapon.knives": {
+			"frame": { "x": 856, "y": 0, "w": 48, "h": 15 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 15 },
+			"sourceSize": { "w": 48, "h": 15 }
+		},
 		"weapon.stormStaff": {
-			"frame": { "x": 350, "y": 0, "w": 74, "h": 14 },
+			"frame": { "x": 905, "y": 0, "w": 74, "h": 14 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 74, "h": 14 },
 			"sourceSize": { "w": 74, "h": 14 }
 		},
 		"proj.spit": {
-			"frame": { "x": 425, "y": 0, "w": 13, "h": 14 },
+			"frame": { "x": 980, "y": 0, "w": 13, "h": 14 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 14 },
 			"sourceSize": { "w": 13, "h": 14 }
 		},
 		"weapon.doubleBarrel": {
-			"frame": { "x": 439, "y": 0, "w": 62, "h": 13 },
+			"frame": { "x": 0, "y": 32, "w": 62, "h": 13 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 62, "h": 13 },
 			"sourceSize": { "w": 62, "h": 13 }
 		},
 		"weapon.elementStaff": {
-			"frame": { "x": 502, "y": 0, "w": 61, "h": 13 },
+			"frame": { "x": 63, "y": 32, "w": 61, "h": 13 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 13 },
 			"sourceSize": { "w": 61, "h": 13 }
 		},
+		"weapon.meteorShower": {
+			"frame": { "x": 125, "y": 32, "w": 45, "h": 13 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 45, "h": 13 },
+			"sourceSize": { "w": 45, "h": 13 }
+		},
 		"proj.orb": {
-			"frame": { "x": 564, "y": 0, "w": 9, "h": 12 },
+			"frame": { "x": 171, "y": 32, "w": 9, "h": 12 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 9, "h": 12 },
 			"sourceSize": { "w": 9, "h": 12 }
 		},
 		"weapon.machete": {
-			"frame": { "x": 574, "y": 0, "w": 61, "h": 11 },
+			"frame": { "x": 181, "y": 32, "w": 61, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 11 },
 			"sourceSize": { "w": 61, "h": 11 }
 		},
 		"pickup.meat": {
-			"frame": { "x": 636, "y": 0, "w": 13, "h": 11 },
+			"frame": { "x": 243, "y": 32, "w": 13, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 11 },
 			"sourceSize": { "w": 13, "h": 11 }
 		},
 		"pickup.xp": {
-			"frame": { "x": 650, "y": 0, "w": 8, "h": 11 },
+			"frame": { "x": 257, "y": 32, "w": 8, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 11 },
 			"sourceSize": { "w": 8, "h": 11 }
 		},
 		"weapon.katana": {
-			"frame": { "x": 659, "y": 0, "w": 75, "h": 8 },
+			"frame": { "x": 266, "y": 32, "w": 75, "h": 8 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 75, "h": 8 },
 			"sourceSize": { "w": 75, "h": 8 }
 		},
 		"pickup.fish": {
-			"frame": { "x": 735, "y": 0, "w": 14, "h": 7 },
+			"frame": { "x": 342, "y": 32, "w": 14, "h": 7 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 14, "h": 7 },
 			"sourceSize": { "w": 14, "h": 7 }
 		},
 		"proj.knife": {
-			"frame": { "x": 750, "y": 0, "w": 24, "h": 5 },
+			"frame": { "x": 357, "y": 32, "w": 24, "h": 5 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 5 },
 			"sourceSize": { "w": 24, "h": 5 }
 		},
 		"proj.blade": {
-			"frame": { "x": 775, "y": 0, "w": 17, "h": 5 },
+			"frame": { "x": 382, "y": 32, "w": 17, "h": 5 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 5 },
 			"sourceSize": { "w": 17, "h": 5 }
 		}
 	},
-	"meta": { "image": "core.png", "size": { "w": 1024, "h": 32 }, "scale": "1" }
+	"meta": { "image": "core.png", "size": { "w": 1024, "h": 64 }, "scale": "1" }
 }

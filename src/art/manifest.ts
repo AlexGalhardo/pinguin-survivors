@@ -39,6 +39,12 @@ export const KEYS = {
 	barrier: 'fx.barrier',
 	/** Shared achievement badge (PixelLab; placeholder until public/assets/ui/ui.achievement.png). */
 	achievementBadge: 'ui.achievement',
+	/**
+	 * 32×32 UI icons (PixelLab, atlas group `ui`): card ids (`icon.maxHp`, `icon.weapon.knives`,
+	 * `icon.perk.bloodlust`) and potions (`icon.potion.heal`). No code placeholder: check
+	 * `textures.exists` before using one.
+	 */
+	icon: (id: string) => `icon.${id}`,
 	sfxAchievement: 'sfx.achievement',
 	/** Approved PixelLab concept (south view), used as portrait in menus. */
 	portrait: (hero: HeroId) => `portrait.${hero}`,

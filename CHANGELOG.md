@@ -45,6 +45,7 @@ Playtest build **playdev-4**.
 - Final art for the kraken and abomination bosses and the brute and acid bloater zombies; the medic zombie walks.
 - The three heroes now have breathing idle, hit reaction and death animations in 8 directions; the sailor and sea lion zombies walk.
 - Walking animations for the fuel bloater, walrus, narwhal, citizen, riot cop and soldier zombies.
+- Sprites for every secondary weapon (shown around the hero like the signature weapon), the first card icons, and walking rats, brutes and acid bloaters.
 
 ## [0.1.0-beta.4] - 2026-09-27
 

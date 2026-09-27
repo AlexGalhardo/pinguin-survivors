@@ -163,5 +163,78 @@
 	"deco.ruins.2": {
 		"src": "art-src/pixellab/images/deco.ruins.2/11.png",
 		"group": "ruins"
+	},
+	"weapon.knives": {
+		"src": "art-src/pixellab/images/weapon.knives/11.png"
+	},
+	"weapon.molotov": {
+		"src": "art-src/pixellab/images/weapon.molotov/11.png"
+	},
+	"weapon.iceShards": {
+		"src": "art-src/pixellab/images/weapon.iceShards/11.png"
+	},
+	"weapon.fishBoomerang": {
+		"src": "art-src/pixellab/images/weapon.fishBoomerang/11.png"
+	},
+	"weapon.mine": {
+		"src": "art-src/pixellab/images/weapon.mine/11.png"
+	},
+	"weapon.flameRing": {
+		"src": "art-src/pixellab/images/weapon.flameRing/11.png"
+	},
+	"weapon.lightningTotem": {
+		"src": "art-src/pixellab/images/weapon.lightningTotem/11.png"
+	},
+	"weapon.poisonCloud": {
+		"src": "art-src/pixellab/images/weapon.poisonCloud/11.png"
+	},
+	"weapon.crossbow": {
+		"src": "art-src/pixellab/images/weapon.crossbow/11.png"
+	},
+	"weapon.bladeWhirl": {
+		"src": "art-src/pixellab/images/weapon.bladeWhirl/11.png"
+	},
+	"weapon.seismicStomp": {
+		"src": "art-src/pixellab/images/weapon.seismicStomp/11.png"
+	},
+	"weapon.droneSentinel": {
+		"src": "art-src/pixellab/images/weapon.droneSentinel/11.png"
+	},
+	"weapon.grenadeBelt": {
+		"src": "art-src/pixellab/images/weapon.grenadeBelt/11.png"
+	},
+	"weapon.arcaneChain": {
+		"src": "art-src/pixellab/images/weapon.arcaneChain/11.png"
+	},
+	"weapon.meteorShower": {
+		"src": "art-src/pixellab/images/weapon.meteorShower/11.png"
+	},
+	"weapon.frostNova": {
+		"src": "art-src/pixellab/images/weapon.frostNova/11.png"
+	},
+	"icon.maxHp": {
+		"src": "art-src/pixellab/images/icon.maxHp/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"icon.regen": {
+		"src": "art-src/pixellab/images/icon.regen/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"icon.armor": {
+		"src": "art-src/pixellab/images/icon.armor/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"icon.moveSpeed": {
+		"src": "art-src/pixellab/images/icon.moveSpeed/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"icon.attackSpeed": {
+		"src": "art-src/pixellab/images/icon.attackSpeed/11.png",
+		"group": "ui",
+		"trim": false
 	}
 }
