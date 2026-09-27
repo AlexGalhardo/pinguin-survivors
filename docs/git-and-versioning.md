@@ -70,3 +70,10 @@ Nunca use `--no-verify`. Se um gate falhar, corrija a causa.
 - **Biome v2** é o linter e o formatter (sem ESLint e sem Prettier). Config em `biome.json`.
 - Indentação com **TAB**, largura **4** (`.editorconfig` + Biome), LF, UTF-8. Exceção: YAML usa espaços, porque a especificação proíbe tabs.
 - `bun run check` (verifica) · `bun run check:fix` (corrige/formata).
+
+## Trabalho paralelo e branch `dev` (P-58)
+
+- Frentes: `wt/balance`, `wt/assets` (worktrees) e `wt/systems` (checkout principal). Ninguém faz checkout de `dev` nem de `main` nos worktrees.
+- Integração em `dev`, sempre fast-forward: `git fetch origin && git rebase origin/dev` → gates completos (`bunx biome ci .`, `bun run typecheck`, `bun test`, `bun run build`) → `git push origin HEAD:dev` (se recusar por não ser fast-forward, rebase de novo e repita).
+- Posse de arquivos para evitar conflitos: balance = `src/data/`, `src/logic/sim/`, `scripts/sim.ts`, `scripts/playtest-bot.ts`, `docs/balancing.md`; assets = `art-src/`, `public/assets/`, `scripts/pl-*`/`pack-*`, `docs/art-prompts.md`, `docs/art-and-assets.md`, entradas novas em `src/art/manifest.ts`; systems = o resto. Arquivos compartilhados (`PLAN.md`, `CHANGELOG.md`, `docs/decisions.md`) só recebem edições pequenas e localizadas; em conflito, mantenha as duas versões.
+- Promoção `dev` → `main` (linha principal): gates completos em `dev` → `git push origin origin/dev:main` (fast-forward) com as tags de release.
