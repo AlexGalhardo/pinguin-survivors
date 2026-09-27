@@ -26,6 +26,8 @@ export const KEYS = {
 	sfxAchievement: 'sfx.achievement',
 	/** Approved PixelLab concept (south view), used as portrait in menus. */
 	portrait: (hero: HeroId) => `portrait.${hero}`,
+	/** Main menu key art (PixelLab, 688×384). */
+	keyart: (hero: HeroId) => `keyart.${hero}`,
 } as const;
 
 export const BIOMES = {
@@ -40,6 +42,8 @@ export const FILES = {
 		'portrait.jack': 'assets/heroes/portrait.jack.png',
 		'portrait.bob': 'assets/heroes/portrait.bob.png',
 		'portrait.lucia': 'assets/heroes/portrait.lucia.png',
+		'keyart.jack': 'assets/menu/keyart.jack.png',
+		'keyart.bob': 'assets/menu/keyart.bob.png',
 	},
 	audio: { 'sfx.achievement': 'assets/audio/sfx/sfx.achievement.mp3' },
 } as const;

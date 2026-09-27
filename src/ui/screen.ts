@@ -11,6 +11,9 @@ export const text = (size: number, color: number = PALETTE.textLight, wrap?: num
 	color: toCss(color),
 	align: 'center',
 	wordWrap: wrap ? { width: wrap } : undefined,
+	// Dark outline keeps text readable over the key art.
+	stroke: toCss(PALETTE.night),
+	strokeThickness: 3,
 });
 
 /**
