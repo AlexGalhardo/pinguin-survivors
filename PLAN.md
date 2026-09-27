@@ -125,14 +125,14 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ### 1.8c Pedidos do usuário já adiantados (P-41…P-45)
 - [x] TAB alterna 1×/2× (sim, timers e tweens) + indicador "2x ▶▶" na HUD
 - [x] Versão SemVer centralizada no rodapé da HUD (`src/ui/version-footer.ts`)
-- [ ] Versão no rodapé do **menu inicial** (quando o MainMenu existir, 2.5)
+- [x] Versão no rodapé do **menu inicial** e de todas as telas de menu
 - [x] 131 conquistas globais (`src/data/achievements.ts`), avaliação, pontos e loja de extras (`src/logic/achievements.ts`) + textos EN/PT-BR + testes
 - [x] Toast "Achievement unlocked" centralizado no topo, fila, badge placeholder, som `sfx.achievement` (ElevenLabs)
 - [x] Badge final `ui.achievement` no PixelLab (seed 33 de 3; `public/assets/ui/ui.achievement.png`)
 - [x] Contadores de conquistas durante a run (kills, elites, bosses, críticos, parries, dodges, DoTs, elementos, cartas, superpoderes) + feats de boss e desbloqueios, com `evaluateAchievements` ao vivo a cada 1 s
-- [ ] Tela de conquistas (lista, progresso, filtros) e loja de extras (itens a definir)
+- [x] Tela de conquistas (lista com progresso, rolagem, pontos); [ ] loja de extras (itens a definir)
 - [x] Save local: schema v1 tolerante, migrações, snapshot da run, histórico das últimas 20 partidas, export/import (`src/logic/save.ts`, `src/core/storage.ts`) + testes
-- [ ] Autosave no fim de cada round + botão **Continue** no menu + tela de **Histórico** das partidas
+- [x] Tela de **Histórico** das partidas; [ ] autosave no fim de cada round + botão **Continue**
 
 ### 1.9 Pickups, HUD e fim de run
 - [x] Orbes de XP, Fish e carne pooled, ímã pelo alcance de coleta, coleta total no fim do round
@@ -160,11 +160,11 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 2.4 Desbloqueios e seleção
 - [x] Bob ao vencer o boss 10, Lucia ao vencer o boss 20 (banner na tela); [ ] tela de desbloqueio dedicada
-- [ ] `HeroSelectScene` com heróis bloqueados/desbloqueados, level e stats
+- [x] `HeroSelectScene` com retratos (concepts aprovados), bloqueio com dica de desbloqueio e nível
 
 ### 2.5 Menus e settings
-- [ ] `MainMenuScene`, `PauseScene` (Resume / Settings / Quit com confirmação), `GameOverScene` final (XP ganho, levels, Fish, build, recorde)
-- [ ] `SettingsScene`: idioma EN/PT-BR, volumes (master/música/SFX/voz), gore (máx./reduzido/gosma), screen shake, números de dano, fullscreen
+- [x] `MainMenuScene` (key art animada, carteira de Fish/pontos, versão no rodapé), `PauseScene` (Continuar / Configurações / Desistir com confirmação), `GameOverScene` (XP, levels, Fish, recorde; Enter = de novo, Esc = menu)
+- [x] `SettingsScene`: idioma EN/PT-BR, **resolução (auto/SD/HD/FHD/2K/3K/4K)**, volumes, gore, tremor de tela, números de dano, exportar/importar save; [ ] aplicar gore/tremor/números no jogo; [ ] fullscreen
 - [ ] Records (melhor round por herói)
 
 ### 2.6 i18n e balanceamento
@@ -274,6 +274,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - 2026-09-27 — Pedido do usuário: identidade forte por herói (P-37), 6 cartas exclusivas cada (P-38) e superpoderes no level 5 com VFX próprios (P-39/P-40) → GDD, balancing, art, HUD e PLAN (1.8b).
 - 2026-09-27 — Engine iso: projeção 2:1, zoom inteiro pela altura, chunks infinitos em DynamicTexture, herói placeholder 8 direções, i18n EN/PT-BR, fonte Pixelify Sans (60 FPS a 1366×768).
 - 2026-09-27 — Pedidos do usuário: TAB 2×, versão no rodapé, 131 conquistas + pontos, toast com som (ElevenLabs), save/histórico/export; histórico da `main` recomeçado e push por commit.
+- 2026-09-27 — Menus (principal com key art animada do PixelLab, heróis, configurações com resolução, pausa, conquistas, histórico); badge final de conquista; render nativo em Retina (M1 com zoom 3).
 - 2026-09-27 — Fase 1 quase completa: efeitos de status, PlayerStats, CombatSystem, pickups/level/Fish, save ligado ao jogo, Game Over, cartas (48), secundárias e exclusivas, perks, superpoderes, IA especial dos inimigos e ataques do boss. 300 inimigos a 60 FPS. Alcance do Jack +50% (pedido do usuário).
 - 2026-09-27 — Loop de combate jogável com placeholders: hordas fora da tela com separação, elites com aura, boss no round 10, armas T1 dos 3 heróis, sangue no chão, HUD (HP, round, timer, kills, boss). Playwright headless mediu ~38 FPS a 2560×1080 com ~40 inimigos (render por software; medir no Chrome real).
 - 2026-09-27 — Concepts aprovados (Jack v3-a, Bob v3-a, Lucia v3-b; ~88 px). Versionamento passa a `0.1.0-alpha.N`.

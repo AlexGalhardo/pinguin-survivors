@@ -30,6 +30,14 @@ Log bruto e completo em `art-src/pixellab/log.jsonl` (gerado pelos scripts). Aqu
 
 Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 atualizado). Os tiers T2/T3 saem desses personagens via `/create-character-state`.
 
+## 2026-09-27 — Key art do menu (`bun scripts/pl-keyart.ts`)
+
+- Pedido do usuário: 2 concepts inspirados no clima de duas artes de DOOM enviadas no chat (vermelho, laranja, verde, preto), um com o **Jack** e outro com o **Bob**, para fundo animado do menu. As imagens de DOOM **não** foram enviadas à API (arte de terceiros): só a descrição de clima/composição no prompt, com o sprite aprovado do herói como referência de personagem.
+- Endpoint `/generate-image-v2`, **688×384** (maior 16:9 suportado), seeds 7 e 42 por herói → 4 imagens, **120 gerações** (30 cada). Prompt completo em `scripts/pl-keyart.ts` e no log.
+- Em uso (provisório, alternando a cada abertura do menu para o usuário comparar): `jack-42` → `public/assets/menu/keyart.jack.png` e `bob-42` → `public/assets/menu/keyart.bob.png`. Alternativas: `jack-7`, `bob-7` em `art-src/pixellab/keyart/`.
+- Animação por código (`src/ui/MenuBackground.ts`): deriva lenta, brasas subindo, pulso da lava e relâmpagos. Escala inteira que cobre a tela.
+- **Status**: ⏳ o usuário escolhe qual fica (Jack ou Bob, seed 7 ou 42).
+
 ## 2026-09-27 — Badge de conquista (`bun scripts/pl-image.ts ui.achievement 64 …`)
 
 - Endpoint `/create-image-pixflux`, 64×64, fundo transparente, contorno preto, sombreamento detalhado. Seeds 11, 22, 33 (2 gerações no total).
