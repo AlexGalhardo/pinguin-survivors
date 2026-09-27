@@ -81,3 +81,10 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 - **Decorações** (`create_image_pixflux`, `isometric: true`, 48×48, carro 64×64, 1 geração cada): `deco.antarctica.0–2` (cristais de gelo, rocha com neve, caixote com mão de sangue), `deco.station.0–2` (barris de óleo, contêiner laranja, corrente de âncora + cabeço), `deco.ruins.0–2` (carro queimado, entulho, caçamba tombada). Atlas por bioma: `public/assets/atlas/{antarctica,station,ruins}.png`.
 - **Walks** (template, 1 geração/direção): `enemy.zombiePenguin`, `enemy.bloaterPenguin`, `enemy.zombieScientist` com `scary-walk` (8 frames × 5 direções); Bob `walking-8-frames`. Observação: cada lote de animação template deixa às vezes um job "animation" preso em 95% que ocupa slot (os frames já estão prontos).
 - Lote seguinte: Lucia `walking-8-frames` (5 direções); zombieMedic `scary-walk` só no sul por enquanto (demais direções com a rotação estática); zombieSeal `walk-8-frames` (template de quadrúpede) em geração; Jack sem arma por referência v3 reenviado (`6babb578-a611-40f8-8c4b-0c9ae55b91f6`). Lote pausado a pedido do usuário para estabilizar o main.
+
+## 2026-09-27 — Walk dos 3 heróis (8 direções, 8 frames)
+
+- Template `walking-8-frames` (1 geração/direção) em s/se/e/ne/n; sw/w/nw espelhados no motor. Bob (`ae2516ed…`) e Lucia (`452419ff…`) direto dos estados sem arma.
+- **Jack**: o estado `1a3e6a0e…` ("unarmed") ainda desenha o machete em algumas direções; os frames com lâmina foram limpos com `edit_image` (4 frames por chamada, ~20 gerações cada): sul 0–7, nordeste 0–7, leste 4–7 e norte 0–7 (6 chamadas, ~120 gerações). Os originais com lâmina ficam em `art-src/pixellab/anim-raw/hero.jack/`. O personagem v3 limpo por referência (`6babb578…`) segue na fila do PixelLab; se sair, substitui essa base.
+- `pack-heroes`: o `anchorY` agora é a linha mais baixa entre todos os frames do sul de cada animação (antes era só o frame 0, que no walk é meio passo e fazia o herói "flutuar").
+- Verificado no navegador andando nas 8 direções com os 3 heróis, sem erros de console.

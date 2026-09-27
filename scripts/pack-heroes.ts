@@ -2,8 +2,9 @@
 // Input:  art-src/pixellab/anim/<key>/<anim>/<direction>/<nn>.png
 // Output: public/assets/{heroes,enemies}/<key>.png + <key>.json (Phaser JSON Hash) with frame names
 //         `<anim>.<dir>.<nn>` (dir ∈ s, se, e, ne, n) and meta.anims[anim] = { frames, anchorY, dirs }.
-// anchorY is where the feet are (0..1 of the frame height), measured on the south frame 0, because
-// template (96 px) and v3 (132 px) animations come on different canvases.
+// anchorY is where the feet are (0..1 of the frame height): the lowest opaque row over every south
+// frame of the animation (frame 0 of a walk can be mid-step with a raised foot, which made the hero
+// float), per animation because template (96 px) and v3 (132 px) animations use different canvases.
 // Usage: bun scripts/pack-heroes.ts [key ...]
 
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
@@ -72,10 +73,14 @@ async function packKey(key: string): Promise<void> {
 				});
 			}
 		}
-		const feet = await feetY(join(dir, anim, 'south', '00.png'));
+		let anchorY = 0;
+		for (const f of readdirSync(join(dir, anim, 'south')).filter((n) => n.endsWith('.png'))) {
+			const feet = await feetY(join(dir, anim, 'south', f));
+			anchorY = Math.max(anchorY, feet.y / feet.h);
+		}
 		anims[anim] = {
 			frames,
-			anchorY: feet.y / feet.h,
+			anchorY,
 			dirs: dirs.map((d) => SHORT[d] as string),
 			size,
 		};

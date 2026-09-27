@@ -434,7 +434,7 @@
 			},
 			"walk8": {
 				"frames": 8,
-				"anchorY": 0.8958333333333334,
+				"anchorY": 0.90625,
 				"dirs": ["e", "n", "ne", "s", "se"],
 				"size": 96
 			}
