@@ -24,6 +24,10 @@ export interface PlayerStats {
 	area: number;
 	bleedChance: number;
 	poisonChance: number;
+	/** On-hit chances to burn, chill (ice) or shock (energy chain) — cards only. */
+	burnChance: number;
+	chillChance: number;
+	shockChance: number;
 	lifesteal: number;
 	pickupRange: number;
 	luck: number;
@@ -76,6 +80,9 @@ export function baseStats(hero: HeroDef): PlayerStats {
 		area: 1,
 		bleedChance: 0,
 		poisonChance: 0,
+		burnChance: 0,
+		chillChance: 0,
+		shockChance: 0,
 		lifesteal: 0,
 		pickupRange: 60,
 		luck: 0,

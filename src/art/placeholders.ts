@@ -138,6 +138,33 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 	rect(KEYS.projectile('blade'), 14, 4, '#f2f4f8', '#9aa3b5');
 	rect(KEYS.projectile('bottle'), 5, 8, '#5c8a3a', '#ff7a2f');
 	rect(KEYS.projectile('grenade'), 6, 6, '#3f5a2a', '#9aa3b5');
+	rect(KEYS.projectile('bolt'), 12, 2, '#c8a870', '#6b4a2f');
+	canvas(scene, KEYS.projectile('fishBoomerang'), 14, 8, (ctx) => {
+		ctx.fillStyle = '#6fa3c7';
+		ctx.beginPath();
+		ctx.ellipse(6, 4, 6, 3, 0, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.beginPath();
+		ctx.moveTo(11, 4);
+		ctx.lineTo(14, 0);
+		ctx.lineTo(14, 8);
+		ctx.closePath();
+		ctx.fill();
+	});
+	canvas(scene, KEYS.projectile('mine'), 10, 6, (ctx) => {
+		ctx.fillStyle = '#3a4152';
+		ctx.beginPath();
+		ctx.ellipse(5, 3, 5, 3, 0, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.fillStyle = '#ff3b3b';
+		ctx.fillRect(4, 1, 2, 2);
+	});
+	canvas(scene, KEYS.projectile('totem'), 8, 22, (ctx) => {
+		ctx.fillStyle = '#5a4a3a';
+		ctx.fillRect(2, 4, 4, 18);
+		ctx.fillStyle = '#fff27a';
+		ctx.fillRect(0, 0, 8, 5);
+	});
 	canvas(scene, KEYS.projectile('meteor'), 14, 14, (ctx) => {
 		ctx.fillStyle = '#ff7a2f';
 		ctx.beginPath();

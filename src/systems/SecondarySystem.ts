@@ -2,8 +2,15 @@ import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { STATUS } from '../data/combat';
-import { levelScale, SECONDARIES, type SecondaryDef, type SecondaryId } from '../data/secondaries';
+import {
+	DEPLOYABLES,
+	levelScale,
+	SECONDARIES,
+	type SecondaryDef,
+	type SecondaryId,
+} from '../data/secondaries';
 import type { Enemy } from '../entities/Enemy';
+import { boomerangDistance, scaledCount } from '../logic/boomerang';
 import type { Build } from '../logic/build';
 import { type Element, rollOutgoing } from '../logic/combat';
 import { isoDepth, worldToScreen } from '../logic/iso';
@@ -28,7 +35,31 @@ interface OrbitState {
 	cooldowns: Map<Enemy, number>;
 }
 
+interface Boomerang {
+	sprite: Phaser.GameObjects.Image;
+	angle: number;
+	t: number;
+	range: number;
+	amount: number;
+	crit: boolean;
+	hit: Set<Enemy>;
+	returning: boolean;
+	alive: boolean;
+}
+
+interface Deployable {
+	sprite: Phaser.GameObjects.Image;
+	x: number;
+	y: number;
+	/** Mines: arming delay; totems: time to the next zap. */
+	timer: number;
+	life: number;
+	level: number;
+	alive: boolean;
+}
+
 const ORBIT_SPEED = 3;
+const BOOMERANG_HIT = 14;
 const ORBIT_HIT_RADIUS = 14;
 const LOB_TIME = 0.55;
 const METEOR_TIME = 0.7;
@@ -44,6 +75,10 @@ export class SecondarySystem {
 	private lightningLife = 0;
 	/** Frost Nova is reactive (on hero hit), so it keeps its own cooldown. */
 	private novaCooldown = 0;
+	private readonly boomerangs: Boomerang[] = [];
+	private readonly mines: Deployable[] = [];
+	private readonly totems: Deployable[] = [];
+	private auraRing: Phaser.GameObjects.Image | null = null;
 
 	constructor(
 		private readonly scene: Phaser.Scene,
@@ -92,10 +127,197 @@ export class SecondarySystem {
 			const fired = this.activate(def, level, hx, hy, grid);
 			this.timers.set(id, fired ? def.cooldown / this.stats.attackSpeed : 0.2);
 		}
+		this.updateBoomerangs(dt, hx, hy, grid);
+		this.updateMines(dt, grid);
+		this.updateTotems(dt, grid);
+		this.syncAura(hx, hy);
 		if (this.lightningLife > 0) {
 			this.lightningLife -= dt;
 			if (this.lightningLife <= 0) this.lightning.clear();
 		}
+	}
+
+	/** Round end: mines, totems and boomerangs in flight disappear. */
+	clear(): void {
+		for (const b of this.boomerangs) this.retire(b);
+		for (const d of [...this.mines, ...this.totems]) this.retire(d);
+	}
+
+	private retire(d: { alive: boolean; sprite: Phaser.GameObjects.Image }): void {
+		d.alive = false;
+		d.sprite.setVisible(false);
+	}
+
+	private updateBoomerangs(dt: number, hx: number, hy: number, grid: SpatialGrid<Enemy>): void {
+		for (const b of this.boomerangs) {
+			if (!b.alive) continue;
+			b.t += dt;
+			const d = boomerangDistance(b.t, b.range, DEPLOYABLES.boomerangSpeed);
+			if (d < 0) {
+				this.retire(b);
+				continue;
+			}
+			// Enemies can be hit again on the way back.
+			if (!b.returning && b.t > b.range / DEPLOYABLES.boomerangSpeed) {
+				b.returning = true;
+				b.hit.clear();
+			}
+			const x = hx + Math.cos(b.angle) * d;
+			const y = hy + Math.sin(b.angle) * d;
+			const s = worldToScreen(x, y, 14);
+			b.sprite
+				.setPosition(Math.round(s.x), Math.round(s.y))
+				.setDepth(isoDepth(x, y) + 0.5)
+				.setRotation(b.t * 18);
+			this.scratch.length = 0;
+			grid.queryRadius(x, y, BOOMERANG_HIT + 20, this.scratch);
+			for (const e of this.scratch) {
+				if (!e.alive || b.hit.has(e)) continue;
+				if ((e.x - x) ** 2 + (e.y - y) ** 2 > (BOOMERANG_HIT + e.radius) ** 2) continue;
+				b.hit.add(e);
+				this.onHit(e, b.amount, b.crit, undefined);
+			}
+		}
+	}
+
+	private updateMines(dt: number, grid: SpatialGrid<Enemy>): void {
+		const def = SECONDARIES.mine;
+		for (const m of this.mines) {
+			if (!m.alive) continue;
+			m.life -= dt;
+			m.timer -= dt;
+			if (m.life <= 0) {
+				this.retire(m);
+				continue;
+			}
+			m.sprite.setAlpha(m.timer > 0 ? 0.5 : 1);
+			if (m.timer > 0) continue;
+			if (!grid.nearest(m.x, m.y, DEPLOYABLES.mineTrigger + 20, (e) => e.alive)) continue;
+			const radius = def.radius * this.stats.area;
+			const out = this.roll(def, m.level);
+			this.area.burst(grid, m.x, m.y, radius, out.amount, undefined);
+			this.area.flash(m.x, m.y, radius, PALETTE.auraOrange, 0.3);
+			this.retire(m);
+		}
+	}
+
+	private updateTotems(dt: number, grid: SpatialGrid<Enemy>): void {
+		const def = SECONDARIES.lightningTotem;
+		for (const t of this.totems) {
+			if (!t.alive) continue;
+			t.life -= dt;
+			t.timer -= dt;
+			if (t.life <= 0) {
+				this.retire(t);
+				continue;
+			}
+			if (t.timer > 0) continue;
+			const target = grid.nearest(t.x, t.y, def.range, (e) => e.alive);
+			if (!target) continue;
+			t.timer = DEPLOYABLES.totemZap;
+			const out = this.roll(def, t.level);
+			if (this.lightningLife <= 0) this.lightning.clear();
+			this.lightning.lineStyle(2, PALETTE.elEnergy, 1);
+			this.drawBolt(t, target);
+			this.lightningLife = 0.1;
+			this.onHit(target, out.amount, out.crit, 'energy');
+		}
+	}
+
+	private syncAura(hx: number, hy: number): void {
+		if (!this.build.secondaries.flameRing) return;
+		if (!this.auraRing)
+			this.auraRing = this.scene.add
+				.image(0, 0, KEYS.ring)
+				.setTint(PALETTE.elFire)
+				.setAlpha(0.35);
+		const radius = SECONDARIES.flameRing.radius * this.stats.area;
+		const s = worldToScreen(hx, hy);
+		this.auraRing
+			.setPosition(Math.round(s.x), Math.round(s.y))
+			.setDisplaySize(radius * 2.8, radius * 1.4)
+			.setDepth(isoDepth(hx, hy) - 1);
+	}
+
+	private place(
+		list: Deployable[],
+		texture: string,
+		at: { x: number; y: number },
+		timer: number,
+		life: number,
+		level: number,
+	): void {
+		let d = list.find((q) => !q.alive);
+		if (!d) {
+			d = {
+				sprite: this.scene.add.image(0, 0, texture).setOrigin(0.5, 0.9),
+				x: 0,
+				y: 0,
+				timer: 0,
+				life: 0,
+				level: 1,
+				alive: false,
+			};
+			list.push(d);
+		}
+		Object.assign(d, { x: at.x, y: at.y, timer, life, level, alive: true });
+		const s = worldToScreen(at.x, at.y);
+		d.sprite
+			.setPosition(Math.round(s.x), Math.round(s.y))
+			.setDepth(isoDepth(at.x, at.y))
+			.setAlpha(1)
+			.setVisible(true);
+	}
+
+	private throwBoomerangs(def: SecondaryDef, level: number, base: number): void {
+		const count = scaledCount(def.count ?? 1, def.countPerLevel ?? 0, level);
+		for (let i = 0; i < count; i++) {
+			const out = this.roll(def, level);
+			let b = this.boomerangs.find((q) => !q.alive);
+			if (!b) {
+				b = {
+					sprite: this.scene.add.image(0, 0, KEYS.projectile('fishBoomerang')),
+					angle: 0,
+					t: 0,
+					range: 0,
+					amount: 0,
+					crit: false,
+					hit: new Set(),
+					returning: false,
+					alive: false,
+				};
+				this.boomerangs.push(b);
+			}
+			b.hit.clear();
+			Object.assign(b, {
+				angle: base + (i - (count - 1) / 2) * 0.5,
+				t: 0,
+				range: def.range,
+				amount: out.amount,
+				crit: out.crit,
+				returning: false,
+				alive: true,
+			});
+			b.sprite.setVisible(true);
+		}
+	}
+
+	private layMine(def: SecondaryDef, level: number, hx: number, hy: number): void {
+		const max = Math.min(
+			DEPLOYABLES.maxMines,
+			scaledCount(def.count ?? 3, def.countPerLevel ?? 0, level),
+		);
+		const live = this.mines.filter((m) => m.alive);
+		// The oldest mine goes when the field is full.
+		if (live.length >= max) this.retire(live.reduce((a, b) => (a.life < b.life ? a : b)));
+		this.place(
+			this.mines,
+			KEYS.projectile('mine'),
+			{ x: hx, y: hy },
+			DEPLOYABLES.mineArm,
+			def.duration ?? 20,
+			level,
+		);
 	}
 
 	/** Returns false when there was no target (retry soon instead of waiting the cooldown). */
@@ -128,6 +350,41 @@ export class SecondarySystem {
 				}
 				return true;
 			}
+			case 'boomerang': {
+				const target = grid.nearest(hx, hy, def.range, (e) => e.alive);
+				if (!target) return false;
+				this.throwBoomerangs(def, level, Math.atan2(target.y - hy, target.x - hx));
+				return true;
+			}
+			case 'mine':
+				this.layMine(def, level, hx, hy);
+				return true;
+			case 'aura': {
+				const radius = (def.radius ?? 70) * this.stats.area;
+				const out = this.roll(def, level);
+				this.area.burst(grid, hx, hy, radius, out.amount, def.element);
+				return true;
+			}
+			case 'totem': {
+				if (!grid.nearest(hx, hy, def.range, (e) => e.alive)) return false;
+				const life = def.duration ?? 6;
+				this.place(this.totems, KEYS.projectile('totem'), { x: hx, y: hy }, 0, life, level);
+				return true;
+			}
+			case 'cloud': {
+				const target = this.pickCrowd(grid, hx, hy, def.range);
+				if (!target) return false;
+				const out = this.roll(def, level);
+				this.area.zone(
+					target.x,
+					target.y,
+					(def.radius ?? 60) * this.stats.area,
+					def.duration ?? 4,
+					out.amount,
+					{ poison: true, tint: PALETTE.dotPoison },
+				);
+				return true;
+			}
 			case 'shooter':
 			case 'follower': {
 				const from = def.behavior === 'follower' ? this.droneAt : { x: hx, y: hy };
@@ -142,8 +399,14 @@ export class SecondarySystem {
 					range: def.range,
 					damage: out.amount,
 					crit: out.crit,
-					texture: KEYS.projectile('pellet'),
-					tint: def.behavior === 'follower' ? PALETTE.blood : PALETTE.crit,
+					texture: KEYS.projectile(def.pierce ? 'bolt' : 'pellet'),
+					tint: def.pierce
+						? undefined
+						: def.behavior === 'follower'
+							? PALETTE.blood
+							: PALETTE.crit,
+					pierce: def.pierce ?? 0,
+					orient: Boolean(def.pierce),
 				});
 				return true;
 			}

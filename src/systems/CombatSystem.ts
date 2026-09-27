@@ -73,14 +73,16 @@ export class CombatSystem {
 			applyBleed(s, amount);
 		if (opts.poison || this.rng.next() < this.stats.poisonChance) applyPoison(s, amount);
 		if (crit && this.hooks.critBleed) applyBleed(s, amount);
-		if (opts.element === 'fire') applyBurn(s, amount);
-		else if (opts.element === 'ice') applyIce(s);
+		if (opts.element === 'fire' || this.rng.next() < this.stats.burnChance)
+			applyBurn(s, amount);
+		if (opts.element === 'ice' || this.rng.next() < this.stats.chillChance) applyIce(s);
 		else if (opts.element === 'earth') applyEarth(s, this.rng.next());
 		if (crit) countRun(this.run, 'crits');
 		if (this.stats.lifesteal > 0) healHero(this.run, amount * this.stats.lifesteal);
 		e.lastElement = opts.element ?? null;
 		this.damage(e, amount, crit, opts.color, true);
-		if (opts.element === 'energy' && !opts.noChain) this.chain(e, amount);
+		const shock = !opts.noChain && this.rng.next() < this.stats.shockChance;
+		if ((opts.element === 'energy' && !opts.noChain) || shock) this.chain(e, amount);
 	}
 
 	/** Energy jumps to nearby enemies with reduced damage (balancing §3). */

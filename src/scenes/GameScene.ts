@@ -797,6 +797,7 @@ export class GameScene extends Phaser.Scene {
 		this.pool.clear();
 		this.area.clear();
 		this.hostile.clear();
+		this.secondaries.clear();
 		this.run.fish += roundEndFish(this.run.round);
 		this.pickups.collectAll();
 		const offers = drawCards(this.rng, {

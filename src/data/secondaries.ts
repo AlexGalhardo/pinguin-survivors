@@ -15,7 +15,12 @@ export type SecondaryBehavior =
 	| 'stomp'
 	| 'chain'
 	| 'meteor'
-	| 'nova';
+	| 'nova'
+	| 'boomerang'
+	| 'mine'
+	| 'aura'
+	| 'totem'
+	| 'cloud';
 
 export interface SecondaryDef {
 	id: string;
@@ -31,8 +36,12 @@ export interface SecondaryDef {
 	element?: Element;
 	/** Exclusive to one hero (only offered to them). */
 	hero?: HeroId;
-	/** Extra count per level (thrown/orbit/meteor). */
+	/** Extra count per level (thrown/orbit/meteor/boomerang/mine). */
 	countPerLevel?: number;
+	/** Enemies a projectile passes through (crossbow bolts). */
+	pierce?: number;
+	/** Seconds a deployable lasts (mine, totem, cloud). */
+	duration?: number;
 }
 
 export const SECONDARIES = {
@@ -150,7 +159,78 @@ export const SECONDARIES = {
 		element: 'ice',
 		hero: 'lucia',
 	},
+	fishBoomerang: {
+		id: 'fishBoomerang',
+		tag: 'melee',
+		behavior: 'boomerang',
+		damage: 10,
+		cooldown: 1.8,
+		range: 200,
+		count: 1,
+		countPerLevel: 0.5,
+	},
+	mine: {
+		id: 'mine',
+		tag: 'firearm',
+		behavior: 'mine',
+		damage: 35,
+		cooldown: 2.5,
+		range: 30,
+		radius: 70,
+		count: 3,
+		countPerLevel: 1,
+		duration: 20,
+	},
+	flameRing: {
+		id: 'flameRing',
+		tag: 'magic',
+		behavior: 'aura',
+		damage: 4,
+		cooldown: 0.5,
+		range: 75,
+		radius: 75,
+		element: 'fire',
+	},
+	lightningTotem: {
+		id: 'lightningTotem',
+		tag: 'magic',
+		behavior: 'totem',
+		damage: 12,
+		cooldown: 7,
+		range: 170,
+		count: 1,
+		duration: 6,
+		element: 'energy',
+	},
+	poisonCloud: {
+		id: 'poisonCloud',
+		tag: 'magic',
+		behavior: 'cloud',
+		damage: 5,
+		cooldown: 4,
+		range: 230,
+		radius: 65,
+		duration: 4,
+	},
+	crossbow: {
+		id: 'crossbow',
+		tag: 'firearm',
+		behavior: 'shooter',
+		damage: 16,
+		cooldown: 1.4,
+		range: 320,
+		pierce: 3,
+	},
 } as const satisfies Record<string, SecondaryDef>;
+
+/** Deployable tuning: totem zap interval, mine arming delay/trigger, boomerang flight speed. */
+export const DEPLOYABLES = {
+	totemZap: 0.8,
+	mineArm: 0.6,
+	mineTrigger: 26,
+	maxMines: 12,
+	boomerangSpeed: 330,
+} as const;
 
 export type SecondaryId = keyof typeof SECONDARIES;
 export const MAX_SECONDARY_SLOTS = 3;

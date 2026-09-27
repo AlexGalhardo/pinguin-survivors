@@ -227,7 +227,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 - [x] Pool rotativo de bosses com escala por ciclo (`1,6^ciclo`): urso polar (10), **Kraken do Porto** (20: tentáculo de longo alcance, rajada de tinta em leque, invoca marinheiros) e **Abominação** (30: investidas frequentes, poças de ácido telegrafadas, invoca ratos); IA por perfil de boss em `src/data/enemies.ts` + testes
 - [x] Biomas 2 (estação de pesquisa/porto) e 3 (cidade em ruínas): troca de bioma a cada 10 rounds (`src/logic/biome.ts`, em loop no endless), chão/decoração por código, 6–7 inimigos novos cada (placeholders), banner de chegada
-- [ ] +6 armas secundárias (bumerangue de peixe, mina, anel de chamas, totem de raios, nuvem de veneno, besta) e mais cartas on-hit
+- [x] +6 armas secundárias (bumerangue de peixe, mina, anel de chamas, totem de raios, nuvem de veneno, besta perfurante) e 3 cartas on-hit novas (chance de queimar, gelar e eletrocutar em corrente)
 - [ ] Obstáculos sólidos leves (P-11) com desvio simples
 - [ ] Recordes por herói e conquistas que dependem dos biomas 2–3
 - [ ] Balanceamento com sim + playtest (metas §9)
