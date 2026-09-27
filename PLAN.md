@@ -168,7 +168,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Records: melhor round por herói na seleção de heróis (`progress.hero[h].bestRound`)
 
 ### 2.6 i18n e balanceamento
-- [ ] Todas as strings em `en.ts` e `pt-BR.ts`; layouts conferidos nos dois idiomas
+- [x] Todas as strings em `en.ts` e `pt-BR.ts` (+ `cards`, `achievements`, `voice`); layouts conferidos nos dois idiomas
 - [ ] `src/logic/sim/`: simulação headless de runs (3 heróis, rounds 1–30, levels 1/10/30) + script `scripts/sim.ts`
 - [ ] Ajustar `balancing.md` e `src/data` pelas metas (§9)
 
@@ -195,7 +195,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [ ] Performance: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 (medir e anotar)
 - [x] Tela de desbloqueio dedicada (Bob/Lucia) e fullscreen nas configurações
 - [ ] Loja de extras das conquistas: mecânica pronta; itens a definir com o usuário
-- [ ] Auditoria de i18n (nenhum texto fora de `src/i18n`; skill `ccgs-localize`)
+- [x] Auditoria de i18n (nenhum texto fora de `src/i18n`: nomes de idioma e "XP" movidos; teste de chaves iguais nos 2 idiomas)
 
 ---
 

@@ -47,7 +47,7 @@ export class SettingsScene extends Phaser.Scene {
 				{
 					label: () =>
 						t('settings.language', {
-							v: s.lang === 'en' ? 'English' : 'Português (BR)',
+							v: t(`lang.${s.lang}` as I18nKey),
 						}),
 					onAdjust: (d) => {
 						s.lang = cycle(LANGS, s.lang, d);

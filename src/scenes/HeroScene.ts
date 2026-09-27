@@ -46,7 +46,7 @@ export class HeroScene extends Phaser.Scene {
 		const refreshInfo = () => {
 			const h = save.heroes[this.hero];
 			info.setText(
-				`${t(`hero.${this.hero}` as I18nKey).toUpperCase()}  ·  ${t('select.level', { n: h.level })}  ·  XP ${Math.floor(h.xp)}/${xpToNext(h.level)}\n${t('hero.points', { n: freePoints(h.level, h.points) })}`,
+				`${t(`hero.${this.hero}` as I18nKey).toUpperCase()}  ·  ${t('select.level', { n: h.level })}  ·  ${t('hero.xp', { xp: Math.floor(h.xp), next: xpToNext(h.level) })}\n${t('hero.points', { n: freePoints(h.level, h.points) })}`,
 			);
 		};
 		const heroItem: MenuItem = {
