@@ -179,10 +179,10 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 > **Regra do usuário (P-57, 2026-09-27): nenhum asset novo até o fim da Fase 7.** Tudo com placeholders por código usando as chaves do manifest; arte e áudio finais entram só na seção 7.2.
 
 ### 3.1 Armas como sprites separados (P-56)
-- [ ] `WeaponView`: sprite da arma assinada ao lado do herói, mira no alvo, animação por código (corte em arco com rastro, recuo + clarão de tiro, brilho/pulso do cajado)
-- [ ] Placeholders por código das 9 armas assinadas (T1–T3 × 3 heróis) e das secundárias visíveis na mão (pistola)
-- [ ] Remover a dependência de animação de ataque do herói (`Hero.attack` só vira para o alvo); corpo sem arma no placeholder
-- [ ] Testes da lógica de mira/ângulo e do tempo de animação vs. cadência
+- [x] `WeaponView`: sprite da arma assinada ao lado do herói, mira no alvo, animação por código (corte em arco com rastro, recuo + clarão de tiro, brilho/pulso do cajado)
+- [x] Placeholders por código das 9 armas assinadas (T1–T3 × 3 heróis) e da pistola
+- [x] Ataque não depende de frames do herói (`Hero.attack` só vira para o alvo quando não há atlas; placeholder já é sem arma)
+- [x] Testes da lógica de pose/ângulo e do tempo do golpe vs. cadência (`tests/weapon-anim.test.ts`)
 
 ### 3.2 Simulação headless e balanceamento
 - [ ] `src/logic/sim/`: run simulada (herói, level, build aleatória por seed, rounds 1–30) usando as fórmulas reais (stats, combate, status, escala, spawn)

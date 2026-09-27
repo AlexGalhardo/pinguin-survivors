@@ -180,6 +180,68 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.ellipse(24, 28, 22, 26, 0, 0, Math.PI * 2);
 		ctx.stroke();
 	});
+	const blade = (id: string, len: number, color: string, edge: string, teeth = false) =>
+		canvas(scene, KEYS.weapon(id), len, 8, (ctx) => {
+			ctx.fillStyle = '#5a3a22';
+			ctx.fillRect(0, 3, 7, 3);
+			ctx.fillStyle = '#9aa3b5';
+			ctx.fillRect(7, 2, 2, 5);
+			ctx.fillStyle = color;
+			ctx.fillRect(9, 2, len - 11, 4);
+			ctx.fillStyle = edge;
+			ctx.fillRect(9, 5, len - 11, 1);
+			if (teeth) for (let x = 10; x < len - 2; x += 3) ctx.fillRect(x, 1, 1, 1);
+			ctx.fillStyle = '#a3121a';
+			ctx.fillRect(len - 8, 3, 4, 2);
+		});
+	blade('machete', 26, '#c8ced8', '#f2f4f8');
+	blade('katana', 34, '#dfe5ee', '#ffffff');
+	blade('chainsword', 36, '#7d8699', '#ffb13b', true);
+	const gun = (id: string, len: number, body: string, barrels: number, tip?: string) =>
+		canvas(scene, KEYS.weapon(id), len, 10, (ctx) => {
+			ctx.fillStyle = '#5a3a22';
+			ctx.fillRect(0, 4, 9, 4);
+			ctx.fillStyle = body;
+			ctx.fillRect(8, 2, len - 8, 3 + barrels);
+			ctx.fillStyle = '#2c2f3a';
+			for (let b = 0; b < barrels; b++) ctx.fillRect(10, 2 + b * 2, len - 12, 1);
+			if (tip) {
+				ctx.fillStyle = tip;
+				ctx.fillRect(len - 4, 1, 4, 6);
+			}
+		});
+	gun('doubleBarrel', 28, '#6b7488', 2);
+	gun('autoShotgun', 30, '#4a5266', 2, '#3a4152');
+	gun('rocketShotgun', 32, '#5c8a3a', 3, '#c4161c');
+	gun('auxPistol', 14, '#6b7488', 1);
+	const staff = (id: string, len: number, gems: string[]) =>
+		canvas(scene, KEYS.weapon(id), len, 12, (ctx) => {
+			ctx.fillStyle = '#6b4a2f';
+			ctx.fillRect(0, 5, len - 8, 2);
+			ctx.fillStyle = '#8fd8ff';
+			ctx.beginPath();
+			ctx.arc(len - 5, 6, 4, 0, Math.PI * 2);
+			ctx.fill();
+			gems.forEach((g, i) => {
+				ctx.fillStyle = g;
+				ctx.fillRect(len - 10 + i * 2, i % 2 ? 1 : 10, 2, 1);
+			});
+		});
+	staff('elementStaff', 30, ['#ff7a2f', '#6fdc4a', '#8fd8ff', '#fff27a']);
+	staff('arcaneStaff', 34, ['#b347ff', '#b347ff', '#e8d8ff', '#b347ff']);
+	staff('stormStaff', 38, ['#ff7a2f', '#6fdc4a', '#8fd8ff', '#fff27a']);
+	canvas(scene, KEYS.muzzle, 12, 10, (ctx) => {
+		ctx.fillStyle = '#ffe07a';
+		ctx.beginPath();
+		ctx.moveTo(0, 5);
+		ctx.lineTo(12, 0);
+		ctx.lineTo(9, 5);
+		ctx.lineTo(12, 10);
+		ctx.closePath();
+		ctx.fill();
+		ctx.fillStyle = '#ffffff';
+		ctx.fillRect(0, 4, 5, 2);
+	});
 	canvas(scene, KEYS.slash, 64, 32, (ctx) => {
 		ctx.strokeStyle = '#f2f4f8';
 		ctx.lineWidth = 3;

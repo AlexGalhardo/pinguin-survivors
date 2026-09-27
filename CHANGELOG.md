@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blood and gibs now stay on the ground for the whole run, with blood spurts and hit-stop on big hits.
 - Polar night darkness with light around the hero, fire, explosions and elites.
 - 18 sound effects (weapons, gore, pickups, level up, boss roar, superpower, menus, game over).
-- Jack's PixelLab animations pipeline (idle, walk, hurt, death from templates; attack and superpower custom).
+- Brotato-style weapons: the signature weapon is its own sprite that aims, swings, recoils or glows next to the hero.
 
 ### Changed
 

@@ -18,6 +18,7 @@ import { SUPER } from '../data/superpowers';
 import { SIGNATURE, type SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
+import { WeaponView } from '../entities/WeaponView';
 import { evaluateAchievements } from '../logic/achievements';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
@@ -103,6 +104,7 @@ export class GameScene extends Phaser.Scene {
 	speed: GameSpeed = 1;
 	private keys!: MoveKeys;
 	private weapons!: WeaponSystem;
+	private weaponView!: WeaponView;
 	private secondaries!: SecondarySystem;
 	private pool!: ProjectilePool;
 	private area!: AreaSystem;
@@ -272,12 +274,14 @@ export class GameScene extends Phaser.Scene {
 			(element) => this.elementUsedAt.set(element, this.run.elapsed),
 			(angle, cooldown) => {
 				this.hero.attack(angle, cooldown);
+				this.weaponView.fire(angle, cooldown);
 				const tag = this.weapons.weapon.tag;
 				this.fx.play(
 					tag === 'melee' ? 'sfx.swing' : tag === 'firearm' ? 'sfx.shotgun' : 'sfx.cast',
 				);
 			},
 		);
+		this.weaponView = new WeaponView(this, this.weapons.weapon);
 		this.secondaries = new SecondarySystem(
 			this,
 			this.rng,
@@ -331,7 +335,10 @@ export class GameScene extends Phaser.Scene {
 			iy = gamepadMove.y;
 		}
 		this.moving = ix !== 0 || iy !== 0;
-		this.hero.update(dt, inputToWorld(ix, iy));
+		const move = inputToWorld(ix, iy);
+		this.hero.update(dt, move);
+		if (this.moving) this.weaponView.face(Math.atan2(move.y, move.x));
+		this.weaponView.update(dt, this.hero.x, this.hero.y);
 		healHero(run, this.stats.regen * dt);
 		this.updatePotions(dt);
 
@@ -794,6 +801,7 @@ export class GameScene extends Phaser.Scene {
 		this.run.tier = tier;
 		this.hero.setTier(tier);
 		this.weapons.weapon = SIGNATURE[this.run.hero][tier - 1] as SignatureWeapon;
+		this.weaponView.setWeapon(this.weapons.weapon);
 		countRun(this.run, tier === 2 ? 'evolutionsT2' : 'evolutionsT3');
 		if (tier === 3) this.run.counters.evolvedT3 = true;
 	}

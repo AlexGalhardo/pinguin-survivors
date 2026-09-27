@@ -22,6 +22,9 @@ export const KEYS = {
 	splat: (kind: 'blood' | 'goo', n: number) => `fx.splat.${kind}.${n}`,
 	gib: (n: number) => `fx.gib.${n}`,
 	droplet: 'fx.droplet',
+	/** Signature/secondary weapon held by the hero, drawn pointing right, pivot at the grip (P-56). */
+	weapon: (id: string) => `weapon.${id}`,
+	muzzle: 'fx.muzzle',
 	pickup: (kind: 'xp' | 'fish' | 'meat') => `pickup.${kind}`,
 	ring: 'fx.ring',
 	zone: 'fx.zone',
