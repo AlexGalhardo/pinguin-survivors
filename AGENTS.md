@@ -1,44 +1,42 @@
-# AGENTS.md — Starfall Survivors
+# AGENTS.md — Pinguin Survivors
 
 Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini, etc.).
 
-**Projeto:** jogo 2D para browser, top-down arena shooter roguelite (inspirado em Brotato e Vampire Survivors).
-Pixel art 32px, tema sci-fi retrô, tela cheia. Ondas infinitas → 3 cartas de upgrade → loja → próxima onda.
-**Stack:** TypeScript · Vite · Phaser 4.2.x (Arcade Physics) · jsfxr · **Bun 1.4.2** (runtime/pacotes, testes `bun:test`). UI em inglês; docs em PT-BR.
+**Projeto:** endless roguelite para browser em **pixel art 2.5D isométrica 2:1** (layout Diablo 2, clima Diablo 4), inspirado em Brotato. Jack (melee), Bob (fogo) e Lucia (magia) — os 3 últimos pinguins de um apocalipse zumbi. Rounds cronometrados → 3 cartas → próximo round; boss a cada 10; level 1–100 persistente; gore estilo DOOM.
+**Stack:** TypeScript · Vite · Phaser 4.2.x (sem engine de física; simulação em mundo cartesiano + projeção iso) · **Bun 1.4.2** (`bun:test`). Arte **PixelLab**, áudio **ElevenLabs**. UI EN + PT-BR; docs em PT-BR.
+**Legado:** o jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`.
 
 ## Fonte da verdade
 
-- **[PLAN.md](PLAN.md)**: fases (Alpha → Beta → 1.0), microtarefas com checklist e changelog. Leia primeiro, sempre.
+- **[PLAN.md](PLAN.md)**: fases 0–7, microtarefas com checklist, changelog, pendências do usuário. Leia primeiro, sempre.
 - **[docs/README.md](docs/README.md)**: índice da documentação.
 
 | Preciso de… | Leia |
 |---|---|
 | Como trabalhar numa sessão | [docs/agent-workflow.md](docs/agent-workflow.md) |
-| Regras do jogo, classes, cartas, inimigos | [docs/game-design.md](docs/game-design.md) |
+| Regras do jogo, heróis, cartas, poções, inimigos | [docs/game-design.md](docs/game-design.md) |
 | Fórmulas e números | [docs/balancing.md](docs/balancing.md) |
-| Estrutura do código e padrões | [docs/architecture.md](docs/architecture.md) |
-| Pixel art, paleta, pipeline de arte por IA | [docs/art-and-assets.md](docs/art-and-assets.md) · [docs/art-prompts.md](docs/art-prompts.md) · skill `.claude/skills/starfall-art-assets` |
-| Onde publicar (itch.io, Poki, CrazyGames) | [docs/game-market.md](docs/game-market.md) |
-| Sons | [docs/audio.md](docs/audio.md) |
+| Projeção iso, pastas, padrões, gore, luz | [docs/architecture.md](docs/architecture.md) |
+| Arte e pipeline PixelLab | [docs/art-and-assets.md](docs/art-and-assets.md) · [docs/art-prompts.md](docs/art-prompts.md) · skill `.claude/skills/pinguin-art-assets` |
+| Áudio e pipeline ElevenLabs | [docs/audio.md](docs/audio.md) · skill `.claude/skills/pinguin-audio-assets` |
 | Telas e HUD | [docs/ui-hud.md](docs/ui-hud.md) |
 | Por que algo foi decidido | [docs/decisions.md](docs/decisions.md) |
-| Skills, MCPs, libs | [docs/tooling.md](docs/tooling.md) · [docs/research.md](docs/research.md) |
-| Commits, SemVer, hooks, push | [docs/git-and-versioning.md](docs/git-and-versioning.md) |
+| Skills, APIs, libs, scripts | [docs/tooling.md](docs/tooling.md) |
+| Commits, SemVer, branches | [docs/git-and-versioning.md](docs/git-and-versioning.md) |
+| Onde publicar | [docs/game-market.md](docs/game-market.md) |
 
 ## Comandos
 
-`bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run check` (Biome) · `bun scripts/qa-browsers.ts` (QA cross-browser do build). Use Bun, não npm/node (exceto se a ferramenta não suportar Bun).
+`bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run check` (Biome) · `bun scripts/pl-concepts.ts` (PixelLab) · `bun scripts/pack-atlas.ts` · `bun scripts/qa-browsers.ts`. Use Bun, não npm/node.
 
 ## Regras
 
-1. Faça microtarefas na ordem do PLAN.md. Ao concluir: `[x]` + 1–3 linhas no Changelog. Bloqueado: `[~]` + motivo.
-2. Phaser **4** (a API mudou em relação ao v3). Skills de referência em `.claude/skills/`.
-3. Regras de jogo em `src/logic/` (TS puro, testado); números em `src/data/`; textos em `src/config/strings.ts`;
-   cores em `src/config/palette.ts`; chaves de assets em `src/art/manifest.ts`.
-4. Placeholders por código (canvas) cobrem todas as chaves; a arte final (Retro Diffusion, via `scripts/rd-*.ts` + `pack-atlas.ts`) entra no atlas com as mesmas chaves e substitui o placeholder chave a chave. Todo prompt vai para `docs/art-prompts.md`.
-5. Tela cheia sem scroll, zoom inteiro, pixel-perfect. Pooling de objetos. Meta: 60 FPS com 300 inimigos.
-6. Valide visualmente no browser (agent-browser) com os query params de debug descritos em architecture.md.
-7. Mudou um número? Atualize docs/balancing.md. Tomou uma decisão de design? Registre em docs/decisions.md.
-8. Commits em **Conventional Commits 1.0.0** (commitlint bloqueia fora do padrão); versões em **SemVer 2.0.0**.
-9. Micro-commits; ao fechar cada seção do PLAN: `docs(plan)` → `chore(release): X.Y.Z` + tag → push para `main`.
-10. Código formatado pelo **Biome v2** com TAB de largura 4. Hooks Husky nunca são pulados (`--no-verify` proibido).
+1. Microtarefas na ordem do PLAN.md. Ao concluir: `[x]` + 1–3 linhas no Changelog. Bloqueado: `[~]` + motivo.
+2. Phaser **4** (API diferente do v3). Skills de referência em `.claude/skills/`.
+3. Mundo simulado em coordenadas cartesianas; a tela é projeção iso 2:1 (`docs/architecture.md`). Sem Arcade Physics.
+4. Regras em `src/logic/` (TS puro, testado); números em `src/data/`; textos em `src/i18n/` (EN + PT-BR juntos); cores em `src/config/palette.ts`; chaves de assets em `src/art/manifest.ts`.
+5. Arte só pelo PixelLab, com **aprovação do usuário do concept antes de animar**; 8 direções; ≥ 12 frames; prompts em `docs/art-prompts.md`. Áudio pelo ElevenLabs.
+6. Tela cheia sem scroll, zoom inteiro pela altura (540 lógicos). Pooling. Meta: 60 FPS com 300 inimigos.
+7. Valide visualmente no browser (agent-browser) com os query params de debug.
+8. Segredos só no `.env`. `TODO.md` é local e ignorado pelo git.
+9. Conventional Commits 1.0.0 + SemVer 2.0.0; gates manuais (hooks Husky vazios por escolha do usuário); nunca `--no-verify`.

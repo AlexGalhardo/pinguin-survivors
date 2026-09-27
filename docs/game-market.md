@@ -1,6 +1,8 @@
+> **Nota (2026-09-27):** pesquisa herdada do Starfall Survivors. Para o Pinguin Survivors, atenção a dois pontos: (1) o **gore nível DOOM** exige o modo "gosma"/gore reduzido para Poki/CrazyGames (PEGI 12); (2) com arte PixelLab em 8 direções e áudio ElevenLabs o build passa fácil de 5 MB — carregar por bioma/tier sob demanda.
+
 # Mercado de jogos de browser: itch.io, Poki e CrazyGames
 
-> Pesquisa feita em 2026-09-25 para decidir onde (e se) publicar o Starfall Survivors.
+> Pesquisa feita em 2026-09-25 para decidir onde (e se) publicar o o jogo anterior (Starfall).
 > O objetivo principal do projeto continua sendo **diversão e aprendizado**; este documento serve para saber o que cada plataforma oferece e exige.
 > Números de tráfego vêm de terceiros (Similarweb, Semrush, imprensa) e das próprias plataformas; trate-os como **ordem de grandeza**, não como valor exato. Fontes no fim.
 
@@ -19,7 +21,7 @@
 | Limites técnicos | Web: ZIP ≤ 500 MB extraído, ≤ 1.000 arquivos, arquivo ≤ 200 MB | Download inicial ideal ≤ 5 MB, total ≤ 8 MB; carregar em < 10 s | Total ≤ 250 MB, ≤ 1.500 arquivos; inicial ≤ 50 MB (≤ 20 MB para a home mobile); Chromebook de 4 GB |
 | Melhor para | Portfólio, feedback de devs, game jams, vender uma versão "completa" | Alcance máximo e renda com anúncios, se for aprovado | Validar com jogadores reais sem burocracia, renda com anúncios |
 
-**Starfall Survivors hoje**: build de produção com **~1,5 MB** (416 kB gzip), 3 arquivos, sem assets externos. Cabe folgado nos três. Com a arte final em atlas PNG, a meta é continuar abaixo de **5 MB** para não perder a Poki como opção.
+**o jogo anterior (Starfall) hoje**: build de produção com **~1,5 MB** (416 kB gzip), 3 arquivos, sem assets externos. Cabe folgado nos três. Com a arte final em atlas PNG, a meta é continuar abaixo de **5 MB** para não perder a Poki como opção.
 
 ---
 
@@ -88,7 +90,7 @@ Portal holandês fundado em 2014, hoje o **maior site de jogos grátis de browse
 - Requisitos técnicos rígidos: download inicial pequeno (**≤ 5 MB ideal, ≤ 8 MB total**), carregar em menos de ~10 s, funcionar em celular (toque).
 - Anúncios obrigatórios nos momentos que eles definem (pausas naturais: entre ondas, game over).
 
-### O que o Starfall Survivors precisaria
+### O que o o jogo anterior (Starfall) precisaria
 - Integrar o Poki SDK (`gameplayStart`/`gameplayStop`, `commercialBreak` entre ondas, `rewardedBreak` opcional, por exemplo para um re-roll grátis).
 - **Controles de toque** (hoje o jogo é teclado/mouse/gamepad; decisão D-03 deixou mobile fora do escopo).
 - Tutorial ainda mais curto: o jogador casual decide em segundos.
@@ -142,7 +144,7 @@ Portal belga fundado em 2014, o **segundo maior** do mercado. Aberto a qualquer 
 
 ---
 
-## Recomendação para o Starfall Survivors
+## Recomendação para o o jogo anterior (Starfall)
 
 1. **Agora (aprendizado)**: publicar no **itch.io** como jogo grátis de browser (com "pague quanto quiser" opcional). Zero custo, zero exclusividade, página própria e feedback da comunidade. Participar de uma game jam temática é a melhor forma de ganhar visibilidade lá.
 2. **Se quiser testar público casual**: enviar para a **CrazyGames em Basic Launch** (sem SDK, sem anúncios, sem exclusividade). As métricas de retenção dizem se vale investir em SDK/anúncios e em controles de toque.

@@ -1,10 +1,11 @@
 # Git, commits e versionamento
 
-Remoto: `origin` → `git@github.com:AlexGalhardo/starfall-survivors-game.git` · branch principal: **`main`**.
+Remoto: `origin` → `git@github.com:AlexGalhardo/pinguin-survivors.git` · branch principal: **`main`** (Pinguin Survivors).
+Branch **`starfall-survivors-legacy`**: histórico completo do jogo anterior (Starfall Survivors, até `v1.0.0-rc.1`). Não commitar nela.
 
 ## Conventional Commits 1.0.0 (obrigatório)
 
-Especificação: <https://www.conventionalcommits.org/en/v1.0.0/>. Validado pelo hook `commit-msg` (commitlint + `@commitlint/config-conventional`). Um commit fora do padrão é **rejeitado**.
+Especificação: <https://www.conventionalcommits.org/en/v1.0.0/>. Config do commitlint em `commitlint.config.js` (`@commitlint/config-conventional`). Os hooks estão vazios por escolha do usuário, então valide você mesmo: `echo "<msg>" | bunx commitlint`.
 
 ```
 <type>(<scope opcional>)<! opcional>: <descrição>
@@ -17,7 +18,7 @@ Especificação: <https://www.conventionalcommits.org/en/v1.0.0/>. Validado pelo
 - **Descrição** em inglês, no imperativo, começando com letra minúscula, sem ponto final, com até ~72 caracteres. Ex.: `feat(combat): add energy blade arc attack`.
 - **Tipos**: `feat` (nova funcionalidade → MINOR) · `fix` (correção → PATCH) · `docs` · `style` (formatação) · `refactor` · `perf` · `test` · `build` (deps, Vite, Biome, Husky) · `ci` · `chore` · `revert`.
 - **Breaking change**: `!` depois do tipo/escopo **e/ou** o rodapé `BREAKING CHANGE: <descrição>` → MAJOR.
-- **Escopos sugeridos**: `core`, `config`, `scene`, `player`, `enemy`, `combat`, `wave`, `cards`, `abilities`, `items`, `economy`, `hud`, `ui`, `audio`, `art`, `save`, `debug`, `balance`, `plan`, `deps`, `release`.
+- **Escopos sugeridos**: `core`, `config`, `iso`, `world`, `gore`, `light`, `scene`, `hero`, `enemy`, `boss`, `combat`, `weapons`, `round`, `cards`, `potions`, `progression`, `meta`, `hud`, `ui`, `i18n`, `audio`, `art`, `save`, `debug`, `balance`, `plan`, `deps`, `release`.
 - **Micro-commits**: um commit por mudança lógica (ex.: lógica + teste juntos, ou config de uma ferramenta). Nada de commit "WIP" gigante.
 
 ## SemVer 2.0.0 (obrigatório)
@@ -28,27 +29,28 @@ Especificação: <https://semver.org/lang/pt-BR/>. A versão fica em `package.js
 
 | Momento | Versão | Regra |
 |---|---|---|
-| Fase 0 (setup) concluída | `0.1.0` | Desenvolvimento inicial (0.y.z) |
-| Fase 1 — ALPHA | `1.0.0-alpha.N` | N sobe (+1) a cada seção do PLAN concluída (1.1, 1.2, …) |
-| Fase 2 — BETA | `1.0.0-beta.N` | N sobe a cada seção concluída |
-| Release candidate (opcional) | `1.0.0-rc.N` | Congelamento de funcionalidades, só correções |
-| Lançamento | `1.0.0` | Primeira versão estável |
-| Depois do 1.0 | `MAJOR.MINOR.PATCH` | MAJOR: save incompatível sem migração, ou remoção de conteúdo/modo · MINOR: conteúdo ou funcionalidade nova compatível · PATCH: correções e ajustes de balanceamento |
+| Refundação (fase 0) | `2.0.0-alpha.1` | Starfall terminou em `1.0.0-rc.1`; Pinguin Survivors é um MAJOR novo |
+| Fases 1–2 (ALPHA) | `2.0.0-alpha.N` | N sobe (+1) a cada seção do PLAN concluída |
+| Fases 3–6 (BETA) | `2.0.0-beta.N` | N sobe a cada seção concluída |
+| Release candidate | `2.0.0-rc.N` | Congelamento, só correções |
+| Lançamento | `2.0.0` | Primeira versão estável do Pinguin Survivors |
+| Depois do 2.0 | `MAJOR.MINOR.PATCH` | MAJOR: save incompatível sem migração, ou remoção de conteúdo/modo · MINOR: conteúdo ou funcionalidade nova compatível · PATCH: correções e ajustes de balanceamento |
 
-Precedência válida: `0.1.0 < 1.0.0-alpha.1 < … < 1.0.0-beta.1 < … < 1.0.0-rc.1 < 1.0.0`.
+Precedência válida: `1.0.0-rc.1 < 2.0.0-alpha.1 < … < 2.0.0-beta.1 < … < 2.0.0-rc.1 < 2.0.0`.
 Uma versão publicada **nunca** é alterada. Qualquer mudança gera uma nova versão.
 
-## Hooks (Husky)
+## Gates (Husky)
 
-| Hook | O que roda | Objetivo |
-|---|---|---|
-| `pre-commit` | `bunx biome check --staged` (lint + format + imports) → `bun run typecheck` → `bun test` | Nada entra quebrado ou sem formatação |
-| `commit-msg` | `bunx commitlint --edit` | Mensagem em Conventional Commits |
-| `pre-push` | `bunx biome ci .` → `bun run typecheck` → `bun test` → `bun run build` | O que vai para o `main` compila, passa nos testes e gera build |
+Os arquivos `.husky/*` estão **vazios por escolha do usuário** (commit `5b8f23a`). Não os restaure sem pedido. Rode os gates manualmente:
 
-Nunca use `--no-verify`. Se um hook falhar, corrija a causa.
+| Momento | Comandos |
+|---|---|
+| Antes de commitar | `bun run check` → `bun run typecheck` → `bun test` |
+| Antes de pushar | `bunx biome ci .` → `bun run typecheck` → `bun test` → `bun run build` |
 
-## Fluxo ao concluir uma seção do PLAN (0.2, 1.1, 1.2, …)
+Nunca use `--no-verify`. Se um gate falhar, corrija a causa.
+
+## Fluxo ao concluir uma seção do PLAN (0.1, 1.1, 1.2, …)
 
 1. Micro-commits durante o trabalho (`feat(...)`, `test(...)`, `build(...)`…).
 2. Marcar `[x]` no PLAN.md + linha no Changelog → `docs(plan): complete <seção>`.

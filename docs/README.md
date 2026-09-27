@@ -1,19 +1,18 @@
-# Documentação — Starfall Survivors
+# Documentação — Pinguin Survivors
 
-Índice dos docs do projeto. O plano de execução está em [`../PLAN.md`](../PLAN.md).
+Índice dos docs. O plano de execução está em [`../PLAN.md`](../PLAN.md).
 
 | Doc | Conteúdo |
 |---|---|
-| [game-design.md](game-design.md) | GDD: pitch, pilares, core loop, personagens, stats, cartas, habilidades, itens, inimigos, arena |
-| [balancing.md](balancing.md) | Fórmulas de escala infinita, stats base, combate, raridade, cartas, itens, metas de sanidade |
-| [architecture.md](architecture.md) | Stack, estrutura de pastas, princípios, tela cheia pixel-perfect, performance, debug |
-| [art-and-assets.md](art-and-assets.md) | Guia de estilo pixel art, contrato de chaves, lista de assets, pipeline Higgsfield, templates de prompt |
-| [audio.md](audio.md) | SFX procedurais (jsfxr), catálogo de sons, regras do AudioSystem, música por fase |
-| [ui-hud.md](ui-hud.md) | Fluxo de telas, HUD, CardPick, Shop, Pause, GameOver, regras de UI |
-| [decisions.md](decisions.md) | Decisões tomadas com o usuário (D-01…) e questões em aberto |
-| [tooling.md](tooling.md) | Skills instaladas, MCPs, libs npm, ferramentas externas |
-| [agent-workflow.md](agent-workflow.md) | Protocolo de sessão, convenções, definição de pronto, prompts prontos |
-| [art-prompts.md](art-prompts.md) | Histórico de prompts de arte por IA (ferramenta, estilo, seed, custo, resultado) |
-| [game-market.md](game-market.md) | Pesquisa de mercado: itch.io, Poki, CrazyGames (público, números, monetização, requisitos) |
-| [research.md](research.md) | Pesquisa de mercado com fontes (Phaser 4, Higgsfield, pixel art com IA, áudio) |
-| [git-and-versioning.md](git-and-versioning.md) | Conventional Commits, SemVer, hooks Husky, fluxo de push, estilo (Biome/TAB 4) |
+| [game-design.md](game-design.md) | GDD: pitch, loop, heróis, stats, RPG, cartas, armas, poções, inimigos, mundo, meta |
+| [balancing.md](balancing.md) | Números e fórmulas (rounds, escala, combate, heróis, XP, armas, cartas, Fish) |
+| [architecture.md](architecture.md) | Stack, projeção iso, pastas, princípios, mundo infinito, gore, iluminação, debug |
+| [art-and-assets.md](art-and-assets.md) | Direção de arte, tamanhos, animações, pipeline PixelLab, chaves, orçamento |
+| [art-prompts.md](art-prompts.md) | Histórico de prompts do PixelLab (id, endpoint, seed, custo, resultado) |
+| [audio.md](audio.md) | Direção de áudio e pipeline ElevenLabs (SFX, música, vozes EN/PT-BR) |
+| [ui-hud.md](ui-hud.md) | Fluxo de telas, HUD, CardPick, Hero, GameOver |
+| [decisions.md](decisions.md) | Decisões do usuário (P-01…) |
+| [tooling.md](tooling.md) | Skills, APIs (PixelLab, ElevenLabs), libs, scripts |
+| [agent-workflow.md](agent-workflow.md) | Protocolo de sessão, convenções, definição de pronto |
+| [git-and-versioning.md](git-and-versioning.md) | Conventional Commits, SemVer, branches, push |
+| [game-market.md](game-market.md) | Onde publicar (itch.io, Poki, CrazyGames) — pesquisa herdada do Starfall |

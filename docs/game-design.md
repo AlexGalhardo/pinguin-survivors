@@ -1,135 +1,125 @@
-# Game Design Document — Starfall Survivors
+# Game Design Document — Pinguin Survivors
 
-> Nome provisório. Top-down arena shooter roguelite para browser, pixel art 32px, tema sci-fi retrô.
-> Inspirações: **Brotato** (ondas cronometradas, loja, itens com trade-off) + **Vampire Survivors** (ataque automático, hordas, habilidades que evoluem).
-> Números concretos ficam em [`balancing.md`](balancing.md). Decisões e o motivo de cada uma estão em [`decisions.md`](decisions.md).
+> Endless roguelite frenético em **pixel art 2.5D isométrica** (estilo Diablo 2 com a atmosfera do Diablo 4), inspirado em **Brotato**. Browser desktop. UI em EN + PT-BR.
+> Decisões de origem: [decisions.md](decisions.md). Números: [balancing.md](balancing.md).
 
 ## 1. Pitch
 
-Um sobrevivente cai num planeta alienígena. Preso numa arena fechada, enfrenta ondas infinitas de aliens, robôs e insetoides. Ele ataca sozinho; o jogador só **se move** (WASD). No fim de cada onda, escolhe **1 de 3 cartas** de melhoria e depois gasta o **ouro** coletado na **loja**. A run termina quando ele morre sem uma carga de ressurreição.
+Jack, Bob e Lucia são os **3 últimos pinguins sobreviventes de um apocalipse zumbi** na Antártida. Sobreviva a rounds cronometrados contra hordas de animais e cientistas zumbis, escolha 1 de 3 cartas a cada round, derrote um boss a cada 10 rounds e pinte a neve de vermelho. Os ataques são automáticos; você só se move.
 
 ## 2. Pilares
 
-1. **Um input, muitas decisões**: combate só com movimento; a profundidade está nas escolhas entre as ondas (cartas, loja, re-roll).
-2. **Poder cresce visivelmente**: o jogador sente cada upgrade (mais projéteis, números maiores, efeitos novos).
-3. **Pressão infinita e justa**: a dificuldade sobe a cada onda sem teto, mas sempre é possível ler o que está acontecendo (arena fechada, spawns telegrafados).
-4. **Tudo em pixel art**: jogo, HUD, menus e fontes.
+1. **Frenético e sangrento**: hordas de até 300 inimigos, gore estilo DOOM (jorros, gibs, poças que ficam a run inteira), hit-stop e screen shake.
+2. **Decisões rápidas e significativas**: 3 cartas por round, 1 arma assinada + 3 secundárias, gambits de poção.
+3. **Progressão RPG persistente**: cada herói sobe do level 1 ao 100 entre runs; morrer nunca é tempo perdido.
+4. **Contraste visual**: pinguins fofos e marcados pela guerra num mundo escuro iluminado por tiros, magias e auras.
 
 ## 3. Core loop
 
 ```
-Menu → Seleção de personagem → [ Onda N (combate) → 3 Cartas (grátis, escolhe 1) → Loja (ouro) ] → Onda N+1 …
-                                         ↘ morte sem carga de revive → Game Over (estatísticas) → Menu
+Menu (Fish: poções/upgrades · pontos de stat · gambits)
+  → Escolhe herói → Run:
+      Round N (timer) → mata hordas, coleta XP/Fish
+      → fim do timer (ou boss morto) → 3 cartas (tempo pausado) → Round N+1
+      → round 10k: BOSS (3 min; timeout = game over)
+  → Morte / desistência → resumo → XP e Fish ficam salvos → Menu
 ```
 
-- **Onda**: dura `min(20 + 5·(N−1), 60)` segundos. Quem sobrevive até o timer zerar vence a onda. Os inimigos restantes morrem (efeito "purge") e o ouro no chão é coletado automaticamente.
-- **Cartas**: 3 opções com raridade. Pode fazer **re-roll** pagando ouro. Teclas 1/2/3 ou mouse.
-- **Loja**: 4 itens com raridade, comprar, re-roll pago, "Continue".
-- **Game Over**: onda alcançada, tempo, abates, dano causado, ouro total, build final. Recorde salvo em localStorage.
+- **Duração do round**: `min(20 + 5·(N−1), 60)` s → 20, 25, 30 … 60 s a partir do round 9.
+- **Boss**: rounds 10, 20, 30… Barra de boss + timer de 3:00. Matar o boss encerra o round; o timer zerar = **game over**.
+- **Elites** (rounds múltiplos de 3 que não são boss: 3, 6, 9, 12…): **roxo 2×**; a partir do round 11 também **laranja 3×**.
+- **Endless**: sem fim; escala sem teto (ver balancing).
 
 ## 4. Controles
 
-- **WASD** / setas: mover. **ESC**: pausar. Menus: mouse **e** teclado (setas/WASD + Enter/Espaço, 1/2/3 nas cartas).
-- Ataque e mira **automáticos**: cada arma mira no inimigo mais próximo dentro do alcance.
-- Sem gamepad e sem toque no escopo atual.
+| Ação | Teclado | Gamepad |
+|---|---|---|
+| Mover (8 dir; input rotacionado 45° para o losango iso) | WASD / setas | Analógico esquerdo / D-pad |
+| Confirmar / cartas | Enter / Espaço / 1-2-3 | ✕ / A |
+| Pausa | Esc / P | Start |
 
-## 5. Personagens (3)
+Ataques são automáticos. Não há dash. Input abstraído (`src/core/input`) para um joystick virtual mobile no futuro.
 
-| Classe | Fantasia sci-fi | Estilo | Arma inicial | Pontos fortes / fracos |
+## 5. Heróis
+
+| Herói | Espécie / visual | Especialidade | Arma assinada T1 → T2 → T3 | Desbloqueio |
 |---|---|---|---|---|
-| **Warrior** | Soldado com armadura pesada e lâmina de energia | Corpo a corpo | **Energy Blade**: golpe em arco automático no inimigo mais próximo, curto alcance, dano alto, knockback | + muita vida, + armor / − alcance |
-| **Ranger** | Batedor ágil com blaster | Distância, cadência alta | **Blaster**: tiro rápido, projétil único, alcance longo | vida e habilidades medianas, + velocidade |
-| **Mage** | Psiônico / tecnomago | Distância, habilidades | **Psi Orb**: orbe lento que perfura; dano base baixo | **+50% Ability Power**, − pouca vida |
+| **Jack** | Pinguim-saltador-da-rocha (crista amarela espetada), bandana vermelha, ombreira de couro, curativos | Armas brancas (melee): arcos largos, sangramento | Machete → Katana → Espada-motosserra | Inicial |
+| **Bob** | Pinguim-imperador gordinho, colete tático, cinto de cartuchos, gorro, tapa-olho | Armas de fogo: espalhamento, crítico | Escopeta cano duplo → Escopeta automática → Escopeta-foguete | Vencer o boss do round 10 |
+| **Lucia** | Pinguim-gentoo pequena, capa roxa rasgada com runas | Magias: 4 elementos, área, corrente, veneno | Cajado dos 4 elementos → Cajado arcano → Cajado das Quatro Tempestades | Vencer o boss do round 20 |
 
-Desbloqueio: Alpha tem os 3 liberados (para testes). No Beta, Ranger e Mage passam a ser desbloqueados por conquista (ver `balancing.md` §9).
+- A **arma assinada é desenhada no sprite** do herói (idle/walk/attack/hurt/death × 8 dir por tier).
+- **Especialista**: +25% de dano em armas da própria tag (`melee`/`firearm`/`magic`), incluindo secundárias.
+- **Evolução**: carta especial de T2 a partir do round 10 (após o boss) e de T3 a partir do round 20.
 
-## 6. Atributos (stats) do jogador
+## 6. Atributos (stats)
 
-| Stat | Efeito |
+| Grupo | Stats |
 |---|---|
-| Max HP | Vida máxima |
-| HP Regen | HP por segundo |
-| Lifesteal % | Chance de curar 1 HP por acerto |
-| Damage % | Multiplicador de todo dano |
-| Attack Speed % | Reduz o cooldown das armas |
-| Crit Chance % / Crit Damage % | "Attack Power": críticos |
-| Ability Power % | Multiplicador do dano e efeito das habilidades |
-| Range % | Alcance das armas e habilidades |
-| Move Speed % | Velocidade de movimento |
-| Armor | Redução de dano percentual com retorno decrescente |
-| Dodge % | Chance de ignorar um golpe (teto de 60%) |
-| Pickup Range | Raio do ímã de ouro |
-| Luck | Melhora a raridade de cartas e itens e a chance de cura dropar |
-| Projectiles / Pierce | +projéteis por disparo / +inimigos atravessados |
-| Revive | 0 ou 1 carga |
+| Vida | HP máx., regeneração de HP/s, roubo de vida % |
+| Ataque | dano % (geral e por tag), **velocidade de ataque %**, **chance de crítico**, dano crítico, alcance %, área % |
+| Status on-hit | chance de **sangramento** (DoT físico, acumula), chance de **veneno** (DoT que ignora armadura, acumula), dano elemental % (fogo/terra/gelo/energia) |
+| Defesa | **defesa física** (armadura), **defesas elementais** (fogo, terra, gelo, energia), **dodge %** (evita qualquer golpe), **parry %** (bloqueia golpe corpo a corpo e contra-ataca) |
+| Utilidade | velocidade de movimento, alcance de coleta, sorte (raridade das cartas), ganho de XP % |
 
-## 7. Cartas (grátis, 3 por onda)
+Elementos: **fogo** = queimadura (DoT); **gelo** = lentidão → congelamento com acúmulo; **terra** = knockback/atordoamento e quebra de armadura; **energia** = salta para inimigos próximos (corrente).
 
-Tipos:
-1. **Stat card**: +X em um atributo; o valor depende da raridade. Ex.: "Reinforced Plating: +10 Max HP".
-2. **Ability card**: ganha uma **habilidade nova** (nível 1) ou **sobe uma que já tem** (até nível 5). Máximo de **6 habilidades**. Quando os 6 slots estão cheios, só aparecem cartas de habilidades que o jogador já tem.
-3. **Special card**: **Revive** (1 carga: volta com 50% de HP + 2s de invulnerabilidade + onda de choque que empurra os inimigos; não aparece enquanto o jogador já tem uma carga), cura total, +1 projétil (Epic+).
+## 7. RPG persistente (level 1–100)
 
-Raridades: **Common / Rare / Epic / Legendary**, com molduras coloridas em pixel art. Legendary só a partir da onda 5. A probabilidade depende da onda e do **Luck**.
+- Inimigos soltam **orbes de XP** (coletados na run). O XP vai para o **herói** e persiste.
+- Cada level: **crescimento automático** pela curva da classe + **1 ponto de stat** para gastar no menu (tela "Hero").
+- Morrer mantém todo o XP e todo o Fish.
+- Level 100 é o teto por herói.
 
-## 8. Habilidades ("Abilities", as magias)
+## 8. Cartas (3 por round, tempo pausado)
 
-Disparam sozinhas e escalam com **Ability Power**. Alpha: 6 habilidades.
+Raridade: comum, rara, épica, lendária (sorte e round aumentam a chance). Tipos:
+1. **Stat**: ex. +12% velocidade de ataque, +3 armadura, +8% resistência a gelo.
+2. **Arma/magia secundária**: adiciona uma nova (se houver slot livre, máx. 3) ou sobe o nível de uma existente (nível 1–5).
+3. **On-hit**: +chance de sangramento/veneno/elemento, roubo de vida.
+4. **Evolução**: sobe a arma assinada para T2/T3 (só aparece quando liberada).
 
-| Habilidade | Comportamento | Escala por nível |
+## 9. Armas secundárias (pool inicial)
+
+Sprites separados do herói (orbitando, arremessados, torres). Cada uma tem tag (`melee`/`firearm`/`magic`) e nível 1–5.
+Exemplos: facas arremessáveis (melee), bumerangue de peixe (melee), pistola auxiliar (firearm), drone-torreta (firearm), molotov (firearm/fogo), mina terrestre (firearm), estilhaços de gelo orbitando (magic/gelo), anel de chamas (magic/fogo), totem de raios (magic/energia), nuvem de veneno (magic/terra). Lista final em `src/data/weapons.ts`.
+
+## 10. Poções (gambits estilo FFXII)
+
+- 3 slots por run. Cada slot = **tipo** + **condição**, montados no menu antes da run; cada poção é consumida uma vez.
+- Tipos: Cura (40%), Mega Cura (70%), Escudo (absorve 30% do HP máx. por 8 s), Fúria (+50% dano 8 s), Antídoto (limpa veneno/sangramento, imune 5 s), Pressa (+40% vel. de ataque 8 s).
+- Condições: HP < 25/50/75%, envenenado, sangrando, boss na tela, ≥ N inimigos por perto, início do round.
+- Avaliadas em ordem (slot 1 → 3) a cada 0,25 s; comprar custa Fish.
+
+## 11. Inimigos — bioma 1: Antártida zumbi
+
+| Inimigo | Papel | Notas |
 |---|---|---|
-| **Orbital Drones** | Drones orbitam o jogador e causam dano por contato | +1 drone, +dano |
-| **Chain Lightning** | Raio que salta entre N inimigos | +saltos, +dano |
-| **Plasma Nova** | Explosão circular periódica em volta do jogador | +raio, −cooldown |
-| **Cryo Field** | Aura que causa lentidão e dano leve contínuo | +raio, +lentidão |
-| **Homing Missiles** | Mísseis que perseguem alvos aleatórios | +mísseis, +dano |
-| **Laser Beam** | Feixe em linha reta na direção do inimigo mais denso | +largura, +duração |
+| Pinguim zumbi | Enxame rápido e frágil | Base da horda |
+| Foca zumbi | Tanque lento | Rasteja; muito HP |
+| Skua zumbi (ave) | Voador | Mergulha em linha reta, ignora obstáculos |
+| Cientista zumbi | À distância | Cospe gosma tóxica (veneno) |
+| Morsa zumbi | Investida | Carrega em linha e causa knockback |
+| Pinguim inchado | Explosivo | Explode em nuvem de veneno ao morrer ou ao chegar perto |
+| **Boss: Urso polar zumbi** | Boss round 10 | Patada em arco, investida, rugido que invoca pinguins |
 
-Beta: **evoluções** (habilidade no nível 5 + item específico → versão evoluída) e **sinergias** (tags como `energy`, `cryo` e `psi` somam bônus em conjunto).
+Biomas seguintes (estação de pesquisa/porto, cidade em ruínas) trazem novos inimigos e bosses (pool rotativo). Elites usam o mesmo sprite, maiores, com aura roxa/laranja.
 
-## 9. Itens (loja, pagos com ouro)
+## 12. Mundo
 
-- Passivos e permanentes durante a run. Muitos têm **trade-off** no estilo Brotato (ex.: *Overclocked Core*: +25% Attack Speed, −10% Max HP).
-- Raridade igual à das cartas. O preço sobe a cada onda. **Sem limite de slots**.
-- A loja tem 4 slots, re-roll pago (o custo sobe a cada re-roll dentro da mesma loja) e botão "Continue".
-- Alpha: ~12 itens. Beta: ~40 itens. Lista inicial em `balancing.md` §7.
-
-## 10. Inimigos
-
-| Tipo | Papel | Aparece a partir de |
-|---|---|---|
-| **Chaser** (alien rastejante) | Persegue o jogador em linha reta | Onda 1 |
-| **Runner** (inseto veloz) | Rápido e frágil, em enxames | Onda 2 |
-| **Shooter** (drone sentinela) | Fica a distância e atira projéteis lentos | Onda 3 |
-| **Tank** (bruto blindado) | Lento, muita vida, empurra | Onda 4 |
-| **Elite** | Versão grande de um tipo, com modificador (rápido / escudo / explode ao morrer) | A cada 5 ondas |
-| **Boss** (sprite 64×64) | 2 padrões no Alpha: rajada radial de projéteis + investida telegrafada | A cada 10 ondas |
-
-- **Spawn**: pelas bordas da arena e em pontos aleatórios longe do jogador. Um **telegraph** (marcador piscando 0,8s) aparece antes de cada inimigo surgir, para evitar dano injusto.
-- **Drops**: só **ouro**, mais uma chance pequena de **medkit** (cura) influenciada pelo Luck.
-
-## 11. Arena
-
-- Fechada, com paredes, com aproximadamente 2×2 telas lógicas (960×540 px lógicos). A câmera segue o jogador com deadzone e fica limitada às bordas da arena.
-- Chão em tiles de 32 px (placeholder gerado por código no Alpha). Beta: pequenas variações e decoração que não bloqueia.
-
-## 12. Progressão infinita
-
-- A cada onda sobem a quantidade, a vida, o dano e a velocidade dos inimigos (fórmulas em `balancing.md`).
-- A quantidade de inimigos tem teto de performance (300 vivos). Acima dele, a dificuldade cresce por **HP e dano**.
-- O jogador cresce por cartas, habilidades e itens. A curva do jogador precisa acompanhar a dos inimigos até ~onda 20–30 com uma boa build e depois perder, para que runs "infinitas" terminem.
+- Mapa **infinito**: chunks de 16×16 tiles iso (64×32) gerados por seed + coordenada do chunk; decoração visual (pedras de gelo, carcaças, placas, barris, poças de óleo).
+- Obstáculos sólidos leves só na beta.
+- Clima escuro: noite polar, vinheta, luzes dinâmicas; **o sangue fica no chão** (carimbado na textura do chunk).
 
 ## 13. Meta-progressão
 
-- **Alpha**: recorde e estatísticas por personagem (localStorage).
-- **Beta**: desbloqueio de personagens por conquista.
-- **1.0**: pequena árvore de upgrades permanentes (a definir; ver `decisions.md`).
+- **Fish 🐟**: moeda persistente (drop de inimigos, bônus por round e por boss). Compra poções e upgrades permanentes.
+- **Desbloqueios**: Bob (boss 10) e Lucia (boss 20); conquistas e recordes por herói.
 
-## 14. Game feel ("juice")
+## 14. Game feel
 
-Alpha (o básico): flash branco ao tomar hit, knockback, números de dano, tremor de tela leve, SFX em toda ação.
-Beta: hit-stop curto, partículas, squash/stretch, morte com explosão em pixels, transições de cena.
+Hit-stop em crítico/kill de elite, screen shake, flash branco no hit, números de dano, knockback, jorros de sangue, gibs com arco e sombra (eixo Z falso), poças persistentes, bloom em magias, luz dos tiros, zoom-punch em boss.
 
 ## 15. Fora do escopo (por enquanto)
 
-Multiplayer, mobile/toque, gamepad, ranking online, conta de usuário, monetização.
+Multiplayer, mobile (a arquitetura prevê), rotação de câmera, 3D real, Steam.

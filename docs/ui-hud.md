@@ -1,62 +1,52 @@
 # UI, HUD e telas
 
-Toda a UI é em pixel art e **em inglês**. No Alpha, é desenhada por código (`src/ui/`). Os textos ficam centralizados em `src/config/strings.ts`.
+UI em pixel art, **EN + PT-BR** (`src/i18n/`; nenhum texto fora de lá). Fonte pixel com acentos latinos (escolher na fase 1: precisa de á, ã, ç, é, ê, í, ó, õ, ú). Placeholders por código até a UI do PixelLab (`/create-ui-asset`) entrar.
 
 ## Fluxo de telas
 
 ```
-MainMenu ─► CharacterSelect ─► Game (+ HUD em paralelo)
-   │                              │  ESC ─► Pause ─► Settings / Resume / Quit run
-   └─► Settings                   │  fim da onda ─► CardPick ─► Shop ─► Game (próxima onda)
-                                  └─ morte ─► GameOver ─► MainMenu / Retry
+MainMenu ─► HeroSelect ─► Hero (pontos de stat · poções/gambits · upgrades com Fish) ─► Game (+ HUD)
+   │                                                                                     │ ESC ─► Pause ─► Settings / Resume / Quit
+   ├─► Settings (idioma, volumes, gore, shake, números de dano)                          │ fim do round ─► CardPick ─► Game
+   └─► Records / Credits                                                                 └ morte/timeout do boss ─► GameOver ─► Menu / Retry
 ```
 
-## HUD (durante o combate)
+## HUD
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ [HP ███████░░░ 24/30]  (♥ revive)        WAVE 7   0:34   │
-│ [◆ 128 gold]                                             │
-│                                                          │
-│                        (arena)                           │
-│                                                          │
-│ [drone 3][chain 1][nova 2][ ][ ][ ]            FPS (debug)│
-└──────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│ JACK Lv 12  [HP ████████░░ 96/120]            ROUND 7     0:34          │
+│ [XP ▰▰▰▰▱▱▱]  🐟 214                        (ELITE ROUND — roxo)         │
+│                                                                         │
+│                            (mundo iso)                                  │
+│                                                                         │
+│ [T1 machete] [sec1 3][sec2 1][ ]              [🧪1 HP<30%][🧪2][🧪3]    │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-- Barra de HP com número; ícone de revive quando há carga.
-- Onda + timer grande no topo e no centro; pisca em vermelho nos últimos 5 s. Quando há boss, aparece a barra de HP dele.
-- Ouro com ícone.
-- 6 slots de habilidade com ícone 16×16 e nível (1–5); habilidades com cooldown mostram um preenchimento.
-- Números de dano flutuantes (críticos maiores e amarelos), podem ser desligados em Settings.
+- HP com número; XP do herói (persistente) com level; Fish.
+- Round + timer grande no topo; últimos 5 s piscam. **Boss**: barra de HP do boss + timer de 3:00 em vermelho.
+- Aviso de round de elite (roxo/laranja).
+- Arma assinada (tier) + 3 slots de secundárias com nível; 3 poções com a condição resumida e estado (usada/pronta).
+- Números de dano (crítico maior e amarelo; sangramento vermelho escuro; veneno verde; elementos com cor própria), desligáveis.
 
-## CardPick
+## CardPick (tempo pausado)
 
-- Título "WAVE N CLEARED — CHOOSE AN UPGRADE".
-- 3 cartas lado a lado: moldura na cor da raridade, ícone, nome, descrição curta com o valor final já calculado, e a tag "NEW" ou "LV 2→3" nas habilidades.
-- Input: mouse (hover levanta a carta) ou teclas **1/2/3**, ou setas + Enter.
-- Botão **Reroll (X gold)**. Fica desabilitado se o ouro não for suficiente.
-- Painel lateral de stats atuais (opcional, pode ser recolhido).
+"ROUND N CLEARED — CHOOSE ONE" / "ROUND N CONCLUÍDO — ESCOLHA UMA". 3 cartas com moldura de raridade, ícone, nome, descrição com valor final calculado, tag "NEW"/"LV 2→3"/"EVOLVE". Input: mouse, 1/2/3, setas + Enter, gamepad.
 
-## Shop
+## Hero (menu, fora da run)
 
-- 4 slots de item (moldura de raridade, preço, efeitos em verde/vermelho).
-- **Reroll (X gold)**, **Continue ▶**. Beta: botão de "lock" num item (mantém o item no próximo re-roll).
-- Painel de stats atuais + lista de itens possuídos.
-
-## Pause / Settings
-
-- Resume, Settings, Quit run (com confirmação).
-- Settings: volume de SFX e de música, Fullscreen (Scale Manager), Screen shake on/off, Damage numbers on/off. Tudo persistido.
+- Level, XP, **pontos de stat** para distribuir (com prévia do stat final).
+- **Gambits de poção**: 3 slots, cada um com tipo (comprado com Fish) + condição (lista).
+- Upgrades permanentes com Fish.
 
 ## GameOver
 
-- "YOU DIED — WAVE N", tempo total, abates, dano causado, ouro total, habilidades e itens da build, recorde ("NEW BEST!").
-- Retry (mesmo personagem) / Main Menu.
+Round alcançado, tempo, abates, dano, XP ganho (+ levels), Fish ganho, build (arma/tier, secundárias, cartas), recorde. Retry / Menu.
 
-## Regras de UI
+## Regras
 
-- Escala sempre inteira, alinhada ao grid lógico (480×270). Ancorar pelas bordas visíveis e recalcular no `resize`.
-- Toda tela navegável por teclado **e** mouse. O foco visível é uma seta ou borda piscando.
-- Feedback sonoro em hover e clique.
-- Pausar a física e os timers do GameScene enquanto CardPick, Shop ou Pause estão abertos.
+- Escala inteira; ancorar pelas bordas visíveis (largura lógica variável) e recalcular no `resize`.
+- Tudo navegável por teclado, mouse e gamepad; foco visível.
+- Pausar simulação e timers durante CardPick/Pause.
+- Textos longos em PT-BR: layouts testados nos dois idiomas.

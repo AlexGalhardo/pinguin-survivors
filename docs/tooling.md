@@ -1,47 +1,39 @@
-# Ferramentas, skills e MCPs
+# Ferramentas, skills e APIs
 
-Tudo está instalado em `.claude/skills/` (nível de projeto) e travado em `skills-lock.json`.
-Para restaurar numa máquina nova: `bunx skills experimental_install`.
+Skills em `.claude/skills/` (nível de projeto), travadas em `skills-lock.json` (restaurar: `bunx skills experimental_install`).
 
-## Skills e quando usar
+## Skills
 
 | Skill | Use quando… |
 |---|---|
-| **Phaser 4 (28 skills)**: `game-setup-and-config`, `scenes`, `physics-arcade`, `groups-and-containers`, `input-keyboard-mouse-touch`, `scale-and-responsive`, `cameras`, `particles`, `tweens`, `time-and-timers`, `text-and-bitmaptext`, `graphics-and-shapes`, `render-textures`, `sprites-and-images`, `animations`, `loading-assets`, `audio-and-sound`, `events-system`, `data-manager`, `filters-and-postfx`, `geometry-and-math`, `game-object-components`, `actions-and-utilities`, `curves-and-paths`, `tilemaps`, `physics-matter`, `v4-new-features`, `v3-to-v4-migration` | For **any** Phaser API question. Phaser 4 changed a lot relative to v3; always prefer these skills over v3 examples from the web |
-| `agent-browser` | Abrir o jogo no browser, tirar screenshots, simular teclas, ler o console, fazer QA e smoke tests. Requer o CLI `agent-browser` (a skill explica a instalação) |
-| `canvas-design` | Arte estática PNG/PDF: key art do menu, logo, mockups de telas, pôster |
-| `graphify` | Gerar ou consultar o grafo de conhecimento do código e dos docs (`/graphify .`). Útil quando o código crescer. CLI Python `graphifyy` (fora do PATH: `%APPDATA%\Python\Python314\Scripts\graphify.exe`) |
-| `find-skills` | Procurar novas skills (ex.: pixel art, Aseprite, balanceamento) |
-| `grill-me` / `grilling` | Entrevistar o usuário para aprofundar uma decisão de design. `/grill-me` só é invocável pelo usuário; `grilling` pode ser usada pelo agente |
-| `setup-matt-pocock-skills` | Configurar issue tracker, labels e docs de domínio para as skills de engenharia do Matt Pocock (rodar só se o usuário quiser esse fluxo) |
+| **Phaser 4 (28)**: `game-setup-and-config`, `scenes`, `cameras`, `sprites-and-images`, `animations`, `render-textures`, `filters-and-postfx`, `particles`, `tweens`, `groups-and-containers`, `input-keyboard-mouse-touch`, `scale-and-responsive`, `loading-assets`, `audio-and-sound`, `text-and-bitmaptext`, `graphics-and-shapes`, `geometry-and-math`, `v4-new-features`, `v3-to-v4-migration`, … | Qualquer dúvida de API do Phaser. Phaser 4 ≠ Phaser 3 |
+| **`pinguin-art-assets`** | Gerar/trocar qualquer asset visual com o PixelLab (personagens, animações, tiles, objetos, VFX, UI) |
+| **`pinguin-audio-assets`** | Gerar SFX, música e vozes com o ElevenLabs |
+| `agent-browser` | QA visual: abrir o jogo, screenshots, teclas, console |
+| `canvas-design` | Arte estática (logo, key art, mockups) |
+| `graphify` | Mapa de conhecimento do código/docs |
+| `find-skills` | Procurar novas skills |
+| `grilling` / `grill-me` | Entrevistar o usuário sobre decisões de design (`/grill-me` é só do usuário) |
 
-## MCPs
+## APIs e MCPs
 
-| MCP | Status | Notas |
+| Serviço | Status | Notas |
 |---|---|---|
-| Retro Diffusion | ✅ API v2 via `scripts/rd-generate.ts` (chave em `.env`); MCP opcional | Ver skill `starfall-art-assets` → `references/tools-setup.md` |
-| PixelLab | fallback (trial esgotado) | MCP `pixellab` já configurado no usuário |
-| Scenario / pixel-mcp (Aseprite) | não configurados | Passo a passo em `references/tools-setup.md` da skill |
-| Higgsfield | `[~]` adiado pelo usuário | `claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp`, depois autenticar via `/mcp` (OAuth na conta do usuário, que consome créditos) |
-| Phaser Game Agent | **não usar** | Pago e só em projetos na nuvem da Phaser (ver `research.md`) |
+| **PixelLab** | ✅ API v2 via `scripts/lib/pixellab.ts` (`PIXELLAB_API_TOKEN` no `.env`); MCP `pixellab` (`https://api.pixellab.ai/mcp`) no escopo de usuário | Plano Tier 2 (5.000 gerações/mês). `GET /balance` antes de lotes |
+| **ElevenLabs** | ✅ chave `ELEVENLABS_API_KEY` no `.env` | SFX, música, vozes. Scripts `scripts/el-*.ts` |
+| Phaser Game Agent MCP | **não usar** | Pago/nuvem |
 
-## Bibliotecas npm previstas
+`.env` e `TODO.md` estão no `.gitignore`. Nunca commitar chaves nem colá-las em docs.
 
-- `phaser` (^4.2), `jsfxr`: runtime.
-- Runtime/gerenciador: **Bun 1.4.2** (`bun install`, `bun run`, `bunx`, `bun test`).
-- `typescript`, `vite`, `@types/bun`, `@biomejs/biome` (v2, lint + format), `husky`, `@commitlint/cli` + `@commitlint/config-conventional`: dev.
-- 1.0: `sharp` (pipeline de pixelização), um empacotador de atlas (script próprio ou `free-tex-packer-core`).
-- `playwright` (1.63.0, dev): QA cross-browser do build de produção (`scripts/qa-browsers.ts`: Chrome, Edge e o Firefox do Playwright).
+## Bibliotecas
 
-## Scripts de QA e performance
+- Runtime: `phaser` (^4.2).
+- Dev: `typescript`, `vite`, `@types/bun`, `@biomejs/biome`, `husky`, `@commitlint/*`, `sharp` (atlas/contact sheets), `playwright` (QA cross-browser).
 
-- `bash scripts/playtest.sh <classe> [seed] [onda] [velocidade]`: bot de playtest (dev server).
-- `bash scripts/profile.sh [segundos]`: CPU profile do estresse 300 inimigos + 500 projéteis (dev server).
-- `bun run build` + `bunx --bun vite preview --port 4173` → `bun scripts/qa-browsers.ts`: carga, sem scroll, WebGL, FPS, erros e 4xx por navegador. Na 1ª vez: `bunx playwright install firefox`.
-- `bun scripts/render-keyart.ts [escala]`: exporta logo, key art e favicon (pixel art por código).
+## Scripts
 
-## Ferramentas externas úteis
-
-- [sfxr.me](https://sfxr.me/): editor visual de SFX (exporta os parâmetros para o jsfxr).
-- [Lospec](https://lospec.com/palette-list/endesga-32): paleta Endesga 32.
-- Aseprite + [pixel-plugin](https://github.com/willibrandon/pixel-plugin): retoque manual de sprites no 1.0 (opcional).
+| Comando | O quê |
+|---|---|
+| `bun scripts/pl-concepts.ts [id…]` | Gera concepts dos heróis no PixelLab + `art-src/pixellab/concepts/sheet.png` |
+| `bun scripts/pack-atlas.ts` | `art-src/processed/*.png` → `public/assets/atlas.png/json` |
+| `bun scripts/qa-browsers.ts` | QA do build em Chrome/Edge/Firefox (com `vite preview --port 4173` rodando; 1ª vez: `bunx playwright install firefox`) |

@@ -1,36 +1,18 @@
 # Áudio
 
-## Estratégia por fase
+> Ferramenta: **ElevenLabs** (chave `ELEVENLABS_API_KEY` no `.env`, nunca no git). Scripts `scripts/el-*.ts` (a criar) geram os arquivos em `public/assets/audio/` e registram prompt + parâmetros em `art-src/elevenlabs/log.jsonl`. Siga a skill **`pinguin-audio-assets`**.
+> Confirme os endpoints na documentação oficial antes de implementar (https://elevenlabs.io/docs): Sound Effects (`POST /v1/sound-generation`), Music (`POST /v1/music`), Text to Speech (`POST /v1/text-to-speech/{voice_id}`), Voice Design (`/v1/text-to-voice/...`).
 
-| Fase | SFX | Música |
-|---|---|---|
-| Alpha | **jsfxr** procedural em runtime (Web Audio), sem arquivos | nenhuma |
-| Beta | jsfxr com parâmetros refinados + variação de pitch | **loop chiptune simples** (sequenciador Web Audio próprio ou faixa CC0) |
-| 1.0 | SFX finais (jsfxr exportado para WAV/OGG, ou gerados por IA) | trilha gerada por IA (verificar se o Higgsfield gera música; se não, escolher outra ferramenta) `[~]` |
+## Direção
 
-## Catálogo de SFX (chaves do manifest)
+- **Música**: metal/industrial estilo DOOM (djent, riffs graves, bateria agressiva). Faixas: menu (sombria, lenta), round (loop 90–120 s, intensidade média), round tardio (≥ 20, mais pesada), boss (máxima), game over (curta).
+- **SFX**: pesados e "carnudos": golpe de machete, katana, motosserra, tiro de escopeta (com eco), foguete, 4 elementos (fogo, terra, gelo, energia), impacto em carne, jorro de sangue, gib, explosão, coleta de XP/Fish, level up, carta, poção, UI.
+- **Vozes** (EN + PT-BR, seguem o idioma): frases curtas por herói — início de run, level up, HP baixo, poção usada, boss aparece, vitória no boss, morte. Timbre: Jack (jovem, marrento), Bob (grave, veterano), Lucia (calma, mística).
 
-| Chave | Quando toca | Preset jsfxr de partida |
-|---|---|---|
-| `sfx.blade` | golpe do Warrior | `hitHurt` curto, agudo |
-| `sfx.blaster` | tiro do Ranger | `laserShoot` |
-| `sfx.psi` | orbe do Mage | `synth` grave |
-| `sfx.enemy_hit` | inimigo atingido | `hitHurt` |
-| `sfx.enemy_die` | inimigo morre | `explosion` curto |
-| `sfx.player_hurt` | jogador toma dano | `hitHurt` grave |
-| `sfx.gold` | coleta de ouro | `pickupCoin` |
-| `sfx.heal` | medkit/regen | `powerUp` suave |
-| `sfx.card_pick` / `sfx.buy` | escolher carta / comprar | `powerUp` |
-| `sfx.ui_click` / `sfx.ui_hover` | UI | `blipSelect` |
-| `sfx.wave_start` / `sfx.wave_end` | início/fim de onda | `powerUp` / `synth` |
-| `sfx.boss_warn` | telegraph do boss | `tone` grave pulsante |
-| `sfx.revive` / `sfx.game_over` | | `powerUp` longo / `explosion` longo |
+## Regras técnicas
 
-## Regras do AudioSystem
-
-- **Pré-renderizar** cada som do jsfxr uma vez para um `AudioBuffer` (no Boot) e tocar a partir do cache. Não sintetizar por frame.
-- **Limitar vozes**: no máximo N instâncias do mesmo som ao mesmo tempo (ex.: `enemy_hit` ≤ 4) e intervalo mínimo de 40 ms entre repetições.
-- **Variação de pitch** de ±8% em sons repetitivos.
-- Volumes separados de SFX e música (Settings), persistidos no localStorage.
-- **Desbloqueio de áudio**: o browser exige um gesto do usuário, então o `AudioContext` é iniciado no primeiro clique/tecla do menu.
-- Skill de referência: `audio-and-sound`.
+- Formato: **OGG** (e MP3 de fallback se precisar), 44,1 kHz; SFX normalizados em −14 LUFS, música em −18 LUFS.
+- Chaves no `src/art/manifest.ts` (`sfx.*`, `music.*`, `vo.<hero>.<evento>.<lang>.<n>`).
+- `VoiceLimiter` (herdado) limita vozes simultâneas por chave; variação de pitch ±5% em SFX repetidos.
+- Volumes separados (master, música, SFX, voz) em Settings. `SOUND_MUTED=true` no `.env` silencia tudo no dev.
+- Música com crossfade entre faixas (round → boss).
