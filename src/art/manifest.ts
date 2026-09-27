@@ -16,6 +16,10 @@ export const KEYS = {
 	projectile: (id: string) => `proj.${id}`,
 	slash: 'fx.slash',
 	blood: 'fx.blood',
+	/** Ground splats: 4 variants each, red (`blood`) and green (`goo`, gore setting). */
+	splat: (kind: 'blood' | 'goo', n: number) => `fx.splat.${kind}.${n}`,
+	gib: (n: number) => `fx.gib.${n}`,
+	droplet: 'fx.droplet',
 	pickup: (kind: 'xp' | 'fish' | 'meat') => `pickup.${kind}`,
 	ring: 'fx.ring',
 	zone: 'fx.zone',

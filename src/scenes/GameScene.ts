@@ -111,6 +111,10 @@ export class GameScene extends Phaser.Scene {
 	private hostile!: HostileSystem;
 	private rng!: Rng;
 	private deadFor = -1;
+	/** Simulation freeze left (hit-stop); rendering keeps going. */
+	private hitStop = 0;
+	/** Crit hit-stops are throttled so hordes do not stutter. */
+	private hitStopCooldown = 0;
 	private outcome: RunOutcome = 'death';
 	private levelsGained = 0;
 	private startedAt = 0;
@@ -204,7 +208,7 @@ export class GameScene extends Phaser.Scene {
 		kb?.on('keydown-P', () => this.pause());
 
 		this.chunks = new ChunkManager(this, seed, 'antarctica');
-		this.fx = new FxSystem(this, save.settings);
+		this.fx = new FxSystem(this, save.settings, this.chunks);
 		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
 		this.hero = new Hero(this, heroId, tier, this.stats);
 		this.barrier = this.add.image(0, 0, KEYS.barrier).setVisible(false);
@@ -243,6 +247,7 @@ export class GameScene extends Phaser.Scene {
 				onParry: () => this.onParry(),
 				onHurt: (source) => this.onHurt(source),
 				shield: (amount) => this.soakShield(amount),
+				hitStop: (seconds) => this.requestHitStop(seconds),
 			},
 		);
 		this.combat.god = params.god;
@@ -295,6 +300,11 @@ export class GameScene extends Phaser.Scene {
 
 	override update(_time: number, deltaMs: number): void {
 		const dt = (Math.min(deltaMs, 50) / 1000) * this.speed;
+		this.hitStopCooldown -= deltaMs / 1000;
+		if (this.hitStop > 0) {
+			this.hitStop -= deltaMs / 1000;
+			return;
+		}
 		if (this.deadFor >= 0) {
 			this.deadFor += dt;
 			this.fx.update(dt);
@@ -340,6 +350,12 @@ export class GameScene extends Phaser.Scene {
 			width: v.width + VIEW_PAD * 2,
 			height: v.height + VIEW_PAD * 2,
 		});
+	}
+
+	private requestHitStop(seconds: number): void {
+		if (seconds < 0.1 && this.hitStopCooldown > 0) return;
+		this.hitStop = Math.max(this.hitStop, seconds);
+		this.hitStopCooldown = 0.3;
 	}
 
 	setSpeed(speed: GameSpeed): void {
@@ -780,6 +796,7 @@ export class GameScene extends Phaser.Scene {
 		run.counters.fishEarned = run.fish;
 		run.counters.damageDealt = run.damageDealt;
 		run.counters.secondsPlayed = run.elapsed;
+		run.counters.gibs = this.fx.gibCount;
 		const record: RunRecord = {
 			id: `${this.startedAt}-${run.seed}`,
 			startedAt: this.startedAt,

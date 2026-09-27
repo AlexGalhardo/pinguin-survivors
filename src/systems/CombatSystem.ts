@@ -42,6 +42,8 @@ export interface CombatHooks {
 	onParry: (source: Enemy | undefined) => void;
 	/** Damage actually taken, after mitigation (Frost Nova, thorns). */
 	onHurt: (source: Enemy | undefined) => void;
+	/** Hit-stop requests: short freezes that sell the weight of big hits (seconds). */
+	hitStop: (seconds: number) => void;
 	/** Shield potion: returns the damage left after the shield soaks what it can. */
 	shield: (amount: number) => number;
 }
@@ -134,6 +136,8 @@ export class CombatSystem {
 		if (knockback) e.lastDot = null;
 		this.run.damageDealt += amount;
 		this.fx.damage(e.x, e.y, amount, crit, color);
+		if (knockback) this.fx.spray(e.x, e.y, crit ? 10 : 4);
+		if (crit) this.hooks.hitStop(0.04);
 		if (knockback && e.def.behavior !== 'boss') {
 			const dx = e.x - this.hero.x;
 			const dy = e.y - this.hero.y;
@@ -159,7 +163,11 @@ export class CombatSystem {
 		else if (e.lastElement === 'earth') countRun(run, 'earthKills');
 		else if (e.lastElement === 'energy') countRun(run, 'energyKills');
 		const size = e.radius / 10;
-		this.fx.bloodAt(e.x, e.y, size);
+		this.fx.bloodAt(e.x, e.y, size * 1.4);
+		this.fx.burst(e.x, e.y, e.def.behavior === 'boss' ? 24 : e.elite ? 8 : 3);
+		this.fx.spray(e.x, e.y, 12);
+		if (e.def.behavior === 'boss') this.hooks.hitStop(0.25);
+		else if (e.elite) this.hooks.hitStop(0.08);
 		for (let i = 0; i < 2; i++)
 			this.fx.bloodAt(
 				e.x + this.rng.range(-14, 14),

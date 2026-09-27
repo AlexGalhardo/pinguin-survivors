@@ -187,6 +187,26 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.ellipse(32, 16, 30, 14, 0, Math.PI * 1.05, Math.PI * 1.95);
 		ctx.stroke();
 	});
+	for (const [kind, main, dark] of [
+		['blood', PALETTE.blood, PALETTE.bloodDark],
+		['goo', PALETTE.goo, 0x2f7a1f],
+	] as const) {
+		for (let n = 0; n < 4; n++) {
+			canvas(scene, KEYS.splat(kind, n), 40, 20, (ctx) => splat(ctx, 40, 20, main, dark, n));
+		}
+	}
+	for (let n = 0; n < 4; n++) {
+		canvas(scene, KEYS.gib(n), 6, 5, (ctx) => {
+			ctx.fillStyle = toCss(n % 2 ? PALETTE.bloodDark : PALETTE.blood);
+			ctx.fillRect(0, 1, 6, 3);
+			ctx.fillStyle = toCss(n < 2 ? 0xd8c8b8 : PALETTE.zombie);
+			ctx.fillRect(1 + n, 0, 2, 2);
+		});
+	}
+	canvas(scene, KEYS.droplet, 2, 2, (ctx) => {
+		ctx.fillStyle = '#ffffff';
+		ctx.fillRect(0, 0, 2, 2);
+	});
 	canvas(scene, KEYS.blood, 16, 8, (ctx) => {
 		ctx.fillStyle = toCss(PALETTE.blood);
 		ctx.beginPath();
@@ -277,4 +297,40 @@ function zombie(ctx: CanvasRenderingContext2D, w: number, h: number, color: numb
 	ctx.fillStyle = '#ff3b3b';
 	ctx.fillRect(Math.round(w * 0.3), Math.round(h * 0.32), 3, 2);
 	ctx.fillRect(Math.round(w * 0.6), Math.round(h * 0.32), 3, 2);
+}
+
+/** Irregular flat puddle (squashed 2:1 like the iso ground) with drops around it. */
+function splat(
+	ctx: CanvasRenderingContext2D,
+	w: number,
+	h: number,
+	main: number,
+	dark: number,
+	seed: number,
+): void {
+	let r = seed * 9301 + 49297;
+	const rand = () => {
+		r = (r * 9301 + 49297) % 233280;
+		return r / 233280;
+	};
+	ctx.fillStyle = toCss(main);
+	for (let i = 0; i < 7; i++) {
+		ctx.beginPath();
+		ctx.ellipse(
+			w / 2 + (rand() - 0.5) * w * 0.5,
+			h / 2 + (rand() - 0.5) * h * 0.4,
+			3 + rand() * w * 0.18,
+			2 + rand() * h * 0.18,
+			0,
+			0,
+			Math.PI * 2,
+		);
+		ctx.fill();
+	}
+	for (let i = 0; i < 6; i++)
+		ctx.fillRect(Math.floor(rand() * w), Math.floor(rand() * h), 1 + Math.floor(rand() * 2), 1);
+	ctx.fillStyle = toCss(dark);
+	ctx.beginPath();
+	ctx.ellipse(w / 2, h / 2, w * 0.14, h * 0.14, 0, 0, Math.PI * 2);
+	ctx.fill();
 }
