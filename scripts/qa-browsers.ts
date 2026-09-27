@@ -79,3 +79,37 @@ for (const [name, launch] of targets) {
 	);
 	await browser.close();
 }
+
+// Resolutions (PLAN 7.1): full-window canvas, no scroll, from 1366×768 to 4K, ultrawide and Retina.
+const RESOLUTIONS: [string, number, number, number][] = [
+	['1366x768', 1366, 768, 1],
+	['1920x1080', 1920, 1080, 1],
+	['2560x1080-ultrawide', 2560, 1080, 1],
+	['2560x1440', 2560, 1440, 1],
+	['3840x2160', 3840, 2160, 1],
+	['1440x900-retina', 1440, 900, 2],
+];
+const shell = await chromium.launch();
+for (const [label, width, height, dpr] of RESOLUTIONS) {
+	const page = await shell.newPage({ viewport: { width, height }, deviceScaleFactor: dpr });
+	const errors: string[] = [];
+	page.on('pageerror', (e) => errors.push(e.message));
+	await page.goto(base, { waitUntil: 'load' });
+	await page.waitForFunction(() => document.querySelector('canvas') !== null);
+	await page.waitForTimeout(1500);
+	const layout = await page.evaluate(() => {
+		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+		const rect = canvas.getBoundingClientRect();
+		const root = document.documentElement;
+		return {
+			noScroll: root.scrollWidth <= innerWidth && root.scrollHeight <= innerHeight,
+			fillsWindow:
+				Math.abs(rect.width - innerWidth) <= 1 && Math.abs(rect.height - innerHeight) <= 1,
+			backing: `${canvas.width}x${canvas.height}`,
+		};
+	});
+	await page.screenshot({ path: join(outDir, `qa-res-${label}.png`) });
+	console.log(JSON.stringify({ resolution: label, dpr, ...layout, errors }));
+	await page.close();
+}
+await shell.close();

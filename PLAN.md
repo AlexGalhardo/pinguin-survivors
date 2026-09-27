@@ -237,7 +237,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ## FASE 7 — RC → 1.0.0
 
 ### 7.1 QA e release candidate (ainda com placeholders)
-- [ ] QA cross-browser (`scripts/qa-browsers.ts`) e resoluções (1366×768 → 3840×2160, ultrawide, Retina)
+- [x] QA cross-browser (`scripts/qa-browsers.ts`, build de produção): Chrome 153 59,4 FPS · Edge 154 59 FPS · Firefox 155 58 FPS, zero erros/4xx; resoluções 1366×768, 1920×1080, 2560×1080, 2560×1440, 3840×2160 e Retina 1440×900@2× (backing 2880×1800): canvas ocupa a janela, sem scroll (2026-09-27)
 - [x] Gamepad completo (△/Y superpoder, □/X ou View 1×/2×, Options pausa, L1/R1 paginam), rebind de teclas (`ControlsScene`, `src/logic/keybinds.ts` + testes; troca em conflito, teclas de menu reservadas), acessibilidade (tamanho dos números de dano, flashes reduzidos)
 - [x] Testes E2E com Playwright (`bun run e2e`, `scripts/e2e.ts`): menu → seleção → run → fim do round → carta → morte → game over → menu → histórico, save limpo e zero erros de página
 - [ ] `1.0.0-rc.1`
