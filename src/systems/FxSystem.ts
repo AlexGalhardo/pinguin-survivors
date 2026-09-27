@@ -127,6 +127,8 @@ export class FxSystem {
 	damage(x: number, y: number, amount: number, crit: boolean, color?: number): void {
 		// Labels/banners call this with amount 0 and must still show.
 		if (!this.settings.damageNumbers && amount > 0) return;
+		// Tiny DoT ticks (fractions of a point) used to show as a stream of "0".
+		if (amount > 0 && amount < 1) return;
 		let n = this.numbers.find((f) => f.life <= 0);
 		if (!n) {
 			if (this.numbers.length >= MAX_NUMBERS) return;

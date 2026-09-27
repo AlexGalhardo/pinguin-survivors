@@ -173,7 +173,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'over.mainMenu': 'MENU PRINCIPAL',
 	'hud.eliteRound': 'ROUND DE ELITE',
 	'fx.superUnlocked': 'SUPERPODER LIBERADO!',
-	'hud.super': 'SUPER {n}/100',
+	'hud.super': 'SUPER {n}/{max}',
 	'hud.superReady': 'SUPER · SPACE',
 	'fx.block': 'BLOQUEIO',
 	'hud.fish': 'PEIXES {n}',

@@ -4,6 +4,8 @@ import type { HeroId } from '../config/constants';
 export const SUPER = {
 	unlockLevel: 5,
 	charge: 100,
+	/** Every use makes the next one cost this many more kills (100, 105, 110…; user request). */
+	chargeStep: 5,
 	eliteCharge: 3,
 	invulnerable: 0.8,
 	tick: 0.25,

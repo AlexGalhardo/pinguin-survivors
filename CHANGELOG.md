@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Each superpower cast makes the next one cost 5 more kills (100, 105, 110…); the HUD shows the current cost.
+- The main menu title sits top-left above the menu; the subtitle is gone.
+- Ring of Fire hits harder and more often (8 damage every 0.4 s); damage ticks under 1 no longer spam "0" numbers.
+
 ## [0.1.0-beta.6] - 2026-09-27
 
 Playtest build **playdev-5**.

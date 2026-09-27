@@ -6,7 +6,6 @@ import { GameEvents } from '../core/events';
 import { trackZoom } from '../core/viewport';
 import type { VoiceLine } from '../core/voice';
 import type { AchievementDef } from '../data/achievements';
-import { SUPER } from '../data/superpowers';
 import { VOICE } from '../data/voice';
 import { type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
@@ -203,11 +202,14 @@ export class HudScene extends Phaser.Scene {
 			);
 		this.superBox.setVisible(game.superIsUnlocked);
 		if (game.superIsUnlocked) {
-			const charge = Math.min(run.superCharge, SUPER.charge);
-			const ready = charge >= SUPER.charge;
-			this.superFill.width = SUPER_W * (charge / SUPER.charge);
+			const cost = game.superCost;
+			const charge = Math.min(run.superCharge, cost);
+			const ready = charge >= cost;
+			this.superFill.width = SUPER_W * (charge / cost);
 			this.superFill.fillColor = ready ? PALETTE.crit : PALETTE.blood;
-			this.superText.setText(ready ? t('hud.superReady') : t('hud.super', { n: charge }));
+			this.superText.setText(
+				ready ? t('hud.superReady') : t('hud.super', { n: charge, max: cost }),
+			);
 			this.superText.setAlpha(ready ? 0.6 + 0.4 * Math.sin(this.time.now / 120) : 1);
 		}
 		const lines = Object.entries(game.build.secondaries).map(

@@ -53,7 +53,7 @@ import {
 } from '../logic/save';
 import { nextSpeed } from '../logic/speed';
 import { heroStats, type PlayerStats } from '../logic/stats';
-import { addCharge, chargeFor, superReady, superUnlocked } from '../logic/superpower';
+import { addCharge, chargeFor, superCost, superReady, superUnlocked } from '../logic/superpower';
 import { applyUpgrades } from '../logic/upgrades';
 import { VoiceDirector } from '../logic/voice';
 import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
@@ -162,6 +162,11 @@ export class GameScene extends Phaser.Scene {
 
 	constructor() {
 		super('Game');
+	}
+
+	/** Kills needed for the next superpower (grows by 5 per cast this run). */
+	get superCost(): number {
+		return superCost(this.run.counters.superUses ?? 0);
 	}
 
 	get superIsUnlocked(): boolean {
@@ -711,7 +716,7 @@ export class GameScene extends Phaser.Scene {
 	private onKill(e: Enemy): void {
 		const run = this.run;
 		const kind = e.def.behavior === 'boss' ? 'boss' : e.elite ? 'elite' : 'common';
-		run.superCharge = addCharge(run.superCharge, chargeFor(kind));
+		run.superCharge = addCharge(run.superCharge, chargeFor(kind), this.superCost);
 		if (this.superpower.active) this.superpower.killsThisCast++;
 		this.pickups.drop('xp', orbXp(e.def.xp, run.round) * this.mods.rewards, e.x, e.y);
 		const f = ECONOMY.fish;
@@ -770,7 +775,7 @@ export class GameScene extends Phaser.Scene {
 
 	private castSuper(): void {
 		if (this.deadFor >= 0 || this.superpower.active) return;
-		if (!superReady(this.run.superCharge, this.level.level)) return;
+		if (!superReady(this.run.superCharge, this.level.level, this.superCost)) return;
 		this.run.superCharge = 0;
 		countRun(this.run, 'superUses');
 		this.combat.iFrames = Math.max(this.combat.iFrames, SUPER.invulnerable);

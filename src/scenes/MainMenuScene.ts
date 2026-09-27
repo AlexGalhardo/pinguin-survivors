@@ -24,9 +24,6 @@ export class MainMenuScene extends Phaser.Scene {
 		const panel = this.add
 			.rectangle(0, 0, PANEL_W, 150, 0x0b0e14, 0.72)
 			.setStrokeStyle(1, 0x3a2418);
-		const subtitle = this.add
-			.text(0, 0, t('menu.subtitle'), text(10, PALETTE.textDim))
-			.setOrigin(0.5, 0);
 		const wallet = this.add
 			.text(
 				0,
@@ -69,9 +66,12 @@ export class MainMenuScene extends Phaser.Scene {
 			],
 			{ x: 0, y: 0, fontSize: 14 },
 		);
-		const heading = setupScreen(this, t('game.title').toUpperCase(), (view, cx) => {
+		// The title sits top-left, right above the menu panel (user request); no subtitle.
+		const titleAt = { x: 0, y: 0 };
+		let heading: Phaser.GameObjects.Text | undefined;
+		const placeTitle = () => heading?.setOrigin(0.5, 1).setPosition(titleAt.x, titleAt.y);
+		heading = setupScreen(this, t('game.title').toUpperCase(), (view) => {
 			background.layout(view);
-			subtitle.setPosition(cx, 64);
 			// Menu on the left third so the hero in the key art stays visible.
 			const mx = Math.round(Math.max(PANEL_W / 2 + 16, view.width * 0.2));
 			panel
@@ -79,7 +79,17 @@ export class MainMenuScene extends Phaser.Scene {
 				.setSize(PANEL_W, menu.height + 24);
 			menu.layout(mx, Math.round(view.height / 2 - menu.height / 2 + 4));
 			wallet.setPosition(mx, Math.round(view.height / 2 + menu.height / 2 + 26));
+			titleAt.x = mx;
+			titleAt.y = Math.round(view.height / 2 - menu.height / 2 - 18);
+			placeTitle();
 		});
-		heading.setFontSize(32).setColor('#e8ecf2');
+		// Two lines so the big title fits above the menu panel.
+		heading
+			.setText(t('game.title').toUpperCase().replace(' ', '\n'))
+			.setAlign('center')
+			.setFontSize(40)
+			.setLineSpacing(-4)
+			.setColor('#e8ecf2');
+		placeTitle();
 	}
 }

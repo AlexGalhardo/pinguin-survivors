@@ -171,7 +171,7 @@ export const en = {
 	'over.mainMenu': 'MAIN MENU',
 	'hud.eliteRound': 'ELITE ROUND',
 	'fx.superUnlocked': 'SUPERPOWER UNLOCKED!',
-	'hud.super': 'SUPER {n}/100',
+	'hud.super': 'SUPER {n}/{max}',
 	'hud.superReady': 'SUPER · SPACE',
 	'fx.block': 'BLOCK',
 	'hud.fish': 'FISH {n}',

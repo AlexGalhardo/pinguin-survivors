@@ -9,10 +9,19 @@ export function chargeFor(kind: 'common' | 'elite' | 'boss'): number {
 	return kind === 'boss' ? 0 : kind === 'elite' ? SUPER.eliteCharge : 1;
 }
 
-export function addCharge(current: number, amount: number): number {
-	return Math.min(SUPER.charge, current + amount);
+/** Kills needed for the next cast after `uses` casts this run: 100, 105, 110… */
+export function superCost(uses: number): number {
+	return SUPER.charge + SUPER.chargeStep * Math.max(0, uses);
 }
 
-export function superReady(charge: number, heroLevel: number): boolean {
-	return superUnlocked(heroLevel) && charge >= SUPER.charge;
+export function addCharge(current: number, amount: number, cost: number = SUPER.charge): number {
+	return Math.min(cost, current + amount);
+}
+
+export function superReady(
+	charge: number,
+	heroLevel: number,
+	cost: number = SUPER.charge,
+): boolean {
+	return superUnlocked(heroLevel) && charge >= cost;
 }
