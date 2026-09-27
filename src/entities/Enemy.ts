@@ -1,16 +1,20 @@
 import Phaser from 'phaser';
+import { type AnimMeta, registerCharacterAnims } from '../art/anim-atlas';
 import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import type { EnemyDef } from '../data/enemies';
 import { ROUNDS } from '../data/rounds';
 import type { Element } from '../logic/combat';
 import { type AiState, newAi } from '../logic/enemy-ai';
-import { isoDepth, worldToScreen } from '../logic/iso';
+import { spriteDir } from '../logic/hero-anim';
+import { type Dir, dirFromWorld, isoDepth, worldToScreen } from '../logic/iso';
 import type { EliteTier } from '../logic/round';
 import { emptyStatus, resetStatus, type StatusState } from '../logic/status';
 import type { Mover } from '../logic/steering';
 
 const ELITE_BAR_W = 24;
+const ANIM_FPS: Record<string, number> = { walk: 10, attack: 12 };
+const ANIM_LOOPS = ['walk', 'attack'] as const;
 
 /** Pooled enemy: world state + its sprites. Flyers hover at a fake height (z). */
 export class Enemy implements Mover {
@@ -38,7 +42,12 @@ export class Enemy implements Mover {
 	chargeY = 0;
 	/** Red flash while winding up an attack (readable telegraph). */
 	telegraph = false;
-	private readonly sprite: Phaser.GameObjects.Image;
+	private readonly sprite: Phaser.GameObjects.Sprite;
+	/** PixelLab animation atlas of this enemy (enemy.<id>), null for the code placeholder. */
+	private anims: Record<string, AnimMeta> | null = null;
+	private facing: Dir = 's';
+	private lastX = 0;
+	private lastY = 0;
 	private readonly shadow: Phaser.GameObjects.Image;
 	private readonly aura: Phaser.GameObjects.Image;
 	/** Elite HP bar, created on the first elite spawn of this pooled slot. */
@@ -48,7 +57,7 @@ export class Enemy implements Mover {
 	constructor(private readonly scene: Phaser.Scene) {
 		this.shadow = scene.add.image(0, 0, KEYS.shadow).setVisible(false);
 		this.aura = scene.add.image(0, 0, KEYS.aura('purple')).setVisible(false);
-		this.sprite = scene.add.image(0, 0, KEYS.shadow).setOrigin(0.5, 0.95).setVisible(false);
+		this.sprite = scene.add.sprite(0, 0, KEYS.shadow).setOrigin(0.5, 0.95).setVisible(false);
 	}
 
 	spawn(
@@ -79,7 +88,13 @@ export class Enemy implements Mover {
 		this.ai = newAi(def);
 		this.telegraph = false;
 		this.lastDot = null;
+		this.sprite.anims.stop();
 		this.sprite.setTexture(KEYS.enemy(def.id)).setScale(scale).setVisible(true).clearTint();
+		this.anims = registerCharacterAnims(this.scene, KEYS.enemy(def.id), ANIM_FPS, ANIM_LOOPS);
+		this.sprite.setOrigin(0.5, this.anims?.walk?.anchorY ?? 0.95);
+		this.facing = 's';
+		this.lastX = x;
+		this.lastY = y;
 		this.sprite.setTintMode(Phaser.TintModes.MULTIPLY);
 		this.shadow.setScale((this.radius * 2.4) / 32).setVisible(true);
 		this.aura.setVisible(elite !== null);
@@ -100,6 +115,7 @@ export class Enemy implements Mover {
 
 	despawn(): void {
 		this.alive = false;
+		this.sprite.anims.stop();
 		this.sprite.setVisible(false);
 		this.shadow.setVisible(false);
 		this.aura.setVisible(false);
@@ -114,8 +130,9 @@ export class Enemy implements Mover {
 		this.aura.setPosition(ground.x, ground.y).setDepth(depth - 0.5);
 		this.sprite
 			.setPosition(Math.round(ground.x), Math.round(ground.y - this.z))
-			.setDepth(depth)
-			.setFlipX(facingLeft);
+			.setDepth(depth);
+		if (this.anims) this.animate();
+		else this.sprite.setFlipX(facingLeft);
 		if (this.bar && this.elite) this.syncBar(ground.x, ground.y - this.z, depth);
 		if (this.telegraph && this.hitFlash <= 0) {
 			this.sprite.setTint(0xff3030).setTintMode(Phaser.TintModes.FILL);
@@ -130,6 +147,22 @@ export class Enemy implements Mover {
 			this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
 			if (this.hitFlash <= 0) this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
 		}
+	}
+
+	/** Faces the movement direction (5 drawn + 3 mirrored) and walks, or winds up an attack. */
+	private animate(): void {
+		const dx = this.x - this.lastX;
+		const dy = this.y - this.lastY;
+		this.lastX = this.x;
+		this.lastY = this.y;
+		if (dx * dx + dy * dy > 0.01) this.facing = dirFromWorld(dx, dy, this.facing);
+		const name = this.telegraph && this.anims?.attack ? 'attack' : 'walk';
+		const meta = this.anims?.[name];
+		if (!meta) return;
+		const { dir, flip } = spriteDir(this.facing);
+		const d = meta.dirs.includes(dir) ? dir : 's';
+		this.sprite.setFlipX(flip && d === dir);
+		this.sprite.play(`${KEYS.enemy(this.def.id)}.${name}.${d}`, true);
 	}
 
 	/** Shown only once the elite has taken damage, above its head. */

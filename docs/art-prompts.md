@@ -52,3 +52,22 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 - **Pickups/projéteis** 32×32 reduzidos a 50% (nearest) no `pack-process`: `pickup.xp` (cristal ciano), `pickup.fish`, `pickup.meat`, `proj.orb` (lineless), `proj.spit`, `proj.bottle` (molotov), `proj.grenade`; `proj.meteor` em tamanho cheio. Faca e lâmina saíram na diagonal (projéteis orientados precisam apontar para a direita) e foram refeitas em canvas largo.
 - Escolhas em `art-src/selection.json`; prancha de revisão com `bun scripts/pack-sheet.ts`.
 - Custo do lote: ~25 gerações.
+
+## 2026-09-27 — Heróis sem arma (P-56) e inimigos com arte estática (P-60)
+
+- **Estados sem arma** (`create_character_state`, ~30 gerações cada, "empty flippers, not holding any weapon"): Bob `ae2516ed-dd60-4aa7-b951-985343592d27` e Lucia `452419ff-e4fd-4928-84e3-97b86cedb055` saíram limpos. Jack (`ab0dc2a5…` e a 2ª tentativa `1a3e6a0e-3cff-4827-8883-cac67209b633`, "unarmed") manteve o machete no sul e no nordeste; o sul foi corrigido com `edit_image` (~20 gerações, `art-src/pixellab/images/hero.jack.south-unarmed/south.png`) e virou referência de um personagem v3 novo (`7bdeb4d9-7432-49a7-bb33-7d897f4a04aa`, em geração) para as animações. Enquanto isso o Jack usa sul editado + se/e/n do estado `1a3e6a0e` (ne usa a vista norte).
+- **Animações dos heróis** (template, 1 geração/direção): `idle` (`breathing-idle`) do Bob (5 direções) e da Lucia (4, norte pendente). Direções/animações que ainda faltam são preenchidas com a **rotação estática** do personagem (`bun scripts/pack-rotations.ts`), sem sobrescrever frames reais.
+- **Inimigos aprovados (P-60)** — variantes escolhidas (concepts em `art-src/pixellab/concepts/enemies/`):
+
+| Chave | Variante | character_id |
+|---|---|---|
+| `enemy.zombiePenguin` | `zombiePenguin-22` (mais gore) | `35eaad7c-3a33-4c39-bf5a-fb047d22fc65` |
+| `enemy.bloaterPenguin` | `bloaterPenguin-11` (mais pus verde) | `199478b9-e973-462e-8316-2170525e0ede` |
+| `enemy.zombieSeal` | `zombieSeal-11` | `10c28e4b-1df8-4aec-98fa-de855bb9141c` |
+| `enemy.zombieSkua` | `zombieSkua-22` (única) | `5d6c5e76-92d5-4697-a08b-2f8b156074d7` |
+| `enemy.zombieScientist` | `zombieScientist-11` (única) | `4195da5b-4174-417b-830f-bcb6402957c7` |
+| `enemy.polarBear` (boss) | `polarBear-11` (costelas expostas) | `4caa325b-e9e8-444e-bcfb-8094414204c5` |
+| `enemy.zombieMedic` | `zombieMedic-v3` | `5aeb2f3c-d64b-4389-bd59-437b7dbf3190` |
+
+  Por enquanto entram como atlas `enemy.<id>` com a animação `walk` de 1 frame por direção (rotações); o `Enemy` vira para a direção do movimento (5 desenhadas + 3 espelhadas) e troca para `attack` no telegraph quando existir. As animações template (walk/attack) substituem os frames estáticos pelas mesmas chaves.
+- **Concepts novos dos biomas 2–3** (v3 64 px, 2 gerações cada; bosses 160 px, 5): a 1ª leva de 9 falhou no servidor ("v3 generation failed") e foi reenviada; em geração: zombieSailor, fuelBloater, zombieGull, zombieRiotCop, zombieSoldier, acidBloater, zombieBrute (80 px), kraken, abomination; zombieWalrus (bioma 1, nunca teve concept) também.

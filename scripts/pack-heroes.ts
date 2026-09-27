@@ -1,6 +1,6 @@
 // Packs PixelLab animation frames into one atlas per character key.
 // Input:  art-src/pixellab/anim/<key>/<anim>/<direction>/<nn>.png
-// Output: public/assets/heroes/<key>.png + <key>.json (Phaser JSON Hash) with frame names
+// Output: public/assets/{heroes,enemies}/<key>.png + <key>.json (Phaser JSON Hash) with frame names
 //         `<anim>.<dir>.<nn>` (dir ∈ s, se, e, ne, n) and meta.anims[anim] = { frames, anchorY, dirs }.
 // anchorY is where the feet are (0..1 of the frame height), measured on the south frame 0, because
 // template (96 px) and v3 (132 px) animations come on different canvases.
@@ -12,7 +12,9 @@ import sharp from 'sharp';
 import { shelfPack } from './lib/shelf-pack';
 
 const IN = 'art-src/pixellab/anim';
-const OUT = 'public/assets/heroes';
+/** Heroes go to public/assets/heroes, enemies and bosses (enemy.<id>) to public/assets/enemies. */
+const outDir = (key: string): string =>
+	key.startsWith('enemy.') ? 'public/assets/enemies' : 'public/assets/heroes';
 const SHORT: Record<string, string> = {
 	south: 's',
 	'south-east': 'se',
@@ -23,7 +25,7 @@ const SHORT: Record<string, string> = {
 	west: 'w',
 	'north-west': 'nw',
 };
-/** Pilot folders that are not part of the final set. */
+/** Hero pilot folders that are not part of the final set (enemies use `walk` for real). */
 const SKIP_ANIMS = new Set(['walk', 'walk-template', 'walk-skeleton']);
 
 async function feetY(file: string): Promise<{ y: number; h: number }> {
@@ -45,7 +47,11 @@ async function packKey(key: string): Promise<void> {
 	const anims: Record<string, { frames: number; anchorY: number; dirs: string[]; size: number }> =
 		{};
 	for (const anim of readdirSync(dir).sort()) {
-		if (SKIP_ANIMS.has(anim) || !existsSync(join(dir, anim, 'south'))) continue;
+		if (
+			(key.startsWith('hero.') && SKIP_ANIMS.has(anim)) ||
+			!existsSync(join(dir, anim, 'south'))
+		)
+			continue;
 		const dirs = readdirSync(join(dir, anim)).filter((d) => SHORT[d]);
 		let frames = 0;
 		let size = 0;
@@ -79,13 +85,13 @@ async function packKey(key: string): Promise<void> {
 		return;
 	}
 	const { width, height, rects } = shelfPack(sprites, 2048, 1);
-	mkdirSync(OUT, { recursive: true });
+	mkdirSync(outDir(key), { recursive: true });
 	await sharp({
 		create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
 	})
 		.composite(rects.map((r) => ({ input: r.file, left: r.x, top: r.y })))
 		.png()
-		.toFile(join(OUT, `${key}.png`));
+		.toFile(join(outDir(key), `${key}.png`));
 	const frames = Object.fromEntries(
 		rects.map((r) => [
 			r.key,
@@ -99,14 +105,14 @@ async function packKey(key: string): Promise<void> {
 		]),
 	);
 	writeFileSync(
-		join(OUT, `${key}.json`),
+		join(outDir(key), `${key}.json`),
 		JSON.stringify({
 			frames,
 			meta: { image: `${key}.png`, size: { w: width, h: height }, scale: '1', anims },
 		}),
 	);
 	console.log(
-		`${key}: ${rects.length} frames → ${OUT}/${key}.png (${width}x${height}) anims: ${Object.keys(anims).join(', ')}`,
+		`${key}: ${rects.length} frames → ${outDir(key)}/${key}.png (${width}x${height}) anims: ${Object.keys(anims).join(', ')}`,
 	);
 }
 

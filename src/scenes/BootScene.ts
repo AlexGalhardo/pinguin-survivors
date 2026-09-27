@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { CHAR_ATLAS_DIR, characterAtlases } from '../art/anim-atlas';
 import { ATLAS_DIR, atlasGroups, atlasKey, registerAtlasFrames } from '../art/atlas';
 import { FILES } from '../art/manifest';
 import { installPlaceholders } from '../art/placeholders';
@@ -34,6 +35,9 @@ export class BootScene extends Phaser.Scene {
 				const json = `assets/heroes/${key}.json`;
 				if (present.has(json)) this.load.atlas(key, `assets/heroes/${key}.png`, json);
 			}
+		// Enemy/boss animation atlases (enemy.<id>), same format as the heroes.
+		for (const key of characterAtlases(__ASSET_FILES__))
+			this.load.atlas(key, `${CHAR_ATLAS_DIR}${key}.png`, `${CHAR_ATLAS_DIR}${key}.json`);
 		for (const [key, url] of Object.entries(FILES.audio))
 			if (present.has(url)) this.load.audio(key, url);
 	}

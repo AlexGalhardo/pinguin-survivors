@@ -245,9 +245,9 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 7.2 Produção e troca dos assets finais (só aqui — P-57)
 > Siga as skills `pinguin-art-assets` e `pinguin-audio-assets`. `GET /balance` antes de cada lote; piloto antes de lotes grandes.
-- [ ] Heróis **sem arma** via `/create-character-state` + templates (idle, walk8, hurt, death) × 5 direções + espelho; superpoder (1 direção)
+- [~] Heróis **sem arma** via `/create-character-state` + templates (idle, walk8, hurt, death) × 5 direções + espelho; superpoder (1 direção)
 - [x] 9 armas assinadas + secundárias como imagens (`/create-image-pixflux`), animadas por código (P-56)
-- [ ] Inimigos: aprovar concepts (já gerados em `art-src/pixellab/concepts/enemies/`) → templates walk/attack/death; boss urso polar (skeleton-v3); bosses/inimigos dos biomas 2–3
+- [~] Inimigos: aprovar concepts (já gerados em `art-src/pixellab/concepts/enemies/`) → templates walk/attack/death; boss urso polar (skeleton-v3); bosses/inimigos dos biomas 2–3
 - [ ] Tiles iso e decorações dos 3 biomas (`scripts/pl-tiles.ts`)
 - [~] Projéteis, pickups, ícones de cartas/stats/poções, molduras de UI (projéteis e pickups prontos; ícones e molduras pendentes)
 - [ ] VFX dos 3 superpoderes (demais efeitos seguem por código)

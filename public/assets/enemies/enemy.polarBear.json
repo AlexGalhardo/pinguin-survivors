@@ -1,0 +1,52 @@
+{
+	"frames": {
+		"walk.e.00": {
+			"frame": { "x": 0, "y": 0, "w": 160, "h": 160 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 160, "h": 160 },
+			"sourceSize": { "w": 160, "h": 160 }
+		},
+		"walk.n.00": {
+			"frame": { "x": 161, "y": 0, "w": 160, "h": 160 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 160, "h": 160 },
+			"sourceSize": { "w": 160, "h": 160 }
+		},
+		"walk.ne.00": {
+			"frame": { "x": 322, "y": 0, "w": 160, "h": 160 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 160, "h": 160 },
+			"sourceSize": { "w": 160, "h": 160 }
+		},
+		"walk.s.00": {
+			"frame": { "x": 483, "y": 0, "w": 160, "h": 160 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 160, "h": 160 },
+			"sourceSize": { "w": 160, "h": 160 }
+		},
+		"walk.se.00": {
+			"frame": { "x": 644, "y": 0, "w": 160, "h": 160 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 160, "h": 160 },
+			"sourceSize": { "w": 160, "h": 160 }
+		}
+	},
+	"meta": {
+		"image": "enemy.polarBear.png",
+		"size": { "w": 1024, "h": 256 },
+		"scale": "1",
+		"anims": {
+			"walk": {
+				"frames": 1,
+				"anchorY": 0.94375,
+				"dirs": ["e", "n", "ne", "s", "se"],
+				"size": 160
+			}
+		}
+	}
+}

@@ -125,6 +125,20 @@
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 14, "h": 7 },
 			"sourceSize": { "w": 14, "h": 7 }
+		},
+		"proj.knife": {
+			"frame": { "x": 750, "y": 0, "w": 24, "h": 5 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 5 },
+			"sourceSize": { "w": 24, "h": 5 }
+		},
+		"proj.blade": {
+			"frame": { "x": 775, "y": 0, "w": 17, "h": 5 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 5 },
+			"sourceSize": { "w": 17, "h": 5 }
 		}
 	},
 	"meta": { "image": "core.png", "size": { "w": 1024, "h": 32 }, "scale": "1" }

@@ -59,5 +59,13 @@
 	},
 	"proj.meteor": {
 		"src": "art-src/pixellab/images/proj.meteor/11.png"
+	},
+	"proj.knife": {
+		"src": "art-src/pixellab/images/proj.knife/22.png",
+		"scale": 0.5
+	},
+	"proj.blade": {
+		"src": "art-src/pixellab/images/proj.blade/22.png",
+		"scale": 0.5
 	}
 }
