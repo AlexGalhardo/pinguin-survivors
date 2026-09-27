@@ -17,6 +17,7 @@ Playtest build **playdev-4**.
 - Jack gets a clean weaponless base with breathing idle and hit reaction; the polar bear boss walks; fuel bloater and sea lion zombie art.
 - Final art for the narwhal, walrus, pigeon, riot cop, citizen and soldier zombies.
 - Final art for the kraken and abomination bosses and the brute and acid bloater zombies; the medic zombie walks.
+- The three heroes now have breathing idle, hit reaction and death animations in 8 directions; the sailor and sea lion zombies walk.
 
 ## [0.1.0-beta.4] - 2026-09-27
 
