@@ -21,3 +21,6 @@
 {"kind":"music-loop","key":"music.round","endpoint":"/v1/sound-generation","loop":true,"durationSeconds":24}
 {"kind":"music-loop","key":"music.menu","endpoint":"/v1/sound-generation","loop":true,"durationSeconds":28}
 {"kind":"music-loop","key":"music.boss","endpoint":"/v1/sound-generation","loop":true,"durationSeconds":24}
+{"kind":"music","key":"music.round","endpoint":"/v1/music","lengthMs":45000,"credits":562,"prompt":"Relentless instrumental heavy metal and industrial track for a brutal zombie horde survival video game: fast chugging drop-tuned djent guitar riffs, pounding double kick drums, dark distorted synth bass, aggressive and driving energy, 140 bpm, loopable, no vocals"}
+{"kind":"music","key":"music.menu","endpoint":"/v1/music","lengthMs":40000,"prompt":"Dark brooding instrumental doom metal theme for a zombie apocalypse video game main menu: slow crushing distorted guitar chords, ominous low drone, distant war drums, cold arctic wind ambience, epic and menacing, loopable, no vocals"}
+{"kind":"music","key":"music.boss","endpoint":"/v1/music","lengthMs":45000,"prompt":"Extremely intense instrumental heavy metal boss battle track for a video game: blast beats and fast double kick drums, aggressive tremolo-picked distorted guitars, industrial metal hits, roaring synth bass, chaotic and epic, 170 bpm, loopable, no vocals"}

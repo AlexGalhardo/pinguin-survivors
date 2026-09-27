@@ -14,5 +14,5 @@ Read `docs/audio.md` first (direction, formats, keys, loudness).
 3. Scripts live in `scripts/el-<kind>.ts` (sfx, music, voice), are idempotent (skip existing files) and append `{key, endpoint, prompt, params, at}` to `art-src/elevenlabs/log.jsonl`.
 4. Output OGG in `public/assets/audio/<group>/<key>.ogg`; register the key in `src/art/manifest.ts` (`sfx.*`, `music.*`, `vo.<hero>.<event>.<lang>.<n>`).
 5. Voices: one designed voice per hero (Jack young and cocky, Bob deep veteran, Lucia calm mystic), **same voice for EN and PT-BR**; lines come from `src/i18n` so subtitles match.
-6. Music: heavy metal/industrial like modern DOOM; loops must be seamless (generate longer and cut on a bar, or crossfade).
+6. Music: heavy metal/industrial, **never name games, bands or artists in prompts** (the API rejects them as copyrighted). ~560 credits per 45 s on the Starter plan: keep tracks short (40–60 s) and generate one take at a time.
 7. Generate 2–3 variations of hot SFX (hit, shot, blood) for pitch/variation rotation.
