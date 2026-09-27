@@ -108,6 +108,15 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [ ] 4 armas secundárias iniciais (facas arremessáveis, drone-torreta, estilhaços de gelo orbitando, molotov) com níveis 1–5
 - [ ] Evolução da arma assinada T1→T2→T3 via carta
 
+### 1.8b Identidade dos heróis e superpoderes (P-37…P-40)
+- [ ] Perfis de stats e multiplicadores por tag (melee/fogo/magia) em `src/data/heroes.ts` + testes de aplicação no `combat.ts`
+- [ ] Cartas exclusivas do Jack (Sede de Sangue, Contra-Ataque, Redemoinho de Lâminas, Pele de Ferro, Açougueiro, Pisão Sísmico) só no sorteio dele + testes
+- [ ] Cartas exclusivas do Bob (Pontas Ocas, Ricochete, Drone-Sentinela, Atirar Correndo, Reflexo, Cinto de Granadas)
+- [ ] Cartas exclusivas da Lucia (Sintonia Elemental, Corrente Arcana, Nova Glacial, Chuva de Meteoros, Barreira Arcana, Florescer Tóxico)
+- [ ] `src/logic/superpower.ts`: desbloqueio no level 5, carga por abates (elite 3, boss 0), persiste entre rounds, zera ao usar + testes
+- [ ] `SuperpowerSystem`: Espaço / △-Y; Colheita Rubra, Bombardeio, Cataclismo Elemental (placeholders de VFX); invulnerável na animação
+- [ ] Medidor do superpoder na HUD
+
 ### 1.9 Pickups, HUD e fim de run
 - [ ] Orbes de XP e Fish pooled, ímã de coleta
 - [ ] `HudScene`: HP, XP/level, Fish, round/timer, aviso de elite, barra/timer do boss, arma + secundárias, 3 poções, números de dano
@@ -156,7 +165,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [ ] (depende da aprovação 0.2) Regerar/ajustar os escolhidos no tamanho final, se preciso
 - [ ] Piloto: `walk` de Jack T1 em 1 direção (v3, 12 frames) → medir custo e qualidade → anotar em art-and-assets
 - [ ] `scripts/pl-animate.ts` (lotes por personagem × anim × direções, idempotente, zip → frames)
-- [ ] Jack T1: idle, walk, attack, hurt, death × 8 dir
+- [ ] Jack T1: idle, walk, attack, hurt, death, super × 8 dir
 - [ ] Jack T2 (katana) e T3 (espada-motosserra) via `/create-character-state` + animações
 - [ ] Bob T1–T3 (escopeta cano duplo → automática → foguete) + animações
 - [ ] Lucia T1–T3 (cajado dos 4 elementos → arcano → Quatro Tempestades) + animações
@@ -178,6 +187,8 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ### 3.5 VFX (≥ 12 frames)
 - [ ] Jorros de sangue (3 variações), decalques de poça (8+ variações), gibs (pedaços por tipo de inimigo)
 - [ ] Explosões, impactos, 4 elementos, auras de elite roxa/laranja, level up, cura
+- [ ] **VFX exclusivos dos superpoderes**: Colheita Rubra (Jack), Bombardeio (Bob), Cataclismo Elemental (Lucia)
+- [ ] VFX das cartas exclusivas (redemoinho, pisão, drone, granada, corrente arcana, nova glacial, meteoros, barreira, nuvem tóxica)
 
 ### 3.6 UI e integração
 - [ ] Painéis, botões, molduras de carta por raridade, ícones de stats/cartas (`/create-ui-asset`), logo
@@ -243,6 +254,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 - 2026-09-27 — Refundação como **Pinguin Survivors**: entrevista (P-01…P-36), branch `starfall-survivors-legacy`, remoto renomeado, `main` limpa (camada de jogo do Starfall removida; infra mantida).
 - 2026-09-27 — Docs, CLAUDE.md, AGENTS.md e skills reescritos (`pinguin-art-assets`, `pinguin-audio-assets`); PLAN novo com fases 0–7.
+- 2026-09-27 — Pedido do usuário: identidade forte por herói (P-37), 6 cartas exclusivas cada (P-38) e superpoderes no level 5 com VFX próprios (P-39/P-40) → GDD, balancing, art, HUD e PLAN (1.8b).
 - 2026-09-27 — Cliente PixelLab + `pl-concepts.ts`: 9 concepts (3 heróis × v3 a/b + Pro), 93 gerações; aguardando aprovação.
 
 ## Pendências do desenvolvedor

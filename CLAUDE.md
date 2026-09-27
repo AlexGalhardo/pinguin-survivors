@@ -1,6 +1,6 @@
 # Pinguin Survivors — CLAUDE.md
 
-Endless roguelite frenético em **pixel art 2.5D isométrica 2:1** (layout Diablo 2, clima escuro Diablo 4), inspirado em Brotato. Três pinguins sobreviventes de um apocalipse zumbi: Jack (melee), Bob (fogo), Lucia (magia). Gore nível DOOM.
+Endless roguelite frenético em **pixel art 2.5D isométrica 2:1** (layout Diablo 2, clima escuro Diablo 4), inspirado em Brotato. Três pinguins sobreviventes de um apocalipse zumbi: Jack (melee), Bob (fogo), Lucia (magia) — cada um com perfil de stats, 6 cartas exclusivas e um superpoder (level 5, Espaço). Gore nível DOOM.
 Stack: TypeScript + Vite + **Phaser 4.2.x** (sem Arcade: simulação própria em mundo cartesiano + projeção iso) sobre **Bun 1.4.2** (testes `bun:test`). Arte **PixelLab**, áudio **ElevenLabs**. UI **EN + PT-BR**; docs em PT-BR.
 O jogo anterior (Starfall Survivors) vive na branch `starfall-survivors-legacy` — não use nada de lá sem pedido.
 

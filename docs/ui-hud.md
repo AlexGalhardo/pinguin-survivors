@@ -20,19 +20,20 @@ MainMenu ─► HeroSelect ─► Hero (pontos de stat · poções/gambits · up
 │                                                                         │
 │                            (mundo iso)                                  │
 │                                                                         │
-│ [T1 machete] [sec1 3][sec2 1][ ]              [🧪1 HP<30%][🧪2][🧪3]    │
+│ [T1 machete] [sec1 3][sec2 1][ ]  [SUPER ▰▰▰▱ 74/100]  [🧪1 HP<30%][🧪2][🧪3] │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
 - HP com número; XP do herói (persistente) com level; Fish.
 - Round + timer grande no topo; últimos 5 s piscam. **Boss**: barra de HP do boss + timer de 3:00 em vermelho.
 - Aviso de round de elite (roxo/laranja).
+- **Medidor do superpoder** (abates/100; brilha e mostra "SPACE" quando carregado; oculto antes do level 5).
 - Arma assinada (tier) + 3 slots de secundárias com nível; 3 poções com a condição resumida e estado (usada/pronta).
 - Números de dano (crítico maior e amarelo; sangramento vermelho escuro; veneno verde; elementos com cor própria), desligáveis.
 
 ## CardPick (tempo pausado)
 
-"ROUND N CLEARED — CHOOSE ONE" / "ROUND N CONCLUÍDO — ESCOLHA UMA". 3 cartas com moldura de raridade, ícone, nome, descrição com valor final calculado, tag "NEW"/"LV 2→3"/"EVOLVE". Input: mouse, 1/2/3, setas + Enter, gamepad.
+"ROUND N CLEARED — CHOOSE ONE" / "ROUND N CONCLUÍDO — ESCOLHA UMA". 3 cartas com moldura de raridade, ícone, nome, descrição com valor final calculado, tag "NEW"/"LV 2→3"/"EVOLVE" e selo do herói nas cartas exclusivas. Input: mouse, 1/2/3, setas + Enter, gamepad.
 
 ## Hero (menu, fora da run)
 

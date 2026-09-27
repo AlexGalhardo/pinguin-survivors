@@ -35,10 +35,11 @@ Menu (Fish: poções/upgrades · pontos de stat · gambits)
 | Ação | Teclado | Gamepad |
 |---|---|---|
 | Mover (8 dir; input rotacionado 45° para o losango iso) | WASD / setas | Analógico esquerdo / D-pad |
-| Confirmar / cartas | Enter / Espaço / 1-2-3 | ✕ / A |
+| **Superpoder** (quando carregado) | **Espaço** | △ / Y |
+| Confirmar / cartas | Enter / 1-2-3 | ✕ / A |
 | Pausa | Esc / P | Start |
 
-Ataques são automáticos. Não há dash. Input abstraído (`src/core/input`) para um joystick virtual mobile no futuro.
+Ataques são automáticos. Não há dash; o único botão de ação em combate é o superpoder. Input abstraído (`src/core/input`) para um joystick virtual mobile no futuro.
 
 ## 5. Heróis
 
@@ -48,9 +49,43 @@ Ataques são automáticos. Não há dash. Input abstraído (`src/core/input`) pa
 | **Bob** | Pinguim-imperador gordinho, colete tático, cinto de cartuchos, gorro, tapa-olho | Armas de fogo: espalhamento, crítico | Escopeta cano duplo → Escopeta automática → Escopeta-foguete | Vencer o boss do round 10 |
 | **Lucia** | Pinguim-gentoo pequena, capa roxa rasgada com runas | Magias: 4 elementos, área, corrente, veneno | Cajado dos 4 elementos → Cajado arcano → Cajado das Quatro Tempestades | Vencer o boss do round 20 |
 
-- A **arma assinada é desenhada no sprite** do herói (idle/walk/attack/hurt/death × 8 dir por tier).
-- **Especialista**: +25% de dano em armas da própria tag (`melee`/`firearm`/`magic`), incluindo secundárias.
+- A **arma assinada é desenhada no sprite** do herói (idle/walk/attack/hurt/death/super × 8 dir por tier).
 - **Evolução**: carta especial de T2 a partir do round 10 (após o boss) e de T3 a partir do round 20.
+
+### 5.1 Identidade de gameplay (além dos stats)
+
+Cada herói joga de um jeito diferente: **perfil de stats**, **multiplicadores por tag de arma**, **6 cartas/magias exclusivas** (só aparecem para ele) e **1 superpoder**. Números em [balancing.md](balancing.md) §4.
+
+| | Jack (melee) | Bob (armas de fogo) | Lucia (magia) |
+|---|---|---|---|
+| Perfil | Muita vida e armadura inicial, **mais parry**, **lento** | **Mais rápido**, **crítico e dodge altos**, vida mediana | Velocidade mediana, **pouca vida** |
+| Dano melee | **Alto** (+30%) | Baixo (−30%) | Baixo (−20%) |
+| Dano de fogo | Normal | **Alto** (+30%) | Baixo (−15%) |
+| Dano de magia | Baixo (−35%) | Mediano (0%) | **Muito alto** (+50%) |
+| Estilo | Entra na horda, aguenta, sangra tudo | Kite: corre, desvia, critica | Canhão de vidro: área, elementos, controle |
+
+**Cartas/magias exclusivas** (entram no sorteio de cartas só do herói; tag `exclusive`):
+
+| Jack | Bob | Lucia |
+|---|---|---|
+| **Sede de Sangue**: +2% vel. de ataque por inimigo sangrando por perto (máx. +20%) | **Pontas Ocas**: críticos causam sangramento | **Sintonia Elemental**: +5% de dano mágico por elemento diferente usado nos últimos 4 s (máx. +20%) |
+| **Contra-Ataque**: parry bem-sucedido dispara um golpe giratório de 360° (200% do dano da arma) | **Ricochete**: projéteis de fogo quicam para +1 alvo (nível sobe o nº de quiques) | **Corrente Arcana** (magia): raio que salta entre até 5 inimigos |
+| **Redemoinho de Lâminas** (magia/secundária): lâminas giram ao redor do Jack | **Drone-Sentinela** (secundária): torreta aérea que segue o Bob | **Nova Glacial** (magia): ao ser atingida, congela tudo num raio (recarga 8 s) |
+| **Pele de Ferro**: +armadura e reflete 10% da armadura como dano de espinhos | **Atirar Correndo**: +15% de cadência enquanto se move | **Chuva de Meteoros** (magia): meteoros caem no maior grupo de inimigos |
+| **Açougueiro**: abates corpo a corpo têm 15% de chance de soltar carne (cura 3% do HP) | **Reflexo**: depois de um dodge, o próximo tiro é crítico garantido | **Barreira Arcana**: escudo que absorve 1 golpe e recarrega a cada 10 s |
+| **Pisão Sísmico** (magia): a cada 6 s, pisão que atordoa em área | **Cinto de Granadas** (secundária): granada de fragmentação a cada 5 s | **Florescer Tóxico**: inimigos envenenados explodem em nuvem de veneno ao morrer |
+
+### 5.2 Superpoder (libera no level 5 do herói)
+
+- **Carga**: 1 ponto por inimigo morto; **100 abates = carregado**. A carga **passa de um round para o outro** (dentro da run; começa em 0 em cada run).
+- **Uso**: 1× quando o jogador quiser, com **Espaço** (gamepad △/Y). Ao usar, a carga volta a 0.
+- É uma **magia de área muito poderosa** com **animação do herói (`super`, 8 dir × 3 tiers) e VFX exclusivos (≥ 12 frames)**. Invulnerável durante a animação.
+
+| Herói | Superpoder | Efeito | VFX exclusivo |
+|---|---|---|---|
+| **Jack** | **Colheita Rubra** (*Red Harvest*) | Gira como um tornado de lâminas por 3 s, puxando inimigos: 800% do dano da arma por segundo em raio 180 u, sangramento máximo garantido | Tornado de sangue e aço, rastro vermelho, chuva de gibs |
+| **Bob** | **Bombardeio** (*Carpet Bombing*) | Chama um bombardeio: 16 explosões em 2,5 s cobrindo a tela visível, 600% do dano da arma cada, queimadura | Sinalizador vermelho, projéteis caindo do céu, explosões com fogo e fumaça, crateras (decalques) |
+| **Lucia** | **Cataclismo Elemental** (*Elemental Cataclysm*) | Vórtice dos 4 elementos por 4 s em raio 260 u: fogo (queima), gelo (congela), terra (atordoa), energia (corrente); 1000% do dano mágico total | Vórtice com 4 cores girando, meteoro central, pilares de gelo, raios, rachaduras no chão |
 
 ## 6. Atributos (stats)
 

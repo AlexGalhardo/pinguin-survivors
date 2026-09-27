@@ -2,7 +2,7 @@
 
 Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini, etc.).
 
-**Projeto:** endless roguelite para browser em **pixel art 2.5D isométrica 2:1** (layout Diablo 2, clima Diablo 4), inspirado em Brotato. Jack (melee), Bob (fogo) e Lucia (magia) — os 3 últimos pinguins de um apocalipse zumbi. Rounds cronometrados → 3 cartas → próximo round; boss a cada 10; level 1–100 persistente; gore estilo DOOM.
+**Projeto:** endless roguelite para browser em **pixel art 2.5D isométrica 2:1** (layout Diablo 2, clima Diablo 4), inspirado em Brotato. Jack (melee), Bob (fogo) e Lucia (magia) — os 3 últimos pinguins de um apocalipse zumbi, cada um com perfil de stats, 6 cartas exclusivas e superpoder próprio (game-design §5). Rounds cronometrados → 3 cartas → próximo round; boss a cada 10; level 1–100 persistente; gore estilo DOOM.
 **Stack:** TypeScript · Vite · Phaser 4.2.x (sem engine de física; simulação em mundo cartesiano + projeção iso) · **Bun 1.4.2** (`bun:test`). Arte **PixelLab**, áudio **ElevenLabs**. UI EN + PT-BR; docs em PT-BR.
 **Legado:** o jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`.
 

@@ -27,7 +27,9 @@ Tela lógica: altura 540, zoom inteiro (2560×1080 → ×2).
 
 ## Animações
 
-- **Heróis**: `idle`, `walk`, `attack`, `hurt`, `death` × 8 direções × **3 tiers** de arma assinada (T1/T2/T3).
+- **Heróis**: `idle`, `walk`, `attack`, `hurt`, `death`, **`super`** (conjuração do superpoder) × 8 direções × **3 tiers** de arma assinada (T1/T2/T3).
+- **VFX dos superpoderes** (exclusivos, ≥ 12 frames, 128–256 px): Colheita Rubra (tornado de sangue e aço), Bombardeio (sinalizador, bombas caindo, explosões, crateras), Cataclismo Elemental (vórtice de 4 elementos, meteoro, pilares de gelo, raios).
+- **VFX das cartas exclusivas**: redemoinho de lâminas, pisão sísmico, drone-sentinela, granada, corrente arcana, nova glacial, meteoros, barreira arcana, nuvem tóxica.
 - **Inimigos**: `walk`, `attack`, `death` (+ `idle` opcional) × 8 direções.
 - **Bosses**: `idle`, `walk`, `attack` (1–2 golpes), `special`, `death` × 8 direções.
 - **Mínimo 12 frames** (PixelLab v3 aceita 4–16, par). Loops (idle/walk) em 12; ataques 12–16.
@@ -55,7 +57,7 @@ Tela lógica: altura 540, zoom inteiro (2560×1080 → ×2).
 | Personagem v3 a 96 px | ~3 gerações (1 pixen + ceil(96²·8/65536)) |
 | Personagem Pro | 20–40 gerações |
 | Animação v3 | 1 job por direção (custo exato medido no piloto e anotado aqui) |
-| Heróis completos | 3 heróis × 3 tiers × 5 anims × 8 dir = **360 jobs** |
+| Heróis completos | 3 heróis × 3 tiers × 6 anims × 8 dir = **432 jobs** |
 | Inimigos bioma 1 | 6 × 3 anims × 8 dir = **144 jobs** |
 | Boss bioma 1 | 5 anims × 8 dir = **40 jobs** |
 

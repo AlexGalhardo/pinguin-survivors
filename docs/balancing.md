@@ -35,24 +35,63 @@
 | Gelo | −10% vel. por acúmulo; 5 acúmulos = congelado por 1,5 s |
 | Terra | knockback ×1,5; 10% de chance de atordoar 0,5 s; −10% armadura por 4 s |
 | Energia | salta para até 2 alvos a 90 u com 60% do dano |
-| Especialista | +25% de dano na tag do herói |
 | Invulnerabilidade após ser atingido | 0,35 s |
 
 ## 4. Heróis (level 1)
 
 | Stat | Jack | Bob | Lucia |
 |---|---|---|---|
-| HP | 120 | 100 | 80 |
-| Regen/s | 0,6 | 0,4 | 0,4 |
-| Armadura | 8 | 4 | 2 |
-| Vel. movimento (u/s) | 120 | 110 | 115 |
-| Dodge | 5% | 3% | 8% |
-| Parry | 10% | 0% | 0% |
-| Crítico | 5% | 10% | 5% |
-| Resist. (fogo/terra/gelo/energia) | 0/5/5/0 | 0/0/5/0 | 10/10/10/10 |
+| HP | **140** | 100 | **70** |
+| Regen/s | 0,8 | 0,4 | 0,3 |
+| Armadura | **12** | 4 | 1 |
+| Vel. movimento (u/s) | **95** (lento) | **135** (rápido) | 115 |
+| Dodge | 3% | **12%** | 6% |
+| Parry | **15%** | 0% | 0% |
+| Crítico | 5% | **12%** | 5% |
+| Dano crítico | 150% | 175% | 150% |
+| Resist. (fogo/terra/gelo/energia) | 0/10/5/0 | 5/0/5/0 | 10/10/10/10 |
+| Mult. dano **melee** | **×1,30** | ×0,70 | ×0,80 |
+| Mult. dano **fogo** | ×1,00 | **×1,30** | ×0,85 |
+| Mult. dano **magia** | ×0,65 | ×1,00 | **×1,50** |
 
-**Crescimento automático por level** (somado ao valor base): Jack +4 HP, +0,5 armadura · Bob +3 HP, +0,4% crítico · Lucia +2 HP, +0,5% dano elemental.
+Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de magia (incluindo as de outras tags que o herói pegar).
+
+**Crescimento automático por level** (somado ao valor base): Jack +4 HP, +0,4 armadura, +0,1% parry · Bob +2,5 HP, +0,3% crítico, +0,1% dodge · Lucia +1,5 HP, +0,6% dano mágico.
 **Ponto de stat** (1 por level): +1% vel. de ataque · +0,1 regen/s · +1 armadura · +1% resist. elemental (escolhe o elemento) · +0,5% dodge · +0,5% parry · +0,5% crítico · +5 HP.
+
+### 4.1 Cartas exclusivas (valores de nível 1; +50% por nível até 5)
+
+| Herói | Carta | Valor |
+|---|---|---|
+| Jack | Sede de Sangue | +2% vel. ataque por inimigo sangrando a ≤ 150 u, máx. +20% |
+| Jack | Contra-Ataque | golpe 360°, 200% do dano da arma, raio 90 u |
+| Jack | Redemoinho de Lâminas | 3 lâminas, 8 de dano, raio 70 u, 1 volta/s |
+| Jack | Pele de Ferro | +6 armadura; espinhos = 10% da armadura |
+| Jack | Açougueiro | 15% de drop de carne; cura 3% HP máx. |
+| Jack | Pisão Sísmico | a cada 6 s, 20 de dano, raio 110 u, atordoa 0,6 s |
+| Bob | Pontas Ocas | críticos aplicam 1 acúmulo de sangramento |
+| Bob | Ricochete | +1 quique, 70% do dano, alcance 120 u |
+| Bob | Drone-Sentinela | 6 de dano, 3 tiros/s, alcance 220 u |
+| Bob | Atirar Correndo | +15% de cadência em movimento |
+| Bob | Reflexo | próximo tiro crítico após dodge (janela 2 s) |
+| Bob | Cinto de Granadas | a cada 5 s, 30 de dano, raio 70 u |
+| Lucia | Sintonia Elemental | +5% dano mágico por elemento distinto em 4 s, máx. +20% |
+| Lucia | Corrente Arcana | 18 de dano, salta 5×, 80% por salto, recarga 2 s |
+| Lucia | Nova Glacial | congela raio 120 u por 1,5 s, recarga 8 s |
+| Lucia | Chuva de Meteoros | 3 meteoros, 40 de dano, raio 60 u, a cada 4 s |
+| Lucia | Barreira Arcana | absorve 1 golpe, recarga 10 s |
+| Lucia | Florescer Tóxico | nuvem de 60 u, 8 de veneno/s por 3 s |
+
+### 4.2 Superpoderes
+
+| Regra | Valor |
+|---|---|
+| Desbloqueio | level 5 do herói |
+| Carga | 100 abates (qualquer inimigo; elite conta 3, boss não conta); persiste entre rounds da mesma run |
+| Colheita Rubra (Jack) | 3 s; 800% do dano da arma/s; raio 180 u; puxa 60 u/s; sangramento 5 acúmulos |
+| Bombardeio (Bob) | 16 explosões em 2,5 s na área visível; 600% do dano da arma cada; raio 80 u; queimadura |
+| Cataclismo Elemental (Lucia) | 4 s; 1000% do dano mágico distribuído; raio 260 u; aplica os 4 elementos |
+| Invulnerabilidade | durante a animação (0,8 s) |
 
 ## 5. XP e level (persistente)
 
