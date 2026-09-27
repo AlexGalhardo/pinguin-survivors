@@ -3,6 +3,7 @@ import { KEYS } from '../art/manifest';
 import type { EnemyDef } from '../data/enemies';
 import { ROUNDS } from '../data/rounds';
 import type { Element } from '../logic/combat';
+import { type AiState, newAi } from '../logic/enemy-ai';
 import { isoDepth, worldToScreen } from '../logic/iso';
 import type { EliteTier } from '../logic/round';
 import { emptyStatus, resetStatus, type StatusState } from '../logic/status';
@@ -26,6 +27,12 @@ export class Enemy implements Mover {
 	/** What hit last, for kill attribution (achievement counters). */
 	lastElement: Element | null = null;
 	lastDot: 'bleed' | 'poison' | 'burn' | null = null;
+	ai: AiState = newAi();
+	/** World direction of an ongoing charge. */
+	chargeX = 0;
+	chargeY = 0;
+	/** Red flash while winding up an attack (readable telegraph). */
+	telegraph = false;
 	private readonly sprite: Phaser.GameObjects.Image;
 	private readonly shadow: Phaser.GameObjects.Image;
 	private readonly aura: Phaser.GameObjects.Image;
@@ -60,6 +67,8 @@ export class Enemy implements Mover {
 		this.hitFlash = 0;
 		resetStatus(this.status);
 		this.lastElement = null;
+		this.ai = newAi();
+		this.telegraph = false;
 		this.lastDot = null;
 		this.sprite.setTexture(KEYS.enemy(def.id)).setScale(scale).setVisible(true).clearTint();
 		this.sprite.setTintMode(Phaser.TintModes.MULTIPLY);
@@ -84,6 +93,13 @@ export class Enemy implements Mover {
 			.setPosition(Math.round(ground.x), Math.round(ground.y - this.z))
 			.setDepth(depth)
 			.setFlipX(facingLeft);
+		if (this.telegraph && this.hitFlash <= 0) {
+			this.sprite.setTint(0xff3030).setTintMode(Phaser.TintModes.FILL);
+			this.sprite.setAlpha(0.6 + 0.4 * Math.sin(performance.now() / 40));
+		} else if (!this.telegraph) {
+			this.sprite.setAlpha(1);
+			if (this.hitFlash <= 0) this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
+		}
 		if (this.hitFlash > 0) {
 			this.hitFlash -= dt;
 			this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);

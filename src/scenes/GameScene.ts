@@ -8,6 +8,7 @@ import { gamepadMove } from '../core/gamepad';
 import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
 import { trackZoom } from '../core/viewport';
 import { ECONOMY } from '../data/economy';
+import { ENEMIES } from '../data/enemies';
 import { HEROES } from '../data/heroes';
 import { levelScale, PERKS } from '../data/secondaries';
 import { SUPER } from '../data/superpowers';
@@ -18,6 +19,7 @@ import { evaluateAchievements } from '../logic/achievements';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
+import { inArc } from '../logic/geometry';
 import { inputToWorld, isoDepth, worldToScreen } from '../logic/iso';
 import { addXp, type LevelState, orbXp, roundEndFish } from '../logic/progression';
 import { Rng, randomSeed } from '../logic/rng';
@@ -34,9 +36,10 @@ import { nextSpeed } from '../logic/speed';
 import { heroStats, type PlayerStats } from '../logic/stats';
 import { addCharge, chargeFor, superReady, superUnlocked } from '../logic/superpower';
 import { AreaSystem } from '../systems/AreaSystem';
-import { CombatSystem } from '../systems/CombatSystem';
+import { CombatSystem, HERO_RADIUS } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
+import { HostileSystem } from '../systems/HostileSystem';
 import { type PickupKind, PickupSystem } from '../systems/PickupSystem';
 import { ProjectilePool } from '../systems/ProjectilePool';
 import { SecondarySystem } from '../systems/SecondarySystem';
@@ -74,6 +77,7 @@ export class GameScene extends Phaser.Scene {
 	private combat!: CombatSystem;
 	private fx!: FxSystem;
 	private pickups!: PickupSystem;
+	private hostile!: HostileSystem;
 	private rng!: Rng;
 	private deadFor = -1;
 	private outcome: RunOutcome = 'death';
@@ -134,7 +138,22 @@ export class GameScene extends Phaser.Scene {
 		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
 		this.hero = new Hero(this, heroId, tier, this.stats);
 		this.barrier = this.add.image(0, 0, KEYS.barrier).setVisible(false);
-		this.enemies = new EnemySystem(this, this.rng, (e, t) => this.combat.dot(e, t));
+		this.hostile = new HostileSystem(this, (damage) => this.combat.heroHit(damage, false));
+		this.enemies = new EnemySystem(this, this.rng, (e, t) => this.combat.dot(e, t), {
+			shoot: (e) =>
+				this.hostile.spawn(
+					e.x,
+					e.y,
+					this.hero.x,
+					this.hero.y,
+					220,
+					(e.def.range ?? 200) * 1.4,
+					e.damage,
+				),
+			explode: (e) => this.explode(e),
+			swipe: (e) => this.swipe(e),
+			summon: (e) => this.summon(e),
+		});
 		this.combat = new CombatSystem(
 			this.rng,
 			this.run,
@@ -230,6 +249,7 @@ export class GameScene extends Phaser.Scene {
 		this.secondaries.update(dt, this.hero.x, this.hero.y, grid);
 		this.superpower.update(dt, this.hero.x, this.hero.y, grid, this.weapons.weapon, view);
 		this.pool.update(dt, grid);
+		this.hostile.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
 		this.area.update(dt, grid);
 		this.combat.contact(dt);
 		this.pickups.update(dt, this.hero.x, this.hero.y, this.stats.pickupRange);
@@ -334,6 +354,44 @@ export class GameScene extends Phaser.Scene {
 			this.combat.damage(source, thorns, false, undefined, false);
 		}
 		this.secondaries.onHeroHit(this.hero.x, this.hero.y, this.enemies.grid);
+	}
+
+	// --- Enemy special attacks (docs/game-design.md §11) -----------------------------------
+
+	/** Bloater: poison burst on the spot, hurting the hero if close; the bloater dies. */
+	private explode(e: Enemy): void {
+		const radius = 60;
+		this.area.flash(e.x, e.y, radius, PALETTE.dotPoison, 0.4);
+		this.area.zone(e.x, e.y, radius, 2, 0, { tint: PALETTE.dotPoison });
+		const d = Math.hypot(this.hero.x - e.x, this.hero.y - e.y);
+		if (d <= radius + HERO_RADIUS) this.combat.heroHit(e.damage, false, 'earth');
+		this.combat.damage(e, e.hp + 1, false, undefined, false);
+	}
+
+	/** Boss swipe: a wide arc in front of the bear. */
+	private swipe(e: Enemy): void {
+		const reach = (e.def.range ?? 90) * 1.3;
+		const angle = Math.atan2(this.hero.y - e.y, this.hero.x - e.x);
+		const c = Math.cos(angle);
+		const s = Math.sin(angle);
+		this.fx.slash(e.x, e.y, Math.atan2((c + s) / 2, c - s), reach * 1.4);
+		this.cameras.main.shake(120, 0.004);
+		if (inArc(e.x, e.y, angle, Math.PI * 0.8, reach, this.hero.x, this.hero.y, HERO_RADIUS))
+			this.combat.heroHit(e.damage * 1.5, true, undefined, e);
+	}
+
+	/** Boss roar: zombie penguins burst out around the bear. */
+	private summon(e: Enemy): void {
+		this.area.flash(e.x, e.y, 140, PALETTE.textLight, 0.5);
+		this.cameras.main.shake(300, 0.005);
+		for (let i = 0; i < 6; i++) {
+			const a = (i / 6) * Math.PI * 2;
+			this.enemies.spawnAt(
+				ENEMIES.zombiePenguin,
+				e.x + Math.cos(a) * 70,
+				e.y + Math.sin(a) * 70,
+			);
+		}
 	}
 
 	// --- Kills, pickups, superpower -------------------------------------------------------
@@ -454,6 +512,7 @@ export class GameScene extends Phaser.Scene {
 		this.enemies.clear();
 		this.pool.clear();
 		this.area.clear();
+		this.hostile.clear();
 		this.run.fish += roundEndFish(this.run.round);
 		this.pickups.collectAll();
 		const offers = drawCards(this.rng, {

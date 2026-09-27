@@ -1,7 +1,8 @@
 import type Phaser from 'phaser';
 import { MAX_ENEMIES } from '../config/constants';
-import { BOSS_BY_BIOME, ENEMIES, ENEMY_LIST } from '../data/enemies';
+import { BOSS_BY_BIOME, ENEMIES, ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { Enemy } from '../entities/Enemy';
+import { AI, stepAi } from '../logic/enemy-ai';
 import type { Vec2 } from '../logic/iso';
 import type { Rng } from '../logic/rng';
 import { bossHpMul, dmgMul, hpMul, isBossRound, rollElite, spawnRate } from '../logic/round';
@@ -9,6 +10,14 @@ import { SpatialGrid } from '../logic/spatial-grid';
 import { pickEnemy, spawnPosition } from '../logic/spawn';
 import { speedFactor, type Tick, tickStatus } from '../logic/status';
 import { seekWithSeparation } from '../logic/steering';
+
+/** Special attacks are resolved by the scene (it owns combat, fx and projectiles). */
+export interface EnemyAttacks {
+	shoot: (enemy: Enemy) => void;
+	explode: (enemy: Enemy) => void;
+	swipe: (enemy: Enemy) => void;
+	summon: (enemy: Enemy) => void;
+}
 
 /** World size covered by the neighbor grid around the hero (larger than any view). */
 const GRID_SIZE = 3072;
@@ -27,7 +36,16 @@ export class EnemySystem {
 		private readonly scene: Phaser.Scene,
 		private readonly rng: Rng,
 		private readonly onDot: (enemy: Enemy, tick: Tick) => void,
+		private readonly attacks: EnemyAttacks,
 	) {}
+
+	private round = 1;
+
+	/** Extra spawn outside the normal flow (boss summons). */
+	spawnAt(def: EnemyDef, x: number, y: number): void {
+		if (this.active.length >= MAX_ENEMIES) return;
+		this.take().spawn(def, x, y, hpMul(this.round), dmgMul(this.round), null);
+	}
 
 	startRound(round: number, hero: Vec2, view: { width: number; height: number }): void {
 		this.spawnBudget = 0;
@@ -41,6 +59,7 @@ export class EnemySystem {
 	}
 
 	update(dt: number, round: number, hero: Vec2, view: { width: number; height: number }): void {
+		this.round = round;
 		this.spawnBudget += spawnRate(round) * dt;
 		while (this.spawnBudget >= 1) {
 			this.spawnBudget -= 1;
@@ -77,8 +96,28 @@ export class EnemySystem {
 				this.onDot(e, t);
 				if (!e.alive) continue;
 			}
-			const v = seekWithSeparation(e, hero.x, hero.y, this.grid, this.scratch);
 			const slow = speedFactor(e.status);
+			const dx = hero.x - e.x;
+			const dy = hero.y - e.y;
+			const dist = Math.hypot(dx, dy);
+			// Frozen/stunned enemies also pause their attack timers.
+			const step =
+				slow > 0 ? stepAi(e.def, e.ai, dist, dt) : { move: 'hold' as const, action: null };
+			e.telegraph = e.ai.mode === 'windup';
+			if (step.action === 'chargeStart') {
+				e.chargeX = dx / (dist || 1);
+				e.chargeY = dy / (dist || 1);
+			} else if (step.action) {
+				this.attacks[step.action](e);
+				if (!e.alive) continue;
+			}
+			let v = { vx: 0, vy: 0 };
+			if (step.move === 'seek')
+				v = seekWithSeparation(e, hero.x, hero.y, this.grid, this.scratch);
+			else if (step.move === 'charge') {
+				const mul = e.ai.chargeMul || AI.chargeSpeed;
+				v = { vx: e.chargeX * e.speed * mul, vy: e.chargeY * e.speed * mul };
+			}
 			e.x += v.vx * slow * dt;
 			e.y += v.vy * slow * dt;
 			// Screen-space x of the velocity decides the horizontal flip.

@@ -8,7 +8,8 @@ import { UI_FONT } from './font';
 
 const WIDTH = 220;
 const HEIGHT = 40;
-const TOP = 8;
+/** Below the round timer and boss bar, still top-centered (P-44). */
+const TOP = 62;
 const HOLD_MS = 2800;
 
 /**
