@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.6] - 2026-09-27
+
+Playtest build **playdev-5**.
+
 ### Fixed
 
 - Bosses and big zombies no longer turn into white silhouettes: bloom is now opt-in (off by default; it also cost a lot of FPS), hit flashes are rate-limited and attack warnings tint the art red instead of hiding it.
@@ -161,7 +165,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.5...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.6...HEAD
+[0.1.0-beta.6]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.5...v0.1.0-beta.6
 [0.1.0-beta.5]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.4...v0.1.0-beta.5
 [0.1.0-beta.4]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.3...v0.1.0-beta.4
 [0.1.0-beta.3]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.2...v0.1.0-beta.3
