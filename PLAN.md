@@ -192,7 +192,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 3.3 Polimento de sistemas
 - [x] Zoom-punch do boss (chegada, patada que acerta, morte; respeita "tremor de tela"), luz nos projéteis mágicos (até 40) e bloom por `ParallelFilters` (threshold + blur + ADD), com opção em Configurações
-- [ ] Performance: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 (medir e anotar)
+- [x] Performance: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 — medido com `bun scripts/perf.ts` (Chrome com GPU, round 40, Lucia, bloom ligado): **60 FPS médio, p95 16,9 ms/frame**, zero erros (2026-09-27)
 - [x] Tela de desbloqueio dedicada (Bob/Lucia) e fullscreen nas configurações
 - [ ] Loja de extras das conquistas: mecânica pronta; itens a definir com o usuário
 - [x] Auditoria de i18n (nenhum texto fora de `src/i18n`: nomes de idioma e "XP" movidos; teste de chaves iguais nos 2 idiomas)
