@@ -73,7 +73,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] `src/logic/chunks.ts`: coordenada de chunk, chunks visíveis para um retângulo de câmera, decoração determinística por (seed, cx, cy) + testes
 - [x] `ChunkManager.ts` (pool de DynamicTextures por chunk, cria/recicla conforme a câmera); camadas por depth (chão `GROUND_DEPTH`, decalques, sombras, entidades por `x+y`)
 - [x] Câmera segue o herói com lerp, zoom inteiro, sem tremer (roundPixels)
-- [ ] Depth sorting por `x+y` validado com 300 sprites sobrepostos
+- [x] Depth sorting por `x+y` validado com 300 inimigos na tela (sem artefatos no teste de estresse)
 
 ### 1.3 Herói e movimento
 - [x] `src/data/heroes.ts` (stats base, crescimento, arma assinada por tier, cores de placeholder)
@@ -85,12 +85,12 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] `src/data/enemies.ts`: 6 inimigos da Antártida (pinguim zumbi, foca, skua, cientista, morsa, inchado) + boss urso polar
 - [x] `src/logic/spawn.ts`: pontos fora da área visível real (largura variável), taxa por round + testes
 - [x] `EnemySystem`: spawn fora da tela, perseguir + separação via SpatialGrid (recentralizada no herói), reciclagem de distantes
-- [ ] Comportamentos especiais: voador (já flutua em z), à distância (cuspe), investida (morsa), explosivo (inchado)
+- [x] Comportamentos especiais (`src/logic/enemy-ai.ts` + testes): voador em z, cientista mantém distância e cospe, morsa com preparação e investida, inchado explode em veneno
 - [x] `entities/Enemy.ts` pooled (máx. 300) com sombra, aura de elite, flash de hit e flip horizontal; [ ] barra de HP dos elites; [ ] 8 direções quando a arte chegar
-- [ ] Estresse: 300 inimigos a 60 FPS (medir e anotar no Changelog)
+- [x] Estresse: **300 inimigos a 60 FPS** a 2560×1080 (Chrome via Playwright, round 40, Lucia)
 
 ### 1.5 Combate e armas assinadas
-- [ ] `src/logic/stats.ts` (modelo completo de stats + modificadores) + testes
+- [x] `src/logic/stats.ts` (PlayerStats: perfil + crescimento por level + pontos + cartas; chaves `resist.*`/`tagMul.*`) + testes
 - [x] `src/logic/combat.ts`: crítico, armadura, resist. elemental, dodge, parry, especialista + testes
 - [x] `src/data/weapons.ts`: armas assinadas T1–T3 dos 3 heróis (balancing §6)
 - [x] `WeaponSystem`: arco melee (Jack), leque de bagos (Bob), projétil elemental alternando 4 elementos (Lucia), cadência, projéteis pooled em z; [ ] área/corrente reais da magia
@@ -98,29 +98,29 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Contato de inimigo com o herói (dano por contato + parry)
 
 ### 1.6 Efeitos de status
-- [ ] `src/logic/status.ts`: sangramento, veneno, queimadura, gelo/congelar, terra (atordoar/quebra de armadura), energia (corrente) + testes
-- [ ] `StatusSystem` (ticks, acúmulos, cores dos números, indicador visual placeholder)
+- [x] `src/logic/status.ts`: sangramento, veneno, queimadura, gelo/congelar, terra (atordoar/quebra de armadura), energia (corrente) + testes
+- [x] Ticks no `EnemySystem`, números coloridos por DoT, lentidão/congelamento/atordoamento no movimento, crédito do abate para conquistas
 
 ### 1.7 Rounds, elites e boss
 - [x] `src/logic/round.ts`: duração, boss (N%10), elite roxo/laranja (N%3, ≥11), escala por round/ciclo + testes
 - [x] Timer e troca de round (inimigos restantes viram poças); [ ] transição para as cartas (1.8)
 - [x] Elites: escala e aura roxa/laranja (placeholder elíptico); [ ] drop garantido de Fish
-- [~] Boss urso polar: aparece no round 10 com barra na HUD e timer 3:00 (timeout = morte); ataques próprios (patada, investida, rugido) pendentes
+- [x] Boss urso polar: barra na HUD, timer 3:00 (timeout = game over), patada em arco com preparação, investida e rugido que invoca 6 pinguins
 
 ### 1.8 Cartas e armas secundárias
-- [ ] `src/data/cards.ts` (stat, secundária, on-hit, evolução) e `src/logic/cards.ts` (raridade por round + sorte, slots máx. 3, evolução só quando liberada) + testes
-- [ ] `CardPickScene` (tempo pausado; mouse, 1/2/3, setas+Enter, gamepad)
-- [ ] 4 armas secundárias iniciais (facas arremessáveis, drone-torreta, estilhaços de gelo orbitando, molotov) com níveis 1–5
-- [ ] Evolução da arma assinada T1→T2→T3 via carta
+- [x] `src/data/cards.ts` (stats, on-hit, secundárias, exclusivas, evolução) e `src/logic/cards.ts` + `src/logic/build.ts` (raridade por round + sorte, slots máx. 3, níveis 1–5, evolução garantida quando liberada) + testes
+- [x] `CardPickScene` (tempo pausado; mouse, 1/2/3, setas/A-D + Enter) com moldura por raridade e textos EN/PT-BR; [ ] gamepad dedicado (hoje via teclas sintéticas)
+- [x] 4 armas secundárias gerais (facas arremessáveis, molotov, estilhaços de gelo orbitando, pistola reserva — trocada pelo drone, que ficou exclusivo do Bob) com níveis 1–5
+- [x] Evolução da arma assinada T1→T2→T3 via carta (após os bosses 10 e 20)
 
 ### 1.8b Identidade dos heróis e superpoderes (P-37…P-40)
-- [ ] Perfis de stats e multiplicadores por tag (melee/fogo/magia) em `src/data/heroes.ts` + testes de aplicação no `combat.ts`
-- [ ] Cartas exclusivas do Jack (Sede de Sangue, Contra-Ataque, Redemoinho de Lâminas, Pele de Ferro, Açougueiro, Pisão Sísmico) só no sorteio dele + testes
-- [ ] Cartas exclusivas do Bob (Pontas Ocas, Ricochete, Drone-Sentinela, Atirar Correndo, Reflexo, Cinto de Granadas)
-- [ ] Cartas exclusivas da Lucia (Sintonia Elemental, Corrente Arcana, Nova Glacial, Chuva de Meteoros, Barreira Arcana, Florescer Tóxico)
-- [ ] `src/logic/superpower.ts`: desbloqueio no level 5, carga por abates (elite 3, boss 0), persiste entre rounds, zera ao usar + testes
-- [ ] `SuperpowerSystem`: Espaço / △-Y; Colheita Rubra, Bombardeio, Cataclismo Elemental (placeholders de VFX); invulnerável na animação
-- [ ] Medidor do superpoder na HUD
+- [x] Perfis de stats e multiplicadores por tag em `src/data/heroes.ts`, aplicados por `PlayerStats` e testados
+- [x] Exclusivas do Jack: Sede de Sangue, Contra-Ataque, Redemoinho de Lâminas, Pele de Ferro, Açougueiro, Pisão Sísmico
+- [x] Exclusivas do Bob: Pontas Ocas, Ricochete, Drone-Sentinela, Atirar Correndo, Reflexo, Cinto de Granadas
+- [x] Exclusivas da Lucia: Sintonia Elemental, Corrente Arcana, Nova Glacial, Chuva de Meteoros, Barreira Arcana, Florescer Tóxico
+- [x] `src/logic/superpower.ts`: desbloqueio no level 5, carga por abates (elite 3, boss 0), persiste entre rounds, zera ao usar + testes
+- [x] `SuperpowerSystem`: Espaço; Colheita Rubra (giro que puxa e sangra), Bombardeio (16 explosões na tela), Cataclismo Elemental (vórtice dos 4 elementos); invulnerável 0,8 s; VFX placeholder
+- [x] Medidor do superpoder na HUD (visível a partir do level 5, pisca quando pronto)
 
 ### 1.8c Pedidos do usuário já adiantados (P-41…P-45)
 - [x] TAB alterna 1×/2× (sim, timers e tweens) + indicador "2x ▶▶" na HUD
@@ -129,15 +129,15 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] 131 conquistas globais (`src/data/achievements.ts`), avaliação, pontos e loja de extras (`src/logic/achievements.ts`) + textos EN/PT-BR + testes
 - [x] Toast "Achievement unlocked" centralizado no topo, fila, badge placeholder, som `sfx.achievement` (ElevenLabs)
 - [~] Badge final `ui.achievement` no PixelLab (`scripts/pl-image.ts`): API do PixelLab com erro 500 em 2026-09-27 — tentar de novo
-- [ ] Contadores de conquistas durante a run (kills, críticos, parries, DoTs, elementos, gibs…) + feats (boss sem poção, etc.) chamando `evaluateAchievements` ao vivo
+- [x] Contadores de conquistas durante a run (kills, elites, bosses, críticos, parries, dodges, DoTs, elementos, cartas, superpoderes) + feats de boss e desbloqueios, com `evaluateAchievements` ao vivo a cada 1 s
 - [ ] Tela de conquistas (lista, progresso, filtros) e loja de extras (itens a definir)
 - [x] Save local: schema v1 tolerante, migrações, snapshot da run, histórico das últimas 20 partidas, export/import (`src/logic/save.ts`, `src/core/storage.ts`) + testes
 - [ ] Autosave no fim de cada round + botão **Continue** no menu + tela de **Histórico** das partidas
 
 ### 1.9 Pickups, HUD e fim de run
-- [ ] Orbes de XP e Fish pooled, ímã de coleta
-- [ ] `HudScene`: HP, XP/level, Fish, round/timer, aviso de elite, barra/timer do boss, arma + secundárias, 3 poções, números de dano
-- [ ] Morte / timeout do boss → `GameOverScene` provisória (resumo) → reiniciar
+- [x] Orbes de XP, Fish e carne pooled, ímã pelo alcance de coleta, coleta total no fim do round
+- [x] `HudScene`: HP, XP/level, Fish, kills, round/timer, barra do boss, 2x, superpoder, lista da build; [ ] aviso de round de elite; [ ] poções (2.3)
+- [x] Morte / timeout do boss → `GameOverScene` (resumo, recorde) → Enter para jogar de novo
 - [ ] QA: run completa com Jack até o round 10 (boss) no browser, sem erros
 
 ---
@@ -145,9 +145,9 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ## FASE 2 — ALPHA: RPG, meta e menus
 
 ### 2.1 Save e progressão persistente
-- [ ] `src/logic/save.ts` schema v1 (heróis: level/XP/pontos distribuídos; Fish; poções compradas; gambits; desbloqueios; recordes; settings) + migração + testes
-- [ ] `src/logic/progression.ts`: `xpToNext`, level 1–100, crescimento por classe, pontos + testes
-- [ ] XP e Fish da run somados ao save na morte/vitória (mantém tudo)
+- [x] `src/logic/save.ts` schema v1 (heróis, Fish, poções, gambits, desbloqueios, progresso de conquistas, histórico, snapshot) + migração + testes
+- [x] `src/logic/progression.ts`: `xpToNext`, level 1–100, pontos livres + testes (crescimento por classe em `stats.ts`)
+- [x] XP e Fish da run somados ao save no fim da run (mantém tudo); level sobe ao vivo durante a run
 
 ### 2.2 Tela Hero (pontos, poções, upgrades)
 - [ ] Distribuir pontos de stat com prévia
@@ -159,7 +159,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [ ] `PotionSystem`: efeitos (cura, mega cura, escudo, fúria, antídoto, pressa) + feedback na HUD
 
 ### 2.4 Desbloqueios e seleção
-- [ ] Bob ao vencer o boss 10, Lucia ao vencer o boss 20 (+ tela de desbloqueio)
+- [x] Bob ao vencer o boss 10, Lucia ao vencer o boss 20 (banner na tela); [ ] tela de desbloqueio dedicada
 - [ ] `HeroSelectScene` com heróis bloqueados/desbloqueados, level e stats
 
 ### 2.5 Menus e settings
@@ -274,6 +274,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - 2026-09-27 — Pedido do usuário: identidade forte por herói (P-37), 6 cartas exclusivas cada (P-38) e superpoderes no level 5 com VFX próprios (P-39/P-40) → GDD, balancing, art, HUD e PLAN (1.8b).
 - 2026-09-27 — Engine iso: projeção 2:1, zoom inteiro pela altura, chunks infinitos em DynamicTexture, herói placeholder 8 direções, i18n EN/PT-BR, fonte Pixelify Sans (60 FPS a 1366×768).
 - 2026-09-27 — Pedidos do usuário: TAB 2×, versão no rodapé, 131 conquistas + pontos, toast com som (ElevenLabs), save/histórico/export; histórico da `main` recomeçado e push por commit.
+- 2026-09-27 — Fase 1 quase completa: efeitos de status, PlayerStats, CombatSystem, pickups/level/Fish, save ligado ao jogo, Game Over, cartas (48), secundárias e exclusivas, perks, superpoderes, IA especial dos inimigos e ataques do boss. 300 inimigos a 60 FPS. Alcance do Jack +50% (pedido do usuário).
 - 2026-09-27 — Loop de combate jogável com placeholders: hordas fora da tela com separação, elites com aura, boss no round 10, armas T1 dos 3 heróis, sangue no chão, HUD (HP, round, timer, kills, boss). Playwright headless mediu ~38 FPS a 2560×1080 com ~40 inimigos (render por software; medir no Chrome real).
 - 2026-09-27 — Concepts aprovados (Jack v3-a, Bob v3-a, Lucia v3-b; ~88 px). Versionamento passa a `0.1.0-alpha.N`.
 - 2026-09-27 — Cliente PixelLab + `pl-concepts.ts`: 9 concepts (3 heróis × v3 a/b + Pro), 93 gerações; aguardando aprovação.

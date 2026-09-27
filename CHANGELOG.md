@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Signature tier 1 weapons: Jack's machete arcs, Bob's double-barrel shotgun spread and Lucia's elemental staff bolts.
 - Critical hits, armor, elemental resistances, dodge and parry, with floating damage numbers and blood puddles on the snow.
 - HUD with health bar, kills, round number and round timer.
+- Bleeding, poison, burning, ice slow and freeze, earth stun and armor shred, and energy chains, with colored damage numbers.
+- Three upgrade cards to choose from after every round: 24 stat and on-hit cards, 4 secondary weapons, 18 hero-exclusive cards and signature weapon evolutions after the bosses.
+- Superpowers on the Space key from hero level 5: Red Harvest (Jack), Carpet Bombing (Bob) and Elemental Cataclysm (Lucia).
+- XP orbs, fish and healing meat with a pickup magnet; persistent hero levels up live during the run.
+- Enemy behaviors: spitting scientists, charging walruses, exploding bloaters, and a polar bear boss that swipes, charges and summons penguins.
+- Run rewards are saved when the run ends, with a game over summary, match history and live achievement unlocks.
+- Bob unlocks after beating the round 10 boss and Lucia after the round 20 boss.
+
+### Changed
+
+- Jack's melee reach is 50% larger on every weapon tier.
 
 ## [0.1.0-alpha.1] - 2026-09-27
 
