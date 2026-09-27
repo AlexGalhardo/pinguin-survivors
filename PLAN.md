@@ -217,16 +217,16 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ## FASE 4 — BETA: gore, luz e juice
 
 ### 4.1 Gore persistente
-- [ ] `GoreLayer`: decalques por chunk (DynamicTexture), recarimbo ao voltar ao chunk, teto por chunk com fusão
-- [ ] Jorros de sangue no hit e na morte; gibs com arco em z, sombra e decalque ao cair
-- [ ] Settings de gore: máximo / reduzido / gosma verde
+- [x] Decalques por chunk (`ChunkManager.addDecal`, carimbados na DynamicTexture do chão), recarimbo ao voltar, teto de 400 por chunk
+- [x] Jorros de sangue (partículas) no hit e na morte; gibs com arco em z, sombra e decalque ao cair
+- [x] Settings de gore: máximo / reduzido / gosma verde
 
 ### 4.2 Iluminação estilo Diablo 4
-- [ ] Spike: máscara de escuridão com luzes aditivas vs Lighting do Phaser 4 → escolher pelo custo
-- [ ] Luzes em tiros, magias, explosões, auras, orbes; vinheta; bloom em projéteis/magias
+- [x] Escuridão (RenderTexture na HUD) com luzes carimbadas em modo ERASE (`world/Lighting.ts`)
+- [x] Luzes no herói, fogo, explosões/flashes, elites e boss, superpoder; [ ] luz nos projéteis; [ ] bloom
 
 ### 4.3 Juice
-- [ ] Hit-stop (crítico, elite, boss), screen shake, flash branco, knockback, zoom-punch do boss, números de dano estilizados
+- [x] Hit-stop (crítico com limite, elite, boss), screen shake, flash, knockback; [ ] zoom-punch do boss
 
 ### 4.4 Performance
 - [ ] 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 (medir no Chrome; anotar)
