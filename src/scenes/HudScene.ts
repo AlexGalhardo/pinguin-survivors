@@ -3,9 +3,9 @@ import { PALETTE, toCss } from '../config/palette';
 import { getParams } from '../core/context';
 import { trackZoom } from '../core/viewport';
 import { t } from '../i18n';
+import { UI_FONT } from '../ui/font';
+import { addVersionFooter } from '../ui/version-footer';
 import type { GameScene } from './GameScene';
-
-export const UI_FONT = '"Pixelify Sans", monospace';
 
 export class HudScene extends Phaser.Scene {
 	private debugText?: Phaser.GameObjects.Text;
@@ -20,8 +20,10 @@ export class HudScene extends Phaser.Scene {
 		this.speedText = this.add
 			.text(0, 4, '', { fontFamily: UI_FONT, fontSize: '16px', color: toCss(PALETTE.crit) })
 			.setOrigin(1, 0);
+		const footer = addVersionFooter(this);
 		trackZoom(this, cam, (view) => {
 			cam.centerOn(view.width / 2, view.height / 2);
+			footer.layout(view);
 			this.speedText.setX(view.width - 8);
 		});
 		if (getParams(this).debug) {
