@@ -1,0 +1,52 @@
+{
+	"frames": {
+		"walk.e.00": {
+			"frame": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"walk.n.00": {
+			"frame": { "x": 65, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"walk.ne.00": {
+			"frame": { "x": 130, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"walk.s.00": {
+			"frame": { "x": 195, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"walk.se.00": {
+			"frame": { "x": 260, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		}
+	},
+	"meta": {
+		"image": "enemy.fuelBloater.png",
+		"size": { "w": 512, "h": 64 },
+		"scale": "1",
+		"anims": {
+			"walk": {
+				"frames": 1,
+				"anchorY": 0.953125,
+				"dirs": ["e", "n", "ne", "s", "se"],
+				"size": 64
+			}
+		}
+	}
+}
