@@ -1,9 +1,15 @@
 import Phaser from 'phaser';
+import { AchievementsScene } from '../scenes/AchievementsScene';
 import { BootScene } from '../scenes/BootScene';
 import { CardPickScene } from '../scenes/CardPickScene';
 import { GameOverScene } from '../scenes/GameOverScene';
 import { GameScene } from '../scenes/GameScene';
+import { HeroSelectScene } from '../scenes/HeroSelectScene';
+import { HistoryScene } from '../scenes/HistoryScene';
 import { HudScene } from '../scenes/HudScene';
+import { MainMenuScene } from '../scenes/MainMenuScene';
+import { PauseScene } from '../scenes/PauseScene';
+import { SettingsScene } from '../scenes/SettingsScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -19,5 +25,17 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	},
 	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
 	disableContextMenu: true,
-	scene: [BootScene, GameScene, HudScene, CardPickScene, GameOverScene],
+	scene: [
+		BootScene,
+		MainMenuScene,
+		HeroSelectScene,
+		GameScene,
+		HudScene,
+		CardPickScene,
+		PauseScene,
+		SettingsScene,
+		AchievementsScene,
+		HistoryScene,
+		GameOverScene,
+	],
 };

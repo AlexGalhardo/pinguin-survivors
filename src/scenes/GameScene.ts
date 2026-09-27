@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import type { GameSpeed, HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
-import { getParams, getSave, persist } from '../core/context';
+import { getParams, getRunHero, getSave, persist } from '../core/context';
 import { GameEvents } from '../core/events';
 import { gamepadMove } from '../core/gamepad';
 import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
@@ -103,7 +103,7 @@ export class GameScene extends Phaser.Scene {
 	create(): void {
 		const params = getParams(this);
 		const save = getSave(this);
-		const heroId: HeroId = params.hero ?? 'jack';
+		const heroId: HeroId = params.hero ?? getRunHero(this) ?? 'jack';
 		const heroDef = HEROES[heroId];
 		const heroSave = save.heroes[heroId];
 		const seed = params.seed ?? randomSeed();
@@ -132,6 +132,8 @@ export class GameScene extends Phaser.Scene {
 			this.setSpeed(nextSpeed(this.speed)),
 		);
 		kb?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', () => this.castSuper());
+		kb?.on('keydown-ESC', () => this.pause());
+		kb?.on('keydown-P', () => this.pause());
 
 		this.chunks = new ChunkManager(this, seed, 'antarctica');
 		this.fx = new FxSystem(this);
@@ -556,6 +558,18 @@ export class GameScene extends Phaser.Scene {
 		this.weapons.weapon = SIGNATURE[this.run.hero][tier - 1] as SignatureWeapon;
 		countRun(this.run, tier === 2 ? 'evolutionsT2' : 'evolutionsT3');
 		if (tier === 3) this.run.counters.evolvedT3 = true;
+	}
+
+	private pause(): void {
+		if (this.deadFor >= 0) return;
+		this.scene.pause();
+		this.scene.launch('Pause');
+	}
+
+	/** Quit from the pause menu: the run ends normally and rewards are kept (P-26). */
+	quitRun(): void {
+		this.die('quit');
+		this.deadFor = DEATH_DELAY;
 	}
 
 	private die(outcome: RunOutcome): void {

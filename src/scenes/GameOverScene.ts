@@ -53,7 +53,12 @@ export class GameOverScene extends Phaser.Scene {
 			...(data.newBest
 				? [this.add.text(0, 0, t('over.newBest'), style(12, PALETTE.crit))]
 				: []),
-			this.add.text(0, 0, t('over.retry'), style(10, PALETTE.textDim)),
+			this.add.text(
+				0,
+				0,
+				`${t('over.retry')}   ·   ${t('over.menu')}`,
+				style(10, PALETTE.textDim),
+			),
 		];
 		for (const l of lines) l.setOrigin(0.5, 0);
 		const footer = addVersionFooter(this);
@@ -70,5 +75,6 @@ export class GameOverScene extends Phaser.Scene {
 		});
 		this.input.keyboard?.once('keydown-ENTER', () => this.scene.start('Game'));
 		this.input.keyboard?.once('keydown-SPACE', () => this.scene.start('Game'));
+		this.input.keyboard?.once('keydown-ESC', () => this.scene.start('MainMenu'));
 	}
 }

@@ -14,7 +14,7 @@ export const achPtBR: Record<keyof typeof achEn, string> = {
 	'ach.heroRound.name': 'Veterano',
 	'ach.heroRound.desc': 'Chegue ao round {n} com {hero}',
 	'ach.heroLevel.name': 'Experiente',
-	'ach.heroLevel.desc': 'Leve {hero} ao level {n}',
+	'ach.heroLevel.desc': 'Leve {hero} ao nível {n}',
 	'ach.runs.name': 'Teimoso',
 	'ach.runs.desc': 'Jogue {n} partidas',
 	'ach.fish.name': 'Peixeiro',
@@ -90,7 +90,7 @@ export const achPtBR: Record<keyof typeof achEn, string> = {
 	'ach.feat.bossBiome3.name': 'Salvador da Cidade',
 	'ach.feat.bossBiome3.desc': 'Derrote o chefe da cidade em ruínas',
 	'ach.allHeroes.name': 'Reunião de Família',
-	'ach.allHeroes.desc': 'Leve todos os heróis ao level {n}',
+	'ach.allHeroes.desc': 'Leve todos os heróis ao nível {n}',
 	'ach.hunter.name': 'Colecionador',
 	'ach.hunter.desc': 'Desbloqueie {n} conquistas',
 };

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FILES } from '../art/manifest';
 import { installPlaceholders } from '../art/placeholders';
+import { getParams } from '../core/context';
 
 export class BootScene extends Phaser.Scene {
 	constructor() {
@@ -18,6 +19,6 @@ export class BootScene extends Phaser.Scene {
 
 	create(): void {
 		installPlaceholders(this);
-		this.scene.start('Game');
+		this.scene.start(getParams(this).skipMenu ? 'Game' : 'MainMenu');
 	}
 }

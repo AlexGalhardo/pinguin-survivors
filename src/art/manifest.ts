@@ -24,6 +24,8 @@ export const KEYS = {
 	/** Shared achievement badge (PixelLab; placeholder until public/assets/ui/ui.achievement.png). */
 	achievementBadge: 'ui.achievement',
 	sfxAchievement: 'sfx.achievement',
+	/** Approved PixelLab concept (south view), used as portrait in menus. */
+	portrait: (hero: HeroId) => `portrait.${hero}`,
 } as const;
 
 export const BIOMES = {
@@ -33,6 +35,11 @@ export type BiomeId = keyof typeof BIOMES;
 
 /** Final files loaded in Boot when present; placeholders cover every missing key. */
 export const FILES = {
-	images: { 'ui.achievement': 'assets/ui/ui.achievement.png' },
+	images: {
+		'ui.achievement': 'assets/ui/ui.achievement.png',
+		'portrait.jack': 'assets/heroes/portrait.jack.png',
+		'portrait.bob': 'assets/heroes/portrait.bob.png',
+		'portrait.lucia': 'assets/heroes/portrait.lucia.png',
+	},
 	audio: { 'sfx.achievement': 'assets/audio/sfx/sfx.achievement.mp3' },
 } as const;
