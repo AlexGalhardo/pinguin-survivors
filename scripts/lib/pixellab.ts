@@ -35,6 +35,7 @@ function token(): string {
 }
 
 const RETRIES = 4;
+const BUSY_RETRIES = 45;
 
 /** Retries 5xx/429 with backoff: PixelLab has short outages and rate limits. */
 export async function api<T>(
@@ -49,10 +50,12 @@ export async function api<T>(
 		});
 		const text = await res.text();
 		if (res.ok) return JSON.parse(text) as T;
-		const retryable = res.status >= 500 || res.status === 429;
-		if (!retryable || attempt >= RETRIES)
+		// 429 = no free concurrent job slots: jobs take minutes, so wait long and often.
+		const busy = res.status === 429;
+		const retryable = res.status >= 500 || busy;
+		if (!retryable || attempt >= (busy ? BUSY_RETRIES : RETRIES))
 			throw new Error(`PixelLab ${res.status} ${path}: ${text.slice(0, 500)}`);
-		await Bun.sleep(2000 * 2 ** attempt);
+		await Bun.sleep(busy ? 20_000 : 2000 * 2 ** attempt);
 	}
 }
 
