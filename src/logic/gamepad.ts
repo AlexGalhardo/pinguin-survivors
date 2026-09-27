@@ -19,12 +19,19 @@ export const PAD = {
 	right: 15,
 } as const;
 
-/** Keyboard code each button emulates (menus reuse the keyboard handlers). */
+/**
+ * Keyboard code each button emulates (menus and gameplay reuse the keyboard handlers):
+ * Cross/A confirm, Circle/B back, Triangle/Y superpower (P-39), Square/X or Share/View 1x/2x
+ * (P-42), Options/Menu pause, L1/R1 page up/down (long lists).
+ */
 export const BUTTON_KEYS: Record<number, string> = {
 	[PAD.south]: 'Enter',
 	[PAD.east]: 'Escape',
-	[PAD.west]: 'KeyR',
-	[PAD.north]: 'KeyL',
+	[PAD.west]: 'Tab',
+	[PAD.north]: 'Space',
+	[PAD.select]: 'Tab',
+	[PAD.l1]: 'PageUp',
+	[PAD.r1]: 'PageDown',
 	[PAD.start]: 'Escape',
 	[PAD.up]: 'ArrowUp',
 	[PAD.down]: 'ArrowDown',

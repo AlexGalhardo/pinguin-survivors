@@ -5,11 +5,12 @@ import { sfx } from '../core/audio';
 import type { SfxKey } from '../data/sfx';
 import { type I18nKey, t } from '../i18n';
 import { isoDepth, worldToScreen } from '../logic/iso';
-import type { Settings } from '../logic/save';
+import type { NumberSize, Settings } from '../logic/save';
 import { UI_FONT } from '../ui/font';
 import type { ChunkManager } from '../world/ChunkManager';
 
 const MAX_NUMBERS = 80;
+const NUMBER_SCALE: Record<NumberSize, number> = { small: 0.8, normal: 1, large: 1.5 };
 const MAX_GIBS = 160;
 const GRAVITY = 420;
 const NUMBER_LIFE = 0.7;
@@ -147,7 +148,7 @@ export class FxSystem {
 			.setText(String(Math.round(amount)))
 			.setPosition(s.x + (Math.random() - 0.5) * 10, s.y)
 			.setColor(toCss(color ?? (crit ? PALETTE.crit : PALETTE.textLight)))
-			.setFontSize(crit ? 14 : 10)
+			.setFontSize(Math.round((crit ? 14 : 10) * NUMBER_SCALE[this.settings.numberSize]))
 			.setAlpha(1)
 			.setVisible(true);
 	}

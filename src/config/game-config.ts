@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { AchievementsScene } from '../scenes/AchievementsScene';
 import { BootScene } from '../scenes/BootScene';
 import { CardPickScene } from '../scenes/CardPickScene';
+import { ControlsScene } from '../scenes/ControlsScene';
 import { GameOverScene } from '../scenes/GameOverScene';
 import { GameScene } from '../scenes/GameScene';
 import { HeroScene } from '../scenes/HeroScene';
@@ -39,6 +40,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		CardPickScene,
 		PauseScene,
 		SettingsScene,
+		ControlsScene,
 		AchievementsScene,
 		HistoryScene,
 		GameOverScene,

@@ -5,8 +5,7 @@ import { PALETTE } from '../config/palette';
 import { getParams, getRunHero, getSave, persist } from '../core/context';
 import { GameEvents } from '../core/events';
 import { applyBloom, shake, zoomPunch } from '../core/feel';
-import { gamepadMove } from '../core/gamepad';
-import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
+import { GameInput } from '../core/input';
 import { playMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
 import { playVoice } from '../core/voice';
@@ -18,7 +17,7 @@ import { levelScale, PERKS } from '../data/secondaries';
 import { SUPER } from '../data/superpowers';
 import type { VoEvent } from '../data/voice';
 import { MAGIC_FIRE_SPLASH, SIGNATURE, type SignatureWeapon } from '../data/weapons';
-import type { Enemy } from '../entities/Enemy';
+import { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
 import { WeaponView } from '../entities/WeaponView';
 import type { I18nKey } from '../i18n';
@@ -110,7 +109,7 @@ export class GameScene extends Phaser.Scene {
 	level!: LevelState;
 	/** Multiplies simulation dt, scene timers and tweens (TAB toggles 1x/2x). */
 	speed: GameSpeed = 1;
-	private keys!: MoveKeys;
+	private controls!: GameInput;
 	private obstacles!: ObstacleField;
 	private voiceDirector = new VoiceDirector();
 	private readonly collideHero = (hero: Hero): void => {
@@ -220,14 +219,12 @@ export class GameScene extends Phaser.Scene {
 			this.run.hp = this.stats.maxHp;
 		}
 
-		this.keys = createMoveKeys(this);
-		const kb = this.input.keyboard;
-		kb?.addKey(Phaser.Input.Keyboard.KeyCodes.TAB).on('down', () =>
-			this.setSpeed(nextSpeed(this.speed)),
-		);
-		kb?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', () => this.castSuper());
-		kb?.on('keydown-ESC', () => this.pause());
-		kb?.on('keydown-P', () => this.pause());
+		this.controls = new GameInput(this, save.settings.keys);
+		this.controls.on('speed', () => this.setSpeed(nextSpeed(this.speed)));
+		this.controls.on('super', () => this.castSuper());
+		this.controls.on('pause', () => this.pause());
+		// Esc always pauses, whatever the binds are.
+		this.input.keyboard?.on('keydown-ESC', () => this.pause());
 
 		const biome = biomeForRound(this.run.round);
 		this.chunks = new ChunkManager(this, seed, biome);
@@ -332,6 +329,7 @@ export class GameScene extends Phaser.Scene {
 		const cam = this.cameras.main;
 		trackZoom(this, cam);
 		if (save.settings.bloom) applyBloom(cam);
+		Enemy.reducedFlashes = save.settings.reducedFlashes;
 		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
 		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);
 		this.enemies.obstacles = this.obstacles;
@@ -362,15 +360,9 @@ export class GameScene extends Phaser.Scene {
 		run.elapsed += dt;
 		run.timeLeft -= dt;
 
-		const k = this.keys;
-		let ix = (anyDown(k.right) ? 1 : 0) - (anyDown(k.left) ? 1 : 0);
-		let iy = (anyDown(k.down) ? 1 : 0) - (anyDown(k.up) ? 1 : 0);
-		if (ix === 0 && iy === 0 && gamepadMove.connected) {
-			ix = gamepadMove.x;
-			iy = gamepadMove.y;
-		}
-		this.moving = ix !== 0 || iy !== 0;
-		const move = inputToWorld(ix, iy);
+		const intent = this.controls.move();
+		this.moving = intent.x !== 0 || intent.y !== 0;
+		const move = inputToWorld(intent.x, intent.y);
 		this.hero.update(dt, move, this.collideHero);
 		if (this.moving) this.weaponView.face(Math.atan2(move.y, move.x));
 		this.weaponView.update(dt, this.hero.x, this.hero.y);

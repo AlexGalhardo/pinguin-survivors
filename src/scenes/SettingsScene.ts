@@ -5,7 +5,7 @@ import { refreshMusicVolume } from '../core/music';
 import { exportSave, importSave } from '../core/storage';
 import { RESOLUTION_IDS } from '../data/display';
 import { type I18nKey, LANGS, setLang, t } from '../i18n';
-import type { GoreMode } from '../logic/save';
+import { type GoreMode, NUMBER_SIZES } from '../logic/save';
 import { MenuList } from '../ui/MenuList';
 import { setupScreen } from '../ui/screen';
 
@@ -113,11 +113,33 @@ export class SettingsScene extends Phaser.Scene {
 						persist(this);
 					},
 				},
+				{
+					label: () =>
+						t('settings.numberSize', { v: t(`size.${s.numberSize}` as I18nKey) }),
+					onAdjust: (d) => {
+						s.numberSize = cycle(NUMBER_SIZES, s.numberSize, d);
+						persist(this);
+					},
+				},
+				{
+					label: () => t('settings.reducedFlashes', { v: onOff(s.reducedFlashes) }),
+					onAdjust: () => {
+						s.reducedFlashes = !s.reducedFlashes;
+						persist(this);
+					},
+				},
+				{
+					label: () => t('settings.controls'),
+					onSelect: () => {
+						persist(this);
+						this.scene.start('Controls', data);
+					},
+				},
 				{ label: () => t('settings.export'), onSelect: () => exportSave(getSave(this)) },
 				{ label: () => t('settings.import'), onSelect: () => this.pickImport() },
 				{ label: () => t('menu.back'), onSelect: back },
 			],
-			{ x: 0, y: 0, fontSize: 12, spacing: 18, onBack: back },
+			{ x: 0, y: 0, fontSize: 11, spacing: 16, onBack: back },
 		);
 		setupScreen(this, t('settings.title'), (view, cx) => {
 			menu.layout(cx, Math.round(view.height / 2 - menu.height / 2 + 10));

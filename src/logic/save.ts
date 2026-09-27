@@ -23,6 +23,7 @@ import {
 	emptyProgress,
 	evaluateAchievements,
 } from './achievements';
+import { DEFAULT_BINDS, type KeyBinds, parseBinds } from './keybinds';
 
 /**
  * Local save (localStorage, one JSON document). SemVer public API: bump SAVE_VERSION and add a
@@ -33,6 +34,8 @@ export const SAVE_KEY = 'pinguin-survivors.save';
 export const HISTORY_SIZE = 20;
 
 export type GoreMode = 'max' | 'reduced' | 'goo';
+export const NUMBER_SIZES = ['small', 'normal', 'large'] as const;
+export type NumberSize = (typeof NUMBER_SIZES)[number];
 
 export interface Settings {
 	lang: Lang;
@@ -41,6 +44,10 @@ export interface Settings {
 	screenShake: boolean;
 	subtitles: boolean;
 	bloom: boolean;
+	/** Accessibility: damage number scale and softer flashes (PLAN 7.1). */
+	numberSize: NumberSize;
+	reducedFlashes: boolean;
+	keys: KeyBinds;
 	damageNumbers: boolean;
 	resolution: ResolutionId;
 }
@@ -116,6 +123,9 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			screenShake: true,
 			subtitles: true,
 			bloom: true,
+			numberSize: 'normal',
+			reducedFlashes: false,
+			keys: { ...DEFAULT_BINDS },
 			damageNumbers: true,
 			resolution: 'auto',
 		},
@@ -187,6 +197,9 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		screenShake: bool(s.screenShake, base.settings.screenShake),
 		subtitles: bool(s.subtitles, base.settings.subtitles),
 		bloom: bool(s.bloom, base.settings.bloom),
+		numberSize: oneOf(s.numberSize, NUMBER_SIZES, base.settings.numberSize),
+		reducedFlashes: bool(s.reducedFlashes, base.settings.reducedFlashes),
+		keys: parseBinds(s.keys),
 		damageNumbers: bool(s.damageNumbers, base.settings.damageNumbers),
 		resolution: oneOf(s.resolution, RESOLUTION_IDS, base.settings.resolution),
 	};

@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { sfx } from '../core/audio';
+import { getSave } from '../core/context';
 import type { Enemy } from '../entities/Enemy';
 import type { Element } from '../logic/combat';
 import { isoDepth, worldToScreen } from '../logic/iso';
@@ -8,6 +9,8 @@ import type { SpatialGrid } from '../logic/spatial-grid';
 import { GROUND_DEPTH } from '../world/ChunkManager';
 
 /** Radius in world units → scale of the 128×64 ring/zone textures (their radius is 62 px). */
+/** Explosion rings stay visible but dim with Settings → Reduced flashes. */
+const REDUCED_FLASH_ALPHA = 0.35;
 const scaleFor = (radius: number) => (radius * 2) / 124;
 
 export type AreaHit = (
@@ -190,7 +193,7 @@ export class AreaSystem {
 			.setTint(tint)
 			.setScale(scaleFor(radius) * 0.3)
 			.setData('target', scaleFor(radius))
-			.setAlpha(1)
+			.setAlpha(getSave(this.scene).settings.reducedFlashes ? REDUCED_FLASH_ALPHA : 1)
 			.setDepth(isoDepth(x, y) + 2)
 			.setVisible(true);
 	}
@@ -248,12 +251,13 @@ export class AreaSystem {
 				if (p.radius > 0) sfx(this.scene, 'sfx.explosion', 0.8);
 			}
 		}
+		const peak = getSave(this.scene).settings.reducedFlashes ? REDUCED_FLASH_ALPHA : 1;
 		for (const f of this.flashes) {
 			if (f.life <= 0) continue;
 			f.life -= dt;
 			const k = 1 - Math.max(0, f.life / f.total);
 			const target = f.img.getData('target') as number;
-			f.img.setScale(target * (0.3 + 0.7 * k)).setAlpha(1 - k);
+			f.img.setScale(target * (0.3 + 0.7 * k)).setAlpha((1 - k) * peak);
 			if (f.life <= 0) f.img.setVisible(false);
 		}
 	}

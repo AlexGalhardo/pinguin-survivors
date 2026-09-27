@@ -30,6 +30,8 @@ export class Enemy implements Mover {
 	/** What hit last, for kill attribution (achievement counters). */
 	lastElement: Element | null = null;
 	lastDot: 'bleed' | 'poison' | 'burn' | null = null;
+	/** Accessibility: no white hit flash on enemies (set by the game scene from Settings). */
+	static reducedFlashes = false;
 	ai: AiState = newAi();
 	/** World direction of an ongoing charge. */
 	chargeX = 0;
@@ -121,6 +123,7 @@ export class Enemy implements Mover {
 			this.sprite.setAlpha(1);
 			if (this.hitFlash <= 0) this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
 		}
+		if (this.hitFlash > 0 && Enemy.reducedFlashes) this.hitFlash = 0;
 		if (this.hitFlash > 0) {
 			this.hitFlash -= dt;
 			this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);

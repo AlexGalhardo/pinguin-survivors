@@ -77,7 +77,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 1.3 Herói e movimento
 - [x] `src/data/heroes.ts` (stats base, crescimento, arma assinada por tier, cores de placeholder)
-- [x] Input teclado + gamepad (WASD/setas/analógico) e movimento no mundo cartesiano; [ ] abstração formal para joystick mobile
+- [x] Input teclado + gamepad (WASD/setas/analógico) e movimento no mundo cartesiano; abstração `GameInput` (teclado rebindável + gamepad + joystick de toque flutuante)
 - [x] `entities/Hero.ts`: sprite 8 direções (idle/walk por direção), sombra, flash de hit, i-frames
 - [x] `RunState` mínimo (herói, tier, round, timer, HP, kills, XP, Fish, carga do superpoder, dano) + testes; cartas/armas/poções entram com as seções 1.8 e 2.3
 
@@ -109,7 +109,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 1.8 Cartas e armas secundárias
 - [x] `src/data/cards.ts` (stats, on-hit, secundárias, exclusivas, evolução) e `src/logic/cards.ts` + `src/logic/build.ts` (raridade por round + sorte, slots máx. 3, níveis 1–5, evolução garantida quando liberada) + testes
-- [x] `CardPickScene` (tempo pausado; mouse, 1/2/3, setas/A-D + Enter) com moldura por raridade e textos EN/PT-BR; [ ] gamepad dedicado (hoje via teclas sintéticas)
+- [x] `CardPickScene` (tempo pausado; mouse, 1/2/3, setas/A-D + Enter) com moldura por raridade e textos EN/PT-BR; gamepad pela ponte de teclas (d-pad/analógico escolhe, Cross/A confirma)
 - [x] 4 armas secundárias gerais (facas arremessáveis, molotov, estilhaços de gelo orbitando, pistola reserva — trocada pelo drone, que ficou exclusivo do Bob) com níveis 1–5
 - [x] Evolução da arma assinada T1→T2→T3 via carta (após os bosses 10 e 20)
 
@@ -238,7 +238,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 7.1 QA e release candidate (ainda com placeholders)
 - [ ] QA cross-browser (`scripts/qa-browsers.ts`) e resoluções (1366×768 → 3840×2160, ultrawide, Retina)
-- [ ] Gamepad completo, rebind de teclas, acessibilidade (tamanho dos números, flashes reduzidos)
+- [x] Gamepad completo (△/Y superpoder, □/X ou View 1×/2×, Options pausa, L1/R1 paginam), rebind de teclas (`ControlsScene`, `src/logic/keybinds.ts` + testes; troca em conflito, teclas de menu reservadas), acessibilidade (tamanho dos números de dano, flashes reduzidos)
 - [ ] Testes E2E com Playwright (skills `gc-game-qa`/`gc-qa-game`): menu → run → cartas → morte → histórico
 - [ ] `1.0.0-rc.1`
 
