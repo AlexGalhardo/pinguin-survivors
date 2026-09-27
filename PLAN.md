@@ -3,7 +3,7 @@
 > **Referência principal das sessões de agentes.** Leia inteiro antes de começar. Trabalhe na ordem, uma microtarefa por vez.
 > Legenda: `[ ]` pendente · `[x]` concluída · `[~]` incompleta/bloqueada (diga o motivo).
 > Ao terminar uma tarefa: marque o checkbox e adicione 1–3 linhas no **Changelog** (fim do arquivo).
-> Git: micro-commits em **Conventional Commits 1.0.0**; ao fechar cada **seção** (0.1, 1.1, …) → bump **SemVer** (`2.0.0-alpha.N` / `-beta.N`) + tag + `git push origin main --follow-tags`. Ver [docs/git-and-versioning.md](docs/git-and-versioning.md).
+> Git: micro-commits em **Conventional Commits 1.0.0**; ao fechar cada **seção** (0.1, 1.1, …) → bump **SemVer** (`0.1.0-alpha.N` / `0.1.0-beta.N`) + tag + `git push origin main --follow-tags`. Ver [docs/git-and-versioning.md](docs/git-and-versioning.md).
 > Contexto: [CLAUDE.md](CLAUDE.md) · [AGENTS.md](AGENTS.md) · [docs/](docs/README.md) · decisões [docs/decisions.md](docs/decisions.md)
 
 ## Visão geral
@@ -15,14 +15,14 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 | Fase | Versão | Objetivo |
 |---|---|---|
-| 0 | `2.0.0-alpha.1` | Refundação: entrevista, docs, limpeza, pipeline PixelLab, concepts dos heróis |
-| 1 | `2.0.0-alpha.N` | Engine iso + loop jogável com placeholders (herói, hordas, combate, rounds, cartas, boss) |
-| 2 | `2.0.0-alpha.N` | RPG e meta: save, level 1–100, pontos, Fish, poções/gambits, desbloqueios, menus, i18n |
-| 3 | `2.0.0-beta.N` | Arte PixelLab: heróis (3 tiers), inimigos, boss, tiles, VFX, UI |
-| 4 | `2.0.0-beta.N` | Gore persistente, iluminação estilo D4, juice |
-| 5 | `2.0.0-beta.N` | Áudio ElevenLabs: SFX, música metal, vozes EN/PT-BR |
-| 6 | `2.0.0-beta.N` | Conteúdo endless: biomas 2–3, pool de bosses, mais armas/cartas, balanceamento |
-| 7 | `2.0.0-rc.N` → `2.0.0` | Polish, QA, performance, release |
+| 0 | `0.1.0-alpha.1` | Refundação: entrevista, docs, limpeza, pipeline PixelLab, concepts dos heróis |
+| 1 | `0.1.0-alpha.N` | Engine iso + loop jogável com placeholders (herói, hordas, combate, rounds, cartas, boss) |
+| 2 | `0.1.0-alpha.N` | RPG e meta: save, level 1–100, pontos, Fish, poções/gambits, desbloqueios, menus, i18n |
+| 3 | `0.1.0-beta.N` | Arte PixelLab: heróis (3 tiers), inimigos, boss, tiles, VFX, UI |
+| 4 | `0.1.0-beta.N` | Gore persistente, iluminação estilo D4, juice |
+| 5 | `0.1.0-beta.N` | Áudio ElevenLabs: SFX, música metal, vozes EN/PT-BR |
+| 6 | `0.1.0-beta.N` | Conteúdo endless: biomas 2–3, pool de bosses, mais armas/cartas, balanceamento |
+| 7 | `1.0.0-rc.N` → `1.0.0` | Polish, QA, performance, release |
 
 **Ordem acordada (P-34):** concepts aprovados → loop jogável com placeholders → animações e assets finais em paralelo. A Fase 3 pode começar assim que os concepts forem aprovados, intercalada com as Fases 1–2.
 
@@ -40,15 +40,19 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Skills: criar `pinguin-art-assets` e `pinguin-audio-assets`; remover `starfall-art-assets` e `setup-matt-pocock-skills`
 - [x] CLAUDE.md e AGENTS.md reescritos; PLAN.md novo
 - [x] `.gitignore`: `TODO.md` (contém chaves) e `art-src/pixellab/raw/`
-- [x] `package.json` (`pinguin-survivors`, `2.0.0-alpha.0`), título do `index.html`
+- [x] `package.json` (`pinguin-survivors`, `0.1.0-alpha.0`), título do `index.html`
 
 ### 0.2 Pipeline PixelLab e concepts
 - [x] MCP `pixellab` adicionado no escopo de usuário (aparece após reiniciar a sessão)
 - [x] `PIXELLAB_API_TOKEN` no `.env`; cliente `scripts/lib/pixellab.ts` (api, waitJob, getCharacter, download, log, balance)
 - [x] `scripts/pl-concepts.ts`: 3 heróis × (v3 seed a, v3 seed b, Pro) em 96 px, 8 rotações + `sheet.png` (93 gerações)
-- [~] **Aprovação do usuário**: escolher 1 concept por herói (ou pedir ajustes) e o tamanho final (v3 ~88 px vs meta ~64 px). Bloqueia a Fase 3
-- [ ] Registrar os `character_id` aprovados em `docs/art-prompts.md` e em `src/data/heroes.ts`
-- [ ] Release `2.0.0-alpha.1` (docs(plan) → chore(release) → tag → push)
+- [x] **Aprovação do usuário** (2026-09-27): Jack `jack-v3-a`, Bob `bob-v3-a`, Lucia `lucia-v3-b`; tamanho ~88 px aceito (P-05, P-49)
+- [x] `character_id` aprovados em `docs/art-prompts.md` e em `src/data/heroes.ts`
+- [x] Histórico da `main` recomeçado no 1º commit do Pinguin Survivors (pedido do usuário); push após cada commit (P-48)
+- [x] Versionamento `0.1.0-alpha.N` nos arquivos (P-46)
+- [~] Reescrever o histórico antigo (mensagens/conteúdo com `2.0.0`) e renomear as tags do Starfall para `starfall/v*`: **bloqueado pela permissão do auto mode** — depende do usuário
+- [x] `CHANGELOG.md` (Keep a Changelog 1.1.0) na raiz (P-47)
+- [ ] Release `0.1.0-alpha.1` (docs(plan) → chore(release) + CHANGELOG → tag → push)
 
 ---
 
@@ -116,6 +120,18 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [ ] `src/logic/superpower.ts`: desbloqueio no level 5, carga por abates (elite 3, boss 0), persiste entre rounds, zera ao usar + testes
 - [ ] `SuperpowerSystem`: Espaço / △-Y; Colheita Rubra, Bombardeio, Cataclismo Elemental (placeholders de VFX); invulnerável na animação
 - [ ] Medidor do superpoder na HUD
+
+### 1.8c Pedidos do usuário já adiantados (P-41…P-45)
+- [x] TAB alterna 1×/2× (sim, timers e tweens) + indicador "2x ▶▶" na HUD
+- [x] Versão SemVer centralizada no rodapé da HUD (`src/ui/version-footer.ts`)
+- [ ] Versão no rodapé do **menu inicial** (quando o MainMenu existir, 2.5)
+- [x] 131 conquistas globais (`src/data/achievements.ts`), avaliação, pontos e loja de extras (`src/logic/achievements.ts`) + textos EN/PT-BR + testes
+- [x] Toast "Achievement unlocked" centralizado no topo, fila, badge placeholder, som `sfx.achievement` (ElevenLabs)
+- [~] Badge final `ui.achievement` no PixelLab (`scripts/pl-image.ts`): API do PixelLab com erro 500 em 2026-09-27 — tentar de novo
+- [ ] Contadores de conquistas durante a run (kills, críticos, parries, DoTs, elementos, gibs…) + feats (boss sem poção, etc.) chamando `evaluateAchievements` ao vivo
+- [ ] Tela de conquistas (lista, progresso, filtros) e loja de extras (itens a definir)
+- [x] Save local: schema v1 tolerante, migrações, snapshot da run, histórico das últimas 20 partidas, export/import (`src/logic/save.ts`, `src/core/storage.ts`) + testes
+- [ ] Autosave no fim de cada round + botão **Continue** no menu + tela de **Histórico** das partidas
 
 ### 1.9 Pickups, HUD e fim de run
 - [ ] Orbes de XP e Fish pooled, ímã de coleta
@@ -240,13 +256,13 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ---
 
-## FASE 7 — RC → 2.0.0
+## FASE 7 — RC → 1.0.0
 
 - [ ] QA cross-browser (`scripts/qa-browsers.ts`) e resoluções (1366×768 → 3840×2160, ultrawide)
 - [ ] Tamanho do build e carregamento por grupos; tela de loading
 - [ ] Gamepad completo, rebind de teclas, acessibilidade (tamanho dos números, flashes reduzidos)
 - [ ] Revisão final de docs, créditos (PixelLab, ElevenLabs), build publicável (itch.io; modo gore reduzido para portais)
-- [ ] `2.0.0`
+- [ ] `1.0.0`
 
 ---
 
@@ -255,10 +271,14 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - 2026-09-27 — Refundação como **Pinguin Survivors**: entrevista (P-01…P-36), branch `starfall-survivors-legacy`, remoto renomeado, `main` limpa (camada de jogo do Starfall removida; infra mantida).
 - 2026-09-27 — Docs, CLAUDE.md, AGENTS.md e skills reescritos (`pinguin-art-assets`, `pinguin-audio-assets`); PLAN novo com fases 0–7.
 - 2026-09-27 — Pedido do usuário: identidade forte por herói (P-37), 6 cartas exclusivas cada (P-38) e superpoderes no level 5 com VFX próprios (P-39/P-40) → GDD, balancing, art, HUD e PLAN (1.8b).
+- 2026-09-27 — Engine iso: projeção 2:1, zoom inteiro pela altura, chunks infinitos em DynamicTexture, herói placeholder 8 direções, i18n EN/PT-BR, fonte Pixelify Sans (60 FPS a 1366×768).
+- 2026-09-27 — Pedidos do usuário: TAB 2×, versão no rodapé, 131 conquistas + pontos, toast com som (ElevenLabs), save/histórico/export; histórico da `main` recomeçado e push por commit.
+- 2026-09-27 — Concepts aprovados (Jack v3-a, Bob v3-a, Lucia v3-b; ~88 px). Versionamento passa a `0.1.0-alpha.N`.
 - 2026-09-27 — Cliente PixelLab + `pl-concepts.ts`: 9 concepts (3 heróis × v3 a/b + Pro), 93 gerações; aguardando aprovação.
 
 ## Pendências do desenvolvedor
 
-- [ ] Aprovar os concepts dos heróis (`art-src/pixellab/concepts/sheet.png`) — ver 0.2
+- [x] Aprovar os concepts dos heróis (`art-src/pixellab/concepts/sheet.png`) — ver 0.2
+- [ ] Decidir se quer reescrever o histórico antigo / renomear as tags do Starfall (ver 0.2; precisa liberar a permissão)
 - [ ] Rotacionar a chave do ElevenLabs e o token do PixelLab (foram colados no chat/TODO.md) e atualizar o `.env`
 - [ ] Reiniciar a sessão do Claude Code para o MCP `pixellab` carregar (opcional; os scripts usam a API direto)
