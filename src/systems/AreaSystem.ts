@@ -48,6 +48,17 @@ interface Flash {
 	img: Phaser.GameObjects.Image;
 	life: number;
 	total: number;
+	x: number;
+	y: number;
+	radius: number;
+}
+
+/** World-space light emitted by an area effect (see world/Lighting.ts). */
+export interface WorldLight {
+	x: number;
+	y: number;
+	radius: number;
+	strength: number;
 }
 
 /**
@@ -157,11 +168,21 @@ export class AreaSystem {
 	flash(x: number, y: number, radius: number, tint: number, duration = 0.3): void {
 		let f = this.flashes.find((q) => q.life <= 0);
 		if (!f) {
-			f = { img: this.scene.add.image(0, 0, KEYS.ring), life: 0, total: 0 };
+			f = {
+				img: this.scene.add.image(0, 0, KEYS.ring),
+				life: 0,
+				total: 0,
+				x: 0,
+				y: 0,
+				radius: 0,
+			};
 			this.flashes.push(f);
 		}
 		f.life = duration;
 		f.total = duration;
+		f.x = x;
+		f.y = y;
+		f.radius = radius;
 		const s = worldToScreen(x, y);
 		f.img
 			.setPosition(s.x, s.y)
@@ -232,6 +253,18 @@ export class AreaSystem {
 			const target = f.img.getData('target') as number;
 			f.img.setScale(target * (0.3 + 0.7 * k)).setAlpha(1 - k);
 			if (f.life <= 0) f.img.setVisible(false);
+		}
+	}
+
+	/** Lights of burning zones and fresh explosions/flashes, appended to `out`. */
+	collectLights(out: WorldLight[]): void {
+		for (const z of this.zones) {
+			if (z.alive && z.element === 'fire')
+				out.push({ x: z.x, y: z.y, radius: z.radius * 1.8, strength: 0.8 });
+		}
+		for (const f of this.flashes) {
+			if (f.life > 0)
+				out.push({ x: f.x, y: f.y, radius: f.radius * 2, strength: f.life / f.total });
 		}
 	}
 

@@ -7,11 +7,13 @@ import type { AchievementDef } from '../data/achievements';
 import { SUPER } from '../data/superpowers';
 import { type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
+import { worldToScreen } from '../logic/iso';
 import { xpToNext } from '../logic/progression';
 import { eliteTiers, isBossRound } from '../logic/round';
 import { AchievementToast } from '../ui/AchievementToast';
 import { UI_FONT } from '../ui/font';
 import { addVersionFooter } from '../ui/version-footer';
+import { type Light, Lighting } from '../world/Lighting';
 import type { GameScene } from './GameScene';
 
 const HP_W = 120;
@@ -19,6 +21,8 @@ const BOSS_W = 260;
 
 export class HudScene extends Phaser.Scene {
 	private debugText?: Phaser.GameObjects.Text;
+	private lighting!: Lighting;
+	private readonly hudLights: Light[] = [];
 	private speedText!: Phaser.GameObjects.Text;
 	private hpFill!: Phaser.GameObjects.Rectangle;
 	private hpText!: Phaser.GameObjects.Text;
@@ -87,6 +91,7 @@ export class HudScene extends Phaser.Scene {
 			this.debugText = this.add.text(8, 58, '', text(8, PALETTE.textDim));
 		}
 
+		this.lighting = new Lighting(this, 0.62);
 		const footer = addVersionFooter(this);
 		const toast = new AchievementToast(this);
 		const onUnlock = (defs: AchievementDef[]) => toast.show(defs);
@@ -108,6 +113,7 @@ export class HudScene extends Phaser.Scene {
 			this.potionText.setPosition(view.width - 8, view.height - 8);
 			this.eliteText.setX(cx);
 			footer.layout(view);
+			this.lighting.resize(view.width, view.height);
 			toast.layout(view.width);
 		});
 	}
@@ -116,6 +122,7 @@ export class HudScene extends Phaser.Scene {
 		const game = this.scene.get('Game') as GameScene;
 		const run = game.run;
 		if (!run) return;
+		this.drawLights(game);
 		this.hpFill.width = Math.max(0, (HP_W - 2) * (run.hp / run.maxHp));
 		this.hpText.setText(t('hud.hp', { hp: Math.ceil(run.hp), max: run.maxHp }));
 		this.killsText.setText(t('hud.kills', { n: run.kills }));
@@ -177,5 +184,17 @@ export class HudScene extends Phaser.Scene {
 				y: Math.round(game.hero.y),
 			}),
 		);
+	}
+
+	/** World lights → HUD coordinates (the HUD camera maps 0..view to the screen). */
+	private drawLights(game: GameScene): void {
+		const view = game.cameras.main.worldView;
+		const out = this.hudLights;
+		out.length = 0;
+		for (const l of game.collectLights()) {
+			const s = worldToScreen(l.x, l.y, 16);
+			out.push({ x: s.x - view.x, y: s.y - view.y, radius: l.radius, strength: l.strength });
+		}
+		this.lighting.draw(out);
 	}
 }

@@ -44,7 +44,7 @@ export class PauseScene extends Phaser.Scene {
 							return;
 						}
 						this.scene.stop();
-						const game = this.scene.get('Game') as GameScene;
+						const game = this.scene.get('Game') as unknown as GameScene;
 						this.scene.resume('Game');
 						game.quitRun();
 					},

@@ -45,7 +45,7 @@ import {
 import { nextSpeed } from '../logic/speed';
 import { heroStats, type PlayerStats } from '../logic/stats';
 import { addCharge, chargeFor, superReady, superUnlocked } from '../logic/superpower';
-import { AreaSystem } from '../systems/AreaSystem';
+import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
 import { CombatSystem, HERO_RADIUS } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
@@ -350,6 +350,24 @@ export class GameScene extends Phaser.Scene {
 			width: v.width + VIEW_PAD * 2,
 			height: v.height + VIEW_PAD * 2,
 		});
+	}
+
+	private readonly worldLights: WorldLight[] = [];
+
+	/** Light sources in world space for the darkness layer (read by the HUD every frame). */
+	collectLights(): readonly WorldLight[] {
+		const out = this.worldLights;
+		out.length = 0;
+		if (!this.hero) return out;
+		out.push({ x: this.hero.x, y: this.hero.y, radius: 240, strength: 1 });
+		if (this.superpower?.active)
+			out.push({ x: this.hero.x, y: this.hero.y, radius: 360, strength: 1 });
+		this.area?.collectLights(out);
+		for (const e of this.enemies?.active ?? []) {
+			if (e.elite || e.def.behavior === 'boss')
+				out.push({ x: e.x, y: e.y, radius: e.radius * 3, strength: 0.55 });
+		}
+		return out;
 	}
 
 	private requestHitStop(seconds: number): void {
