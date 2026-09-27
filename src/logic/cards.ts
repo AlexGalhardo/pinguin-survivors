@@ -1,0 +1,69 @@
+import type { HeroId } from '../config/constants';
+import {
+	ALL_CARDS,
+	type CardDef,
+	EVOLUTION_ROUND,
+	RARITIES,
+	RARITY_WEIGHTS,
+	type Rarity,
+} from '../data/cards';
+import { type Build, canTake } from './build';
+import type { Rng } from './rng';
+
+export interface CardOffer {
+	card: CardDef;
+	rarity: Rarity;
+}
+
+/** Rarity weights for a round and luck (docs/balancing.md §7). */
+export function rarityWeights(round: number, luck: number): number[] {
+	const w = RARITY_WEIGHTS;
+	const t = Math.min(1, Math.max(0, (round - 1) / (w.endRound - 1)));
+	const weights = w.start.map((s, i) => s + ((w.end[i] as number) - s) * t);
+	const shift = Math.min((weights[0] as number) - 5, luck * w.luckShift);
+	if (shift > 0) {
+		weights[0] = (weights[0] as number) - shift;
+		const rest = weights.slice(1).reduce((a, b) => a + b, 0);
+		for (let i = 1; i < weights.length; i++)
+			weights[i] = (weights[i] as number) + (shift * (weights[i] as number)) / rest;
+	}
+	return weights;
+}
+
+export function rollRarity(rng: Rng, round: number, luck: number): Rarity {
+	return RARITIES[rng.weightedIndex(rarityWeights(round, luck))] as Rarity;
+}
+
+export function evolutionAvailable(build: Build, round: number): 2 | 3 | null {
+	if (build.tier === 1 && round >= EVOLUTION_ROUND[2]) return 2;
+	if (build.tier === 2 && round >= EVOLUTION_ROUND[3]) return 3;
+	return null;
+}
+
+/**
+ * Three distinct cards for the end of a round. Exclusive cards only for their hero; an
+ * available evolution is always one of the three (P-23).
+ */
+export function drawCards(
+	rng: Rng,
+	ctx: { hero: HeroId; round: number; luck: number; build: Build },
+	pool: readonly CardDef[] = ALL_CARDS,
+	count = 3,
+): CardOffer[] {
+	const offers: CardOffer[] = [];
+	const evolve = evolutionAvailable(ctx.build, ctx.round);
+	if (evolve) {
+		const card = pool.find((c) => c.effect.type === 'evolve' && c.effect.tier === evolve);
+		if (card) offers.push({ card, rarity: 'legendary' });
+	}
+	const candidates = pool.filter(
+		(c) =>
+			c.weight > 0 && (c.hero === undefined || c.hero === ctx.hero) && canTake(ctx.build, c),
+	);
+	while (offers.length < count && candidates.length > 0) {
+		const i = rng.weightedIndex(candidates.map((c) => c.weight));
+		const card = candidates.splice(i, 1)[0] as CardDef;
+		offers.push({ card, rarity: rollRarity(rng, ctx.round, ctx.luck) });
+	}
+	return offers;
+}
