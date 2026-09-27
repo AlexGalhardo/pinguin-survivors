@@ -90,6 +90,40 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.arc(4, 4, 4, 0, Math.PI * 2);
 		ctx.fill();
 	});
+	canvas(scene, KEYS.pickup('xp'), 8, 10, (ctx) => {
+		ctx.fillStyle = '#5fe0ff';
+		ctx.beginPath();
+		ctx.moveTo(4, 0);
+		ctx.lineTo(8, 5);
+		ctx.lineTo(4, 10);
+		ctx.lineTo(0, 5);
+		ctx.closePath();
+		ctx.fill();
+		ctx.fillStyle = '#e8fbff';
+		ctx.fillRect(3, 3, 2, 2);
+	});
+	canvas(scene, KEYS.pickup('fish'), 14, 8, (ctx) => {
+		ctx.fillStyle = '#ff9a3c';
+		ctx.beginPath();
+		ctx.ellipse(6, 4, 6, 3, 0, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.beginPath();
+		ctx.moveTo(11, 4);
+		ctx.lineTo(14, 0);
+		ctx.lineTo(14, 8);
+		ctx.closePath();
+		ctx.fill();
+		ctx.fillStyle = '#10131a';
+		ctx.fillRect(3, 3, 1, 1);
+	});
+	canvas(scene, KEYS.pickup('meat'), 12, 10, (ctx) => {
+		ctx.fillStyle = '#c4161c';
+		ctx.beginPath();
+		ctx.ellipse(5, 5, 5, 4, 0, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.fillStyle = '#f2e6d0';
+		ctx.fillRect(8, 4, 4, 2);
+	});
 	canvas(scene, KEYS.slash, 64, 32, (ctx) => {
 		ctx.strokeStyle = '#f2f4f8';
 		ctx.lineWidth = 3;

@@ -6,6 +6,7 @@ import { trackZoom } from '../core/viewport';
 import type { AchievementDef } from '../data/achievements';
 import { t } from '../i18n';
 import { formatTime } from '../logic/format';
+import { xpToNext } from '../logic/progression';
 import { isBossRound } from '../logic/round';
 import { AchievementToast } from '../ui/AchievementToast';
 import { UI_FONT } from '../ui/font';
@@ -23,6 +24,9 @@ export class HudScene extends Phaser.Scene {
 	private roundText!: Phaser.GameObjects.Text;
 	private timerText!: Phaser.GameObjects.Text;
 	private killsText!: Phaser.GameObjects.Text;
+	private levelText!: Phaser.GameObjects.Text;
+	private xpFill!: Phaser.GameObjects.Rectangle;
+	private fishText!: Phaser.GameObjects.Text;
 	private boss!: Phaser.GameObjects.Container;
 	private bossFill!: Phaser.GameObjects.Rectangle;
 
@@ -41,7 +45,11 @@ export class HudScene extends Phaser.Scene {
 		this.add.rectangle(8, 8, HP_W, 8, PALETTE.night, 0.8).setOrigin(0, 0);
 		this.hpFill = this.add.rectangle(9, 9, HP_W - 2, 6, PALETTE.blood).setOrigin(0, 0);
 		this.hpText = this.add.text(8, 18, '', text(8)).setOrigin(0, 0);
-		this.killsText = this.add.text(8, 28, '', text(8, PALETTE.textDim)).setOrigin(0, 0);
+		this.add.rectangle(8, 29, HP_W, 4, PALETTE.night, 0.8).setOrigin(0, 0);
+		this.xpFill = this.add.rectangle(9, 30, 0, 2, 0x5fe0ff).setOrigin(0, 0);
+		this.levelText = this.add.text(HP_W + 12, 6, '', text(10, PALETTE.crit)).setOrigin(0, 0);
+		this.killsText = this.add.text(8, 36, '', text(8, PALETTE.textDim)).setOrigin(0, 0);
+		this.fishText = this.add.text(8, 46, '', text(8, 0xff9a3c)).setOrigin(0, 0);
 		this.roundText = this.add.text(0, 4, '', text(12)).setOrigin(0.5, 0);
 		this.timerText = this.add.text(0, 18, '', text(16)).setOrigin(0.5, 0);
 		this.speedText = this.add.text(0, 4, '', text(16, PALETTE.crit)).setOrigin(1, 0);
@@ -56,7 +64,7 @@ export class HudScene extends Phaser.Scene {
 		this.boss = this.add.container(0, 40, [bossBg, this.bossFill, bossName]).setVisible(false);
 
 		if (getParams(this).debug) {
-			this.debugText = this.add.text(8, 40, '', text(8, PALETTE.textDim));
+			this.debugText = this.add.text(8, 58, '', text(8, PALETTE.textDim));
 		}
 
 		const footer = addVersionFooter(this);
@@ -87,6 +95,12 @@ export class HudScene extends Phaser.Scene {
 		this.hpFill.width = Math.max(0, (HP_W - 2) * (run.hp / run.maxHp));
 		this.hpText.setText(t('hud.hp', { hp: Math.ceil(run.hp), max: run.maxHp }));
 		this.killsText.setText(t('hud.kills', { n: run.kills }));
+		this.fishText.setText(t('hud.fish', { n: run.fish }));
+		this.levelText.setText(t('hud.level', { n: game.level.level }));
+		this.xpFill.width = Math.max(
+			0,
+			(HP_W - 2) * Math.min(1, game.level.xp / xpToNext(game.level.level)),
+		);
 		this.roundText.setText(t('hud.round', { n: run.round }));
 		this.timerText
 			.setText(formatTime(run.timeLeft))

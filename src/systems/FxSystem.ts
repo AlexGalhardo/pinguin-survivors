@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
-import { t } from '../i18n';
+import { type I18nKey, t } from '../i18n';
 import { isoDepth, worldToScreen } from '../logic/iso';
 import { UI_FONT } from '../ui/font';
 import { GROUND_DEPTH } from '../world/ChunkManager';
@@ -64,6 +64,15 @@ export class FxSystem {
 		n?.text.setText(t(kind === 'dodge' ? 'fx.dodge' : 'fx.parry')).setFontSize(10);
 	}
 
+	/** Big floating message over the hero (level up, unlocks). */
+	banner(x: number, y: number, key: I18nKey): void {
+		this.damage(x, y, 0, false, PALETTE.crit);
+		const n = this.numbers.find((f) => f.life === NUMBER_LIFE);
+		if (!n) return;
+		n.life = NUMBER_LIFE * 2.5;
+		n.text.setText(t(key)).setFontSize(14);
+	}
+
 	bloodAt(x: number, y: number, size: number): void {
 		let img = this.blood[this.bloodNext];
 		if (!img) {
@@ -102,7 +111,7 @@ export class FxSystem {
 			if (n.life <= 0) continue;
 			n.life -= dt;
 			n.text.y -= 30 * dt;
-			n.text.setAlpha(Math.max(0, n.life / NUMBER_LIFE));
+			n.text.setAlpha(Math.min(1, Math.max(0, n.life / NUMBER_LIFE)));
 			if (n.life <= 0) n.text.setVisible(false);
 		}
 		for (const s of this.slashes) {

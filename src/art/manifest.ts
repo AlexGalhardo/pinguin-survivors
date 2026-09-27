@@ -16,6 +16,7 @@ export const KEYS = {
 	projectile: (id: string) => `proj.${id}`,
 	slash: 'fx.slash',
 	blood: 'fx.blood',
+	pickup: (kind: 'xp' | 'fish' | 'meat') => `pickup.${kind}`,
 	/** Shared achievement badge (PixelLab; placeholder until public/assets/ui/ui.achievement.png). */
 	achievementBadge: 'ui.achievement',
 	sfxAchievement: 'sfx.achievement',
