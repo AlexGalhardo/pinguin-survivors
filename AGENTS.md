@@ -39,4 +39,5 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 6. Tela cheia sem scroll, zoom inteiro pela altura (540 lógicos). Pooling. Meta: 60 FPS com 300 inimigos.
 7. Valide visualmente no browser (agent-browser) com os query params de debug.
 8. Segredos só no `.env`. `TODO.md` é local e ignorado pelo git.
-9. Conventional Commits 1.0.0 + SemVer 2.0.0; gates manuais (hooks Husky vazios por escolha do usuário); nunca `--no-verify`.
+9. Conventional Commits 1.0.0 + SemVer 2.0.0 (`0.1.0-alpha.N` → `0.1.0-beta.N` → `1.0.0`); gates manuais (hooks Husky vazios por escolha do usuário); nunca `--no-verify`; push após cada commit.
+10. `CHANGELOG.md` no padrão Keep a Changelog 1.1.0 (seção `[Unreleased]` durante o trabalho).

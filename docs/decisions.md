@@ -7,9 +7,9 @@ Quando uma decisão mudar, **edite a linha** e registre a data. As decisões do 
 |---|---|---|
 | P-01 | **Refundação**: manter a infraestrutura (Bun, Vite, Phaser 4, Biome, commitlint, `logic/` puro, RNG com seed, spatial grid, gamepad) e **reescrever a camada de jogo** | A fundação era sólida; iso + mapa infinito + RPG mudam todo o resto |
 | P-02 | Histórico do Starfall preservado na branch **`starfall-survivors-legacy`** (e tag `v1.0.0-rc.1`); Pinguin Survivors é desenvolvido na `main` | Pedido do usuário |
-| P-03 | Repo renomeado para `git@github.com:AlexGalhardo/pinguin-survivors.git`; versão recomeça em **`2.0.0-alpha.N`** | Quebra total de jogo, mesmo histórico |
+| P-03 | Repo renomeado para `git@github.com:AlexGalhardo/pinguin-survivors.git`; versão começa em **`0.1.0-alpha.N`** | Projeto novo; histórico do Starfall na branch legacy |
 | P-04 | Perspectiva **2.5D isométrica clássica 2:1** (estilo Diablo 2), tiles de **64×32**, sprites em vista **"low top-down"** | "Iso pixel estilo Diablo" |
-| P-05 | Herói com **~64 px de altura** (canvas 96), inimigos ~48 px, elites ~56 px, bosses 128–192 px | Legibilidade, custo de geração e 300 inimigos na tela |
+| P-05 | Herói com **~88 px de altura** (canvas 96, concepts aprovados), inimigos comuns ~56–64 px (canvas 64–80), elites ×1,25/×1,4, bosses 160–256 px | Meta inicial era ~64 px; o usuário aprovou os concepts v3 no tamanho gerado (2026-09-27) |
 | P-06 | Tela lógica com **altura 540** e largura livre, **zoom inteiro** (`floor(innerHeight/540)`). 2560×1080 → zoom 2, vê 1280×540 | Ultrawide do usuário; pixel-perfect sem escala fracionária |
 | P-07 | **8 direções para tudo** (heróis, inimigos, bosses); animações com **≥ 12 frames** | Pedido do usuário |
 | P-08 | Clima **escuro estilo Diablo 4**: noite polar, vinheta, **luzes dinâmicas** (tiros, magia, auras), bloom; heróis coloridos contra mundo sombrio | P-35 |
@@ -45,3 +45,12 @@ Quando uma decisão mudar, **edite a linha** e registre a data. As decisões do 
 | P-38 | **6 cartas/magias exclusivas por herói** (lista em game-design §5.1) | Pedido do usuário: ≥ 5 diferenças por herói |
 | P-39 | **Superpoder** por herói, libera no **level 5**; carrega com **100 abates**; carga persiste entre rounds da run; uso 1× com **Espaço** (gamepad △/Y), zera ao usar. Jack: Colheita Rubra · Bob: Bombardeio · Lucia: Cataclismo Elemental | Pedido do usuário |
 | P-40 | Superpoderes têm **animação própria do herói** (`super`, 8 dir × 3 tiers) e **VFX exclusivos** (≥ 12 frames) | Pedido do usuário |
+| P-41 | **Conquistas globais** (131, compartilhadas entre heróis), **1 ponto de conquista** cada; loja de extras com pontos (itens a definir) | Pedido do usuário |
+| P-42 | **TAB alterna velocidade 1×/2×** (padrão 1×) | Pedido do usuário |
+| P-43 | **Save local** (localStorage) com autosave, **Continue** da run no início do próximo round, **histórico das últimas 20 partidas**, export/import `.json` | Pedido do usuário |
+| P-44 | Alerta de conquista **centralizado no topo** com **badge exclusivo** (PixelLab) e **som exclusivo** (ElevenLabs) | Pedido do usuário |
+| P-45 | **Versão do build (SemVer) centralizada no rodapé** do menu inicial e da HUD | Pedido do usuário |
+| P-46 | Versionamento começa em **`0.1.0-alpha.N`** (alpha) → `0.1.0-beta.N` → `1.0.0-rc.N` → `1.0.0` | Pedido do usuário (arquivos atualizados; reescrever o histórico git antigo ficou bloqueado pela permissão) |
+| P-47 | **`CHANGELOG.md` na raiz no padrão Keep a Changelog 1.1.0**, além do changelog curto do PLAN | Pedido do usuário |
+| P-48 | **Push após cada commit** | Pedido do usuário |
+| P-49 | Concepts aprovados: Jack `jack-v3-a`, Bob `bob-v3-a`, Lucia `lucia-v3-b` (ids em art-prompts) | Aprovação do usuário; variantes escolhidas pelo agente |

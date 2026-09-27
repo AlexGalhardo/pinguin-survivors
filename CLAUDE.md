@@ -44,7 +44,8 @@ bun scripts/qa-browsers.ts           # QA do build (com `vite preview --port 417
 - **Áudio: ElevenLabs** (skill `pinguin-audio-assets`).
 - Chaves (`PIXELLAB_API_TOKEN`, `ELEVENLABS_API_KEY`) **só no `.env`**; `TODO.md` é local (gitignored).
 - Ao terminar: marque o checklist no PLAN.md e adicione 1–3 linhas no Changelog; decisão nova → docs/decisions.md.
-- **Conventional Commits 1.0.0** e **SemVer 2.0.0** (`2.0.0-alpha.N`). Micro-commits; ao concluir cada seção: `docs(plan)` → `chore(release): X` + tag → `git push origin main --follow-tags`. Os hooks Husky estão vazios por escolha do usuário: rode `check`/`typecheck`/`test` (e `build` antes de push) à mão. Nunca `--no-verify`.
+- **Conventional Commits 1.0.0** e **SemVer 2.0.0** (`0.1.0-alpha.N`). Micro-commits; ao concluir cada seção: `docs(plan)` → `chore(release): X` + tag → `git push origin main --follow-tags`. Os hooks Husky estão vazios por escolha do usuário: rode `check`/`typecheck`/`test` (e `build` antes de push) à mão. Nunca `--no-verify`.
+- **Push após cada commit** (depois dos gates). **`CHANGELOG.md`** na raiz no padrão **Keep a Changelog 1.1.0** (registre em `[Unreleased]`; mova para a versão no release).
 - **Bun** no lugar de npm/node. Estilo **Biome v2**, TAB largura 4.
 
 ## Skills úteis
