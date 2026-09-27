@@ -59,52 +59,53 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ## FASE 1 — ALPHA: engine iso + loop jogável (placeholders)
 
 ### 1.1 Boot, config e contrato
-- [ ] `src/config/constants.ts` (LOGICAL_H=540, TILE_W=64, TILE_H=32, CHUNK_TILES=16, MAX_ENEMIES=300…) e `palette.ts` (noite polar, sangue, auras, raridades)
-- [ ] `src/logic/viewport.ts`: zoom inteiro pela altura + largura lógica variável (+ testes: 2560×1080, 1920×1080, 2560×1440, 3840×2160, 1366×768)
-- [ ] `game-config.ts` (RESIZE, pixelArt, roundPixels, sem physics) + `main.ts` + Boot/Preload scenes
-- [ ] `src/debug/params.ts` (`skipMenu`, `hero`, `round`, `seed`, `debug`, `god`, `tier`) + testes; `window.__GAME__` só no dev; overlay de FPS/contagem
-- [ ] `src/i18n/` (`en.ts`, `pt-BR.ts`, `t(key, vars)`, idioma salvo) + teste que as duas línguas têm as mesmas chaves
-- [ ] Fonte pixel com acentos (avaliar Pixelify Sans / fonte bitmap própria); carregada no Preload
-- [ ] `src/art/manifest.ts` (chaves de personagens, anims, tiles, fx, ui, sfx) + placeholders por código: tile losango, pinguim 8 direções (cores por herói), zumbis (cor por tipo), sombra elíptica
-- [ ] Smoke test no browser (agent-browser, 2560×1080 e 1366×768): tela cheia sem scroll, zoom correto, sem erros
+- [x] `src/config/constants.ts` (LOGICAL_H=540, TILE_W=64, TILE_H=32, CHUNK_TILES=16, MAX_ENEMIES=300…) e `palette.ts` (noite polar, sangue, auras, raridades)
+- [x] `src/logic/viewport.ts`: zoom inteiro pela altura + largura lógica variável (+ testes: 2560×1080, 1920×1080, 2560×1440, 3840×2160, 1366×768)
+- [x] `game-config.ts` (RESIZE, pixelArt, roundPixels, sem physics) + `main.ts` + BootScene (carrega só arquivos presentes em `public/assets`; Preload dedicado virá com o atlas)
+- [x] `src/debug/params.ts` (`skipMenu`, `hero`, `round`, `seed`, `debug`, `god`, `tier`) + testes; `window.__GAME__` só no dev; overlay de FPS/contagem
+- [x] `src/i18n/` (`en.ts`, `pt-BR.ts`, `t(key, vars)`, idioma salvo) + teste que as duas línguas têm as mesmas chaves
+- [x] Fonte pixel com acentos (avaliar Pixelify Sans / fonte bitmap própria); carregada no Preload
+- [x] `src/art/manifest.ts` (chaves de personagens, anims, tiles, fx, ui, sfx) + placeholders por código: tile losango, pinguim 8 direções (cores por herói), zumbis (cor por tipo), sombra elíptica
+- [x] Smoke test no browser (Playwright, pois o CLI agent-browser não está instalado nesta máquina; 2560×1080 e 1366×768): sem scroll, zoom correto, sem erros
 
 ### 1.2 Projeção iso e mundo infinito
-- [ ] `src/logic/iso.ts`: `worldToScreen`, `screenToWorld`, depth, `dir8` a partir de vetor de tela, rotação do input 45° + testes
-- [ ] `src/logic/chunks.ts`: coordenada de chunk, chunks visíveis para um retângulo de câmera, decoração determinística por (seed, cx, cy) + testes
-- [ ] `world/IsoWorld.ts` (camadas: chão, decalques, sombras, entidades, luz, UI de mundo) e `ChunkManager.ts` (pool de chunks, cria/recicla conforme a câmera)
-- [ ] Câmera segue o herói com lerp, zoom inteiro, sem tremer (roundPixels)
+- [x] `src/logic/iso.ts`: `worldToScreen`, `screenToWorld`, depth, `dir8` a partir de vetor de tela, rotação do input 45° + testes
+- [x] `src/logic/chunks.ts`: coordenada de chunk, chunks visíveis para um retângulo de câmera, decoração determinística por (seed, cx, cy) + testes
+- [x] `ChunkManager.ts` (pool de DynamicTextures por chunk, cria/recicla conforme a câmera); camadas por depth (chão `GROUND_DEPTH`, decalques, sombras, entidades por `x+y`)
+- [x] Câmera segue o herói com lerp, zoom inteiro, sem tremer (roundPixels)
 - [ ] Depth sorting por `x+y` validado com 300 sprites sobrepostos
 
 ### 1.3 Herói e movimento
-- [ ] `src/data/heroes.ts` (stats base, crescimento, arma assinada por tier, cores de placeholder)
-- [ ] `InputSystem` (teclado + gamepad; abstração para mobile) e `MovementSystem` no mundo cartesiano
-- [ ] `entities/Hero.ts`: sprite 8 direções (idle/walk por direção), sombra, flash de hit, i-frames
-- [ ] `RunState` (herói, round, HP, stats da run, armas, cartas, poções, Fish/XP ganhos) + testes
+- [x] `src/data/heroes.ts` (stats base, crescimento, arma assinada por tier, cores de placeholder)
+- [x] Input teclado + gamepad (WASD/setas/analógico) e movimento no mundo cartesiano; [ ] abstração formal para joystick mobile
+- [x] `entities/Hero.ts`: sprite 8 direções (idle/walk por direção), sombra, flash de hit, i-frames
+- [x] `RunState` mínimo (herói, tier, round, timer, HP, kills, XP, Fish, carga do superpoder, dano) + testes; cartas/armas/poções entram com as seções 1.8 e 2.3
 
 ### 1.4 Inimigos, spawn e hordas
-- [ ] `src/data/enemies.ts`: 6 inimigos da Antártida (pinguim zumbi, foca, skua, cientista, morsa, inchado) + boss urso polar
-- [ ] `src/logic/spawn.ts`: pontos fora da área visível real (largura variável), taxa por round + testes
-- [ ] `EnemyAiSystem`: perseguir, separação via SpatialGrid, comportamentos (voador, à distância, investida, explosivo)
-- [ ] `entities/Enemy.ts` pooled (máx. 300) com direção 8-way, sombra, barra de HP para elites
+- [x] `src/data/enemies.ts`: 6 inimigos da Antártida (pinguim zumbi, foca, skua, cientista, morsa, inchado) + boss urso polar
+- [x] `src/logic/spawn.ts`: pontos fora da área visível real (largura variável), taxa por round + testes
+- [x] `EnemySystem`: spawn fora da tela, perseguir + separação via SpatialGrid (recentralizada no herói), reciclagem de distantes
+- [ ] Comportamentos especiais: voador (já flutua em z), à distância (cuspe), investida (morsa), explosivo (inchado)
+- [x] `entities/Enemy.ts` pooled (máx. 300) com sombra, aura de elite, flash de hit e flip horizontal; [ ] barra de HP dos elites; [ ] 8 direções quando a arte chegar
 - [ ] Estresse: 300 inimigos a 60 FPS (medir e anotar no Changelog)
 
 ### 1.5 Combate e armas assinadas
 - [ ] `src/logic/stats.ts` (modelo completo de stats + modificadores) + testes
-- [ ] `src/logic/combat.ts`: crítico, armadura, resist. elemental, dodge, parry, especialista + testes
-- [ ] `src/data/weapons.ts`: armas assinadas T1–T3 dos 3 heróis (balancing §6)
-- [ ] `WeaponSystem`: mira por tipo (arco melee, mais próximo para fogo, área/corrente para magia), cadência, projéteis pooled com altura (z)
-- [ ] `CombatSystem`: dano no inimigo e no herói, knockback, morte, números de dano pooled
-- [ ] Contato de inimigo com o herói (dano por contato + parry)
+- [x] `src/logic/combat.ts`: crítico, armadura, resist. elemental, dodge, parry, especialista + testes
+- [x] `src/data/weapons.ts`: armas assinadas T1–T3 dos 3 heróis (balancing §6)
+- [x] `WeaponSystem`: arco melee (Jack), leque de bagos (Bob), projétil elemental alternando 4 elementos (Lucia), cadência, projéteis pooled em z; [ ] área/corrente reais da magia
+- [x] Dano no inimigo e no herói, knockback, morte com sangue, números de dano pooled (no `GameScene`; extrair para `CombatSystem` quando crescer)
+- [x] Contato de inimigo com o herói (dano por contato + parry)
 
 ### 1.6 Efeitos de status
 - [ ] `src/logic/status.ts`: sangramento, veneno, queimadura, gelo/congelar, terra (atordoar/quebra de armadura), energia (corrente) + testes
 - [ ] `StatusSystem` (ticks, acúmulos, cores dos números, indicador visual placeholder)
 
 ### 1.7 Rounds, elites e boss
-- [ ] `src/logic/round.ts`: duração, boss (N%10), elite roxo/laranja (N%3, ≥11), escala por round/ciclo + testes
-- [ ] `RoundSystem`: timer, fim do round (limpa inimigos com "explosão" de morte), transição para cartas
-- [ ] Elites: escala, aura roxa/laranja (placeholder elíptico), drop garantido
-- [ ] Boss urso polar (patada em arco, investida, rugido que invoca), barra de boss, timer 3:00 → game over no timeout
+- [x] `src/logic/round.ts`: duração, boss (N%10), elite roxo/laranja (N%3, ≥11), escala por round/ciclo + testes
+- [x] Timer e troca de round (inimigos restantes viram poças); [ ] transição para as cartas (1.8)
+- [x] Elites: escala e aura roxa/laranja (placeholder elíptico); [ ] drop garantido de Fish
+- [~] Boss urso polar: aparece no round 10 com barra na HUD e timer 3:00 (timeout = morte); ataques próprios (patada, investida, rugido) pendentes
 
 ### 1.8 Cartas e armas secundárias
 - [ ] `src/data/cards.ts` (stat, secundária, on-hit, evolução) e `src/logic/cards.ts` (raridade por round + sorte, slots máx. 3, evolução só quando liberada) + testes
@@ -273,6 +274,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - 2026-09-27 — Pedido do usuário: identidade forte por herói (P-37), 6 cartas exclusivas cada (P-38) e superpoderes no level 5 com VFX próprios (P-39/P-40) → GDD, balancing, art, HUD e PLAN (1.8b).
 - 2026-09-27 — Engine iso: projeção 2:1, zoom inteiro pela altura, chunks infinitos em DynamicTexture, herói placeholder 8 direções, i18n EN/PT-BR, fonte Pixelify Sans (60 FPS a 1366×768).
 - 2026-09-27 — Pedidos do usuário: TAB 2×, versão no rodapé, 131 conquistas + pontos, toast com som (ElevenLabs), save/histórico/export; histórico da `main` recomeçado e push por commit.
+- 2026-09-27 — Loop de combate jogável com placeholders: hordas fora da tela com separação, elites com aura, boss no round 10, armas T1 dos 3 heróis, sangue no chão, HUD (HP, round, timer, kills, boss). Playwright headless mediu ~38 FPS a 2560×1080 com ~40 inimigos (render por software; medir no Chrome real).
 - 2026-09-27 — Concepts aprovados (Jack v3-a, Bob v3-a, Lucia v3-b; ~88 px). Versionamento passa a `0.1.0-alpha.N`.
 - 2026-09-27 — Cliente PixelLab + `pl-concepts.ts`: 9 concepts (3 heróis × v3 a/b + Pro), 93 gerações; aguardando aprovação.
 
