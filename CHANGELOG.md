@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-09-27
+
 ### Added
 
 - Playable horde loop with placeholder art: enemies spawn just outside the visible screen and crowd around the hero without stacking.
@@ -53,5 +55,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-alpha.1...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-alpha.2...HEAD
+[0.1.0-alpha.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
 [0.1.0-alpha.1]: https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.1.0-alpha.1
