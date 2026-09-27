@@ -29,14 +29,14 @@ Especificação: <https://semver.org/lang/pt-BR/>. A versão fica em `package.js
 
 | Momento | Versão | Regra |
 |---|---|---|
-| Refundação (fase 0) | `2.0.0-alpha.1` | Starfall terminou em `1.0.0-rc.1`; Pinguin Survivors é um MAJOR novo |
-| Fases 1–2 (ALPHA) | `2.0.0-alpha.N` | N sobe (+1) a cada seção do PLAN concluída |
-| Fases 3–6 (BETA) | `2.0.0-beta.N` | N sobe a cada seção concluída |
-| Release candidate | `2.0.0-rc.N` | Congelamento, só correções |
-| Lançamento | `2.0.0` | Primeira versão estável do Pinguin Survivors |
-| Depois do 2.0 | `MAJOR.MINOR.PATCH` | MAJOR: save incompatível sem migração, ou remoção de conteúdo/modo · MINOR: conteúdo ou funcionalidade nova compatível · PATCH: correções e ajustes de balanceamento |
+| Refundação (fase 0) | `0.1.0-alpha.1` | Primeira versão do Pinguin Survivors (o Starfall vive na branch legacy) |
+| Fases 1–2 (ALPHA) | `0.1.0-alpha.N` | N sobe (+1) a cada seção do PLAN concluída |
+| Fases 3–6 (BETA) | `0.1.0-beta.N` | N sobe a cada seção concluída |
+| Release candidate | `1.0.0-rc.N` | Congelamento, só correções |
+| Lançamento | `1.0.0` | Primeira versão estável do Pinguin Survivors |
+| Depois do 1.0 | `MAJOR.MINOR.PATCH` | MAJOR: save incompatível sem migração, ou remoção de conteúdo/modo · MINOR: conteúdo ou funcionalidade nova compatível · PATCH: correções e ajustes de balanceamento |
 
-Precedência válida: `1.0.0-rc.1 < 2.0.0-alpha.1 < … < 2.0.0-beta.1 < … < 2.0.0-rc.1 < 2.0.0`.
+Precedência válida: `0.1.0-alpha.1 < … < 0.1.0-beta.1 < … < 1.0.0-rc.1 < 1.0.0`.
 Uma versão publicada **nunca** é alterada. Qualquer mudança gera uma nova versão.
 
 ## Gates (Husky)
@@ -50,11 +50,20 @@ Os arquivos `.husky/*` estão **vazios por escolha do usuário** (commit `5b8f23
 
 Nunca use `--no-verify`. Se um gate falhar, corrija a causa.
 
+## CHANGELOG.md (Keep a Changelog 1.1.0)
+
+`CHANGELOG.md` na raiz segue **estritamente** <https://keepachangelog.com/en/1.1.0/>: seção `[Unreleased]` no topo; uma seção por versão (`## [X.Y.Z] - AAAA-MM-DD`, mais nova primeiro); grupos só `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`; frases para humanos (em inglês), sem hashes de commit; links de comparação no fim. Registre mudanças relevantes em `[Unreleased]` durante o trabalho e mova-as para a nova versão no commit `chore(release)`.
+É diferente do changelog curto do fim do `PLAN.md` (log de tarefas dos agentes).
+
+## Push
+
+**Push para o `origin/main` logo após cada commit** (pedido do usuário, P-48), depois de rodar os gates.
+
 ## Fluxo ao concluir uma seção do PLAN (0.1, 1.1, 1.2, …)
 
 1. Micro-commits durante o trabalho (`feat(...)`, `test(...)`, `build(...)`…).
-2. Marcar `[x]` no PLAN.md + linha no Changelog → `docs(plan): complete <seção>`.
-3. Subir a versão no `package.json` (`bun pm version <versão> --no-git-tag-version` ou manualmente) conforme a tabela acima → `chore(release): <versão>` + `git tag -a v<versão> -m "<versão>"`.
+2. Marcar `[x]` no PLAN.md + linha no Changelog do PLAN → `docs(plan): complete <seção>`.
+3. Subir a versão no `package.json` (`bun pm version <versão> --no-git-tag-version` ou manualmente) conforme a tabela acima e mover `[Unreleased]` do `CHANGELOG.md` para `## [<versão>] - <data>` (+ links) → `chore(release): <versão>` + `git tag -a v<versão> -m "<versão>"`.
 4. `git push origin main --follow-tags`.
 
 ## Estilo de código
