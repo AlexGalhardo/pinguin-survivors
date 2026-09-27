@@ -264,6 +264,7 @@ export class GameScene extends Phaser.Scene {
 				this.combat.weaponHit(e, amount, crit, { bleedChance }),
 			(x, y, a, r) => this.fx.slash(x, y, a, r),
 			(element) => this.elementUsedAt.set(element, this.run.elapsed),
+			(angle, cooldown) => this.hero.attack(angle, cooldown),
 		);
 		this.secondaries = new SecondarySystem(
 			this,
@@ -616,6 +617,7 @@ export class GameScene extends Phaser.Scene {
 		countRun(this.run, 'superUses');
 		this.combat.iFrames = Math.max(this.combat.iFrames, SUPER.invulnerable);
 		this.superpower.cast(this.run.hero, this.hero.x, this.hero.y, this);
+		this.hero.super();
 	}
 
 	/** Bob unlocks on the first round-10 boss kill, Lucia on round 20 (P-17). */
@@ -762,6 +764,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.deadFor >= 0) return;
 		this.outcome = outcome;
 		this.deadFor = 0;
+		this.hero.die();
 		this.fx.bloodAt(this.hero.x, this.hero.y, 2);
 	}
 

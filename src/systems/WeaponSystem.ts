@@ -53,6 +53,7 @@ export class WeaponSystem {
 			range: number,
 		) => void,
 		private readonly onElement: (element: Element) => void,
+		private readonly onFire: (angle: number, cooldown: number) => void = () => {},
 	) {}
 
 	update(dt: number, hx: number, hy: number, grid: SpatialGrid<Enemy>): void {
@@ -62,8 +63,10 @@ export class WeaponSystem {
 			this.weapon.kind === 'arc' ? this.weapon.range * MELEE_AIM_FACTOR : this.weapon.range;
 		const target = grid.nearest(hx, hy, aimRange, (e) => e.alive);
 		if (!target) return;
-		this.fire(hx, hy, Math.atan2(target.y - hy, target.x - hx), grid);
+		const angle = Math.atan2(target.y - hy, target.x - hx);
+		this.fire(hx, hy, angle, grid);
 		this.cooldown = 1 / (this.weapon.rate * this.stats.attackSpeed * this.bonus.rate);
+		this.onFire(angle, this.cooldown);
 	}
 
 	private fire(hx: number, hy: number, angle: number, grid: SpatialGrid<Enemy>): void {

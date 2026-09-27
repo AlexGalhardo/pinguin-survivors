@@ -207,6 +207,7 @@ export class CombatSystem {
 			this.fx.label(this.hero.x, this.hero.y, 'block');
 		} else {
 			this.hero.flash();
+			this.hero.hurt();
 			this.hooks.onHurt(source);
 			const left = this.hooks.shield(result.amount);
 			if (left > 0 && damageHero(this.run, left)) this.onHeroDeath();
