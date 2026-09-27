@@ -331,3 +331,36 @@ export function recordRunEnd(
 	save.activeRun = null;
 	return evaluateAchievements(p, save.achievements, now);
 }
+
+/**
+ * Save progress plus what the current run has done so far, without mutating the save.
+ * Used to unlock achievements live during a run (the counters are committed at run end).
+ */
+export function liveProgress(
+	save: SaveData,
+	run: { hero: HeroId; round: number; kills: number },
+	counters: RunCounters,
+	heroLevel: number,
+): AchievementProgress {
+	const p = structuredClone(save.progress);
+	for (const stat of LIFETIME_STATS) p.lifetime[stat] += counters[stat] ?? 0;
+	p.lifetime.runs += 1;
+	const h = p.hero[run.hero];
+	h.exclusiveCards += counters.exclusiveCards ?? 0;
+	h.superUses += counters.superUses ?? 0;
+	h.bestRound = Math.max(h.bestRound, run.round);
+	if (counters.evolvedT3) h.evolvedT3 = 1;
+	p.runBests.maxRound = Math.max(p.runBests.maxRound, run.round);
+	p.runBests.killsInRun = Math.max(p.runBests.killsInRun, run.kills);
+	p.runBests.superKillsOneCast = Math.max(
+		p.runBests.superKillsOneCast,
+		counters.superKillsOneCast ?? 0,
+	);
+	for (const hero of HERO_IDS) p.heroLevels[hero] = save.heroes[hero].level;
+	p.heroLevels[run.hero] = Math.max(p.heroLevels[run.hero], heroLevel);
+	return p;
+}
+
+export function addFeat(save: SaveData, feat: (typeof FEATS)[number]): void {
+	if (!save.progress.feats.includes(feat)) save.progress.feats.push(feat);
+}

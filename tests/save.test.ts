@@ -113,3 +113,19 @@ describe('history and run end', () => {
 		);
 	});
 });
+
+describe('liveProgress', () => {
+	test('merges run counters without mutating the save', async () => {
+		const { liveProgress } = await import('../src/logic/save');
+		const s = defaultSave();
+		s.progress.lifetime.kills = 90;
+		const p = liveProgress(s, { hero: 'bob', round: 6, kills: 20 }, { kills: 20, crits: 3 }, 4);
+		expect(p.lifetime.kills).toBe(110);
+		expect(p.lifetime.crits).toBe(3);
+		expect(p.lifetime.runs).toBe(1);
+		expect(p.hero.bob.bestRound).toBe(6);
+		expect(p.heroLevels.bob).toBe(4);
+		expect(s.progress.lifetime.kills).toBe(90);
+		expect(s.progress.lifetime.runs).toBe(0);
+	});
+});
