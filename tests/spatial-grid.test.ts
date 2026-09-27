@@ -41,3 +41,16 @@ describe('SpatialGrid', () => {
 		expect(g.nearest(0, 0, 100, (i) => i.ok)?.x).toBe(50);
 	});
 });
+
+describe('recenter (infinite world)', () => {
+	it('finds items around a far-away center', () => {
+		const grid = new SpatialGrid<{ x: number; y: number }>(64, 1024, 1024);
+		grid.recenter(10_000, -8_000);
+		const a = { x: 10_050, y: -8_020 };
+		const b = { x: 9_700, y: -8_300 };
+		grid.insert(a);
+		grid.insert(b);
+		expect(grid.nearest(10_000, -8_000, 200)).toBe(a);
+		expect(grid.queryRadius(10_000, -8_000, 600)).toHaveLength(2);
+	});
+});

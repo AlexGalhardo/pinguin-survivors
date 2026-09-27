@@ -11,15 +11,26 @@ export class SpatialGrid<T extends Positioned> {
 	private readonly cols: number;
 	private readonly rows: number;
 	private readonly cells: T[][];
+	private ox = 0;
+	private oy = 0;
 
 	constructor(
 		private readonly cellSize: number,
-		width: number,
-		height: number,
+		private readonly width: number,
+		private readonly height: number,
 	) {
 		this.cols = Math.max(1, Math.ceil(width / cellSize));
 		this.rows = Math.max(1, Math.ceil(height / cellSize));
 		this.cells = Array.from({ length: this.cols * this.rows }, () => []);
+	}
+
+	/**
+	 * Moves the covered area so it is centered on (x, y). The world is infinite, so the grid
+	 * follows the hero; items outside are clamped into the border cells (still found, slower).
+	 */
+	recenter(x: number, y: number): void {
+		this.ox = x - this.width / 2;
+		this.oy = y - this.height / 2;
 	}
 
 	clear(): void {
@@ -27,11 +38,11 @@ export class SpatialGrid<T extends Positioned> {
 	}
 
 	private col(x: number): number {
-		return Math.min(this.cols - 1, Math.max(0, Math.floor(x / this.cellSize)));
+		return Math.min(this.cols - 1, Math.max(0, Math.floor((x - this.ox) / this.cellSize)));
 	}
 
 	private row(y: number): number {
-		return Math.min(this.rows - 1, Math.max(0, Math.floor(y / this.cellSize)));
+		return Math.min(this.rows - 1, Math.max(0, Math.floor((y - this.oy) / this.cellSize)));
 	}
 
 	insert(item: T): void {
