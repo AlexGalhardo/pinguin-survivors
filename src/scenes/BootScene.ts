@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ATLAS_DIR, atlasGroups, atlasKey, registerAtlasFrames } from '../art/atlas';
 import { FILES } from '../art/manifest';
 import { installPlaceholders } from '../art/placeholders';
 import { HERO_IDS } from '../config/constants';
@@ -12,6 +13,13 @@ export class BootScene extends Phaser.Scene {
 	preload(): void {
 		// Only files that exist are queued; placeholders drawn in create() cover the rest.
 		const present = new Set(__ASSET_FILES__);
+		// Final art packed by scripts/pack-atlas.ts; frames become textures named by manifest key.
+		for (const group of atlasGroups(__ASSET_FILES__))
+			this.load.atlas(
+				atlasKey(group),
+				`${ATLAS_DIR}${group}.png`,
+				`${ATLAS_DIR}${group}.json`,
+			);
 		for (const [key, url] of Object.entries(FILES.images))
 			if (present.has(url)) this.load.image(key, url);
 		// PixelLab animation atlases (scripts/pack-heroes.ts), one per hero tier.
@@ -26,6 +34,8 @@ export class BootScene extends Phaser.Scene {
 	}
 
 	create(): void {
+		for (const group of atlasGroups(__ASSET_FILES__))
+			registerAtlasFrames(this.textures, atlasKey(group));
 		installPlaceholders(this);
 		this.scene.start(getParams(this).skipMenu ? 'Game' : 'MainMenu');
 	}

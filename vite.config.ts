@@ -8,9 +8,12 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 /** Files under public/assets (relative, e.g. "assets/ui/x.png"): Boot loads only what exists. */
 function assetFiles(dir = 'public/assets'): string[] {
 	if (!existsSync(dir)) return [];
-	return readdirSync(dir, { recursive: true, withFileTypes: true })
-		.filter((e) => e.isFile() && !e.name.startsWith('.'))
-		.map((e) => `${e.parentPath}/${e.name}`.replace(/^public\//, ''));
+	return (
+		readdirSync(dir, { recursive: true, withFileTypes: true })
+			.filter((e) => e.isFile() && !e.name.startsWith('.'))
+			// parentPath uses backslashes on Windows; the game expects URL-style paths.
+			.map((e) => `${e.parentPath}/${e.name}`.replace(/\\/g, '/').replace(/^public\//, ''))
+	);
 }
 
 export default defineConfig({
@@ -20,7 +23,7 @@ export default defineConfig({
 	define: {
 		__APP_VERSION__: JSON.stringify(pkg.version),
 		// Final art atlas (1.0): loaded only when it exists; placeholders cover the rest.
-		__HAS_ATLAS__: JSON.stringify(existsSync('public/assets/atlas.json')),
+		__HAS_ATLAS__: JSON.stringify(existsSync('public/assets/atlas')),
 		__ASSET_FILES__: JSON.stringify(assetFiles()),
 	},
 	build: {

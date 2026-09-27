@@ -1,0 +1,75 @@
+{
+	"frames": {
+		"weapon.autoShotgun": {
+			"frame": { "x": 0, "y": 0, "w": 72, "h": 19 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 72, "h": 19 },
+			"sourceSize": { "w": 72, "h": 19 }
+		},
+		"weapon.arcaneStaff": {
+			"frame": { "x": 73, "y": 0, "w": 64, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 18 },
+			"sourceSize": { "w": 64, "h": 18 }
+		},
+		"weapon.chainsword": {
+			"frame": { "x": 138, "y": 0, "w": 63, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 63, "h": 16 },
+			"sourceSize": { "w": 63, "h": 16 }
+		},
+		"weapon.auxPistol": {
+			"frame": { "x": 202, "y": 0, "w": 23, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 23, "h": 16 },
+			"sourceSize": { "w": 23, "h": 16 }
+		},
+		"weapon.rocketShotgun": {
+			"frame": { "x": 226, "y": 0, "w": 73, "h": 15 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 73, "h": 15 },
+			"sourceSize": { "w": 73, "h": 15 }
+		},
+		"weapon.stormStaff": {
+			"frame": { "x": 300, "y": 0, "w": 74, "h": 14 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 74, "h": 14 },
+			"sourceSize": { "w": 74, "h": 14 }
+		},
+		"weapon.doubleBarrel": {
+			"frame": { "x": 375, "y": 0, "w": 62, "h": 13 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 62, "h": 13 },
+			"sourceSize": { "w": 62, "h": 13 }
+		},
+		"weapon.elementStaff": {
+			"frame": { "x": 438, "y": 0, "w": 61, "h": 13 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 13 },
+			"sourceSize": { "w": 61, "h": 13 }
+		},
+		"weapon.machete": {
+			"frame": { "x": 500, "y": 0, "w": 61, "h": 11 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 11 },
+			"sourceSize": { "w": 61, "h": 11 }
+		},
+		"weapon.katana": {
+			"frame": { "x": 562, "y": 0, "w": 75, "h": 8 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 75, "h": 8 },
+			"sourceSize": { "w": 75, "h": 8 }
+		}
+	},
+	"meta": { "image": "core.png", "size": { "w": 1024, "h": 32 }, "scale": "1" }
+}

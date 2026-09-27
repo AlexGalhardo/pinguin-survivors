@@ -1,0 +1,12 @@
+{
+	"weapon.machete": { "src": "art-src/pixellab/images/weapon.machete/11.png" },
+	"weapon.katana": { "src": "art-src/pixellab/images/weapon.katana/11.png" },
+	"weapon.chainsword": { "src": "art-src/pixellab/images/weapon.chainsword/22.png" },
+	"weapon.doubleBarrel": { "src": "art-src/pixellab/images/weapon.doubleBarrel/22.png" },
+	"weapon.autoShotgun": { "src": "art-src/pixellab/images/weapon.autoShotgun/22.png" },
+	"weapon.rocketShotgun": { "src": "art-src/pixellab/images/weapon.rocketShotgun/11.png" },
+	"weapon.elementStaff": { "src": "art-src/pixellab/images/weapon.elementStaff/11.png" },
+	"weapon.arcaneStaff": { "src": "art-src/pixellab/images/weapon.arcaneStaff/11.png" },
+	"weapon.stormStaff": { "src": "art-src/pixellab/images/weapon.stormStaff/11.png" },
+	"weapon.auxPistol": { "src": "art-src/pixellab/images/weapon.auxPistol/11.png" }
+}
