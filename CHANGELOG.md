@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Walking animation for Jack, Bob and Lucia in all 8 directions (8 frames each), without weapons in hand (the weapon is its own sprite); walking seals and sailor and gull zombie art.
+
 ## [0.1.0-beta.4] - 2026-09-27
 
 Playtest build **playdev-3**.
