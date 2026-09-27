@@ -1,6 +1,6 @@
 # Pinguin Survivors — Status do projeto
 
-> Relatório local (fora do git). Gerado em **2026-09-27**. Build atual publicada no `main`: **v0.1.0-beta.2 · playdev-1**.
+> Relatório local (fora do git). Gerado em **2026-09-27**. Build atual publicada no `main`: **v0.1.0-beta.3 · playdev-2** (atualizado após a sincronização das 3 frentes).
 > Fonte da verdade continua sendo o [PLAN.md](PLAN.md); este arquivo resume onde estamos e o que falta para a **1.0.0**.
 
 ## 1. Resumo executivo
@@ -25,7 +25,7 @@
 - Cartas no fim de cada round (raridades), evolução da arma assinada T1→T2→T3, **15 armas secundárias** (6 novas: bumerangue de peixe, minas, anel de fogo, totem de raios, nuvem de veneno, besta), cartas on-hit (sangrar, veneno, queimar, gelar, eletrocutar), superpoder no level 5 (Espaço / △).
 - Obstáculos sólidos leves (rochas, caixotes, entulho) com desvio.
 - Poções com gambits estilo FFXII, gore persistente (3 modos), escuridão com luzes estilo Diablo 4, bloom, hit-stop, zoom-punch, tremor.
-- Falas dos heróis com **legendas** (7 eventos × 2 variações) — ainda **sem áudio de voz**.
+- Falas dos heróis **gravadas** com legendas (7 eventos × 2 variações, EN e PT-BR).
 
 **Meta-progressão**
 - Level persistente e pontos de stat, **Oficina** (9 upgrades permanentes com Fish), **Loja de Extras** (10 bônus permanentes com pontos de conquista, nível 1–10), 131 conquistas, histórico das últimas 20 partidas, **Continuar** a run salva, export/import do save.
@@ -34,7 +34,7 @@
 
 **Arte já no jogo (PixelLab)**: key art do menu, retratos, badge de conquista, as 10 armas, pickups (XP/peixe/carne), projéteis, heróis sem arma (Bob com idle animado, Jack/Lucia em rotações estáticas) e 6 zumbis + urso polar em 8 direções (estáticos). **Todo o resto ainda é placeholder desenhado por código** (tiles, inimigos dos biomas 2–3, bosses 2–3, ícones, molduras, VFX).
 
-**Áudio**: 18 SFX + 3 músicas (menu/round/boss) do ElevenLabs. Faltam vozes, variações de SFX e música do round tardio.
+**Áudio (completo)**: 18 SFX + 9 variações extras em rotação, 4 músicas (menu/round/boss/**round tardio** a partir do 21) e **84 falas gravadas** (EN + PT-BR, 1 voz desenhada por herói) sincronizadas com as legendas. Créditos ElevenLabs usados: ~3,9 mil de 35 mil.
 
 ## 3. As 3 frentes de trabalho
 
@@ -44,7 +44,7 @@
 **Falta (meu lado)**
 | Item | Esforço |
 |---|---|
-| **Áudio final (7.2)**: vozes EN + PT-BR dos 3 heróis (42 falas × 2 idiomas, roteiro já pronto em `src/i18n/voice.*.ts`), variações de SFX, música do round tardio — ElevenLabs | ~2–4 h + créditos ElevenLabs (verificar saldo) |
+| ~~Áudio final (7.2)~~ — **concluído** (vozes, variações de SFX, música tardia) | — |
 | QA 1.9: run real com Jack até o boss 10 sem erros (o bot automático é afetado por concorrência de GPU — ver §6) | ~1 h |
 | Carregamento sob demanda dos atlas por bioma (junto com a frente de assets) | ~1 h |
 | Revisão final de docs, créditos (PixelLab, ElevenLabs), build publicável itch.io (gore reduzido para portais) | ~2 h |
@@ -69,7 +69,7 @@ _Situação detalhada e estimativa: ver §3.2.1 (resposta do agente)._
 
 - **Meta "level 10–20 com build razoável chega ao round 30": ainda NÃO atingida de forma consistente.** Gargalos: bosses (a arma mira o inimigo mais próximo, então o boss quase não apanha; o Kraken do round 20 mata muito) e variância das cartas.
 - **Falta**: ajustar os bosses 20/30 e o `bossHpPerCycle`, reforçar Bob/Lucia no bioma 2, rodar mais seeds (2–3 por herói × nível), atualizar `balancing.md` e marcar o PLAN.
-- **Pedidos para sistemas (linha principal)**: arma assinada priorizar boss/elite no alcance; cura parcial no fim do round (opcional).
+- **Pedidos para sistemas — já entregues no dev (1234974)**: arma prioriza boss/elite no alcance, cura de 25% do HP no fim do round e gancho de velocidade por volta do endless. 2ª passada já no main (ciclo ×1,12 HP / ×1,08 dano, boss ×1,35 por ciclo, Kraken 3.000 HP, Abominação 3.500 HP, tinta 35%, volta do endless HP ×1,6 / dano ×1,5, metade do spawn em rounds de boss). **Próximo lote do bot rodando** com esses ganchos.
 - **Estimativa**: ~2–3 h de agente (cada lote do bot leva 40–60 min de relógio). Risco: variância alta com poucas seeds.
 - **FPS**: a frente roda até 4 Chromes headless do bot em paralelo — isso **explica as quedas de FPS** nos meus testes. Combinado: no máximo 2 por vez.
 
@@ -97,7 +97,7 @@ _Situação detalhada e estimativa: ver §3.2.1 (resposta do agente)._
 ## 4. O que falta para a 1.0.0 (checklist consolidado)
 
 1. **Arte final** (frente de assets) — heróis animados, inimigos/bosses dos 3 biomas, tiles/decos, ícones, UI, VFX dos superpoderes; lazy-load por bioma.
-2. **Áudio final** (linha principal) — vozes EN/PT-BR, SFX extras, música do round tardio.
+2. ~~Áudio final~~ — **concluído**.
 3. **Balanceamento até o round 30** (frente de balance) — com os números novos (biomas 2–3, bosses, secundárias, dificuldade, Oficina/Extras), meta §9 do balancing e playtests reais.
 4. **QA final** — run completa até o round 30 nos 3 heróis e 3 dificuldades; QA visual a 2560×1080 e no Mac M1; cross-browser de novo com a arte final.
 5. **Release** — docs e créditos, build itch.io, `1.0.0-rc.1` (congelamento, só correções) → `1.0.0`.
@@ -108,7 +108,7 @@ _Situação detalhada e estimativa: ver §3.2.1 (resposta do agente)._
 |---|---|---|
 | Arte bioma 1 + heróis + tiles + UI | ~1 dia | throughput PixelLab (10 slots, jobs de 2–15 min) |
 | Arte biomas 2–3 | +1–2 dias | modelo v3 estável (ou modo pro, mais caro) |
-| Áudio final | ~meio dia | créditos ElevenLabs |
+| Áudio final | **concluído** | — |
 | Balance até o round 30 | ~2–3 h de agente + ajustes de sistema (mira no boss) | arte não bloqueia; roda em paralelo |
 | RC + QA + release | ~meio dia | tudo acima |
 | **Total até 1.0.0** | **~2–4 dias** | |

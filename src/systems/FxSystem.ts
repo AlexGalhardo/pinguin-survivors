@@ -133,7 +133,8 @@ export class FxSystem {
 			const text = this.scene.add
 				.text(0, 0, '', {
 					fontFamily: UI_FONT,
-					fontSize: '10px',
+					fontSize: '13px',
+					fontStyle: 'bold',
 					stroke: toCss(PALETTE.night),
 					strokeThickness: 2,
 				})
@@ -148,7 +149,7 @@ export class FxSystem {
 			.setText(String(Math.round(amount)))
 			.setPosition(s.x + (Math.random() - 0.5) * 10, s.y)
 			.setColor(toCss(color ?? (crit ? PALETTE.crit : PALETTE.textLight)))
-			.setFontSize(Math.round((crit ? 14 : 10) * NUMBER_SCALE[this.settings.numberSize]))
+			.setFontSize(Math.round((crit ? 18 : 13) * NUMBER_SCALE[this.settings.numberSize]))
 			.setAlpha(1)
 			.setVisible(true);
 	}
@@ -157,7 +158,7 @@ export class FxSystem {
 	label(x: number, y: number, kind: 'dodge' | 'parry' | 'block'): void {
 		this.damage(x, y, 0, false, kind === 'parry' ? PALETTE.crit : PALETTE.textDim);
 		const n = this.numbers.find((f) => f.life === NUMBER_LIFE);
-		n?.text.setText(t(`fx.${kind}`)).setFontSize(10);
+		n?.text.setText(t(`fx.${kind}`)).setFontSize(13);
 	}
 
 	/** Big floating message over the hero (level up, unlocks). */
@@ -166,7 +167,7 @@ export class FxSystem {
 		const n = this.numbers.find((f) => f.life === NUMBER_LIFE);
 		if (!n) return;
 		n.life = NUMBER_LIFE * 2.5;
-		n.text.setText(t(key)).setFontSize(14);
+		n.text.setText(t(key)).setFontSize(18);
 	}
 
 	/** A puddle baked into the ground (stays for the whole run). */

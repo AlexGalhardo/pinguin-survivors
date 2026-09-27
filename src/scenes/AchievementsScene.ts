@@ -89,6 +89,8 @@ export class AchievementsScene extends Phaser.Scene {
 		kb?.on('keydown-PAGE_DOWN', () => scrollBy(ROW_H * 8));
 		kb?.on('keydown-PAGE_UP', () => scrollBy(-ROW_H * 8));
 		kb?.on('keydown-ESC', () => this.scene.start('MainMenu'));
+		// Backspace too: in fullscreen the browser takes Esc to leave fullscreen.
+		kb?.on('keydown-BACKSPACE', () => this.scene.start('MainMenu'));
 		kb?.on('keydown-ENTER', () => this.scene.start('Extras'));
 		shop.setInteractive({ useHandCursor: true }).on('pointerdown', () =>
 			this.scene.start('Extras'),

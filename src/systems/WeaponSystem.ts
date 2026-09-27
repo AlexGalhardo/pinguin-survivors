@@ -10,7 +10,8 @@ import type { PlayerStats } from '../logic/stats';
 import type { ProjectilePool } from './ProjectilePool';
 
 /** Melee aims at enemies a bit beyond the blade so the hero swings as they close in. */
-const MELEE_AIM_FACTOR = 1.6;
+/** Melee only swings at targets it can reach (a wider aim wasted swings on far enemies). */
+const MELEE_AIM_FACTOR = 1;
 const ELEMENTS: readonly Element[] = ['fire', 'ice', 'earth', 'energy'];
 export const ELEMENT_TINT: Record<Element, number> = {
 	fire: PALETTE.elFire,

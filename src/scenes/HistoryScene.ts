@@ -44,6 +44,8 @@ export class HistoryScene extends Phaser.Scene {
 				];
 		const kb = this.input.keyboard;
 		kb?.on('keydown-ESC', () => this.scene.start('MainMenu'));
+		// Backspace too: in fullscreen the browser takes Esc to leave fullscreen.
+		kb?.on('keydown-BACKSPACE', () => this.scene.start('MainMenu'));
 		kb?.on('keydown-ENTER', () => this.scene.start('MainMenu'));
 		setupScreen(this, t('history.title'), (_view, cx) => {
 			rows.forEach((row, i) => {

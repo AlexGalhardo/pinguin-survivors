@@ -97,6 +97,8 @@ ${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 		kb?.on('keydown-ENTER', () => this.start());
 		kb?.on('keydown-SPACE', () => this.start());
 		kb?.on('keydown-ESC', () => this.scene.start('MainMenu'));
+		// Backspace too: in fullscreen the browser takes Esc to leave fullscreen.
+		kb?.on('keydown-BACKSPACE', () => this.scene.start('MainMenu'));
 		setupScreen(this, t('select.title'), (view, cx) => {
 			const cy = Math.round(view.height / 2);
 			cards.forEach((c, i) => {

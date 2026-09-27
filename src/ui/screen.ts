@@ -2,12 +2,13 @@ import type Phaser from 'phaser';
 import { PALETTE, toCss } from '../config/palette';
 import { trackZoom } from '../core/viewport';
 import type { ViewSize } from '../logic/viewport';
-import { UI_FONT } from './font';
+import { menuPx, TITLE_FONT, UI_FONT, UI_WEIGHT } from './font';
 import { addVersionFooter } from './version-footer';
 
 export const text = (size: number, color: number = PALETTE.textLight, wrap?: number) => ({
 	fontFamily: UI_FONT,
-	fontSize: `${size}px`,
+	fontSize: `${menuPx(size)}px`,
+	fontStyle: UI_WEIGHT,
 	color: toCss(color),
 	align: 'center',
 	wordWrap: wrap ? { width: wrap } : undefined,
@@ -27,7 +28,14 @@ export function setupScreen(
 ): Phaser.GameObjects.Text {
 	const cam = scene.cameras.main;
 	cam.setBackgroundColor(PALETTE.night);
-	const heading = scene.add.text(0, 0, title, text(20, PALETTE.crit)).setOrigin(0.5, 0);
+	const heading = scene.add
+		.text(0, 0, title, {
+			...text(20, PALETTE.crit),
+			fontFamily: TITLE_FONT,
+			fontSize: '28px',
+			fontStyle: 'bold',
+		})
+		.setOrigin(0.5, 0);
 	const footer = addVersionFooter(scene);
 	trackZoom(scene, cam, (view) => {
 		cam.centerOn(view.width / 2, view.height / 2);

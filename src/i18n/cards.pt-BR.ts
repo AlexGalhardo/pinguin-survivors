@@ -42,7 +42,7 @@ export const cardsPtBR: Record<keyof typeof cardsEn, string> = {
 	'card.chillChance.name': 'Queimadura de Gelo',
 	'card.chillChance.desc': '+{v} de chance de gelar e congelar zumbis',
 	'card.shockChance.name': 'Carga Estática',
-	'card.shockChance.desc': '+{v} de chance de o golpe soltar um raio em corrente',
+	'card.shockChance.desc': '+{v} de chance de soltar um raio em corrente',
 	'card.bleedChance.name': 'Lâmina Serrilhada',
 	'card.bleedChance.desc': '+{v} de chance de causar sangramento',
 	'card.poisonChance.name': 'Revestimento Tóxico',

@@ -159,7 +159,7 @@ export class HeroScene extends Phaser.Scene {
 			const colR = Math.round(cx + view.width * 0.22);
 			portrait.setPosition(colL, 110);
 			info.setPosition(colL, 162);
-			left.layout(colL, 196);
+			left.layout(colL, 214);
 			potionTitle.setPosition(colR, 70);
 			right.layout(colR, 94);
 			hint.setPosition(cx, view.height - 30);

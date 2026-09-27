@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
-import { UI_FONT } from './font';
+import { menuPx, UI_FONT } from './font';
 
 export interface MenuItem {
 	/** Label is re-read on every refresh so values (volume, language…) stay current. */
@@ -37,13 +37,16 @@ export class MenuList {
 		private readonly items: MenuItem[],
 		opts: MenuOptions,
 	) {
-		const size = opts.fontSize ?? 14;
-		this.spacing = opts.spacing ?? size + 8;
+		const size = menuPx(opts.fontSize ?? 14);
+		this.spacing = Math.max(opts.spacing ?? 0, size + 10);
 		items.forEach((item, i) => {
 			const text = scene.add
 				.text(0, 0, '', {
 					fontFamily: UI_FONT,
 					fontSize: `${size}px`,
+					fontStyle: 'bold',
+					stroke: toCss(PALETTE.night),
+					strokeThickness: 3,
 					color: toCss(PALETTE.textLight),
 				})
 				.setOrigin(opts.align === 'left' ? 0 : 0.5, 0)

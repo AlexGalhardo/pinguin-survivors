@@ -7,8 +7,8 @@ import { t } from '../i18n';
 import { achievementName } from './achievement-text';
 import { UI_FONT } from './font';
 
-const WIDTH = 220;
-const HEIGHT = 40;
+const WIDTH = 300;
+const HEIGHT = 56;
 /** Below the round timer and boss bar, still top-centered (P-44). */
 const TOP = 62;
 const HOLD_MS = 2800;
@@ -31,24 +31,27 @@ export class AchievementToast {
 		const badge = scene.add.image(-WIDTH / 2 + 20, 0, KEYS.achievementBadge);
 		// Integer ratios only (64 px art → 0.5), fractional scaling smears pixel art.
 		badge.setScale(32 / Math.max(badge.width, badge.height));
+		badge.setX(-WIDTH / 2 + 24);
 		const title = scene.add
-			.text(-WIDTH / 2 + 40, -14, t('ach.unlocked'), {
+			.text(-WIDTH / 2 + 44, -20, t('ach.unlocked'), {
 				fontFamily: UI_FONT,
-				fontSize: '8px',
+				fontSize: '11px',
+				fontStyle: 'bold',
 				color: toCss(PALETTE.crit),
 			})
 			.setOrigin(0, 0);
 		this.name = scene.add
-			.text(-WIDTH / 2 + 40, -4, '', {
+			.text(-WIDTH / 2 + 44, -6, '', {
 				fontFamily: UI_FONT,
-				fontSize: '12px',
+				fontSize: '16px',
+				fontStyle: 'bold',
 				color: toCss(PALETTE.textLight),
 			})
 			.setOrigin(0, 0);
 		const point = scene.add
-			.text(WIDTH / 2 - 6, 11, t('ach.point'), {
+			.text(WIDTH / 2 - 8, 16, t('ach.point'), {
 				fontFamily: UI_FONT,
-				fontSize: '8px',
+				fontSize: '11px',
 				color: toCss(PALETTE.textDim),
 			})
 			.setOrigin(1, 0.5);

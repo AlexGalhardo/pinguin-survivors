@@ -16,7 +16,7 @@ export function addVersionFooter(scene: Phaser.Scene): { layout: (view: ViewSize
 	const text = scene.add
 		.text(0, 0, buildLabel(__APP_VERSION__, import.meta.env.DEV, __BUILD_NAME__), {
 			fontFamily: UI_FONT,
-			fontSize: '8px',
+			fontSize: '10px',
 			color: toCss(PALETTE.textDim),
 			stroke: toCss(PALETTE.night),
 			strokeThickness: 2,

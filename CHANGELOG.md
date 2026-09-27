@@ -7,7 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The hero no longer keeps walking after picking a card (keys released while the game was paused stayed pressed).
+- "Play again" after a game over no longer crashes the new run.
+- The game over screen now has a real menu (play again / main menu), since Esc is taken by the browser in fullscreen; Backspace also leaves the other menus.
+- The main menu no longer blinks (removed the lava glow pulse).
+
 ### Changed
+
+- New Brotato-style HUD: big HP and XP bars with the numbers inside, fish counter with an icon, large round and timer, a permanent TAB speed hint (top right) and an FPS counter (bottom left).
+- Bigger, redesigned upgrade cards with a rarity band, bold names and readable descriptions.
+- Readable text everywhere: a clean UI font rendered at the real screen resolution, bigger menu text, pixel font kept for titles.
+- Jack's melee reaches about 40% farther with wider arcs, and swings only at enemies in reach.
+- Smaller, flatter contact shadow under the hero.
 
 - The signature weapon now aims at bosses and elites in range before the rest of the horde.
 - The hero recovers 25% of max HP at the end of every round.

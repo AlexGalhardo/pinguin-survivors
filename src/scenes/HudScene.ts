@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
 import { getParams, getSave } from '../core/context';
 import { GameEvents } from '../core/events';
@@ -13,13 +14,18 @@ import { worldToScreen } from '../logic/iso';
 import { xpToNext } from '../logic/progression';
 import { eliteTiers, isBossRound } from '../logic/round';
 import { AchievementToast } from '../ui/AchievementToast';
-import { UI_FONT } from '../ui/font';
+import { TITLE_FONT, UI_FONT, UI_WEIGHT } from '../ui/font';
 import { addVersionFooter } from '../ui/version-footer';
 import { type Light, Lighting } from '../world/Lighting';
 import type { GameScene } from './GameScene';
 
-const HP_W = 120;
-const BOSS_W = 260;
+/** Brotato-style HUD: big bars with the numbers inside, readable counters. */
+const BAR_W = 190;
+const HP_H = 20;
+const XP_H = 12;
+const PAD = 10;
+const BOSS_W = 340;
+const SUPER_W = 220;
 
 export class HudScene extends Phaser.Scene {
 	private debugText?: Phaser.GameObjects.Text;
@@ -40,6 +46,7 @@ export class HudScene extends Phaser.Scene {
 	private buildText!: Phaser.GameObjects.Text;
 	private potionText!: Phaser.GameObjects.Text;
 	private eliteText!: Phaser.GameObjects.Text;
+	private fpsText!: Phaser.GameObjects.Text;
 	private boss!: Phaser.GameObjects.Container;
 	private bossFill!: Phaser.GameObjects.Rectangle;
 	private bossName!: Phaser.GameObjects.Text;
@@ -49,49 +56,80 @@ export class HudScene extends Phaser.Scene {
 	}
 
 	create(): void {
-		const text = (size: number, color: number = PALETTE.textLight) => ({
+		const text = (size: number, color: number = PALETTE.textLight, bold = false) => ({
 			fontFamily: UI_FONT,
 			fontSize: `${size}px`,
+			fontStyle: bold ? 'bold' : UI_WEIGHT,
 			color: toCss(color),
 			stroke: toCss(PALETTE.night),
-			strokeThickness: 2,
+			strokeThickness: 3,
 		});
-		this.add.rectangle(8, 8, HP_W, 8, PALETTE.night, 0.8).setOrigin(0, 0);
-		this.hpFill = this.add.rectangle(9, 9, HP_W - 2, 6, PALETTE.blood).setOrigin(0, 0);
-		this.hpText = this.add.text(8, 18, '', text(8)).setOrigin(0, 0);
-		this.add.rectangle(8, 29, HP_W, 4, PALETTE.night, 0.8).setOrigin(0, 0);
-		this.xpFill = this.add.rectangle(9, 30, 0, 2, 0x5fe0ff).setOrigin(0, 0);
-		this.levelText = this.add.text(HP_W + 12, 6, '', text(10, PALETTE.crit)).setOrigin(0, 0);
-		this.killsText = this.add.text(8, 36, '', text(8, PALETTE.textDim)).setOrigin(0, 0);
-		this.fishText = this.add.text(8, 46, '', text(8, PALETTE.fish)).setOrigin(0, 0);
-		this.roundText = this.add.text(0, 4, '', text(12)).setOrigin(0.5, 0);
-		this.timerText = this.add.text(0, 18, '', text(16)).setOrigin(0.5, 0);
-		this.speedText = this.add.text(0, 4, '', text(16, PALETTE.crit)).setOrigin(1, 0);
+		/** Framed bar: dark border + background, fill anchored left, label centered inside. */
+		const bar = (x: number, y: number, w: number, h: number, color: number) => {
+			this.add.rectangle(x - 2, y - 2, w + 4, h + 4, PALETTE.night, 0.9).setOrigin(0, 0);
+			this.add.rectangle(x, y, w, h, 0x2a2f3a, 1).setOrigin(0, 0);
+			return this.add.rectangle(x, y, w, h, color).setOrigin(0, 0);
+		};
+		this.hpFill = bar(PAD, PAD, BAR_W, HP_H, PALETTE.blood);
+		this.hpText = this.add
+			.text(PAD + BAR_W / 2, PAD + HP_H / 2, '', text(14, PALETTE.textLight, true))
+			.setOrigin(0.5);
+		const xpY = PAD + HP_H + 6;
+		this.xpFill = bar(PAD, xpY, BAR_W, XP_H, PALETTE.xp);
+		this.levelText = this.add
+			.text(PAD + BAR_W / 2, xpY + XP_H / 2, '', text(11, PALETTE.textLight, true))
+			.setOrigin(0.5);
+		const fishY = xpY + XP_H + 8;
+		this.add.image(PAD + 8, fishY + 9, KEYS.pickup('fish')).setScale(1.6);
+		this.fishText = this.add.text(PAD + 22, fishY, '', text(16, PALETTE.fish, true));
+		this.killsText = this.add.text(PAD, fishY + 22, '', text(12, PALETTE.textDim));
+		this.roundText = this.add
+			.text(0, 6, '', text(16, PALETTE.textLight, true))
+			.setOrigin(0.5, 0);
+		this.timerText = this.add
+			.text(0, 24, '', { ...text(28, PALETTE.textLight, true), fontFamily: TITLE_FONT })
+			.setOrigin(0.5, 0);
+		this.speedText = this.add.text(0, PAD, '', text(13, PALETTE.crit, true)).setOrigin(1, 0);
 
-		const bossBg = this.add.rectangle(0, 0, BOSS_W, 8, PALETTE.night, 0.85).setOrigin(0.5, 0);
+		const bossBg = this.add
+			.rectangle(0, 0, BOSS_W + 4, 16, PALETTE.night, 0.9)
+			.setOrigin(0.5, 0);
 		this.bossFill = this.add
-			.rectangle(-BOSS_W / 2 + 1, 1, BOSS_W - 2, 6, PALETTE.auraOrange)
+			.rectangle(-BOSS_W / 2, 2, BOSS_W, 12, PALETTE.auraOrange)
 			.setOrigin(0, 0);
-		this.bossName = this.add.text(0, 9, '', text(8, PALETTE.auraOrange)).setOrigin(0.5, 0);
+		this.bossName = this.add
+			.text(0, 18, '', text(12, PALETTE.auraOrange, true))
+			.setOrigin(0.5, 0);
 		this.boss = this.add
-			.container(0, 40, [bossBg, this.bossFill, this.bossName])
+			.container(0, 62, [bossBg, this.bossFill, this.bossName])
 			.setVisible(false);
 
-		const superBg = this.add.rectangle(0, 0, 120, 6, PALETTE.night, 0.85).setOrigin(0.5, 0);
-		this.superFill = this.add.rectangle(-59, 1, 0, 4, PALETTE.blood).setOrigin(0, 0);
-		this.superText = this.add.text(0, -12, '', text(8, PALETTE.textLight)).setOrigin(0.5, 0);
+		const superBg = this.add
+			.rectangle(0, 0, SUPER_W + 4, 12, PALETTE.night, 0.9)
+			.setOrigin(0.5, 0);
+		this.superFill = this.add.rectangle(-SUPER_W / 2, 2, 0, 8, PALETTE.blood).setOrigin(0, 0);
+		this.superText = this.add
+			.text(0, -18, '', text(13, PALETTE.textLight, true))
+			.setOrigin(0.5, 0);
 		this.superBox = this.add
 			.container(0, 0, [superBg, this.superFill, this.superText])
 			.setVisible(false);
-		this.buildText = this.add.text(8, 0, '', text(8, PALETTE.textDim)).setOrigin(0, 1);
+		this.buildText = this.add
+			.text(PAD, 0, '', text(12, PALETTE.textDim))
+			.setOrigin(0, 1)
+			.setLineSpacing(2);
 		this.potionText = this.add
-			.text(0, 0, '', text(8, PALETTE.dotPoison))
+			.text(0, 0, '', text(12, PALETTE.dotPoison))
 			.setOrigin(1, 1)
 			.setAlign('right');
-		this.eliteText = this.add.text(0, 40, '', text(10, PALETTE.auraPurple)).setOrigin(0.5, 0);
+		this.eliteText = this.add
+			.text(0, 30, '', text(13, PALETTE.auraPurple, true))
+			.setOrigin(1, 0);
+		// Always on (user request): FPS for performance checks while playing.
+		this.fpsText = this.add.text(PAD, 0, '', text(12, PALETTE.textDim, true)).setOrigin(0, 1);
 
 		if (getParams(this).debug) {
-			this.debugText = this.add.text(8, 58, '', text(8, PALETTE.textDim));
+			this.debugText = this.add.text(PAD, 110, '', text(11, PALETTE.textDim));
 		}
 
 		this.lighting = new Lighting(this, 0.62);
@@ -100,7 +138,7 @@ export class HudScene extends Phaser.Scene {
 		const onUnlock = (defs: AchievementDef[]) => toast.show(defs);
 		this.game.events.on(GameEvents.AchievementsUnlocked, onUnlock);
 		const subtitle = this.add
-			.text(0, 0, '', { ...text(10, PALETTE.textLight), align: 'center' })
+			.text(0, 0, '', { ...text(15, PALETTE.textLight, true), align: 'center' })
 			.setOrigin(0.5, 1)
 			.setVisible(false);
 		let subtitleTimer: Phaser.Time.TimerEvent | null = null;
@@ -128,12 +166,13 @@ export class HudScene extends Phaser.Scene {
 			this.roundText.setX(cx);
 			this.timerText.setX(cx);
 			this.boss.setX(cx);
-			this.speedText.setX(view.width - 8);
-			this.superBox.setPosition(cx, view.height - 24);
-			subtitle.setPosition(cx, view.height - 46);
-			this.buildText.setY(view.height - 8);
-			this.potionText.setPosition(view.width - 8, view.height - 8);
-			this.eliteText.setX(cx);
+			this.speedText.setX(view.width - PAD);
+			this.eliteText.setX(view.width - PAD);
+			this.superBox.setPosition(cx, view.height - 30);
+			subtitle.setPosition(cx, view.height - 62);
+			this.fpsText.setY(view.height - 6);
+			this.buildText.setY(view.height - 24);
+			this.potionText.setPosition(view.width - PAD, view.height - 20);
 			footer.layout(view);
 			this.lighting.resize(view.width, view.height);
 			toast.layout(view.width);
@@ -145,14 +184,14 @@ export class HudScene extends Phaser.Scene {
 		const run = game.run;
 		if (!run) return;
 		this.drawLights(game);
-		this.hpFill.width = Math.max(0, (HP_W - 2) * (run.hp / run.maxHp));
-		this.hpText.setText(t('hud.hp', { hp: Math.ceil(run.hp), max: run.maxHp }));
+		this.hpFill.width = Math.max(0, BAR_W * (run.hp / run.maxHp));
+		this.hpText.setText(t('hud.hpBar', { hp: Math.ceil(run.hp), max: Math.round(run.maxHp) }));
 		this.killsText.setText(t('hud.kills', { n: run.kills }));
-		this.fishText.setText(t('hud.fish', { n: run.fish }));
+		this.fishText.setText(String(run.fish));
 		this.levelText.setText(t('hud.level', { n: game.level.level }));
 		this.xpFill.width = Math.max(
 			0,
-			(HP_W - 2) * Math.min(1, game.level.xp / xpToNext(game.level.level)),
+			BAR_W * Math.min(1, game.level.xp / xpToNext(game.level.level)),
 		);
 		this.roundText.setText(t('hud.round', { n: run.round }));
 		this.timerText
@@ -166,7 +205,7 @@ export class HudScene extends Phaser.Scene {
 		if (game.superIsUnlocked) {
 			const charge = Math.min(run.superCharge, SUPER.charge);
 			const ready = charge >= SUPER.charge;
-			this.superFill.width = 118 * (charge / SUPER.charge);
+			this.superFill.width = SUPER_W * (charge / SUPER.charge);
 			this.superFill.fillColor = ready ? PALETTE.crit : PALETTE.blood;
 			this.superText.setText(ready ? t('hud.superReady') : t('hud.super', { n: charge }));
 			this.superText.setAlpha(ready ? 0.6 + 0.4 * Math.sin(this.time.now / 120) : 1);
@@ -196,10 +235,14 @@ export class HudScene extends Phaser.Scene {
 		const boss = game.enemies.boss;
 		this.boss.setVisible(boss !== null);
 		if (boss) {
-			this.bossFill.width = Math.max(0, (BOSS_W - 2) * (boss.hp / boss.maxHp));
+			this.bossFill.width = Math.max(0, BOSS_W * (boss.hp / boss.maxHp));
 			this.bossName.setText(t(`boss.${boss.def.id}` as I18nKey));
 		}
-		this.speedText.setText(game.speed > 1 ? t('hud.speed', { n: game.speed }) : '');
+		// Always visible so players discover TAB (user request).
+		this.speedText.setText(
+			t(game.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: game.speed }),
+		);
+		this.fpsText.setText(t('hud.fps', { n: Math.round(this.game.loop.actualFps) }));
 		this.debugText?.setText(
 			t('debug.stats', {
 				fps: Math.round(this.game.loop.actualFps),

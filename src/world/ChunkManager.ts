@@ -131,8 +131,19 @@ export class ChunkManager {
 		});
 	}
 
+	/**
+	 * Frees the ground surfaces. Their DynamicTextures live in the global texture manager, so a
+	 * new run ("play again") would otherwise crash re-creating `chunk.surface.0`.
+	 */
 	destroy(): void {
 		for (const [key, chunk] of this.active) this.release(key, chunk);
+		for (const s of this.surfaces) {
+			const key = s.texture.key;
+			s.image.destroy();
+			this.scene.textures.remove(key);
+		}
+		this.surfaces.length = 0;
+		this.surfaceCount = 0;
 	}
 
 	private build(c: ChunkCoord): ActiveChunk {

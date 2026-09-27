@@ -35,7 +35,12 @@ export class Hero {
 		private tier: 1 | 2 | 3,
 		private readonly stats: { moveSpeed: number },
 	) {
-		this.shadow = scene.add.image(0, 0, KEYS.shadow).setOrigin(0.5, 0.5).setScale(1.3, 1.2);
+		// Small flat contact shadow right under the feet: a big round one read as "floating".
+		this.shadow = scene.add
+			.image(0, 0, KEYS.shadow)
+			.setOrigin(0.5, 0.5)
+			.setScale(0.9, 0.6)
+			.setAlpha(0.7);
 		this.sprite = scene.add.sprite(0, 0, KEYS.heroFacing(id, tier, 's')).setOrigin(0.5, 0.95);
 		this.loadAtlas();
 		this.sync();

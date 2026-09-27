@@ -44,11 +44,19 @@ export class GameInput {
 		kb.on('keyup', onUp);
 		const clear = () => this.held.clear();
 		scene.game.events.on(Phaser.Core.Events.BLUR, clear);
+		// A paused scene misses keyup events (card pick, pause menu): without this the key
+		// released meanwhile stays "held" and the hero keeps walking after resuming.
+		scene.events.on(Phaser.Scenes.Events.PAUSE, clear);
+		scene.events.on(Phaser.Scenes.Events.RESUME, clear);
+		scene.events.on(Phaser.Scenes.Events.WAKE, clear);
 		if (scene.sys.game.device.input.touch) this.installTouch(scene);
 		scene.events.once('shutdown', () => {
 			kb.off('keydown', onDown);
 			kb.off('keyup', onUp);
 			scene.game.events.off(Phaser.Core.Events.BLUR, clear);
+			scene.events.off(Phaser.Scenes.Events.PAUSE, clear);
+			scene.events.off(Phaser.Scenes.Events.RESUME, clear);
+			scene.events.off(Phaser.Scenes.Events.WAKE, clear);
 		});
 	}
 

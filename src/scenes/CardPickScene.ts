@@ -7,7 +7,7 @@ import { type I18nKey, t } from '../i18n';
 import type { Build } from '../logic/build';
 import type { CardOffer } from '../logic/cards';
 import { cardDescription, cardName } from '../ui/card-text';
-import { UI_FONT } from '../ui/font';
+import { TITLE_FONT, UI_FONT, UI_WEIGHT } from '../ui/font';
 
 export interface CardPickData {
 	round: number;
@@ -16,9 +16,11 @@ export interface CardPickData {
 	onPick: (index: number) => void;
 }
 
-const CARD_W = 132;
-const CARD_H = 176;
-const GAP = 14;
+const CARD_W = 200;
+const CARD_H = 270;
+const GAP = 24;
+/** Colored rarity band at the top of each card. */
+const BAND_H = 30;
 
 const RARITY_COLOR: Record<Rarity, number> = {
 	common: PALETTE.rarityCommon,
@@ -43,56 +45,92 @@ export class CardPickScene extends Phaser.Scene {
 		this.cards = [];
 		this.focus = 0;
 		this.picked = false;
-		const style = (size: number, color: number, wrap?: number) => ({
+		const style = (size: number, color: number, wrap?: number, bold = false) => ({
 			fontFamily: UI_FONT,
 			fontSize: `${size}px`,
+			fontStyle: bold ? 'bold' : UI_WEIGHT,
 			color: toCss(color),
 			align: 'center',
 			wordWrap: wrap ? { width: wrap } : undefined,
+			lineSpacing: 3,
+			stroke: toCss(PALETTE.night),
+			strokeThickness: bold ? 3 : 0,
 		});
-		const dim = this.add.rectangle(0, 0, 10, 10, PALETTE.night, 0.75).setOrigin(0, 0);
+		const dim = this.add.rectangle(0, 0, 10, 10, PALETTE.night, 0.8).setOrigin(0, 0);
 		const title = this.add
-			.text(0, 0, t('cards.title', { n: data.round }), style(16, PALETTE.textLight))
+			.text(0, 0, t('cards.title', { n: data.round }), {
+				...style(30, PALETTE.crit, undefined, true),
+				fontFamily: TITLE_FONT,
+			})
 			.setOrigin(0.5, 0);
 		const hint = this.add
-			.text(0, 0, t('cards.hint'), style(8, PALETTE.textDim))
+			.text(0, 0, t('cards.hint'), style(14, PALETTE.textDim))
 			.setOrigin(0.5, 0);
 
 		data.offers.forEach((offer, i) => {
 			const color = RARITY_COLOR[offer.rarity];
+			const top = -CARD_H / 2;
 			const bg = this.add
-				.rectangle(0, 0, CARD_W, CARD_H, 0x151a24, 0.96)
-				.setStrokeStyle(2, color)
+				.rectangle(0, 0, CARD_W, CARD_H, 0x141820, 0.98)
+				.setStrokeStyle(3, color)
 				.setInteractive({ useHandCursor: true });
-			const tag = this.add
-				.text(0, -CARD_H / 2 + 8, this.tagText(offer, data.build), style(8, color))
-				.setOrigin(0.5, 0);
+			const band = this.add
+				.rectangle(0, top + BAND_H / 2, CARD_W - 6, BAND_H - 3, color, 0.3)
+				.setOrigin(0.5);
+			const rarity = this.add
+				.text(
+					0,
+					top + BAND_H / 2,
+					t(`rarity.${offer.rarity}` as I18nKey).toUpperCase(),
+					style(14, color, undefined, true),
+				)
+				.setOrigin(0.5);
 			const name = this.add
 				.text(
 					0,
-					-CARD_H / 2 + 26,
+					top + BAND_H + 14,
 					cardName(offer.card),
-					style(12, PALETTE.textLight, CARD_W - 12),
+					style(20, PALETTE.textLight, CARD_W - 20, true),
 				)
 				.setOrigin(0.5, 0);
+			const divider = this.add
+				.rectangle(0, top + BAND_H + 14 + name.height + 10, CARD_W - 40, 2, color, 0.6)
+				.setOrigin(0.5);
 			const desc = this.add
 				.text(
 					0,
-					-6,
+					divider.y + 12,
 					cardDescription(offer.card, offer.rarity),
-					style(9, PALETTE.textDim, CARD_W - 16),
+					style(15, 0xd9dee8, CARD_W - 24),
 				)
 				.setOrigin(0.5, 0);
-			const rarity = this.add
-				.text(0, CARD_H / 2 - 16, t(`rarity.${offer.rarity}` as I18nKey), style(8, color))
+			const tag = this.add
+				.text(
+					0,
+					CARD_H / 2 - 42,
+					this.tagText(offer, data.build),
+					style(13, color, CARD_W - 20, true),
+				)
 				.setOrigin(0.5, 0);
-			const key = this.add.text(
-				-CARD_W / 2 + 6,
-				CARD_H / 2 - 16,
-				String(i + 1),
-				style(8, PALETTE.textDim),
-			);
-			const card = this.add.container(0, 0, [bg, tag, name, desc, rarity, key]);
+			const key = this.add
+				.text(
+					0,
+					CARD_H / 2 - 22,
+					`[ ${i + 1} ]`,
+					style(13, PALETTE.textDim, undefined, true),
+				)
+				.setOrigin(0.5, 0);
+			const card = this.add.container(0, 0, [
+				bg,
+				band,
+				rarity,
+				name,
+				divider,
+				desc,
+				tag,
+				key,
+			]);
+			card.setData('bg', bg).setData('color', color);
 			bg.on('pointerover', () => this.setFocus(i));
 			bg.on('pointerdown', () => this.pick(i, data));
 			this.cards.push(card);
@@ -115,8 +153,8 @@ export class CardPickScene extends Phaser.Scene {
 			const cx = view.width / 2;
 			const cy = view.height / 2;
 			this.centerY = Math.round(cy);
-			title.setPosition(Math.round(cx), Math.round(cy - CARD_H / 2 - 40));
-			hint.setPosition(Math.round(cx), Math.round(cy + CARD_H / 2 + 16));
+			title.setPosition(Math.round(cx), Math.round(cy - CARD_H / 2 - 56));
+			hint.setPosition(Math.round(cx), Math.round(cy + CARD_H / 2 + 22));
 			const total = this.cards.length * CARD_W + (this.cards.length - 1) * GAP;
 			for (const [i, c] of this.cards.entries())
 				c.setPosition(
@@ -149,8 +187,11 @@ export class CardPickScene extends Phaser.Scene {
 		if (n === 0) return;
 		this.focus = (i + n) % n;
 		this.cards.forEach((c, j) => {
-			c.setScale(j === this.focus ? 1.05 : 1);
-			c.y = this.centerY - (j === this.focus ? 6 : 0);
+			const on = j === this.focus;
+			c.setScale(on ? 1.06 : 1);
+			c.y = this.centerY - (on ? 8 : 0);
+			const bg = c.getData('bg') as Phaser.GameObjects.Rectangle;
+			bg.setStrokeStyle(on ? 5 : 3, on ? PALETTE.crit : (c.getData('color') as number));
 		});
 	}
 
