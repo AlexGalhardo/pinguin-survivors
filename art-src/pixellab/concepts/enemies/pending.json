@@ -1,0 +1,45 @@
+{
+	"note": "Created on PixelLab on 2026-09-27; download with getCharacter(character_id) in PLAN 7.2 (no new generation needed).",
+	"concepts": [
+		{
+			"id": "zombiePenguin-11",
+			"character_id": "eb775a03-3b89-40a0-8795-2dc52cfaddf0"
+		},
+		{
+			"id": "polarBear-11",
+			"character_id": "4caa325b-e9e8-444e-bcfb-8094414204c5"
+		},
+		{
+			"id": "zombieSeal-11",
+			"character_id": "10c28e4b-1df8-4aec-98fa-de855bb9141c"
+		},
+		{
+			"id": "bloaterPenguin-22",
+			"character_id": "89625324-3389-42d5-bda8-da1a5a490623"
+		},
+		{
+			"id": "polarBear-22",
+			"character_id": "df81b8ae-9fc1-4214-b616-3059283c0441"
+		},
+		{
+			"id": "zombieSkua-22",
+			"character_id": "5d6c5e76-92d5-4697-a08b-2f8b156074d7"
+		},
+		{
+			"id": "zombiePenguin-22",
+			"character_id": "35eaad7c-3a33-4c39-bf5a-fb047d22fc65"
+		},
+		{
+			"id": "bloaterPenguin-11",
+			"character_id": "199478b9-e973-462e-8316-2170525e0ede"
+		},
+		{
+			"id": "zombieSeal-22",
+			"character_id": "e887a514-ed7e-4013-b1c5-e65faf8f4d37"
+		},
+		{
+			"id": "zombieScientist-11",
+			"character_id": "4195da5b-4174-417b-830f-bcb6402957c7"
+		}
+	]
+}

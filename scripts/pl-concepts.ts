@@ -1,7 +1,7 @@
-// Generates the hero concept characters (8 rotations, no animation) for approval.
-// Usage: bun scripts/pl-concepts.ts [id ...]   (no args = all concepts)
-// Output: art-src/pixellab/concepts/<id>/<direction>.png + meta.json, and a contact
-// sheet at art-src/pixellab/concepts/sheet.png (4x nearest-neighbor, dark bg).
+// Generates concept characters (8 rotations, no animation) for the user's approval.
+// Usage: bun scripts/pl-concepts.ts [--set heroes|enemies] [id ...]   (no ids = whole set)
+// Output: art-src/pixellab/concepts[/<set>]/<id>/<direction>.png + meta.json and sheet.png
+// (heroes stay in the root folder for history).
 
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import sharp from 'sharp';
@@ -15,7 +15,11 @@ import {
 	waitJob,
 } from './lib/pixellab';
 
-const OUT = 'art-src/pixellab/concepts';
+const SET = (() => {
+	const i = process.argv.indexOf('--set');
+	return i >= 0 ? (process.argv[i + 1] ?? 'heroes') : 'heroes';
+})();
+const OUT = SET === 'heroes' ? 'art-src/pixellab/concepts' : `art-src/pixellab/concepts/${SET}`;
 
 const STYLE =
 	'cute but battle-worn, scars and bandages, dirty worn gear, zombie apocalypse survivor, ' +
@@ -27,6 +31,10 @@ interface Concept {
 	size: number;
 	seed?: number;
 	description: string;
+	/** Style suffix (heroes vs zombies). */
+	style?: string;
+	/** Skeleton template for later animation (`bear` for quadrupeds). */
+	template?: string;
 }
 
 const HEROES = {
@@ -41,11 +49,78 @@ const HEROES = {
 		'holding a crooked wooden staff topped with a glowing crystal with four small gems (red, green, cyan, yellow)',
 };
 
-const CONCEPTS: Concept[] = (Object.keys(HEROES) as (keyof typeof HEROES)[]).flatMap((hero) => [
-	{ id: `${hero}-v3-a`, model: 'v3', size: 96, seed: 101, description: HEROES[hero] },
-	{ id: `${hero}-v3-b`, model: 'v3', size: 96, seed: 202, description: HEROES[hero] },
-	{ id: `${hero}-pro`, model: 'pro', size: 96, seed: 303, description: HEROES[hero] },
-]);
+const ZOMBIE_STYLE =
+	'zombie apocalypse monster, pale greenish rotting skin or feathers, open red wounds, glowing green eyes, ' +
+	'dripping blood, isometric action RPG enemy like Diablo 2, readable silhouette, single color black outline';
+
+const ENEMIES: { id: string; size: number; template?: string; description: string }[] = [
+	{
+		id: 'zombiePenguin',
+		size: 64,
+		description:
+			'a zombie penguin shambling forward with torn flippers, one eye hanging, fast horde enemy',
+	},
+	{
+		id: 'zombieSkua',
+		size: 64,
+		template: 'bear',
+		description:
+			'a zombie skua seabird with rotten tattered wings spread, flying, bones showing',
+	},
+	{
+		id: 'zombieSeal',
+		size: 64,
+		template: 'bear',
+		description: 'a bloated zombie seal crawling on its belly, fat and rotten, big tank enemy',
+	},
+	{
+		id: 'zombieScientist',
+		size: 64,
+		description:
+			'a zombie polar research scientist in a torn orange parka and cracked goggles, green toxic drool, ranged spitter',
+	},
+	{
+		id: 'bloaterPenguin',
+		size: 64,
+		description:
+			'a swollen bloated zombie penguin full of glowing green toxic pus, about to explode',
+	},
+	{
+		id: 'zombieWalrus',
+		size: 64,
+		template: 'bear',
+		description: 'a huge zombie walrus with broken bloody tusks, charging, heavy brute enemy',
+	},
+	{
+		id: 'polarBear',
+		size: 160,
+		template: 'bear',
+		description:
+			'a giant zombie polar bear boss, fur matted with blood, ribs exposed, glowing green eyes, enormous claws, terrifying',
+	},
+];
+
+const HERO_CONCEPTS: Concept[] = (Object.keys(HEROES) as (keyof typeof HEROES)[]).flatMap(
+	(hero) => [
+		{ id: `${hero}-v3-a`, model: 'v3', size: 96, seed: 101, description: HEROES[hero] },
+		{ id: `${hero}-v3-b`, model: 'v3', size: 96, seed: 202, description: HEROES[hero] },
+		{ id: `${hero}-pro`, model: 'pro', size: 96, seed: 303, description: HEROES[hero] },
+	],
+);
+
+const ENEMY_CONCEPTS: Concept[] = ENEMIES.flatMap((e) =>
+	[11, 22].map((seed) => ({
+		id: `${e.id}-${seed}`,
+		model: 'v3' as const,
+		size: e.size,
+		seed,
+		description: e.description,
+		style: ZOMBIE_STYLE,
+		template: e.template,
+	})),
+);
+
+const CONCEPTS = SET === 'enemies' ? ENEMY_CONCEPTS : HERO_CONCEPTS;
 
 async function generate(c: Concept): Promise<void> {
 	const dir = `${OUT}/${c.id}`;
@@ -53,12 +128,12 @@ async function generate(c: Concept): Promise<void> {
 		console.log(`skip ${c.id} (exists)`);
 		return;
 	}
-	const description = `${c.description}. ${STYLE}`;
+	const description = `${c.description}. ${c.style ?? STYLE}`;
 	const common = {
 		description,
 		image_size: { width: c.size, height: c.size },
 		view: 'low top-down',
-		template_id: 'mannequin',
+		template_id: c.template ?? 'mannequin',
 		seed: c.seed,
 		no_background: true,
 	};
@@ -129,7 +204,7 @@ async function contactSheet(ids: string[]): Promise<void> {
 	console.log(`sheet: ${OUT}/sheet.png`);
 }
 
-const wanted = process.argv.slice(2);
+const wanted = process.argv.slice(2).filter((a, i, all) => a !== '--set' && all[i - 1] !== '--set');
 const list = wanted.length ? CONCEPTS.filter((c) => wanted.includes(c.id)) : CONCEPTS;
 const before = await getBalance();
 console.log(`generations left: ${before.subscription.generations}`);
