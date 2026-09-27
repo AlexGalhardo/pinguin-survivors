@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.7] - 2026-09-27
+
+Playtest build **playdev-6**.
+
 ### Added
 
 - Equipment: helmets, armor, legs, rings and amulets (10 of each: 3 common, 4 rare, 3 legendary) dropped by zombies (commons), elites (rares) and bosses (legendaries); they blink on the ground until you step on them.
@@ -179,7 +183,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.6...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.7...HEAD
+[0.1.0-beta.7]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.6...v0.1.0-beta.7
 [0.1.0-beta.6]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.5...v0.1.0-beta.6
 [0.1.0-beta.5]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.4...v0.1.0-beta.5
 [0.1.0-beta.4]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.3...v0.1.0-beta.4
