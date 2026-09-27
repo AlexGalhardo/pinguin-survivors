@@ -110,11 +110,12 @@ export class Hero {
 		this.play('death');
 	}
 
-	/** `move` is a unit world vector (or zero). */
-	update(dt: number, move: Vec2): void {
+	/** `move` is a unit world vector (or zero); `collide` pushes the hero out of obstacles. */
+	update(dt: number, move: Vec2, collide?: (hero: Hero) => void): void {
 		if (!this.dead) {
 			this.x += move.x * this.stats.moveSpeed * dt;
 			this.y += move.y * this.stats.moveSpeed * dt;
+			collide?.(this);
 		}
 		const moving = move.x !== 0 || move.y !== 0;
 		if (moving && !this.isPlaying('attack'))

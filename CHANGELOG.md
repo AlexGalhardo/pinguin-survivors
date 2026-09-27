@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blood and gibs now stay on the ground for the whole run, with blood spurts and hit-stop on big hits.
 - Polar night darkness with light around the hero, fire, explosions and elites.
 - 18 sound effects (weapons, gore, pickups, level up, boss roar, superpower, menus, game over).
+- Rocks, crates and rubble are now light solid obstacles: the hero and walking zombies slide around them.
 - Six new secondary weapons: fish boomerang, proximity mines, ring of fire, lightning totem, poison cloud and a piercing crossbow.
 - Three new on-hit cards: chance to burn, chill and chain lightning.
 - Two new biomes: the research station/harbor (rounds 11–20) and the ruined city (rounds 21–30), each with its own ground, props and 6–7 new zombies; the biomes loop in endless mode.

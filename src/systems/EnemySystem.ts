@@ -5,6 +5,7 @@ import { Enemy } from '../entities/Enemy';
 import { bossForRound } from '../logic/biome';
 import { AI, stepAi } from '../logic/enemy-ai';
 import type { Vec2 } from '../logic/iso';
+import { type ObstacleField, pushOut } from '../logic/obstacles';
 import type { Rng } from '../logic/rng';
 import { bossHpMul, dmgMul, hpMul, isBossRound, rollElite, spawnRate } from '../logic/round';
 import { SpatialGrid } from '../logic/spatial-grid';
@@ -33,6 +34,8 @@ export class EnemySystem {
 	private readonly scratch: Enemy[] = [];
 	private spawnBudget = 0;
 	boss: Enemy | null = null;
+	/** Solid decorations walkers slide around (flyers and bosses ignore them). */
+	obstacles: ObstacleField | null = null;
 	private readonly tick: Tick = { bleed: 0, poison: 0, burn: 0 };
 
 	constructor(
@@ -123,6 +126,8 @@ export class EnemySystem {
 			}
 			e.x += v.vx * slow * dt;
 			e.y += v.vy * slow * dt;
+			if (this.obstacles && e.def.behavior !== 'flyer' && e !== this.boss)
+				pushOut(e, e.radius, this.obstacles.near(e.x, e.y, e.radius));
 			// Screen-space x of the velocity decides the horizontal flip.
 			e.sync(dt, v.vx - v.vy < 0);
 		}

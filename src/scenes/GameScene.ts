@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { KEYS } from '../art/manifest';
+import { BIOMES, KEYS } from '../art/manifest';
 import type { GameSpeed, HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import { getParams, getRunHero, getSave, persist } from '../core/context';
@@ -27,6 +27,7 @@ import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
 import { inArc } from '../logic/geometry';
 import { inputToWorld, isoDepth, worldToScreen } from '../logic/iso';
+import { ObstacleField, pushOut } from '../logic/obstacles';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
 import { addXp, type LevelState, orbXp, roundEndFish } from '../logic/progression';
 import { Rng, randomSeed } from '../logic/rng';
@@ -107,6 +108,10 @@ export class GameScene extends Phaser.Scene {
 	/** Multiplies simulation dt, scene timers and tweens (TAB toggles 1x/2x). */
 	speed: GameSpeed = 1;
 	private keys!: MoveKeys;
+	private obstacles!: ObstacleField;
+	private readonly collideHero = (hero: Hero): void => {
+		pushOut(hero, HERO_RADIUS, this.obstacles.near(hero.x, hero.y, HERO_RADIUS));
+	};
 	private weapons!: WeaponSystem;
 	private weaponView!: WeaponView;
 	private secondaries!: SecondarySystem;
@@ -220,7 +225,9 @@ export class GameScene extends Phaser.Scene {
 		kb?.on('keydown-ESC', () => this.pause());
 		kb?.on('keydown-P', () => this.pause());
 
-		this.chunks = new ChunkManager(this, seed, biomeForRound(this.run.round));
+		const biome = biomeForRound(this.run.round);
+		this.chunks = new ChunkManager(this, seed, biome);
+		this.obstacles = new ObstacleField(seed, BIOMES[biome]);
 		this.fx = new FxSystem(this, save.settings, this.chunks);
 		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
 		this.hero = new Hero(this, heroId, tier, this.stats);
@@ -319,6 +326,7 @@ export class GameScene extends Phaser.Scene {
 		trackZoom(this, cam);
 		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
 		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);
+		this.enemies.obstacles = this.obstacles;
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
 
@@ -352,7 +360,7 @@ export class GameScene extends Phaser.Scene {
 		}
 		this.moving = ix !== 0 || iy !== 0;
 		const move = inputToWorld(ix, iy);
-		this.hero.update(dt, move);
+		this.hero.update(dt, move, this.collideHero);
 		if (this.moving) this.weaponView.face(Math.atan2(move.y, move.x));
 		this.weaponView.update(dt, this.hero.x, this.hero.y);
 		healHero(run, this.stats.regen * dt);
@@ -868,6 +876,7 @@ export class GameScene extends Phaser.Scene {
 	private enterBiome(): void {
 		const biome = biomeForRound(this.run.round);
 		this.chunks.setBiome(biome);
+		this.obstacles.setLayout(BIOMES[biome]);
 		this.fx.banner(this.hero.x, this.hero.y, `biome.${biome}` as I18nKey);
 	}
 
