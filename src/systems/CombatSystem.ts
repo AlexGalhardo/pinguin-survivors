@@ -1,0 +1,191 @@
+import { PALETTE } from '../config/palette';
+import { COMBAT, STATUS } from '../data/combat';
+import type { Enemy } from '../entities/Enemy';
+import type { Hero } from '../entities/Hero';
+import { type Element, resolveIncoming } from '../logic/combat';
+import type { Rng } from '../logic/rng';
+import { countRun, damageHero, healHero, type RunState } from '../logic/run-state';
+import type { PlayerStats } from '../logic/stats';
+import {
+	applyBleed,
+	applyBurn,
+	applyEarth,
+	applyIce,
+	applyPoison,
+	shredFactor,
+	type Tick,
+} from '../logic/status';
+import type { EnemySystem } from './EnemySystem';
+import type { FxSystem } from './FxSystem';
+
+export const HERO_RADIUS = 12;
+
+export interface HitOptions {
+	element?: Element;
+	/** Extra bleed chance of the weapon on top of the hero's. */
+	bleedChance?: number;
+	/** Damage-number color override. */
+	color?: number;
+	/** DoT ticks and reflected damage skip knockback, on-hit effects and lifesteal. */
+	direct?: boolean;
+}
+
+/** All damage rules applied inside the scene: on-hit effects, DoTs, kills and hero contact. */
+export class CombatSystem {
+	iFrames = 0;
+	god = false;
+
+	constructor(
+		private readonly rng: Rng,
+		private readonly run: RunState,
+		private readonly stats: PlayerStats,
+		private readonly hero: Hero,
+		private readonly enemies: EnemySystem,
+		private readonly fx: FxSystem,
+		private readonly onKill: (enemy: Enemy) => void,
+		private readonly onHeroDeath: () => void,
+	) {}
+
+	/** A weapon or ability hit: applies on-hit statuses, elements, lifesteal and knockback. */
+	weaponHit(e: Enemy, amount: number, crit: boolean, opts: HitOptions = {}): void {
+		if (!e.alive) return;
+		const s = e.status;
+		if (this.rng.next() < (opts.bleedChance ?? 0) + this.stats.bleedChance)
+			applyBleed(s, amount);
+		if (this.rng.next() < this.stats.poisonChance) applyPoison(s, amount);
+		if (opts.element === 'fire') applyBurn(s, amount);
+		else if (opts.element === 'ice') applyIce(s);
+		else if (opts.element === 'earth') applyEarth(s, this.rng.next());
+		if (crit) countRun(this.run, 'crits');
+		if (this.stats.lifesteal > 0) healHero(this.run, amount * this.stats.lifesteal);
+		e.lastElement = opts.element ?? null;
+		this.damage(e, amount, crit, opts.color, true);
+		if (opts.element === 'energy') this.chain(e, amount);
+	}
+
+	/** Energy jumps to nearby enemies with reduced damage (balancing §3). */
+	private chain(from: Enemy, amount: number): void {
+		const c = STATUS.energy;
+		let current = from;
+		const hit = new Set<Enemy>([from]);
+		for (let j = 0; j < c.jumps; j++) {
+			const next = this.enemies.grid.nearest(
+				current.x,
+				current.y,
+				c.range,
+				(e) => e.alive && !hit.has(e),
+			);
+			if (!next) return;
+			hit.add(next);
+			next.lastElement = 'energy';
+			this.damage(next, amount * c.share, false, PALETTE.elEnergy, false);
+			current = next;
+		}
+	}
+
+	dot(e: Enemy, t: Tick): void {
+		// Kill credit goes to the strongest DoT of this tick (achievement counters).
+		const kind =
+			t.poison >= t.bleed && t.poison >= t.burn
+				? 'poison'
+				: t.bleed >= t.burn
+					? 'bleed'
+					: 'burn';
+		e.lastDot = kind;
+		const color =
+			kind === 'poison'
+				? PALETTE.dotPoison
+				: kind === 'bleed'
+					? PALETTE.dotBleed
+					: PALETTE.dotBurn;
+		this.damage(e, t.bleed + t.poison + t.burn, false, color, false);
+	}
+
+	/** Raw damage to an enemy (already rolled); handles shred, numbers, knockback and death. */
+	damage(
+		e: Enemy,
+		raw: number,
+		crit: boolean,
+		color: number | undefined,
+		knockback: boolean,
+	): void {
+		if (!e.alive) return;
+		const amount = raw * shredFactor(e.status);
+		e.hp -= amount;
+		e.hitFlash = 0.08;
+		if (knockback) e.lastDot = null;
+		this.run.damageDealt += amount;
+		this.fx.damage(e.x, e.y, amount, crit, color);
+		if (knockback && e.def.behavior !== 'boss') {
+			const dx = e.x - this.hero.x;
+			const dy = e.y - this.hero.y;
+			const d = Math.hypot(dx, dy) || 1;
+			const push = (COMBAT.knockback * 0.05) / (e.elite ? 2 : 1);
+			e.x += (dx / d) * push;
+			e.y += (dy / d) * push;
+		}
+		if (e.hp <= 0) this.kill(e);
+	}
+
+	private kill(e: Enemy): void {
+		const run = this.run;
+		run.kills++;
+		countRun(run, 'kills');
+		if (e.elite === 'purple') countRun(run, 'elitePurpleKills');
+		if (e.elite === 'orange') countRun(run, 'eliteOrangeKills');
+		if (e.def.behavior === 'boss') countRun(run, 'bossKills');
+		if (e.lastDot === 'bleed') countRun(run, 'bleedKills');
+		else if (e.lastDot === 'poison') countRun(run, 'poisonKills');
+		else if (e.lastDot === 'burn' || e.lastElement === 'fire') countRun(run, 'fireKills');
+		else if (e.lastElement === 'ice') countRun(run, 'iceKills');
+		else if (e.lastElement === 'earth') countRun(run, 'earthKills');
+		else if (e.lastElement === 'energy') countRun(run, 'energyKills');
+		const size = e.radius / 10;
+		this.fx.bloodAt(e.x, e.y, size);
+		for (let i = 0; i < 2; i++)
+			this.fx.bloodAt(
+				e.x + this.rng.range(-14, 14),
+				e.y + this.rng.range(-14, 14),
+				size * 0.5,
+			);
+		this.onKill(e);
+		this.enemies.kill(e);
+	}
+
+	/** Enemy bodies touching the hero; one resolution per invulnerability window. */
+	contact(dt: number): void {
+		this.iFrames -= dt;
+		if (this.iFrames > 0 || this.god) return;
+		const near = this.enemies.grid.queryRadius(this.hero.x, this.hero.y, 64);
+		for (const e of near) {
+			const dx = e.x - this.hero.x;
+			const dy = e.y - this.hero.y;
+			if (dx * dx + dy * dy > (e.radius + HERO_RADIUS) ** 2) continue;
+			this.heroHit(e.damage, true, undefined, e);
+			return;
+		}
+	}
+
+	/** Damage coming at the hero (contact, projectiles, explosions). */
+	heroHit(amount: number, contact: boolean, element?: Element, source?: Enemy): void {
+		if (this.god || this.iFrames > 0) return;
+		const result = resolveIncoming(
+			amount,
+			this.stats,
+			{ contact, element },
+			{ dodge: this.rng.next(), parry: this.rng.next() },
+		);
+		this.iFrames = COMBAT.heroIFrames;
+		if (result.kind === 'dodged') {
+			countRun(this.run, 'dodges');
+			this.fx.label(this.hero.x, this.hero.y, 'dodge');
+		} else if (result.kind === 'parried') {
+			countRun(this.run, 'parries');
+			this.fx.label(this.hero.x, this.hero.y, 'parry');
+			if (source) this.damage(source, result.reflected, false, undefined, false);
+		} else {
+			this.hero.flash();
+			if (damageHero(this.run, result.amount)) this.onHeroDeath();
+		}
+	}
+}

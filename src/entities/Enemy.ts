@@ -2,8 +2,10 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import type { EnemyDef } from '../data/enemies';
 import { ROUNDS } from '../data/rounds';
+import type { Element } from '../logic/combat';
 import { isoDepth, worldToScreen } from '../logic/iso';
 import type { EliteTier } from '../logic/round';
+import { emptyStatus, resetStatus, type StatusState } from '../logic/status';
 import type { Mover } from '../logic/steering';
 
 /** Pooled enemy: world state + its sprites. Flyers hover at a fake height (z). */
@@ -20,6 +22,10 @@ export class Enemy implements Mover {
 	elite: EliteTier | null = null;
 	alive = false;
 	hitFlash = 0;
+	readonly status: StatusState = emptyStatus();
+	/** What hit last, for kill attribution (achievement counters). */
+	lastElement: Element | null = null;
+	lastDot: 'bleed' | 'poison' | 'burn' | null = null;
 	private readonly sprite: Phaser.GameObjects.Image;
 	private readonly shadow: Phaser.GameObjects.Image;
 	private readonly aura: Phaser.GameObjects.Image;
@@ -52,6 +58,9 @@ export class Enemy implements Mover {
 		this.elite = elite;
 		this.alive = true;
 		this.hitFlash = 0;
+		resetStatus(this.status);
+		this.lastElement = null;
+		this.lastDot = null;
 		this.sprite.setTexture(KEYS.enemy(def.id)).setScale(scale).setVisible(true).clearTint();
 		this.sprite.setTintMode(Phaser.TintModes.MULTIPLY);
 		this.shadow.setScale((this.radius * 2.4) / 32).setVisible(true);

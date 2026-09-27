@@ -19,6 +19,13 @@ export const PALETTE = {
 	textLight: 0xe8ecf2,
 	textDim: 0x9aa3b5,
 	crit: 0xffd84a,
+	dotBleed: 0xa3121a,
+	dotPoison: 0x6fdc4a,
+	dotBurn: 0xff8a3a,
+	elFire: 0xff7a2f,
+	elIce: 0x8fd8ff,
+	elEarth: 0xb08a4f,
+	elEnergy: 0xfff27a,
 } as const;
 
 export const toCss = (c: number): string => `#${c.toString(16).padStart(6, '0')}`;

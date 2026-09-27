@@ -15,7 +15,7 @@ export class Hero {
 		scene: Phaser.Scene,
 		readonly id: HeroId,
 		private tier: 1 | 2 | 3,
-		private readonly speed: number,
+		private readonly stats: { moveSpeed: number },
 	) {
 		this.shadow = scene.add.image(0, 0, KEYS.shadow).setOrigin(0.5, 0.5);
 		this.sprite = scene.add.image(0, 0, KEYS.heroFacing(id, tier, 's')).setOrigin(0.5, 0.95);
@@ -24,6 +24,10 @@ export class Hero {
 
 	private flashTime = 0;
 
+	setTier(tier: 1 | 2 | 3): void {
+		this.tier = tier;
+	}
+
 	flash(): void {
 		this.flashTime = 0.12;
 		this.sprite.setTint(0xff4040).setTintMode(Phaser.TintModes.FILL);
@@ -31,8 +35,8 @@ export class Hero {
 
 	/** `move` is a unit world vector (or zero). */
 	update(dt: number, move: Vec2): void {
-		this.x += move.x * this.speed * dt;
-		this.y += move.y * this.speed * dt;
+		this.x += move.x * this.stats.moveSpeed * dt;
+		this.y += move.y * this.stats.moveSpeed * dt;
 		this.facing = dirFromWorld(move.x, move.y, this.facing);
 		this.sprite.setTexture(KEYS.heroFacing(this.id, this.tier, this.facing));
 		if (this.flashTime > 0) {

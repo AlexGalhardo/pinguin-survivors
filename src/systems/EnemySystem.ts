@@ -7,6 +7,7 @@ import type { Rng } from '../logic/rng';
 import { bossHpMul, dmgMul, hpMul, isBossRound, rollElite, spawnRate } from '../logic/round';
 import { SpatialGrid } from '../logic/spatial-grid';
 import { pickEnemy, spawnPosition } from '../logic/spawn';
+import { speedFactor, type Tick, tickStatus } from '../logic/status';
 import { seekWithSeparation } from '../logic/steering';
 
 /** World size covered by the neighbor grid around the hero (larger than any view). */
@@ -20,10 +21,12 @@ export class EnemySystem {
 	private readonly scratch: Enemy[] = [];
 	private spawnBudget = 0;
 	boss: Enemy | null = null;
+	private readonly tick: Tick = { bleed: 0, poison: 0, burn: 0 };
 
 	constructor(
 		private readonly scene: Phaser.Scene,
 		private readonly rng: Rng,
+		private readonly onDot: (enemy: Enemy, tick: Tick) => void,
 	) {}
 
 	startRound(round: number, hero: Vec2, view: { width: number; height: number }): void {
@@ -66,10 +69,18 @@ export class EnemySystem {
 			if (Math.abs(e.x - hero.x) > leash || Math.abs(e.y - hero.y) > leash) this.release(i);
 		}
 
-		for (const e of this.active) {
+		// Iterate backwards: a DoT may kill (and swap-remove) the current enemy.
+		for (let i = this.active.length - 1; i >= 0; i--) {
+			const e = this.active[i] as Enemy;
+			const t = tickStatus(e.status, dt, this.tick);
+			if (t.bleed + t.poison + t.burn > 0) {
+				this.onDot(e, t);
+				if (!e.alive) continue;
+			}
 			const v = seekWithSeparation(e, hero.x, hero.y, this.grid, this.scratch);
-			e.x += v.vx * dt;
-			e.y += v.vy * dt;
+			const slow = speedFactor(e.status);
+			e.x += v.vx * slow * dt;
+			e.y += v.vy * slow * dt;
 			// Screen-space x of the velocity decides the horizontal flip.
 			e.sync(dt, v.vx - v.vy < 0);
 		}

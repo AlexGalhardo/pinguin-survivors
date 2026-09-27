@@ -1,6 +1,7 @@
 import type { HeroId } from '../config/constants';
 import type { HeroDef } from '../data/heroes';
 import { roundDuration } from './round';
+import type { RunCounters } from './save';
 
 /** Everything about the current run; serializable for the save snapshot (P-43). */
 export interface RunState {
@@ -19,6 +20,8 @@ export interface RunState {
 	superCharge: number;
 	elapsed: number;
 	damageDealt: number;
+	/** Lifetime counters gathered this run; added to the save when the run ends. */
+	counters: RunCounters;
 }
 
 export function createRunState(
@@ -40,6 +43,7 @@ export function createRunState(
 		superCharge: 0,
 		elapsed: 0,
 		damageDealt: 0,
+		counters: {},
 	};
 }
 
@@ -56,4 +60,10 @@ export function damageHero(state: RunState, amount: number): boolean {
 
 export function healHero(state: RunState, amount: number): void {
 	state.hp = Math.min(state.maxHp, state.hp + amount);
+}
+
+/** Increments one run counter (achievement progress). */
+export function countRun(state: RunState, key: keyof RunCounters & string, by = 1): void {
+	const c = state.counters as Record<string, number | boolean | undefined>;
+	c[key] = ((c[key] as number | undefined) ?? 0) + by;
 }

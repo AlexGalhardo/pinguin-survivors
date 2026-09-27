@@ -1,7 +1,6 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import type { HeroDef } from '../data/heroes';
 import type { SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { type Element, rollOutgoing } from '../logic/combat';
@@ -9,6 +8,7 @@ import { inArc, spreadAngles } from '../logic/geometry';
 import { isoDepth, worldToScreen } from '../logic/iso';
 import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
+import type { PlayerStats } from '../logic/stats';
 
 const MAX_PROJECTILES = 400;
 /** Melee aims at enemies a bit beyond the blade so the hero swings as they close in. */
@@ -36,7 +36,13 @@ interface Projectile {
 	element: Element | undefined;
 }
 
-export type HitHandler = (enemy: Enemy, amount: number, crit: boolean, element?: Element) => void;
+export type HitHandler = (
+	enemy: Enemy,
+	amount: number,
+	crit: boolean,
+	element: Element | undefined,
+	bleedChance: number,
+) => void;
 
 /** Fires the hero's signature weapon automatically (P-18/P-19) and moves its projectiles. */
 export class WeaponSystem {
@@ -48,7 +54,7 @@ export class WeaponSystem {
 	constructor(
 		private readonly scene: Phaser.Scene,
 		private readonly rng: Rng,
-		private readonly hero: HeroDef,
+		private readonly stats: PlayerStats,
 		public weapon: SignatureWeapon,
 		private readonly onHit: HitHandler,
 		private readonly onSlash: (
@@ -69,7 +75,7 @@ export class WeaponSystem {
 			const target = grid.nearest(hx, hy, aimRange, (e) => e.alive);
 			if (target) {
 				this.fire(hx, hy, Math.atan2(target.y - hy, target.x - hx), grid);
-				this.cooldown = 1 / this.weapon.rate;
+				this.cooldown = 1 / (this.weapon.rate * this.stats.attackSpeed);
 			}
 		}
 		this.moveProjectiles(dt, grid);
@@ -81,26 +87,27 @@ export class WeaponSystem {
 
 	private fire(hx: number, hy: number, angle: number, grid: SpatialGrid<Enemy>): void {
 		const w = this.weapon;
-		const mul = this.hero.tagMul[w.tag];
+		const mul = this.stats.tagMul[w.tag] * this.stats.damage;
+		const range = w.range * (w.kind === 'arc' ? this.stats.area : 1);
 		const attack = {
 			base: w.damage,
 			tag: w.tag,
 			multiplier: mul,
-			critChance: this.hero.crit,
-			critDamage: this.hero.critDamage,
+			critChance: this.stats.crit,
+			critDamage: this.stats.critDamage,
 		};
 		if (w.kind === 'arc') {
 			const arc = ((w.angle ?? 90) * Math.PI) / 180;
 			this.scratch.length = 0;
-			grid.queryRadius(hx, hy, w.range + 40, this.scratch);
+			grid.queryRadius(hx, hy, range + 40, this.scratch);
 			for (const e of this.scratch) {
-				if (!e.alive || !inArc(hx, hy, angle, arc, w.range, e.x, e.y, e.radius)) continue;
+				if (!e.alive || !inArc(hx, hy, angle, arc, range, e.x, e.y, e.radius)) continue;
 				const out = rollOutgoing(attack, { crit: this.rng.next() });
-				this.onHit(e, out.amount, out.crit);
+				this.onHit(e, out.amount, out.crit, undefined, w.bleedChance ?? 0);
 			}
 			const c = Math.cos(angle);
 			const s = Math.sin(angle);
-			this.onSlash(hx, hy, Math.atan2((c + s) / 2, c - s), w.range);
+			this.onSlash(hx, hy, Math.atan2((c + s) / 2, c - s), range);
 			return;
 		}
 		const count = w.kind === 'spread' ? (w.count ?? 1) : 1;
@@ -182,7 +189,7 @@ export class WeaponSystem {
 				const dy = e.y - p.y;
 				if (dx * dx + dy * dy > (e.radius + 4) ** 2) continue;
 				p.hit.add(e);
-				this.onHit(e, p.damage, p.crit, p.element);
+				this.onHit(e, p.damage, p.crit, p.element, this.weapon.bleedChance ?? 0);
 				if (p.pierce-- <= 0) {
 					this.kill(p);
 					break;

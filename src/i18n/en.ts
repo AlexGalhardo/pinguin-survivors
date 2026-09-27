@@ -5,6 +5,8 @@ export const en = {
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
+	'fx.dodge': 'DODGE',
+	'fx.parry': 'PARRY',
 	'hud.hp': 'HP {hp}/{max}',
 	'hud.kills': 'KILLS {n}',
 	'hud.boss': 'ZOMBIE POLAR BEAR',

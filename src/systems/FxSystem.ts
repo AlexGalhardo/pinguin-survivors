@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
+import { t } from '../i18n';
 import { isoDepth, worldToScreen } from '../logic/iso';
 import { UI_FONT } from '../ui/font';
 import { GROUND_DEPTH } from '../world/ChunkManager';
@@ -29,7 +30,7 @@ export class FxSystem {
 
 	constructor(private readonly scene: Phaser.Scene) {}
 
-	damage(x: number, y: number, amount: number, crit: boolean): void {
+	damage(x: number, y: number, amount: number, crit: boolean, color?: number): void {
 		let n = this.numbers.find((f) => f.life <= 0);
 		if (!n) {
 			if (this.numbers.length >= MAX_NUMBERS) return;
@@ -50,10 +51,17 @@ export class FxSystem {
 		n.text
 			.setText(String(Math.round(amount)))
 			.setPosition(s.x + (Math.random() - 0.5) * 10, s.y)
-			.setColor(toCss(crit ? PALETTE.crit : PALETTE.textLight))
+			.setColor(toCss(color ?? (crit ? PALETTE.crit : PALETTE.textLight)))
 			.setFontSize(crit ? 14 : 10)
 			.setAlpha(1)
 			.setVisible(true);
+	}
+
+	/** Short floating word over the hero (dodge/parry feedback). */
+	label(x: number, y: number, kind: 'dodge' | 'parry'): void {
+		this.damage(x, y, 0, false, kind === 'parry' ? PALETTE.crit : PALETTE.textDim);
+		const n = this.numbers.find((f) => f.life === NUMBER_LIFE);
+		n?.text.setText(t(kind === 'dodge' ? 'fx.dodge' : 'fx.parry')).setFontSize(10);
 	}
 
 	bloodAt(x: number, y: number, size: number): void {

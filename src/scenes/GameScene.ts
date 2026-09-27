@@ -4,23 +4,17 @@ import { getParams } from '../core/context';
 import { gamepadMove } from '../core/gamepad';
 import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
 import { trackZoom } from '../core/viewport';
-import { COMBAT } from '../data/combat';
 import { HEROES } from '../data/heroes';
 import { SIGNATURE, type SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
-import { resolveIncoming } from '../logic/combat';
 import { inputToWorld } from '../logic/iso';
 import { Rng, randomSeed } from '../logic/rng';
 import { isBossRound } from '../logic/round';
-import {
-	createRunState,
-	damageHero,
-	healHero,
-	type RunState,
-	startRound,
-} from '../logic/run-state';
+import { createRunState, healHero, type RunState, startRound } from '../logic/run-state';
 import { nextSpeed } from '../logic/speed';
+import { heroStats, type PlayerStats } from '../logic/stats';
+import { CombatSystem } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
@@ -28,23 +22,22 @@ import { ChunkManager } from '../world/ChunkManager';
 
 /** Padding (screen px) around the camera view where chunks are already built. */
 const VIEW_PAD = 96;
-const HERO_RADIUS = 12;
 const RESTART_DELAY = 1.5;
 
 export class GameScene extends Phaser.Scene {
 	hero!: Hero;
 	chunks!: ChunkManager;
 	run!: RunState;
+	stats!: PlayerStats;
 	enemies!: EnemySystem;
 	/** Multiplies simulation dt, scene timers and tweens (TAB toggles 1x/2x). */
 	speed: GameSpeed = 1;
 	private keys!: MoveKeys;
 	private weapons!: WeaponSystem;
+	private combat!: CombatSystem;
 	private fx!: FxSystem;
 	private rng!: Rng;
-	private iFrames = 0;
 	private deadFor = -1;
-	private god = false;
 
 	constructor() {
 		super('Game');
@@ -57,11 +50,12 @@ export class GameScene extends Phaser.Scene {
 		const seed = params.seed ?? randomSeed();
 		const tier = params.tier ?? 1;
 		this.rng = new Rng(seed);
-		this.god = params.god;
-		this.iFrames = 0;
 		this.deadFor = -1;
 		this.speed = 1;
+		this.stats = heroStats(heroDef, 1, {});
 		this.run = createRunState(heroDef, { seed, round: params.round, tier });
+		this.run.maxHp = this.stats.maxHp;
+		this.run.hp = this.stats.maxHp;
 		this.keys = createMoveKeys(this);
 		this.input.keyboard
 			?.addKey(Phaser.Input.Keyboard.KeyCodes.TAB)
@@ -69,14 +63,28 @@ export class GameScene extends Phaser.Scene {
 
 		this.chunks = new ChunkManager(this, seed, 'antarctica');
 		this.fx = new FxSystem(this);
-		this.hero = new Hero(this, heroId, tier, heroDef.moveSpeed);
-		this.enemies = new EnemySystem(this, this.rng);
+		this.hero = new Hero(this, heroId, tier, this.stats);
+		this.enemies = new EnemySystem(this, this.rng, (e, t) => this.combat.dot(e, t));
+		this.combat = new CombatSystem(
+			this.rng,
+			this.run,
+			this.stats,
+			this.hero,
+			this.enemies,
+			this.fx,
+			(e) => this.onKill(e),
+			() => {
+				this.deadFor = 0;
+			},
+		);
+		this.combat.god = params.god;
 		this.weapons = new WeaponSystem(
 			this,
 			this.rng,
-			heroDef,
+			this.stats,
 			SIGNATURE[heroId][tier - 1] as SignatureWeapon,
-			(e, amount, crit) => this.hitEnemy(e, amount, crit),
+			(e, amount, crit, element, bleedChance) =>
+				this.combat.weaponHit(e, amount, crit, { element, bleedChance }),
 			(x, y, a, r) => this.fx.slash(x, y, a, r),
 		);
 
@@ -109,12 +117,11 @@ export class GameScene extends Phaser.Scene {
 			iy = gamepadMove.y;
 		}
 		this.hero.update(dt, inputToWorld(ix, iy));
-		healHero(run, HEROES[run.hero].regen * dt);
+		healHero(run, this.stats.regen * dt);
 
-		const view = this.viewSize();
-		this.enemies.update(dt, run.round, this.hero, view);
+		this.enemies.update(dt, run.round, this.hero, this.viewSize());
 		this.weapons.update(dt, this.hero.x, this.hero.y, this.enemies.grid);
-		this.contactDamage(dt);
+		this.combat.contact(dt);
 		this.fx.update(dt);
 		this.checkRoundEnd();
 
@@ -138,64 +145,10 @@ export class GameScene extends Phaser.Scene {
 		return { width: v.width, height: v.height };
 	}
 
-	private hitEnemy(e: Enemy, amount: number, crit: boolean): void {
-		if (!e.alive) return;
-		e.hp -= amount;
-		e.hitFlash = 0.08;
-		this.run.damageDealt += amount;
-		this.fx.damage(e.x, e.y, amount, crit);
-		// Small knockback away from the hero (bosses shrug it off).
-		if (e.def.behavior !== 'boss') {
-			const dx = e.x - this.hero.x;
-			const dy = e.y - this.hero.y;
-			const d = Math.hypot(dx, dy) || 1;
-			const push = (COMBAT.knockback * 0.05) / (e.elite ? 2 : 1);
-			e.x += (dx / d) * push;
-			e.y += (dy / d) * push;
-		}
-		if (e.hp <= 0) this.killEnemy(e);
-	}
-
-	private killEnemy(e: Enemy): void {
+	private onKill(e: Enemy): void {
 		const run = this.run;
-		run.kills++;
 		run.xp += e.def.xp;
 		if (e.def.behavior !== 'boss') run.superCharge += e.elite ? 3 : 1;
-		const size = e.radius / 10;
-		this.fx.bloodAt(e.x, e.y, size);
-		for (let i = 0; i < 2; i++)
-			this.fx.bloodAt(
-				e.x + this.rng.range(-14, 14),
-				e.y + this.rng.range(-14, 14),
-				size * 0.5,
-			);
-		this.enemies.kill(e);
-	}
-
-	private contactDamage(dt: number): void {
-		this.iFrames -= dt;
-		if (this.iFrames > 0 || this.god) return;
-		const heroDef = HEROES[this.run.hero];
-		const near = this.enemies.grid.queryRadius(this.hero.x, this.hero.y, 64);
-		for (const e of near) {
-			const dx = e.x - this.hero.x;
-			const dy = e.y - this.hero.y;
-			if (dx * dx + dy * dy > (e.radius + HERO_RADIUS) ** 2) continue;
-			const result = resolveIncoming(
-				e.damage,
-				heroDef,
-				{ contact: true },
-				{ dodge: this.rng.next(), parry: this.rng.next() },
-			);
-			this.iFrames = COMBAT.heroIFrames;
-			if (result.kind === 'hit') {
-				this.hero.flash();
-				if (damageHero(this.run, result.amount)) this.deadFor = 0;
-			} else if (result.kind === 'parried') {
-				this.hitEnemy(e, result.reflected, false);
-			}
-			return;
-		}
 	}
 
 	private checkRoundEnd(): void {
