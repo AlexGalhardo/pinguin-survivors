@@ -42,6 +42,8 @@ export interface CombatHooks {
 	onParry: (source: Enemy | undefined) => void;
 	/** Damage actually taken, after mitigation (Frost Nova, thorns). */
 	onHurt: (source: Enemy | undefined) => void;
+	/** Shield potion: returns the damage left after the shield soaks what it can. */
+	shield: (amount: number) => number;
 }
 
 /** All damage rules applied inside the scene: on-hit effects, DoTs, kills and hero contact. */
@@ -206,7 +208,8 @@ export class CombatSystem {
 		} else {
 			this.hero.flash();
 			this.hooks.onHurt(source);
-			if (damageHero(this.run, result.amount)) this.onHeroDeath();
+			const left = this.hooks.shield(result.amount);
+			if (left > 0 && damageHero(this.run, left)) this.onHeroDeath();
 		}
 	}
 }

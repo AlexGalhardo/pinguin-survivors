@@ -27,6 +27,8 @@ export interface MenuOptions {
 export class MenuList {
 	private readonly texts: Phaser.GameObjects.Text[] = [];
 	private focus = 0;
+	/** Only the active list reacts to the keyboard (screens with two columns). */
+	active = true;
 	private readonly spacing: number;
 
 	constructor(
@@ -56,7 +58,10 @@ export class MenuList {
 		});
 		const kb = scene.input.keyboard;
 		const on = (keys: string[], fn: () => void) => {
-			for (const k of keys) kb?.on(`keydown-${k}`, fn);
+			for (const k of keys)
+				kb?.on(`keydown-${k}`, () => {
+					if (this.active) fn();
+				});
 		};
 		on(['UP', 'W'], () => this.move(-1));
 		on(['DOWN', 'S'], () => this.move(1));
@@ -84,7 +89,7 @@ export class MenuList {
 			if (!t.scene) return;
 			const item = this.items[i] as MenuItem;
 			const off = item.disabled?.() ?? false;
-			const focused = i === this.focus;
+			const focused = i === this.focus && this.active;
 			const label = item.label();
 			t.setText(focused ? `> ${label} <` : label);
 			t.setColor(toCss(off ? PALETTE.textDim : focused ? PALETTE.crit : PALETTE.textLight));
@@ -99,6 +104,15 @@ export class MenuList {
 
 	private setFocus(i: number): void {
 		this.focus = i;
+		this.onFocus?.();
+		this.refresh();
+	}
+
+	/** Called when the mouse or keyboard focuses an item (lets two-column screens switch). */
+	onFocus?: () => void;
+
+	setActive(active: boolean): void {
+		this.active = active;
 		this.refresh();
 	}
 

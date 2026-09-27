@@ -8,6 +8,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Carregando…',
 	'hud.round': 'ROUND {n}',
+	'hero.hint': 'TAB troca de coluna · ↑↓ escolher · ENTER aplicar · ←→ trocar poção · ESC voltar',
 	'menu.play': 'JOGAR',
 	'menu.continue': 'CONTINUAR (ROUND {n})',
 	'menu.hero': 'HERÓIS E POÇÕES',

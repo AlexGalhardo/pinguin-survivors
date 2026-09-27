@@ -10,6 +10,7 @@ import { trackZoom } from '../core/viewport';
 import { ECONOMY } from '../data/economy';
 import { ENEMIES } from '../data/enemies';
 import { HEROES } from '../data/heroes';
+import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { levelScale, PERKS } from '../data/secondaries';
 import { SUPER } from '../data/superpowers';
 import { SIGNATURE, type SignatureWeapon } from '../data/weapons';
@@ -21,10 +22,18 @@ import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
 import { inArc } from '../logic/geometry';
 import { inputToWorld, isoDepth, worldToScreen } from '../logic/iso';
+import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
 import { addXp, type LevelState, orbXp, roundEndFish } from '../logic/progression';
 import { Rng, randomSeed } from '../logic/rng';
 import { cycle, isBossRound } from '../logic/round';
-import { countRun, createRunState, healHero, type RunState, startRound } from '../logic/run-state';
+import {
+	countRun,
+	createRunState,
+	damageHero,
+	healHero,
+	type RunState,
+	startRound,
+} from '../logic/run-state';
 import {
 	addFeat,
 	liveProgress,
@@ -91,6 +100,18 @@ export class GameScene extends Phaser.Scene {
 	private barrier!: Phaser.GameObjects.Image;
 	private readonly elementUsedAt = new Map<Element, number>();
 	private readonly scratch: Enemy[] = [];
+	/** Gambit slots loaded from the save for this run (P-28). */
+	potions: GambitSlot[] = [];
+	private gambitTimer = 0;
+	private potionsThisRound = 0;
+	private shieldHp = 0;
+	private shieldTime = 0;
+	private rageTime = 0;
+	private hasteTime = 0;
+	private immuneTime = 0;
+	/** Hero poison from scientist spit (world damage per second). */
+	private heroPoisonDps = 0;
+	private heroPoisonTime = 0;
 
 	constructor() {
 		super('Game');
@@ -120,6 +141,16 @@ export class GameScene extends Phaser.Scene {
 		this.barrierTimer = 0;
 		this.elementUsedAt.clear();
 		this.level = { level: heroSave.level, xp: heroSave.xp };
+		this.potions = loadGambits(save.gambits, save.potions);
+		this.gambitTimer = 0;
+		this.potionsThisRound = 0;
+		this.shieldHp = 0;
+		this.shieldTime = 0;
+		this.rageTime = 0;
+		this.hasteTime = 0;
+		this.immuneTime = 0;
+		this.heroPoisonDps = 0;
+		this.heroPoisonTime = 0;
 		this.stats = heroStats(heroDef, heroSave.level, heroSave.points);
 		this.build = emptyBuild(tier);
 		this.run = createRunState(heroDef, { seed, round: params.round, tier });
@@ -140,7 +171,10 @@ export class GameScene extends Phaser.Scene {
 		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
 		this.hero = new Hero(this, heroId, tier, this.stats);
 		this.barrier = this.add.image(0, 0, KEYS.barrier).setVisible(false);
-		this.hostile = new HostileSystem(this, (damage) => this.combat.heroHit(damage, false));
+		this.hostile = new HostileSystem(this, (damage) => {
+			this.combat.heroHit(damage, false);
+			this.poisonHero(damage);
+		});
 		this.enemies = new EnemySystem(this, this.rng, (e, t) => this.combat.dot(e, t), {
 			shoot: (e) =>
 				this.hostile.spawn(
@@ -171,6 +205,7 @@ export class GameScene extends Phaser.Scene {
 				onDodge: () => this.onDodge(),
 				onParry: () => this.onParry(),
 				onHurt: (source) => this.onHurt(source),
+				shield: (amount) => this.soakShield(amount),
 			},
 		);
 		this.combat.god = params.god;
@@ -242,6 +277,7 @@ export class GameScene extends Phaser.Scene {
 		this.moving = ix !== 0 || iy !== 0;
 		this.hero.update(dt, inputToWorld(ix, iy));
 		healHero(run, this.stats.regen * dt);
+		this.updatePotions(dt);
 
 		const grid = this.enemies.grid;
 		const view = this.viewSize();
@@ -293,7 +329,7 @@ export class GameScene extends Phaser.Scene {
 			rate += Math.min(PERKS.bloodlust.cap * s, PERKS.bloodlust.value * s * bleeding);
 		}
 		if (p.runAndGun && this.moving) rate += PERKS.runAndGun.value * levelScale(p.runAndGun);
-		bonus.rate = rate;
+		bonus.rate = rate * (this.hasteTime > 0 ? 1 + POTION_EFFECTS.haste.attackSpeed : 1);
 		bonus.bounces = p.ricochet ?? 0;
 		this.combat.hooks.critBleed = Boolean(p.hollowPoints);
 		if (p.elementalAttunement) {
@@ -303,7 +339,8 @@ export class GameScene extends Phaser.Scene {
 			const s = levelScale(p.elementalAttunement);
 			const perk = PERKS.elementalAttunement;
 			bonus.damage = 1 + Math.min(perk.cap * s, perk.value * s * distinct);
-		}
+		} else bonus.damage = 1;
+		if (this.rageTime > 0) bonus.damage *= 1 + POTION_EFFECTS.rage.damage;
 		if (this.reflexTime > 0) {
 			this.reflexTime -= dt;
 			if (this.reflexTime <= 0) bonus.forceCrit = false;
@@ -357,6 +394,91 @@ export class GameScene extends Phaser.Scene {
 			this.combat.damage(source, thorns, false, undefined, false);
 		}
 		this.secondaries.onHeroHit(this.hero.x, this.hero.y, this.enemies.grid);
+	}
+
+	// --- Potions and gambits (P-28) --------------------------------------------------------
+
+	private updatePotions(dt: number): void {
+		const run = this.run;
+		this.shieldTime -= dt;
+		if (this.shieldTime <= 0) this.shieldHp = 0;
+		this.rageTime -= dt;
+		this.hasteTime -= dt;
+		this.immuneTime -= dt;
+		if (this.heroPoisonTime > 0) {
+			this.heroPoisonTime -= dt;
+			if (this.immuneTime > 0) this.heroPoisonTime = 0;
+			else if (!this.combat.god && damageHero(run, this.heroPoisonDps * dt))
+				this.die('death');
+		}
+		this.gambitTimer -= dt;
+		if (this.gambitTimer > 0) return;
+		this.gambitTimer = GAMBIT_INTERVAL;
+		this.scratch.length = 0;
+		this.enemies.grid.queryRadius(this.hero.x, this.hero.y, CROWD_RADIUS, this.scratch);
+		const i = pickGambit(this.potions, {
+			hpRatio: run.hp / run.maxHp,
+			poisoned: this.heroPoisonTime > 0,
+			bleeding: false,
+			bossVisible: this.enemies.boss !== null,
+			enemiesNear: this.scratch.length,
+			roundStart: run.elapsed - this.roundStartedAt < 1,
+		});
+		if (i < 0) return;
+		const slot = this.potions[i] as GambitSlot;
+		slot.used = true;
+		this.drink(slot.potion as PotionType);
+	}
+
+	private roundStartedAt = 0;
+
+	private drink(potion: PotionType): void {
+		const run = this.run;
+		countRun(run, 'potionsUsed');
+		this.potionsThisRound++;
+		if (this.potionsThisRound >= 3) addFeat(getSave(this), 'gambitTriple');
+		const e = POTION_EFFECTS;
+		switch (potion) {
+			case 'heal':
+				healHero(run, run.maxHp * e.heal.heal);
+				break;
+			case 'megaHeal':
+				healHero(run, run.maxHp * e.megaHeal.heal);
+				break;
+			case 'shield':
+				this.shieldHp = run.maxHp * e.shield.shield;
+				this.shieldTime = e.shield.duration;
+				break;
+			case 'rage':
+				this.rageTime = e.rage.duration;
+				break;
+			case 'haste':
+				this.hasteTime = e.haste.duration;
+				break;
+			case 'antidote':
+				this.heroPoisonTime = 0;
+				this.immuneTime = e.antidote.immune;
+				break;
+		}
+		this.fx.banner(this.hero.x, this.hero.y, `potion.${potion}` as 'potion.heal');
+		this.area.flash(this.hero.x, this.hero.y, 40, PALETTE.dotPoison, 0.3);
+	}
+
+	private soakShield(amount: number): number {
+		if (this.shieldHp <= 0) return amount;
+		const soaked = Math.min(this.shieldHp, amount);
+		this.shieldHp -= soaked;
+		return amount - soaked;
+	}
+
+	/** Scientist spit poisons the hero: 10% of the hit per second for 4 s (antidote immune). */
+	private poisonHero(hit: number): void {
+		if (this.immuneTime > 0 || this.combat.god) return;
+		this.heroPoisonDps = Math.max(
+			this.heroPoisonDps * (this.heroPoisonTime > 0 ? 1 : 0),
+			hit * 0.1,
+		);
+		this.heroPoisonTime = 4;
 	}
 
 	// --- Enemy special attacks (docs/game-design.md §11) -----------------------------------
@@ -549,6 +671,8 @@ export class GameScene extends Phaser.Scene {
 		}
 		startRound(this.run, this.run.round + 1);
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
+		this.roundStartedAt = this.run.elapsed;
+		this.potionsThisRound = 0;
 		this.scene.resume();
 	}
 
@@ -587,6 +711,7 @@ export class GameScene extends Phaser.Scene {
 		heroSave.level = this.level.level;
 		heroSave.xp = this.level.xp;
 		save.fish += run.fish;
+		returnUnused(this.potions, save.potions);
 		run.counters.fishEarned = run.fish;
 		run.counters.damageDealt = run.damageDealt;
 		run.counters.secondsPlayed = run.elapsed;

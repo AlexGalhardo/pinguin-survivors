@@ -7,6 +7,7 @@ export const en = {
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
+	'hero.hint': 'TAB switch column · ↑↓ choose · ENTER apply · ←→ change potion · ESC back',
 	'menu.play': 'PLAY',
 	'menu.continue': 'CONTINUE (ROUND {n})',
 	'menu.hero': 'HEROES & POTIONS',

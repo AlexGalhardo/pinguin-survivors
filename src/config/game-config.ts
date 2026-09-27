@@ -4,6 +4,7 @@ import { BootScene } from '../scenes/BootScene';
 import { CardPickScene } from '../scenes/CardPickScene';
 import { GameOverScene } from '../scenes/GameOverScene';
 import { GameScene } from '../scenes/GameScene';
+import { HeroScene } from '../scenes/HeroScene';
 import { HeroSelectScene } from '../scenes/HeroSelectScene';
 import { HistoryScene } from '../scenes/HistoryScene';
 import { HudScene } from '../scenes/HudScene';
@@ -29,6 +30,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		BootScene,
 		MainMenuScene,
 		HeroSelectScene,
+		HeroScene,
 		GameScene,
 		HudScene,
 		CardPickScene,

@@ -8,7 +8,7 @@ import { SUPER } from '../data/superpowers';
 import { type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
 import { xpToNext } from '../logic/progression';
-import { isBossRound } from '../logic/round';
+import { eliteTiers, isBossRound } from '../logic/round';
 import { AchievementToast } from '../ui/AchievementToast';
 import { UI_FONT } from '../ui/font';
 import { addVersionFooter } from '../ui/version-footer';
@@ -32,6 +32,8 @@ export class HudScene extends Phaser.Scene {
 	private superFill!: Phaser.GameObjects.Rectangle;
 	private superText!: Phaser.GameObjects.Text;
 	private buildText!: Phaser.GameObjects.Text;
+	private potionText!: Phaser.GameObjects.Text;
+	private eliteText!: Phaser.GameObjects.Text;
 	private boss!: Phaser.GameObjects.Container;
 	private bossFill!: Phaser.GameObjects.Rectangle;
 
@@ -75,6 +77,11 @@ export class HudScene extends Phaser.Scene {
 			.container(0, 0, [superBg, this.superFill, this.superText])
 			.setVisible(false);
 		this.buildText = this.add.text(8, 0, '', text(8, PALETTE.textDim)).setOrigin(0, 1);
+		this.potionText = this.add
+			.text(0, 0, '', text(8, PALETTE.dotPoison))
+			.setOrigin(1, 1)
+			.setAlign('right');
+		this.eliteText = this.add.text(0, 40, '', text(10, PALETTE.auraPurple)).setOrigin(0.5, 0);
 
 		if (getParams(this).debug) {
 			this.debugText = this.add.text(8, 58, '', text(8, PALETTE.textDim));
@@ -98,6 +105,8 @@ export class HudScene extends Phaser.Scene {
 			this.speedText.setX(view.width - 8);
 			this.superBox.setPosition(cx, view.height - 24);
 			this.buildText.setY(view.height - 8);
+			this.potionText.setPosition(view.width - 8, view.height - 8);
+			this.eliteText.setX(cx);
 			footer.layout(view);
 			toast.layout(view.width);
 		});
@@ -142,6 +151,19 @@ export class HudScene extends Phaser.Scene {
 				`${t(`card.perk.${id}.name` as I18nKey)} ${t('hud.level', { n: lv as number })}`,
 		);
 		this.buildText.setText([...lines, ...perks].join('\n'));
+		this.potionText.setText(
+			game.potions
+				.filter((p) => p.potion && p.condition)
+				.map(
+					(p) =>
+						`${p.used ? '✕ ' : ''}${t(`potion.${p.potion}` as I18nKey)} · ${t(`cond.${p.condition}` as I18nKey)}`,
+				)
+				.join('\n'),
+		);
+		const tiers = eliteTiers(run.round);
+		this.eliteText
+			.setText(tiers.length ? t('hud.eliteRound') : '')
+			.setColor(toCss(tiers.includes('orange') ? PALETTE.auraOrange : PALETTE.auraPurple));
 		const boss = game.enemies.boss;
 		this.boss.setVisible(boss !== null);
 		if (boss) this.bossFill.width = Math.max(0, (BOSS_W - 2) * (boss.hp / boss.maxHp));
