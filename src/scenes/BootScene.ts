@@ -5,6 +5,8 @@ import { FILES } from '../art/manifest';
 import { installPlaceholders } from '../art/placeholders';
 import { HERO_IDS } from '../config/constants';
 import { getParams } from '../core/context';
+import { loadVoiceLines } from '../core/voice';
+import { getLang } from '../i18n';
 
 export class BootScene extends Phaser.Scene {
 	constructor() {
@@ -40,6 +42,8 @@ export class BootScene extends Phaser.Scene {
 			this.load.atlas(key, `${CHAR_ATLAS_DIR}${key}.png`, `${CHAR_ATLAS_DIR}${key}.json`);
 		for (const [key, url] of Object.entries(FILES.audio))
 			if (present.has(url)) this.load.audio(key, url);
+		// Hero voices: only the current language (the other one loads on a language change).
+		loadVoiceLines(this, getLang());
 	}
 
 	create(): void {

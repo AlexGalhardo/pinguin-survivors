@@ -3,6 +3,7 @@ import { getSave, persist, setSave } from '../core/context';
 import { setResolution } from '../core/display';
 import { refreshMusicVolume } from '../core/music';
 import { exportSave, importSave } from '../core/storage';
+import { loadVoiceLines } from '../core/voice';
 import { RESOLUTION_IDS } from '../data/display';
 import { type I18nKey, LANGS, setLang, t } from '../i18n';
 import { type GoreMode, NUMBER_SIZES } from '../logic/save';
@@ -53,6 +54,7 @@ export class SettingsScene extends Phaser.Scene {
 						s.lang = cycle(LANGS, s.lang, d);
 						setLang(s.lang);
 						persist(this);
+						loadVoiceLines(this, s.lang, true);
 						this.scene.restart(data);
 					},
 				},

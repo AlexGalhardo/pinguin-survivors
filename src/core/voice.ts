@@ -1,10 +1,26 @@
 import type Phaser from 'phaser';
+import { voiceFiles } from '../art/manifest';
 import type { HeroId } from '../config/constants';
 import { VOICE, type VoEvent } from '../data/voice';
 import type { VoiceDirector } from '../logic/voice';
 import { voKey } from '../logic/voice';
 import { getSave } from './context';
 import { GameEvents } from './events';
+
+/**
+ * Queues the recorded lines of one language (only files that exist). Called by the Boot preload
+ * and again after a language change, where it starts the loader in the background.
+ */
+export function loadVoiceLines(scene: Phaser.Scene, lang: string, start = false): void {
+	const present = new Set(__ASSET_FILES__);
+	let queued = 0;
+	for (const [key, url] of Object.entries(voiceFiles(lang))) {
+		if (!present.has(url) || scene.cache.audio.exists(key)) continue;
+		scene.load.audio(key, url);
+		queued++;
+	}
+	if (start && queued > 0) scene.load.start();
+}
 
 export interface VoiceLine {
 	hero: HeroId;
