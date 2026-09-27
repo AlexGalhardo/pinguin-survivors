@@ -1,4 +1,7 @@
+import { achEn } from './achievements.en';
+
 export const en = {
+	...achEn,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
