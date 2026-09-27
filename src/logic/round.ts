@@ -35,14 +35,25 @@ export function rollElite(round: number, roll: number): EliteTier | null {
 	return null;
 }
 
+/** 0-based endless loop: rounds 1–30 → 0, 31–60 → 1… (the biomes start over, harder). */
+export function loop(round: number): number {
+	return Math.floor((round - 1) / ROUNDS.scaling.loopRounds);
+}
+
 export function hpMul(round: number): number {
 	const s = ROUNDS.scaling;
-	return (1 + s.hpPerRound * (round - 1)) * s.hpPerCycle ** cycle(round);
+	return (
+		(1 + s.hpPerRound * (round - 1)) * s.hpPerCycle ** cycle(round) * s.hpPerLoop ** loop(round)
+	);
 }
 
 export function dmgMul(round: number): number {
 	const s = ROUNDS.scaling;
-	return (1 + s.dmgPerRound * (round - 1)) * s.dmgPerCycle ** cycle(round);
+	return (
+		(1 + s.dmgPerRound * (round - 1)) *
+		s.dmgPerCycle ** cycle(round) *
+		s.dmgPerLoop ** loop(round)
+	);
 }
 
 /** Boss HP grows per cycle as the rotating pool comes back stronger (round 10 → ×1, 20 → ×1.6). */
@@ -53,5 +64,6 @@ export function bossHpMul(round: number): number {
 /** Enemies per second. */
 export function spawnRate(round: number): number {
 	const s = ROUNDS.scaling;
-	return Math.min(s.spawnBase + s.spawnPerRound * round, s.spawnMax);
+	const rate = Math.min(s.spawnBase + s.spawnPerRound * round, s.spawnMax);
+	return isBossRound(round) ? rate * s.bossSpawnMul : rate;
 }

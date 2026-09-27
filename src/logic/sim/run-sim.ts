@@ -30,28 +30,29 @@ import { pickBest } from './card-policy';
  * formulas and card draws. It has no positions, so crowd behaviour is folded into the named
  * constants below, calibrated against the real-game playtest bot (docs/balancing.md §10).
  */
+/** Mutable so calibration scripts can fit it; gameplay never reads it. */
 export const SIM = {
 	/** Seconds simulated per step. */
 	step: 0.25,
 	maxRound: 60,
 	/** Enemies alive that a kiting hero keeps at bay with no hits (scaled by mobility). */
-	safeCrowd: 22,
+	safeCrowd: 100,
 	/** Contact hits per second per enemy above the safe crowd. */
-	hitPerExtra: 0.02,
+	hitPerExtra: 0.001,
 	/** Hero speed / average enemy speed at which the safe crowd is exactly `safeCrowd`. */
 	mobilityRef: 1.35,
 	/** Average enemies hit per signature attack by kind, in a full crowd. */
 	hits: { arc: 3.2, spread: 2.6, bolt: 1.6 },
 	/** Alive enemies at which the hero reaches half of that crowd factor (kiting = fewer targets). */
-	engageHalf: { arc: 18, spread: 8, bolt: 6 },
+	engageHalf: { arc: 75, spread: 30, bolt: 25 },
 	/** Share of the damage aimed at the boss while the horde keeps coming. */
 	bossFocus: 0.55,
 	/** Boss hits per second on the hero (telegraphed swipes, charges) and share that lands. */
 	bossHitRate: 0.33,
-	bossLand: 0.35,
+	bossLand: 0.1,
 	/** Superpower: share of the crowd it clears. */
 	superClear: 0.7,
-} as const;
+};
 
 export interface SimConfig {
 	hero: HeroId;
@@ -125,6 +126,7 @@ export function secondaryDps(stats: PlayerStats, build: Build, alive = 300): num
 		const d = SECONDARIES[id] as (typeof SECONDARIES)[SecondaryId] & {
 			count?: number;
 			countPerLevel?: number;
+			duration?: number;
 		};
 		const hit =
 			d.damage * levelScale(level) * stats.tagMul[d.tag] * stats.damage * critAvg(stats);
@@ -155,6 +157,23 @@ export function secondaryDps(stats: PlayerStats, build: Build, alive = 300): num
 			case 'orbit':
 				// Each blade touches ~1.2 enemies per second in a crowd (per-enemy cooldown).
 				total += hit * count * crowd(1.2);
+				break;
+			case 'boomerang':
+				// Out and back through the line: ~2 hits per throw.
+				total += hit * Math.floor(count) * crowd(2) * rate;
+				break;
+			case 'mine':
+				total += hit * crowd(2 * stats.area) * rate;
+				break;
+			case 'aura':
+				total += hit * crowd(3 * stats.area) * (1 / d.cooldown);
+				break;
+			case 'totem':
+				// Zaps once per second for its duration.
+				total += hit * (d.duration ?? 6) * rate;
+				break;
+			case 'cloud':
+				total += hit * (d.duration ?? 4) * crowd(2.5 * stats.area) * rate;
 				break;
 			case 'nova':
 				break;

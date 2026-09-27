@@ -23,5 +23,11 @@ export const ROUNDS = {
 		spawnBase: 1.5,
 		spawnPerRound: 0.5,
 		spawnMax: 25,
+		/** Horde spawn rate during boss rounds (the fight is about the boss; auto-aim hits the nearest). */
+		bossSpawnMul: 0.5,
+		/** Endless: every full tour of the 3 biomes (30 rounds) multiplies HP/damage again. */
+		loopRounds: 30,
+		hpPerLoop: 1.6,
+		dmgPerLoop: 1.5,
 	},
 } as const;

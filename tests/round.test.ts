@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { ROUNDS } from '../src/data/rounds';
 import {
 	bossHpMul,
 	cycle,
@@ -6,6 +7,7 @@ import {
 	eliteTiers,
 	hpMul,
 	isBossRound,
+	loop,
 	rollElite,
 	roundDuration,
 	spawnRate,
@@ -48,16 +50,27 @@ describe('scaling', () => {
 	});
 
 	test('multipliers grow and jump at each cycle', () => {
+		const k = ROUNDS.scaling;
 		expect(hpMul(1)).toBe(1);
-		expect(hpMul(11)).toBeCloseTo((1 + 0.15 * 10) * 1.25);
+		expect(hpMul(11)).toBeCloseTo((1 + k.hpPerRound * 10) * k.hpPerCycle);
 		expect(dmgMul(1)).toBe(1);
 		expect(dmgMul(10)).toBeLessThan(dmgMul(11));
 		expect(bossHpMul(10)).toBe(1);
-		expect(bossHpMul(20)).toBeCloseTo(1.6);
+		expect(bossHpMul(20)).toBeCloseTo(k.bossHpPerCycle);
 	});
 
-	test('spawn rate is capped', () => {
-		expect(spawnRate(1)).toBeCloseTo(2);
-		expect(spawnRate(100)).toBe(25);
+	test('each 30-round loop multiplies again (endless)', () => {
+		const k = ROUNDS.scaling;
+		expect([1, 30, 31, 60, 61].map(loop)).toEqual([0, 0, 1, 1, 2]);
+		const plain = (r: number) => (1 + k.hpPerRound * (r - 1)) * k.hpPerCycle ** cycle(r);
+		expect(hpMul(31)).toBeCloseTo(plain(31) * k.hpPerLoop);
+		expect(dmgMul(31) / dmgMul(30)).toBeGreaterThan(k.dmgPerLoop);
+	});
+
+	test('spawn rate is capped and slower on boss rounds', () => {
+		const k = ROUNDS.scaling;
+		expect(spawnRate(1)).toBeCloseTo(k.spawnBase + k.spawnPerRound);
+		expect(spawnRate(99)).toBe(k.spawnMax);
+		expect(spawnRate(100)).toBeCloseTo(k.spawnMax * k.bossSpawnMul);
 	});
 });
