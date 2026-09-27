@@ -134,7 +134,8 @@ export class CombatSystem {
 		if (!e.alive) return;
 		const amount = raw * shredFactor(e.status);
 		e.hp -= amount;
-		e.hitFlash = 0.08;
+		// DoT ticks don't flash; direct hits flash at a limited rate (Enemy.flash).
+		if (knockback) e.flash();
 		if (knockback) e.lastDot = null;
 		this.run.damageDealt += amount;
 		this.fx.damage(e.x, e.y, amount, crit, color);

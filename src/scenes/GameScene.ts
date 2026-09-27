@@ -337,7 +337,7 @@ export class GameScene extends Phaser.Scene {
 
 		const cam = this.cameras.main;
 		trackZoom(this, cam);
-		if (save.settings.bloom) applyBloom(cam);
+		if (save.settings.bloomOptIn) applyBloom(cam);
 		Enemy.reducedFlashes = save.settings.reducedFlashes;
 		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
 		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);

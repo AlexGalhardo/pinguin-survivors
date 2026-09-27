@@ -13,6 +13,8 @@ import { emptyStatus, resetStatus, type StatusState } from '../logic/status';
 import type { Mover } from '../logic/steering';
 
 const ELITE_BAR_W = 24;
+const FLASH_TIME = 0.06;
+const FLASH_COOLDOWN = 0.18;
 const ANIM_FPS: Record<string, number> = { walk: 10, attack: 12 };
 const ANIM_LOOPS = ['walk', 'attack'] as const;
 
@@ -30,6 +32,8 @@ export class Enemy implements Mover {
 	elite: EliteTier | null = null;
 	alive = false;
 	hitFlash = 0;
+	/** Time left before the next white hit flash may start. */
+	private flashCooldown = 0;
 	readonly status: StatusState = emptyStatus();
 	/** What hit last, for kill attribution (achievement counters). */
 	lastElement: Element | null = null;
@@ -60,6 +64,16 @@ export class Enemy implements Mover {
 		this.sprite = scene.add.sprite(0, 0, KEYS.shadow).setOrigin(0.5, 0.95).setVisible(false);
 	}
 
+	/**
+	 * White hit flash, rate-limited: under constant fire (bosses, DoTs) a flash per hit kept the
+	 * sprite white most of the time and hid the art.
+	 */
+	flash(): void {
+		if (this.flashCooldown > 0) return;
+		this.hitFlash = FLASH_TIME;
+		this.flashCooldown = FLASH_COOLDOWN;
+	}
+
 	spawn(
 		def: EnemyDef,
 		x: number,
@@ -83,6 +97,7 @@ export class Enemy implements Mover {
 		this.elite = elite;
 		this.alive = true;
 		this.hitFlash = 0;
+		this.flashCooldown = 0;
 		resetStatus(this.status);
 		this.lastElement = null;
 		this.ai = newAi(def);
@@ -135,12 +150,23 @@ export class Enemy implements Mover {
 		else this.sprite.setFlipX(facingLeft);
 		if (this.bar && this.elite) this.syncBar(ground.x, ground.y - this.z, depth);
 		if (this.telegraph && this.hitFlash <= 0) {
-			this.sprite.setTint(0xff3030).setTintMode(Phaser.TintModes.FILL);
-			this.sprite.setAlpha(0.6 + 0.4 * Math.sin(performance.now() / 40));
+			// Reddish over the art (not a solid fill) so the telegraph never hides the sprite.
+			const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 60);
+			this.sprite
+				.setTint(
+					Phaser.Display.Color.GetColor(
+						255,
+						Math.round(90 + 90 * pulse),
+						Math.round(90 + 90 * pulse),
+					),
+				)
+				.setTintMode(Phaser.TintModes.MULTIPLY);
+			this.sprite.setAlpha(1);
 		} else if (!this.telegraph) {
 			this.sprite.setAlpha(1);
 			if (this.hitFlash <= 0) this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
 		}
+		this.flashCooldown -= dt;
 		if (this.hitFlash > 0 && Enemy.reducedFlashes) this.hitFlash = 0;
 		if (this.hitFlash > 0) {
 			this.hitFlash -= dt;

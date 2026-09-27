@@ -44,7 +44,8 @@ export interface Settings {
 	gore: GoreMode;
 	screenShake: boolean;
 	subtitles: boolean;
-	bloom: boolean;
+	/** Opt-in bloom (renamed from `bloom`, which defaulted to on). */
+	bloomOptIn: boolean;
 	/** Accessibility: damage number scale and softer flashes (PLAN 7.1). */
 	numberSize: NumberSize;
 	reducedFlashes: boolean;
@@ -125,7 +126,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			gore: 'max',
 			screenShake: true,
 			subtitles: true,
-			bloom: true,
+			bloomOptIn: false,
 			numberSize: 'normal',
 			reducedFlashes: false,
 			keys: { ...DEFAULT_BINDS },
@@ -200,7 +201,9 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		gore: oneOf(s.gore, ['max', 'reduced', 'goo'] as const, base.settings.gore),
 		screenShake: bool(s.screenShake, base.settings.screenShake),
 		subtitles: bool(s.subtitles, base.settings.subtitles),
-		bloom: bool(s.bloom, base.settings.bloom),
+		// Read from `bloomOptIn`: the old `bloom` key defaulted to on, and bloom washes large bright
+		// sprites (bosses) into white silhouettes and costs a lot of FPS, so everyone starts off.
+		bloomOptIn: bool(s.bloomOptIn, base.settings.bloomOptIn),
 		numberSize: oneOf(s.numberSize, NUMBER_SIZES, base.settings.numberSize),
 		reducedFlashes: bool(s.reducedFlashes, base.settings.reducedFlashes),
 		keys: parseBinds(s.keys),

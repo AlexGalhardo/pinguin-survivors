@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Bosses and big zombies no longer turn into white silhouettes: bloom is now opt-in (off by default; it also cost a lot of FPS), hit flashes are rate-limited and attack warnings tint the art red instead of hiding it.
+
 ## [0.1.0-beta.5] - 2026-09-27
 
 Playtest build **playdev-4**.

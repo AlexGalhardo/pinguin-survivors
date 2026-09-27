@@ -95,9 +95,9 @@ export class SettingsScene extends Phaser.Scene {
 					},
 				},
 				{
-					label: () => t('settings.bloom', { v: onOff(s.bloom) }),
+					label: () => t('settings.bloom', { v: onOff(s.bloomOptIn) }),
 					onAdjust: () => {
-						s.bloom = !s.bloom;
+						s.bloomOptIn = !s.bloomOptIn;
 						persist(this);
 					},
 				},
