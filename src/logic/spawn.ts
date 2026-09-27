@@ -12,24 +12,26 @@ export const SPAWN_MARGIN = 48;
 export function spawnPosition(rng: Rng, hero: Vec2, viewW: number, viewH: number): Vec2 {
 	const hw = viewW / 2 + SPAWN_MARGIN;
 	const hh = viewH / 2 + SPAWN_MARGIN;
-	// Pick a point on the rectangle perimeter, uniformly by length.
+	// Pick a point on the rectangle perimeter, uniformly by length (top, right, bottom, left).
 	const perimeter = 4 * (hw + hh);
-	let t = rng.next() * perimeter;
+	const t = rng.next() * perimeter;
+	const top = 2 * hw;
+	const right = top + 2 * hh;
+	const bottom = right + 2 * hw;
 	let sx: number;
 	let sy: number;
-	if (t < 2 * hw) {
+	if (t < top) {
 		sx = -hw + t;
 		sy = -hh;
-	} else if ((t -= 2 * hw) < 2 * hh) {
+	} else if (t < right) {
 		sx = hw;
-		sy = -hh + t;
-	} else if ((t -= 2 * hh) < 2 * hw) {
-		sx = hw - t;
+		sy = -hh + (t - top);
+	} else if (t < bottom) {
+		sx = hw - (t - right);
 		sy = hh;
 	} else {
-		t -= 2 * hw;
 		sx = -hw;
-		sy = hh - t;
+		sy = hh - (t - bottom);
 	}
 	const offset = screenToWorld(sx, sy);
 	return { x: hero.x + offset.x, y: hero.y + offset.y };
