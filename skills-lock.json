@@ -198,6 +198,286 @@
       "sourceType": "github",
       "skillPath": "skills/v4-new-features/SKILL.md",
       "computedHash": "cf435ba5df67acfaa55b346e0922357a0df47e232084a3b2e2a09e8fcfc60b5b"
+    },
+    "gd-procedural-gen": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/procedural-gen/SKILL.md",
+      "computedHash": "6d20a41a3b314641c03bca35943ae2e92205a9a03d811dce67b920aed3125620",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-level-design": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/level-design/SKILL.md",
+      "computedHash": "cc5bea1b921c2e57abcb0eba6adc2417ca31654bb71261e4caffb18d49d9c942",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-save-systems": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/save-systems/SKILL.md",
+      "computedHash": "2d901bdc2a7290ea07db3b5db1cb25a1df8c036d0ee8442b288b75c0f30bb97a",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-ai-behavior-trees-utility-ai": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/ai-behavior-trees-utility-ai/SKILL.md",
+      "computedHash": "1306f3a029ca19e4ea6f2157e84571d3cdd852260ff07538a6899a6b8a7ae0b8",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-game-feel": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/game-feel/SKILL.md",
+      "computedHash": "56127958805eb3d687a73c7cae34e3137a474c82d05aee1318710a162eda0be7",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-shader-programming": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/shader-programming/SKILL.md",
+      "computedHash": "66d01f66c3aeb8e82ca28b892cbd8c9a41c080235a2512437524e8c11b3cd262",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-input-systems": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/input-systems/SKILL.md",
+      "computedHash": "2d7197e6ec4063171603079564e2fc3d09ec60876098f80088ab14b181eef0c7",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-camera-systems": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/camera-systems/SKILL.md",
+      "computedHash": "bcb4d66672261fca1aad5ed2a8378039a36c2decaaafb22148506f29b94fc5a1",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-game-ai": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/game-ai/SKILL.md",
+      "computedHash": "3fa1a2f14c6f813891253245d828edbf9ac61e8a4a0d900c30c0c5f3f299d131",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-audio-design": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/audio-design/SKILL.md",
+      "computedHash": "984f079b36a99a65ac4019a5fd62c5a2b5c0eb772322a7eb1069644221d15320",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-create-game-assets": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/create-game-assets/SKILL.md",
+      "computedHash": "9f548fea739ed56b04753feb420f25f25c8085f411c799b0692a65f91e8b1d38",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-physics-tuning": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/physics-tuning/SKILL.md",
+      "computedHash": "ebdf64716e547ba9cd8f3427b949a110b77496c5fad3b449d162eec5c2705495",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-performance-optimization": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/performance-optimization/SKILL.md",
+      "computedHash": "7ade8cab803fbb1dcf10a610dd75e755a33d411f9943f78f933667fd1a807d98",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-game-ui-ux": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/game-ui-ux/SKILL.md",
+      "computedHash": "49e6e38804c97998f010b4d3fb5dabc857ab1ca42af7343eecf268c03352aa8b",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-roguelike": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/genres/roguelike/SKILL.md",
+      "computedHash": "692ce403dc0489310dd3bf63b428ce6c0cd07e9f3ad4b2424d3e0f1ad3fe7174",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-rpg": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/genres/rpg/SKILL.md",
+      "computedHash": "cfdf51eacf28d802028597739d7a37249f1c2c7bb6342cfe9e074593fa83d7f7",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-prototype-fast": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/workflows/prototype-fast/SKILL.md",
+      "computedHash": "891dd9d536e7abfde68d35d358c6087bbde6a3424513701a96c0faeb98c82e51",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-itch-publish": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/workflows/itch-publish/SKILL.md",
+      "computedHash": "282f22824981b19221a47ba653cf465f3f11e915a05e3198a0776460b44e1baf",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-steam-publish": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/workflows/steam-publish/SKILL.md",
+      "computedHash": "66299cf9faf8bc8cce7a40a292b6ab6e4dbb58ad3a43f86183f8f128303e7a2d",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gd-phaser-core": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-engines/phaser-core/SKILL.md",
+      "computedHash": "74f7a394e94336859b195c1fb0b636b89c8a25d411aa3c9d5baddf342d2bc66f",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-design-game": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/design-game/SKILL.md",
+      "computedHash": "2e3d2557d3dda42896bbffdccc84ead8b09819121e1e1c17afceb6bc32769b21",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-game-designer": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/game-designer/SKILL.md",
+      "computedHash": "99f94ad7d83320b2b306417f0a61ddf2c8c4bf69588670f013497246c1d622e2",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-game-architecture": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/game-architecture/SKILL.md",
+      "computedHash": "294859e2c51057673b1ba192a48fd0466cda3578fe84f08cf1c03aafe05311ed",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-qa-game": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/qa-game/SKILL.md",
+      "computedHash": "2a61a7494ecb415bdafd9d2843648a141adb5964598e07757bbecd733514b699",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-review-game": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/review-game/SKILL.md",
+      "computedHash": "8c066726c0e59cfddfdfaca631ec677cba9e9c7d828fd64898b7e5cd3576c09b",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-improve-game": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/improve-game/SKILL.md",
+      "computedHash": "6ddb428e7357c4a1d4d1f8bcf8145de13da1892b55081d31cd519dc2ee6baaa7",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-add-feature": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/add-feature/SKILL.md",
+      "computedHash": "79e8b2128cece5ea23997c572270e6f078385a391a169d1dfd822ba482a03293",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-game-qa": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/game-qa/SKILL.md",
+      "computedHash": "bf4f113c73baea8bc605c418d4cac73b0eb225779bd084db3701e1676c6ab265",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-phaser": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/phaser/SKILL.md",
+      "computedHash": "56e01bee50004e1b9856b75e13f06724afe6abee0d2f77ec2d7309a00443340b",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-monetize-game": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/monetize-game/SKILL.md",
+      "computedHash": "ab66b7747f215d308eb6e7bf3b46de5d4dfa3b409a2937bcb8220b4cb7273fc7",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "gc-game-deploy": {
+      "source": "PlayableIntelligence/game-creator",
+      "sourceType": "github",
+      "skillPath": "skills/game-deploy/SKILL.md",
+      "computedHash": "44f68a485e513b1628dab607b67ea8e1d4d76efa5be181fb8762b44d9e52c535",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "ccgs-balance-check": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/balance-check/SKILL.md",
+      "computedHash": "05f0d8bb268d0d1800d08b5600658414c5059626e65a1af2bb0f2066b3f404b8",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
+    },
+    "ccgs-playtest-report": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/playtest-report/SKILL.md",
+      "computedHash": "4b79089931173ec159903ef2c8cb94999767066ebea6c5f81ed8b5fa985744b6",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
+    },
+    "ccgs-perf-profile": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/perf-profile/SKILL.md",
+      "computedHash": "e349338340c261c7a20881223a123660b8604355a04b655e9c9aabd920256ddc",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
+    },
+    "ccgs-release-checklist": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/release-checklist/SKILL.md",
+      "computedHash": "94e3f67c280e7b5fca1a9a906a5d9e00ed56ce4b7c3c34f17ec93768e21a5acd",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
+    },
+    "ccgs-launch-checklist": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/launch-checklist/SKILL.md",
+      "computedHash": "a94be94ee6fe3cffcd422d11903d77c940be3a42b3d0583b842a366ba0cf1de1",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
+    },
+    "ccgs-scope-check": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/scope-check/SKILL.md",
+      "computedHash": "7c62350615b7c496193d76303686e4dac1dfc1a02005d1b096b494a6ed1b12c5",
+      "localEdits": "renamed with source prefix and project note"
+    },
+    "ccgs-qa-plan": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/qa-plan/SKILL.md",
+      "computedHash": "a960a4dfcb10e15e6f3e63b300aeaead64279b1e21c073a3207940402faaeeed",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
+    },
+    "ccgs-bug-report": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/bug-report/SKILL.md",
+      "computedHash": "ecbf1b291fc40fd6204a9d75e62b8eae675c4c2bbfa94801d5dc4d40ff9b4070",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
+    },
+    "ccgs-localize": {
+      "source": "Donchitos/Claude-Code-Game-Studios",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/localize/SKILL.md",
+      "computedHash": "8c052563ab7349b40242132127348d95dc0aa2e4156827c13b7d49104b7af4ac",
+      "localEdits": "renamed with source prefix, project note, removed CCGS yaml-helper config injection"
     }
   }
 }

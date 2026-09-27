@@ -41,3 +41,4 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 8. Segredos só no `.env`. `TODO.md` é local e ignorado pelo git.
 9. Conventional Commits 1.0.0 + SemVer 2.0.0 (`0.1.0-alpha.N` → `0.1.0-beta.N` → `1.0.0`); gates manuais (hooks Husky vazios por escolha do usuário); nunca `--no-verify`; push após cada commit.
 10. `CHANGELOG.md` no padrão Keep a Changelog 1.1.0 (seção `[Unreleased]` durante o trabalho).
+11. Skills de gamedev de terceiros em `.claude/skills/` (`gd-*`, `gc-*`, `ccgs-*`): **use quando a tarefa bater** (tabela em `docs/tooling.md`). Elas são guias; as regras deste projeto vencem em conflito. As `ccgs-*` assumem pastas `design/`/`production/`: grave relatórios em `docs/reports/`.

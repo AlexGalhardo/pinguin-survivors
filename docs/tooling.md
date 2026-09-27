@@ -15,6 +15,30 @@ Skills em `.claude/skills/` (nível de projeto), travadas em `skills-lock.json` 
 | `find-skills` | Procurar novas skills |
 | `grilling` / `grill-me` | Entrevistar o usuário sobre decisões de design (`/grill-me` é só do usuário) |
 
+### Skills de gamedev de terceiros (curadas; ver `.claude/skills/THIRD_PARTY.md`)
+
+Use quando a tarefa pedir; em conflito, vale o `CLAUDE.md` (Phaser **4**, Bun, `src/logic` puro, i18n, PixelLab/ElevenLabs).
+
+| Quando | Skill |
+|---|---|
+| Juice, hit-stop, shake, feedback | `gd-game-feel`, `gc-design-game`, `gc-game-designer` |
+| IA de inimigos, bosses, steering | `gd-game-ai`, `gd-ai-behavior-trees-utility-ai` |
+| Mapa procedural, loot, seeds | `gd-procedural-gen` |
+| Progressão, stats, RPG, save | `gd-rpg`, `gd-roguelike`, `gd-save-systems` |
+| Câmera, input, UI/HUD, menus | `gd-camera-systems`, `gd-input-systems`, `gd-game-ui-ux` |
+| Performance (300 inimigos, gore, luz) | `gd-performance-optimization`, `ccgs-perf-profile` |
+| Shaders/filtros (bloom, vinheta, luz) | `gd-shader-programming` (adaptar para filtros do Phaser 4) |
+| Áudio (mixagem, ducking, música adaptativa) | `gd-audio-design` |
+| Direção de arte e checagem de assets | `gd-create-game-assets` |
+| Balanceamento das fórmulas/dados | `ccgs-balance-check` |
+| QA, testes Playwright, bugs | `gc-game-qa`, `gc-qa-game`, `ccgs-qa-plan`, `ccgs-bug-report`, `ccgs-playtest-report` |
+| Revisão/melhoria do código do jogo | `gc-review-game`, `gc-improve-game`, `gc-add-feature`, `gc-game-architecture` |
+| Escopo (evitar inchaço do PLAN) | `ccgs-scope-check` |
+| i18n EN/PT-BR | `ccgs-localize` |
+| Release e publicação | `ccgs-release-checklist`, `ccgs-launch-checklist`, `gd-itch-publish`, `gd-steam-publish`, `gc-game-deploy`, `gc-monetize-game` |
+| Referência Phaser extra | `gd-phaser-core` (Phaser 4), `gc-phaser` (escrita para Phaser 3: só padrões, não APIs) |
+| Protótipo rápido de mecânica | `gd-prototype-fast` |
+
 ## APIs e MCPs
 
 | Serviço | Status | Notas |

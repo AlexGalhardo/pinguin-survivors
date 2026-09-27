@@ -51,3 +51,4 @@ bun scripts/qa-browsers.ts           # QA do build (com `vite preview --port 417
 ## Skills úteis
 
 Phaser 4 (28, ex.: `render-textures`, `filters-and-postfx`, `cameras`, `animations`, `scale-and-responsive`), `pinguin-art-assets`, `pinguin-audio-assets`, `agent-browser` (QA), `canvas-design`, `graphify`, `find-skills`, `grilling` (entrevistar o usuário).
+**Gamedev de terceiros (40, curadas):** `gd-*` (game feel, IA, procedural, RPG/roguelike, save, câmera, input, UI, performance, shaders, áudio, assets, itch/Steam), `gc-*` (design, arquitetura, QA Playwright, review, deploy) e `ccgs-*` (balanceamento, playtest, perf, QA, release, localização). **Use-as quando a tarefa bater** — tabela "quando usar" em [docs/tooling.md](docs/tooling.md); origem e ajustes em `.claude/skills/THIRD_PARTY.md`. Em conflito, este CLAUDE.md vence (ex.: `gc-phaser` é Phaser 3).

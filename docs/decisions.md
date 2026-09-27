@@ -57,3 +57,4 @@ Quando uma decisão mudar, **edite a linha** e registre a data. As decisões do 
 | P-50 | **Resolução** em Settings: Automática (pixels nativos, Retina incluso) ou SD 480p / HD 720p / Full HD / 2K / 3K / 4K; o canvas renderiza na resolução escolhida e é esticado para a janela (Scale.NONE + zoom) | Pedido do usuário (joga num Mac M1) |
 | P-51 | **Menu inicial com key art animada** estilo DOOM (vermelho/laranja/verde/preto) gerada no PixelLab com Jack e com Bob; o usuário escolhe a definitiva | Pedido do usuário |
 | P-52 | Alcance das armas do Jack **+50%** em todos os tiers | Pedido do usuário |
+| P-53 | Skills de terceiros **curadas** (40 de ~170) dos repositórios awesome-gamedev-agent-skills, game-creator e Claude-Code-Game-Studios, com prefixos `gd-`/`gc-`/`ccgs-`; sem hooks/settings/agentes deles | Pedido do usuário; curadoria para não poluir o contexto nem sobrescrever as regras do projeto |
