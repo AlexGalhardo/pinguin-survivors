@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { HERO_IDS, TILE_H, TILE_W } from '../config/constants';
 import { PALETTE, toCss } from '../config/palette';
+import { ENEMY_LIST } from '../data/enemies';
 import { DIRS, type Dir } from '../logic/iso';
 import { BIOMES, KEYS } from './manifest';
 
@@ -48,6 +49,61 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.beginPath();
 		ctx.ellipse(16, 15, 4, 6, 0, 0, Math.PI * 2);
 		ctx.fill();
+	});
+	for (const e of ENEMY_LIST) {
+		const h = e.placeholder.height;
+		const w = Math.round(h * 0.7);
+		canvas(scene, KEYS.enemy(e.id), w, h, (ctx) => zombie(ctx, w, h, e.placeholder.color));
+	}
+	for (const [tier, color] of [
+		['purple', PALETTE.auraPurple],
+		['orange', PALETTE.auraOrange],
+	] as const) {
+		canvas(scene, KEYS.aura(tier), 64, 32, (ctx) => {
+			const g = ctx.createRadialGradient(32, 16, 2, 32, 16, 30);
+			g.addColorStop(0, `${toCss(color)}cc`);
+			g.addColorStop(1, `${toCss(color)}00`);
+			ctx.fillStyle = g;
+			ctx.save();
+			ctx.scale(1, 0.5);
+			ctx.beginPath();
+			ctx.arc(32, 32, 31, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.restore();
+		});
+	}
+	canvas(scene, KEYS.projectile('pellet'), 4, 4, (ctx) => {
+		ctx.fillStyle = toCss(PALETTE.crit);
+		ctx.fillRect(0, 0, 4, 4);
+	});
+	canvas(scene, KEYS.projectile('orb'), 10, 10, (ctx) => {
+		ctx.fillStyle = toCss(PALETTE.lucia);
+		ctx.beginPath();
+		ctx.arc(5, 5, 5, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.fillStyle = '#e8d8ff';
+		ctx.fillRect(3, 3, 3, 3);
+	});
+	canvas(scene, KEYS.projectile('spit'), 8, 8, (ctx) => {
+		ctx.fillStyle = toCss(PALETTE.goo);
+		ctx.beginPath();
+		ctx.arc(4, 4, 4, 0, Math.PI * 2);
+		ctx.fill();
+	});
+	canvas(scene, KEYS.slash, 64, 32, (ctx) => {
+		ctx.strokeStyle = '#f2f4f8';
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.ellipse(32, 16, 30, 14, 0, Math.PI * 1.05, Math.PI * 1.95);
+		ctx.stroke();
+	});
+	canvas(scene, KEYS.blood, 16, 8, (ctx) => {
+		ctx.fillStyle = toCss(PALETTE.blood);
+		ctx.beginPath();
+		ctx.ellipse(8, 4, 8, 4, 0, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.fillStyle = toCss(PALETTE.bloodDark);
+		ctx.fillRect(5, 3, 4, 2);
 	});
 	for (const hero of HERO_IDS) {
 		for (const tier of [1, 2, 3]) {
@@ -117,4 +173,18 @@ function penguin(ctx: CanvasRenderingContext2D, accent: number, dir: Dir): void 
 	ctx.fillStyle = '#f08a24';
 	ctx.fillRect(12, 51, 6, 3);
 	ctx.fillRect(22, 51, 6, 3);
+}
+
+function zombie(ctx: CanvasRenderingContext2D, w: number, h: number, color: number): void {
+	ctx.fillStyle = toCss(color);
+	ctx.beginPath();
+	ctx.ellipse(w / 2, h * 0.58, w * 0.45, h * 0.4, 0, 0, Math.PI * 2);
+	ctx.fill();
+	ctx.fillStyle = 'rgba(0,0,0,0.25)';
+	ctx.fillRect(Math.round(w * 0.2), Math.round(h * 0.7), Math.round(w * 0.25), 3);
+	ctx.fillStyle = toCss(PALETTE.blood);
+	ctx.fillRect(Math.round(w * 0.55), Math.round(h * 0.55), 4, 3);
+	ctx.fillStyle = '#ff3b3b';
+	ctx.fillRect(Math.round(w * 0.3), Math.round(h * 0.32), 3, 2);
+	ctx.fillRect(Math.round(w * 0.6), Math.round(h * 0.32), 3, 2);
 }

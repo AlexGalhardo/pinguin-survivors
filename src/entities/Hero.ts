@@ -1,4 +1,4 @@
-import type Phaser from 'phaser';
+import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import type { HeroId } from '../config/constants';
 import { type Dir, dirFromWorld, isoDepth, type Vec2, worldToScreen } from '../logic/iso';
@@ -22,12 +22,23 @@ export class Hero {
 		this.sync();
 	}
 
+	private flashTime = 0;
+
+	flash(): void {
+		this.flashTime = 0.12;
+		this.sprite.setTint(0xff4040).setTintMode(Phaser.TintModes.FILL);
+	}
+
 	/** `move` is a unit world vector (or zero). */
 	update(dt: number, move: Vec2): void {
 		this.x += move.x * this.speed * dt;
 		this.y += move.y * this.speed * dt;
 		this.facing = dirFromWorld(move.x, move.y, this.facing);
 		this.sprite.setTexture(KEYS.heroFacing(this.id, this.tier, this.facing));
+		if (this.flashTime > 0) {
+			this.flashTime -= dt;
+			if (this.flashTime <= 0) this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
+		}
 		this.sync();
 	}
 

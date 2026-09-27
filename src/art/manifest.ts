@@ -11,6 +11,11 @@ export const KEYS = {
 	/** Single-frame facing texture (placeholder stage; animations replace it in phase 3). */
 	heroFacing: (hero: HeroId, tier: number, dir: Dir) => `hero.${hero}.t${tier}.${dir}`,
 	shadow: 'fx.shadow',
+	enemy: (id: string) => `enemy.${id}`,
+	aura: (tier: 'purple' | 'orange') => `fx.aura.${tier}`,
+	projectile: (id: string) => `proj.${id}`,
+	slash: 'fx.slash',
+	blood: 'fx.blood',
 	/** Shared achievement badge (PixelLab; placeholder until public/assets/ui/ui.achievement.png). */
 	achievementBadge: 'ui.achievement',
 	sfxAchievement: 'sfx.achievement',

@@ -5,24 +5,60 @@ import { GameEvents } from '../core/events';
 import { trackZoom } from '../core/viewport';
 import type { AchievementDef } from '../data/achievements';
 import { t } from '../i18n';
+import { formatTime } from '../logic/format';
+import { isBossRound } from '../logic/round';
 import { AchievementToast } from '../ui/AchievementToast';
 import { UI_FONT } from '../ui/font';
 import { addVersionFooter } from '../ui/version-footer';
 import type { GameScene } from './GameScene';
 
+const HP_W = 120;
+const BOSS_W = 260;
+
 export class HudScene extends Phaser.Scene {
 	private debugText?: Phaser.GameObjects.Text;
 	private speedText!: Phaser.GameObjects.Text;
+	private hpFill!: Phaser.GameObjects.Rectangle;
+	private hpText!: Phaser.GameObjects.Text;
+	private roundText!: Phaser.GameObjects.Text;
+	private timerText!: Phaser.GameObjects.Text;
+	private killsText!: Phaser.GameObjects.Text;
+	private boss!: Phaser.GameObjects.Container;
+	private bossFill!: Phaser.GameObjects.Rectangle;
 
 	constructor() {
 		super('Hud');
 	}
 
 	create(): void {
-		const cam = this.cameras.main;
-		this.speedText = this.add
-			.text(0, 4, '', { fontFamily: UI_FONT, fontSize: '16px', color: toCss(PALETTE.crit) })
-			.setOrigin(1, 0);
+		const text = (size: number, color: number = PALETTE.textLight) => ({
+			fontFamily: UI_FONT,
+			fontSize: `${size}px`,
+			color: toCss(color),
+			stroke: toCss(PALETTE.night),
+			strokeThickness: 2,
+		});
+		this.add.rectangle(8, 8, HP_W, 8, PALETTE.night, 0.8).setOrigin(0, 0);
+		this.hpFill = this.add.rectangle(9, 9, HP_W - 2, 6, PALETTE.blood).setOrigin(0, 0);
+		this.hpText = this.add.text(8, 18, '', text(8)).setOrigin(0, 0);
+		this.killsText = this.add.text(8, 28, '', text(8, PALETTE.textDim)).setOrigin(0, 0);
+		this.roundText = this.add.text(0, 4, '', text(12)).setOrigin(0.5, 0);
+		this.timerText = this.add.text(0, 18, '', text(16)).setOrigin(0.5, 0);
+		this.speedText = this.add.text(0, 4, '', text(16, PALETTE.crit)).setOrigin(1, 0);
+
+		const bossBg = this.add.rectangle(0, 0, BOSS_W, 8, PALETTE.night, 0.85).setOrigin(0.5, 0);
+		this.bossFill = this.add
+			.rectangle(-BOSS_W / 2 + 1, 1, BOSS_W - 2, 6, PALETTE.auraOrange)
+			.setOrigin(0, 0);
+		const bossName = this.add
+			.text(0, 9, t('hud.boss'), text(8, PALETTE.auraOrange))
+			.setOrigin(0.5, 0);
+		this.boss = this.add.container(0, 40, [bossBg, this.bossFill, bossName]).setVisible(false);
+
+		if (getParams(this).debug) {
+			this.debugText = this.add.text(8, 40, '', text(8, PALETTE.textDim));
+		}
+
 		const footer = addVersionFooter(this);
 		const toast = new AchievementToast(this);
 		const onUnlock = (defs: AchievementDef[]) => toast.show(defs);
@@ -30,30 +66,44 @@ export class HudScene extends Phaser.Scene {
 		this.events.once('shutdown', () =>
 			this.game.events.off(GameEvents.AchievementsUnlocked, onUnlock),
 		);
+
+		const cam = this.cameras.main;
 		trackZoom(this, cam, (view) => {
 			cam.centerOn(view.width / 2, view.height / 2);
+			const cx = Math.round(view.width / 2);
+			this.roundText.setX(cx);
+			this.timerText.setX(cx);
+			this.boss.setX(cx);
+			this.speedText.setX(view.width - 8);
 			footer.layout(view);
 			toast.layout(view.width);
-			this.speedText.setX(view.width - 8);
 		});
-		if (getParams(this).debug) {
-			this.debugText = this.add.text(6, 4, '', {
-				fontFamily: UI_FONT,
-				fontSize: '12px',
-				color: toCss(PALETTE.textLight),
-			});
-		}
 	}
 
 	override update(): void {
 		const game = this.scene.get('Game') as GameScene;
-		if (!game.hero) return;
+		const run = game.run;
+		if (!run) return;
+		this.hpFill.width = Math.max(0, (HP_W - 2) * (run.hp / run.maxHp));
+		this.hpText.setText(t('hud.hp', { hp: Math.ceil(run.hp), max: run.maxHp }));
+		this.killsText.setText(t('hud.kills', { n: run.kills }));
+		this.roundText.setText(t('hud.round', { n: run.round }));
+		this.timerText
+			.setText(formatTime(run.timeLeft))
+			.setColor(
+				toCss(
+					run.timeLeft <= 5 || isBossRound(run.round) ? PALETTE.blood : PALETTE.textLight,
+				),
+			);
+		const boss = game.enemies.boss;
+		this.boss.setVisible(boss !== null);
+		if (boss) this.bossFill.width = Math.max(0, (BOSS_W - 2) * (boss.hp / boss.maxHp));
 		this.speedText.setText(game.speed > 1 ? t('hud.speed', { n: game.speed }) : '');
-		if (!this.debugText) return;
-		this.debugText.setText(
+		this.debugText?.setText(
 			t('debug.stats', {
 				fps: Math.round(this.game.loop.actualFps),
 				chunks: game.chunks.count,
+				enemies: game.enemies.active.length,
 				x: Math.round(game.hero.x),
 				y: Math.round(game.hero.y),
 			}),
