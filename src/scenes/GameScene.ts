@@ -14,6 +14,7 @@ import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
+import { ROUNDS } from '../data/rounds';
 import { levelScale, PERKS } from '../data/secondaries';
 import { SUPER } from '../data/superpowers';
 import type { VoEvent } from '../data/voice';
@@ -843,6 +844,7 @@ export class GameScene extends Phaser.Scene {
 		this.area.clear();
 		this.hostile.clear();
 		this.secondaries.clear();
+		healHero(this.run, this.run.maxHp * ROUNDS.roundEndHeal);
 		this.run.fish += Math.round(roundEndFish(this.run.round) * this.mods.rewards);
 		this.pickups.collectAll();
 		const offers = drawCards(this.rng, {

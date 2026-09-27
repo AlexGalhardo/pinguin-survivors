@@ -61,7 +61,14 @@ export class WeaponSystem {
 		if (this.cooldown > 0) return;
 		const aimRange =
 			this.weapon.kind === 'arc' ? this.weapon.range * MELEE_AIM_FACTOR : this.weapon.range;
-		const target = grid.nearest(hx, hy, aimRange, (e) => e.alive);
+		// Bosses and elites in range come first, so they don't hide behind the horde.
+		const target =
+			grid.nearest(
+				hx,
+				hy,
+				aimRange,
+				(e) => e.alive && (e.elite !== null || e.def.behavior === 'boss'),
+			) ?? grid.nearest(hx, hy, aimRange, (e) => e.alive);
 		if (!target) return;
 		const angle = Math.atan2(target.y - hy, target.x - hx);
 		this.fire(hx, hy, angle, grid);

@@ -29,5 +29,9 @@ export const ROUNDS = {
 		loopRounds: 30,
 		hpPerLoop: 1.6,
 		dmgPerLoop: 1.5,
+		/** Enemy speed per endless loop (1 = off; hook for balancing). */
+		speedPerLoop: 1,
 	},
+	/** Share of max HP restored when a round ends (the hero carries HP into the next round). */
+	roundEndHeal: 0.25,
 } as const;

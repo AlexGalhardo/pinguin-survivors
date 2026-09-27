@@ -11,6 +11,7 @@ import {
 	rollElite,
 	roundDuration,
 	spawnRate,
+	speedMul,
 } from '../src/logic/round';
 
 describe('round timing (P-14)', () => {
@@ -73,4 +74,9 @@ describe('scaling', () => {
 		expect(spawnRate(99)).toBe(k.spawnMax);
 		expect(spawnRate(100)).toBeCloseTo(k.spawnMax * k.bossSpawnMul);
 	});
+});
+
+test('speed multiplier hook per endless loop (off by default)', () => {
+	expect(speedMul(1)).toBe(1);
+	expect(speedMul(31)).toBeCloseTo(ROUNDS.scaling.speedPerLoop);
 });

@@ -56,6 +56,11 @@ export function dmgMul(round: number): number {
 	);
 }
 
+/** Enemy speed multiplier for the round (grows per endless loop). */
+export function speedMul(round: number): number {
+	return ROUNDS.scaling.speedPerLoop ** loop(round);
+}
+
 /** Boss HP grows per cycle as the rotating pool comes back stronger (round 10 → ×1, 20 → ×1.6). */
 export function bossHpMul(round: number): number {
 	return ROUNDS.scaling.bossHpPerCycle ** cycle(round);

@@ -8,7 +8,15 @@ import { AI, stepAi } from '../logic/enemy-ai';
 import type { Vec2 } from '../logic/iso';
 import { type ObstacleField, pushOut } from '../logic/obstacles';
 import type { Rng } from '../logic/rng';
-import { bossHpMul, dmgMul, hpMul, isBossRound, rollElite, spawnRate } from '../logic/round';
+import {
+	bossHpMul,
+	dmgMul,
+	hpMul,
+	isBossRound,
+	rollElite,
+	spawnRate,
+	speedMul,
+} from '../logic/round';
 import { SpatialGrid } from '../logic/spatial-grid';
 import { pickEnemy, spawnPosition } from '../logic/spawn';
 import { speedFactor, type Tick, tickStatus } from '../logic/status';
@@ -61,7 +69,7 @@ export class EnemySystem {
 			hpMul(this.round) * m.hp,
 			dmgMul(this.round) * m.damage,
 			null,
-			m.speed,
+			m.speed * speedMul(this.round),
 		);
 	}
 
@@ -80,7 +88,7 @@ export class EnemySystem {
 				bossHpMul(round) * m.hp,
 				dmgMul(round) * m.damage,
 				null,
-				m.speed,
+				m.speed * speedMul(round),
 			);
 		}
 	}
@@ -100,7 +108,7 @@ export class EnemySystem {
 				hpMul(round) * this.mods.hp,
 				dmgMul(round) * this.mods.damage,
 				rollElite(round, this.rng.next()),
-				this.mods.speed,
+				this.mods.speed * speedMul(round),
 			);
 		}
 
