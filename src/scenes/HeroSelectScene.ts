@@ -45,7 +45,8 @@ export class HeroSelectScene extends Phaser.Scene {
 					0,
 					72,
 					unlocked
-						? t('select.level', { n: save.heroes[hero].level })
+						? `${t('select.level', { n: save.heroes[hero].level })}
+${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 						: `${t('select.locked')}\n${hint ? t(hint) : ''}`,
 					text(9, unlocked ? PALETTE.crit : PALETTE.blood, 140),
 				)

@@ -11,3 +11,4 @@ art-src/raw/
 .env.local
 TODO.md
 art-src/pixellab/raw/
+.playwright-mcp/

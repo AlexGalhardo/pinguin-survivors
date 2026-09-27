@@ -31,7 +31,7 @@ export class AchievementsScene extends Phaser.Scene {
 					total: ACHIEVEMENTS.length,
 					points: availablePoints(save.achievements),
 				}),
-				text(10, 0xff9a3c),
+				text(10, PALETTE.fish),
 			)
 			.setOrigin(0.5, 0);
 		const shop = this.add.text(0, 0, t('ach.shop'), text(9, PALETTE.textDim)).setOrigin(0.5, 0);

@@ -29,7 +29,7 @@ export class MainMenuScene extends Phaser.Scene {
 				0,
 				0,
 				t('menu.wallet', { fish: save.fish, points: availablePoints(save.achievements) }),
-				text(10, 0xff9a3c),
+				text(10, PALETTE.fish),
 			)
 			.setOrigin(0.5, 0);
 		const go = (key: string) => () => this.scene.start(key);
@@ -56,6 +56,7 @@ export class MainMenuScene extends Phaser.Scene {
 					: []),
 				{ label: () => t('menu.play'), onSelect: go('HeroSelect') },
 				{ label: () => t('menu.hero'), onSelect: go('Hero') },
+				{ label: () => t('menu.workshop'), onSelect: go('Workshop') },
 				{ label: () => t('menu.achievements'), onSelect: go('Achievements') },
 				{ label: () => t('menu.history'), onSelect: go('History') },
 				{

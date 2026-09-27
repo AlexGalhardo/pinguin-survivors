@@ -60,7 +60,7 @@ export class HudScene extends Phaser.Scene {
 		this.xpFill = this.add.rectangle(9, 30, 0, 2, 0x5fe0ff).setOrigin(0, 0);
 		this.levelText = this.add.text(HP_W + 12, 6, '', text(10, PALETTE.crit)).setOrigin(0, 0);
 		this.killsText = this.add.text(8, 36, '', text(8, PALETTE.textDim)).setOrigin(0, 0);
-		this.fishText = this.add.text(8, 46, '', text(8, 0xff9a3c)).setOrigin(0, 0);
+		this.fishText = this.add.text(8, 46, '', text(8, PALETTE.fish)).setOrigin(0, 0);
 		this.roundText = this.add.text(0, 4, '', text(12)).setOrigin(0.5, 0);
 		this.timerText = this.add.text(0, 18, '', text(16)).setOrigin(0.5, 0);
 		this.speedText = this.add.text(0, 4, '', text(16, PALETTE.crit)).setOrigin(1, 0);

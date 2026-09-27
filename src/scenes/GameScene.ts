@@ -47,6 +47,7 @@ import {
 import { nextSpeed } from '../logic/speed';
 import { heroStats, type PlayerStats } from '../logic/stats';
 import { addCharge, chargeFor, superReady, superUnlocked } from '../logic/superpower';
+import { applyUpgrades } from '../logic/upgrades';
 import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
 import { CombatSystem, HERO_RADIUS } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
@@ -194,7 +195,10 @@ export class GameScene extends Phaser.Scene {
 			this.run = resume.run;
 			startRound(this.run, this.run.round);
 		} else {
-			this.stats = heroStats(heroDef, heroSave.level, heroSave.points);
+			this.stats = applyUpgrades(
+				heroStats(heroDef, heroSave.level, heroSave.points),
+				save.upgrades,
+			);
 			this.build = emptyBuild(tier);
 			this.run = createRunState(heroDef, { seed, round: params.round, tier });
 			this.run.maxHp = this.stats.maxHp;

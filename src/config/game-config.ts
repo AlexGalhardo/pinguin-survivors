@@ -11,6 +11,7 @@ import { HudScene } from '../scenes/HudScene';
 import { MainMenuScene } from '../scenes/MainMenuScene';
 import { PauseScene } from '../scenes/PauseScene';
 import { SettingsScene } from '../scenes/SettingsScene';
+import { WorkshopScene } from '../scenes/WorkshopScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -31,6 +32,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		MainMenuScene,
 		HeroSelectScene,
 		HeroScene,
+		WorkshopScene,
 		GameScene,
 		HudScene,
 		CardPickScene,

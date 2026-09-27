@@ -148,7 +148,7 @@ Biomas seguintes (estação de pesquisa/porto, cidade em ruínas) trazem novos i
 
 ## 13. Meta-progressão
 
-- **Fish 🐟**: moeda persistente (drop de inimigos, bônus por round e por boss). Compra poções e upgrades permanentes.
+- **Fish 🐟**: moeda persistente (drop de inimigos, bônus por round e por boss). Compra poções e upgrades permanentes na **Oficina** (9 melhorias compartilhadas pelos heróis, níveis com preço crescente; números em `src/data/upgrades.ts`).
 - **Desbloqueios**: Bob (boss 10) e Lucia (boss 20); conquistas e recordes por herói.
 
 ## 14. Game feel

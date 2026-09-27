@@ -19,6 +19,7 @@ export const PALETTE = {
 	textLight: 0xe8ecf2,
 	textDim: 0x9aa3b5,
 	crit: 0xffd84a,
+	fish: 0xff9a3c,
 	rarityCommon: 0x9aa3b5,
 	rarityRare: 0x4f9dff,
 	rarityEpic: 0xb347ff,

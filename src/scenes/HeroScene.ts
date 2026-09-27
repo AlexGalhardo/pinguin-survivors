@@ -127,7 +127,7 @@ export class HeroScene extends Phaser.Scene {
 			onBack: back,
 		});
 		const potionTitle = this.add
-			.text(0, 0, t('hero.potions', { fish: save.fish }), text(12, 0xff9a3c))
+			.text(0, 0, t('hero.potions', { fish: save.fish }), text(12, PALETTE.fish))
 			.setOrigin(0.5, 0);
 		const right = new MenuList(
 			this,

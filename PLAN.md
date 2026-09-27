@@ -103,8 +103,8 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 1.7 Rounds, elites e boss
 - [x] `src/logic/round.ts`: duração, boss (N%10), elite roxo/laranja (N%3, ≥11), escala por round/ciclo + testes
-- [x] Timer e troca de round (inimigos restantes viram poças); [ ] transição para as cartas (1.8)
-- [x] Elites: escala e aura roxa/laranja (placeholder elíptico); [ ] drop garantido de Fish
+- [x] Timer e troca de round (inimigos restantes viram poças) e transição para as cartas (1.8)
+- [x] Elites: escala, aura roxa/laranja (placeholder elíptico) e drop garantido de Fish
 - [x] Boss urso polar: barra na HUD, timer 3:00 (timeout = game over), patada em arco com preparação, investida e rugido que invoca 6 pinguins
 
 ### 1.8 Cartas e armas secundárias
@@ -136,7 +136,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 1.9 Pickups, HUD e fim de run
 - [x] Orbes de XP, Fish e carne pooled, ímã pelo alcance de coleta, coleta total no fim do round
-- [x] `HudScene`: HP, XP/level, Fish, kills, round/timer, barra do boss, 2x, superpoder, lista da build; [ ] aviso de round de elite; [ ] poções (2.3)
+- [x] `HudScene`: HP, XP/level, Fish, kills, round/timer, barra do boss, 2x, superpoder, lista da build, aviso de round de elite e poções (2.3)
 - [x] Morte / timeout do boss → `GameOverScene` (resumo, recorde) → Enter para jogar de novo
 - [ ] QA: run completa com Jack até o round 10 (boss) no browser, sem erros
 
@@ -151,7 +151,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 2.2 Tela Hero (pontos, poções, upgrades)
 - [x] Distribuir pontos de stat com prévia (tela Heróis e Poções)
-- [x] Loja de poções (Fish); [ ] upgrades permanentes
+- [x] Loja de poções (Fish) e **Oficina** de upgrades permanentes com Fish (`src/data/upgrades.ts`, `src/logic/upgrades.ts` + testes; 9 melhorias compartilhadas pelos heróis)
 - [x] Editor de gambits: 3 slots, poção (← →) + condição (Enter)
 
 ### 2.3 Poções em jogo
@@ -165,7 +165,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ### 2.5 Menus e settings
 - [x] `MainMenuScene` (key art animada, carteira de Fish/pontos, versão no rodapé), `PauseScene` (Continuar / Configurações / Desistir com confirmação), `GameOverScene` (XP, levels, Fish, recorde; Enter = de novo, Esc = menu)
 - [x] `SettingsScene`: idioma EN/PT-BR, **resolução (auto/SD/HD/FHD/2K/3K/4K)**, volumes, gore, tremor de tela, números de dano, exportar/importar save; gore (reduzido/gosma), tremor e números de dano aplicados no jogo; [ ] fullscreen
-- [ ] Records (melhor round por herói)
+- [x] Records: melhor round por herói na seleção de heróis (`progress.hero[h].bestRound`)
 
 ### 2.6 i18n e balanceamento
 - [ ] Todas as strings em `en.ts` e `pt-BR.ts`; layouts conferidos nos dois idiomas
