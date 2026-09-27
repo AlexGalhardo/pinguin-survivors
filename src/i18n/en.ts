@@ -1,10 +1,16 @@
 import { achEn } from './achievements.en';
+import { cardsEn } from './cards.en';
 
 export const en = {
 	...achEn,
+	...cardsEn,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
+	'fx.superUnlocked': 'SUPERPOWER UNLOCKED!',
+	'hud.super': 'SUPER {n}/100',
+	'hud.superReady': 'SUPER · SPACE',
+	'fx.block': 'BLOCK',
 	'hud.fish': 'FISH {n}',
 	'fx.levelUp': 'LEVEL UP!',
 	'hud.level': 'LV {n}',

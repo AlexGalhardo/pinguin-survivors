@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
+import { KEYS } from '../art/manifest';
 import type { GameSpeed, HeroId } from '../config/constants';
+import { PALETTE } from '../config/palette';
 import { getParams, getSave, persist } from '../core/context';
 import { GameEvents } from '../core/events';
 import { gamepadMove } from '../core/gamepad';
@@ -7,15 +9,20 @@ import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
 import { trackZoom } from '../core/viewport';
 import { ECONOMY } from '../data/economy';
 import { HEROES } from '../data/heroes';
+import { levelScale, PERKS } from '../data/secondaries';
+import { SUPER } from '../data/superpowers';
 import { SIGNATURE, type SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
 import { evaluateAchievements } from '../logic/achievements';
-import { inputToWorld } from '../logic/iso';
+import { applyCard, type Build, emptyBuild } from '../logic/build';
+import { type CardOffer, drawCards } from '../logic/cards';
+import type { Element } from '../logic/combat';
+import { inputToWorld, isoDepth, worldToScreen } from '../logic/iso';
 import { addXp, type LevelState, orbXp, roundEndFish } from '../logic/progression';
 import { Rng, randomSeed } from '../logic/rng';
 import { cycle, isBossRound } from '../logic/round';
-import { createRunState, healHero, type RunState, startRound } from '../logic/run-state';
+import { countRun, createRunState, healHero, type RunState, startRound } from '../logic/run-state';
 import {
 	addFeat,
 	liveProgress,
@@ -25,74 +32,108 @@ import {
 } from '../logic/save';
 import { nextSpeed } from '../logic/speed';
 import { heroStats, type PlayerStats } from '../logic/stats';
+import { addCharge, chargeFor, superReady, superUnlocked } from '../logic/superpower';
+import { AreaSystem } from '../systems/AreaSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { FxSystem } from '../systems/FxSystem';
 import { type PickupKind, PickupSystem } from '../systems/PickupSystem';
+import { ProjectilePool } from '../systems/ProjectilePool';
+import { SecondarySystem } from '../systems/SecondarySystem';
+import { SuperpowerSystem } from '../systems/SuperpowerSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { ChunkManager } from '../world/ChunkManager';
+import type { CardPickData } from './CardPickScene';
 
 /** Padding (screen px) around the camera view where chunks are already built. */
 const VIEW_PAD = 96;
 const DEATH_DELAY = 1.2;
 /** Seconds between live achievement checks. */
 const ACHIEVEMENT_CHECK = 1;
+const ATTUNEMENT_WINDOW = 4;
+const REFLEX_WINDOW = 2;
+const BLOODLUST_RADIUS = 150;
 
 export class GameScene extends Phaser.Scene {
 	hero!: Hero;
 	chunks!: ChunkManager;
 	run!: RunState;
 	stats!: PlayerStats;
+	build!: Build;
 	enemies!: EnemySystem;
+	superpower!: SuperpowerSystem;
+	/** Persistent hero level/XP, updated live as orbs are collected. */
+	level!: LevelState;
 	/** Multiplies simulation dt, scene timers and tweens (TAB toggles 1x/2x). */
 	speed: GameSpeed = 1;
 	private keys!: MoveKeys;
 	private weapons!: WeaponSystem;
+	private secondaries!: SecondarySystem;
+	private pool!: ProjectilePool;
+	private area!: AreaSystem;
 	private combat!: CombatSystem;
 	private fx!: FxSystem;
+	private pickups!: PickupSystem;
 	private rng!: Rng;
 	private deadFor = -1;
 	private outcome: RunOutcome = 'death';
-	private pickups!: PickupSystem;
-	/** Persistent hero level/XP, updated live as orbs are collected. */
-	level!: LevelState;
 	private levelsGained = 0;
 	private startedAt = 0;
 	private achievementTimer = 0;
+	private moving = false;
+	private reflexTime = 0;
+	private barrierReady = false;
+	private barrierTimer = 0;
+	private barrier!: Phaser.GameObjects.Image;
+	private readonly elementUsedAt = new Map<Element, number>();
+	private readonly scratch: Enemy[] = [];
 
 	constructor() {
 		super('Game');
 	}
 
+	get superIsUnlocked(): boolean {
+		return superUnlocked(this.level.level);
+	}
+
 	create(): void {
 		const params = getParams(this);
+		const save = getSave(this);
 		const heroId: HeroId = params.hero ?? 'jack';
 		const heroDef = HEROES[heroId];
+		const heroSave = save.heroes[heroId];
 		const seed = params.seed ?? randomSeed();
 		const tier = params.tier ?? 1;
 		this.rng = new Rng(seed);
 		this.deadFor = -1;
+		this.outcome = 'death';
 		this.speed = 1;
-		const save = getSave(this);
-		const heroSave = save.heroes[heroId];
-		this.level = { level: heroSave.level, xp: heroSave.xp };
 		this.levelsGained = 0;
 		this.startedAt = Date.now();
 		this.achievementTimer = 0;
-		this.outcome = 'death';
+		this.reflexTime = 0;
+		this.barrierReady = false;
+		this.barrierTimer = 0;
+		this.elementUsedAt.clear();
+		this.level = { level: heroSave.level, xp: heroSave.xp };
 		this.stats = heroStats(heroDef, heroSave.level, heroSave.points);
+		this.build = emptyBuild(tier);
 		this.run = createRunState(heroDef, { seed, round: params.round, tier });
 		this.run.maxHp = this.stats.maxHp;
 		this.run.hp = this.stats.maxHp;
+
 		this.keys = createMoveKeys(this);
-		this.input.keyboard
-			?.addKey(Phaser.Input.Keyboard.KeyCodes.TAB)
-			.on('down', () => this.setSpeed(nextSpeed(this.speed)));
+		const kb = this.input.keyboard;
+		kb?.addKey(Phaser.Input.Keyboard.KeyCodes.TAB).on('down', () =>
+			this.setSpeed(nextSpeed(this.speed)),
+		);
+		kb?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', () => this.castSuper());
 
 		this.chunks = new ChunkManager(this, seed, 'antarctica');
 		this.fx = new FxSystem(this);
 		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
 		this.hero = new Hero(this, heroId, tier, this.stats);
+		this.barrier = this.add.image(0, 0, KEYS.barrier).setVisible(false);
 		this.enemies = new EnemySystem(this, this.rng, (e, t) => this.combat.dot(e, t));
 		this.combat = new CombatSystem(
 			this.rng,
@@ -103,16 +144,49 @@ export class GameScene extends Phaser.Scene {
 			this.fx,
 			(e) => this.onKill(e),
 			() => this.die('death'),
+			{
+				critBleed: false,
+				absorb: () => this.absorbWithBarrier(),
+				onDodge: () => this.onDodge(),
+				onParry: () => this.onParry(),
+				onHurt: (source) => this.onHurt(source),
+			},
 		);
 		this.combat.god = params.god;
+		this.pool = new ProjectilePool(this, (e, p) =>
+			this.combat.weaponHit(e, p.damage, p.crit, {
+				element: p.element,
+				bleedChance: p.bleedChance,
+			}),
+		);
+		this.area = new AreaSystem(this, (e, amount, element, poison) =>
+			this.combat.weaponHit(e, amount, false, { element, poison, noChain: true }),
+		);
 		this.weapons = new WeaponSystem(
-			this,
 			this.rng,
 			this.stats,
 			SIGNATURE[heroId][tier - 1] as SignatureWeapon,
-			(e, amount, crit, element, bleedChance) =>
-				this.combat.weaponHit(e, amount, crit, { element, bleedChance }),
+			this.pool,
+			(e, amount, crit, bleedChance) =>
+				this.combat.weaponHit(e, amount, crit, { bleedChance }),
 			(x, y, a, r) => this.fx.slash(x, y, a, r),
+			(element) => this.elementUsedAt.set(element, this.run.elapsed),
+		);
+		this.secondaries = new SecondarySystem(
+			this,
+			this.rng,
+			this.stats,
+			this.build,
+			this.pool,
+			this.area,
+			(e, amount, crit, element) => this.combat.weaponHit(e, amount, crit, { element }),
+		);
+		this.superpower = new SuperpowerSystem(
+			this.rng,
+			this.stats,
+			this.area,
+			(e, amount, element) =>
+				this.combat.weaponHit(e, amount, false, { element, noChain: true }),
 		);
 
 		const cam = this.cameras.main;
@@ -144,15 +218,23 @@ export class GameScene extends Phaser.Scene {
 			ix = gamepadMove.x;
 			iy = gamepadMove.y;
 		}
+		this.moving = ix !== 0 || iy !== 0;
 		this.hero.update(dt, inputToWorld(ix, iy));
 		healHero(run, this.stats.regen * dt);
 
-		this.enemies.update(dt, run.round, this.hero, this.viewSize());
-		this.weapons.update(dt, this.hero.x, this.hero.y, this.enemies.grid);
+		const grid = this.enemies.grid;
+		const view = this.viewSize();
+		this.enemies.update(dt, run.round, this.hero, view);
+		this.updatePerks(dt);
+		this.weapons.update(dt, this.hero.x, this.hero.y, grid);
+		this.secondaries.update(dt, this.hero.x, this.hero.y, grid);
+		this.superpower.update(dt, this.hero.x, this.hero.y, grid, this.weapons.weapon, view);
+		this.pool.update(dt, grid);
+		this.area.update(dt, grid);
 		this.combat.contact(dt);
 		this.pickups.update(dt, this.hero.x, this.hero.y, this.stats.pickupRange);
-		this.checkAchievements(dt);
 		this.fx.update(dt);
+		this.checkAchievements(dt);
 		this.checkRoundEnd();
 
 		const v = this.cameras.main.worldView;
@@ -175,23 +257,115 @@ export class GameScene extends Phaser.Scene {
 		return { width: v.width, height: v.height };
 	}
 
+	// --- Perks (docs/game-design.md §5.1) -------------------------------------------------
+
+	private updatePerks(dt: number): void {
+		const p = this.build.perks;
+		const bonus = this.weapons.bonus;
+		let rate = 1;
+		if (p.bloodlust) {
+			this.scratch.length = 0;
+			this.enemies.grid.queryRadius(this.hero.x, this.hero.y, BLOODLUST_RADIUS, this.scratch);
+			const bleeding = this.scratch.filter((e) => e.alive && e.status.bleedStacks > 0).length;
+			const s = levelScale(p.bloodlust);
+			rate += Math.min(PERKS.bloodlust.cap * s, PERKS.bloodlust.value * s * bleeding);
+		}
+		if (p.runAndGun && this.moving) rate += PERKS.runAndGun.value * levelScale(p.runAndGun);
+		bonus.rate = rate;
+		bonus.bounces = p.ricochet ?? 0;
+		if (p.elementalAttunement) {
+			let distinct = 0;
+			for (const at of this.elementUsedAt.values())
+				if (this.run.elapsed - at <= ATTUNEMENT_WINDOW) distinct++;
+			const s = levelScale(p.elementalAttunement);
+			const perk = PERKS.elementalAttunement;
+			bonus.damage = 1 + Math.min(perk.cap * s, perk.value * s * distinct);
+		}
+		if (this.reflexTime > 0) {
+			this.reflexTime -= dt;
+			if (this.reflexTime <= 0) bonus.forceCrit = false;
+		}
+		if (p.arcaneBarrier && !this.barrierReady) {
+			this.barrierTimer -= dt;
+			if (this.barrierTimer <= 0) this.barrierReady = true;
+		}
+		this.barrier.setVisible(this.barrierReady);
+		if (this.barrierReady) {
+			const s = worldToScreen(this.hero.x, this.hero.y);
+			this.barrier
+				.setPosition(s.x, s.y - 26)
+				.setDepth(isoDepth(this.hero.x, this.hero.y) + 1);
+		}
+	}
+
+	private absorbWithBarrier(): boolean {
+		const level = this.build.perks.arcaneBarrier;
+		if (!level || !this.barrierReady) return false;
+		this.barrierReady = false;
+		this.barrierTimer = PERKS.arcaneBarrier.value / levelScale(level);
+		return true;
+	}
+
+	private onDodge(): void {
+		if (!this.build.perks.reflex) return;
+		this.weapons.bonus.forceCrit = true;
+		this.reflexTime = REFLEX_WINDOW;
+	}
+
+	private onParry(): void {
+		const level = this.build.perks.counterAttack;
+		if (!level) return;
+		const w = this.weapons.weapon;
+		const damage =
+			w.damage *
+			this.stats.tagMul[w.tag] *
+			this.stats.damage *
+			PERKS.counterAttack.value *
+			levelScale(level);
+		const r = PERKS.counterAttack.radius;
+		this.area.burst(this.enemies.grid, this.hero.x, this.hero.y, r, damage, undefined);
+		this.area.flash(this.hero.x, this.hero.y, r, PALETTE.textLight, 0.2);
+	}
+
+	private onHurt(source: Enemy | undefined): void {
+		const iron = this.build.perks.ironSkin;
+		if (iron && source?.alive) {
+			const thorns = this.stats.armor * PERKS.ironSkin.thorns * levelScale(iron);
+			this.combat.damage(source, thorns, false, undefined, false);
+		}
+		this.secondaries.onHeroHit(this.hero.x, this.hero.y, this.enemies.grid);
+	}
+
+	// --- Kills, pickups, superpower -------------------------------------------------------
+
 	private onKill(e: Enemy): void {
 		const run = this.run;
-		if (e.def.behavior !== 'boss') run.superCharge += e.elite ? 3 : 1;
+		const kind = e.def.behavior === 'boss' ? 'boss' : e.elite ? 'elite' : 'common';
+		run.superCharge = addCharge(run.superCharge, chargeFor(kind));
+		if (this.superpower.active) this.superpower.killsThisCast++;
 		this.pickups.drop('xp', orbXp(e.def.xp, run.round), e.x, e.y);
 		const f = ECONOMY.fish;
-		const fish =
-			e.def.behavior === 'boss'
-				? f.bossPerCycle * (1 + cycle(run.round))
-				: e.elite === 'orange'
-					? f.eliteOrange
-					: e.elite === 'purple'
-						? f.elitePurple
-						: this.rng.next() < f.commonChance
-							? 1
-							: 0;
+		let fish = 0;
+		if (kind === 'boss') fish = f.bossPerCycle * (1 + cycle(run.round));
+		else if (e.elite === 'orange') fish = f.eliteOrange;
+		else if (e.elite === 'purple') fish = f.elitePurple;
+		else if (this.rng.next() < f.commonChance) fish = 1;
 		if (fish > 0) this.pickups.drop('fish', fish, e.x + 6, e.y + 6);
-		if (e.def.behavior === 'boss') this.onBossKilled();
+		const p = this.build.perks;
+		if (
+			p.butcher &&
+			this.weapons.weapon.tag === 'melee' &&
+			this.rng.next() < PERKS.butcher.value * levelScale(p.butcher)
+		)
+			this.pickups.drop('meat', this.stats.maxHp * PERKS.butcher.heal, e.x - 6, e.y);
+		if (p.toxicBloom && e.status.poisonStacks > 0) {
+			const dps = PERKS.toxicBloom.value * levelScale(p.toxicBloom);
+			this.area.zone(e.x, e.y, PERKS.toxicBloom.radius, 3, dps / 2, {
+				poison: true,
+				tint: PALETTE.dotPoison,
+			});
+		}
+		if (kind === 'boss') this.onBossKilled();
 	}
 
 	private collect(kind: PickupKind, value: number): void {
@@ -205,17 +379,32 @@ export class GameScene extends Phaser.Scene {
 		}
 		const xp = value * this.stats.xpGain;
 		this.run.xp += xp;
+		const wasUnlocked = this.superIsUnlocked;
 		const gained = addXp(this.level, xp);
 		if (gained > 0) {
 			this.levelsGained += gained;
 			this.fx.banner(this.hero.x, this.hero.y, 'fx.levelUp');
+			if (!wasUnlocked && this.superIsUnlocked)
+				this.fx.banner(this.hero.x, this.hero.y, 'fx.superUnlocked');
 		}
+	}
+
+	private castSuper(): void {
+		if (this.deadFor >= 0 || this.superpower.active) return;
+		if (!superReady(this.run.superCharge, this.level.level)) return;
+		this.run.superCharge = 0;
+		countRun(this.run, 'superUses');
+		this.combat.iFrames = Math.max(this.combat.iFrames, SUPER.invulnerable);
+		this.superpower.cast(this.run.hero, this.hero.x, this.hero.y, this);
 	}
 
 	/** Bob unlocks on the first round-10 boss kill, Lucia on round 20 (P-17). */
 	private onBossKilled(): void {
 		const save = getSave(this);
 		addFeat(save, 'bossBear');
+		if (this.run.timeLeft > 120) addFeat(save, 'bossUnder60s');
+		if (this.run.timeLeft < 5) addFeat(save, 'bossLastSecond');
+		if (this.speed > 1) addFeat(save, 'bossAt2x');
 		if (this.run.round >= 10 && !save.heroes.bob.unlocked) {
 			save.heroes.bob.unlocked = true;
 			addFeat(save, 'unlockBob');
@@ -233,6 +422,11 @@ export class GameScene extends Phaser.Scene {
 		this.achievementTimer -= dt;
 		if (this.achievementTimer > 0) return;
 		this.achievementTimer = ACHIEVEMENT_CHECK;
+		if (!this.superpower.active && this.superpower.killsThisCast > 0) {
+			const best = this.run.counters.superKillsOneCast ?? 0;
+			this.run.counters.superKillsOneCast = Math.max(best, this.superpower.killsThisCast);
+			this.superpower.killsThisCast = 0;
+		}
 		const save = getSave(this);
 		const progress = liveProgress(save, this.run, this.run.counters, this.level.level);
 		const fresh = evaluateAchievements(progress, save.achievements, Date.now());
@@ -240,6 +434,68 @@ export class GameScene extends Phaser.Scene {
 			persist(this);
 			this.game.events.emit(GameEvents.AchievementsUnlocked, fresh);
 		}
+	}
+
+	// --- Rounds and run end ---------------------------------------------------------------
+
+	private checkRoundEnd(): void {
+		const run = this.run;
+		if (isBossRound(run.round)) {
+			if (!this.enemies.boss) this.finishRound();
+			else if (run.timeLeft <= 0) this.die('bossTimeout');
+			return;
+		}
+		if (run.timeLeft <= 0) this.finishRound();
+	}
+
+	/** Clears the arena, banks the round, then pauses for the 3 cards (P-23). */
+	private finishRound(): void {
+		for (const e of [...this.enemies.active]) this.fx.bloodAt(e.x, e.y, e.radius / 10);
+		this.enemies.clear();
+		this.pool.clear();
+		this.area.clear();
+		this.run.fish += roundEndFish(this.run.round);
+		this.pickups.collectAll();
+		const offers = drawCards(this.rng, {
+			hero: this.run.hero,
+			round: this.run.round + 1,
+			luck: this.stats.luck,
+			build: this.build,
+		});
+		const data: CardPickData = {
+			round: this.run.round,
+			offers,
+			build: this.build,
+			onPick: (i) => this.pickCard(offers[i]),
+		};
+		this.scene.pause();
+		this.scene.launch('CardPick', data);
+	}
+
+	private pickCard(offer: CardOffer | undefined): void {
+		if (offer) {
+			const result = applyCard(this.build, this.stats, offer.card, offer.rarity);
+			countRun(this.run, 'cardsPicked');
+			if (offer.rarity === 'legendary' && offer.card.effect.type !== 'evolve')
+				countRun(this.run, 'legendaryCards');
+			if (result.exclusive) countRun(this.run, 'exclusiveCards');
+			if (result.maxHpDelta > 0) {
+				this.run.maxHp = this.stats.maxHp;
+				healHero(this.run, result.maxHpDelta);
+			}
+			if (result.evolvedTo) this.evolve(result.evolvedTo);
+		}
+		startRound(this.run, this.run.round + 1);
+		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
+		this.scene.resume();
+	}
+
+	private evolve(tier: 2 | 3): void {
+		this.run.tier = tier;
+		this.hero.setTier(tier);
+		this.weapons.weapon = SIGNATURE[this.run.hero][tier - 1] as SignatureWeapon;
+		countRun(this.run, tier === 2 ? 'evolutionsT2' : 'evolutionsT3');
+		if (tier === 3) this.run.counters.evolvedT3 = true;
 	}
 
 	private die(outcome: RunOutcome): void {
@@ -275,8 +531,11 @@ export class GameScene extends Phaser.Scene {
 			fishEarned: run.fish,
 			xpEarned: Math.round(run.xp),
 			levelsGained: this.levelsGained,
-			secondaries: [],
-			cards: [],
+			secondaries: Object.entries(this.build.secondaries).map(([id, level]) => ({
+				id,
+				level: level as number,
+			})),
+			cards: [...this.build.cards],
 			seed: run.seed,
 		};
 		const previousBest = save.progress.hero[run.hero].bestRound;
@@ -285,25 +544,5 @@ export class GameScene extends Phaser.Scene {
 		if (fresh.length > 0) this.game.events.emit(GameEvents.AchievementsUnlocked, fresh);
 		this.scene.stop('Hud');
 		this.scene.start('GameOver', { record, newBest: run.round > previousBest });
-	}
-
-	private checkRoundEnd(): void {
-		const run = this.run;
-		if (isBossRound(run.round)) {
-			if (!this.enemies.boss) this.nextRound();
-			else if (run.timeLeft <= 0) this.die('bossTimeout');
-			return;
-		}
-		if (run.timeLeft <= 0) this.nextRound();
-	}
-
-	private nextRound(): void {
-		for (const e of [...this.enemies.active]) this.fx.bloodAt(e.x, e.y, e.radius / 10);
-		this.enemies.clear();
-		this.weapons.clear();
-		this.run.fish += roundEndFish(this.run.round);
-		this.pickups.collectAll();
-		startRound(this.run, this.run.round + 1);
-		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 	}
 }

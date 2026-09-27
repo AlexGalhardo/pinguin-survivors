@@ -4,7 +4,8 @@ import { getParams } from '../core/context';
 import { GameEvents } from '../core/events';
 import { trackZoom } from '../core/viewport';
 import type { AchievementDef } from '../data/achievements';
-import { t } from '../i18n';
+import { SUPER } from '../data/superpowers';
+import { type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
 import { xpToNext } from '../logic/progression';
 import { isBossRound } from '../logic/round';
@@ -27,6 +28,10 @@ export class HudScene extends Phaser.Scene {
 	private levelText!: Phaser.GameObjects.Text;
 	private xpFill!: Phaser.GameObjects.Rectangle;
 	private fishText!: Phaser.GameObjects.Text;
+	private superBox!: Phaser.GameObjects.Container;
+	private superFill!: Phaser.GameObjects.Rectangle;
+	private superText!: Phaser.GameObjects.Text;
+	private buildText!: Phaser.GameObjects.Text;
 	private boss!: Phaser.GameObjects.Container;
 	private bossFill!: Phaser.GameObjects.Rectangle;
 
@@ -63,6 +68,14 @@ export class HudScene extends Phaser.Scene {
 			.setOrigin(0.5, 0);
 		this.boss = this.add.container(0, 40, [bossBg, this.bossFill, bossName]).setVisible(false);
 
+		const superBg = this.add.rectangle(0, 0, 120, 6, PALETTE.night, 0.85).setOrigin(0.5, 0);
+		this.superFill = this.add.rectangle(-59, 1, 0, 4, PALETTE.blood).setOrigin(0, 0);
+		this.superText = this.add.text(0, -12, '', text(8, PALETTE.textLight)).setOrigin(0.5, 0);
+		this.superBox = this.add
+			.container(0, 0, [superBg, this.superFill, this.superText])
+			.setVisible(false);
+		this.buildText = this.add.text(8, 0, '', text(8, PALETTE.textDim)).setOrigin(0, 1);
+
 		if (getParams(this).debug) {
 			this.debugText = this.add.text(8, 58, '', text(8, PALETTE.textDim));
 		}
@@ -83,6 +96,8 @@ export class HudScene extends Phaser.Scene {
 			this.timerText.setX(cx);
 			this.boss.setX(cx);
 			this.speedText.setX(view.width - 8);
+			this.superBox.setPosition(cx, view.height - 24);
+			this.buildText.setY(view.height - 8);
 			footer.layout(view);
 			toast.layout(view.width);
 		});
@@ -109,6 +124,24 @@ export class HudScene extends Phaser.Scene {
 					run.timeLeft <= 5 || isBossRound(run.round) ? PALETTE.blood : PALETTE.textLight,
 				),
 			);
+		this.superBox.setVisible(game.superIsUnlocked);
+		if (game.superIsUnlocked) {
+			const charge = Math.min(run.superCharge, SUPER.charge);
+			const ready = charge >= SUPER.charge;
+			this.superFill.width = 118 * (charge / SUPER.charge);
+			this.superFill.fillColor = ready ? PALETTE.crit : PALETTE.blood;
+			this.superText.setText(ready ? t('hud.superReady') : t('hud.super', { n: charge }));
+			this.superText.setAlpha(ready ? 0.6 + 0.4 * Math.sin(this.time.now / 120) : 1);
+		}
+		const lines = Object.entries(game.build.secondaries).map(
+			([id, lv]) =>
+				`${t(`card.weapon.${id}.name` as I18nKey)} ${t('hud.level', { n: lv as number })}`,
+		);
+		const perks = Object.entries(game.build.perks).map(
+			([id, lv]) =>
+				`${t(`card.perk.${id}.name` as I18nKey)} ${t('hud.level', { n: lv as number })}`,
+		);
+		this.buildText.setText([...lines, ...perks].join('\n'));
 		const boss = game.enemies.boss;
 		this.boss.setVisible(boss !== null);
 		if (boss) this.bossFill.width = Math.max(0, (BOSS_W - 2) * (boss.hp / boss.maxHp));

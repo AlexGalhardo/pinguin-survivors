@@ -26,8 +26,22 @@ export interface HitOptions {
 	bleedChance?: number;
 	/** Damage-number color override. */
 	color?: number;
-	/** DoT ticks and reflected damage skip knockback, on-hit effects and lifesteal. */
-	direct?: boolean;
+	/** Applies a poison stack regardless of the hero's poison chance (toxic zones). */
+	poison?: boolean;
+	/** Hits that should not chain again (the chain itself, area ticks). */
+	noChain?: boolean;
+}
+
+/** Perk reactions wired by the scene (docs/game-design.md §5.1). */
+export interface CombatHooks {
+	/** Critical hits apply bleed (Hollow Points). */
+	critBleed: boolean;
+	/** Returns true when a shield absorbed the hit (Arcane Barrier). */
+	absorb: () => boolean;
+	onDodge: () => void;
+	onParry: (source: Enemy | undefined) => void;
+	/** Damage actually taken, after mitigation (Frost Nova, thorns). */
+	onHurt: (source: Enemy | undefined) => void;
 }
 
 /** All damage rules applied inside the scene: on-hit effects, DoTs, kills and hero contact. */
@@ -44,6 +58,7 @@ export class CombatSystem {
 		private readonly fx: FxSystem,
 		private readonly onKill: (enemy: Enemy) => void,
 		private readonly onHeroDeath: () => void,
+		private readonly hooks: CombatHooks,
 	) {}
 
 	/** A weapon or ability hit: applies on-hit statuses, elements, lifesteal and knockback. */
@@ -52,7 +67,8 @@ export class CombatSystem {
 		const s = e.status;
 		if (this.rng.next() < (opts.bleedChance ?? 0) + this.stats.bleedChance)
 			applyBleed(s, amount);
-		if (this.rng.next() < this.stats.poisonChance) applyPoison(s, amount);
+		if (opts.poison || this.rng.next() < this.stats.poisonChance) applyPoison(s, amount);
+		if (crit && this.hooks.critBleed) applyBleed(s, amount);
 		if (opts.element === 'fire') applyBurn(s, amount);
 		else if (opts.element === 'ice') applyIce(s);
 		else if (opts.element === 'earth') applyEarth(s, this.rng.next());
@@ -60,7 +76,7 @@ export class CombatSystem {
 		if (this.stats.lifesteal > 0) healHero(this.run, amount * this.stats.lifesteal);
 		e.lastElement = opts.element ?? null;
 		this.damage(e, amount, crit, opts.color, true);
-		if (opts.element === 'energy') this.chain(e, amount);
+		if (opts.element === 'energy' && !opts.noChain) this.chain(e, amount);
 	}
 
 	/** Energy jumps to nearby enemies with reduced damage (balancing §3). */
@@ -179,12 +195,17 @@ export class CombatSystem {
 		if (result.kind === 'dodged') {
 			countRun(this.run, 'dodges');
 			this.fx.label(this.hero.x, this.hero.y, 'dodge');
+			this.hooks.onDodge();
 		} else if (result.kind === 'parried') {
 			countRun(this.run, 'parries');
 			this.fx.label(this.hero.x, this.hero.y, 'parry');
 			if (source) this.damage(source, result.reflected, false, undefined, false);
+			this.hooks.onParry(source);
+		} else if (this.hooks.absorb()) {
+			this.fx.label(this.hero.x, this.hero.y, 'block');
 		} else {
 			this.hero.flash();
+			this.hooks.onHurt(source);
 			if (damageHero(this.run, result.amount)) this.onHeroDeath();
 		}
 	}

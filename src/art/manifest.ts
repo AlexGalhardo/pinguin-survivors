@@ -17,6 +17,10 @@ export const KEYS = {
 	slash: 'fx.slash',
 	blood: 'fx.blood',
 	pickup: (kind: 'xp' | 'fish' | 'meat') => `pickup.${kind}`,
+	ring: 'fx.ring',
+	zone: 'fx.zone',
+	drone: 'fx.drone',
+	barrier: 'fx.barrier',
 	/** Shared achievement badge (PixelLab; placeholder until public/assets/ui/ui.achievement.png). */
 	achievementBadge: 'ui.achievement',
 	sfxAchievement: 'sfx.achievement',

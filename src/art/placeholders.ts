@@ -124,6 +124,62 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.fillStyle = '#f2e6d0';
 		ctx.fillRect(8, 4, 4, 2);
 	});
+	const rect = (key: string, w: number, h: number, color: string, accent?: string) =>
+		canvas(scene, key, w, h, (ctx) => {
+			ctx.fillStyle = color;
+			ctx.fillRect(0, 0, w, h);
+			if (accent) {
+				ctx.fillStyle = accent;
+				ctx.fillRect(0, 0, Math.max(1, Math.floor(w / 3)), h);
+			}
+		});
+	rect(KEYS.projectile('knife'), 10, 3, '#d8dee8', '#6b4a2f');
+	rect(KEYS.projectile('blade'), 14, 4, '#f2f4f8', '#9aa3b5');
+	rect(KEYS.projectile('bottle'), 5, 8, '#5c8a3a', '#ff7a2f');
+	rect(KEYS.projectile('grenade'), 6, 6, '#3f5a2a', '#9aa3b5');
+	canvas(scene, KEYS.projectile('meteor'), 14, 14, (ctx) => {
+		ctx.fillStyle = '#ff7a2f';
+		ctx.beginPath();
+		ctx.arc(7, 7, 7, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.fillStyle = '#ffe07a';
+		ctx.fillRect(4, 4, 4, 4);
+	});
+	canvas(scene, KEYS.drone, 16, 10, (ctx) => {
+		ctx.fillStyle = '#3a4152';
+		ctx.fillRect(2, 3, 12, 5);
+		ctx.fillStyle = '#9aa3b5';
+		ctx.fillRect(0, 1, 5, 2);
+		ctx.fillRect(11, 1, 5, 2);
+		ctx.fillStyle = '#ff3b3b';
+		ctx.fillRect(7, 5, 2, 2);
+	});
+	canvas(scene, KEYS.ring, 128, 64, (ctx) => {
+		ctx.strokeStyle = '#ffffff';
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.ellipse(64, 32, 62, 30, 0, 0, Math.PI * 2);
+		ctx.stroke();
+	});
+	canvas(scene, KEYS.zone, 128, 64, (ctx) => {
+		const g = ctx.createRadialGradient(64, 32, 4, 64, 32, 62);
+		g.addColorStop(0, 'rgba(255,255,255,0.7)');
+		g.addColorStop(1, 'rgba(255,255,255,0)');
+		ctx.fillStyle = g;
+		ctx.save();
+		ctx.scale(1, 0.5);
+		ctx.beginPath();
+		ctx.arc(64, 64, 62, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.restore();
+	});
+	canvas(scene, KEYS.barrier, 48, 56, (ctx) => {
+		ctx.strokeStyle = 'rgba(179,71,255,0.9)';
+		ctx.lineWidth = 2;
+		ctx.beginPath();
+		ctx.ellipse(24, 28, 22, 26, 0, 0, Math.PI * 2);
+		ctx.stroke();
+	});
 	canvas(scene, KEYS.slash, 64, 32, (ctx) => {
 		ctx.strokeStyle = '#f2f4f8';
 		ctx.lineWidth = 3;

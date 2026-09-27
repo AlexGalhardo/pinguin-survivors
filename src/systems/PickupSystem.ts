@@ -59,8 +59,18 @@ export class PickupSystem {
 		p.sprite.setTexture(KEYS.pickup(kind)).setVisible(true);
 	}
 
-	/** End of round: everything flies to the hero. */
+	/** End of round: everything on the ground is collected at once. */
 	collectAll(): void {
+		for (const p of this.items) {
+			if (!p.alive) continue;
+			p.alive = false;
+			p.sprite.setVisible(false);
+			this.onCollect(p.kind, p.value);
+		}
+	}
+
+	/** Pulls every pickup towards the hero (magnet effect). */
+	attractAll(): void {
 		this.vacuum = true;
 	}
 

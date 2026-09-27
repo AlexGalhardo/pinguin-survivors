@@ -58,10 +58,10 @@ export class FxSystem {
 	}
 
 	/** Short floating word over the hero (dodge/parry feedback). */
-	label(x: number, y: number, kind: 'dodge' | 'parry'): void {
+	label(x: number, y: number, kind: 'dodge' | 'parry' | 'block'): void {
 		this.damage(x, y, 0, false, kind === 'parry' ? PALETTE.crit : PALETTE.textDim);
 		const n = this.numbers.find((f) => f.life === NUMBER_LIFE);
-		n?.text.setText(t(kind === 'dodge' ? 'fx.dodge' : 'fx.parry')).setFontSize(10);
+		n?.text.setText(t(`fx.${kind}`)).setFontSize(10);
 	}
 
 	/** Big floating message over the hero (level up, unlocks). */

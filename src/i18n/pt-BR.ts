@@ -1,11 +1,17 @@
 import { achPtBR } from './achievements.pt-BR';
+import { cardsPtBR } from './cards.pt-BR';
 import type { I18nKey } from './en';
 
 export const ptBR: Record<I18nKey, string> = {
 	...achPtBR,
+	...cardsPtBR,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Carregando…',
 	'hud.round': 'ROUND {n}',
+	'fx.superUnlocked': 'SUPERPODER LIBERADO!',
+	'hud.super': 'SUPER {n}/100',
+	'hud.superReady': 'SUPER · SPACE',
+	'fx.block': 'BLOQUEIO',
 	'hud.fish': 'PEIXES {n}',
 	'fx.levelUp': 'SUBIU DE NÍVEL!',
 	'hud.level': 'NV {n}',
