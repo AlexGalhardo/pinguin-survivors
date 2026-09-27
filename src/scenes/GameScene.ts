@@ -60,6 +60,7 @@ import { SuperpowerSystem } from '../systems/SuperpowerSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { ChunkManager } from '../world/ChunkManager';
 import type { CardPickData } from './CardPickScene';
+import type { UnlockData } from './UnlockScene';
 
 /** What a saved run snapshot holds (save.activeRun.state). */
 export interface RunResume {
@@ -142,6 +143,8 @@ export class GameScene extends Phaser.Scene {
 	/** Hero poison from scientist spit (world damage per second). */
 	private heroPoisonDps = 0;
 	private heroPoisonTime = 0;
+	/** Heroes unlocked during this run, shown on the unlock screen after it (PLAN 3.3). */
+	private unlockedNow: HeroId[] = [];
 
 	constructor() {
 		super('Game');
@@ -172,6 +175,7 @@ export class GameScene extends Phaser.Scene {
 		this.barrierReady = false;
 		this.barrierTimer = 0;
 		this.elementUsedAt.clear();
+		this.unlockedNow = [];
 		this.level = { level: heroSave.level, xp: heroSave.xp };
 		if (!resume && save.activeRun) {
 			// Starting over abandons the saved run: its loaded potions go back to the stock.
@@ -689,11 +693,13 @@ export class GameScene extends Phaser.Scene {
 		if (this.run.round >= 10 && !save.heroes.bob.unlocked) {
 			save.heroes.bob.unlocked = true;
 			addFeat(save, 'unlockBob');
+			this.unlockedNow.push('bob');
 			this.fx.banner(this.hero.x, this.hero.y, 'unlock.bob');
 		}
 		if (this.run.round >= 20 && !save.heroes.lucia.unlocked) {
 			save.heroes.lucia.unlocked = true;
 			addFeat(save, 'unlockLucia');
+			this.unlockedNow.push('lucia');
 			this.fx.banner(this.hero.x, this.hero.y, 'unlock.lucia');
 		}
 		persist(this);
@@ -870,6 +876,12 @@ export class GameScene extends Phaser.Scene {
 		persist(this);
 		if (fresh.length > 0) this.game.events.emit(GameEvents.AchievementsUnlocked, fresh);
 		this.scene.stop('Hud');
-		this.scene.start('GameOver', { record, newBest: run.round > previousBest });
+		const summary = { key: 'GameOver', data: { record, newBest: run.round > previousBest } };
+		if (this.unlockedNow.length > 0)
+			this.scene.start('Unlock', {
+				heroes: this.unlockedNow,
+				next: summary,
+			} satisfies UnlockData);
+		else this.scene.start(summary.key, summary.data);
 	}
 }

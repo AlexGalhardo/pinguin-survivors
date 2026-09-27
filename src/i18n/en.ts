@@ -133,6 +133,12 @@ export const en = {
 	'over.newBest': 'NEW BEST!',
 	'unlock.bob': 'BOB UNLOCKED!',
 	'unlock.lucia': 'LUCIA UNLOCKED!',
+	'unlock.title': 'NEW PENGUIN',
+	'unlock.continue': 'ENTER  continue',
+	'unlock.bob.blurb':
+		'Bob escaped the bear with a shotgun and a grudge. Fast, deadly crits, dodges everything, but thin skin.',
+	'unlock.lucia.blurb':
+		'Lucia bends fire, ice, earth and energy. Fragile as a snowflake, devastating as a blizzard.',
 	'fx.dodge': 'DODGE',
 	'fx.parry': 'PARRY',
 	'hud.hp': 'HP {hp}/{max}',

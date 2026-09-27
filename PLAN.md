@@ -159,12 +159,12 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Efeitos das poções no `GameScene` (cura, mega cura, escudo, fúria, antídoto, pressa) + slots na HUD; veneno no herói (cuspe do cientista)
 
 ### 2.4 Desbloqueios e seleção
-- [x] Bob ao vencer o boss 10, Lucia ao vencer o boss 20 (banner na tela); [ ] tela de desbloqueio dedicada
+- [x] Bob ao vencer o boss 10, Lucia ao vencer o boss 20 (banner na tela) e tela de desbloqueio dedicada (`UnlockScene`, depois da run)
 - [x] `HeroSelectScene` com retratos (concepts aprovados), bloqueio com dica de desbloqueio e nível
 
 ### 2.5 Menus e settings
 - [x] `MainMenuScene` (key art animada, carteira de Fish/pontos, versão no rodapé), `PauseScene` (Continuar / Configurações / Desistir com confirmação), `GameOverScene` (XP, levels, Fish, recorde; Enter = de novo, Esc = menu)
-- [x] `SettingsScene`: idioma EN/PT-BR, **resolução (auto/SD/HD/FHD/2K/3K/4K)**, volumes, gore, tremor de tela, números de dano, exportar/importar save; gore (reduzido/gosma), tremor e números de dano aplicados no jogo; [ ] fullscreen
+- [x] `SettingsScene`: idioma EN/PT-BR, **resolução (auto/SD/HD/FHD/2K/3K/4K)**, volumes, gore, tremor de tela, números de dano, exportar/importar save; gore (reduzido/gosma), tremor e números de dano aplicados no jogo; tela cheia (estado do navegador, não salvo)
 - [x] Records: melhor round por herói na seleção de heróis (`progress.hero[h].bestRound`)
 
 ### 2.6 i18n e balanceamento
@@ -193,7 +193,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ### 3.3 Polimento de sistemas
 - [ ] Zoom-punch do boss, luz nos projéteis mágicos e bloom (filtros do Phaser 4)
 - [ ] Performance: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 (medir e anotar)
-- [ ] Tela de desbloqueio dedicada (Bob/Lucia) e fullscreen nas configurações
+- [x] Tela de desbloqueio dedicada (Bob/Lucia) e fullscreen nas configurações
 - [ ] Loja de extras das conquistas: mecânica pronta; itens a definir com o usuário
 - [ ] Auditoria de i18n (nenhum texto fora de `src/i18n`; skill `ccgs-localize`)
 

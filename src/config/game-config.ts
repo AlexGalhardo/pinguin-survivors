@@ -11,6 +11,7 @@ import { HudScene } from '../scenes/HudScene';
 import { MainMenuScene } from '../scenes/MainMenuScene';
 import { PauseScene } from '../scenes/PauseScene';
 import { SettingsScene } from '../scenes/SettingsScene';
+import { UnlockScene } from '../scenes/UnlockScene';
 import { WorkshopScene } from '../scenes/WorkshopScene';
 import { PALETTE, toCss } from './palette';
 
@@ -41,5 +42,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		AchievementsScene,
 		HistoryScene,
 		GameOverScene,
+		UnlockScene,
 	],
 };

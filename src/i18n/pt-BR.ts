@@ -134,6 +134,12 @@ export const ptBR: Record<I18nKey, string> = {
 	'over.retry': 'ENTER  tentar de novo',
 	'over.newBest': 'NOVO RECORDE!',
 	'unlock.bob': 'BOB DESBLOQUEADO!',
+	'unlock.title': 'NOVO PINGUIM',
+	'unlock.continue': 'ENTER  continuar',
+	'unlock.bob.blurb':
+		'Bob escapou do urso com uma espingarda e muito rancor. Rápido, críticos mortais, esquiva de tudo, mas pele fina.',
+	'unlock.lucia.blurb':
+		'Lucia domina fogo, gelo, terra e energia. Frágil como um floco de neve, devastadora como uma nevasca.',
 	'unlock.lucia': 'LUCIA DESBLOQUEADA!',
 	'fx.dodge': 'ESQUIVA',
 	'fx.parry': 'APARO',
