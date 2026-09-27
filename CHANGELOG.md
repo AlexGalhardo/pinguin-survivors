@@ -18,6 +18,7 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 - Extras shop: spend achievement points on ten small permanent bonuses for every penguin (max HP, regen, armor, critical chance and damage, dodge, parry, attack speed, damage, move speed), up to level 10 each.
 - Final art (PixelLab): the 9 signature weapons and the auxiliary pistol, XP gems, fish and meat pickups, and the orb, spit, molotov, grenade and meteor projectiles, packed into group atlases that replace the code placeholders key by key.
 - Final art for the heroes without weapons (Jack, Bob, Lucia; Bob breathing idle) and for seven zombies and the polar bear boss, facing their movement direction in 8 directions (5 drawn + 3 mirrored); animations fill in as they are generated.
+- Seamless PixelLab ground and props for the three biomes (snow, steel deck, cracked asphalt; ice crystals, barrels, wrecked cars…), plus walking animations for Bob and three zombies.
 
 ## [0.1.0-beta.1] - 2026-09-27
 

@@ -67,5 +67,101 @@
 	"proj.blade": {
 		"src": "art-src/pixellab/images/proj.blade/22.png",
 		"scale": 0.5
+	},
+	"tile.antarctica.0": {
+		"src": "art-src/pixellab/tiles/iso/tile.antarctica.0.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"tile.antarctica.1": {
+		"src": "art-src/pixellab/tiles/iso/tile.antarctica.1.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"tile.antarctica.2": {
+		"src": "art-src/pixellab/tiles/iso/tile.antarctica.2.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"tile.antarctica.3": {
+		"src": "art-src/pixellab/tiles/iso/tile.antarctica.3.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"deco.antarctica.0": {
+		"src": "art-src/pixellab/images/deco.antarctica.0/11.png",
+		"group": "antarctica"
+	},
+	"deco.antarctica.1": {
+		"src": "art-src/pixellab/images/deco.antarctica.1/11.png",
+		"group": "antarctica"
+	},
+	"deco.antarctica.2": {
+		"src": "art-src/pixellab/images/deco.antarctica.2/11.png",
+		"group": "antarctica"
+	},
+	"tile.station.0": {
+		"src": "art-src/pixellab/tiles/iso/tile.station.0.png",
+		"group": "station",
+		"trim": false
+	},
+	"tile.station.1": {
+		"src": "art-src/pixellab/tiles/iso/tile.station.1.png",
+		"group": "station",
+		"trim": false
+	},
+	"tile.station.2": {
+		"src": "art-src/pixellab/tiles/iso/tile.station.2.png",
+		"group": "station",
+		"trim": false
+	},
+	"tile.station.3": {
+		"src": "art-src/pixellab/tiles/iso/tile.station.3.png",
+		"group": "station",
+		"trim": false
+	},
+	"tile.ruins.0": {
+		"src": "art-src/pixellab/tiles/iso/tile.ruins.0.png",
+		"group": "ruins",
+		"trim": false
+	},
+	"tile.ruins.1": {
+		"src": "art-src/pixellab/tiles/iso/tile.ruins.1.png",
+		"group": "ruins",
+		"trim": false
+	},
+	"tile.ruins.2": {
+		"src": "art-src/pixellab/tiles/iso/tile.ruins.2.png",
+		"group": "ruins",
+		"trim": false
+	},
+	"tile.ruins.3": {
+		"src": "art-src/pixellab/tiles/iso/tile.ruins.3.png",
+		"group": "ruins",
+		"trim": false
+	},
+	"deco.station.0": {
+		"src": "art-src/pixellab/images/deco.station.0/11.png",
+		"group": "station"
+	},
+	"deco.station.1": {
+		"src": "art-src/pixellab/images/deco.station.1/11.png",
+		"group": "station"
+	},
+	"deco.station.2": {
+		"src": "art-src/pixellab/images/deco.station.2/11.png",
+		"group": "station"
+	},
+	"deco.ruins.0": {
+		"src": "art-src/pixellab/images/deco.ruins.0/11.png",
+		"group": "ruins"
+	},
+	"deco.ruins.1": {
+		"src": "art-src/pixellab/images/deco.ruins.1/11.png",
+		"group": "ruins"
+	},
+	"deco.ruins.2": {
+		"src": "art-src/pixellab/images/deco.ruins.2/11.png",
+		"group": "ruins"
 	}
 }

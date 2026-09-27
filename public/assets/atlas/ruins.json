@@ -1,0 +1,54 @@
+{
+	"frames": {
+		"deco.ruins.0": {
+			"frame": { "x": 0, "y": 0, "w": 58, "h": 39 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 58, "h": 39 },
+			"sourceSize": { "w": 58, "h": 39 }
+		},
+		"tile.ruins.0": {
+			"frame": { "x": 59, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"tile.ruins.1": {
+			"frame": { "x": 124, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"tile.ruins.2": {
+			"frame": { "x": 189, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"tile.ruins.3": {
+			"frame": { "x": 254, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"deco.ruins.2": {
+			"frame": { "x": 319, "y": 0, "w": 36, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 32 },
+			"sourceSize": { "w": 36, "h": 32 }
+		},
+		"deco.ruins.1": {
+			"frame": { "x": 356, "y": 0, "w": 36, "h": 27 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 27 },
+			"sourceSize": { "w": 36, "h": 27 }
+		}
+	},
+	"meta": { "image": "ruins.png", "size": { "w": 512, "h": 64 }, "scale": "1" }
+}

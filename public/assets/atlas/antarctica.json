@@ -1,0 +1,54 @@
+{
+	"frames": {
+		"deco.antarctica.0": {
+			"frame": { "x": 0, "y": 0, "w": 39, "h": 38 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 39, "h": 38 },
+			"sourceSize": { "w": 39, "h": 38 }
+		},
+		"tile.antarctica.0": {
+			"frame": { "x": 40, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"tile.antarctica.1": {
+			"frame": { "x": 105, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"tile.antarctica.2": {
+			"frame": { "x": 170, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"tile.antarctica.3": {
+			"frame": { "x": 235, "y": 0, "w": 64, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+			"sourceSize": { "w": 64, "h": 32 }
+		},
+		"deco.antarctica.2": {
+			"frame": { "x": 300, "y": 0, "w": 38, "h": 29 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 29 },
+			"sourceSize": { "w": 38, "h": 29 }
+		},
+		"deco.antarctica.1": {
+			"frame": { "x": 339, "y": 0, "w": 31, "h": 25 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 31, "h": 25 },
+			"sourceSize": { "w": 31, "h": 25 }
+		}
+	},
+	"meta": { "image": "antarctica.png", "size": { "w": 512, "h": 64 }, "scale": "1" }
+}

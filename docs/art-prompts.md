@@ -71,3 +71,12 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 
   Por enquanto entram como atlas `enemy.<id>` com a animação `walk` de 1 frame por direção (rotações); o `Enemy` vira para a direção do movimento (5 desenhadas + 3 espelhadas) e troca para `attack` no telegraph quando existir. As animações template (walk/attack) substituem os frames estáticos pelas mesmas chaves.
 - **Concepts novos dos biomas 2–3** (v3 64 px, 2 gerações cada; bosses 160 px, 5): a 1ª leva de 9 falhou no servidor ("v3 generation failed") e foi reenviada; em geração: zombieSailor, fuelBloater, zombieGull, zombieRiotCop, zombieSoldier, acidBloater, zombieBrute (80 px), kraken, abomination; zombieWalrus (bioma 1, nunca teve concept) também.
+
+## 2026-09-27 — Chão e decorações dos 3 biomas; walks animados
+
+- **Tiles**: `/create-tiles-pro` isométrico 64×32 (`tile_depth_ratio 0`, `segmentation`, seed 12; ~25–40 gerações por lote de 16). Os tiles vêm com bordas/biséis e formas tortas, então não entram crus: `bun scripts/pack-iso-tile.ts <tile> <saida> --iso 31,12,31,12,0.8` lê a textura dentro do losango e a reprojeta no losango 64×32 exato com **amostragem espelhada** (as bordas sempre casam; sem costura entre tiles da mesma família).
+  - Antártida (`art-src/pixellab/tiles/antarctica-12`, prompt "packed snow… trampled grey snow… powder… pebbles"): família texturizada `tile_01/05/09/13` → `tile.antarctica.0–3`. O 1º lote (`antarctica-11`, vista `top-down`) saiu em losango 1:1 com bisel e foi descartado.
+  - Estação (`station-12`, "worn dark steel deck plates with rivets and frost…"): placas de aço `tile_00/04/08/12` → `tile.station.0–3` (o concreto rachado ficou manchado demais repetido).
+  - Ruínas (`ruins-12`, "cracked dark asphalt…"): asfalto `tile_00/01/02/08` → `tile.ruins.0–3`.
+- **Decorações** (`create_image_pixflux`, `isometric: true`, 48×48, carro 64×64, 1 geração cada): `deco.antarctica.0–2` (cristais de gelo, rocha com neve, caixote com mão de sangue), `deco.station.0–2` (barris de óleo, contêiner laranja, corrente de âncora + cabeço), `deco.ruins.0–2` (carro queimado, entulho, caçamba tombada). Atlas por bioma: `public/assets/atlas/{antarctica,station,ruins}.png`.
+- **Walks** (template, 1 geração/direção): `enemy.zombiePenguin`, `enemy.bloaterPenguin`, `enemy.zombieScientist` com `scary-walk` (8 frames × 5 direções); Bob `walking-8-frames`. Observação: cada lote de animação template deixa às vezes um job "animation" preso em 95% que ocupa slot (os frames já estão prontos).
