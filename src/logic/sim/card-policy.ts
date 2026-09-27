@@ -72,6 +72,8 @@ export function scoreCard(card: CardDef, rarity: Rarity, build: Build, hero: Her
 			return 1000;
 		case 'secondary': {
 			const level = build.secondaries[e.weapon];
+			// Frost Nova only fires when the hero is hit: a poor use of a weapon slot.
+			if (e.weapon === 'frostNova') return level !== undefined ? 30 : 20;
 			const exclusive = card.hero !== undefined ? 10 : 0;
 			if (level !== undefined) return 50 + 4 * level + exclusive;
 			return slotsUsed(build) < MAX_SECONDARY_SLOTS ? 62 + exclusive : 0;
