@@ -1,0 +1,24 @@
+/** Every color used by the game. Dark polar night + saturated heroes, blood and magic (P-08). */
+export const PALETTE = {
+	night: 0x0b0e14,
+	snowDark: 0x3a4152,
+	snow: 0x5a6378,
+	snowLight: 0x7d88a0,
+	ice: 0x6fa3c7,
+	rock: 0x2c2f3a,
+	blood: 0xc4161c,
+	bloodDark: 0x6e0b10,
+	goo: 0x7cff4f,
+	shadow: 0x000000,
+	jack: 0xe8b83a,
+	bob: 0x5c8a3a,
+	lucia: 0x8a4fc9,
+	zombie: 0x8fb48a,
+	auraPurple: 0xb347ff,
+	auraOrange: 0xff8a1f,
+	textLight: 0xe8ecf2,
+	textDim: 0x9aa3b5,
+	crit: 0xffd84a,
+} as const;
+
+export const toCss = (c: number): string => `#${c.toString(16).padStart(6, '0')}`;
