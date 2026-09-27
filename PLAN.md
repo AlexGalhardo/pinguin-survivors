@@ -180,8 +180,8 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 ### 3.1 Heróis
 - [ ] (depende da aprovação 0.2) Regerar/ajustar os escolhidos no tamanho final, se preciso
-- [ ] Piloto: `walk` de Jack T1 em 1 direção (v3, 12 frames) → medir custo e qualidade → anotar em art-and-assets
-- [ ] `scripts/pl-animate.ts` (lotes por personagem × anim × direções, idempotente, zip → frames)
+- [x] Piloto: `walk` de Jack T1 em 1 direção nos modos v3 (12 frames, 45 gerações), template (6 frames, 1) e skeleton-v3 (6 frames, 3) → anotado em art-and-assets
+- [x] `scripts/pl-animate.ts` (modo v3 por direção, `--fetch` para baixar frames); [ ] suporte a `template`/`skeleton-v3` e espelhamento de direções
 - [ ] Jack T1: idle, walk, attack, hurt, death, super × 8 dir
 - [ ] Jack T2 (katana) e T3 (espada-motosserra) via `/create-character-state` + animações
 - [ ] Bob T1–T3 (escopeta cano duplo → automática → foguete) + animações
@@ -274,6 +274,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - 2026-09-27 — Pedido do usuário: identidade forte por herói (P-37), 6 cartas exclusivas cada (P-38) e superpoderes no level 5 com VFX próprios (P-39/P-40) → GDD, balancing, art, HUD e PLAN (1.8b).
 - 2026-09-27 — Engine iso: projeção 2:1, zoom inteiro pela altura, chunks infinitos em DynamicTexture, herói placeholder 8 direções, i18n EN/PT-BR, fonte Pixelify Sans (60 FPS a 1366×768).
 - 2026-09-27 — Pedidos do usuário: TAB 2×, versão no rodapé, 131 conquistas + pontos, toast com som (ElevenLabs), save/histórico/export; histórico da `main` recomeçado e push por commit.
+- 2026-09-27 — Heróis e Poções (pontos, loja, gambits), poções na run, Continuar (autosave por round), configurações aplicadas no jogo, 40 skills de gamedev de terceiros curadas, piloto de animação no PixelLab com custos medidos.
 - 2026-09-27 — Menus (principal com key art animada do PixelLab, heróis, configurações com resolução, pausa, conquistas, histórico); badge final de conquista; render nativo em Retina (M1 com zoom 3).
 - 2026-09-27 — Fase 1 quase completa: efeitos de status, PlayerStats, CombatSystem, pickups/level/Fish, save ligado ao jogo, Game Over, cartas (48), secundárias e exclusivas, perks, superpoderes, IA especial dos inimigos e ataques do boss. 300 inimigos a 60 FPS. Alcance do Jack +50% (pedido do usuário).
 - 2026-09-27 — Loop de combate jogável com placeholders: hordas fora da tela com separação, elites com aura, boss no round 10, armas T1 dos 3 heróis, sangue no chão, HUD (HP, round, timer, kills, boss). Playwright headless mediu ~38 FPS a 2560×1080 com ~40 inimigos (render por software; medir no Chrome real).
@@ -283,6 +284,8 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 ## Pendências do desenvolvedor
 
 - [x] Aprovar os concepts dos heróis (`art-src/pixellab/concepts/sheet.png`) — ver 0.2
+- [ ] **Decidir o plano de arte com orçamento limitado** (recomendação no chat de 2026-09-27): animações `template` de 6 frames (1 geração/direção) + 5 direções espelhadas, `v3` de 12 frames só para ataque/superpoder dos heróis; custo medido do `v3` 12 frames = 45 gerações/direção
+- [ ] ElevenLabs está no plano **free** (10 mil créditos/mês, sem uso comercial): decidir upgrade antes de gerar música/vozes
 - [ ] Decidir se quer reescrever o histórico antigo / renomear as tags do Starfall (ver 0.2; precisa liberar a permissão)
 - [ ] Rotacionar a chave do ElevenLabs e o token do PixelLab (foram colados no chat/TODO.md) e atualizar o `.env`
 - [ ] Reiniciar a sessão do Claude Code para o MCP `pixellab` carregar (opcional; os scripts usam a API direto)
