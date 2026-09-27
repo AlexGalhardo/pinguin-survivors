@@ -21,6 +21,108 @@ const SFX: SfxDef[] = [
 		durationSeconds: 2.5,
 		variants: 3,
 	},
+	{
+		key: 'sfx.hit',
+		text: 'wet meaty flesh impact of a blade hitting a zombie, short and punchy, video game hit sound',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.swing',
+		text: 'fast machete whoosh swing through the air, sharp, video game',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.shotgun',
+		text: 'powerful double barrel shotgun blast with punchy low end and short echo, video game',
+		durationSeconds: 1,
+		variants: 1,
+	},
+	{
+		key: 'sfx.cast',
+		text: 'magic staff casting an elemental bolt, crackling energy whoosh, video game spell',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.explosion',
+		text: 'brutal explosion with debris and fire, heavy boom, video game',
+		durationSeconds: 1.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.splat',
+		text: 'gory splatter of blood and guts hitting snow, wet squelch, video game gore',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.zombieDeath',
+		text: 'zombie animal dying groan cut short with a gurgle, creepy, short, video game',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.heroHurt',
+		text: 'small penguin grunting in pain, cartoonish but gritty, short, video game',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.pickupXp',
+		text: 'tiny bright crystal chime pickup, sparkly, very short, video game',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.pickupFish',
+		text: 'wet fish slap pickup with a coin clink, short, cartoonish, video game',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.levelUp',
+		text: 'epic level up fanfare with distorted guitar riff and choir hit, short, heavy metal video game',
+		durationSeconds: 1.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.card',
+		text: 'card selection whoosh with a heavy metallic stamp, video game menu',
+		durationSeconds: 0.6,
+		variants: 1,
+	},
+	{
+		key: 'sfx.potion',
+		text: 'drinking a potion gulp followed by a magical healing shimmer, short, video game',
+		durationSeconds: 1,
+		variants: 1,
+	},
+	{
+		key: 'sfx.bossRoar',
+		text: 'huge zombie polar bear roar, monstrous, rotten and terrifying, video game boss',
+		durationSeconds: 2.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.super',
+		text: 'massive superpower activation: bass drop, distorted guitar chug and a whooshing blast wave, heavy metal video game',
+		durationSeconds: 2,
+		variants: 1,
+	},
+	{
+		key: 'sfx.uiSelect',
+		text: 'short crisp menu select click with a metallic tick, video game ui',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.gameOver',
+		text: 'dark game over sting: slow heavy distorted guitar chord fading with a low drone, doom metal, video game',
+		durationSeconds: 2.5,
+		variants: 1,
+	},
 ];
 
 const OUT = 'public/assets/audio/sfx';
