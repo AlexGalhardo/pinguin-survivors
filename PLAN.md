@@ -52,7 +52,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Versionamento `0.1.0-alpha.N` nos arquivos (P-46)
 - [~] Reescrever o histórico antigo (mensagens/conteúdo com `2.0.0`) e renomear as tags do Starfall para `starfall/v*`: **bloqueado pela permissão do auto mode** — depende do usuário
 - [x] `CHANGELOG.md` (Keep a Changelog 1.1.0) na raiz (P-47)
-- [ ] Release `0.1.0-alpha.1` (docs(plan) → chore(release) + CHANGELOG → tag → push)
+- [x] Release `0.1.0-alpha.1` (docs(plan) → chore(release) + CHANGELOG → tag → push)
 
 ---
 
