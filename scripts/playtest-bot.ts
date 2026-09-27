@@ -2,7 +2,10 @@
 // Plays the real build in Chromium: an in-page brain dodges (scores 8 directions by crowd
 // danger each frame), casts the superpower on crowds/bosses, and picks cards with the same
 // policy as the sim. Levels, stat points and potions are injected through the save.
-// Needs a server: `bunx --bun vite --port 5183` (use a free port, not 5173/4173 if busy).
+// Needs a server: `bunx --bun vite --port 5183` (use a free port, not 5173/4173 if busy), or a
+// frozen DEV build so source edits do not hot-reload the runs:
+//   NODE_ENV=development bunx --bun vite build --mode development --outDir <dir>
+//   bunx --bun vite preview --outDir <dir> --port 5184
 //
 // Usage: bun scripts/playtest-bot.ts [--url http://localhost:5183] [--heroes jack,bob,lucia]
 //   [--levels 1,10,30] [--runs 1] [--seed 100] [--speed 4] [--max 1500] [--potions]
@@ -134,7 +137,6 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				ai: { mode: string };
 				def: { behavior: string };
 			};
-			type Key = { isDown: boolean };
 			type Run = {
 				round: number;
 				hp: number;
@@ -156,7 +158,8 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				stats: { moveSpeed: number };
 				level: { level: number };
 				deadFor: number;
-				keys: { up: Key[]; down: Key[]; left: Key[]; right: Key[] };
+				controls: { move(): { x: number; y: number } };
+				obstacles?: { near(x: number, y: number, r: number): readonly unknown[] };
 				enemies: { active: E[]; boss: E | null };
 				weapons: { weapon: { range: number; kind: string } };
 				hostile: {
@@ -202,12 +205,13 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				bossLeft: 0,
 			};
 			w.__BOT__ = bot;
+			// The brain drives GameInput.move() directly (screen-space intent, like a held key).
+			const intent = { x: 0, y: 0 };
+			s.controls.move = () => intent;
 			const setKeys = (i: number) => {
 				const [ix, iy] = i < 0 ? [0, 0] : (combos[i] as [number, number]);
-				for (const k of s.keys.right) k.isDown = ix > 0;
-				for (const k of s.keys.left) k.isDown = ix < 0;
-				for (const k of s.keys.down) k.isDown = iy > 0;
-				for (const k of s.keys.up) k.isDown = iy < 0;
+				intent.x = ix;
+				intent.y = iy;
 			};
 			const brain = () => {
 				const h = s.hero as { x: number; y: number };
@@ -299,6 +303,13 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 						const d = Math.hypot(pool.x - px, pool.y - py) - pool.radius - 12;
 						if (d < 0) danger += 0.05 * (1 - d / pool.radius);
 					}
+					// Obstacles snag the hero (he slides around them): avoid walking into one.
+					if (i >= 0 && s.obstacles) {
+						const blocked =
+							s.obstacles.near(h.x + v.x * look * 0.4, h.y + v.y * look * 0.4, 14)
+								.length + s.obstacles.near(px, py, 14).length;
+						danger += 0.0015 * blocked;
+					}
 					if (engage && nearest) {
 						const d = Math.hypot(nearest.x - px, nearest.y - py) - nearest.radius;
 						danger += 0.0004 * ((d - prefer) / 100) ** 2;
@@ -354,6 +365,10 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 		await page.waitForTimeout(installed ? 250 : 400);
 		if (!installed) {
 			installed = await installBrain(page, seed).catch(() => false);
+			if (!installed && Date.now() - start > 30_000)
+				throw new Error(
+					'bot could not attach: window.__GAME__ is only exposed in DEV builds',
+				);
 			continue;
 		}
 		const state = await page.evaluate(() => {
