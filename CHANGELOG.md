@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blood and gibs now stay on the ground for the whole run, with blood spurts and hit-stop on big hits.
 - Polar night darkness with light around the hero, fire, explosions and elites.
 - 18 sound effects (weapons, gore, pickups, level up, boss roar, superpower, menus, game over).
+- End-to-end test of the whole flow (menu, run, cards, death, history) with `bun run e2e`.
 - Controls screen to rebind the gameplay keys; full gamepad mapping (Triangle/Y superpower, Square/X or View speed, L1/R1 page lists) and a floating touch joystick.
 - Accessibility: damage number size and reduced flashes.
 - Bloom glow (toggle in the settings), light around magic bolts and a zoom punch on boss arrival, boss hits and boss deaths.

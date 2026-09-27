@@ -27,7 +27,7 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 
 ## Comandos
 
-`bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run check` (Biome) · `bun scripts/pl-concepts.ts` (PixelLab) · `bun scripts/pack-atlas.ts` · `bun scripts/qa-browsers.ts`. Use Bun, não npm/node.
+`bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run check` (Biome) · `bun scripts/pl-concepts.ts` (PixelLab) · `bun scripts/pack-atlas.ts` · `bun scripts/qa-browsers.ts` · `bun run e2e` (fluxo completo, com o dev rodando). Use Bun, não npm/node.
 
 ## Regras
 

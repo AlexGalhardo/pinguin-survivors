@@ -28,6 +28,7 @@ bun run check      # Biome (lint + format); check:fix corrige
 bun scripts/pl-concepts.ts           # concepts de heróis no PixelLab (+ sheet.png)
 bun scripts/pack-atlas.ts            # art-src/processed → public/assets/atlas
 bun scripts/qa-browsers.ts           # QA do build (com `vite preview --port 4173` rodando)
+bun run e2e                          # E2E menu → run → cartas → morte → histórico (com `bun run dev` rodando)
 ```
 
 ## Regras essenciais

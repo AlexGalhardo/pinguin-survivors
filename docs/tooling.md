@@ -60,4 +60,5 @@ Use quando a tarefa pedir; em conflito, vale o `CLAUDE.md` (Phaser **4**, Bun, `
 |---|---|
 | `bun scripts/pl-concepts.ts [id…]` | Gera concepts dos heróis no PixelLab + `art-src/pixellab/concepts/sheet.png` |
 | `bun scripts/pack-atlas.ts` | `art-src/processed/*.png` → `public/assets/atlas.png/json` |
+| `bun run e2e` | Fluxo E2E (menu → run → cartas → morte → histórico) com Playwright, save limpo e zero erros (com `bun run dev` rodando) |
 | `bun scripts/qa-browsers.ts` | QA do build em Chrome/Edge/Firefox (com `vite preview --port 4173` rodando; 1ª vez: `bunx playwright install firefox`) |
