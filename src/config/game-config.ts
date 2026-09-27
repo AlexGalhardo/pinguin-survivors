@@ -3,6 +3,7 @@ import { AchievementsScene } from '../scenes/AchievementsScene';
 import { BootScene } from '../scenes/BootScene';
 import { CardPickScene } from '../scenes/CardPickScene';
 import { ControlsScene } from '../scenes/ControlsScene';
+import { ExtrasScene } from '../scenes/ExtrasScene';
 import { GameOverScene } from '../scenes/GameOverScene';
 import { GameScene } from '../scenes/GameScene';
 import { HeroScene } from '../scenes/HeroScene';
@@ -42,6 +43,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 		SettingsScene,
 		ControlsScene,
 		AchievementsScene,
+		ExtrasScene,
 		HistoryScene,
 		GameOverScene,
 		UnlockScene,

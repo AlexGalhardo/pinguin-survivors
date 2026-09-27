@@ -21,7 +21,7 @@ import { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
 import { WeaponView } from '../entities/WeaponView';
 import type { I18nKey } from '../i18n';
-import { evaluateAchievements } from '../logic/achievements';
+import { applyExtras, evaluateAchievements } from '../logic/achievements';
 import { biomeForRound, isBiomeStart } from '../logic/biome';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
@@ -209,9 +209,9 @@ export class GameScene extends Phaser.Scene {
 			this.run = resume.run;
 			startRound(this.run, this.run.round);
 		} else {
-			this.stats = applyUpgrades(
-				heroStats(heroDef, heroSave.level, heroSave.points),
-				save.upgrades,
+			this.stats = applyExtras(
+				applyUpgrades(heroStats(heroDef, heroSave.level, heroSave.points), save.upgrades),
+				save.achievements,
 			);
 			this.build = emptyBuild(tier);
 			this.run = createRunState(heroDef, { seed, round: params.round, tier });

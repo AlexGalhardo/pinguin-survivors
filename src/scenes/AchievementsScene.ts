@@ -34,7 +34,7 @@ export class AchievementsScene extends Phaser.Scene {
 				text(10, PALETTE.fish),
 			)
 			.setOrigin(0.5, 0);
-		const shop = this.add.text(0, 0, t('ach.shop'), text(9, PALETTE.textDim)).setOrigin(0.5, 0);
+		const shop = this.add.text(0, 0, t('ach.shop'), text(10, PALETTE.fish)).setOrigin(0.5, 0);
 		// Unlocked first (newest first), then the closest ones to completion.
 		const sorted = [...ACHIEVEMENTS].sort((a, b) => {
 			const ua = save.achievements.unlocked[a.id] ?? 0;
@@ -89,7 +89,10 @@ export class AchievementsScene extends Phaser.Scene {
 		kb?.on('keydown-PAGE_DOWN', () => scrollBy(ROW_H * 8));
 		kb?.on('keydown-PAGE_UP', () => scrollBy(-ROW_H * 8));
 		kb?.on('keydown-ESC', () => this.scene.start('MainMenu'));
-		kb?.on('keydown-ENTER', () => this.scene.start('MainMenu'));
+		kb?.on('keydown-ENTER', () => this.scene.start('Extras'));
+		shop.setInteractive({ useHandCursor: true }).on('pointerdown', () =>
+			this.scene.start('Extras'),
+		);
 		this.input.on('wheel', (_p: unknown, _o: unknown, _dx: number, dy: number) =>
 			scrollBy(dy > 0 ? ROW_H * 2 : -ROW_H * 2),
 		);

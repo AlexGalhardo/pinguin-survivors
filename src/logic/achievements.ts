@@ -1,5 +1,6 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
 import {
+	ACHIEVEMENT_SHOP,
 	ACHIEVEMENTS,
 	type AchievementCondition,
 	type AchievementDef,
@@ -12,6 +13,7 @@ import {
 	RUN_BESTS,
 	type RunBest,
 } from '../data/achievements';
+import { addStat, type PlayerStats } from './stats';
 
 /** Everything achievements read; lives in the save (global, shared by all heroes). */
 export interface AchievementProgress {
@@ -101,12 +103,31 @@ export function availablePoints(state: AchievementState): number {
 
 export type BuyResult = 'ok' | 'owned' | 'insufficient';
 
+/** Levels owned of an extra: each purchase is one entry in `purchases` (save format v1). */
+export function extraLevel(state: AchievementState, id: string): number {
+	return state.purchases.filter((p) => p === id).length;
+}
+
 export function buyExtra(state: AchievementState, extra: ExtraDef): BuyResult {
-	if (state.purchases.includes(extra.id)) return 'owned';
+	if (extraLevel(state, extra.id) >= (extra.maxLevel ?? 1)) return 'owned';
 	if (availablePoints(state) < extra.cost) return 'insufficient';
 	state.spent += extra.cost;
 	state.purchases.push(extra.id);
 	return 'ok';
+}
+
+/** Adds the owned stat extras to a run's starting stats (levels capped at their max). */
+export function applyExtras(
+	stats: PlayerStats,
+	state: AchievementState,
+	shop: readonly ExtraDef[] = ACHIEVEMENT_SHOP,
+): PlayerStats {
+	for (const e of shop) {
+		if (!e.stat || !e.perLevel) continue;
+		const level = Math.min(e.maxLevel ?? 1, extraLevel(state, e.id));
+		if (level > 0) addStat(stats, e.stat, e.perLevel * level);
+	}
+	return stats;
 }
 
 /** Progress (0..1) towards a threshold achievement, for the achievements screen. */

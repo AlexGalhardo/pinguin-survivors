@@ -1,4 +1,5 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
+import type { StatKey } from '../logic/stats';
 
 /**
  * Global achievements (shared by every hero; P-41). Each one is worth 1 achievement point.
@@ -179,10 +180,36 @@ for (const [i, value] of [25, 50, 100].entries())
 
 export const ACHIEVEMENTS: readonly AchievementDef[] = defs;
 
-/** Extras bought with achievement points (content still to be defined; P-42). */
+/**
+ * Extras bought with achievement points (P-61): small permanent bonuses every hero starts runs
+ * with. Each level costs `cost` points and adds `perLevel` to `stat`, up to `maxLevel`.
+ */
 export interface ExtraDef {
 	id: string;
 	cost: number;
+	stat?: StatKey;
+	perLevel?: number;
+	/** Levels that can be bought (1 when omitted: a one-off unlock). */
+	maxLevel?: number;
 }
 
-export const ACHIEVEMENT_SHOP: readonly ExtraDef[] = [];
+const bonus = (id: string, stat: StatKey, perLevel: number): ExtraDef => ({
+	id,
+	cost: 1,
+	stat,
+	perLevel,
+	maxLevel: 10,
+});
+
+export const ACHIEVEMENT_SHOP: readonly ExtraDef[] = [
+	bonus('hp', 'maxHp', 1),
+	bonus('regen', 'regen', 0.02),
+	bonus('armor', 'armor', 0.1),
+	bonus('crit', 'crit', 0.001),
+	bonus('critDamage', 'critDamage', 0.01),
+	bonus('dodge', 'dodge', 0.001),
+	bonus('parry', 'parry', 0.001),
+	bonus('attackSpeed', 'attackSpeed', 0.002),
+	bonus('damage', 'damage', 0.002),
+	bonus('moveSpeed', 'moveSpeed', 0.5),
+];

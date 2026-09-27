@@ -130,7 +130,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Toast "Achievement unlocked" centralizado no topo, fila, badge placeholder, som `sfx.achievement` (ElevenLabs)
 - [x] Badge final `ui.achievement` no PixelLab (seed 33 de 3; `public/assets/ui/ui.achievement.png`)
 - [x] Contadores de conquistas durante a run (kills, elites, bosses, críticos, parries, dodges, DoTs, elementos, cartas, superpoderes) + feats de boss e desbloqueios, com `evaluateAchievements` ao vivo a cada 1 s
-- [x] Tela de conquistas (lista com progresso, rolagem, pontos); [ ] loja de extras (itens a definir)
+- [x] Tela de conquistas (lista com progresso, rolagem, pontos) e loja de extras (P-61)
 - [x] Save local: schema v1 tolerante, migrações, snapshot da run, histórico das últimas 20 partidas, export/import (`src/logic/save.ts`, `src/core/storage.ts`) + testes
 - [x] Tela de **Histórico** das partidas; autosave no início de cada round (após a carta) + **Continuar (Round N)** no menu
 
@@ -194,7 +194,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Zoom-punch do boss (chegada, patada que acerta, morte; respeita "tremor de tela"), luz nos projéteis mágicos (até 40) e bloom por `ParallelFilters` (threshold + blur + ADD), com opção em Configurações
 - [x] Performance: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 — medido com `bun scripts/perf.ts` (Chrome com GPU, round 40, Lucia, bloom ligado): **60 FPS médio, p95 16,9 ms/frame**, zero erros (2026-09-27)
 - [x] Tela de desbloqueio dedicada (Bob/Lucia) e fullscreen nas configurações
-- [ ] Loja de extras das conquistas: mecânica pronta; itens a definir com o usuário
+- [x] Loja de extras das conquistas (P-61, `ExtrasScene`, ENTER na tela de conquistas): 10 bônus permanentes, 1 ponto por nível, até o nível 10, aplicados no início de toda run + testes
 - [x] Auditoria de i18n (nenhum texto fora de `src/i18n`: nomes de idioma e "XP" movidos; teste de chaves iguais nos 2 idiomas)
 
 ---

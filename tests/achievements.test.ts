@@ -1,14 +1,18 @@
 import { describe, expect, test } from 'bun:test';
-import { ACHIEVEMENTS } from '../src/data/achievements';
+import { ACHIEVEMENT_SHOP, ACHIEVEMENTS, type ExtraDef } from '../src/data/achievements';
+import { HEROES } from '../src/data/heroes';
 import {
 	achievementProgress,
+	applyExtras,
 	availablePoints,
 	buyExtra,
 	emptyAchievementState,
 	emptyProgress,
 	evaluateAchievements,
+	extraLevel,
 	toRoman,
 } from '../src/logic/achievements';
+import { heroStats } from '../src/logic/stats';
 
 describe('achievement definitions', () => {
 	test('at least 100, unique ids', () => {
@@ -69,6 +73,27 @@ describe('achievement points', () => {
 		expect(buyExtra(state, { id: 'x', cost: 2 })).toBe('ok');
 		expect(availablePoints(state)).toBe(1);
 		expect(buyExtra(state, { id: 'x', cost: 0 })).toBe('owned');
+	});
+
+	test('leveled extras stack up to their max and add stats', () => {
+		const state = emptyAchievementState();
+		state.unlocked = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [`a${i}`, 1]));
+		const crit = ACHIEVEMENT_SHOP.find((e) => e.id === 'crit') as ExtraDef;
+		for (let i = 0; i < 10; i++) expect(buyExtra(state, crit)).toBe('ok');
+		expect(buyExtra(state, crit)).toBe('owned');
+		expect(extraLevel(state, 'crit')).toBe(10);
+		expect(availablePoints(state)).toBe(2);
+		const base = heroStats(HEROES.bob, 1, {});
+		const boosted = applyExtras(heroStats(HEROES.bob, 1, {}), state);
+		expect(boosted.crit - base.crit).toBeCloseTo(0.01);
+	});
+
+	test('shop: 10 bonuses, 10 levels, 1 point each', () => {
+		expect(ACHIEVEMENT_SHOP.length).toBe(10);
+		for (const e of ACHIEVEMENT_SHOP) {
+			expect(e.maxLevel).toBe(10);
+			expect(e.cost).toBe(1);
+		}
 	});
 });
 
