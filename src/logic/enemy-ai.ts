@@ -1,4 +1,4 @@
-import type { EnemyDef } from '../data/enemies';
+import type { BossProfile, EnemyDef } from '../data/enemies';
 
 /** Timings of special behaviors (docs/game-design.md §11). */
 export const AI = {
@@ -7,40 +7,44 @@ export const AI = {
 	chargeTime: 0.8,
 	chargeSpeed: 3,
 	recover: 0.4,
-	boss: {
-		swipeWindup: 0.4,
-		chargeEvery: 8,
-		chargeWindup: 0.6,
-		chargeTime: 1,
-		chargeSpeed: 2.5,
-		roarEvery: 12,
-		summonCount: 6,
-	},
 } as const;
 
 export type AiMode = 'move' | 'windup' | 'charge' | 'recover';
 export type AiMove = 'seek' | 'hold' | 'charge';
-export type AiAction = 'shoot' | 'explode' | 'swipe' | 'chargeStart' | 'summon' | null;
+export type AiAction =
+	| 'shoot'
+	| 'explode'
+	| 'swipe'
+	| 'chargeStart'
+	| 'summon'
+	| 'volley'
+	| 'pool'
+	| null;
 
 export interface AiState {
 	mode: AiMode;
 	timer: number;
 	cooldown: number;
-	/** Boss only: timers for charge and roar. */
+	/** Boss only: timers for charge, roar, volley and hazard pools. */
 	chargeCd: number;
 	roarCd: number;
+	volleyCd: number;
+	poolCd: number;
 	/** What the current wind-up leads to. */
 	pending: 'swipe' | 'charge' | null;
 	chargeMul: number;
 }
 
-export function newAi(): AiState {
+export function newAi(def?: EnemyDef): AiState {
+	const b = def?.boss;
 	return {
 		mode: 'move',
 		timer: 0,
 		cooldown: 0,
-		chargeCd: AI.boss.chargeEvery,
-		roarCd: AI.boss.roarEvery,
+		chargeCd: b?.chargeEvery ?? 0,
+		roarCd: b?.roarEvery ?? 0,
+		volleyCd: b?.volleyEvery ?? 0,
+		poolCd: b?.poolEvery ?? 0,
 		pending: null,
 		chargeMul: 1,
 	};
@@ -73,7 +77,9 @@ export function stepAi(def: EnemyDef, ai: AiState, dist: number, dt: number): Ai
 				speed: AI.chargeSpeed,
 			});
 		case 'boss':
-			return bossStep(def, ai, dist, dt);
+			return def.boss
+				? bossStep(def, def.boss, ai, dist, dt)
+				: { move: 'seek', action: null };
 		default:
 			return { move: 'seek', action: null };
 	}
@@ -119,14 +125,28 @@ function chargeCycle(
 	}
 }
 
-function bossStep(def: EnemyDef, ai: AiState, dist: number, dt: number): AiStep {
-	const b = AI.boss;
+/** A timer of 0 in the profile means the boss never uses that attack. */
+function due(every: number, left: number): boolean {
+	return every > 0 && left <= 0;
+}
+
+function bossStep(def: EnemyDef, b: BossProfile, ai: AiState, dist: number, dt: number): AiStep {
 	ai.chargeCd -= dt;
 	ai.roarCd -= dt;
+	ai.volleyCd -= dt;
+	ai.poolCd -= dt;
 	if (ai.mode === 'move') {
-		if (ai.roarCd <= 0) {
+		if (due(b.roarEvery, ai.roarCd)) {
 			ai.roarCd = b.roarEvery;
 			return { move: 'hold', action: 'summon' };
+		}
+		if (due(b.volleyEvery, ai.volleyCd)) {
+			ai.volleyCd = b.volleyEvery;
+			return { move: 'seek', action: 'volley' };
+		}
+		if (due(b.poolEvery, ai.poolCd)) {
+			ai.poolCd = b.poolEvery;
+			return { move: 'seek', action: 'pool' };
 		}
 		if (dist <= (def.range ?? 90) && ai.cooldown <= 0) {
 			ai.mode = 'windup';
@@ -135,7 +155,7 @@ function bossStep(def: EnemyDef, ai: AiState, dist: number, dt: number): AiStep 
 			ai.cooldown = def.cooldown ?? 3;
 			return { move: 'hold', action: null };
 		}
-		if (ai.chargeCd <= 0) {
+		if (due(b.chargeEvery, ai.chargeCd)) {
 			ai.chargeCd = b.chargeEvery;
 			ai.mode = 'windup';
 			ai.timer = b.chargeWindup;

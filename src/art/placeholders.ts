@@ -7,6 +7,7 @@ import { BIOMES, KEYS } from './manifest';
 
 /** Code-drawn stand-ins for every key until the PixelLab art lands (phase 3). */
 export function installPlaceholders(scene: Phaser.Scene): void {
+	biomePlaceholders(scene);
 	const biome = BIOMES.antarctica;
 	const tileColors = [PALETTE.snow, PALETTE.snowDark, PALETTE.snowLight, PALETTE.ice];
 	for (let v = 0; v < biome.tileVariants; v++) {
@@ -395,4 +396,61 @@ function splat(
 	ctx.beginPath();
 	ctx.ellipse(w / 2, h / 2, w * 0.14, h * 0.14, 0, 0, Math.PI * 2);
 	ctx.fill();
+}
+
+/** Ground and props of biomes 2 (station/harbor: plates, crates, barrels) and 3 (ruins). */
+function biomePlaceholders(scene: Phaser.Scene): void {
+	const looks = {
+		station: {
+			tiles: [PALETTE.metal, PALETTE.metalDark, PALETTE.rust, PALETTE.harborWater],
+			props: [PALETTE.rust, PALETTE.metal, PALETTE.auraOrange],
+		},
+		ruins: {
+			tiles: [PALETTE.asphalt, PALETTE.concrete, PALETTE.rubble, PALETTE.brick],
+			props: [PALETTE.concrete, PALETTE.brick, PALETTE.rubble],
+		},
+	} as const;
+	for (const id of ['station', 'ruins'] as const) {
+		const biome = BIOMES[id];
+		const look = looks[id];
+		for (let v = 0; v < biome.tileVariants; v++) {
+			canvas(scene, KEYS.tile(id, v), TILE_W, TILE_H, (ctx) => {
+				diamond(ctx, TILE_W, TILE_H, look.tiles[v] ?? PALETTE.metal);
+				// Plate seams / cracks so the ground reads as man-made.
+				ctx.fillStyle = 'rgba(0,0,0,0.18)';
+				ctx.fillRect(TILE_W / 2 - 8, TILE_H / 2, 16, 1);
+				ctx.fillRect(TILE_W / 2, TILE_H / 2 - 4, 1, 8);
+			});
+		}
+		for (let v = 0; v < biome.decoVariants; v++) {
+			const w = 22 + v * 8;
+			canvas(scene, KEYS.deco(id, v), w, w, (ctx) => {
+				const color = toCss(look.props[v] ?? PALETTE.metal);
+				ctx.fillStyle = color;
+				if (id === 'station' && v === 1) {
+					// Barrel.
+					ctx.fillRect(w * 0.3, w * 0.2, w * 0.4, w * 0.75);
+					ctx.fillStyle = 'rgba(0,0,0,0.3)';
+					ctx.fillRect(w * 0.3, w * 0.45, w * 0.4, 2);
+				} else if (id === 'ruins' && v === 2) {
+					// Rubble heap.
+					ctx.beginPath();
+					ctx.moveTo(0, w);
+					ctx.lineTo(w * 0.35, w * 0.45);
+					ctx.lineTo(w * 0.6, w * 0.6);
+					ctx.lineTo(w * 0.8, w * 0.35);
+					ctx.lineTo(w, w);
+					ctx.closePath();
+					ctx.fill();
+				} else {
+					// Crate / broken wall block.
+					ctx.fillRect(w * 0.15, w * 0.3, w * 0.7, w * 0.65);
+					ctx.fillStyle = 'rgba(255,255,255,0.15)';
+					ctx.fillRect(w * 0.15, w * 0.3, w * 0.7, 2);
+					ctx.fillStyle = 'rgba(0,0,0,0.25)';
+					ctx.fillRect(w * 0.48, w * 0.3, 2, w * 0.65);
+				}
+			});
+		}
+	}
 }

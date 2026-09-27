@@ -1,4 +1,4 @@
-import type { HeroId } from '../config/constants';
+import type { BiomeId, HeroId } from '../config/constants';
 import { MUSIC_KEYS } from '../core/music';
 import { SFX } from '../data/sfx';
 import type { Dir } from '../logic/iso';
@@ -41,8 +41,9 @@ export const KEYS = {
 
 export const BIOMES = {
 	antarctica: { id: 'antarctica', tileVariants: 4, decoVariants: 3, decoDensity: 0.03 },
-} as const;
-export type BiomeId = keyof typeof BIOMES;
+	station: { id: 'station', tileVariants: 4, decoVariants: 3, decoDensity: 0.035 },
+	ruins: { id: 'ruins', tileVariants: 4, decoVariants: 3, decoDensity: 0.045 },
+} as const satisfies Record<BiomeId, { id: BiomeId; [k: string]: unknown }>;
 
 /** Final files loaded in Boot when present; placeholders cover every missing key. */
 export const FILES = {

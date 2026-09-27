@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blood and gibs now stay on the ground for the whole run, with blood spurts and hit-stop on big hits.
 - Polar night darkness with light around the hero, fire, explosions and elites.
 - 18 sound effects (weapons, gore, pickups, level up, boss roar, superpower, menus, game over).
+- Two new biomes: the research station/harbor (rounds 11–20) and the ruined city (rounds 21–30), each with its own ground, props and 6–7 new zombies; the biomes loop in endless mode.
+- New bosses: the Harbor Kraken (round 20: long tentacle slams, ink volleys, sailor summons) and the Abomination (round 30: frequent charges, telegraphed acid pools, rat swarms).
 - Workshop: nine permanent upgrades bought with fish (max HP, damage, attack speed, armor, regen, move speed, pickup range, XP gain, luck), shared by every hero.
 - Dedicated unlock screen for Bob and Lucia after the run that unlocks them.
 - Elites show a health bar once damaged.

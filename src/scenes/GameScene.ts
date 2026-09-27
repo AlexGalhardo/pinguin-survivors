@@ -10,7 +10,7 @@ import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
 import { playMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
 import { ECONOMY } from '../data/economy';
-import { ENEMIES } from '../data/enemies';
+import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { levelScale, PERKS } from '../data/secondaries';
@@ -19,7 +19,9 @@ import { SIGNATURE, type SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
 import { WeaponView } from '../entities/WeaponView';
+import type { I18nKey } from '../i18n';
 import { evaluateAchievements } from '../logic/achievements';
+import { biomeForRound, isBiomeStart } from '../logic/biome';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
@@ -218,14 +220,18 @@ export class GameScene extends Phaser.Scene {
 		kb?.on('keydown-ESC', () => this.pause());
 		kb?.on('keydown-P', () => this.pause());
 
-		this.chunks = new ChunkManager(this, seed, 'antarctica');
+		this.chunks = new ChunkManager(this, seed, biomeForRound(this.run.round));
 		this.fx = new FxSystem(this, save.settings, this.chunks);
 		this.pickups = new PickupSystem(this, (kind, value) => this.collect(kind, value));
 		this.hero = new Hero(this, heroId, tier, this.stats);
 		this.barrier = this.add.image(0, 0, KEYS.barrier).setVisible(false);
-		this.hostile = new HostileSystem(this, (damage) => {
+		this.hostile = new HostileSystem(this, (damage, kind) => {
+			if (kind === 'acid') {
+				this.hazardDamage(damage);
+				return;
+			}
 			this.combat.heroHit(damage, false);
-			this.poisonHero(damage);
+			if (kind === 'spit') this.poisonHero(damage);
 		});
 		this.enemies = new EnemySystem(this, this.rng, (e, t) => this.combat.dot(e, t), {
 			shoot: (e) =>
@@ -241,6 +247,8 @@ export class GameScene extends Phaser.Scene {
 			explode: (e) => this.explode(e),
 			swipe: (e) => this.swipe(e),
 			summon: (e) => this.summon(e),
+			volley: (e) => this.volley(e),
+			pool: (e) => this.acidPools(e),
 		});
 		this.combat = new CombatSystem(
 			this.rng,
@@ -589,9 +597,9 @@ export class GameScene extends Phaser.Scene {
 		this.combat.damage(e, e.hp + 1, false, undefined, false);
 	}
 
-	/** Boss swipe: a wide arc in front of the bear. */
+	/** Boss swipe (bear paw, kraken tentacle, abomination claws): a wide arc toward the hero. */
 	private swipe(e: Enemy): void {
-		const reach = (e.def.range ?? 90) * 1.3;
+		const reach = (e.def.range ?? 90) * (e.def.boss?.swipeReach ?? 1.3);
 		const angle = Math.atan2(this.hero.y - e.y, this.hero.x - e.x);
 		const c = Math.cos(angle);
 		const s = Math.sin(angle);
@@ -601,19 +609,62 @@ export class GameScene extends Phaser.Scene {
 			this.combat.heroHit(e.damage * 1.5, true, undefined, e);
 	}
 
-	/** Boss roar: zombie penguins burst out around the bear. */
+	/** Boss roar: minions of the biome burst out around the boss. */
 	private summon(e: Enemy): void {
 		this.fx.play('sfx.bossRoar');
 		this.area.flash(e.x, e.y, 140, PALETTE.textLight, 0.5);
 		shake(this, 300, 0.005);
-		for (let i = 0; i < 6; i++) {
-			const a = (i / 6) * Math.PI * 2;
-			this.enemies.spawnAt(
-				ENEMIES.zombiePenguin,
-				e.x + Math.cos(a) * 70,
-				e.y + Math.sin(a) * 70,
+		const b = e.def.boss;
+		const def = ENEMIES[(b?.summon ?? 'zombiePenguin') as EnemyId];
+		const count = b?.summonCount ?? 6;
+		for (let i = 0; i < count; i++) {
+			const a = (i / count) * Math.PI * 2;
+			this.enemies.spawnAt(def, e.x + Math.cos(a) * 70, e.y + Math.sin(a) * 70);
+		}
+	}
+
+	/** Kraken ink: a fan of slow blobs aimed at the hero. */
+	private volley(e: Enemy): void {
+		const count = e.def.boss?.volleyCount ?? 5;
+		const aim = Math.atan2(this.hero.y - e.y, this.hero.x - e.x);
+		const spread = BOSS_VOLLEY.spread;
+		for (let i = 0; i < count; i++) {
+			const a = aim + (count > 1 ? (i / (count - 1) - 0.5) * spread : 0);
+			this.hostile.spawnAngle(
+				e.x,
+				e.y,
+				a,
+				BOSS_VOLLEY.speed,
+				BOSS_VOLLEY.range,
+				e.damage * BOSS_VOLLEY.damage,
+				'ink',
 			);
 		}
+		this.area.flash(e.x, e.y, 60, PALETTE.lucia, 0.25);
+	}
+
+	/** Abomination acid: telegraphed pools around (and under) the hero. */
+	private acidPools(e: Enemy): void {
+		const count = e.def.boss?.poolCount ?? 3;
+		const p = BOSS_POOL;
+		for (let i = 0; i < count; i++) {
+			const a = this.rng.next() * Math.PI * 2;
+			const d = i === 0 ? 0 : p.scatter * (0.4 + this.rng.next() * 0.6);
+			this.hostile.pool(
+				this.hero.x + Math.cos(a) * d,
+				this.hero.y + Math.sin(a) * d,
+				p.radius,
+				p.duration,
+				e.damage * p.dps,
+				PALETTE.goo,
+			);
+		}
+	}
+
+	/** Damage over time from ground hazards: bypasses i-frames, respects god mode and shields. */
+	private hazardDamage(amount: number): void {
+		if (this.combat.god || this.deadFor >= 0) return;
+		if (damageHero(this.run, this.soakShield(amount))) this.die('death');
 	}
 
 	// --- Kills, pickups, superpower -------------------------------------------------------
@@ -686,7 +737,11 @@ export class GameScene extends Phaser.Scene {
 	/** Bob unlocks on the first round-10 boss kill, Lucia on round 20 (P-17). */
 	private onBossKilled(): void {
 		const save = getSave(this);
-		addFeat(save, 'bossBear');
+		const biome = biomeForRound(this.run.round);
+		addFeat(
+			save,
+			biome === 'station' ? 'bossBiome2' : biome === 'ruins' ? 'bossBiome3' : 'bossBear',
+		);
 		if (this.run.timeLeft > 120) addFeat(save, 'bossUnder60s');
 		if (this.run.timeLeft < 5) addFeat(save, 'bossLastSecond');
 		if (this.speed > 1) addFeat(save, 'bossAt2x');
@@ -774,6 +829,7 @@ export class GameScene extends Phaser.Scene {
 			if (result.evolvedTo) this.evolve(result.evolvedTo);
 		}
 		startRound(this.run, this.run.round + 1);
+		if (isBiomeStart(this.run.round)) this.enterBiome();
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 		if (this.enemies.boss) this.fx.play('sfx.bossRoar');
 		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
@@ -805,6 +861,13 @@ export class GameScene extends Phaser.Scene {
 			state: structuredClone(state) as unknown as Record<string, unknown>,
 		};
 		persist(this);
+	}
+
+	/** New biome every 10 rounds: rebuild the ground and announce it (P-18). */
+	private enterBiome(): void {
+		const biome = biomeForRound(this.run.round);
+		this.chunks.setBiome(biome);
+		this.fx.banner(this.hero.x, this.hero.y, `biome.${biome}` as I18nKey);
 	}
 
 	private evolve(tier: 2 | 3): void {

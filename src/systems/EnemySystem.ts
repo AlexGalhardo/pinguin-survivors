@@ -1,7 +1,8 @@
 import type Phaser from 'phaser';
 import { MAX_ENEMIES } from '../config/constants';
-import { BOSS_BY_BIOME, ENEMIES, ENEMY_LIST, type EnemyDef } from '../data/enemies';
+import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { Enemy } from '../entities/Enemy';
+import { bossForRound } from '../logic/biome';
 import { AI, stepAi } from '../logic/enemy-ai';
 import type { Vec2 } from '../logic/iso';
 import type { Rng } from '../logic/rng';
@@ -17,6 +18,8 @@ export interface EnemyAttacks {
 	explode: (enemy: Enemy) => void;
 	swipe: (enemy: Enemy) => void;
 	summon: (enemy: Enemy) => void;
+	volley: (enemy: Enemy) => void;
+	pool: (enemy: Enemy) => void;
 }
 
 /** World size covered by the neighbor grid around the hero (larger than any view). */
@@ -51,7 +54,7 @@ export class EnemySystem {
 		this.spawnBudget = 0;
 		this.boss = null;
 		if (isBossRound(round)) {
-			const def = ENEMIES[BOSS_BY_BIOME.antarctica];
+			const def = bossForRound(round);
 			const p = spawnPosition(this.rng, hero, view.width * 0.6, view.height * 0.6);
 			this.boss = this.take();
 			this.boss.spawn(def, p.x, p.y, bossHpMul(round), dmgMul(round), null);

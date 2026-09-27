@@ -5,6 +5,16 @@ export const PALETTE = {
 	snow: 0x5a6378,
 	snowLight: 0x7d88a0,
 	ice: 0x6fa3c7,
+	// Biome 2: research station / harbor.
+	metalDark: 0x343b47,
+	metal: 0x4f5968,
+	rust: 0x7a4a2e,
+	harborWater: 0x24435a,
+	// Biome 3: ruined city.
+	asphalt: 0x2b2b30,
+	concrete: 0x46464c,
+	brick: 0x6a3a30,
+	rubble: 0x5a524a,
 	rock: 0x2c2f3a,
 	blood: 0xc4161c,
 	bloodDark: 0x6e0b10,

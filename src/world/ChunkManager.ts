@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
-import { BIOMES, type BiomeId, KEYS } from '../art/manifest';
+import { BIOMES, KEYS } from '../art/manifest';
+import type { BiomeId } from '../config/constants';
 import { CHUNK_WORLD, TILE_WORLD } from '../config/constants';
 import {
 	type ChunkCoord,
@@ -56,8 +57,15 @@ export class ChunkManager {
 	constructor(
 		private readonly scene: Phaser.Scene,
 		private readonly seed: number,
-		private readonly biome: BiomeId,
+		private biome: BiomeId,
 	) {}
+
+	/** Swaps the ground art; every chunk is rebuilt (decals are kept and re-stamped). */
+	setBiome(biome: BiomeId): void {
+		if (biome === this.biome) return;
+		this.biome = biome;
+		for (const [key, chunk] of this.active) this.release(key, chunk);
+	}
 
 	get count(): number {
 		return this.active.size;

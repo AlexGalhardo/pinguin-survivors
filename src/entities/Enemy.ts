@@ -73,7 +73,7 @@ export class Enemy implements Mover {
 		this.hitFlash = 0;
 		resetStatus(this.status);
 		this.lastElement = null;
-		this.ai = newAi();
+		this.ai = newAi(def);
 		this.telegraph = false;
 		this.lastDot = null;
 		this.sprite.setTexture(KEYS.enemy(def.id)).setScale(scale).setVisible(true).clearTint();

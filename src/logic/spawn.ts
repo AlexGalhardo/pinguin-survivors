@@ -1,4 +1,5 @@
 import type { EnemyDef } from '../data/enemies';
+import { biomeForRound } from './biome';
 import { screenToWorld, type Vec2 } from './iso';
 import type { Rng } from './rng';
 
@@ -37,9 +38,12 @@ export function spawnPosition(rng: Rng, hero: Vec2, viewW: number, viewH: number
 	return { x: hero.x + offset.x, y: hero.y + offset.y };
 }
 
-/** Enemies available this round, weighted. */
+/** Enemies of the round's biome available this round, weighted. */
 export function pickEnemy(rng: Rng, pool: readonly EnemyDef[], round: number): EnemyDef {
-	const available = pool.filter((e) => e.fromRound > 0 && e.fromRound <= round);
+	const biome = biomeForRound(round);
+	const available = pool.filter(
+		(e) => e.biome === biome && e.fromRound > 0 && e.fromRound <= round,
+	);
 	if (available.length === 0) throw new Error(`no enemy available for round ${round}`);
 	return available[rng.weightedIndex(available.map((e) => e.weight))] as EnemyDef;
 }

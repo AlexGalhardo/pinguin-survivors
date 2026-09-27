@@ -37,13 +37,30 @@ describe('enemy AI', () => {
 	});
 
 	test('boss swipes in range, charges and roars on timers', () => {
-		const ai = newAi();
 		const d = ENEMIES.polarBear;
+		const ai = newAi(d);
 		stepAi(d, ai, 50, 0.1);
 		expect(ai.pending).toBe('swipe');
-		expect(stepAi(d, ai, 50, AI.boss.swipeWindup).action).toBe('swipe');
-		const far = newAi();
+		expect(stepAi(d, ai, 50, d.boss.swipeWindup).action).toBe('swipe');
+		const far = newAi(d);
 		far.roarCd = 0;
 		expect(stepAi(d, far, 500, 0.1).action).toBe('summon');
+	});
+
+	test('kraken fires volleys and never charges; abomination drops pools and charges', () => {
+		const k = ENEMIES.kraken;
+		const ai = newAi(k);
+		const actions = new Set<string | null>();
+		for (let i = 0; i < 600; i++) actions.add(stepAi(k, ai, 400, 0.05).action);
+		expect(actions.has('volley')).toBe(true);
+		expect(actions.has('pool')).toBe(false);
+		expect(actions.has('chargeStart')).toBe(false);
+		const a = ENEMIES.abomination;
+		const ai2 = newAi(a);
+		const seen = new Set<string | null>();
+		for (let i = 0; i < 600; i++) seen.add(stepAi(a, ai2, 400, 0.05).action);
+		expect(seen.has('pool')).toBe(true);
+		expect(seen.has('chargeStart')).toBe(true);
+		expect(seen.has('volley')).toBe(false);
 	});
 });

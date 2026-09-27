@@ -40,6 +40,7 @@ export class HudScene extends Phaser.Scene {
 	private eliteText!: Phaser.GameObjects.Text;
 	private boss!: Phaser.GameObjects.Container;
 	private bossFill!: Phaser.GameObjects.Rectangle;
+	private bossName!: Phaser.GameObjects.Text;
 
 	constructor() {
 		super('Hud');
@@ -69,10 +70,10 @@ export class HudScene extends Phaser.Scene {
 		this.bossFill = this.add
 			.rectangle(-BOSS_W / 2 + 1, 1, BOSS_W - 2, 6, PALETTE.auraOrange)
 			.setOrigin(0, 0);
-		const bossName = this.add
-			.text(0, 9, t('hud.boss'), text(8, PALETTE.auraOrange))
-			.setOrigin(0.5, 0);
-		this.boss = this.add.container(0, 40, [bossBg, this.bossFill, bossName]).setVisible(false);
+		this.bossName = this.add.text(0, 9, '', text(8, PALETTE.auraOrange)).setOrigin(0.5, 0);
+		this.boss = this.add
+			.container(0, 40, [bossBg, this.bossFill, this.bossName])
+			.setVisible(false);
 
 		const superBg = this.add.rectangle(0, 0, 120, 6, PALETTE.night, 0.85).setOrigin(0.5, 0);
 		this.superFill = this.add.rectangle(-59, 1, 0, 4, PALETTE.blood).setOrigin(0, 0);
@@ -173,7 +174,10 @@ export class HudScene extends Phaser.Scene {
 			.setColor(toCss(tiers.includes('orange') ? PALETTE.auraOrange : PALETTE.auraPurple));
 		const boss = game.enemies.boss;
 		this.boss.setVisible(boss !== null);
-		if (boss) this.bossFill.width = Math.max(0, (BOSS_W - 2) * (boss.hp / boss.maxHp));
+		if (boss) {
+			this.bossFill.width = Math.max(0, (BOSS_W - 2) * (boss.hp / boss.maxHp));
+			this.bossName.setText(t(`boss.${boss.def.id}` as I18nKey));
+		}
 		this.speedText.setText(game.speed > 1 ? t('hud.speed', { n: game.speed }) : '');
 		this.debugText?.setText(
 			t('debug.stats', {
