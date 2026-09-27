@@ -36,9 +36,9 @@ export const HEROES: Record<HeroId, HeroDef> = {
 	bob: {
 		id: 'bob',
 		pixellabId: '61a0d0eb-21f7-4bc9-ac2d-69f42c8bcbd3',
-		hp: 110,
+		hp: 120,
 		regen: 0.4,
-		armor: 4,
+		armor: 6,
 		moveSpeed: 135,
 		dodge: 0.12,
 		parry: 0,
