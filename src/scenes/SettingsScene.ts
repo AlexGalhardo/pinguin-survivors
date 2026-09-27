@@ -66,6 +66,12 @@ export class SettingsScene extends Phaser.Scene {
 					},
 				},
 				{
+					label: () => t('settings.fullscreen', { v: onOff(this.scale.isFullscreen) }),
+					// Browser state, not saved: browsers only allow it from a user gesture.
+					onAdjust: () => this.scale.toggleFullscreen(),
+					onSelect: () => this.scale.toggleFullscreen(),
+				},
+				{
 					label: () => t('settings.master', { v: pct(s.volume.master) }),
 					...vol('master'),
 				},

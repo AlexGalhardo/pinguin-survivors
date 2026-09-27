@@ -31,6 +31,7 @@ export const en = {
 	'settings.title': 'SETTINGS',
 	'settings.language': 'Language: {v}',
 	'settings.resolution': 'Resolution: {v}',
+	'settings.fullscreen': 'Fullscreen: {v}',
 	'settings.master': 'Master volume: {v}',
 	'settings.music': 'Music: {v}',
 	'settings.sfx': 'Sound effects: {v}',

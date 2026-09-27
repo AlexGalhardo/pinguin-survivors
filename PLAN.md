@@ -86,7 +86,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] `src/logic/spawn.ts`: pontos fora da área visível real (largura variável), taxa por round + testes
 - [x] `EnemySystem`: spawn fora da tela, perseguir + separação via SpatialGrid (recentralizada no herói), reciclagem de distantes
 - [x] Comportamentos especiais (`src/logic/enemy-ai.ts` + testes): voador em z, cientista mantém distância e cospe, morsa com preparação e investida, inchado explode em veneno
-- [x] `entities/Enemy.ts` pooled (máx. 300) com sombra, aura de elite, flash de hit e flip horizontal; [ ] barra de HP dos elites; [ ] 8 direções quando a arte chegar
+- [x] `entities/Enemy.ts` pooled (máx. 300) com sombra, aura de elite, flash de hit, flip horizontal e barra de HP dos elites (aparece após o 1º dano); [ ] 8 direções quando a arte chegar
 - [x] Estresse: **300 inimigos a 60 FPS** a 2560×1080 (Chrome via Playwright, round 40, Lucia)
 
 ### 1.5 Combate e armas assinadas

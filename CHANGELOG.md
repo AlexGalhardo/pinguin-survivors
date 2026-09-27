@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Polar night darkness with light around the hero, fire, explosions and elites.
 - 18 sound effects (weapons, gore, pickups, level up, boss roar, superpower, menus, game over).
 - Workshop: nine permanent upgrades bought with fish (max HP, damage, attack speed, armor, regen, move speed, pickup range, XP gain, luck), shared by every hero.
+- Elites show a health bar once damaged.
+- Fullscreen toggle in the settings.
 - Best round per hero shown on the hero select screen.
 - Brotato-style weapons: the signature weapon is its own sprite that aims, swings, recoils or glows next to the hero.
 
