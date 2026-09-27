@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.3] - 2026-09-27
+
+Playtest build **playdev-2**.
+
 ### Changed
 
 - Balance: the endless mode gets harder every full tour of the three biomes (enemy HP ×1.6 and damage ×1.5 every 30 rounds), boss rounds spawn half the horde, the jump into biomes 2–3 is softer and the kraken and abomination have less HP (docs/balancing.md §10.1).
@@ -118,7 +122,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.2...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.3...HEAD
+[0.1.0-beta.3]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.2...v0.1.0-beta.3
 [0.1.0-beta.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.1...v0.1.0-beta.2
 [0.1.0-beta.1]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-alpha.2...v0.1.0-beta.1
 [0.1.0-alpha.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
