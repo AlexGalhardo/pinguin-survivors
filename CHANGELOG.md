@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.5] - 2026-09-27
+
+Playtest build **playdev-4**.
+
 ### Added
 
 - Walking animation for Jack, Bob and Lucia in all 8 directions (8 frames each), without weapons in hand (the weapon is its own sprite); walking seals and sailor and gull zombie art.
@@ -148,7 +152,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.4...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.5...HEAD
+[0.1.0-beta.5]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.4...v0.1.0-beta.5
 [0.1.0-beta.4]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.3...v0.1.0-beta.4
 [0.1.0-beta.3]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.2...v0.1.0-beta.3
 [0.1.0-beta.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.1...v0.1.0-beta.2
