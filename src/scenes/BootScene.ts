@@ -22,10 +22,15 @@ export class BootScene extends Phaser.Scene {
 			);
 		for (const [key, url] of Object.entries(FILES.images))
 			if (present.has(url)) this.load.image(key, url);
-		// PixelLab animation atlases (scripts/pack-heroes.ts), one per hero tier.
+		// PixelLab animation atlases (scripts/pack-heroes.ts): the weaponless set shared by the
+		// three tiers (hero.<id>, P-56) or an optional per-tier override (hero.<id>.t<n>).
 		for (const hero of HERO_IDS)
-			for (const tier of [1, 2, 3]) {
-				const key = `hero.${hero}.t${tier}`;
+			for (const key of [
+				`hero.${hero}`,
+				`hero.${hero}.t1`,
+				`hero.${hero}.t2`,
+				`hero.${hero}.t3`,
+			]) {
 				const json = `assets/heroes/${key}.json`;
 				if (present.has(json)) this.load.atlas(key, `assets/heroes/${key}.png`, json);
 			}

@@ -1,12 +1,63 @@
 {
-	"weapon.machete": { "src": "art-src/pixellab/images/weapon.machete/11.png" },
-	"weapon.katana": { "src": "art-src/pixellab/images/weapon.katana/11.png" },
-	"weapon.chainsword": { "src": "art-src/pixellab/images/weapon.chainsword/22.png" },
-	"weapon.doubleBarrel": { "src": "art-src/pixellab/images/weapon.doubleBarrel/22.png" },
-	"weapon.autoShotgun": { "src": "art-src/pixellab/images/weapon.autoShotgun/22.png" },
-	"weapon.rocketShotgun": { "src": "art-src/pixellab/images/weapon.rocketShotgun/11.png" },
-	"weapon.elementStaff": { "src": "art-src/pixellab/images/weapon.elementStaff/11.png" },
-	"weapon.arcaneStaff": { "src": "art-src/pixellab/images/weapon.arcaneStaff/11.png" },
-	"weapon.stormStaff": { "src": "art-src/pixellab/images/weapon.stormStaff/11.png" },
-	"weapon.auxPistol": { "src": "art-src/pixellab/images/weapon.auxPistol/11.png" }
+	"weapon.machete": {
+		"src": "art-src/pixellab/images/weapon.machete/11.png"
+	},
+	"weapon.katana": {
+		"src": "art-src/pixellab/images/weapon.katana/11.png"
+	},
+	"weapon.chainsword": {
+		"src": "art-src/pixellab/images/weapon.chainsword/22.png"
+	},
+	"weapon.doubleBarrel": {
+		"src": "art-src/pixellab/images/weapon.doubleBarrel/22.png"
+	},
+	"weapon.autoShotgun": {
+		"src": "art-src/pixellab/images/weapon.autoShotgun/22.png"
+	},
+	"weapon.rocketShotgun": {
+		"src": "art-src/pixellab/images/weapon.rocketShotgun/11.png"
+	},
+	"weapon.elementStaff": {
+		"src": "art-src/pixellab/images/weapon.elementStaff/11.png"
+	},
+	"weapon.arcaneStaff": {
+		"src": "art-src/pixellab/images/weapon.arcaneStaff/11.png"
+	},
+	"weapon.stormStaff": {
+		"src": "art-src/pixellab/images/weapon.stormStaff/11.png"
+	},
+	"weapon.auxPistol": {
+		"src": "art-src/pixellab/images/weapon.auxPistol/11.png"
+	},
+	"pickup.xp": {
+		"src": "art-src/pixellab/images/pickup.xp/11.png",
+		"scale": 0.5
+	},
+	"pickup.fish": {
+		"src": "art-src/pixellab/images/pickup.fish/11.png",
+		"scale": 0.5
+	},
+	"pickup.meat": {
+		"src": "art-src/pixellab/images/pickup.meat/11.png",
+		"scale": 0.5
+	},
+	"proj.orb": {
+		"src": "art-src/pixellab/images/proj.orb/11.png",
+		"scale": 0.5
+	},
+	"proj.spit": {
+		"src": "art-src/pixellab/images/proj.spit/11.png",
+		"scale": 0.5
+	},
+	"proj.bottle": {
+		"src": "art-src/pixellab/images/proj.bottle/11.png",
+		"scale": 0.5
+	},
+	"proj.grenade": {
+		"src": "art-src/pixellab/images/proj.grenade/11.png",
+		"scale": 0.5
+	},
+	"proj.meteor": {
+		"src": "art-src/pixellab/images/proj.meteor/11.png"
+	}
 }

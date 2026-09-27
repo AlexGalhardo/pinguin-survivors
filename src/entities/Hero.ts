@@ -41,8 +41,10 @@ export class Hero {
 		this.sync();
 	}
 
+	/** Per-tier atlas when one exists, else the weaponless set shared by the 3 tiers (P-56). */
 	private get atlasKey(): string {
-		return `hero.${this.id}.t${this.tier}`;
+		const tiered = `hero.${this.id}.t${this.tier}`;
+		return this.scene.textures.exists(tiered) ? tiered : `hero.${this.id}`;
 	}
 
 	/** Registers the Phaser animations of the current tier's atlas (once per key). */

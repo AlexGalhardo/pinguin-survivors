@@ -44,3 +44,11 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 - Prompt: `achievement unlocked badge icon: round golden medal with a small penguin silhouette emblem in the center, laurel wreath, red ribbon tails, shiny highlights, game UI icon`.
 - **Escolhido: seed 33** (pinguim mais legível em tamanho pequeno) → `public/assets/ui/ui.achievement.png`. As outras ficam em `art-src/pixellab/images/ui.achievement/`.
 - Obs.: a API do PixelLab ficou com erro 500 por algumas horas em 2026-09-27; o cliente agora repete com backoff.
+
+## 2026-09-27 — Frente de assets (P-58): armas, pickups e projéteis (MCP `create_image_pixflux`)
+
+- Gerados pelo MCP (sem token no checkout), baixados com `bun scripts/pl-save.ts` (URLs e prompts completos em `log.jsonl`). Contorno preto, `detailed shading`, `highly detailed`, fundo transparente, vista `side` nas armas; 1 geração cada.
+- **Armas** (apontando para a direita, empunhadura à esquerda — `WeaponView` usa origem 0,15): machete 64×32, katana 80×32, chainsword 80×32 (seed 22; a 11 parecia arma de fogo), doubleBarrel 64×32 (seed 22), autoShotgun 72×32 (seed 22; a 11 era preta demais contra o chão), rocketShotgun 80×32, elementStaff 64×32, arcaneStaff 72×32, stormStaff 80×32, auxPistol 32×32. Recortadas ficam com 60–75 px (pistola 23 px).
+- **Pickups/projéteis** 32×32 reduzidos a 50% (nearest) no `pack-process`: `pickup.xp` (cristal ciano), `pickup.fish`, `pickup.meat`, `proj.orb` (lineless), `proj.spit`, `proj.bottle` (molotov), `proj.grenade`; `proj.meteor` em tamanho cheio. Faca e lâmina saíram na diagonal (projéteis orientados precisam apontar para a direita) e foram refeitas em canvas largo.
+- Escolhas em `art-src/selection.json`; prancha de revisão com `bun scripts/pack-sheet.ts`.
+- Custo do lote: ~25 gerações.

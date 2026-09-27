@@ -44,6 +44,22 @@ Tela lógica: altura 540, zoom inteiro (2560×1080 → ×2).
 5. **Tiles e objetos**: `/create-isometric-tile`, `/create-tiles-pro`, `/map-objects`, `/create-1-direction-object` (+ animações de objeto para VFX).
 6. Registrar em `art-src/pixellab/log.jsonl` (automático) e resumir em [art-prompts.md](art-prompts.md).
 
+### Pipeline em uso (P-58, 2026-09-27)
+
+Sem `PIXELLAB_API_TOKEN` no checkout, a geração é feita pelo **MCP `pixellab`** e os resultados são baixados pelas URLs públicas:
+
+| Etapa | Comando | Saída |
+|---|---|---|
+| Imagens (armas, ícones, pickups, props) | MCP `create_image_pixflux` → `bun scripts/pl-save.ts lote.json` | `art-src/pixellab/images/<key>/<seed>.png` + `log.jsonl` |
+| Personagens (concepts e animações) | MCP `create_character`/`animate_character` → `bun scripts/pl-fetch-char.ts --char <id> (--concept <dir> \| --key <key>)` | rotações em `concepts/…/<dir>.png`; frames em `anim/<key>/<anim>/<dir>/<nn>.png` |
+| Escolha | editar `art-src/selection.json` (`key → { src, group?, trim?, crop? }`) | — |
+| Normalização | `bun scripts/pack-process.ts` (recorta o transparente) | `art-src/processed/<group>/<key>.png` (gitignored) |
+| Atlas | `bun scripts/pack-atlas.ts` | `public/assets/atlas/<group>.png/json` |
+| Heróis animados | `bun scripts/pack-heroes.ts hero.<id>` | `public/assets/heroes/hero.<id>.png/json` |
+| Revisão / aprovação | `bun scripts/pack-sheet.ts saida.png [--cols N] [--scale N] <arquivos\|pastas>` | prancha com rótulos |
+
+O `BootScene` carrega todos os atlas de `public/assets/atlas/` e registra **cada frame como uma textura com a chave do manifest** (compartilhando a textura da GPU do atlas), então `scene.add.image(x, y, 'weapon.machete')` funciona igual ao placeholder; `installPlaceholders` só desenha as chaves que faltam. Heróis: o atlas `hero.<id>` (sem arma, P-56) vale para os 3 tiers; `hero.<id>.t<n>` sobrescreve um tier se existir.
+
 ## Chaves (contrato `src/art/manifest.ts`)
 
 - Personagem: `hero.<id>.t<n>` · `enemy.<id>` · `boss.<id>`.
