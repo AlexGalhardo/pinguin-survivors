@@ -20,6 +20,20 @@
 - `spawnRate(N)` (inimigos/s) = `min(2 + 0,6·N, 25)`; teto de **300 vivos**
 - Bosses: HP base × `1,6^ciclo` quando voltam no pool rotativo
 
+### 2.1 Inimigos da Antártida (`src/data/enemies.ts`)
+
+| Inimigo | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
+|---|---|---|---|---|---|---|---|---|
+| Pinguim zumbi | perseguidor | 12 | 80 | 6 | 10 | 1 | 1 | 10 |
+| Skua zumbi | voador | 10 | 115 | 5 | 9 | 1 | 2 | 5 |
+| Foca zumbi | tanque | 45 | 40 | 12 | 16 | 3 | 3 | 4 |
+| Cientista zumbi | à distância (220 u, 2,5 s) | 20 | 55 | 8 | 11 | 2 | 4 | 3 |
+| Pinguim inchado | explosivo (40 u) | 18 | 60 | 20 | 12 | 2 | 5 | 3 |
+| Morsa zumbi | investida (200 u, 4 s) | 60 | 50 | 16 | 18 | 4 | 7 | 2 |
+| **Urso polar zumbi** (boss) | boss (90 u, 3 s) | 3.000 | 70 | 30 | 40 | 100 | round 10 | — |
+
+Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultrawide incluso).
+
 ## 3. Combate
 
 | Fórmula | Valor |
