@@ -16,10 +16,10 @@ export const ROUNDS = {
 	},
 	scaling: {
 		hpPerRound: 0.15,
-		hpPerCycle: 1.25,
+		hpPerCycle: 1.12,
 		dmgPerRound: 0.08,
-		dmgPerCycle: 1.15,
-		bossHpPerCycle: 1.6,
+		dmgPerCycle: 1.08,
+		bossHpPerCycle: 1.35,
 		spawnBase: 1.5,
 		spawnPerRound: 0.5,
 		spawnMax: 25,

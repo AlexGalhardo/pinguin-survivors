@@ -249,7 +249,7 @@ export const ENEMIES = {
 		id: 'kraken',
 		biome: 'station',
 		behavior: 'boss',
-		hp: 3400,
+		hp: 3000,
 		speed: 45,
 		damage: 22,
 		radius: 44,
@@ -376,7 +376,7 @@ export const ENEMIES = {
 		id: 'abomination',
 		biome: 'ruins',
 		behavior: 'boss',
-		hp: 3800,
+		hp: 3500,
 		speed: 80,
 		damage: 28,
 		radius: 42,
@@ -407,7 +407,7 @@ export const ENEMIES = {
 export type EnemyId = keyof typeof ENEMIES;
 
 /** Kraken ink volley: speed/range in world units, damage as a fraction of the boss damage. */
-export const BOSS_VOLLEY = { speed: 170, range: 520, damage: 0.45, spread: 1.1 } as const;
+export const BOSS_VOLLEY = { speed: 170, range: 520, damage: 0.35, spread: 1.1 } as const;
 /** Abomination acid pools: dps as a fraction of the boss damage; scatter around the hero. */
 export const BOSS_POOL = { radius: 46, duration: 4, dps: 0.35, scatter: 150 } as const;
 export const ENEMY_LIST: readonly EnemyDef[] = Object.values(ENEMIES);
