@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Main menu with an animated DOOM-inspired key art (Jack or Bob, 50% each), hero select with portraits and unlock hints, settings, pause, achievements list and match history.
+- Heroes & Potions screen: spend stat points, buy potions with fish and set up 3 FFXII-style gambits (potion + condition) that trigger automatically in runs.
+- Potions: heal, mega heal, shield, rage, antidote and haste; scientist spit now poisons the hero.
+- Continue: the run is saved at the start of every round and can be resumed from the main menu.
+- Resolution setting (Auto native, SD, HD, Full HD, 2K, 3K, 4K); Auto renders at native Retina pixels.
+- Final achievement badge art.
+- Elite round warning and potion slots on the HUD.
+- Curated third-party gamedev skills for AI agents working on the project.
+
+### Changed
+
+- Gore mode (maximum, reduced, green goo), screen shake and damage number settings now apply in game.
+
 ## [0.1.0-alpha.2] - 2026-09-27
 
 ### Added

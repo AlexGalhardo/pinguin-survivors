@@ -88,8 +88,8 @@ tests/                    # *.test.ts (bun:test), espelha src/logic
 ## Tela cheia + pixel perfect
 
 - CSS: sem margem, `overflow: hidden`, `image-rendering: pixelated`.
-- Phaser: `scale.mode = RESIZE`, `pixelArt: true`, `roundPixels: true`.
-- **Zoom inteiro pela altura**: `zoom = max(1, floor(innerHeight / 540))`; a largura lógica é `innerWidth / zoom` (ultrawide vê mais mapa nas laterais). 2560×1080 → zoom 2 (1280×540 lógicos) · 1920×1080 → 2 (960×540) · 3840×2160 → 4 · 2560×1440 → 2 (1280×720) · 1366×768 → 1.
+- Phaser: `scale.mode = NONE` + `scale.resize()`/`setZoom()` controlados por `src/core/display.ts`: o canvas renderiza na **resolução de render** (Settings → Resolução: Automática = pixels nativos do dispositivo, ou SD/HD/FHD/2K/3K/4K fixando a altura com o aspecto da janela) e o zoom de exibição estica para a janela (`src/logic/display.ts`, testado).
+- **Zoom inteiro pela altura de render**: `zoom = max(1, floor(renderHeight / 540))` (MacBook M1 em Automática: 2880×1800 → zoom 3); a largura lógica é `innerWidth / zoom` (ultrawide vê mais mapa nas laterais). 2560×1080 → zoom 2 (1280×540 lógicos) · 1920×1080 → 2 (960×540) · 3840×2160 → 4 · 2560×1440 → 2 (1280×720) · 1366×768 → 1.
 - Spawns acontecem fora da área visível **real** (largura variável), para ultrawide não ver inimigos surgindo.
 
 ## Mundo infinito e gore
@@ -107,3 +107,12 @@ tests/                    # *.test.ts (bun:test), espelha src/logic
 ## Debug (query params)
 
 `?skipMenu=1&hero=jack&round=5&seed=1&debug=1&god=1&tier=2`. `window.__GAME__` só no dev.
+
+## Cenas e menus
+
+`Boot` → `MainMenu` (key art animada `ui/MenuBackground.ts`, Continuar/Jogar/Heróis e Poções/Conquistas/Histórico/Configurações) → `HeroSelect` → `Game` (+ `Hud`, `CardPick`, `Pause`) → `GameOver`. Menus usam `ui/MenuList.ts` (teclado + mouse, colunas com `active`) e `ui/screen.ts`.
+Estado da run: `RunState` + `Build` + `PlayerStats` + slots de poção; snapshot salvo no início de cada round em `save.activeRun` (Continuar). `?skipMenu=1` pula direto para o jogo.
+
+## Sistemas do GameScene
+
+`EnemySystem` (spawn, IA de `logic/enemy-ai.ts`, status), `CombatSystem` (dano, DoTs, crítico, dodge/parry, hooks de perks/escudo), `WeaponSystem` (arma assinada), `SecondarySystem` (secundárias e exclusivas), `ProjectilePool`, `AreaSystem` (zonas, impactos, anéis), `HostileSystem` (projéteis inimigos), `SuperpowerSystem`, `PickupSystem`, `FxSystem` (números, sangue, cortes; respeita gore/números), `ChunkManager`.
