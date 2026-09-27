@@ -239,9 +239,9 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 - [x] Endpoint de SFX conferido e `scripts/el-sfx.ts` (cliente `scripts/lib/elevenlabs.ts`); [ ] `el-music.ts`, `el-voice.ts`
 - [x] Catálogo de 18 SFX (armas, impacto, sangue, morte, explosão, pickups, UI, level up, carta, poção, boss, superpoder, game over); [ ] variações extras dos mais repetidos
-- [ ] Música: menu, round, round tardio, boss, game over (loops sem emenda)
+- [x] Música: loops de menu, round e boss via SFX com `loop` (a Music API exige plano pago); game over é um SFX; [ ] round tardio
 - [ ] Vozes EN + PT-BR dos 3 heróis (desenho de voz por herói + falas por evento)
-- [x] `sfx()` com limite de vozes, pitch e volumes (geral × efeitos); [ ] `MusicSystem` (crossfade round↔boss) e canal de voz
+- [x] `sfx()` com limite de vozes, pitch e volumes (geral × efeitos); `core/music.ts` (crossfade menu/round/boss, volume ao vivo); [ ] canal de voz
 
 ---
 

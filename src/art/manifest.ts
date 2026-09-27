@@ -1,4 +1,5 @@
 import type { HeroId } from '../config/constants';
+import { MUSIC_KEYS } from '../core/music';
 import { SFX } from '../data/sfx';
 import type { Dir } from '../logic/iso';
 
@@ -50,7 +51,8 @@ export const FILES = {
 		'keyart.jack': 'assets/menu/keyart.jack.png',
 		'keyart.bob': 'assets/menu/keyart.bob.png',
 	},
-	audio: Object.fromEntries(
-		Object.keys(SFX).map((k) => [k, `assets/audio/sfx/${k}.mp3`]),
-	) as Record<string, string>,
+	audio: Object.fromEntries([
+		...Object.keys(SFX).map((k) => [k, `assets/audio/sfx/${k}.mp3`]),
+		...MUSIC_KEYS.map((k) => [k, `assets/audio/music/${k}.mp3`]),
+	]) as Record<string, string>,
 } as const;

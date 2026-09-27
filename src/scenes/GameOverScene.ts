@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
+import { stopMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
 import { getLang, t } from '../i18n';
 import { formatTime } from '../logic/format';
@@ -20,6 +21,7 @@ export class GameOverScene extends Phaser.Scene {
 	}
 
 	create(data: GameOverData): void {
+		stopMusic(this);
 		sfx(this, 'sfx.gameOver');
 		const r = data.record;
 		const style = (size: number, color: number = PALETTE.textLight) => ({

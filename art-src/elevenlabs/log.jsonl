@@ -18,3 +18,6 @@
 {"at":"2026-09-27T16:11:42.263Z","kind":"sfx","key":"sfx.super","variant":1,"endpoint":"/v1/sound-generation","text":"massive superpower activation: bass drop, distorted guitar chug and a whooshing blast wave, heavy metal video game","durationSeconds":2}
 {"at":"2026-09-27T16:11:43.723Z","kind":"sfx","key":"sfx.uiSelect","variant":1,"endpoint":"/v1/sound-generation","text":"short crisp menu select click with a metallic tick, video game ui","durationSeconds":0.5}
 {"at":"2026-09-27T16:11:45.871Z","kind":"sfx","key":"sfx.gameOver","variant":1,"endpoint":"/v1/sound-generation","text":"dark game over sting: slow heavy distorted guitar chord fading with a low drone, doom metal, video game","durationSeconds":2.5}
+{"kind":"music-loop","key":"music.round","endpoint":"/v1/sound-generation","loop":true,"durationSeconds":24}
+{"kind":"music-loop","key":"music.menu","endpoint":"/v1/sound-generation","loop":true,"durationSeconds":28}
+{"kind":"music-loop","key":"music.boss","endpoint":"/v1/sound-generation","loop":true,"durationSeconds":24}

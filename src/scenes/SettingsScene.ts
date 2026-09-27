@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { getSave, persist, setSave } from '../core/context';
 import { setResolution } from '../core/display';
+import { refreshMusicVolume } from '../core/music';
 import { exportSave, importSave } from '../core/storage';
 import { RESOLUTION_IDS } from '../data/display';
 import { type I18nKey, LANGS, setLang, t } from '../i18n';
@@ -36,6 +37,7 @@ export class SettingsScene extends Phaser.Scene {
 					Math.max(0, Math.round((s.volume[key] + d * 0.1) * 10) / 10),
 				);
 				persist(this);
+				refreshMusicVolume(this);
 			},
 		});
 		const onOff = (v: boolean) => t(v ? 'on' : 'off');

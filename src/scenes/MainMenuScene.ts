@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../config/palette';
 import { getSave } from '../core/context';
+import { playMusic } from '../core/music';
 import { t } from '../i18n';
 import { availablePoints } from '../logic/achievements';
 import { MenuBackground } from '../ui/MenuBackground';
@@ -15,6 +16,7 @@ export class MainMenuScene extends Phaser.Scene {
 
 	create(): void {
 		const save = getSave(this);
+		playMusic(this, 'music.menu');
 		const background = new MenuBackground(this);
 		const panel = this.add
 			.rectangle(0, 0, 260, 150, 0x0b0e14, 0.72)

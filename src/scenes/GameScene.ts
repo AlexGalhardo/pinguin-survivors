@@ -7,6 +7,7 @@ import { GameEvents } from '../core/events';
 import { shake } from '../core/feel';
 import { gamepadMove } from '../core/gamepad';
 import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
+import { playMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
 import { ECONOMY } from '../data/economy';
 import { ENEMIES } from '../data/enemies';
@@ -299,6 +300,7 @@ export class GameScene extends Phaser.Scene {
 		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
 		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
+		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
 
 		this.scene.launch('Hud');
 		this.events.once('shutdown', () => this.chunks.destroy());
@@ -757,6 +759,7 @@ export class GameScene extends Phaser.Scene {
 		startRound(this.run, this.run.round + 1);
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 		if (this.enemies.boss) this.fx.play('sfx.bossRoar');
+		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
 		this.saveSnapshot();
