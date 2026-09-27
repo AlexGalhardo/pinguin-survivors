@@ -51,6 +51,19 @@ Tela lógica: altura 540, zoom inteiro (2560×1080 → ×2).
 - Tiles: `tile.<biome>.<nome>` · decoração: `deco.<biome>.<nome>` · VFX: `fx.<nome>` · UI: `ui.<nome>` · ícones: `icon.<nome>`.
 - Placeholders por código usam **as mesmas chaves** até a arte final entrar.
 
+## Custos medidos (piloto de 2026-09-27, Jack T1 `walk`, 1 direção)
+
+| Modo `/characters/animations` | Frames | Custo real | Qualidade |
+|---|---|---|---|
+| `v3` (ação em texto, `frame_count` 12) | 12 | **45 gerações** | Melhor: movimento expressivo, identidade estável, canvas cresce para 132 px |
+| `template` (`walking`) | 6 | **1 geração** | Boa: identidade perfeita, movimento mais contido |
+| `skeleton-v3` (`walking`) | 6 | **3 gerações** | Boa, igual ao template no teste |
+| Key art `/generate-image-v2` 688×384 | — | 30 por imagem | Excelente |
+| Imagem `/create-image-pixflux` 64×64 | — | ~0,7 por imagem | Boa para ícones |
+| Personagem `v3` 96 px / `pro` | — | 3 / 25 | v3 melhor para os heróis |
+
+Frames: `art-src/pixellab/anim/hero.jack.t1/{walk,walk-template,walk-skeleton}/south/`.
+
 ## Orçamento (plano Tier 2: 5.000 gerações/mês)
 
 | Item | Estimativa |
