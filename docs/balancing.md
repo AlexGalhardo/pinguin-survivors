@@ -115,11 +115,13 @@ Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de 
 
 ## 6. Armas assinadas
 
+> 2026-09-27: alcance das armas do Jack +50% em todos os tiers (pedido do usuário; T1 70 → 105 u).
+
 | Arma | Tag | Dano | Cadência (/s) | Alcance | Especial |
 |---|---|---|---|---|---|
-| Machete (T1) | melee | 14 | 1,4 | arco 110° · 70 u | 15% sangramento |
-| Katana (T2) | melee | 26 | 1,8 | arco 140° · 85 u | 25% sangramento, golpe duplo |
-| Espada-motosserra (T3) | melee | 12 × 4 | 2,2 | arco 160° · 90 u | contínuo, 40% sangramento |
+| Machete (T1) | melee | 14 | 1,4 | arco 110° · 105 u | 15% sangramento |
+| Katana (T2) | melee | 26 | 1,8 | arco 140° · 128 u | 25% sangramento, golpe duplo |
+| Espada-motosserra (T3) | melee | 12 × 4 | 2,2 | arco 160° · 135 u | contínuo, 40% sangramento |
 | Escopeta cano duplo (T1) | firearm | 7 × 6 bagos | 0,9 | 220 u · 30° | knockback |
 | Escopeta automática (T2) | firearm | 8 × 7 | 1,6 | 240 u · 35° | perfura 1 |
 | Escopeta-foguete (T3) | firearm | 10 × 7 + explosão 30 | 1,4 | 260 u | explosão em área |
