@@ -58,6 +58,27 @@ import { WeaponSystem } from '../systems/WeaponSystem';
 import { ChunkManager } from '../world/ChunkManager';
 import type { CardPickData } from './CardPickScene';
 
+/** What a saved run snapshot holds (save.activeRun.state). */
+export interface RunResume {
+	run: RunState;
+	build: Build;
+	stats: PlayerStats;
+	potions: GambitSlot[];
+}
+
+const RESUME_KEY = 'resumeRun';
+
+/** Menu → Continue puts the snapshot in the registry; the game consumes it once. */
+export function queueResume(game: Phaser.Game, state: RunResume): void {
+	game.registry.set(RESUME_KEY, state);
+}
+
+function takeResume(scene: Phaser.Scene): RunResume | undefined {
+	const state = scene.registry.get(RESUME_KEY) as RunResume | undefined;
+	scene.registry.remove(RESUME_KEY);
+	return state;
+}
+
 /** Padding (screen px) around the camera view where chunks are already built. */
 const VIEW_PAD = 96;
 const DEATH_DELAY = 1.2;
@@ -125,12 +146,14 @@ export class GameScene extends Phaser.Scene {
 	create(): void {
 		const params = getParams(this);
 		const save = getSave(this);
-		const heroId: HeroId = params.hero ?? getRunHero(this) ?? 'jack';
+		const resume = takeResume(this);
+		const heroId: HeroId = resume?.run.hero ?? params.hero ?? getRunHero(this) ?? 'jack';
 		const heroDef = HEROES[heroId];
 		const heroSave = save.heroes[heroId];
-		const seed = params.seed ?? randomSeed();
-		const tier = params.tier ?? 1;
-		this.rng = new Rng(seed);
+		const seed = resume?.run.seed ?? params.seed ?? randomSeed();
+		const tier = resume?.run.tier ?? params.tier ?? 1;
+		// A resumed run reseeds per round so it stays reproducible without storing RNG state.
+		this.rng = new Rng(resume ? seed + resume.run.round : seed);
 		this.deadFor = -1;
 		this.outcome = 'death';
 		this.speed = 1;
@@ -142,7 +165,13 @@ export class GameScene extends Phaser.Scene {
 		this.barrierTimer = 0;
 		this.elementUsedAt.clear();
 		this.level = { level: heroSave.level, xp: heroSave.xp };
-		this.potions = loadGambits(save.gambits, save.potions);
+		if (!resume && save.activeRun) {
+			// Starting over abandons the saved run: its loaded potions go back to the stock.
+			const old = save.activeRun.state as unknown as RunResume;
+			if (Array.isArray(old.potions)) returnUnused(old.potions, save.potions);
+			save.activeRun = null;
+		}
+		this.potions = resume ? resume.potions : loadGambits(save.gambits, save.potions);
 		this.gambitTimer = 0;
 		this.potionsThisRound = 0;
 		this.shieldHp = 0;
@@ -152,11 +181,18 @@ export class GameScene extends Phaser.Scene {
 		this.immuneTime = 0;
 		this.heroPoisonDps = 0;
 		this.heroPoisonTime = 0;
-		this.stats = heroStats(heroDef, heroSave.level, heroSave.points);
-		this.build = emptyBuild(tier);
-		this.run = createRunState(heroDef, { seed, round: params.round, tier });
-		this.run.maxHp = this.stats.maxHp;
-		this.run.hp = this.stats.maxHp;
+		if (resume) {
+			this.stats = resume.stats;
+			this.build = resume.build;
+			this.run = resume.run;
+			startRound(this.run, this.run.round);
+		} else {
+			this.stats = heroStats(heroDef, heroSave.level, heroSave.points);
+			this.build = emptyBuild(tier);
+			this.run = createRunState(heroDef, { seed, round: params.round, tier });
+			this.run.maxHp = this.stats.maxHp;
+			this.run.hp = this.stats.maxHp;
+		}
 
 		this.keys = createMoveKeys(this);
 		const kb = this.input.keyboard;
@@ -674,7 +710,32 @@ export class GameScene extends Phaser.Scene {
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
+		this.saveSnapshot();
 		this.scene.resume();
+	}
+
+	/**
+	 * Autosave at the start of every round (P-43): "Continue" resumes here. The hero level is
+	 * persisted too, since XP is kept no matter how the run ends.
+	 */
+	private saveSnapshot(): void {
+		const save = getSave(this);
+		save.heroes[this.run.hero].level = this.level.level;
+		save.heroes[this.run.hero].xp = this.level.xp;
+		const state: RunResume = {
+			run: this.run,
+			build: this.build,
+			stats: this.stats,
+			potions: this.potions,
+		};
+		save.activeRun = {
+			savedAt: Date.now(),
+			seed: this.run.seed,
+			hero: this.run.hero,
+			nextRound: this.run.round,
+			state: structuredClone(state) as unknown as Record<string, unknown>,
+		};
+		persist(this);
 	}
 
 	private evolve(tier: 2 | 3): void {

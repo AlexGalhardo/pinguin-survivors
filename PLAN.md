@@ -132,7 +132,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] Contadores de conquistas durante a run (kills, elites, bosses, críticos, parries, dodges, DoTs, elementos, cartas, superpoderes) + feats de boss e desbloqueios, com `evaluateAchievements` ao vivo a cada 1 s
 - [x] Tela de conquistas (lista com progresso, rolagem, pontos); [ ] loja de extras (itens a definir)
 - [x] Save local: schema v1 tolerante, migrações, snapshot da run, histórico das últimas 20 partidas, export/import (`src/logic/save.ts`, `src/core/storage.ts`) + testes
-- [x] Tela de **Histórico** das partidas; [ ] autosave no fim de cada round + botão **Continue**
+- [x] Tela de **Histórico** das partidas; autosave no início de cada round (após a carta) + **Continuar (Round N)** no menu
 
 ### 1.9 Pickups, HUD e fim de run
 - [x] Orbes de XP, Fish e carne pooled, ímã pelo alcance de coleta, coleta total no fim do round

@@ -6,6 +6,7 @@ import { availablePoints } from '../logic/achievements';
 import { MenuBackground } from '../ui/MenuBackground';
 import { MenuList } from '../ui/MenuList';
 import { setupScreen, text } from '../ui/screen';
+import { queueResume, type RunResume } from './GameScene';
 
 export class MainMenuScene extends Phaser.Scene {
 	constructor() {
@@ -33,6 +34,24 @@ export class MainMenuScene extends Phaser.Scene {
 		const menu = new MenuList(
 			this,
 			[
+				...(save.activeRun
+					? [
+							{
+								label: () =>
+									t('menu.continue', { n: save.activeRun?.nextRound ?? 1 }),
+								onSelect: () => {
+									if (!save.activeRun) return;
+									queueResume(
+										this.game,
+										structuredClone(
+											save.activeRun.state,
+										) as unknown as RunResume,
+									);
+									this.scene.start('Game');
+								},
+							},
+						]
+					: []),
 				{ label: () => t('menu.play'), onSelect: go('HeroSelect') },
 				{ label: () => t('menu.hero'), onSelect: go('Hero') },
 				{ label: () => t('menu.achievements'), onSelect: go('Achievements') },
