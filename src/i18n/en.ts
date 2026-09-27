@@ -5,6 +5,8 @@ export const en = {
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
+	'ach.unlocked': 'ACHIEVEMENT UNLOCKED',
+	'ach.point': '+1 achievement point',
 	'hud.speed': '{n}x ▶▶',
 	'hero.jack': 'Jack',
 	'hero.bob': 'Bob',

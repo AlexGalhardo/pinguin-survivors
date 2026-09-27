@@ -1,0 +1,92 @@
+import type Phaser from 'phaser';
+import { KEYS } from '../art/manifest';
+import { PALETTE, toCss } from '../config/palette';
+import type { AchievementDef } from '../data/achievements';
+import { t } from '../i18n';
+import { achievementName } from './achievement-text';
+import { UI_FONT } from './font';
+
+const WIDTH = 220;
+const HEIGHT = 40;
+const TOP = 8;
+const HOLD_MS = 2800;
+
+/**
+ * "Achievement unlocked" banner centered at the top of the screen, with the shared badge and
+ * sound. Unlocks arriving together are queued and shown one after another.
+ */
+export class AchievementToast {
+	private readonly queue: AchievementDef[] = [];
+	private busy = false;
+	private readonly box: Phaser.GameObjects.Container;
+	private readonly name: Phaser.GameObjects.Text;
+	private centerX = 0;
+
+	constructor(private readonly scene: Phaser.Scene) {
+		const bg = scene.add
+			.rectangle(0, 0, WIDTH, HEIGHT, PALETTE.night, 0.92)
+			.setStrokeStyle(1, PALETTE.crit);
+		const badge = scene.add.image(-WIDTH / 2 + 20, 0, KEYS.achievementBadge);
+		badge.setScale(28 / Math.max(badge.width, badge.height));
+		const title = scene.add
+			.text(-WIDTH / 2 + 40, -14, t('ach.unlocked'), {
+				fontFamily: UI_FONT,
+				fontSize: '8px',
+				color: toCss(PALETTE.crit),
+			})
+			.setOrigin(0, 0);
+		this.name = scene.add
+			.text(-WIDTH / 2 + 40, -4, '', {
+				fontFamily: UI_FONT,
+				fontSize: '12px',
+				color: toCss(PALETTE.textLight),
+			})
+			.setOrigin(0, 0);
+		const point = scene.add
+			.text(WIDTH / 2 - 6, 11, t('ach.point'), {
+				fontFamily: UI_FONT,
+				fontSize: '8px',
+				color: toCss(PALETTE.textDim),
+			})
+			.setOrigin(1, 0.5);
+		this.box = scene.add
+			.container(0, -HEIGHT, [bg, badge, title, this.name, point])
+			.setVisible(false)
+			.setDepth(1000);
+	}
+
+	layout(viewWidth: number): void {
+		this.centerX = Math.round(viewWidth / 2);
+		this.box.setX(this.centerX);
+	}
+
+	show(defs: readonly AchievementDef[]): void {
+		this.queue.push(...defs);
+		if (!this.busy) this.next();
+	}
+
+	private next(): void {
+		const def = this.queue.shift();
+		if (!def) {
+			this.busy = false;
+			return;
+		}
+		this.busy = true;
+		this.name.setText(achievementName(def));
+		this.box.setPosition(this.centerX, -HEIGHT).setVisible(true);
+		if (this.scene.cache.audio.exists(KEYS.sfxAchievement))
+			this.scene.sound.play(KEYS.sfxAchievement, { volume: 0.8 });
+		this.scene.tweens.chain({
+			targets: this.box,
+			tweens: [
+				{ y: TOP + HEIGHT / 2, duration: 260, ease: 'Back.easeOut' },
+				{ y: TOP + HEIGHT / 2, duration: HOLD_MS },
+				{ y: -HEIGHT, duration: 220, ease: 'Quad.easeIn' },
+			],
+			onComplete: () => {
+				this.box.setVisible(false);
+				this.next();
+			},
+		});
+	}
+}

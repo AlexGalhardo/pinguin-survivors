@@ -6,6 +6,8 @@ export const ptBR: Record<I18nKey, string> = {
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Carregando…',
 	'hud.round': 'ROUND {n}',
+	'ach.unlocked': 'CONQUISTA DESBLOQUEADA',
+	'ach.point': '+1 ponto de conquista',
 	'hud.speed': '{n}x ▶▶',
 	'hero.jack': 'Jack',
 	'hero.bob': 'Bob',

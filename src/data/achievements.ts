@@ -152,7 +152,7 @@ lifetime('earth', 'earthKills', [1_000]);
 lifetime('energy', 'energyKills', [1_000]);
 lifetime('potions', 'potionsUsed', [10, 100, 500]);
 lifetime('damage', 'damageDealt', [1_000_000, 10_000_000, 100_000_000]);
-lifetime('time', 'secondsPlayed', [3_600, 36_000, 180_000]);
+lifetime('time', 'secondsPlayed', [7_200, 36_000, 180_000]);
 runBest('runKills', 'killsInRun', [1_000, 5_000]);
 lifetime('gibs', 'gibs', [10_000, 100_000]);
 for (const feat of FEATS) {

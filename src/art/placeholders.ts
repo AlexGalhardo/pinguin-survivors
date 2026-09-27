@@ -36,6 +36,19 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.ellipse(16, 8, 15, 7, 0, 0, Math.PI * 2);
 		ctx.fill();
 	});
+	canvas(scene, KEYS.achievementBadge, 32, 32, (ctx) => {
+		ctx.fillStyle = toCss(PALETTE.blood);
+		ctx.fillRect(9, 20, 5, 11);
+		ctx.fillRect(18, 20, 5, 11);
+		ctx.fillStyle = toCss(PALETTE.crit);
+		ctx.beginPath();
+		ctx.arc(16, 14, 12, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.fillStyle = '#10131a';
+		ctx.beginPath();
+		ctx.ellipse(16, 15, 4, 6, 0, 0, Math.PI * 2);
+		ctx.fill();
+	});
 	for (const hero of HERO_IDS) {
 		for (const tier of [1, 2, 3]) {
 			for (const dir of DIRS) {
