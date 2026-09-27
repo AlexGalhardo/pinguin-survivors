@@ -35,6 +35,7 @@ export const en = {
 	'settings.resolution': 'Resolution: {v}',
 	'settings.fullscreen': 'Fullscreen: {v}',
 	'settings.subtitles': 'Voice subtitles: {v}',
+	'settings.bloom': 'Bloom (glow): {v}',
 	'settings.master': 'Master volume: {v}',
 	'settings.music': 'Music: {v}',
 	'settings.sfx': 'Sound effects: {v}',

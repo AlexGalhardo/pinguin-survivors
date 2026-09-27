@@ -93,7 +93,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [x] `src/logic/stats.ts` (PlayerStats: perfil + crescimento por level + pontos + cartas; chaves `resist.*`/`tagMul.*`) + testes
 - [x] `src/logic/combat.ts`: crítico, armadura, resist. elemental, dodge, parry, especialista + testes
 - [x] `src/data/weapons.ts`: armas assinadas T1–T3 dos 3 heróis (balancing §6)
-- [x] `WeaponSystem`: arco melee (Jack), leque de bagos (Bob), projétil elemental alternando 4 elementos (Lucia), cadência, projéteis pooled em z; [ ] área/corrente reais da magia
+- [x] `WeaponSystem`: arco melee (Jack), leque de bagos (Bob), projétil elemental alternando 4 elementos (Lucia), cadência, projéteis pooled em z; área real do fogo (respingo de 50% em 36 u) e corrente real da energia
 - [x] Dano no inimigo e no herói, knockback, morte com sangue, números de dano pooled (no `GameScene`; extrair para `CombatSystem` quando crescer)
 - [x] Contato de inimigo com o herói (dano por contato + parry)
 
@@ -191,7 +191,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [ ] Teste de sanidade da sim (determinística por seed)
 
 ### 3.3 Polimento de sistemas
-- [ ] Zoom-punch do boss, luz nos projéteis mágicos e bloom (filtros do Phaser 4)
+- [x] Zoom-punch do boss (chegada, patada que acerta, morte; respeita "tremor de tela"), luz nos projéteis mágicos (até 40) e bloom por `ParallelFilters` (threshold + blur + ADD), com opção em Configurações
 - [ ] Performance: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 2560×1080 (medir e anotar)
 - [x] Tela de desbloqueio dedicada (Bob/Lucia) e fullscreen nas configurações
 - [ ] Loja de extras das conquistas: mecânica pronta; itens a definir com o usuário

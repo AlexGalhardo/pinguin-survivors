@@ -36,6 +36,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'settings.resolution': 'Resolução: {v}',
 	'settings.fullscreen': 'Tela cheia: {v}',
 	'settings.subtitles': 'Legendas das falas: {v}',
+	'settings.bloom': 'Bloom (brilho): {v}',
 	'settings.master': 'Volume geral: {v}',
 	'settings.music': 'Música: {v}',
 	'settings.sfx': 'Efeitos sonoros: {v}',

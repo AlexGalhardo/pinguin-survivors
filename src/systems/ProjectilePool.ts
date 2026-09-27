@@ -5,6 +5,7 @@ import { isoDepth, worldToScreen } from '../logic/iso';
 import type { SpatialGrid } from '../logic/spatial-grid';
 
 const MAX_PROJECTILES = 600;
+const MAX_LIT = 40;
 /** Fake height of flying projectiles (screen px above the ground). */
 const FLIGHT_Z = 16;
 
@@ -50,6 +51,16 @@ export class ProjectilePool {
 		private readonly scene: Phaser.Scene,
 		private readonly onHit: ProjectileHit,
 	) {}
+
+	/** Magic bolts glow in the darkness (capped: a screen full of orbs would cost too much). */
+	collectLights(out: { x: number; y: number; radius: number; strength: number }[]): void {
+		let n = 0;
+		for (const p of this.items) {
+			if (!p.alive || !p.element) continue;
+			out.push({ x: p.x, y: p.y, radius: 56, strength: 0.55 });
+			if (++n >= MAX_LIT) return;
+		}
+	}
 
 	spawn(spec: ProjectileSpec): void {
 		let p = this.items.find((q) => !q.alive);

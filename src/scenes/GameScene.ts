@@ -4,7 +4,7 @@ import type { GameSpeed, HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import { getParams, getRunHero, getSave, persist } from '../core/context';
 import { GameEvents } from '../core/events';
-import { shake } from '../core/feel';
+import { applyBloom, shake, zoomPunch } from '../core/feel';
 import { gamepadMove } from '../core/gamepad';
 import { anyDown, createMoveKeys, type MoveKeys } from '../core/input';
 import { playMusic } from '../core/music';
@@ -17,7 +17,7 @@ import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '
 import { levelScale, PERKS } from '../data/secondaries';
 import { SUPER } from '../data/superpowers';
 import type { VoEvent } from '../data/voice';
-import { SIGNATURE, type SignatureWeapon } from '../data/weapons';
+import { MAGIC_FIRE_SPLASH, SIGNATURE, type SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
 import { WeaponView } from '../entities/WeaponView';
@@ -281,12 +281,15 @@ export class GameScene extends Phaser.Scene {
 			},
 		);
 		this.combat.god = params.god;
-		this.pool = new ProjectilePool(this, (e, p) =>
+		this.pool = new ProjectilePool(this, (e, p) => {
+			const x = e.x;
+			const y = e.y;
 			this.combat.weaponHit(e, p.damage, p.crit, {
 				element: p.element,
 				bleedChance: p.bleedChance,
-			}),
-		);
+			});
+			if (p.element === 'fire') this.fireSplash(x, y, p.damage);
+		});
 		this.area = new AreaSystem(this, (e, amount, element, poison) =>
 			this.combat.weaponHit(e, amount, false, { element, poison, noChain: true }),
 		);
@@ -328,6 +331,7 @@ export class GameScene extends Phaser.Scene {
 
 		const cam = this.cameras.main;
 		trackZoom(this, cam);
+		if (save.settings.bloom) applyBloom(cam);
 		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
 		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);
 		this.enemies.obstacles = this.obstacles;
@@ -410,6 +414,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.superpower?.active)
 			out.push({ x: this.hero.x, y: this.hero.y, radius: 360, strength: 1 });
 		this.area?.collectLights(out);
+		this.pool?.collectLights(out);
 		for (const e of this.enemies?.active ?? []) {
 			if (e.elite || e.def.behavior === 'boss')
 				out.push({ x: e.x, y: e.y, radius: e.radius * 3, strength: 0.55 });
@@ -629,6 +634,15 @@ export class GameScene extends Phaser.Scene {
 		shake(this, 120, 0.004);
 		if (inArc(e.x, e.y, angle, Math.PI * 0.8, reach, this.hero.x, this.hero.y, HERO_RADIUS))
 			this.combat.heroHit(e.damage * 1.5, true, undefined, e);
+		zoomPunch(this, 0.05, 180);
+	}
+
+	/** Lucia's fire bolt bursts on impact: real area damage around the target (PLAN 1.5). */
+	private fireSplash(x: number, y: number, damage: number): void {
+		const s = MAGIC_FIRE_SPLASH;
+		const r = s.radius * this.stats.area;
+		this.area.burst(this.enemies.grid, x, y, r, damage * s.share, 'fire');
+		this.area.flash(x, y, r, PALETTE.elFire, 0.18);
 	}
 
 	/** Boss roar: minions of the biome burst out around the boss. */
@@ -718,7 +732,10 @@ export class GameScene extends Phaser.Scene {
 				tint: PALETTE.dotPoison,
 			});
 		}
-		if (kind === 'boss') this.onBossKilled();
+		if (kind === 'boss') {
+			zoomPunch(this, 0.1, 500);
+			this.onBossKilled();
+		}
 	}
 
 	private collect(kind: PickupKind, value: number): void {
@@ -859,6 +876,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.enemies.boss) {
 			this.fx.play('sfx.bossRoar');
 			this.say('boss');
+			zoomPunch(this, 0.08, 400);
 		}
 		playMusic(this, isBossRound(this.run.round) ? 'music.boss' : 'music.round');
 		this.roundStartedAt = this.run.elapsed;

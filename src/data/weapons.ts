@@ -22,6 +22,9 @@ export interface SignatureWeapon {
 	bleedChance?: number;
 }
 
+/** Lucia's fire bolts splash on impact (share of the hit, radius in world units). */
+export const MAGIC_FIRE_SPLASH = { radius: 36, share: 0.5 } as const;
+
 export const SIGNATURE: Record<HeroId, [SignatureWeapon, SignatureWeapon, SignatureWeapon]> = {
 	jack: [
 		{
