@@ -58,7 +58,7 @@ export class CombatSystem {
 		private readonly fx: FxSystem,
 		private readonly onKill: (enemy: Enemy) => void,
 		private readonly onHeroDeath: () => void,
-		private readonly hooks: CombatHooks,
+		readonly hooks: CombatHooks,
 	) {}
 
 	/** A weapon or ability hit: applies on-hit statuses, elements, lifesteal and knockback. */

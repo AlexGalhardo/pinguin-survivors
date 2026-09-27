@@ -293,6 +293,7 @@ export class GameScene extends Phaser.Scene {
 		if (p.runAndGun && this.moving) rate += PERKS.runAndGun.value * levelScale(p.runAndGun);
 		bonus.rate = rate;
 		bonus.bounces = p.ricochet ?? 0;
+		this.combat.hooks.critBleed = Boolean(p.hollowPoints);
 		if (p.elementalAttunement) {
 			let distinct = 0;
 			for (const at of this.elementUsedAt.values())
