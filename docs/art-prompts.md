@@ -34,9 +34,9 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 
 - Pedido do usuário: 2 concepts inspirados no clima de duas artes de DOOM enviadas no chat (vermelho, laranja, verde, preto), um com o **Jack** e outro com o **Bob**, para fundo animado do menu. As imagens de DOOM **não** foram enviadas à API (arte de terceiros): só a descrição de clima/composição no prompt, com o sprite aprovado do herói como referência de personagem.
 - Endpoint `/generate-image-v2`, **688×384** (maior 16:9 suportado), seeds 7 e 42 por herói → 4 imagens, **120 gerações** (30 cada). Prompt completo em `scripts/pl-keyart.ts` e no log.
-- Em uso (provisório, alternando a cada abertura do menu para o usuário comparar): `jack-42` → `public/assets/menu/keyart.jack.png` e `bob-42` → `public/assets/menu/keyart.bob.png`. Alternativas: `jack-7`, `bob-7` em `art-src/pixellab/keyart/`.
-- Animação por código (`src/ui/MenuBackground.ts`): deriva lenta, brasas subindo, pulso da lava e relâmpagos. Escala inteira que cobre a tela.
-- **Status**: ⏳ o usuário escolhe qual fica (Jack ou Bob, seed 7 ou 42).
+- Em uso: **50% de chance de cada uma** a cada abertura do menu (pedido do usuário): `jack-42` → `public/assets/menu/keyart.jack.png` e `bob-42` → `public/assets/menu/keyart.bob.png`. Alternativas: `jack-7`, `bob-7` em `art-src/pixellab/keyart/`.
+- `src/ui/MenuBackground.ts`: imagem **fixa** (sem piscar, sem deriva, a pedido do usuário) com brasas subindo por cima. Escala inteira que cobre a tela.
+- **Status**: ✅ as duas ficam, sorteadas 50/50.
 
 ## 2026-09-27 — Badge de conquista (`bun scripts/pl-image.ts ui.achievement 64 …`)
 
