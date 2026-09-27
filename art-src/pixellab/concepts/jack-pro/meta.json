@@ -1,0 +1,11 @@
+{
+	"id": "jack-pro",
+	"model": "pro",
+	"size": {
+		"width": 96,
+		"height": 96
+	},
+	"seed": 303,
+	"description": "Jack, a rockhopper penguin with a spiky yellow crest, red bandana tied on the forehead, leather shoulder pad, bandaged flipper, holding a bloody machete in the right flipper, melee brawler. cute but battle-worn, scars and bandages, dirty worn gear, zombie apocalypse survivor, isometric action RPG hero like Diablo 2, readable silhouette, chibi proportions",
+	"character_id": "dfc1aeb5-6241-4ba7-826f-b8fcb2ee0c70"
+}
