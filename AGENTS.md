@@ -35,7 +35,7 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 2. Phaser **4** (API diferente do v3). Skills de referência em `.claude/skills/`.
 3. Mundo simulado em coordenadas cartesianas; a tela é projeção iso 2:1 (`docs/architecture.md`). Sem Arcade Physics.
 4. Regras em `src/logic/` (TS puro, testado); números em `src/data/`; textos em `src/i18n/` (EN + PT-BR juntos); cores em `src/config/palette.ts`; chaves de assets em `src/art/manifest.ts`.
-5. Arte só pelo PixelLab, com **aprovação do usuário do concept antes de animar**; 8 direções; ≥ 12 frames; prompts em `docs/art-prompts.md`. Áudio pelo ElevenLabs.
+5. Arte só pelo PixelLab, com **aprovação do usuário do concept antes de animar**; 5 direções geradas + 3 espelhadas; `template` 6 frames na maioria e `v3` 12 frames só no ataque T1 dos heróis (P-54); prompts em `docs/art-prompts.md`. Áudio pelo ElevenLabs (plano free por enquanto, P-55).
 6. Tela cheia sem scroll, zoom inteiro pela altura (540 lógicos). Pooling. Meta: 60 FPS com 300 inimigos.
 7. Valide visualmente no browser (agent-browser) com os query params de debug.
 8. Segredos só no `.env`. `TODO.md` é local e ignorado pelo git.

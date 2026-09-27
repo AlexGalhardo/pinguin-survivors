@@ -11,7 +11,7 @@ Read `docs/art-and-assets.md` first (style, sizes, keys, budget). Every generati
 
 1. **View** `low top-down`, **8 directions**, transparent background, **single color black outline** for characters.
 2. **Sizes**: hero canvas 96 (≈64 px tall), common enemy 64, boss 128–192, iso tile 64×32. Never change a size without updating `docs/decisions.md` (P-05).
-3. **Animations ≥ 12 frames** (`frame_count` 12 or 16; must be even). Hero: idle, walk, attack, hurt, death. Enemy: walk, attack, death. Boss: idle, walk, attack, special, death.
+3. **Animations (budget rule P-54):** `mode: template` (6 frames, 1 generation/direction) for idle/walk/hurt/death and for everything on tiers T2/T3 and enemies; `mode: v3` with `frame_count: 12` (45 generations/direction!) only for the T1 hero **attack**; the superpower cast is v3 in the **south** direction only. Generate **5 directions** (south, south-east, east, north-east, north) and mirror south-west/west/north-west in the engine.
 4. **Approval gates**: a new character (hero, enemy or boss) is generated as a concept (rotations only), shown to the user (contact sheet), and **only animated after approval**. Record the approved `character_id` in `docs/art-prompts.md`.
 5. **Weapon tiers**: the signature weapon is part of the hero sprite. T2/T3 come from the approved T1 character via `POST /create-character-state` (same identity, new weapon), never from scratch.
 6. **Style prompt suffix** (keep identical across assets): `cute but battle-worn, scars and bandages, dirty worn gear, zombie apocalypse survivor, isometric action RPG like Diablo 2, readable silhouette` for heroes; zombies use `pale greenish rotting skin/feathers, red wounds, glowing eyes, isometric action RPG like Diablo 2`.

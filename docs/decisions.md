@@ -11,7 +11,7 @@ Quando uma decisão mudar, **edite a linha** e registre a data. As decisões do 
 | P-04 | Perspectiva **2.5D isométrica clássica 2:1** (estilo Diablo 2), tiles de **64×32**, sprites em vista **"low top-down"** | "Iso pixel estilo Diablo" |
 | P-05 | Herói com **~88 px de altura** (canvas 96, concepts aprovados), inimigos comuns ~56–64 px (canvas 64–80), elites ×1,25/×1,4, bosses 160–256 px | Meta inicial era ~64 px; o usuário aprovou os concepts v3 no tamanho gerado (2026-09-27) |
 | P-06 | Tela lógica com **altura 540** e largura livre, **zoom inteiro** (`floor(innerHeight/540)`). 2560×1080 → zoom 2, vê 1280×540 | Ultrawide do usuário; pixel-perfect sem escala fracionária |
-| P-07 | **8 direções para tudo** (heróis, inimigos, bosses); animações com **≥ 12 frames** | Pedido do usuário |
+| P-07 | **8 direções para tudo** (heróis, inimigos, bosses) — 5 geradas + 3 espelhadas (P-54); animações com **≥ 12 frames** onde o orçamento permite (P-54) | Pedido do usuário |
 | P-08 | Clima **escuro estilo Diablo 4**: noite polar, vinheta, **luzes dinâmicas** (tiros, magia, auras), bloom; heróis coloridos contra mundo sombrio | P-35 |
 | P-09 | Heróis **fofos, mas marcados pela guerra** (cicatrizes, curativos, equipamento sujo) | Contraste com o gore |
 | P-10 | **Gore nível DOOM**: jorros, gibs, poças que **persistem a run inteira**; opção em Settings para reduzir ou trocar por "gosma verde" | Diversão frenética + portais que restringem gore |
@@ -58,3 +58,5 @@ Quando uma decisão mudar, **edite a linha** e registre a data. As decisões do 
 | P-51 | **Menu inicial com key art** estilo DOOM (vermelho/laranja/verde/preto) gerada no PixelLab: Jack e Bob, **50% de chance cada** a cada abertura; imagem fixa com brasas e pulso suave da lava (sem relâmpagos) | Pedido do usuário |
 | P-52 | Alcance das armas do Jack **+50%** em todos os tiers | Pedido do usuário |
 | P-53 | Skills de terceiros **curadas** (40 de ~170) dos repositórios awesome-gamedev-agent-skills, game-creator e Claude-Code-Game-Studios, com prefixos `gd-`/`gc-`/`ccgs-`; sem hooks/settings/agentes deles | Pedido do usuário; curadoria para não poluir o contexto nem sobrescrever as regras do projeto |
+| P-54 | **Animações com orçamento**: `template` do PixelLab (**6 frames**, 1 geração/direção) para idle/walk/hurt/death e para tudo nos tiers T2/T3; `v3` com **12 frames** só no **ataque** do T1 de cada herói; superpoder em **1 direção** (sul, virado para a câmera). Geramos **5 direções** (s, se, e, ne, n) e espelhamos sw/w/nw | Aceito pelo usuário em 2026-09-27 (substitui o "≥ 12 frames" de P-07 para esses casos); custo medido: v3 12 frames = 45 gerações/direção |
+| P-55 | **ElevenLabs no plano free** (10 mil créditos/mês, uso não comercial) até os créditos acabarem; upgrade só se faltar áudio | Decisão do usuário |
