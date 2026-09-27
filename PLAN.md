@@ -128,7 +128,7 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 - [ ] Versão no rodapé do **menu inicial** (quando o MainMenu existir, 2.5)
 - [x] 131 conquistas globais (`src/data/achievements.ts`), avaliação, pontos e loja de extras (`src/logic/achievements.ts`) + textos EN/PT-BR + testes
 - [x] Toast "Achievement unlocked" centralizado no topo, fila, badge placeholder, som `sfx.achievement` (ElevenLabs)
-- [~] Badge final `ui.achievement` no PixelLab (`scripts/pl-image.ts`): API do PixelLab com erro 500 em 2026-09-27 — tentar de novo
+- [x] Badge final `ui.achievement` no PixelLab (seed 33 de 3; `public/assets/ui/ui.achievement.png`)
 - [x] Contadores de conquistas durante a run (kills, elites, bosses, críticos, parries, dodges, DoTs, elementos, cartas, superpoderes) + feats de boss e desbloqueios, com `evaluateAchievements` ao vivo a cada 1 s
 - [ ] Tela de conquistas (lista, progresso, filtros) e loja de extras (itens a definir)
 - [x] Save local: schema v1 tolerante, migrações, snapshot da run, histórico das últimas 20 partidas, export/import (`src/logic/save.ts`, `src/core/storage.ts`) + testes

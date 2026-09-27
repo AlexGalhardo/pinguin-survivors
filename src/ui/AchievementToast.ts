@@ -28,7 +28,8 @@ export class AchievementToast {
 			.rectangle(0, 0, WIDTH, HEIGHT, PALETTE.night, 0.92)
 			.setStrokeStyle(1, PALETTE.crit);
 		const badge = scene.add.image(-WIDTH / 2 + 20, 0, KEYS.achievementBadge);
-		badge.setScale(28 / Math.max(badge.width, badge.height));
+		// Integer ratios only (64 px art → 0.5), fractional scaling smears pixel art.
+		badge.setScale(32 / Math.max(badge.width, badge.height));
 		const title = scene.add
 			.text(-WIDTH / 2 + 40, -14, t('ach.unlocked'), {
 				fontFamily: UI_FONT,
