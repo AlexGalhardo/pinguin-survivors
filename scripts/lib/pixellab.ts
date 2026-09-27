@@ -34,18 +34,26 @@ function token(): string {
 	return t;
 }
 
+const RETRIES = 4;
+
+/** Retries 5xx/429 with backoff: PixelLab has short outages and rate limits. */
 export async function api<T>(
 	path: string,
 	init: { method?: string; body?: unknown } = {},
 ): Promise<T> {
-	const res = await fetch(`${BASE}${path}`, {
-		method: init.method ?? (init.body ? 'POST' : 'GET'),
-		headers: { Authorization: `Bearer ${token()}`, 'Content-Type': 'application/json' },
-		body: init.body ? JSON.stringify(init.body) : undefined,
-	});
-	const text = await res.text();
-	if (!res.ok) throw new Error(`PixelLab ${res.status} ${path}: ${text.slice(0, 500)}`);
-	return JSON.parse(text) as T;
+	for (let attempt = 0; ; attempt++) {
+		const res = await fetch(`${BASE}${path}`, {
+			method: init.method ?? (init.body ? 'POST' : 'GET'),
+			headers: { Authorization: `Bearer ${token()}`, 'Content-Type': 'application/json' },
+			body: init.body ? JSON.stringify(init.body) : undefined,
+		});
+		const text = await res.text();
+		if (res.ok) return JSON.parse(text) as T;
+		const retryable = res.status >= 500 || res.status === 429;
+		if (!retryable || attempt >= RETRIES)
+			throw new Error(`PixelLab ${res.status} ${path}: ${text.slice(0, 500)}`);
+		await Bun.sleep(2000 * 2 ** attempt);
+	}
 }
 
 export interface Balance {
@@ -54,6 +62,15 @@ export interface Balance {
 }
 
 export const getBalance = () => api<Balance>('/balance');
+
+/** Remaining subscription generations, or null when /balance is temporarily failing. */
+export async function generationsLeft(): Promise<number | null> {
+	try {
+		return (await getBalance()).subscription.generations;
+	} catch {
+		return null;
+	}
+}
 
 export interface JobStatus {
 	id: string;
