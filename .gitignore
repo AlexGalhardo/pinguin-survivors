@@ -9,3 +9,5 @@ art-src/raw/
 .vite/
 .env
 .env.local
+TODO.md
+art-src/pixellab/raw/
