@@ -236,5 +236,40 @@
 		"src": "art-src/pixellab/images/icon.attackSpeed/11.png",
 		"group": "ui",
 		"trim": false
+	},
+	"item.helmet.wool": {
+		"src": "art-src/pixellab/images/item.helmet.wool/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"item.helmet.pot": {
+		"src": "art-src/pixellab/images/item.helmet.pot/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"item.helmet.goggles": {
+		"src": "art-src/pixellab/images/item.helmet.goggles/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"item.helmet.miner": {
+		"src": "art-src/pixellab/images/item.helmet.miner/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"item.helmet.diver": {
+		"src": "art-src/pixellab/images/item.helmet.diver/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"item.helmet.viking": {
+		"src": "art-src/pixellab/images/item.helmet.viking/11.png",
+		"group": "ui",
+		"trim": false
+	},
+	"item.helmet.hood": {
+		"src": "art-src/pixellab/images/item.helmet.hood/11.png",
+		"group": "ui",
+		"trim": false
 	}
 }

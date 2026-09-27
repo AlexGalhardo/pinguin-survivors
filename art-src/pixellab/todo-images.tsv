@@ -1,0 +1,103 @@
+item.helmet.wool	32	32	game UI item icon: a knitted wool beanie hat, plain grey quality, dark fantasy RPG inventory icon, centered
+item.helmet.pot	32	32	game UI item icon: a dented cooking pot worn as a helmet, plain grey quality, dark fantasy RPG inventory icon, centered
+item.helmet.goggles	32	32	game UI item icon: a pair of snow goggles, plain grey quality, dark fantasy RPG inventory icon, centered
+item.helmet.miner	32	32	game UI item icon: a miner hard hat with a headlamp, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.helmet.diver	32	32	game UI item icon: a brass diving helmet, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.helmet.viking	32	32	game UI item icon: a horned viking helmet, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.helmet.hood	32	32	game UI item icon: a dark leather hood, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.helmet.crown	32	32	game UI item icon: a golden crown with red gems, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.helmet.skull	32	32	game UI item icon: a helmet made from a monster skull, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.helmet.halo	32	32	game UI item icon: a glowing golden halo, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.armor.parka	32	32	game UI item icon: a warm padded parka jacket, plain grey quality, dark fantasy RPG inventory icon, centered
+item.armor.leather	32	32	game UI item icon: a leather vest armor, plain grey quality, dark fantasy RPG inventory icon, centered
+item.armor.lifevest	32	32	game UI item icon: an orange life vest, plain grey quality, dark fantasy RPG inventory icon, centered
+item.armor.chainmail	32	32	game UI item icon: a chainmail shirt, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.armor.kevlar	32	32	game UI item icon: a black kevlar tactical vest, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.armor.bloodcoat	32	32	game UI item icon: a blood red long coat, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.armor.hazmat	32	32	game UI item icon: a yellow hazmat suit, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.armor.juggernaut	32	32	game UI item icon: a massive heavy plate armor, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.armor.dragonscale	32	32	game UI item icon: a dragon scale armor glowing red, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.armor.phantom	32	32	game UI item icon: a translucent ghostly phantom cloak, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.legs.boots	32	32	game UI item icon: a pair of worn leather boots, plain grey quality, dark fantasy RPG inventory icon, centered
+item.legs.skates	32	32	game UI item icon: a pair of ice skates, plain grey quality, dark fantasy RPG inventory icon, centered
+item.legs.padded	32	32	game UI item icon: a pair of padded pants, plain grey quality, dark fantasy RPG inventory icon, centered
+item.legs.cargo	32	32	game UI item icon: a pair of cargo pants with pockets, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.legs.ninja	32	32	game UI item icon: a pair of black ninja tabi boots, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.legs.greaves	32	32	game UI item icon: a pair of steel greaves, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.legs.flippers	32	32	game UI item icon: a pair of blue swim flippers, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.legs.windwalkers	32	32	game UI item icon: a pair of winged boots with wind swirls, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.legs.titan	32	32	game UI item icon: a pair of massive titan armor leggings, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.legs.hermes	32	32	game UI item icon: a pair of golden winged sandals, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.ring.copper	32	32	game UI item icon: a simple copper ring, plain grey quality, dark fantasy RPG inventory icon, centered
+item.ring.bone	32	32	game UI item icon: a ring carved from bone, plain grey quality, dark fantasy RPG inventory icon, centered
+item.ring.iron	32	32	game UI item icon: a plain iron ring, plain grey quality, dark fantasy RPG inventory icon, centered
+item.ring.ruby	32	32	game UI item icon: a gold ring with a big ruby, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.ring.onyx	32	32	game UI item icon: a silver ring with a black onyx, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.ring.silver	32	32	game UI item icon: a shiny silver ring, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.ring.fang	32	32	game UI item icon: a ring with a sharp fang, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.ring.doom	32	32	game UI item icon: a dark ring with a glowing red skull, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.ring.berserker	32	32	game UI item icon: a spiked ring dripping blood, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.ring.eclipse	32	32	game UI item icon: a black and gold ring shaped like an eclipse, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.amulet.shell	32	32	game UI item icon: a seashell necklace, plain grey quality, dark fantasy RPG inventory icon, centered
+item.amulet.clover	32	32	game UI item icon: a four leaf clover pendant, plain grey quality, dark fantasy RPG inventory icon, centered
+item.amulet.magnet	32	32	game UI item icon: a horseshoe magnet pendant, plain grey quality, dark fantasy RPG inventory icon, centered
+item.amulet.ember	32	32	game UI item icon: an amulet with a glowing ember stone, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.amulet.frost	32	32	game UI item icon: an amulet with an ice crystal, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.amulet.storm	32	32	game UI item icon: an amulet with a crackling lightning gem, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.amulet.venom	32	32	game UI item icon: an amulet with a green poison vial, rare blue glowing quality, dark fantasy RPG inventory icon, centered
+item.amulet.phoenix	32	32	game UI item icon: a golden phoenix feather amulet glowing with fire, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.amulet.void	32	32	game UI item icon: a dark void orb amulet with purple swirls, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+item.amulet.fortune	32	32	game UI item icon: a golden coin amulet with a lucky gem, legendary golden glowing quality, dark fantasy RPG inventory icon, centered
+pickup.heal.25	32	32	a small first aid kit with a red cross, health pickup item
+pickup.heal.50	32	32	a medium first aid kit with a red cross and bandages, health pickup item
+pickup.heal.75	32	32	a big military medkit with a glowing red cross, health pickup item
+icon.damage	32	32	game UI icon: a bloody sword pointing up, dark fantasy RPG item icon, centered
+icon.crit	32	32	game UI icon: a red crosshair target with a star spark, dark fantasy RPG item icon, centered
+icon.critDamage	32	32	game UI icon: a cracked skull with a red star, dark fantasy RPG item icon, centered
+icon.dodge	32	32	game UI icon: a blurred penguin silhouette dashing sideways with motion lines, dark fantasy RPG item icon, centered
+icon.parry	32	32	game UI icon: two crossed swords with a spark, dark fantasy RPG item icon, centered
+icon.area	32	32	game UI icon: a blue expanding ring shockwave, dark fantasy RPG item icon, centered
+icon.pickupRange	32	32	game UI icon: a red and silver horseshoe magnet, dark fantasy RPG item icon, centered
+icon.luck	32	32	game UI icon: a four leaf clover, dark fantasy RPG item icon, centered
+icon.xpGain	32	32	game UI icon: a glowing cyan crystal with an up arrow, dark fantasy RPG item icon, centered
+icon.resistFire	32	32	game UI icon: a shield with a flame emblem, dark fantasy RPG item icon, centered
+icon.resistEarth	32	32	game UI icon: a shield with a brown rock emblem, dark fantasy RPG item icon, centered
+icon.resistIce	32	32	game UI icon: a shield with a blue snowflake emblem, dark fantasy RPG item icon, centered
+icon.resistEnergy	32	32	game UI icon: a shield with a yellow lightning emblem, dark fantasy RPG item icon, centered
+icon.bleedChance	32	32	game UI icon: a dripping blood drop with a claw scratch, dark fantasy RPG item icon, centered
+icon.poisonChance	32	32	game UI icon: a green poison vial with a skull, dark fantasy RPG item icon, centered
+icon.lifesteal	32	32	game UI icon: a red vampire fang with a blood drop, dark fantasy RPG item icon, centered
+icon.burnChance	32	32	game UI icon: a burning orange flame, dark fantasy RPG item icon, centered
+icon.chillChance	32	32	game UI icon: a light blue ice crystal, dark fantasy RPG item icon, centered
+icon.shockChance	32	32	game UI icon: a crackling yellow electric spark, dark fantasy RPG item icon, centered
+icon.meleeDamage	32	32	game UI icon: a machete with a red glow, dark fantasy RPG item icon, centered
+icon.firearmDamage	32	32	game UI icon: a shotgun shell with a red glow, dark fantasy RPG item icon, centered
+icon.magicDamage	32	32	game UI icon: a glowing purple rune orb, dark fantasy RPG item icon, centered
+icon.potion.heal	32	32	game UI icon: a small red health potion flask, dark fantasy RPG item icon, centered
+icon.potion.megaHeal	32	32	game UI icon: a big red health potion flask with a gold cap, dark fantasy RPG item icon, centered
+icon.potion.shield	32	32	game UI icon: a blue potion flask with a shield emblem, dark fantasy RPG item icon, centered
+icon.potion.rage	32	32	game UI icon: an angry red and black potion flask with steam, dark fantasy RPG item icon, centered
+icon.potion.antidote	32	32	game UI icon: a green antidote potion flask with a leaf, dark fantasy RPG item icon, centered
+icon.potion.haste	32	32	game UI icon: a yellow potion flask with a lightning bolt, dark fantasy RPG item icon, centered
+icon.weapon.knives	32	32	game UI icon: three throwing knives fanned out, dark fantasy RPG item icon, centered
+icon.weapon.molotov	32	32	game UI icon: a molotov cocktail bottle with a burning rag, dark fantasy RPG item icon, centered
+icon.weapon.iceShards	32	32	game UI icon: a cluster of sharp blue ice shards, dark fantasy RPG item icon, centered
+icon.weapon.auxPistol	32	32	game UI icon: a small pistol, dark fantasy RPG item icon, centered
+icon.weapon.bladeWhirl	32	32	game UI icon: a spinning ring of steel blades, dark fantasy RPG item icon, centered
+icon.weapon.seismicStomp	32	32	game UI icon: a penguin foot stomping cracked ground, dark fantasy RPG item icon, centered
+icon.weapon.droneSentinel	32	32	game UI icon: a small military drone with a red eye, dark fantasy RPG item icon, centered
+icon.weapon.grenadeBelt	32	32	game UI icon: a belt of green grenades, dark fantasy RPG item icon, centered
+icon.weapon.arcaneChain	32	32	game UI icon: a purple chain lightning between orbs, dark fantasy RPG item icon, centered
+icon.weapon.meteorShower	32	32	game UI icon: flaming meteors falling from the sky, dark fantasy RPG item icon, centered
+icon.weapon.frostNova	32	32	game UI icon: an icy snowflake explosion ring, dark fantasy RPG item icon, centered
+icon.perk.bloodlust	32	32	game UI icon: a red eye with a blood drop, dark fantasy RPG item icon, centered
+icon.perk.counterAttack	32	32	game UI icon: a curved arrow around a sword, dark fantasy RPG item icon, centered
+icon.perk.ironSkin	32	32	game UI icon: a riveted iron plate with spikes, dark fantasy RPG item icon, centered
+icon.perk.butcher	32	32	game UI icon: a butcher cleaver with a meat chunk, dark fantasy RPG item icon, centered
+icon.perk.hollowPoints	32	32	game UI icon: a bullet with a hollow red tip, dark fantasy RPG item icon, centered
+icon.perk.ricochet	32	32	game UI icon: a bullet bouncing with a zigzag trail, dark fantasy RPG item icon, centered
+icon.perk.runAndGun	32	32	game UI icon: a running boot next to a shotgun, dark fantasy RPG item icon, centered
+icon.perk.reflex	32	32	game UI icon: a lightning fast hand catching a bullet, dark fantasy RPG item icon, centered
+icon.perk.elementalAttunement	32	32	game UI icon: four colored elemental orbs in a circle, dark fantasy RPG item icon, centered
+icon.perk.arcaneBarrier	32	32	game UI icon: a purple magic bubble shield, dark fantasy RPG item icon, centered
+icon.perk.toxicBloom	32	32	game UI icon: a green toxic flower bursting, dark fantasy RPG item icon, centered

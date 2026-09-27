@@ -46,6 +46,7 @@ Playtest build **playdev-4**.
 - The three heroes now have breathing idle, hit reaction and death animations in 8 directions; the sailor and sea lion zombies walk.
 - Walking animations for the fuel bloater, walrus, narwhal, citizen, riot cop and soldier zombies.
 - Sprites for every secondary weapon (shown around the hero like the signature weapon), the first card icons, and walking rats, brutes and acid bloaters.
+- First equipment icons (seven helmets). Still pending: kraken and abomination walks, flying zombies, enemy attacks, superpower animations and effects, the remaining card, potion and gear icons, health packs and UI frames.
 
 ## [0.1.0-beta.4] - 2026-09-27
 

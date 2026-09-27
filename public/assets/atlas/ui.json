@@ -34,7 +34,56 @@
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.helmet.diver": {
+			"frame": { "x": 165, "y": 0, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.helmet.goggles": {
+			"frame": { "x": 198, "y": 0, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.helmet.hood": {
+			"frame": { "x": 231, "y": 0, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.helmet.miner": {
+			"frame": { "x": 264, "y": 0, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.helmet.pot": {
+			"frame": { "x": 297, "y": 0, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.helmet.viking": {
+			"frame": { "x": 330, "y": 0, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.helmet.wool": {
+			"frame": { "x": 363, "y": 0, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
 		}
 	},
-	"meta": { "image": "ui.png", "size": { "w": 256, "h": 32 }, "scale": "1" }
+	"meta": { "image": "ui.png", "size": { "w": 512, "h": 32 }, "scale": "1" }
 }
