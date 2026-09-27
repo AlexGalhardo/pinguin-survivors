@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
+import { sfx } from '../core/audio';
 import type { AchievementDef } from '../data/achievements';
 import { t } from '../i18n';
 import { achievementName } from './achievement-text';
@@ -76,8 +77,7 @@ export class AchievementToast {
 		this.busy = true;
 		this.name.setText(achievementName(def));
 		this.box.setPosition(this.centerX, -HEIGHT).setVisible(true);
-		if (this.scene.cache.audio.exists(KEYS.sfxAchievement))
-			this.scene.sound.play(KEYS.sfxAchievement, { volume: 0.8 });
+		sfx(this.scene, 'sfx.achievement');
 		this.scene.tweens.chain({
 			targets: this.box,
 			tweens: [

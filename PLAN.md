@@ -237,11 +237,11 @@ O jogo anterior (Starfall Survivors) está na branch `starfall-survivors-legacy`
 
 > Siga a skill `pinguin-audio-assets`.
 
-- [ ] Conferir endpoints atuais (SFX, música, TTS, voice design) e criar `scripts/el-sfx.ts`, `el-music.ts`, `el-voice.ts`
-- [ ] Catálogo de SFX (armas, impactos, sangue, elementos, pickups, UI, level up, poção) com variações
+- [x] Endpoint de SFX conferido e `scripts/el-sfx.ts` (cliente `scripts/lib/elevenlabs.ts`); [ ] `el-music.ts`, `el-voice.ts`
+- [x] Catálogo de 18 SFX (armas, impacto, sangue, morte, explosão, pickups, UI, level up, carta, poção, boss, superpoder, game over); [ ] variações extras dos mais repetidos
 - [ ] Música: menu, round, round tardio, boss, game over (loops sem emenda)
 - [ ] Vozes EN + PT-BR dos 3 heróis (desenho de voz por herói + falas por evento)
-- [ ] `AudioSystem` (limite de vozes, pitch) + `MusicSystem` (crossfade round↔boss) + volumes por canal
+- [x] `sfx()` com limite de vozes, pitch e volumes (geral × efeitos); [ ] `MusicSystem` (crossfade round↔boss) e canal de voz
 
 ---
 

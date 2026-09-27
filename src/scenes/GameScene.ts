@@ -269,7 +269,13 @@ export class GameScene extends Phaser.Scene {
 				this.combat.weaponHit(e, amount, crit, { bleedChance }),
 			(x, y, a, r) => this.fx.slash(x, y, a, r),
 			(element) => this.elementUsedAt.set(element, this.run.elapsed),
-			(angle, cooldown) => this.hero.attack(angle, cooldown),
+			(angle, cooldown) => {
+				this.hero.attack(angle, cooldown);
+				const tag = this.weapons.weapon.tag;
+				this.fx.play(
+					tag === 'melee' ? 'sfx.swing' : tag === 'firearm' ? 'sfx.shotgun' : 'sfx.cast',
+				);
+			},
 		);
 		this.secondaries = new SecondarySystem(
 			this,
@@ -507,6 +513,7 @@ export class GameScene extends Phaser.Scene {
 	private drink(potion: PotionType): void {
 		const run = this.run;
 		countRun(run, 'potionsUsed');
+		this.fx.play('sfx.potion');
 		this.potionsThisRound++;
 		if (this.potionsThisRound >= 3) addFeat(getSave(this), 'gambitTriple');
 		const e = POTION_EFFECTS;
@@ -579,6 +586,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** Boss roar: zombie penguins burst out around the bear. */
 	private summon(e: Enemy): void {
+		this.fx.play('sfx.bossRoar');
 		this.area.flash(e.x, e.y, 140, PALETTE.textLight, 0.5);
 		shake(this, 300, 0.005);
 		for (let i = 0; i < 6; i++) {
@@ -626,12 +634,14 @@ export class GameScene extends Phaser.Scene {
 	private collect(kind: PickupKind, value: number): void {
 		if (kind === 'fish') {
 			this.run.fish += value;
+			this.fx.play('sfx.pickupFish');
 			return;
 		}
 		if (kind === 'meat') {
 			healHero(this.run, value);
 			return;
 		}
+		this.fx.play('sfx.pickupXp');
 		const xp = value * this.stats.xpGain;
 		this.run.xp += xp;
 		const wasUnlocked = this.superIsUnlocked;
@@ -639,6 +649,7 @@ export class GameScene extends Phaser.Scene {
 		if (gained > 0) {
 			this.levelsGained += gained;
 			this.fx.banner(this.hero.x, this.hero.y, 'fx.levelUp');
+			this.fx.play('sfx.levelUp');
 			if (!wasUnlocked && this.superIsUnlocked)
 				this.fx.banner(this.hero.x, this.hero.y, 'fx.superUnlocked');
 		}
@@ -651,6 +662,7 @@ export class GameScene extends Phaser.Scene {
 		countRun(this.run, 'superUses');
 		this.combat.iFrames = Math.max(this.combat.iFrames, SUPER.invulnerable);
 		this.superpower.cast(this.run.hero, this.hero.x, this.hero.y, this);
+		this.fx.play('sfx.super');
 		this.hero.super();
 	}
 
@@ -744,6 +756,7 @@ export class GameScene extends Phaser.Scene {
 		}
 		startRound(this.run, this.run.round + 1);
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
+		if (this.enemies.boss) this.fx.play('sfx.bossRoar');
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
 		this.saveSnapshot();

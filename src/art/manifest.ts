@@ -1,4 +1,5 @@
 import type { HeroId } from '../config/constants';
+import { SFX } from '../data/sfx';
 import type { Dir } from '../logic/iso';
 
 /**
@@ -49,5 +50,7 @@ export const FILES = {
 		'keyart.jack': 'assets/menu/keyart.jack.png',
 		'keyart.bob': 'assets/menu/keyart.bob.png',
 	},
-	audio: { 'sfx.achievement': 'assets/audio/sfx/sfx.achievement.mp3' },
+	audio: Object.fromEntries(
+		Object.keys(SFX).map((k) => [k, `assets/audio/sfx/${k}.mp3`]),
+	) as Record<string, string>,
 } as const;

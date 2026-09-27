@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
+import { sfx } from '../core/audio';
 import type { Enemy } from '../entities/Enemy';
 import type { Element } from '../logic/combat';
 import { isoDepth, worldToScreen } from '../logic/iso';
@@ -244,6 +245,7 @@ export class AreaSystem {
 				p.img.setVisible(false);
 				this.burst(grid, p.x, p.y, p.radius, p.damage, p.element);
 				this.flash(p.x, p.y, p.radius, p.tint);
+				if (p.radius > 0) sfx(this.scene, 'sfx.explosion', 0.8);
 			}
 		}
 		for (const f of this.flashes) {

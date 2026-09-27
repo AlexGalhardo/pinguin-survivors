@@ -136,7 +136,10 @@ export class CombatSystem {
 		if (knockback) e.lastDot = null;
 		this.run.damageDealt += amount;
 		this.fx.damage(e.x, e.y, amount, crit, color);
-		if (knockback) this.fx.spray(e.x, e.y, crit ? 10 : 4);
+		if (knockback) {
+			this.fx.spray(e.x, e.y, crit ? 10 : 4);
+			this.fx.play('sfx.hit', crit ? 1 : 0.7);
+		}
 		if (crit) this.hooks.hitStop(0.04);
 		if (knockback && e.def.behavior !== 'boss') {
 			const dx = e.x - this.hero.x;
@@ -166,6 +169,8 @@ export class CombatSystem {
 		this.fx.bloodAt(e.x, e.y, size * 1.4);
 		this.fx.burst(e.x, e.y, e.def.behavior === 'boss' ? 24 : e.elite ? 8 : 3);
 		this.fx.spray(e.x, e.y, 12);
+		this.fx.play('sfx.splat');
+		this.fx.play('sfx.zombieDeath');
 		if (e.def.behavior === 'boss') this.hooks.hitStop(0.25);
 		else if (e.elite) this.hooks.hitStop(0.08);
 		for (let i = 0; i < 2; i++)
@@ -216,6 +221,7 @@ export class CombatSystem {
 		} else {
 			this.hero.flash();
 			this.hero.hurt();
+			this.fx.play('sfx.heroHurt');
 			this.hooks.onHurt(source);
 			const left = this.hooks.shield(result.amount);
 			if (left > 0 && damageHero(this.run, left)) this.onHeroDeath();

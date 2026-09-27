@@ -9,9 +9,16 @@
 - **SFX**: pesados e "carnudos": golpe de machete, katana, motosserra, tiro de escopeta (com eco), foguete, 4 elementos (fogo, terra, gelo, energia), impacto em carne, jorro de sangue, gib, explosão, coleta de XP/Fish, level up, carta, poção, UI.
 - **Vozes** (EN + PT-BR, seguem o idioma): frases curtas por herói — início de run, level up, HP baixo, poção usada, boss aparece, vitória no boss, morte. Timbre: Jack (jovem, marrento), Bob (grave, veterano), Lucia (calma, mística).
 
+## Estado (2026-09-27)
+
+- Plano **free** do ElevenLabs (P-55): 10 mil créditos/mês, uso não comercial. Custo medido: **17 SFX curtos ≈ 72 créditos** (~4 cada).
+- Catálogo gerado (1 variação cada, `scripts/el-sfx.ts`): achievement, hit, swing, shotgun, cast, explosion, splat, zombieDeath, heroHurt, pickupXp, pickupFish, levelUp, card, potion, bossRoar, super, uiSelect, gameOver → `public/assets/audio/sfx/*.mp3`.
+- Mixagem por chave em `src/data/sfx.ts` (volume, vozes simultâneas, variação de pitch); tocar sempre via `sfx(scene, key)` (`src/core/audio.ts`), que aplica volume geral × efeitos e o limitador.
+- Pendente: música (metal/industrial) e vozes EN/PT-BR — avaliar custo no plano free antes (música consome bem mais que SFX).
+
 ## Regras técnicas
 
-- Formato: **OGG** (e MP3 de fallback se precisar), 44,1 kHz; SFX normalizados em −14 LUFS, música em −18 LUFS.
+- Formato: **MP3** 44,1 kHz 128 kbps (saída do ElevenLabs); SFX normalizados em −14 LUFS, música em −18 LUFS.
 - Chaves no `src/art/manifest.ts` (`sfx.*`, `music.*`, `vo.<hero>.<evento>.<lang>.<n>`).
 - `VoiceLimiter` (herdado) limita vozes simultâneas por chave; variação de pitch ±5% em SFX repetidos.
 - Volumes separados (master, música, SFX, voz) em Settings. `SOUND_MUTED=true` no `.env` silencia tudo no dev.

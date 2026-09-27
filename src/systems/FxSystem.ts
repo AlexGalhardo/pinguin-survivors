@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
+import { sfx } from '../core/audio';
+import type { SfxKey } from '../data/sfx';
 import { type I18nKey, t } from '../i18n';
 import { isoDepth, worldToScreen } from '../logic/iso';
 import type { Settings } from '../logic/save';
@@ -60,6 +62,11 @@ export class FxSystem {
 				emitting: false,
 			})
 			.setDepth(OVERLAY_DEPTH - 1);
+	}
+
+	/** Sound effect with the Settings volumes and voice limits. */
+	play(key: SfxKey, volume = 1): void {
+		sfx(this.scene, key, volume);
 	}
 
 	private get splatKind(): 'blood' | 'goo' {

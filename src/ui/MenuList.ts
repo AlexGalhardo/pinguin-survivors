@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { PALETTE, toCss } from '../config/palette';
+import { sfx } from '../core/audio';
 import { UI_FONT } from './font';
 
 export interface MenuItem {
@@ -32,7 +33,7 @@ export class MenuList {
 	private readonly spacing: number;
 
 	constructor(
-		scene: Phaser.Scene,
+		private readonly scene: Phaser.Scene,
 		private readonly items: MenuItem[],
 		opts: MenuOptions,
 	) {
@@ -135,6 +136,7 @@ export class MenuList {
 	private select(): void {
 		const item = this.items[this.focus];
 		if (!item || item.disabled?.()) return;
+		sfx(this.scene, 'sfx.uiSelect');
 		if (item.onSelect) item.onSelect();
 		else item.onAdjust?.(1);
 		this.refresh();

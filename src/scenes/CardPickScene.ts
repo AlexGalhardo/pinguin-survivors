@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { PALETTE, toCss } from '../config/palette';
+import { sfx } from '../core/audio';
 import { trackZoom } from '../core/viewport';
 import type { Rarity } from '../data/cards';
 import { type I18nKey, t } from '../i18n';
@@ -156,6 +157,7 @@ export class CardPickScene extends Phaser.Scene {
 	private pick(i: number, data: CardPickData): void {
 		if (this.picked || i < 0 || i >= this.cards.length) return;
 		this.picked = true;
+		sfx(this, 'sfx.card');
 		data.onPick(i);
 		this.scene.stop();
 	}
