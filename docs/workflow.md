@@ -67,12 +67,15 @@ Conventional Commits 1.0.0 (`commitlint.config.js`; hooks Husky vazios por escol
 
 Tipos: `feat` (MINOR), `fix` (PATCH), `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`; `!` ou `BREAKING CHANGE:` → MAJOR. Escopos: `arena`, `weapons`, `shop`, `cards`, `economy`, `danger`, `ui`, `hud`, `i18n`, `save`, `platform`, `desktop`, `mobile`, `site`, `art`, `audio`, `balance`, `sim`, `demo`, `release`, `docs`, `deps`. Um commit por mudança lógica; nada de "WIP".
 
+**Micro-commits obrigatórios** (decisão do desenvolvedor, 2026-11-08): um commit por mudança lógica — uma feature, uma correção, um ajuste de dados, um lote de arte, um doc — com o teste dela no mesmo commit. **Nunca** um "super commit" que junta frentes diferentes (ex.: árvore + saves + loja + docs num commit só). Quando vários agentes entregam juntos, o orquestrador separa o working tree em commits por frente (`git add <arquivos>` ou `git add -p`), cada um com o código verde (typecheck e testes passando naquele ponto), e faz push após cada um. A release é o "merge rebase" desses commits: o corpo dela cita cada micro-commit (o `release.ts` gera uma linha por commit, com escopo, descrição e link), então o histórico precisa contar a história commit a commit.
+
 ## 6. Versionamento e releases (padrão vukem)
 
 Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 
 - **SemVer sem pré-release**: `0.0.x` = alpha (refatoração top-down até a demo jogável), `0.1.x` = beta (demo pública, Next Fest, polimento), **`1.0.0`** = lançamento comercial; depois MAJOR (save incompatível ou remoção de conteúdo), MINOR (conteúdo/feature), PATCH (correções e balanceamento).
-- `package.json.version` = tag sem `v`. Versão atual: **0.3.0** publicada (Latest); a **0.4.0** está em preparação (conteúdo desde a 0.2.0: árvore de habilidades, raridade I–V, Loja e Pausa estilo Diablo 4, armas atacando, obstáculos grandes, voadores com `fly`, lojista).
+- `package.json.version` = tag sem `v`. Versão atual: **0.4.0** publicada (Latest).
+- **Release como merge rebase**: o corpo da release lista **cada micro-commit** desde a tag anterior (uma linha por commit, agrupada por tipo), como se a branch tivesse sido integrada com rebase. Um super commit apaga essa história e é proibido.
 - **Release GitHub** por tag: título `vX.Y.Z`; corpo em grupos Keep a Changelog (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`, só os não vazios), linhas `- **escopo:** Descrição ([abc1234](…/commit/sha))`; `0.x` marcados **pre-release**.
 - **Fluxo ao fechar um marco**: micro-commits → `docs(roadmap): close <marco>` → `bun scripts/release.ts X.Y.Z` (gates, bump, CHANGELOG, commit `chore(release): X.Y.Z`, tag anotada, `git push --follow-tags`, `gh release create`). Detalhes em [sdds/SDD-011](sdds/SDD-011-releases-vukem.md).
 - **Uma release por marco** (decisão do desenvolvedor, 2026-11-08): o marco inteiro vai numa release só (M1 → `0.0.12`, M2 → `0.0.13`). Nunca uma release por tarefa.
