@@ -3,6 +3,7 @@ import '@fontsource/roboto/700.css';
 import '@fontsource/roboto/900.css';
 import Phaser from 'phaser';
 import { gameConfig } from './config/game-config';
+import { sfx } from './core/audio';
 import { setParams, setRunDanger, setRunHero, setRunWeapon, setSave } from './core/context';
 import { attachGame, currentRenderSize, initDisplay } from './core/display';
 import { installGamepad } from './core/gamepad';
@@ -18,6 +19,7 @@ import { ensureLangFont } from './ui/lang-font';
 import { mountUi } from './ui/mount';
 import { publishSave } from './ui/save-bridge';
 import { uiStore } from './ui/store';
+import { bindUiSound } from './ui/ui-sound';
 
 const params = parseDebugParams(window.location.search);
 const save = loadSave(detectLang(navigator.language));
@@ -47,6 +49,7 @@ forceTier(params.fxTier);
 setSave(game, save);
 publishSave(save);
 if (!params.skipMenu) uiStore.set({ screen: 'main-menu' });
+bindUiSound((key) => sfx(game.scene.getScene('Boot'), key));
 bindMenuCommands({
 	startRun: ({ hero, danger, weapon }) => {
 		setRunHero(game, hero);

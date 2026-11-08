@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Forest and city music with music per biome (endless follows the drawn biome), eight weapon SFX, boss roars and boss-down, and UI hover/confirm/back sounds (ElevenLabs, normalized).
+
 - The React UI draws atlas art: weapon tiers in the HUD, shop and pause, gear and item icons, card icons, Fish and Pearl coins and Danger icons, with the old text as fallback.
 
 - Forest (rounds 11–20) and destroyed city (21–30) biomes with their enemies and bosses (Moose King, Biomechanical Colossus), six original aliens including a cloaked stalker, code placeholders for floors and props; endless rounds draw biomes and enemies from every set, legacy ones included.

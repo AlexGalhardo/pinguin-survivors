@@ -51,6 +51,20 @@ export const SFX = {
 	'sfx.earth': { volume: 0.35, polyphony: 2, pitch: 0.1, ms: 1000 },
 	'sfx.lightning': { volume: 0.35, polyphony: 2, pitch: 0.1, ms: 1000 },
 	'sfx.freeze': { volume: 0.55, polyphony: 1, pitch: 0.05, ms: 1000 },
+	'sfx.knife': { volume: 0.45, polyphony: 3, pitch: 0.1, ms: 600 },
+	'sfx.boomerang': { volume: 0.45, polyphony: 2, pitch: 0.08, ms: 800 },
+	'sfx.pistol': { volume: 0.45, polyphony: 3, pitch: 0.08, ms: 600 },
+	'sfx.crossbow': { volume: 0.5, polyphony: 2, pitch: 0.06, ms: 800 },
+	'sfx.molotov': { volume: 0.55, polyphony: 2, pitch: 0.06, ms: 1000 },
+	'sfx.mine': { volume: 0.4, polyphony: 2, pitch: 0.05, ms: 500 },
+	'sfx.totem': { volume: 0.45, polyphony: 2, pitch: 0.05, ms: 800 },
+	'sfx.flameRing': { volume: 0.3, polyphony: 1, pitch: 0.05, ms: 800 },
+	'sfx.uiHover': { volume: 0.3, polyphony: 1, pitch: 0.05, ms: 480 },
+	'sfx.uiConfirm': { volume: 0.5, polyphony: 1, pitch: 0.03, ms: 500 },
+	'sfx.uiBack': { volume: 0.4, polyphony: 1, pitch: 0.03, ms: 500 },
+	'sfx.mooseKingRoar': { volume: 0.9, polyphony: 1, pitch: 0.05, ms: 2000 },
+	'sfx.colossusRoar': { volume: 0.9, polyphony: 1, pitch: 0.05, ms: 2000 },
+	'sfx.bossDown': { volume: 0.9, polyphony: 1, pitch: 0, ms: 1500 },
 } as const satisfies Record<string, SfxDef>;
 
 export type SfxKey = keyof typeof SFX;

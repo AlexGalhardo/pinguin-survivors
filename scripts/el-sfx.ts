@@ -191,6 +191,90 @@ const SFX: SfxDef[] = [
 		durationSeconds: 1.0,
 		variants: 1,
 	},
+	{
+		key: 'sfx.knife',
+		text: 'fast throwing knife whoosh with a short metallic thunk, cartoon gritty',
+		durationSeconds: 0.6,
+		variants: 1,
+	},
+	{
+		key: 'sfx.boomerang',
+		text: 'spinning fish boomerang whirring through the air with a wet slap, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.pistol',
+		text: 'small pistol shot with a sharp crack and a tiny echo, cartoon gritty',
+		durationSeconds: 0.6,
+		variants: 1,
+	},
+	{
+		key: 'sfx.crossbow',
+		text: 'heavy crossbow twang and bolt release with a wooden snap, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.molotov',
+		text: 'glass bottle shattering and flames bursting with a fiery whoosh, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.mine',
+		text: 'proximity mine arming beep followed by a short click, cartoon gritty',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.totem',
+		text: 'crackling lightning totem zap with a deep electric hum, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.flameRing',
+		text: 'ring of flames igniting with a soft roaring whoosh, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.uiHover',
+		text: 'very short soft metallic menu hover tick, cartoon gritty',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.uiConfirm',
+		text: 'short crisp menu confirm click with a low metallic thud, cartoon gritty',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.uiBack',
+		text: 'short soft menu back click with a dull wooden tap, cartoon gritty',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.mooseKingRoar',
+		text: 'huge antlered zombie moose king roar, monstrous, rotten and terrifying, short, cartoon gritty',
+		durationSeconds: 2.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.colossusRoar',
+		text: 'huge biomechanical alien colossus roar with metallic screech and wet growl, terrifying, short, cartoon gritty',
+		durationSeconds: 2.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.bossDown',
+		text: 'massive boss defeated sting: heavy collapse thud with a rising victorious metal chime, cartoon gritty',
+		durationSeconds: 1.5,
+		variants: 1,
+	},
 ];
 
 const OUT = 'public/assets/audio/sfx';

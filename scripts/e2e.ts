@@ -251,16 +251,19 @@ async function fullFlow(): Promise<void> {
 
 /** SDD-006 A2/A3: locked hero falls back to Jack, the last demo boss ends the demo. */
 async function demoFlow(): Promise<void> {
-	await page.goto(`${base}/?skipMenu=1&hero=bob&round=10&seed=1&god=1`, { waitUntil: 'load' });
+	await page.goto(`${base}/?skipMenu=1&hero=bob&round=10&seed=1&god=1`, {
+		waitUntil: 'domcontentloaded',
+		timeout: 60000,
+	});
 	await page.waitForFunction(() => '__GAME__' in window);
 	await waitFor('demo run started', (p) => p.active.includes('Game') && p.round === 10);
 	// The demo server starts fresh, so every audio file on disk must have been loaded (no 404).
 	const missing = await page.evaluate(
-		`['sfx.shopOpen','sfx.shopBuy','sfx.shopReroll','sfx.shopLock','sfx.weaponFuse','sfx.shopNoFish','sfx.fire','sfx.ice','sfx.earth','sfx.lightning','sfx.freeze','music.shop'].filter((k) => !window.__GAME__.cache.audio.exists(k))`,
+		`['sfx.shopOpen','sfx.shopBuy','sfx.shopReroll','sfx.shopLock','sfx.weaponFuse','sfx.shopNoFish','sfx.fire','sfx.ice','sfx.earth','sfx.lightning','sfx.freeze','music.shop','music.forest','music.city','sfx.knife','sfx.boomerang','sfx.pistol','sfx.crossbow','sfx.molotov','sfx.mine','sfx.totem','sfx.flameRing','sfx.uiHover','sfx.uiConfirm','sfx.uiBack','sfx.mooseKingRoar','sfx.colossusRoar','sfx.bossDown'].filter((k) => !window.__GAME__.cache.audio.exists(k))`,
 	);
 	if ((missing as string[]).length > 0)
 		fail(`audio not loaded: ${(missing as string[]).join(', ')}`);
-	console.log('ok   new shop and element audio loaded');
+	console.log('ok   new audio loaded (shop, elements, weapons, bosses, UI, biome music)');
 	const hero = await game((g) => g.run.hero);
 	if (hero !== 'jack') fail(`?hero=bob in the demo should fall back to jack, got ${hero}`);
 	await see('toast: available in the full game', 'Available in the full game', 5000);

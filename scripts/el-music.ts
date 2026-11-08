@@ -22,6 +22,16 @@ const TRACKS: Track[] = [
 		prompt: 'Instrumental ambient track for a shop screen in a brutal zombie horde game: low wind over arctic silence, soft distant metal clank, slow minor drone, melancholic and calm, 70 bpm, loopable, no vocals',
 		lengthMs: 30000,
 	},
+	{
+		key: 'music.forest',
+		prompt: 'Instrumental heavy metal track for a dark pine forest stage in a brutal zombie horde survival video game: low-tuned chugging guitars, tribal toms, eerie wooden flute and wind through the trees, brooding and relentless, 135 bpm, loopable, no vocals',
+		lengthMs: 36000,
+	},
+	{
+		key: 'music.city',
+		prompt: 'Instrumental industrial metal track for a destroyed city overrun by alien creatures in a brutal horde survival video game: cold mechanical synth pulses, distorted guitars, metallic percussion, acidic dissonant lead, tense and relentless, 150 bpm, loopable, no vocals',
+		lengthMs: 36000,
+	},
 ];
 
 const wanted = process.argv.slice(2);

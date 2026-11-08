@@ -58,6 +58,9 @@ Endpoint `POST /v1/sound-generation` (`text`, `duration_seconds`, `prompt_influe
 | `sfx.shopLock` | heavy iron padlock clicking shut, short metallic clack |
 | `sfx.weaponFuse` | two metal weapons forging together: hammer clang on an anvil with a sparks sizzle and a short power-up shimmer |
 | `sfx.shopNoFish` | empty cash drawer denied buzzer, dull wooden thud with a short negative error tone |
+| `sfx.knife` / `sfx.boomerang` / `sfx.pistol` / `sfx.crossbow` / `sfx.molotov` / `sfx.mine` / `sfx.totem` / `sfx.flameRing` | fast throwing knife whoosh; spinning fish boomerang; small pistol crack; heavy crossbow twang; glass shatter with a fiery whoosh; mine arming beep and click; crackling lightning totem zap; ring of flames igniting ("cartoon gritty", 0,5–1 s) |
+| `sfx.uiHover` / `sfx.uiConfirm` / `sfx.uiBack` | very short soft metallic hover tick; crisp confirm click with a low thud; soft back click with a dull wooden tap (0,5 s, a API exige ≥ 0,5 s) |
+| `sfx.mooseKingRoar` / `sfx.colossusRoar` / `sfx.bossDown` | huge antlered zombie moose king roar; biomechanical alien colossus roar with metallic screech; boss defeated sting with a heavy collapse and a rising metal chime (1,5–2 s) |
 | `sfx.fire` / `sfx.ice` / `sfx.earth` / `sfx.lightning` / `sfx.freeze` | magic staff casting a fire bolt / an ice bolt / an earth spell / a lightning bolt; enemies freezing solid (1 s each, "cartoon gritty") |
 
 Prompts completos e parâmetros em `art-src/elevenlabs/log.jsonl`.
@@ -73,6 +76,10 @@ Endpoint `POST /v1/music` (`force_instrumental: true`), ~560 créditos por 45 s 
 | `music.late` | 45 s | rounds ≥ 21 |
 | `music.boss` | 45 s | rounds de boss |
 | `music.shop` | 30 s | loja (toca ao abrir, volta à música do round ao fechar) |
+| `music.forest` | 36 s | floresta (rounds 11–20 e endless quando sorteada) |
+| `music.city` | 36 s | cidade destruída (rounds 21–30 e endless quando sorteada) |
+
+Por bioma (`musicForRound(round, boss, biome)` em `src/core/music.ts`): `antarctica` → `music.round`, `forest` → `music.forest`, `city` → `music.city`; os legados `station` → `music.round` e `ruins` → `music.late` (não há faixa `music.station`/`music.ruins`); round de boss sempre `music.boss`. Se uma faixa nova faltar, cai em `music.round`.
 
 Loops de reserva feitos pelo endpoint de SFX em `art-src/elevenlabs/music/*-loop.mp3`.
 
@@ -85,13 +92,13 @@ Histórico, mantido para referência (arquivos e código na branch `legacy-voice
 | Item | Chaves | Estimativa |
 |---|---|---|
 | ~~SFX da loja~~ (feito, 2026-11-08, + `sfx.shopNoFish`) | `sfx.shopBuy`, `sfx.shopReroll`, `sfx.shopLock`, `sfx.weaponFuse`, `sfx.shopOpen`, `sfx.shopNoFish` | ~20 créditos |
-| SFX de armas novas | `sfx.knife`, `sfx.boomerang`, `sfx.pistol`, `sfx.crossbow`, `sfx.molotov`, `sfx.mine`, `sfx.totem`, `sfx.flameRing` | ~35 |
+| ~~SFX de armas novas~~ (feito, T7.5) | `sfx.knife`, `sfx.boomerang`, `sfx.pistol`, `sfx.crossbow`, `sfx.molotov`, `sfx.mine`, `sfx.totem`, `sfx.flameRing` | ~35 |
 | ~~SFX de elementos~~ (feito, 2026-11-08) | `sfx.fire`, `sfx.ice`, `sfx.earth`, `sfx.lightning`, `sfx.freeze` | ~20 |
-| SFX de bosses | `sfx.krakenInk`, `sfx.abominationAcid`, `sfx.bossDeath` | ~12 |
-| SFX de UI/meta | `sfx.pearls`, `sfx.dangerUnlock`, `sfx.equip`, `sfx.demoEnd` | ~16 |
+| SFX de bosses (rugidos dos 2 bosses novos e `sfx.bossDown` feitos; faltam `sfx.krakenInk`, `sfx.abominationAcid`) | `sfx.mooseKingRoar`, `sfx.colossusRoar`, `sfx.bossDown` | ~12 |
+| SFX de UI/meta (hover, confirmar e voltar feitos; faltam `sfx.pearls`, `sfx.dangerUnlock`, `sfx.equip`, `sfx.demoEnd`; a conquista já existe) | `sfx.uiHover`, `sfx.uiConfirm`, `sfx.uiBack` | ~16 |
 | ~~Música da loja~~ (feito, 2026-11-08) | `music.shop` (30 s) | ~380 |
-| Música dos biomas 2–3 (proposta, ADR-016) | `music.forest`, `music.city` (45 s cada; nomes antigos `music.station`, `music.ruins` ficam para o endless legado) | ~1.120 |
-| Sting de boss derrotado | `sfx.bossDown` | ~4 |
+| ~~Música dos biomas 2–3~~ (feito, T7.5, 36 s cada em vez de 45 s por causa do teto) | `music.forest`, `music.city` | ~1.120 |
+| ~~Sting de boss derrotado~~ (feito, T7.5) | `sfx.bossDown` | ~4 |
 
 Total estimado **~1.600 créditos** de 58.198 disponíveis (renova em 14/11/2026). Sobra para 2–3 takes de cada música.
 
@@ -104,3 +111,13 @@ Plano **Creator** (ativo), 124.333 créditos no ciclo atual, 66.135 usados em 20
 - Saldo antes: 58.198 créditos; depois: 57.679. **Gasto total: 519** (11 SFX de 0,5 a 1,2 s, 1 take cada, + `music.shop` de 30 s, 1 take). Isso passou do teto duro de 450 do lote em 69 créditos: a estimativa de ~20 para os SFX e ~380 para a música estava abaixo do real; o custo por faixa não foi medido separadamente. Nada mais foi gerado depois de notar.
 - Loudness: os takes saíram fora do alvo (`music.shop` a −33 LUFS, `sfx.shopLock` a −39). Normalizados offline, sem créditos, por `bun scripts/el-normalize.ts <chaves>` (SFX −14, música −18 LUFS; originais em `art-src/elevenlabs/`). Em clipes de 0,5–1 s o `loudnorm` de um passe não acerta o alvo (ficaram entre −14 e −21 LUFS); o ajuste fino fica no volume por chave de `src/data/sfx.ts`. `music.shop` ficou a −17,7 LUFS.
 - Saldo: `bun --env-file=.env scripts/el-quota.ts`.
+
+### Registro de 2026-11-08 (T7.5)
+
+- Teto duro do lote: 1.200 créditos. **Gasto 1.142**, medido pela diferença de uso (uso de 66.654 para 67.796; saldo 57.679 → 56.537).
+  - `music.forest` e `music.city`: 495 créditos cada (36 s, ~13,75 créditos/s). Reduzi de 45 s para 36 s para caber no teto junto com os SFX.
+  - 8 SFX de armas novas: ~67 (~8,4 cada); 3 de UI e 3 de boss (`sfx.mooseKingRoar`, `sfx.colossusRoar`, `sfx.bossDown`): ~85.
+  - A API recusa `duration_seconds` < 0,5: o hover e o back ficaram em 0,5 s.
+  - O saldo da API atualiza com alguns segundos de atraso; conferir de novo antes de somar.
+- Normalizados com `bun scripts/el-normalize.ts` (música −18 LUFS: forest −18,4 e city −18,1; SFX −14 LUFS: entre −14,4 e −16,4 nos medidos).
+- Ligação: SFX de arma tocam pelo callback do `SecondarySystem` (`WEAPON_SFX` em `GameScene`, com `grenadeBelt` → `sfx.explosion` e `poisonCloud` → `sfx.cast`); rugido por boss em `bossRoarSfx`; `sfx.bossDown` no abate do boss; sons de menu em `src/ui/focus.tsx` via `src/ui/ui-sound.ts` (ligado em `main.ts`).

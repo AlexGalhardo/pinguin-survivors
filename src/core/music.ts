@@ -1,23 +1,43 @@
 import type Phaser from 'phaser';
+import type { BiomeId } from '../config/constants';
 import { getSave } from './context';
 
-export type MusicKey = 'music.menu' | 'music.round' | 'music.boss' | 'music.late' | 'music.shop';
+export type MusicKey =
+	| 'music.menu'
+	| 'music.round'
+	| 'music.boss'
+	| 'music.late'
+	| 'music.shop'
+	| 'music.forest'
+	| 'music.city';
 export const MUSIC_KEYS: readonly MusicKey[] = [
 	'music.menu',
 	'music.round',
 	'music.boss',
 	'music.late',
 	'music.shop',
+	'music.forest',
+	'music.city',
 ];
 
 /** First round of the late-game track (the ruined city onwards). */
 export const LATE_MUSIC_FROM = 21;
 
 /** Track for a gameplay round: boss fights, then the late-game track, else the round loop. */
-export function musicForRound(round: number, boss: boolean): MusicKey {
+export function musicForRound(round: number, boss: boolean, biome?: BiomeId): MusicKey {
 	if (boss) return 'music.boss';
+	if (biome) return MUSIC_BY_BIOME[biome];
 	return round >= LATE_MUSIC_FROM ? 'music.late' : 'music.round';
 }
+
+/** Track of each biome; the legacy station and ruins reuse the original round and late tracks. */
+const MUSIC_BY_BIOME: Record<BiomeId, MusicKey> = {
+	antarctica: 'music.round',
+	forest: 'music.forest',
+	city: 'music.city',
+	station: 'music.round',
+	ruins: 'music.late',
+};
 
 const FADE_MS = 800;
 /** Music sits under the SFX in the mix. */
@@ -36,7 +56,8 @@ export function playMusic(scene: Phaser.Scene, key: MusicKey): void {
 	if (current?.key === key && current.sound.isPlaying) return;
 	// A missing late track falls back to the regular round loop.
 	if (!scene.cache.audio.exists(key)) {
-		if (key === 'music.late') playMusic(scene, 'music.round');
+		if (key === 'music.late' || key === 'music.forest' || key === 'music.city')
+			playMusic(scene, 'music.round');
 		return;
 	}
 	stopMusic(scene);

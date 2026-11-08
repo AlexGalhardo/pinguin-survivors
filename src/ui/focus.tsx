@@ -12,6 +12,7 @@ import {
 	useState,
 } from 'react';
 import { type FocusDir, nextFocus } from './focus-nav';
+import { uiSound } from './ui-sound';
 
 /**
  * Keyboard, gamepad and touch focus for the overlay. The gamepad bridge (core/gamepad) already
@@ -88,6 +89,7 @@ export function FocusScope(props: {
 				}
 			} else if (ev.code === 'Escape' && onBack.current) {
 				ev.preventDefault();
+				uiSound('sfx.uiBack');
 				onBack.current();
 			}
 		};
@@ -129,7 +131,10 @@ export function useFocusable(opts: { onActivate: () => void; disabled?: boolean 
 			if (!scope || !el) return;
 			return scope.register({
 				el,
-				activate: () => activate.current(),
+				activate: () => {
+					uiSound('sfx.uiConfirm');
+					activate.current();
+				},
 				get disabled() {
 					return disabledRef.current;
 				},
@@ -143,10 +148,15 @@ export function useFocusable(opts: { onActivate: () => void; disabled?: boolean 
 		props: {
 			tabIndex: disabled ? -1 : 0,
 			onClick: () => {
-				if (!disabledRef.current) activate.current();
+				if (!disabledRef.current) {
+					uiSound('sfx.uiConfirm');
+					activate.current();
+				}
 			},
 			onMouseEnter: (e) => {
-				if (!disabledRef.current) e.currentTarget.focus();
+				if (disabledRef.current) return;
+				if (document.activeElement !== e.currentTarget) uiSound('sfx.uiHover');
+				e.currentTarget.focus();
 			},
 			onFocus: () => setFocused(true),
 			onBlur: () => setFocused(false),

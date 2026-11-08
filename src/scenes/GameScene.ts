@@ -28,6 +28,7 @@ import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '
 import { ROUNDS } from '../data/rounds';
 import { levelScale, PERKS, SECONDARIES, type SecondaryId } from '../data/secondaries';
 import type { SetModifier } from '../data/sets';
+import type { SfxKey } from '../data/sfx';
 import { SUPER } from '../data/superpowers';
 import {
 	MAX_WEAPON_SLOTS,
@@ -189,6 +190,29 @@ const PAUSE_STATS: StatKey[] = [
 	'area',
 	'luck',
 ];
+
+/** Sound of the weapons that fire through the secondary system (the direct ones have their own). */
+const WEAPON_SFX: Partial<Record<WeaponId, SfxKey>> = {
+	knives: 'sfx.knife',
+	fishBoomerang: 'sfx.boomerang',
+	auxPistol: 'sfx.pistol',
+	crossbow: 'sfx.crossbow',
+	molotov: 'sfx.molotov',
+	mine: 'sfx.mine',
+	lightningTotem: 'sfx.totem',
+	flameRing: 'sfx.flameRing',
+	grenadeBelt: 'sfx.explosion',
+	poisonCloud: 'sfx.cast',
+};
+
+/** Roar of a boss; bosses without their own roar use the generic one. */
+function bossRoarSfx(id: string): SfxKey {
+	return id === 'mooseKing'
+		? 'sfx.mooseKingRoar'
+		: id === 'biomechColossus'
+			? 'sfx.colossusRoar'
+			: 'sfx.bossRoar';
+}
 
 export class GameScene extends Phaser.Scene {
 	hero!: Hero;
@@ -459,7 +483,12 @@ export class GameScene extends Phaser.Scene {
 			this.area,
 			(e, amount, crit, element) => this.combat.weaponHit(e, amount, crit, { element }),
 			this.weapons.bonus,
-			(slot, angle, cooldown) => this.weaponRing.fire(slot, angle, cooldown),
+			(slot, angle, cooldown) => {
+				this.weaponRing.fire(slot, angle, cooldown);
+				const id = this.build.weapons[slot]?.id;
+				const sound = id ? WEAPON_SFX[id] : undefined;
+				if (sound) this.fx.play(sound);
+			},
 		);
 		this.superpower = new SuperpowerSystem(
 			this.rng,
@@ -483,7 +512,14 @@ export class GameScene extends Phaser.Scene {
 		this.enemies.mods = this.mods;
 		this.enemies.seed = this.run.seed;
 		this.startEnemyRound();
-		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
+		playMusic(
+			this,
+			musicForRound(
+				this.run.round,
+				isBossRound(this.run.round),
+				biomeForRound(this.run.round, this.run.seed),
+			),
+		);
 
 		this.scene.launch('Hud');
 		this.run.phase ??= 'round';
@@ -926,7 +962,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** Boss roar: minions of the biome burst out around the boss. */
 	private summon(e: Enemy): void {
-		this.fx.play('sfx.bossRoar');
+		this.fx.play(bossRoarSfx(e.def.id));
 		this.area.flash(e.x, e.y, 140, PALETTE.textLight, 0.5);
 		shake(this, 300, 0.005);
 		const b = e.def.boss;
@@ -1020,6 +1056,7 @@ export class GameScene extends Phaser.Scene {
 			});
 		}
 		if (kind === 'boss') {
+			this.fx.play('sfx.bossDown');
 			zoomPunch(this, 0.1, 500);
 			this.onBossKilled();
 		}
@@ -1521,10 +1558,17 @@ export class GameScene extends Phaser.Scene {
 		this.syncArena();
 		this.startEnemyRound();
 		if (this.enemies.boss) {
-			this.fx.play('sfx.bossRoar');
+			this.fx.play(bossRoarSfx(this.enemies.boss.def.id));
 			zoomPunch(this, 0.08, 400);
 		}
-		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
+		playMusic(
+			this,
+			musicForRound(
+				this.run.round,
+				isBossRound(this.run.round),
+				biomeForRound(this.run.round, this.run.seed),
+			),
+		);
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
 		this.drinkShopPotions();
