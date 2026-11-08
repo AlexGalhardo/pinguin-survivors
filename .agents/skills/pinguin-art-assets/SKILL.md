@@ -7,6 +7,8 @@ description: Use when creating, regenerating, animating or replacing any visual 
 
 Read `docs/visual.md` first (Art Bible: style, sizes, keys, budget, production log) and `docs/sdds/SDD-012-arte-topdown-e-vfx.md` (what is pending and its budget). Every generation is logged in `art-src/pixellab/log.jsonl`; summarize each batch in `docs/visual.md` §13.
 
+Antes de gerar, monte o prompt por [prompts.md](prompts.md) (base fixa, blocos por tipo, parâmetros da API, checklist e exemplos).
+
 ## Hard rules
 
 1. **Camera is top-down 2D** (ADR-003). Sprites use view `low top-down` (3/4), **8 directions in the engine** (5 generated: s, se, e, ne, n; 3 mirrored). Ground is a **top-down 64×64 tileset** per biome plus borders; props are `high top-down`.

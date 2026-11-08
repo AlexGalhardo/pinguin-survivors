@@ -7,6 +7,8 @@ description: Use when creating or replacing any sound of Pinguin Survivors (SFX,
 
 Read `docs/audio.md` first (direction, engineering, catalog with prompts, pending list, budget).
 
+Antes de gerar, monte o prompt por [prompts.md](prompts.md) (base fixa, blocos de SFX e música, checklist e exemplos).
+
 ## Rules
 
 1. Key `ELEVENLABS_API_KEY` only in `.env` (header `xi-api-key`). Never commit or print it. Check the quota (`GET /v1/user/subscription`) before batches and record it in `docs/audio.md` §7.

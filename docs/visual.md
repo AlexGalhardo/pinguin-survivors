@@ -1,6 +1,6 @@
 # Art Bible — Pinguin Survivors
 
-> **Versão** 2.1 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
+> **Versão** 2.2 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
 
 ## Índice
 
@@ -84,6 +84,8 @@
 4. **Seleção** em `art-src/selection.json` → `bun scripts/pack-process.ts` → `bun scripts/pack-atlas.ts` / `pack-heroes.ts` → `public/assets/atlas/*`, `public/assets/heroes/*`.
 5. Registrar em `src/art/manifest.ts`; placeholders por código param de ser usados por chave.
 6. QA no browser (`?skipMenu=1&hero=jack&round=5&seed=1&debug=1`) a 1920×1080.
+
+Antes de gerar, monte o prompt por [`.agents/skills/pinguin-art-assets/prompts.md`](../.agents/skills/pinguin-art-assets/prompts.md) (base fixa, blocos por tipo, parâmetros da API e checklist).
 
 Chamadas: API v2 (`scripts/lib/pixellab.ts`, token `PIXELLAB_API_TOKEN` do `.env`). O MCP `pixellab` do usuário usa outro token (expirado em 2026-11-07); use a API. `GET /balance` antes de lotes; piloto de 1 direção; lotes > 200 gerações só com aviso ao desenvolvedor.
 

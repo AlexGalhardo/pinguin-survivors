@@ -1,6 +1,6 @@
 # Direção de Som — Pinguin Survivors
 
-> **Versão** 2.0 · **Data** 2026-11-08 · Ferramenta única: **ElevenLabs** (`ELEVENLABS_API_KEY` só no `.env`). Pipeline na skill `.agents/skills/pinguin-audio-assets`; log bruto em `art-src/elevenlabs/log.jsonl`; decisão de remover vozes em [adrs/ADR-009](adrs/ADR-009-remover-vozes.md).
+> **Versão** 2.1 · **Data** 2026-11-08 · Ferramenta única: **ElevenLabs** (`ELEVENLABS_API_KEY` só no `.env`). Pipeline na skill `.agents/skills/pinguin-audio-assets`; log bruto em `art-src/elevenlabs/log.jsonl`; decisão de remover vozes em [adrs/ADR-009](adrs/ADR-009-remover-vozes.md).
 
 ## Índice
 
@@ -27,6 +27,8 @@
 - Mobile/WebView: destravar o `AudioContext` no 1º toque; pausar ao perder o foco.
 
 ## 3. Catálogo e prompts (SFX)
+
+Pipeline: antes de gerar, monte o prompt por [`.agents/skills/pinguin-audio-assets/prompts.md`](../.agents/skills/pinguin-audio-assets/prompts.md) (base fixa, blocos de SFX e música, exemplos).
 
 Endpoint `POST /v1/sound-generation` (`text`, `duration_seconds`, `prompt_influence`), 1 take cada salvo o indicado. Custo medido ~4 créditos por SFX curto.
 
