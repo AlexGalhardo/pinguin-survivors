@@ -19,4 +19,4 @@ Manter **TypeScript + Vite 8 + Phaser 4.2 + Bun** como stack do jogo. Electron (
 
 - Nenhuma mudança de engine; todo o esforço vai para game design (ADR-003…008) e UI (ADR-002).
 - Steam e Android dependem de wrappers web (ADR-012); limites conhecidos: tamanho do instalador Electron (~100 MB) e performance do WebView Android em aparelhos fracos.
-- As skills Phaser 4 em `.claude/skills/` continuam sendo a referência de API.
+- As skills Phaser 4 em `.agents/skills/` continuam sendo a referência de API.

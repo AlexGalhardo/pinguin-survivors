@@ -41,7 +41,7 @@ Registro das decisões de produto tomadas com o desenvolvedor (entrevista de 202
 | P-33 | Áudio: **ElevenLabs** para **SFX, música (metal/industrial estilo DOOM) e vozes EN + PT-BR** dos pinguins | |
 | P-34 | Ordem: **concepts → loop jogável com placeholders iso → animações/assets finais em paralelo** | |
 | P-35 | Sem Arcade Physics: **simulação em espaço de mundo cartesiano** (TS puro, testável) + **projeção iso só na renderização**; colisões via spatial grid | Decisão técnica do agente (iso + 300 corpos) |
-| P-36 | Os hooks do Husky estão **vazios por escolha do usuário** (commit "save work"); os gates (`check`, `typecheck`, `test`, `build`) são rodados manualmente antes de commitar/pushar | Não restaurar sem pedido |
+| P-36 | Os hooks do Husky estão **vazios por escolha do usuário** (commit "save work"); os gates (`lint`, `typecheck`, `test`, `build`) são rodados manualmente antes de commitar/pushar | Não restaurar sem pedido |
 | P-37 | **Identidade forte por herói**: Jack = muita vida/armadura, parry alto, lento, magia fraca; Bob = mais rápido, crítico e dodge altos, vida mediana, melee fraco, magia mediana; Lucia = velocidade mediana, pouca vida, magia muito forte. Multiplicadores de dano por tag (melee/fogo/magia) por herói | Pedido do usuário (2026-09-27) |
 | P-38 | **6 cartas/magias exclusivas por herói** (lista em game-design §5.1) | Pedido do usuário: ≥ 5 diferenças por herói |
 | P-39 | **Superpoder** por herói, libera no **level 5**; carrega com **100 abates**; carga persiste entre rounds da run; uso 1× com **Espaço** (gamepad △/Y), zera ao usar. Jack: Colheita Rubra · Bob: Bombardeio · Lucia: Cataclismo Elemental | Pedido do usuário |

@@ -11,7 +11,7 @@ Tags atuais: `v0.1.0-alpha.1…v0.1.0-alpha.2`, `v0.1.0-beta.1…v0.1.0-beta.8` 
 - **SemVer sem pré-release**: `0.0.x` = fase alpha, `0.1.x` = fase beta, **`1.0.0` = lançamento comercial**; depois `MAJOR.MINOR.PATCH` normal. `package.json` e tag sempre iguais.
 - **Release = tag**: título `vX.Y.Z`; corpo gerado de `CHANGELOG.md` + `git log` (`- **escopo:** Descrição ([abc1234](link))`). Releases `0.x` marcados como **pre-release** no GitHub.
 - **Retag**: as 11 tags Pinguin viram `v0.0.1…v0.0.11` nos mesmos commits; as antigas são apagadas local e remotamente; releases retroativos criados com o corpo derivado do CHANGELOG. Próxima versão de trabalho: `0.0.12`.
-- Tags do Starfall ficam como estão (histórico da branch `starfall-survivors-legacy`), sem release.
+- Tags do Starfall (`v1.0.0-*`, `v0.1.0`, `pinguin-survivors-final`) **apagadas** local e remotamente em 2026-11-08 a pedido do desenvolvedor: o repositório fica com exatamente uma tag por release (10). Os commits continuam na branch `starfall-survivors-legacy`.
 - Script `scripts/release.ts`: valida gates, bump, atualiza CHANGELOG, cria tag anotada, `gh release create`.
 
 ## Alternativas

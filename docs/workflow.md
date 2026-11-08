@@ -43,7 +43,7 @@ Relatório de agente é alegação, não evidência: conferir diff, testes e CI 
 - Nomes em inglês; `PascalCase.ts` para classes/cenas/componentes, `kebab-case.ts` para módulos.
 - Lógica pura em `src/logic/` (sem Phaser e sem React), testada com `bun:test`; números só em `src/data/`; textos só em `src/i18n/` (4 idiomas juntos); cores só em `src/config/palette.ts`; chaves de assets só em `src/art/manifest.ts`.
 - UI em React + Tailwind v4 (`src/ui/`); Phaser só no mundo (`src/world`, `src/entities`, `src/systems`, `src/scenes/{Boot,Game}Scene`).
-- Phaser **4** (API ≠ v3): confira as skills em `.claude/skills/` antes de copiar exemplos da web.
+- Phaser **4** (API ≠ v3): confira as skills em `.agents/skills/` antes de copiar exemplos da web.
 - Dependências: sempre a última versão **estável**, fixada (sem `^`); nunca `latest`/`next`/`beta`. Não adicionar dependência sem a SDD listar.
 - Comentários só para o porquê, edge cases e workarounds (com motivo).
 
@@ -76,14 +76,14 @@ Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 - **Release GitHub** por tag: título `vX.Y.Z`; corpo em grupos Keep a Changelog (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`, só os não vazios), linhas `- **escopo:** Descrição ([abc1234](…/commit/sha))`; `0.x` marcados **pre-release**.
 - **Fluxo ao fechar um marco**: micro-commits → `docs(roadmap): close <marco>` → `bun scripts/release.ts X.Y.Z` (gates, bump, CHANGELOG, commit `chore(release): X.Y.Z`, tag anotada, `git push --follow-tags`, `gh release create`). Detalhes em [sdds/SDD-011](sdds/SDD-011-releases-vukem.md).
 - `CHANGELOG.md` (Keep a Changelog 1.1.0): `[Unreleased]` no topo; seções `## [X.Y.Z] - AAAA-MM-DD`; frases para humanos em inglês; links de comparação no fim.
-- Histórico: tags `v0.1.0-alpha.1…v0.1.0-beta.8` retagueadas como `v0.0.1…v0.0.10` (tabela no CHANGELOG). Tags `v1.0.0-*` e `pinguin-survivors-final` são do Starfall e não recebem release.
+- Histórico: tags `v0.1.0-alpha.1…v0.1.0-beta.8` retagueadas como `v0.0.1…v0.0.10` (tabela no CHANGELOG); as tags do Starfall foram apagadas. Regra: **uma tag por release**, nada mais.
 
 ## 7. Gates
 
 | Momento | Comandos |
 |---|---|
-| Antes de commitar | `bun run check` → `bun run typecheck` → `bun test` |
-| Antes de pushar | `bunx biome ci .` → `bun run typecheck` → `bun test` → `bun run build` |
+| Antes de commitar | `bun run lint` → `bun run typecheck` → `bun test` |
+| Antes de pushar | `bun run lint` → `bun run typecheck` → `bun test` → `bun run build` |
 | Antes de release | tudo acima + `bun run e2e` (com `bun run dev`) + `bun scripts/qa-browsers.ts` (com `vite preview --port 4173`) |
 | Site (`site/`) | `cd site && bun run build` + Lighthouse ≥ 95 |
 
@@ -91,7 +91,7 @@ Nunca `--no-verify`. Gate falhou → corrigir a causa.
 
 ## 8. Ferramentas, skills e APIs
 
-- **Skills do projeto** (`.claude/skills/`): `pinguin-art-assets` (PixelLab), `pinguin-audio-assets` (ElevenLabs), 28 skills Phaser 4, `agent-browser` (QA), `graphify`, `grilling`, e 40 skills de gamedev de terceiros (`gd-*`, `gc-*`, `ccgs-*`; em conflito, este projeto vence; `gc-phaser` é Phaser 3). Tabela "quando usar": juice → `gd-game-feel`; IA → `gd-game-ai`; RPG/save → `gd-rpg`, `gd-roguelike`, `gd-save-systems`; UI → `gd-game-ui-ux`; perf → `gd-performance-optimization`; balance → `ccgs-balance-check`; QA → `gc-game-qa`, `ccgs-qa-plan`; release → `ccgs-release-checklist`, `gd-steam-publish`; i18n → `ccgs-localize`. Relatórios das `ccgs-*` vão para `docs/reports/`.
+- **Skills do projeto** (`.agents/skills/`, provider-agnostic; regras em `.agents/rules/`): `pinguin-art-assets` (PixelLab), `pinguin-audio-assets` (ElevenLabs), 26 skills Phaser 4 oficiais, `agent-browser` (QA), `graphify`, `grilling`, e 26 skills de gamedev de terceiros auditadas em 2026-11-08 (`gd-*`, `gc-*`, `ccgs-*`; origem e remoções em `.agents/skills/THIRD_PARTY.md`; em conflito, este projeto vence). Tabela "quando usar": juice → `gd-game-feel`; IA → `gd-game-ai`; RPG/save → `gd-rpg`, `gd-roguelike`, `gd-save-systems`; procedural/props → `gd-procedural-gen`; câmera/input/UI → `gd-camera-systems`, `gd-input-systems`, `gd-game-ui-ux`; perf → `gd-performance-optimization`, `ccgs-perf-profile`; shaders/luz → `gd-shader-programming`; áudio → `gd-audio-design`; arte → `gd-create-game-assets`; design → `gc-game-designer`; review → `gc-review-game`; balance → `ccgs-balance-check`; QA/bugs → `gc-game-qa`, `ccgs-qa-plan`, `ccgs-bug-report`, `ccgs-playtest-report`; escopo → `ccgs-scope-check`; i18n → `ccgs-localize`; release → `ccgs-release-checklist`, `ccgs-launch-checklist`, `gd-steam-publish`; Phaser 4 extra → `gd-phaser-core`. Relatórios das `ccgs-*` vão para `docs/reports/`.
 - **PixelLab**: API v2 (`scripts/lib/pixellab.ts`, `PIXELLAB_API_TOKEN` no `.env`), plano Tier 2 (5.000 gerações/mês, renova dia 14). O MCP `pixellab` do usuário usa um token expirado: não usar. `GET /balance` antes de lotes.
 - **ElevenLabs**: `ELEVENLABS_API_KEY` no `.env`; plano Creator (renova dia 14). Scripts `scripts/el-*.ts`.
 - **GitHub**: `gh` CLI para releases e Actions. **Steamworks** e **Google Play Console**: contas pendentes do desenvolvedor.
@@ -104,7 +104,7 @@ bun install                      # dependências do jogo
 bun run dev                      # Vite dev
 bun run build                    # tsc --noEmit + vite build (dist/)
 bun run build:demo               # VITE_DEMO=1, base /demo/ (dist-demo/)     [a criar: SDD-006]
-bun test · bun run typecheck · bun run check (Biome) · bun run check:fix
+bun test · bun run typecheck · bun run lint (Biome) · bun run lint:fix
 bun run e2e                      # Playwright (com bun run dev)
 bun scripts/qa-browsers.ts       # Chrome/Edge/Firefox (com vite preview --port 4173)
 bun scripts/perf.ts --round 40   # orçamento de performance

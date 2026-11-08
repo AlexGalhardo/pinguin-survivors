@@ -26,7 +26,7 @@
 | # | Assert | Verificação |
 |---|---|---|
 | A1 | `rg -n "Phaser" src/ui` retorna vazio | grep |
-| A2 | `rg -n "scene.add.text|add.bitmapText" src/scenes src/systems` só no overlay de debug | grep |
+| A2 | `rg -n "scene.add.text\|add.bitmapText" src/scenes src/systems` só no overlay de debug | grep |
 | A3 | Teste de componente: `Shop` renderiza 4 ofertas, desabilita compra sem Fish, chama `commands.buy` | `bun test tests/ui/shop.test.tsx` |
 | A4 | E2E: menu → seleção → run → level-up → loja → pausa → settings → game over, zero erros de console, em 1920×1080 e 2400×1080 | `bun run e2e` |
 | A5 | Nenhuma string literal com letras em JSX fora de `t()` | `bun scripts/lint-i18n.ts` |

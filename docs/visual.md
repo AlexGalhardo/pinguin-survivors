@@ -1,6 +1,6 @@
 # Art Bible — Pinguin Survivors
 
-> **Versão** 2.0 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.claude/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
+> **Versão** 2.0 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
 
 ## Índice
 
@@ -122,7 +122,6 @@ Brotato (vista, ritmo, loja), Diablo 4 (luz, sangue), Halls of Torment (pixel + 
 
 > Seção migrada de `docs/art-prompts.md` (removido em 2026-11-08): prompts, `character_id` aprovados e custos. Novas gerações continuam registradas aqui, em ordem cronológica. Log bruto: `art-src/pixellab/log.jsonl`.
 
-
 ### 2026-09-27 — Concepts dos 3 heróis (`bun scripts/pl-concepts.ts`)
 
 - Vista `low top-down`, 8 rotações, 96×96, fundo transparente, template `mannequin`.
@@ -191,6 +190,7 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 | `enemy.zombieMedic` | `zombieMedic-v3` | `5aeb2f3c-d64b-4389-bd59-437b7dbf3190` |
 
   Por enquanto entram como atlas `enemy.<id>` com a animação `walk` de 1 frame por direção (rotações); o `Enemy` vira para a direção do movimento (5 desenhadas + 3 espelhadas) e troca para `attack` no telegraph quando existir. As animações template (walk/attack) substituem os frames estáticos pelas mesmas chaves.
+
 - **Concepts novos dos biomas 2–3** (v3 64 px, 2 gerações cada; bosses 160 px, 5): a 1ª leva de 9 falhou no servidor ("v3 generation failed") e foi reenviada; em geração: zombieSailor, fuelBloater, zombieGull, zombieRiotCop, zombieSoldier, acidBloater, zombieBrute (80 px), kraken, abomination; zombieWalrus (bioma 1, nunca teve concept) também.
 
 ### 2026-09-27 — Chão e decorações dos 3 biomas; walks animados

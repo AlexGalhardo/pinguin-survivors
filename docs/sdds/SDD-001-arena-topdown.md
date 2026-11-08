@@ -35,7 +35,7 @@ O mundo atual é isométrico 2:1 e infinito em chunks. A 1.0 usa câmera top-dow
 | A1 | `arenaSide(1) === 10`, `arenaSide(31) === 40`, `arenaSide(99) === 40` | `bun test tests/arena.test.ts` |
 | A2 | 1.000 pontos de `spawnRing` estão a ≤ 64 u da borda e dentro dos bounds; nenhum dentro do retângulo visível quando ele cabe | teste de propriedade em `tests/arena.test.ts` |
 | A3 | Herói com input constante contra a borda por 5 s fica com `x ∈ bounds` | teste do `clampToArena` + E2E `?arena=10` |
-| A4 | Nenhum arquivo importa `iso.ts`/`chunks.ts` | `rg -n "logic/iso|logic/chunks|ChunkManager" src tests` retorna vazio |
+| A4 | Nenhum arquivo importa `iso.ts`/`chunks.ts` | `rg -n "logic/iso\|logic/chunks\|ChunkManager" src tests` retorna vazio |
 | A5 | `bun scripts/perf.ts --round 40` ≥ 58 FPS médio, p95 ≤ 18 ms em 1920×1080 | saída do script |
 | A6 | Screenshot `?skipMenu=1&hero=jack&round=1&seed=1&debug=1` mostra arena 10×10 inteira centrada, sem scroll | agent-browser |
 | A7 | Decalques sobrevivem à troca de round (contagem antes = depois) | teste de `GoreLayer.grow` com 500 decalques |

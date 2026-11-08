@@ -22,7 +22,7 @@
 
 | # | Assert | Verificação |
 |---|---|---|
-| A1 | `rg -n "from 'electron'|steamworks|@capacitor" src` retorna vazio | grep |
+| A1 | `rg -n "from 'electron'\|steamworks\|@capacitor" src` retorna vazio | grep |
 | A2 | `bun run build:desktop` gera `apps/desktop/dist/*.exe` (demo e completo) em CI Windows | artefato do workflow |
 | A3 | Executável abre em fullscreen 1920×1080, roda a run, conquista de teste dispara no overlay da Steam (modo dev com `steam_appid.txt`) | QA manual registrado no ROADMAP |
 | A4 | `bun run build:android` gera AAB; app abre em landscape num aparelho de 6,7", joystick funcional, 55+ FPS no round 10 com `tier` detectado | QA manual + log de FPS |

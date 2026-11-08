@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Developer interview of 2026-11-08 with the decisions for the commercial 1.0 (`docs/brainstorming.md`), Architecture Decision Records ADR-001…015 (`docs/adrs/`) and implementation specs SDD-001…013 with verifiable acceptance criteria (`docs/sdds/`).
 - Game Design Document (`docs/gdd.md`), Art Bible (`docs/visual.md`), sound direction (`docs/audio.md`), balancing and simulation playbook (`docs/balancing-and-simulation.md`), agent/git workflow (`docs/workflow.md`) and the commercial site spec (`docs/site.md`).
 - Branch `legacy-voices` with the isometric build and the hero voices before their removal.
+- `ROADMAP.md` with dated milestones up to the 1.0 launch, one owner, DoD, assert and audit checkbox per task, asset budget, risks and the developer's pending items.
+- Open source project files: root `README.md`, `LICENSE.md` (MIT for the code, assets all rights reserved), `CONTRIBUTING.md`, `.github/SECURITY.md`, `.github/CODE_OF_CONDUCT.md`, a CI workflow (`lint`, `typecheck`, `test`, `build`) and Dependabot.
+- Release tooling in the vukem style: `scripts/release.ts`, `scripts/release-backfill.ts` and `scripts/lib/release-notes.ts`.
+- Provider-agnostic agent setup: `.claude/` renamed to `.agents/` with twelve short rules in `.agents/rules/` (workflow, commits, changelog, TypeScript, Phaser 4, React UI, game data and i18n, testing, assets, balance, secrets, docs); `CLAUDE.md` now points to `AGENTS.md`.
+- markdownlint configuration and the `bun run lint:md` script.
 
 ### Changed
 
@@ -35,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- The Starfall Survivors tags (`v1.0.0-alpha.2…v1.0.0-rc.1`, `v0.1.0`, `pinguin-survivors-final`) were deleted from the repository so that there is exactly one tag per release; their commits stay on the `starfall-survivors-legacy` branch.
+- `PLAN.md` is no longer tracked (it stays in the git history and locally as the frozen plan of the isometric prototype).
+- Eighteen third-party or meta skills that do not fit the 1.0 direction (Phaser 3 guide, physics, itch.io, monetization, duplicates); reasons in `.agents/skills/THIRD_PARTY.md`.
 - Legacy docs merged elsewhere: `game-design.md`, `ui-hud.md`, `art-and-assets.md`, `art-prompts.md`, `game-market.md`, `tooling.md`, `agent-workflow.md`, `git-and-versioning.md`, `balancing.md`, `decisions.md` (now `docs/adrs/ADR-000-decisoes-anteriores.md`).
 
 ## [0.0.10] - 2026-09-27

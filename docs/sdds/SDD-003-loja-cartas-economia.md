@@ -33,7 +33,7 @@
 | A3 | Fluxo E2E: round 1 termina → loja abre → compra → reroll → lock → próximo round; Fish debitado corretamente | `bun run e2e` cenário `shop` |
 | A4 | Save v1 com `fish: 120` migra para `pearls: 120`, `fish` ausente | `tests/save.test.ts` |
 | A5 | Bot médio L1: morte mediana entre rounds 8 e 20 com a política de compra | `bun scripts/playtest-bot.ts --levels 1 --runs 2` |
-| A6 | Nenhuma carta de level-up contém `kind: 'weapon'|'evolve'` | `tests/cards.test.ts` |
+| A6 | Nenhuma carta de level-up contém `kind: 'weapon'\|'evolve'` | `tests/cards.test.ts` |
 
 ## Fora de escopo
 

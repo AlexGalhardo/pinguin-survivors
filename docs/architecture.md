@@ -22,7 +22,7 @@
 |---|---|---|
 | Linguagem | **TypeScript** strict | |
 | Bundler | **Vite 8** | multi-target por env (`VITE_DEMO`) |
-| Engine do mundo | **Phaser 4.2.x** (WebGL) | só mundo, entidades, VFX, câmera, áudio. **Phaser 4 ≠ 3**: skills em `.claude/skills/` |
+| Engine do mundo | **Phaser 4.2.x** (WebGL) | só mundo, entidades, VFX, câmera, áudio. **Phaser 4 ≠ 3**: skills em `.agents/skills/` |
 | UI | **React 19 + Tailwind CSS v4** | overlay DOM; todas as telas (ADR-002) |
 | Física | nenhuma engine: simulação própria + `SpatialGrid` | testável em TS puro |
 | Runtime/testes | **Bun 1.4.x**, `bun:test`, Playwright (E2E, bot, QA) | |

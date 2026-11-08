@@ -18,8 +18,8 @@ Branch `legacy-voices` criada a partir de `main` e enviada ao origin em 2026-11-
 
 | # | Assert | Verificação |
 |---|---|---|
-| A1 | `rg -n "voice|subtitle|vo\." src tests scripts --glob '!**/voice-limiter*' --glob '!**/sfx-limiter*'` retorna vazio | grep |
+| A1 | `rg -n "voice\|subtitle\|vo\." src tests scripts --glob '!**/voice-limiter*' --glob '!**/sfx-limiter*'` retorna vazio | grep |
 | A2 | `ls public/assets/audio` não contém `vo/`; `du -sh public/assets` cai ≥ 3 MB | shell |
-| A3 | `bun run check && bun run typecheck && bun test && bun run build` verdes | gates |
+| A3 | `bun run lint && bun run typecheck && bun test && bun run build` verdes | gates |
 | A4 | E2E completo sem erros de console após a remoção | `bun run e2e` |
 | A5 | CHANGELOG `[Unreleased] → Removed` registra a remoção e aponta para `legacy-voices` | arquivo |

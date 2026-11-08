@@ -44,7 +44,7 @@ Build para o bot: `NODE_ENV=development vite build --mode development && vite pr
 1. **Hipótese** escrita (ex.: "Bob L1 forte demais: chega ao 45"). Registrar em `docs/reports/balance-<data>.md` §Hipótese.
 2. **Sim** com a mudança candidata (A/B por seed): aceitar só se mover a métrica na direção certa sem quebrar as outras metas.
 3. **Bot** nos perfis afetados (2 seeds, bot médio); se a métrica estiver dentro da faixa, aplicar em `src/data/` e neste arquivo (Parte B).
-4. **Gates**: `bun test` (inclui `sim.test.ts`), `bun run check`, `typecheck`.
+4. **Gates**: `bun test` (inclui `sim.test.ts`), `bun run lint`, `typecheck`.
 5. **Commit** `balance(<escopo>): …` com o link do relatório; CHANGELOG `### Changed` → "Balance: …".
 6. **Orçamento**: no máximo 3 passadas de bot por milestone (~1 h cada); se não fechar, registrar o que ficou fora e por quê.
 
@@ -101,14 +101,13 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 - [ ] Sim A/B (mesmas seeds) anexada ao relatório.
 - [ ] Bot nos perfis afetados (2 seeds).
 - [ ] `src/data/*` e Parte B atualizados no mesmo commit.
-- [ ] `bun test` (inclui `sim.test.ts`), `check`, `typecheck` verdes.
+- [ ] `bun test` (inclui `sim.test.ts`), `lint`, `typecheck` verdes.
 - [ ] CHANGELOG `### Changed` → "Balance: …".
 - [ ] Relatório em `docs/reports/balance-<data>.md`.
 
 ## Parte B — Números e fórmulas
 
 > Espelho de `src/data/*.ts` no estado de 2026-09-27 (design isométrico, arma assinada, EASY/NORMAL/HARD). Itens marcados **[1.0: revisar]** mudam com as SDDs 001–005; a tabela por arma × tier entra com a SDD-002.
-
 
 ### 1. Rounds
 
@@ -398,6 +397,7 @@ Com a prioridade de alvo boss/elite, a cura de 25% entre rounds, o alcance novo 
 Contra o critério §9.1: **#1** ✗ (Lucia morre nos rounds 24–26 com L10); **#2** Jack e Bob ✓, Lucia não medida; **#3** ✗ (Bob L1 chega aos rounds 45–51: forte demais para jogador novo); **#4** ✗ (Bob L20 passou do 60; falta o `speedPerLoop` e/ou dano por volta maior); **#5** não medido.
 
 **Próximos passos (pendentes):**
+
 1. Lucia: +sobrevivência (HP 85 → ~100, armadura 1 → 3) e medir de novo o #1.
 2. Bob: devolver parte do buff (escopeta cano duplo 8 → 7 por bago) e medir L1 com 2 seeds.
 3. Endless: `speedPerLoop` 1 → ~1,1 e/ou `dmgPerLoop` 1,5 → 1,8 até o #4 passar.

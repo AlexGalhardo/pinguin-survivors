@@ -10,7 +10,7 @@
 - RF-04 SEO estático: `<title>`, `description`, Open Graph/Twitter cards com key art, `hreflang` por idioma, `sitemap` (`@astrojs/sitemap`), `robots.txt`. Sem analytics, sem cookies, sem fontes externas (fontes self-hosted via `@fontsource`).
 - RF-05 Performance: Lighthouse ≥ 95 em Performance, Acessibilidade, Best Practices e SEO; imagens em AVIF/WebP via `astro:assets`; peso da landing ≤ 600 kB sem o vídeo.
 - RF-06 Build pipeline: `bun run build:demo` (raiz, `VITE_DEMO=1`, `base: '/demo/'`) → copiar `dist-demo/` para `site/public/demo/` → `cd site && bun run build` → `site/dist/`. Script `bun scripts/build-site.ts` faz tudo.
-- RF-07 Deploy `.github/workflows/pages.yml` em push na `main` que toque `site/**`, `src/**`, `public/**` ou o workflow: gates do jogo (`check`, `typecheck`, `test`) → `build-site` → `actions/upload-pages-artifact` → `actions/deploy-pages`. `site.astro.config` lê `SITE_BASE` (`/pinguin-survivors/` no Pages de projeto; `/` com DNS próprio) e `SITE_URL`.
+- RF-07 Deploy `.github/workflows/pages.yml` em push na `main` que toque `site/**`, `src/**`, `public/**` ou o workflow: gates do jogo (`lint`, `typecheck`, `test`) → `build-site` → `actions/upload-pages-artifact` → `actions/deploy-pages`. `site.astro.config` lê `SITE_BASE` (`/pinguin-survivors/` no Pages de projeto; `/` com DNS próprio) e `SITE_URL`.
 - RF-08 O jogo completo nunca entra no site.
 
 ## Especificação
@@ -25,7 +25,7 @@
 | # | Assert | Verificação |
 |---|---|---|
 | A1 | `cd site && bun run build` termina sem erros e gera `dist/index.html`, `dist/pt-br/index.html`, `dist/es/index.html`, `dist/zh-cn/index.html`, `dist/demo/index.html` | saída do build + `ls` |
-| A2 | `rg -n "astro:server|output: 'server'|adapter" site/astro.config.mjs` vazio | grep |
+| A2 | `rg -n "astro:server\|output: 'server'\|adapter" site/astro.config.mjs` vazio | grep |
 | A3 | Lighthouse (chrome-devtools) em `dist/index.html` servido por `bunx serve`: ≥ 95 nas 4 categorias | relatório |
 | A4 | Screenshot 1920×1080 e 1366×768: landing sem barra de scroll; 390×844: layout em coluna única legível | agent-browser |
 | A5 | `/demo/` carrega o jogo demo, round 1 começa, zero erros de console, `href` do wishlist aponta para a página da Steam | agent-browser |

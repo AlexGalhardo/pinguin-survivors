@@ -10,7 +10,7 @@
 - RF-04 Tradução por IA (agente `text-editor`) a partir do EN com instrução de registro (ES neutro latino-americano; ZH simplificado, tom de jogo de ação), seguida de revisão humana marcada em `docs/i18n-glossary.md` (tabela de status por domínio).
 - RF-05 Fonte CJK `@fontsource/noto-sans-sc` carregada só quando `locale === 'zh-CN'`; fallback do sistema até carregar.
 - RF-06 Layouts validados em ES (textos ~20% mais longos) e ZH (glifos altos, textos curtos) em 1920×1080 e 2400×1080; sem overflow em HUD, loja, cartas e menus.
-- RF-07 Detecção inicial por `navigator.language` (zh* → zh-CN, es* → es, pt* → pt-BR, senão en); troca em Configurações; persistida no save.
+- RF-07 Detecção inicial por `navigator.language` (zh*→ zh-CN, es* → es, pt* → pt-BR, senão en); troca em Configurações; persistida no save.
 - RF-08 Site (SDD-008) e página da Steam usam o mesmo glossário.
 
 ## Especificação

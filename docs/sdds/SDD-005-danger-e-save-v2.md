@@ -22,7 +22,7 @@
 
 | # | Assert | Verificação |
 |---|---|---|
-| A1 | `extraWaves(seed, 0|1)` vazio; `(…, 2|3)` 1 round; `(…, 4|5)` 3 rounds distintos em [4, 19] | `bun test tests/difficulty.test.ts` |
+| A1 | `extraWaves(seed, 0\|1)` vazio; `(…, 2\|3)` 1 round; `(…, 4\|5)` 3 rounds distintos em [4, 19] | `bun test tests/difficulty.test.ts` |
 | A2 | Save v1 real (fixture `tests/fixtures/save-v1.json`) migra sem lançar e sem perder heróis, XP, conquistas | `tests/save.test.ts` |
 | A3 | Migrar duas vezes dá o mesmo objeto | teste |
 | A4 | Vencer boss 20 no D1 em run simulada libera D2 só para aquele herói | `tests/progression.test.ts` |

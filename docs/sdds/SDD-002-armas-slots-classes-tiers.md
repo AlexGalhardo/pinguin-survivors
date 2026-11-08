@@ -9,7 +9,7 @@
 - RF-03 **Sets**: `blade, blunt, thrown, gun, explosive, elemental, support`. Bônus por contagem 2/4/6 em `src/data/sets.ts`, aplicado em `PlayerStats` como modificadores (ex.: `blade: +5/+12/+25% chance de sangramento`).
 - RF-04 **Fusão**: `fuse(build, idA, idB)` só se `id` e `tier` iguais e `tier < 4`; resultado tier+1 ocupa um slot; oferecida automaticamente na loja ao comprar a 2ª igual (confirmação).
 - RF-05 **Arma inicial**: `HeroDef.startingWeapons: WeaponId[]` (3 por herói); seleção na `HeroSelect`; desbloqueio de mais armas iniciais com Pérolas (`src/data/unlocks.ts`).
-- RF-06 As antigas secundárias com comportamento de arma viram `WeaponDef` (knives, molotov, iceShards, auxPistol, fishBoomerang, mine, flameRing, lightningTotem, poisonCloud, crossbow, bladeWhirl*, droneSentinel*, grenadeBelt*; * exclusivas do herói: só aparecem na loja/inicial daquele herói).
+- RF-06 As antigas secundárias com comportamento de arma viram `WeaponDef` (knives, molotov, iceShards, auxPistol, fishBoomerang, mine, flameRing, lightningTotem, poisonCloud, crossbow, bladeWhirl*, droneSentinel*, grenadeBelt*;* exclusivas do herói: só aparecem na loja/inicial daquele herói).
 - RF-07 Exclusivas passivas/ativas (bloodlust, counterAttack, ironSkin, butcher, hollowPoints, ricochet, runAndGun, reflex, elementalAttunement, arcaneChain, frostNova, meteorShower, arcaneBarrier, toxicBloom, seismicStomp) continuam como **cartas exclusivas** (SDD-003). Cada herói recebe 1 exclusiva nova para repor a que virou arma (propostas: Jack *Fôlego de Ferro* +regen por inimigo próximo; Bob *Recarga Rápida* +cadência após abate; Lucia *Eco Arcano* repete 1 projétil a cada N).
 - RF-08 `WeaponRing` posiciona até 6 armas em anel (raio 26 u, ângulos iguais, rotação lenta); cada `WeaponView` mira e anima o alvo mais próximo no alcance; prioridade boss/elite.
 - RF-09 Multiplicadores por classe do herói continuam (balancing-and-simulation.md Parte B §4).
@@ -33,7 +33,7 @@
 | A4 | Cada herói tem 3 armas iniciais válidas da sua classe favorita ou neutras | `tests/heroes.test.ts` |
 | A5 | Sim: Jack/Bob/Lucia L1 com 6 slots morrem entre os rounds 8 e 20 (meta balancing-and-simulation.md Parte B §9.1 #3) | `bun scripts/sim.ts 20` |
 | A6 | 6 armas visíveis ao redor do herói em `?skipMenu=1&weapons=machete,knives,molotov,auxPistol,iceShards,flameRing` | agent-browser |
-| A7 | `rg "signature|evolve|tierUp" src` retorna vazio | grep |
+| A7 | `rg "signature\|evolve\|tierUp" src` retorna vazio | grep |
 
 ## Fora de escopo
 
