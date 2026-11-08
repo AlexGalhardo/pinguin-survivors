@@ -2,6 +2,7 @@ import { HERO_IDS, type HeroId } from '../config/constants';
 import { setResolution } from '../core/display';
 import { exportSave, exportTelemetry, importSave, writeSave } from '../core/storage';
 import { ACHIEVEMENT_SHOP, ACHIEVEMENTS } from '../data/achievements';
+import { isDemoBuild } from '../data/demo';
 import { RESOLUTION_IDS } from '../data/display';
 import { HEROES } from '../data/heroes';
 import { GAMBIT_CONDITIONS, POTION_PRICES, POTION_TYPES } from '../data/potions';
@@ -14,12 +15,14 @@ import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/
 import { freePoints, xpToNext } from '../logic/progression';
 import { type GoreMode, NUMBER_SIZES, type SaveData } from '../logic/save';
 import { getStat, heroStats, POINT_VALUES, type PointStat } from '../logic/stats';
+import { availableStartingWeapons, buyStartingWeapon, unlockableWeapons } from '../logic/unlocks';
 import { buyUpgrade, upgradeCost, upgradeLevel } from '../logic/upgrades';
 import { achievementDescription, achievementName } from './achievement-text';
 import { menuCommands } from './commands';
 import type { SettingsRow } from './components/Settings';
 import { ensureLangFont } from './lang-font';
 import type { MenuView } from './Router';
+import { publishUnlock } from './run-bridge';
 import { getUiSave, touchSave } from './save-bridge';
 import { uiStore } from './store';
 
@@ -120,7 +123,7 @@ function heroSelect(save: SaveData): MenuView {
 				bestRound: save.progress.hero[id].bestRound,
 				maxDanger: demoDanger(maxSelectableDanger(save, id)),
 				bestByDanger: save.bestRoundByDanger[id],
-				weapons: HEROES[id].startingWeapons,
+				weapons: availableStartingWeapons(save, id),
 			})),
 		},
 		actions: {
@@ -161,6 +164,7 @@ function heroScreen(save: SaveData): MenuView {
 				price: POTION_PRICES[type],
 			})),
 			gambits: save.gambits.map((g) => ({ potion: g.potion, condition: g.condition })),
+			weaponUnlocks: isDemoBuild() ? [] : unlockableWeapons(save, hero),
 			upgrades: UPGRADES.map((def) => {
 				const level = upgradeLevel(save.upgrades, def.id);
 				return {
@@ -201,6 +205,13 @@ function heroScreen(save: SaveData): MenuView {
 				if (!g) return;
 				g.condition = cycle(conditionChoices, g.condition, 1);
 				persist(save);
+			},
+			buyWeapon: (weapon) => {
+				if (isDemoBuild()) return;
+				const id = unlockableWeapons(save, hero).find((u) => u.weapon === weapon)?.weapon;
+				if (!id || !buyStartingWeapon(save, hero, id)) return;
+				persist(save);
+				publishUnlock({ kind: 'weapon', id });
 			},
 			buyUpgrade: (id) => {
 				const def = UPGRADES.find((u) => u.id === id);

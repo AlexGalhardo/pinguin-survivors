@@ -9,4 +9,6 @@ export const menusZhCN = {
 	'touch.super': '超能力',
 	'touch.speed': '游戏速度',
 	'touch.pause': '暂停',
+	'workshop.weapons': '{hero} 的初始武器',
+	'workshop.weaponRow': '{name}  ·  {price} 珍珠',
 } as const;

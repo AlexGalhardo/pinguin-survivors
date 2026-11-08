@@ -17,11 +17,14 @@ export const runUiStore = createStore<{
 	pause: PauseData | null;
 	over: RunOverView | null;
 	demoEnd: DemoEndData | null;
-}>({ levelUp: null, pause: null, over: null, demoEnd: null });
+	/** A notice outside the run summary (e.g. a starting weapon bought in the hero screen). */
+	unlock: UnlockData | null;
+}>({ levelUp: null, pause: null, over: null, demoEnd: null, unlock: null });
 
 /** `null` closes the screen. */
 export const publishLevelUp = (levelUp: LevelUpData | null): void => runUiStore.set({ levelUp });
 export const publishPause = (pause: PauseData | null): void => runUiStore.set({ pause });
+export const publishUnlock = (unlock: UnlockData | null): void => runUiStore.set({ unlock });
 export const publishDemoEnd = (demoEnd: DemoEndData | null): void => runUiStore.set({ demoEnd });
 export const publishRunOver = (over: RunOverView | null): void => runUiStore.set({ over });
 

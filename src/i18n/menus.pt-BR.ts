@@ -9,4 +9,6 @@ export const menusPtBR = {
 	'touch.super': 'Superpoder',
 	'touch.speed': 'Velocidade do jogo',
 	'touch.pause': 'Pausar',
+	'workshop.weapons': 'Armas iniciais de {hero}',
+	'workshop.weaponRow': '{name}  ·  {price} pérolas',
 } as const;

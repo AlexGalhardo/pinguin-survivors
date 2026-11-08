@@ -257,3 +257,23 @@ describe('set and tier IV records (T7.8)', () => {
 		expect(old.progress.runBests.tierIVSlots).toBe(0);
 	});
 });
+
+describe('starting weapon unlocks (SDD-005 RF-05)', () => {
+	test('round-trip keeps them; old saves, junk ids and duplicates parse to a clean list', () => {
+		const s = defaultSave();
+		s.unlocks.startingWeapons.jack = ['hammer', 'molotov'];
+		expect(parseSave(serializeSave(s)).unlocks.startingWeapons.jack).toEqual([
+			'hammer',
+			'molotov',
+		]);
+		const raw = JSON.parse(serializeSave(s));
+		raw.unlocks.startingWeapons.bob = ['mine', 'mine', 'nope', 7];
+		expect(parseSave(JSON.stringify(raw)).unlocks.startingWeapons.bob).toEqual(['mine']);
+		delete raw.unlocks;
+		expect(parseSave(JSON.stringify(raw)).unlocks.startingWeapons).toEqual({
+			jack: [],
+			bob: [],
+			lucia: [],
+		});
+	});
+});

@@ -2,6 +2,7 @@ import { type ReactElement, useState } from 'react';
 import type { HeroId } from '../../config/constants';
 import { type I18nKey, t } from '../../i18n';
 import { Btn } from './Btn';
+import { weaponName } from './Hud';
 import { AdjustRow, MenuScreen } from './MenuScreen';
 
 export interface HeroScreenData {
@@ -19,6 +20,8 @@ export interface HeroScreenData {
 	potions: readonly { type: string; owned: number; price: number }[];
 	/** The 3 gambit slots; null = empty. */
 	gambits: readonly { potion: string | null; condition: string | null }[];
+	/** Starting weapons for sale to the selected hero; empty hides the section (demo, all owned). */
+	weaponUnlocks: readonly { weapon: string; cost: number }[];
 	/** Workshop upgrades; `cost` is null at max level, `bonus` already formatted. */
 	upgrades: readonly {
 		id: string;
@@ -37,6 +40,7 @@ export interface HeroScreenActions {
 	cycleGambitPotion: (slot: number, dir: -1 | 1) => void;
 	cycleGambitCondition: (slot: number) => void;
 	buyUpgrade: (id: string) => void;
+	buyWeapon: (weapon: string) => void;
 	back: () => void;
 }
 
@@ -171,6 +175,23 @@ export function HeroScreen({
 										? t('workshop.maxed')
 										: t('workshop.price', { n: u.cost }),
 							})}
+						</Btn>
+					))}
+				</div>
+			)}
+			{tab === 'workshop' && data.weaponUnlocks.length > 0 && (
+				<div className="flex w-full max-w-[44rem] flex-col gap-2">
+					<div className="text-center font-bold text-fish">
+						{t('workshop.weapons', { hero: t(`hero.${data.hero}` as I18nKey) })}
+					</div>
+					{data.weaponUnlocks.map((u) => (
+						<Btn
+							key={u.weapon}
+							onActivate={() => actions.buyWeapon(u.weapon)}
+							disabled={data.pearls < u.cost}
+							className="border-snow text-left font-normal"
+						>
+							{t('workshop.weaponRow', { name: weaponName(u.weapon), price: u.cost })}
 						</Btn>
 					))}
 				</div>

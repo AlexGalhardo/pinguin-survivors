@@ -2,7 +2,7 @@ import { type ReactElement, useSyncExternalStore } from 'react';
 import { platform } from '../../core/platform';
 import { STEAM_URL } from '../../data/demo';
 import { commands } from '../commands';
-import { dismissUnlock, runUiStore } from '../run-bridge';
+import { dismissUnlock, publishUnlock, runUiStore } from '../run-bridge';
 import { uiStore } from '../store';
 import { DemoEnd } from './DemoEnd';
 import { GameOver } from './GameOver';
@@ -14,6 +14,8 @@ import { Unlock } from './Unlock';
 export function RunHost(): ReactElement | null {
 	const s = useSyncExternalStore(runUiStore.subscribe, () => runUiStore.get());
 	const screen = useSyncExternalStore(uiStore.subscribe, () => uiStore.get().screen);
+	if (s.unlock)
+		return <Unlock data={s.unlock} actions={{ dismiss: () => publishUnlock(null) }} />;
 	if (s.demoEnd)
 		return (
 			<DemoEnd

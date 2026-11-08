@@ -18,6 +18,7 @@ const { defaultSave } = await import('../../src/logic/save');
 const { menuView } = await import('../../src/ui/menu-controller');
 const { bindMenuCommands } = await import('../../src/ui/commands');
 const { uiStore } = await import('../../src/ui/store');
+const { runUiStore } = await import('../../src/ui/run-bridge');
 const { setLang } = await import('../../src/i18n');
 type SaveData = import('../../src/logic/save').SaveData;
 
@@ -88,6 +89,27 @@ describe('hero screen', () => {
 	test('cannot spend points or pearls that are not there', () => {
 		view('hero').actions.spendPoint('maxHp');
 		view('hero').actions.buyPotion('heal');
+		expect(writes.length).toBe(0);
+	});
+
+	test('a starting weapon is bought with pearls, listed in the select and announced', () => {
+		save.pearls = 500;
+		const offer = view('hero').data.weaponUnlocks.find((u) => u.weapon === 'hammer');
+		if (!offer) throw new Error('hammer should be for sale');
+		view('hero').actions.buyWeapon('hammer');
+		expect(save.pearls).toBe(500 - offer.cost);
+		expect(save.unlocks.startingWeapons.jack).toEqual(['hammer']);
+		expect(view('hero').data.weaponUnlocks.some((u) => u.weapon === 'hammer')).toBe(false);
+		expect(view('hero-select').data.heroes[0]?.weapons).toContain('hammer');
+		expect(runUiStore.get().unlock).toEqual({ kind: 'weapon', id: 'hammer' });
+		view('hero').actions.buyWeapon('hammer');
+		expect(save.pearls).toBe(500 - offer.cost);
+	});
+
+	test('no weapon without pearls, and other heroes exclusives are not for sale', () => {
+		view('hero').actions.buyWeapon('hammer');
+		expect(save.unlocks.startingWeapons.jack).toEqual([]);
+		expect(view('hero').data.weaponUnlocks.some((u) => u.weapon === 'grenadeBelt')).toBe(false);
 		expect(writes.length).toBe(0);
 	});
 

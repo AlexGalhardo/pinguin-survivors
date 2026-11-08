@@ -9,4 +9,6 @@ export const menusEn = {
 	'touch.super': 'Superpower',
 	'touch.speed': 'Game speed',
 	'touch.pause': 'Pause',
+	'workshop.weapons': 'Starting weapons for {hero}',
+	'workshop.weaponRow': '{name}  ·  {price} pearls',
 } as const;

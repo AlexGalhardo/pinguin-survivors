@@ -227,6 +227,7 @@ describe('HeroScreen and lists', () => {
 						pearls: 20,
 						potions: [{ type: 'heal', owned: 1, price: 10 }],
 						gambits: [{ potion: null, condition: null }],
+						weaponUnlocks: [],
 						upgrades: [{ id: 'recovery', level: 1, max: 5, bonus: '+1', cost: 8 }],
 					},
 					actions: actionsOf([
@@ -236,6 +237,7 @@ describe('HeroScreen and lists', () => {
 						'cycleGambitPotion',
 						'cycleGambitCondition',
 						'buyUpgrade',
+						'buyWeapon',
 						'back',
 					]),
 				}}

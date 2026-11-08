@@ -17,6 +17,7 @@ import {
 	type PotionType,
 } from '../data/potions';
 import { SET_IDS, type SetId } from '../data/sets';
+import { WEAPON_LINE_BY_ID, type WeaponId } from '../data/weapons';
 import { LANGS, type Lang } from '../i18n';
 import {
 	type AchievementProgress,
@@ -122,6 +123,8 @@ export interface SaveData {
 	/** Run-end events of this machine (newest last, capped); exported with the save. */
 	telemetry: RunEndEvent[];
 	activeRun: RunSnapshot | null;
+	/** Pearl unlocks (SDD-005 RF-05): extra starting weapons per hero. */
+	unlocks: { startingWeapons: Record<HeroId, WeaponId[]> };
 }
 
 export function defaultSave(lang: Lang = 'en'): SaveData {
@@ -156,6 +159,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 		history: [],
 		telemetry: [],
 		activeRun: null,
+		unlocks: { startingWeapons: { jack: [], bob: [], lucia: [] } },
 	};
 }
 
@@ -332,6 +336,23 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 			.slice(0, HISTORY_SIZE),
 		telemetry: parseRunEndEvents(r.telemetry),
 		activeRun: isRunSnapshot(r.activeRun) ? r.activeRun : null,
+		unlocks: parseUnlocks(r.unlocks),
+	};
+}
+
+/** Unknown weapon ids and duplicates are dropped; a missing section is empty (no version bump). */
+function parseUnlocks(v: unknown): SaveData['unlocks'] {
+	const src = isObj(v) && isObj(v.startingWeapons) ? v.startingWeapons : {};
+	return {
+		startingWeapons: Object.fromEntries(
+			HERO_IDS.map((h) => {
+				const row = Array.isArray(src[h]) ? (src[h] as unknown[]) : [];
+				const ids = row.filter(
+					(id): id is WeaponId => typeof id === 'string' && id in WEAPON_LINE_BY_ID,
+				);
+				return [h, [...new Set(ids)]];
+			}),
+		) as Record<HeroId, WeaponId[]>,
 	};
 }
 

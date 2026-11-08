@@ -122,6 +122,7 @@ import {
 } from '../logic/stats';
 import { addCharge, chargeFor, superCost, superReady, superUnlocked } from '../logic/superpower';
 import { recordRunEnd as recordTelemetry } from '../logic/telemetry';
+import { availableStartingWeapons } from '../logic/unlocks';
 import { applyUpgrades } from '../logic/upgrades';
 import { leadWeapon, resolveWeapon } from '../logic/weapons';
 import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
@@ -346,7 +347,7 @@ export class GameScene extends Phaser.Scene {
 		const picked = getRunWeapon(this);
 		this.initWeapons(
 			params.weapon ??
-				(picked && heroDef.startingWeapons.includes(picked)
+				(picked && availableStartingWeapons(save, heroId).includes(picked)
 					? picked
 					: heroDef.startingWeapons[0]),
 			params.weapons,
