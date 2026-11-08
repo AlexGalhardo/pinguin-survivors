@@ -36,3 +36,11 @@ export const SHOP = {
 	luckPerPoint: 0.01,
 	fishToPearls: 10,
 } as const;
+
+/** Persistent Pearls (SDD-003 RF-07): per round `roundBase + floor(N / roundEvery)`. */
+export const PEARLS = {
+	roundBase: 1,
+	roundEvery: 5,
+	boss: 25,
+	achievement: 5,
+} as const;
