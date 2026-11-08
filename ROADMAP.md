@@ -166,8 +166,8 @@ Specs: [SDD-004](docs/sdds/SDD-004-ui-react-tailwind.md), [SDD-005](docs/sdds/SD
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T3.7** Remover cenas Phaser de UI e `installCrispText` · Resp.: senior · Dep.: T3.3–T3.6 · Est.: 4 h · Assert: `rg -n "scene.add.text|add.bitmapText" src/scenes src/systems` só no overlay de debug (A2).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T3.8** `scripts/lint-i18n.ts` (sem literais em JSX) · Resp.: estagiario · Est.: 2 h · Assert: `bun scripts/lint-i18n.ts` retorna 0 (A5).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T3.8** `scripts/lint-i18n.ts` (sem literais em JSX) · Resp.: estagiario · Est.: 2 h · Assert: `bun scripts/lint-i18n.ts` retorna 0 (A5). · Evidência (2026-11-08): `bun scripts/lint-i18n.ts` exit 0 (0 `.tsx` ainda); `bun test tests/lint-i18n.test.ts` 16 pass; script `bun run lint:i18n`.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado exit 0; amostra `<div title="Sair">Iniciar jogo {t("ok")}</div>` acusa `attr Sair` e `text Iniciar jogo`, ignora `t()`.
 - [ ] **T3.9** Danger 0–5: `difficulty.ts`, waves extras, desbloqueio por herói, aviso na loja · Resp.: senior · Dep.: T3.4 · Est.: 6 h · Assert: `tests/difficulty.test.ts`, `tests/progression.test.ts` (SDD-005 A1, A4).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T3.10** Acessibilidade: Lighthouse ≥ 90 na `MainMenu`; hit targets ≥ 44 px · Resp.: estagiario · Est.: 2 h · Assert: relatório chrome-devtools (A6).
