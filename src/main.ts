@@ -1,7 +1,6 @@
-import '@fontsource/pixelify-sans/400.css';
-import '@fontsource/pixelify-sans/700.css';
-import '@fontsource/rubik/500.css';
-import '@fontsource/rubik/700.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/roboto/900.css';
 import Phaser from 'phaser';
 import { gameConfig } from './config/game-config';
 import { setParams, setRunDanger, setRunHero, setRunWeapon, setSave } from './core/context';
@@ -9,6 +8,7 @@ import { attachGame, currentRenderSize, initDisplay } from './core/display';
 import { installGamepad } from './core/gamepad';
 import { refreshMusicVolume } from './core/music';
 import { loadSave } from './core/storage';
+import { forceTier } from './core/tier';
 import type { WeaponId } from './data/weapons';
 import { parseDebugParams } from './debug/params';
 import { detectLang, setLang } from './i18n';
@@ -25,14 +25,9 @@ setLang(save.settings.lang);
 await ensureLangFont(save.settings.lang);
 initDisplay(save.settings.resolution);
 
-// Text objects rasterize once, so the pixel font must be ready before the first scene.
+// Text objects rasterize once, so the font must be ready before the first scene.
 await Promise.all(
-	[
-		'16px "Pixelify Sans"',
-		'bold 16px "Pixelify Sans"',
-		'500 16px "Rubik"',
-		'bold 16px "Rubik"',
-	].map((f) => document.fonts.load(f).catch(() => undefined)),
+	['500 16px "Roboto"', 'bold 16px "Roboto"', '900 16px "Roboto"'].map((f) => document.fonts.load(f).catch(() => undefined)),
 );
 
 const initial = currentRenderSize();
@@ -46,6 +41,7 @@ const game = new Phaser.Game({
 	},
 });
 setParams(game, params);
+forceTier(params.fxTier);
 setSave(game, save);
 publishSave(save);
 if (!params.skipMenu) uiStore.set({ screen: 'main-menu' });

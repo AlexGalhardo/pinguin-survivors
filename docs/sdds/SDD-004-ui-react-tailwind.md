@@ -1,6 +1,6 @@
 # SDD-004 — UI em React + TypeScript + Tailwind CSS v4
 
-**Versão** 1.0 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [002](../adrs/ADR-002-ui-react-tailwind-overlay.md) · **GDD** §21 · **Art Bible** §7
+**Versão** 1.1 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [002](../adrs/ADR-002-ui-react-tailwind-overlay.md) · **GDD** §21 · **Art Bible** §7
 
 ## Requisitos
 
@@ -9,7 +9,7 @@
 - RF-03 Estado: store leve (`src/ui/store.ts`, `useSyncExternalStore`) alimentado pelo `GameScene` via `GameEvents`; comandos do React ao jogo por `GameCommands` tipados (iniciar run, escolher carta, comprar, fechar loja, pausar).
 - RF-04 Input: gerenciador de foco próprio (teclado, gamepad via `GameInput`, toque); foco visível; hit targets ≥ 44 px no toque; `Esc`/`B` volta.
 - RF-05 Layout responsivo com Tailwind v4 (`@theme` com tokens de `palette.ts`); texto em `rem`/`clamp()`; sem zoom inteiro no overlay; testado em 1920×1080, 2560×1440, 2400×1080 e 1366×768.
-- RF-06 Tipografia: Rubik (corpo), Pixelify Sans (títulos), Noto Sans SC (ZH, carregada sob demanda).
+- RF-06 Tipografia: **Roboto** em todo o jogo (corpo 500, títulos 700/900), sem fonte pixelada, por legibilidade (pedido do desenvolvedor, 2026-11-08); Noto Sans SC (ZH, carregada sob demanda).
 - RF-07 `Shop`: grid 2 colunas (paper doll + stats | lojista + 4 ofertas), rodapé fixo; no celular, colunas viram abas.
 - RF-08 Remover cenas Phaser de UI ao fim da migração; `HudScene` substituída; `installCrispText` removido.
 - RF-09 Textos só via `t()` de `src/i18n/`; nenhuma string literal visível em componentes (lint custom).

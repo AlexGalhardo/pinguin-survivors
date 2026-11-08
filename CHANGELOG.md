@@ -10,8 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Extra starting weapons bought with Pearls per hero in the Workshop (SDD-002 RF-05): saved in `unlocks.startingWeapons`, offered in the hero select, announced by an Unlock screen; hidden in the demo.
-
 - Shop sound effects (open, buy, reroll, lock, fuse, out of Fish), element hit sounds (fire, ice, earth, lightning, freeze) and the shop music (ElevenLabs, loudness-normalized).
+
+### Changed
+
+- Every game text uses Roboto (no pixel font) for readability; Pixelify Sans and Rubik are removed.
 
 ## [0.1.0] - 2026-11-08
 

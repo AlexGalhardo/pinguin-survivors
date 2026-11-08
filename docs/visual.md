@@ -71,7 +71,7 @@
 
 ## 7. UI (React + Tailwind)
 
-- Estilo **ARPG sombrio** (Diablo): painéis escuros com borda de metal/osso, títulos em **Pixelify Sans**, corpo em **Rubik** (Noto Sans SC para ZH), ícones 32×32 em pixel art (PixelLab) para cartas, stats, poções, equipamentos.
+- Estilo **ARPG sombrio** (Diablo): painéis escuros com borda de metal/osso, texto todo em **Roboto** — sem fonte pixelada, por legibilidade (Noto Sans SC para ZH), ícones 32×32 em pixel art (PixelLab) para cartas, stats, poções, equipamentos.
 - Tokens em CSS (`@theme` do Tailwind v4) derivados de `palette.ts`: fundo, painel, borda, raridades, elementos, sangue.
 - Componentes-chave: HUD, `Shop` (paper doll + lojista), `LevelUpCards`, `HeroSelect`, `Pause`, `Settings`, `DemoEnd`. Hit targets ≥ 44 px no toque; foco visível; sem texto < 12 px lógicos a ×2.
 - Molduras e botões em CSS/SVG (sem PixelLab), para escalar em qualquer resolução.
