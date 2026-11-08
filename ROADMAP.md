@@ -88,10 +88,10 @@ Specs: [SDD-001](docs/sdds/SDD-001-arena-topdown.md), [SDD-010](docs/sdds/SDD-01
   - [ ] Auditoria: `?round=30&debug=1` mostra contagem de decalques estável após troca de round.
 - [ ] **T1.7** Perf na arena 40×40 (RF-10) · Resp.: estagiario roda, orquestrador decide · Dep.: T1.6 · Est.: 2 h · Assert: `bun scripts/perf.ts --round 40` ≥ 58 FPS, p95 ≤ 18 ms (A5)
   - [ ] Auditoria: anexar saída em `docs/reports/perf-<data>.md`.
-- [ ] **T1.8** Save v2: `pearls`, `dangerUnlocked`, migração v1→v2, `activeRun` descartado (SDD-005 RF-05…07) · Resp.: senior · Est.: 6 h · Assert: `bun test tests/save.test.ts` com fixture `tests/fixtures/save-v1.json` (A2, A3)
-  - [ ] Auditoria: importar um save real exportado do `0.0.10` no build novo sem erro.
-- [ ] **T1.9** `docs/balancing-and-simulation.md` Parte B: marcar `[1.0: revisar]` nos itens afetados pela arena; `architecture.md` conferido · Resp.: estagiario · Est.: 2 h · Assert: `rg -c "1.0: revisar" docs/balancing-and-simulation.md` ≥ 5.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T1.8** Save v2: `pearls`, `dangerUnlocked`, migração v1→v2, `activeRun` descartado (SDD-005 RF-05…07) · Resp.: senior · Est.: 6 h · Assert: `bun test tests/save.test.ts` com fixture `tests/fixtures/save-v1.json` (A2, A3) · Evidência (2026-11-08): `bun test tests/save.test.ts tests/achievements.test.ts` 21 pass; fixture `tests/fixtures/save-v1.json`; `SAVE_VERSION = 2`, `pearls`, `progress.hero[h].dangerUnlocked`, `activeRun` descartado na migração. Restante do RF-05 (`bestRoundByDanger`, `unlocks.startingWeapons`, `settings.locale`, remoção de `fish`/`difficulty`/`activeRun` do tipo) fica com T2.7/T3.9/T7.6.
+  - [x] Auditoria: importar um save real exportado do `0.0.10` no build novo sem erro. · Conferido (2026-11-08, orquestrador): save gerado por `serializeSave` do código de `v0.0.10` (`git archive`) lido pelo `parseSave` novo → `version 2`, Jack L17/XP 900 e conquistas mantidos, `activeRun null`, `dangerUnlocked 1`, reparse idêntico.
+- [x] **T1.9** `docs/balancing-and-simulation.md` Parte B: marcar `[1.0: revisar]` nos itens afetados pela arena; `architecture.md` conferido · Resp.: estagiario · Est.: 2 h · Assert: `rg -c "1.0: revisar" docs/balancing-and-simulation.md` ≥ 5. · Evidência (2026-11-08): `rg -c "1.0: revisar"` = 12 (11 marcações + legenda); `architecture.md` conferido sem resquício iso/chunks; SDD-001 A6 corrigida (v1.1: 640 u > altura lógica 540).
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado = 12; lido o diff de `balancing-and-simulation.md` (12 linhas, só etiquetas e versão 2.1).
 - [ ] **T1.10** Release `0.0.12` (T1.1–T1.3) e `0.0.13` (T1.4–T1.9) · Resp.: orquestrador · Assert: `gh release list` mostra as duas.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 

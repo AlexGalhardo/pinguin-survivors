@@ -30,7 +30,7 @@ import { DEFAULT_BINDS, type KeyBinds, parseBinds } from './keybinds';
  * Local save (localStorage, one JSON document). SemVer public API: bump SAVE_VERSION and add a
  * migration whenever the shape changes incompatibly.
  */
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 export const SAVE_KEY = 'pinguin-survivors.save';
 export const HISTORY_SIZE = 20;
 
@@ -107,6 +107,8 @@ export interface SaveData {
 	settings: Settings;
 	heroes: Record<HeroId, HeroSave>;
 	fish: number;
+	/** Meta currency (SDD-005 RF-05); Fish→Pearls conversion lands with T2.7. */
+	pearls: number;
 	potions: Record<PotionType, number>;
 	gambits: Gambit[];
 	upgrades: Record<string, number>;
@@ -136,6 +138,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			HERO_IDS.map((h) => [h, { unlocked: h === 'jack', level: 1, xp: 0, points: {} }]),
 		) as Record<HeroId, HeroSave>,
 		fish: 0,
+		pearls: 0,
 		potions: Object.fromEntries(POTION_TYPES.map((p) => [p, 0])) as Record<PotionType, number>,
 		gambits: Array.from({ length: GAMBIT_SLOTS }, () => ({ potion: null, condition: null })),
 		upgrades: {},
@@ -162,7 +165,28 @@ function numRecord<K extends string>(v: unknown, keys: readonly K[], base: Recor
 }
 
 /** Past versions → current. Each step receives the raw object of version N and returns N+1. */
-const MIGRATIONS: Record<number, (raw: Json) => Json> = {};
+const MIGRATIONS: Record<number, (raw: Json) => Json> = {
+	// v1 → v2: the in-progress run is incompatible with the new run model, so it is dropped; the old
+	// `difficulty` setting maps to Danger 1 unlocked for every hero. Voice settings are simply not read.
+	1: (raw) => {
+		const progress = isObj(raw.progress) ? raw.progress : {};
+		const hero = isObj(progress.hero) ? progress.hero : {};
+		return {
+			...raw,
+			pearls: raw.pearls ?? 0,
+			activeRun: null,
+			progress: {
+				...progress,
+				hero: Object.fromEntries(
+					HERO_IDS.map((h) => [
+						h,
+						{ dangerUnlocked: 1, ...(isObj(hero[h]) ? hero[h] : {}) },
+					]),
+				),
+			},
+		};
+	},
+};
 
 /**
  * Parses a stored/imported save. Never throws: corrupt or missing data falls back to defaults
@@ -254,6 +278,11 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 			: [],
 	};
 
+	for (const h of HERO_IDS) {
+		const stats = progress.hero[h];
+		stats.dangerUnlocked = Math.min(6, Math.max(1, Math.floor(stats.dangerUnlocked)));
+	}
+
 	const a = isObj(r.achievements) ? r.achievements : {};
 	const achievements: AchievementState = {
 		unlocked: isObj(a.unlocked)
@@ -275,6 +304,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		settings,
 		heroes,
 		fish: num(r.fish, 0),
+		pearls: num(r.pearls, 0),
 		potions: numRecord(r.potions, POTION_TYPES, base.potions),
 		gambits,
 		upgrades: isObj(r.upgrades)

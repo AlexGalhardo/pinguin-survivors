@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Save v2 (SDD-005): `SAVE_VERSION = 2`, `pearls` and per-hero `dangerUnlocked`; v1 saves migrate idempotently and drop the in-progress run.
+- Pure arena logic (`src/logic/arena.ts`, `src/data/arena.ts`): side per round, centered bounds, clamp, inner spawn ring and prop layout (SDD-001).
+
 ### Removed
 
 - Hero voices and subtitles (ADR-009, SDD-010): `vo.*` audio, `src/core/voice.ts`, `src/data/voice.ts`, `src/logic/voice.ts`, the voice i18n tables, `scripts/el-voice.ts`, the ElevenLabs voice designs, the voice volume and subtitle settings and the HUD subtitle. The voiced build lives on the `legacy-voices` branch.
@@ -14,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `VoiceLimiter` renamed to `SfxLimiter` (`src/logic/sfx-limiter.ts`) and the per-key `voices` field of `src/data/sfx.ts` to `polyphony`; `menu.subtitle` renamed to `menu.tagline`.
+- `docs/balancing-and-simulation.md` Part B tags the numbers the square arena affects with `[1.0: revisar]`; SDD-001 A6 now matches the 540-unit logical height.
 
 ## [0.0.11] - 2026-11-08
 

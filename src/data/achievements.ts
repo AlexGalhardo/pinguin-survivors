@@ -36,7 +36,14 @@ export const LIFETIME_STATS = [
 export type LifetimeStat = (typeof LIFETIME_STATS)[number];
 
 /** Per-hero lifetime counters. */
-export const HERO_STATS = ['exclusiveCards', 'superUses', 'bestRound', 'evolvedT3'] as const;
+/** `dangerUnlocked` = highest Danger selectable for the hero (SDD-005 RF-03); starts at 1. */
+export const HERO_STATS = [
+	'exclusiveCards',
+	'superUses',
+	'bestRound',
+	'evolvedT3',
+	'dangerUnlocked',
+] as const;
 export type HeroStat = (typeof HERO_STATS)[number];
 
 /** Best value reached inside a single run. */

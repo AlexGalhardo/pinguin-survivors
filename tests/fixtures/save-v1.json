@@ -1,0 +1,46 @@
+{
+	"version": 1,
+	"settings": {
+		"lang": "pt-BR",
+		"volume": { "master": 0.7, "music": 0.5, "sfx": 0.9, "voice": 0.8 },
+		"subtitles": true,
+		"gore": "reduced",
+		"screenShake": false,
+		"bloomOptIn": false,
+		"numberSize": "large",
+		"reducedFlashes": true,
+		"keys": {},
+		"difficulty": "hard",
+		"damageNumbers": true,
+		"resolution": "auto"
+	},
+	"heroes": {
+		"jack": { "unlocked": true, "level": 23, "xp": 140, "points": { "crit": 4, "hp": 6 } },
+		"bob": { "unlocked": true, "level": 9, "xp": 55, "points": { "dmg": 3 } },
+		"lucia": { "unlocked": false, "level": 1, "xp": 0, "points": {} }
+	},
+	"fish": 412,
+	"potions": { "heal": 2 },
+	"gambits": [{ "potion": "heal", "condition": "hpBelow25" }],
+	"upgrades": { "fishMagnet": 2 },
+	"progress": {
+		"lifetime": { "kills": 5400, "runs": 31 },
+		"hero": { "jack": { "bestRound": 17, "superUses": 12 }, "bob": { "bestRound": 8 } },
+		"heroLevels": { "jack": 23, "bob": 9, "lucia": 1 },
+		"runBests": { "killsInRun": 610, "maxRound": 17 },
+		"feats": []
+	},
+	"achievements": {
+		"unlocked": { "kills.1": 1700000000000, "runs.1": 1700000100000 },
+		"spent": 3,
+		"purchases": []
+	},
+	"history": [],
+	"activeRun": {
+		"savedAt": 1700000200000,
+		"seed": 42,
+		"hero": "jack",
+		"nextRound": 5,
+		"state": { "hp": 80 }
+	}
+}

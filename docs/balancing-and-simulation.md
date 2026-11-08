@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.0 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.1 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -113,7 +113,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 
 | Regra | Valor |
 |---|---|
-| Duração do round N (não boss) | `min(20 + 5·(N−1), 60)` s |
+| Duração do round N (não boss) | `min(20 + 5·(N−1), 60)` s [1.0: revisar] |
 | Boss | rounds `N % 10 == 0`; limite **180 s**; timeout = game over |
 | Elite roxo (2×) | rounds `N % 3 == 0` e não boss; 8% dos spawns do round |
 | Elite laranja (3×) | idem, a partir do round 11; 4% dos spawns |
@@ -123,7 +123,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 
 - `hpMul(N) = (1 + 0,15·(N−1)) · 1,12^ciclo · 1,6^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/30)` (endless: a cada volta completa pelos 3 biomas)
 - `dmgMul(N) = (1 + 0,08·(N−1)) · 1,08^ciclo · 1,5^volta`
-- `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos**
+- `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos** [1.0: revisar]
 - Bosses: HP base × `1,35^ciclo` (round 10 ×1, 20 ×1,35, 30 ×1,82…)
 - Biomas: rounds 1–10 Antártida, 11–20 estação/porto, 21–30 cidade em ruínas, depois repete (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
 
@@ -134,7 +134,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | zombiePenguin | perseguidor | 12 | 80 | 4 | 10 | 1 | 1 | 10 |
 | zombieSkua | voador | 10 | 115 | 3 | 9 | 1 | 2 | 5 |
 | zombieSeal | tanque | 45 | 40 | 8 | 16 | 3 | 3 | 4 |
-| zombieScientist | à distância (220 u, 2,5 s) | 20 | 55 | 6 | 11 | 2 | 4 | 3 |
+| zombieScientist | à distância (220 u, 2,5 s) [1.0: revisar] | 20 | 55 | 6 | 11 | 2 | 4 | 3 |
 | bloaterPenguin | explosivo (40 u) | 18 | 60 | 14 | 12 | 2 | 5 | 3 |
 | zombieWalrus | investida (200 u, 4 s) | 60 | 50 | 12 | 18 | 4 | 7 | 2 |
 
@@ -145,7 +145,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | zombieSailor | perseguidor | 16 | 85 | 5 | 10 | 1 | 11 | 10 |
 | zombieGull | voador | 12 | 125 | 4 | 9 | 1 | 11 | 5 |
 | zombieSeaLion | tanque | 60 | 45 | 10 | 17 | 3 | 12 | 4 |
-| zombieMedic | à distância (240 u, 2,2 s) | 24 | 55 | 7 | 11 | 2 | 13 | 3 |
+| zombieMedic | à distância (240 u, 2,2 s) [1.0: revisar] | 24 | 55 | 7 | 11 | 2 | 13 | 3 |
 | fuelBloater | explosivo (42 u) | 22 | 62 | 16 | 12 | 2 | 14 | 3 |
 | zombieNarwhal | investida (220 u, 3,5 s) | 70 | 55 | 14 | 18 | 4 | 16 | 2 |
 
@@ -157,7 +157,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | zombieRat | perseguidor | 8 | 130 | 3 | 7 | 1 | 21 | 6 |
 | zombiePigeon | voador | 14 | 125 | 5 | 9 | 1 | 22 | 4 |
 | zombieRiotCop | tanque | 80 | 45 | 12 | 16 | 3 | 22 | 4 |
-| zombieSoldier | à distância (260 u, 2 s) | 30 | 60 | 8 | 11 | 2 | 23 | 3 |
+| zombieSoldier | à distância (260 u, 2 s) [1.0: revisar] | 30 | 60 | 8 | 11 | 2 | 23 | 3 |
 | acidBloater | explosivo (44 u) | 26 | 64 | 18 | 12 | 2 | 24 | 3 |
 | zombieBrute | investida (220 u, 3,5 s) | 90 | 55 | 16 | 19 | 5 | 26 | 2 |
 
@@ -169,9 +169,9 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | kraken | 20 (+30·k) | 3000 | 45 | 22 | 44 | 150 u | 2,6 s | patada 0,55 s de preparo, alcance ×1,2; rajada de 7 projéteis a cada 4 s; rugido a cada 14 s invoca 6× zombieSailor |
 | abomination | 30 (+30·k) | 3500 | 80 | 28 | 42 | 95 u | 2,6 s | patada 0,35 s de preparo, alcance ×1,3; investida a cada 5 s; 4 poças de ácido a cada 6 s; rugido a cada 13 s invoca 10× zombieRat |
 
-Rajada do kraken: 170 u/s, alcance 520 u, dano 35% do dano do boss. Poças da abominação: raio 46 u, 4 s, 35% do dano do boss por segundo.
+Rajada do kraken: 170 u/s, alcance 520 u [1.0: revisar], dano 35% do dano do boss. Poças da abominação: raio 46 u, 4 s, 35% do dano do boss por segundo.
 
-Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultrawide incluso).
+Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultrawide incluso). [1.0: revisar]
 
 ### 3. Combate
 
@@ -197,7 +197,7 @@ Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultraw
 | HP | **140** | 110 | **85** |
 | Regen/s | 0,8 | 0,4 | 0,3 |
 | Armadura | **12** | 4 | 1 |
-| Vel. movimento (u/s) | **95** (lento) | **135** (rápido) | 115 |
+| Vel. movimento (u/s) | **95** (lento) [1.0: revisar] | **135** (rápido) | 115 |
 | Dodge | 3% | **12%** | 6% |
 | Parry | **15%** | 0% | 0% |
 | Crítico | 5% | **12%** | 5% |
@@ -242,7 +242,7 @@ Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de 
 | Desbloqueio | level 5 do herói |
 | Carga | 100 abates (qualquer inimigo; elite conta 3, boss não conta); persiste entre rounds da mesma run |
 | Colheita Rubra (Jack) | 3 s; 800% do dano da arma/s; raio 180 u; puxa 60 u/s; sangramento 5 acúmulos |
-| Bombardeio (Bob) | 16 explosões em 2,5 s na área visível; 600% do dano da arma cada; raio 80 u; queimadura |
+| Bombardeio (Bob) | 16 explosões em 2,5 s na área visível [1.0: revisar]; 600% do dano da arma cada; raio 80 u; queimadura |
 | Cataclismo Elemental (Lucia) | 4 s; 1000% do dano mágico distribuído; raio 260 u; aplica os 4 elementos |
 | Invulnerabilidade | durante a animação (0,8 s) |
 
@@ -311,7 +311,7 @@ A loja de extras das conquistas (`ACHIEVEMENT_SHOP`, P-61) soma no máximo +10 H
 
 - Run média de um jogador novo: morrer entre os rounds 6 e 9 (5–7 min).
 - Boss do round 10 vencível por ~50% dos jogadores com Jack level 5–8.
-- 60 FPS com 300 inimigos + 2.000 decalques de sangue.
+- 60 FPS com 300 inimigos + 2.000 decalques de sangue. [1.0: revisar]
 
 #### 9.1 Critério de saída do balanceamento (milestone "Balance 1.0")
 
@@ -322,7 +322,7 @@ O trabalho de balanceamento da frente `wt/balance` **termina** quando o lote aba
 | 1 | L10 + Oficina `all:2` + poções | cada herói passa do round 30 (vence o boss 30) em **≥ 1 de 2 seeds**, e nenhum herói morre antes do round 20 em ambas |
 | 2 | L20 + Oficina `all:4` + poções | os 3 heróis passam do round 30 |
 | 3 | L1 sem Oficina/poções (jogador novo) | mediana de morte entre os rounds **8 e 20** (nenhum herói passa do 30) |
-| 4 | Endless (L20) | a run termina antes do round 60 (a volta do endless mata) |
+| 4 | Endless (L20) | a run termina antes do round 60 (a volta do endless mata) [1.0: revisar] |
 | 5 | EASY / HARD (L10, 1 seed) | EASY chega pelo menos tão longe quanto NORMAL; HARD morre antes do NORMAL |
 
 A sim (`bun scripts/sim.ts`) é só apoio: serve para comparar mudanças antes de gastar tempo no bot, não para aprovar o milestone.

@@ -37,10 +37,9 @@ export function emptyProgress(): AchievementProgress {
 		Object.fromEntries(keys.map((k) => [k, 0])) as Record<K, number>;
 	return {
 		lifetime: zeros(LIFETIME_STATS),
-		hero: Object.fromEntries(HERO_IDS.map((h) => [h, zeros(HERO_STATS)])) as Record<
-			HeroId,
-			Record<HeroStat, number>
-		>,
+		hero: Object.fromEntries(
+			HERO_IDS.map((h) => [h, { ...zeros(HERO_STATS), dangerUnlocked: 1 }]),
+		) as Record<HeroId, Record<HeroStat, number>>,
 		heroLevels: Object.fromEntries(HERO_IDS.map((h) => [h, 1])) as Record<HeroId, number>,
 		runBests: zeros(RUN_BESTS),
 		feats: [],

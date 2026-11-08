@@ -1,6 +1,6 @@
 # SDD-001 — Arena quadrada top-down
 
-**Versão** 1.0 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [003](../adrs/ADR-003-topdown-arena-quadrada.md) · **GDD** §4
+**Versão** 1.1 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [003](../adrs/ADR-003-topdown-arena-quadrada.md) · **GDD** §4
 
 ## Contexto
 
@@ -37,7 +37,7 @@ O mundo atual é isométrico 2:1 e infinito em chunks. A 1.0 usa câmera top-dow
 | A3 | Herói com input constante contra a borda por 5 s fica com `x ∈ bounds` | teste do `clampToArena` + E2E `?arena=10` |
 | A4 | Nenhum arquivo importa `iso.ts`/`chunks.ts` | `rg -n "logic/iso\|logic/chunks\|ChunkManager" src tests` retorna vazio |
 | A5 | `bun scripts/perf.ts --round 40` ≥ 58 FPS médio, p95 ≤ 18 ms em 1920×1080 | saída do script |
-| A6 | Screenshot `?skipMenu=1&hero=jack&round=1&seed=1&debug=1` mostra arena 10×10 inteira centrada, sem scroll | agent-browser |
+| A6 | Screenshot `?skipMenu=1&hero=jack&round=1&seed=1&debug=1` em 1920×1080 (vista lógica 960×540) mostra a arena 10×10 (640 u) centrada na horizontal e clampada na vertical (540 < 640: não cabe inteira na altura), sem scroll da página | agent-browser |
 | A7 | Decalques sobrevivem à troca de round (contagem antes = depois) | teste de `GoreLayer.grow` com 500 decalques |
 
 ## Plano de testes

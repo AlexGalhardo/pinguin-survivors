@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { HERO_IDS } from '../src/config/constants';
 import {
 	defaultSave,
 	HISTORY_SIZE,
@@ -9,6 +10,7 @@ import {
 	SAVE_VERSION,
 	serializeSave,
 } from '../src/logic/save';
+import v1Fixture from './fixtures/save-v1.json';
 
 function run(over: Partial<RunRecord> = {}): RunRecord {
 	return {
@@ -75,6 +77,48 @@ describe('parseSave', () => {
 
 	test('a save from a newer game version is not trusted', () => {
 		expect(parseSave(JSON.stringify({ version: SAVE_VERSION + 1, fish: 500 })).fish).toBe(0);
+	});
+});
+
+describe('save v1 → v2 migration', () => {
+	const v1 = JSON.stringify(v1Fixture);
+
+	test('A2: real v1 save migrates keeping heroes, XP and achievements', () => {
+		const s = parseSave(v1);
+		expect(s.version).toBe(2);
+		expect(s.heroes.jack).toMatchObject({ level: 23, xp: 140, unlocked: true });
+		expect(s.heroes.bob.level).toBe(9);
+		expect(s.fish).toBe(412);
+		expect(s.achievements.unlocked['kills.1']).toBe(1700000000000);
+		expect(s.progress.hero.jack.bestRound).toBe(17);
+		expect(s.settings.lang).toBe('pt-BR');
+		expect(s.settings.volume).toEqual({ master: 0.7, music: 0.5, sfx: 0.9 });
+		expect(s.settings).not.toHaveProperty('subtitles');
+	});
+
+	test('discards activeRun and sets pearls = 0, dangerUnlocked = 1 for every hero', () => {
+		const s = parseSave(v1);
+		expect(s.activeRun).toBeNull();
+		expect(s.pearls).toBe(0);
+		for (const h of HERO_IDS) expect(s.progress.hero[h].dangerUnlocked).toBe(1);
+	});
+
+	test('A3: migrating twice gives the same object', () => {
+		const once = parseSave(v1);
+		expect(parseSave(serializeSave(once))).toEqual(once);
+	});
+
+	test('dangerUnlocked and pearls survive a round-trip and are clamped', () => {
+		const s = defaultSave();
+		s.pearls = 7;
+		s.progress.hero.bob.dangerUnlocked = 3;
+		expect(parseSave(serializeSave(s))).toEqual(s);
+		const raw = JSON.parse(serializeSave(s));
+		raw.progress.hero.bob.dangerUnlocked = 99;
+		raw.progress.hero.jack.dangerUnlocked = -4;
+		const back = parseSave(JSON.stringify(raw));
+		expect(back.progress.hero.bob.dangerUnlocked).toBe(6);
+		expect(back.progress.hero.jack.dangerUnlocked).toBe(1);
 	});
 });
 
