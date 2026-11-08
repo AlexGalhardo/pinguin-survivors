@@ -130,7 +130,7 @@ Specs: [SDD-002](docs/sdds/SDD-002-armas-slots-classes-tiers.md), [SDD-003](docs
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado 24 pass; diff limitado a dados/lógica/i18n de cartas.
 - [x] **T2.9** Sim e bot: `shop-policy.ts`, 6 slots, Fish/Pérolas (`SDD-013` RF-01/02 parcial) · Resp.: senior · Dep.: T2.7 · Est.: 10 h · Assert: `bun scripts/sim.ts 20` < 60 s; `tests/sim.test.ts` determinístico. · Evidência (2026-11-08): `bun scripts/sim.ts 20` em 2,9 s; `tests/sim.test.ts` + `tests/shop-policy.test.ts` 13 pass (determinístico por seed); `src/logic/sim/shop-policy.ts` (compra por valor/Fish, fusão, troca com 6 slots cheios, lock, reroll); sim com 6 slots, Fish da run, loja por round e Pérolas no fim. Bot real com loja (`--danger`, `--weapons`, JSONL) depende da loja na cena (T2.7/T3.4). Sim fora da meta (L1 morre no round 26–52): é o T2.10.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado (2,9 s, 13 pass, biome limpo).
-- [ ] **T2.10** 1ª passada de balanceamento do design 1.0 (metas #1, #5, #6 da Parte A4) · Resp.: estagiario roda bot/sim; orquestrador ajusta `src/data` · Dep.: T2.9 · Est.: 8 h · Assert: `docs/reports/balance-<data>.md` com #1, #5, #6 ✓ · Progresso (2026-11-08): 1ª passada com a sim em `docs/reports/balance-2026-11-08.md` — #1 ✓ (L1 mediana 18/17/10, ninguém passa do 30), #6 ✓ (gasto/ganho 0,903; reroll 0,5%), #5 ✓ nas armas (9,7–32,7%) e ✗ no set `elemental` (67,7% > 50%: toda arma mágica é `elemental`) — pergunta ao desenvolvedor em `questions-to-dev.md`.
+- [~] **T2.10** 1ª passada de balanceamento do design 1.0 (metas #1, #5, #6 da Parte A4) · Resp.: estagiario roda bot/sim; orquestrador ajusta `src/data` · Dep.: T2.9 · Est.: 8 h · Assert: `docs/reports/balance-<data>.md` com #1, #5, #6 ✓ · Progresso (2026-11-08): 1ª passada com a sim em `docs/reports/balance-2026-11-08.md` — #1 ✓ (L1 mediana 18/17/10, ninguém passa do 30), #6 ✓ (gasto/ganho 0,903; reroll 0,5%), #5 ✓ nas armas (9,7–32,7%) e ✗ no set `elemental` (67,7% > 50%: toda arma mágica é `elemental`) — pergunta ao desenvolvedor em `questions-to-dev.md`. · Bloqueado (2026-11-08): aguarda decisão do desenvolvedor sobre o set `elemental` (meta #5); demais metas ✓.
   - [ ] Auditoria: Parte B atualizada no mesmo commit.
 - [ ] **T2.11** Release `0.0.13` com todo o M2 (uma release por marco).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
@@ -139,14 +139,14 @@ Specs: [SDD-002](docs/sdds/SDD-002-armas-slots-classes-tiers.md), [SDD-003](docs
 
 Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o que falta) · `[x]` feita (data e quem auditou).
 
-- [ ] Todos os asserts das tarefas `[x]` re-executados e conferidos (Auditoria de cada tarefa marcada).
-- [ ] SDDs do marco em "Aprovada" e implementação sem contradizer nenhum RF (grep pelos arquivos/funções citados).
+- [x] Todos os asserts das tarefas `[x]` re-executados e conferidos (Auditoria de cada tarefa marcada). · 2026-11-08: 64 testes do M2, grep A7, sim; T2.10 `[~]` com motivo.
+- [x] SDDs do marco em "Aprovada" e implementação sem contradizer nenhum RF (grep pelos arquivos/funções citados). · SDD-002 1.1, SDD-003; desvios documentados no relatório.
 - [ ] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release.
 - [ ] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release.
 - [ ] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio.
-- [ ] Docs afetados atualizados (gdd/visual/audio/architecture/balancing Parte B/site) e sem links quebrados.
-- [ ] Saldos PixelLab/ElevenLabs registrados se o marco gastou assets.
-- [ ] Relatório `docs/reports/audit-m2-<data>.md` gravado (tabela tarefa · status · evidência).
+- [x] Docs afetados atualizados (gdd/visual/audio/architecture/balancing Parte B/site) e sem links quebrados. · balancing 2.3, architecture 2.2.
+- [x] Saldos PixelLab/ElevenLabs registrados se o marco gastou assets. · M2 não gastou assets.
+- [x] Relatório `docs/reports/audit-m2-<data>.md` gravado (tabela tarefa · status · evidência). · `docs/reports/audit-m2-2026-11-08.md`.
 
 ## 5. M3 — UI React e Danger (até 2027-01-10)
 
