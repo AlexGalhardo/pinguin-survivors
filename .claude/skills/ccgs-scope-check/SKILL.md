@@ -7,7 +7,7 @@ allowed-tools: Read, Glob, Grep, Bash
 model: haiku
 ---
 
-> **Pinguin Survivors:** skill de terceiros (`Donchitos/Claude-Code-Game-Studios`, MIT). Ela assume as pastas `design/` e `production/` do Claude-Code-Game-Studios. **Mapeie:** `design/gdd/*` → `docs/game-design.md` e `docs/balancing.md`; `design/art/*` → `docs/art-and-assets.md`; `production/*` (relatórios, planos, checklists) → `docs/reports/<skill>-<data>.md`; sprints/milestones → `PLAN.md`. Não invoque agentes que não existem aqui.
+> **Pinguin Survivors:** skill de terceiros (`Donchitos/Claude-Code-Game-Studios`, MIT). Ela assume as pastas `design/` e `production/` do Claude-Code-Game-Studios. **Mapeie:** `design/gdd/*` → `docs/gdd.md` e `docs/balancing-and-simulation.md`; `design/art/*` → `docs/visual.md`; `production/*` (relatórios, planos, checklists) → `docs/reports/<skill>-<data>.md`; sprints/milestones → `PLAN.md`. Não invoque agentes que não existem aqui.
 
 
 # Scope Check
