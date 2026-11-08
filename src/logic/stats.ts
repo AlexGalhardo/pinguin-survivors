@@ -111,6 +111,19 @@ export function applyModifiers(
 	for (const m of mods) addStat(stats, m.stat, m.value);
 }
 
+/** Swaps one modifier set for another (e.g. set bonuses after the build changed). */
+export function replaceModifiers(
+	stats: PlayerStats,
+	previous: readonly { stat: StatKey; value: number }[],
+	next: readonly { stat: StatKey; value: number }[],
+): void {
+	applyModifiers(
+		stats,
+		previous.map((m) => ({ stat: m.stat, value: -m.value })),
+	);
+	applyModifiers(stats, next);
+}
+
 export function getStat(stats: PlayerStats, key: StatKey): number {
 	if (key.startsWith('resist.')) return stats.resist[key.slice(7) as Element];
 	if (key.startsWith('tagMul.')) return stats.tagMul[key.slice(7) as DamageTag];

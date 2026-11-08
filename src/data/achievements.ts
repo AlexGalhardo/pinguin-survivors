@@ -17,8 +17,8 @@ export const LIFETIME_STATS = [
 	'fishEarned',
 	'cardsPicked',
 	'legendaryCards',
-	'evolutionsT2',
-	'evolutionsT3',
+	'fusions',
+	'tierIVWeapons',
 	'crits',
 	'parries',
 	'dodges',
@@ -41,7 +41,7 @@ export const HERO_STATS = [
 	'exclusiveCards',
 	'superUses',
 	'bestRound',
-	'evolvedT3',
+	'fusedT4',
 	'dangerUnlocked',
 ] as const;
 export type HeroStat = (typeof HERO_STATS)[number];
@@ -143,9 +143,9 @@ lifetime('runs', 'runs', [1, 10, 50, 100, 500]);
 lifetime('fish', 'fishEarned', [100, 1_000, 10_000, 100_000]);
 lifetime('cards', 'cardsPicked', [50, 500, 2_000]);
 lifetime('legendary', 'legendaryCards', [1, 25, 100]);
-lifetime('evolveT2', 'evolutionsT2', [1]);
-lifetime('evolveT3', 'evolutionsT3', [1]);
-perHero('heroT3', 'evolvedT3', [1]);
+lifetime('fuse', 'fusions', [1]);
+lifetime('weaponT4', 'tierIVWeapons', [1]);
+perHero('heroT4', 'fusedT4', [1]);
 perHero('exclusive', 'exclusiveCards', [10, 100]);
 perHero('super', 'superUses', [1, 25, 100]);
 runBest('superCast', 'superKillsOneCast', [50, 150]);

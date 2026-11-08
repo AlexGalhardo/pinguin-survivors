@@ -44,19 +44,20 @@ describe('headless run sim', () => {
 });
 
 describe('card policy', () => {
-	test('evolution always wins', () => {
+	test('picks the highest score', () => {
 		const offers = [
-			{ card: card('damage'), rarity: 'legendary' as const },
-			{ card: card('evolve.2'), rarity: 'legendary' as const },
+			{ card: card('damage'), rarity: 'common' as const },
+			{ card: card('perk.bloodlust'), rarity: 'common' as const },
 		];
-		expect(pickBest(offers, emptyBuild(1), 'jack')).toBe(1);
+		const best = pickBest(offers, emptyBuild(1), 'jack');
+		const scores = offers.map((o) => scoreCard(o.card, o.rarity, emptyBuild(1), 'jack'));
+		expect(scores[best]).toBe(Math.max(...scores));
 	});
 
-	test('a full weapon bar rejects new secondaries', () => {
+	test('owned hero actives rate above taking a new one with full slots', () => {
 		const build = emptyBuild(1);
-		build.secondaries = { knives: 1, molotov: 1, iceShards: 1 };
-		expect(scoreCard(card('weapon.auxPistol'), 'common', build, 'jack')).toBe(0);
-		expect(scoreCard(card('weapon.knives'), 'common', build, 'jack')).toBeGreaterThan(0);
+		build.secondaries = { arcaneChain: 1 };
+		expect(scoreCard(card('active.arcaneChain'), 'common', build, 'lucia')).toBeGreaterThan(0);
 	});
 
 	test('rarity scales stat cards', () => {

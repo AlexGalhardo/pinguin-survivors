@@ -6,7 +6,7 @@ import type { StatKey } from '../stats';
 
 /**
  * "Reasonable player" card choice shared by the headless sim and the playtest bot (PLAN 3.2),
- * so both runs build the same way: evolve first, fill the 3 weapon slots, level them, then
+ * so both runs build the same way: level the hero actives, then
  * the hero's key stats. Scores are only relative; stat cards scale with rarity.
  */
 const MAIN_TAG: Record<HeroId, StatKey> = {
@@ -72,8 +72,6 @@ const PERK_SCORE: Record<PerkId, number> = {
 export function scoreCard(card: CardDef, rarity: Rarity, build: Build, hero: HeroId): number {
 	const e = card.effect;
 	switch (e.type) {
-		case 'evolve':
-			return 1000;
 		case 'secondary': {
 			const level = build.secondaries[e.weapon];
 			// Frost Nova only fires when the hero is hit: a poor use of a weapon slot.

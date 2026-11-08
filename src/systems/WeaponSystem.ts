@@ -1,17 +1,16 @@
 import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
-import type { SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
+import type { Build } from '../logic/build';
 import { type Element, rollOutgoing } from '../logic/combat';
 import { inArc, spreadAngles } from '../logic/geometry';
 import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
 import type { PlayerStats } from '../logic/stats';
+import { type ActiveWeapon, isDirect, resolveWeapon } from '../logic/weapons';
 import type { ProjectilePool } from './ProjectilePool';
+import { pickTarget } from './targeting';
 
-/** Melee aims at enemies a bit beyond the blade so the hero swings as they close in. */
-/** Melee only swings at targets it can reach (a wider aim wasted swings on far enemies). */
-const MELEE_AIM_FACTOR = 1;
 const ELEMENTS: readonly Element[] = ['fire', 'ice', 'earth', 'energy'];
 export const ELEMENT_TINT: Record<Element, number> = {
 	fire: PALETTE.elFire,
@@ -24,7 +23,7 @@ export type MeleeHit = (enemy: Enemy, amount: number, crit: boolean, bleedChance
 
 /** Per-frame modifiers from hero perks (docs/gdd.md §5.1). */
 export interface WeaponBonus {
-	/** Extra attack-rate multiplier (Bloodlust, Run and Gun). */
+	/** Extra attack-rate multiplier (Bloodlust, Run and Gun, Quick Reload). */
 	rate: number;
 	/** Next attack is a guaranteed critical hit (Reflex). */
 	forceCrit: boolean;
@@ -32,48 +31,70 @@ export interface WeaponBonus {
 	damage: number;
 	/** Firearm projectile bounces (Ricochet). */
 	bounces: number;
+	/** Arcane Echo: every Nth projectile volley repeats one projectile (0 = off). */
+	echoEvery: number;
 }
 
-/** Fires the hero's signature weapon automatically (P-18/P-19). */
+interface SlotState {
+	id: string;
+	tier: number;
+	cooldown: number;
+}
+
+/** Fires the weapons that attack by themselves (arc, spread, bolt), one timer per slot. */
 export class WeaponSystem {
-	private cooldown = 0;
+	private readonly states: SlotState[] = [];
 	private elementIndex = 0;
+	private volleys = 0;
 	private readonly scratch: Enemy[] = [];
-	readonly bonus: WeaponBonus = { rate: 1, forceCrit: false, damage: 1, bounces: 0 };
+	readonly bonus: WeaponBonus = {
+		rate: 1,
+		forceCrit: false,
+		damage: 1,
+		bounces: 0,
+		echoEvery: 0,
+	};
 
 	constructor(
 		private readonly rng: Rng,
 		private readonly stats: PlayerStats,
-		public weapon: SignatureWeapon,
+		private readonly build: Build,
 		private readonly pool: ProjectilePool,
 		private readonly onMelee: MeleeHit,
 		private readonly onSlash: (x: number, y: number, angle: number, range: number) => void,
 		private readonly onElement: (element: Element) => void,
-		private readonly onFire: (angle: number, cooldown: number) => void = () => {},
+		private readonly onFire: (slot: number, angle: number, cooldown: number) => void = () => {},
 	) {}
 
 	update(dt: number, hx: number, hy: number, grid: SpatialGrid<Enemy>): void {
-		this.cooldown -= dt;
-		if (this.cooldown > 0) return;
-		const aimRange =
-			this.weapon.kind === 'arc' ? this.weapon.range * MELEE_AIM_FACTOR : this.weapon.range;
-		// Bosses and elites in range come first, so they don't hide behind the horde.
-		const target =
-			grid.nearest(
-				hx,
-				hy,
-				aimRange,
-				(e) => e.alive && (e.elite !== null || e.def.behavior === 'boss'),
-			) ?? grid.nearest(hx, hy, aimRange, (e) => e.alive);
-		if (!target) return;
-		const angle = Math.atan2(target.y - hy, target.x - hx);
-		this.fire(hx, hy, angle, grid);
-		this.cooldown = 1 / (this.weapon.rate * this.stats.attackSpeed * this.bonus.rate);
-		this.onFire(angle, this.cooldown);
+		const slots = this.build.weapons;
+		this.states.length = slots.length;
+		for (let i = 0; i < slots.length; i++) {
+			const w = resolveWeapon(slots[i] as (typeof slots)[number]);
+			let st = this.states[i];
+			if (!st || st.id !== w.id || st.tier !== w.tier) {
+				st = { id: w.id, tier: w.tier, cooldown: 0 };
+				this.states[i] = st;
+			}
+			if (!isDirect(w)) continue;
+			st.cooldown -= dt;
+			if (st.cooldown > 0) continue;
+			const target = pickTarget(grid, hx, hy, w.range);
+			if (!target) continue;
+			const angle = Math.atan2(target.y - hy, target.x - hx);
+			this.fire(w, hx, hy, angle, grid);
+			st.cooldown = w.cooldown / (this.stats.attackSpeed * this.bonus.rate);
+			this.onFire(i, angle, st.cooldown);
+		}
 	}
 
-	private fire(hx: number, hy: number, angle: number, grid: SpatialGrid<Enemy>): void {
-		const w = this.weapon;
+	private fire(
+		w: ActiveWeapon,
+		hx: number,
+		hy: number,
+		angle: number,
+		grid: SpatialGrid<Enemy>,
+	): void {
 		const attack = {
 			base: w.damage,
 			tag: w.tag,
@@ -82,41 +103,44 @@ export class WeaponSystem {
 			critDamage: this.stats.critDamage,
 		};
 		this.bonus.forceCrit = false;
-		if (w.kind === 'arc') {
+		if (w.behavior === 'arc') {
 			const range = w.range * this.stats.area;
-			const arc = ((w.angle ?? 90) * Math.PI) / 180;
+			const arc = (w.angle * Math.PI) / 180;
 			this.scratch.length = 0;
 			grid.queryRadius(hx, hy, range + 40, this.scratch);
 			for (const e of this.scratch) {
 				if (!e.alive || !inArc(hx, hy, angle, arc, range, e.x, e.y, e.radius)) continue;
 				const out = rollOutgoing(attack, { crit: this.rng.next() });
-				this.onMelee(e, out.amount, out.crit, w.bleedChance ?? 0);
+				this.onMelee(e, out.amount, out.crit, w.bleedChance);
 			}
 			this.onSlash(hx, hy, angle, range);
 			return;
 		}
-		const count = w.kind === 'spread' ? (w.count ?? 1) : 1;
-		const step =
-			w.kind === 'spread' ? ((w.angle ?? 30) * Math.PI) / 180 / Math.max(1, count - 1) : 0;
+		const spread = w.behavior === 'spread';
+		const count = spread ? w.count : 1;
+		const step = spread ? (w.angle * Math.PI) / 180 / Math.max(1, count - 1) : 0;
 		const element =
-			w.kind === 'bolt' ? ELEMENTS[this.elementIndex++ % ELEMENTS.length] : undefined;
+			w.behavior === 'bolt' ? ELEMENTS[this.elementIndex++ % ELEMENTS.length] : undefined;
 		if (element) this.onElement(element);
-		for (const a of spreadAngles(angle, count, step)) {
+		const angles = spreadAngles(angle, count, step);
+		const echo = this.bonus.echoEvery > 0 && ++this.volleys % this.bonus.echoEvery === 0;
+		if (echo) angles.push(angle);
+		for (const a of angles) {
 			const out = rollOutgoing(attack, { crit: this.rng.next() });
 			this.pool.spawn({
 				x: hx,
 				y: hy,
 				angle: a,
-				speed: w.projectileSpeed ?? 400,
+				speed: w.projectileSpeed,
 				range: w.range,
 				damage: out.amount,
 				crit: out.crit,
 				texture: KEYS.projectile(element ? 'orb' : 'pellet'),
 				tint: element ? ELEMENT_TINT[element] : PALETTE.crit,
-				pierce: w.pierce ?? 0,
+				pierce: w.pierce,
 				bounces: w.tag === 'firearm' ? this.bonus.bounces : 0,
 				element,
-				bleedChance: w.bleedChance ?? 0,
+				bleedChance: w.bleedChance,
 			});
 		}
 	}

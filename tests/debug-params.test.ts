@@ -13,10 +13,12 @@ describe('parseDebugParams', () => {
 			god: true,
 			debug: true,
 			skipMenu: true,
+			uiHud: false,
 		});
 	});
 
 	test('arena forces the side, clamped to the maximum', () => {
+		expect(parseDebugParams('?uiHud=1').uiHud).toBe(true);
 		expect(parseDebugParams('?arena=12').arena).toBe(12);
 		expect(parseDebugParams('?arena=99').arena).toBe(40);
 		expect(parseDebugParams('?arena=0').arena).toBeUndefined();

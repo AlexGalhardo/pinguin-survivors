@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { HEROES } from '../src/data/heroes';
-import { WEAPON_LINES } from '../src/data/weapon-lines';
+import { WEAPON_LINES } from '../src/data/weapons';
 import { Rng } from '../src/logic/rng';
 import { roundDuration } from '../src/logic/round';
 import {

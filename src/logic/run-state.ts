@@ -2,7 +2,7 @@ import type { HeroId } from '../config/constants';
 import type { Difficulty } from '../data/difficulty';
 import { ECONOMY, PEARLS, SHOP } from '../data/economy';
 import type { HeroDef } from '../data/heroes';
-import { WEAPON_LINES, WEAPON_TIERS } from '../data/weapon-lines';
+import { WEAPON_LINES, WEAPON_TIERS } from '../data/weapons';
 import type { RunGear } from './equipment';
 import { roundEndFish } from './progression';
 import type { Rng } from './rng';

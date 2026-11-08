@@ -10,6 +10,9 @@ export const COMBAT = {
 	knockback: 140,
 } as const;
 
+/** Fire bolts splash on impact (share of the hit, radius in world units). */
+export const MAGIC_FIRE_SPLASH = { radius: 36, share: 0.5 } as const;
+
 /** Damage-over-time and elemental effects (docs/balancing-and-simulation.md §3). */
 export const STATUS = {
 	bleed: { share: 0.2, duration: 3, maxStacks: 5 },

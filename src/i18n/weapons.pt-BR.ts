@@ -1,4 +1,4 @@
-/** Nomes das linhas de arma (src/data/weapon-lines.ts). */
+/** Nomes das linhas de arma (src/data/weapons.ts). */
 export const weaponsPtBR = {
 	'weapon.machete.name': 'Facão',
 	'weapon.hammer.name': 'Marreta',

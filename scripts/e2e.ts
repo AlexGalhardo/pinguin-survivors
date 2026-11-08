@@ -44,7 +44,7 @@ async function waitFor(
 	process.exit(1);
 }
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--mute-audio'] });
 const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
 const errors: string[] = [];
 page.on('pageerror', (e) => errors.push(e.message));

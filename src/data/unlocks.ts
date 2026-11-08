@@ -1,5 +1,5 @@
 import type { HeroId } from '../config/constants';
-import type { WeaponId } from './weapon-lines';
+import type { WeaponId } from './weapons';
 
 /** Starting weapons each hero can pick from the start (GDD §6). */
 export const STARTING_WEAPONS: Readonly<Record<HeroId, readonly [WeaponId, WeaponId, WeaponId]>> = {

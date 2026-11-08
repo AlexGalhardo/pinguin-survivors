@@ -1,4 +1,4 @@
-/** Weapon line names (src/data/weapon-lines.ts). */
+/** Weapon line names (src/data/weapons.ts). */
 export const weaponsEn = {
 	'weapon.machete.name': 'Machete',
 	'weapon.hammer.name': 'Sledgehammer',

@@ -1,93 +1,66 @@
 import type Phaser from 'phaser';
-import { KEYS } from '../art/manifest';
-import { SECONDARIES, type SecondaryId } from '../data/secondaries';
-import { depthOf, worldToScreen } from '../logic/projection';
+import type { WeaponInstance } from '../logic/build';
 import type { SpatialGrid } from '../logic/spatial-grid';
+import { resolveWeapon, ringAngle } from '../logic/weapons';
+import { pickTarget } from '../systems/targeting';
 import type { Enemy } from './Enemy';
+import { WeaponView } from './WeaponView';
 
-/** Hand height above the feet, in screen px (same as the signature WeaponView). */
-const HAND_Z = 18;
-/**
- * Screen offsets of the 3 secondary weapon slots around the hero (the signature weapon keeps
- * its hand): left, top-left and top-right — 4 weapons at most, like Brotato (P-67).
- */
-const SLOTS = [
-	{ x: -46, y: 4 },
-	{ x: -40, y: -34 },
-	{ x: 42, y: -34 },
-] as const;
-/** Secondary sprites are small; a bit bigger reads better floating around the hero. */
-const SCALE = 1.4;
-const TURN_SPEED = 10;
-
-interface Slot {
-	id: SecondaryId;
-	sprite: Phaser.GameObjects.Image;
-	angle: number;
-}
+/** Ring radius around the hero in world units, and its slow rotation in rad/s (SDD-002 RF-08). */
+const RING_RADIUS = 26;
+const RING_SPEED = 0.6;
 
 /**
- * Secondary weapons floating around the hero, each turning towards the nearest enemy in its
- * range (they fire through SecondarySystem; this is only their visual presence).
+ * Up to 6 weapon sprites in an evenly spaced ring around the hero. Each one turns towards the
+ * nearest enemy in its range (bosses and elites first) and animates when its weapon fires.
  */
 export class WeaponRing {
-	private readonly slots: Slot[] = [];
-	private bob = 0;
+	private readonly views: WeaponView[] = [];
+	private time = 0;
 
 	constructor(private readonly scene: Phaser.Scene) {}
 
+	/** Called when the weapon in `slot` attacks (world angle towards the target). */
+	fire(slot: number, angle: number, cooldown: number): void {
+		this.views[slot]?.fire(angle, cooldown);
+	}
+
 	update(
 		dt: number,
-		owned: readonly SecondaryId[],
+		slots: readonly WeaponInstance[],
 		hx: number,
 		hy: number,
 		grid: SpatialGrid<Enemy>,
 	): void {
-		this.sync(owned.slice(0, SLOTS.length));
-		this.bob += dt * 3;
-		const hand = worldToScreen(hx, hy, HAND_Z);
-		const depth = depthOf(hx, hy);
-		this.slots.forEach((s, i) => {
-			const off = SLOTS[i] as (typeof SLOTS)[number];
-			const def = SECONDARIES[s.id];
-			const target = grid.nearest(hx, hy, def.range, (e) => e.alive);
-			const want = target
-				? Math.atan2(target.y - hy, target.x - hx)
-				: off.x < 0
-					? Math.PI
-					: 0;
-			// Shortest turn towards the target angle.
-			let d = want - s.angle;
-			d = Math.atan2(Math.sin(d), Math.cos(d));
-			s.angle += d * Math.min(1, TURN_SPEED * dt);
-			const left = Math.cos(s.angle) < 0;
-			s.sprite
-				.setPosition(
-					Math.round(hand.x + off.x),
-					Math.round(hand.y + off.y + Math.sin(this.bob + i) * 1.5),
-				)
-				.setRotation(s.angle)
-				.setFlipY(left)
-				.setDepth(depth + 0.4);
+		this.sync(slots);
+		this.time += dt;
+		const n = slots.length;
+		this.views.forEach((view, i) => {
+			const w = resolveWeapon(slots[i] as WeaponInstance);
+			const a = ringAngle(i, n, this.time, RING_SPEED);
+			const x = hx + Math.cos(a) * RING_RADIUS;
+			const y = hy + Math.sin(a) * RING_RADIUS;
+			const target = pickTarget(grid, hx, hy, w.range);
+			view.turn(target ? Math.atan2(target.y - y, target.x - x) : a, dt);
+			view.update(dt, x, y);
 		});
 	}
 
-	/** Creates/removes sprites so they match the owned secondaries (in pick order). */
-	private sync(owned: readonly SecondaryId[]): void {
-		for (let i = this.slots.length - 1; i >= 0; i--) {
-			const s = this.slots[i] as Slot;
-			if (owned[i] !== s.id) {
-				s.sprite.destroy();
-				this.slots.splice(i, 1);
+	/** Creates/removes sprites so they match the slots; a changed slot is re-skinned. */
+	private sync(slots: readonly WeaponInstance[]): void {
+		while (this.views.length > slots.length) this.views.pop()?.destroy();
+		slots.forEach((s, i) => {
+			let view = this.views[i];
+			if (!view) {
+				view = new WeaponView(this.scene);
+				this.views.push(view);
 			}
-		}
-		for (let i = this.slots.length; i < owned.length; i++) {
-			const id = owned[i] as SecondaryId;
-			const sprite = this.scene.add
-				.image(0, 0, KEYS.weapon(id))
-				.setOrigin(0.3, 0.5)
-				.setScale(SCALE);
-			this.slots.push({ id, sprite, angle: 0 });
-		}
+			if (view.id !== s.id || view.tier !== s.tier) view.setWeapon(resolveWeapon(s));
+		});
+	}
+
+	destroy(): void {
+		for (const v of this.views) v.destroy();
+		this.views.length = 0;
 	}
 }

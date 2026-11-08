@@ -1,4 +1,4 @@
-import type { WeaponKind } from '../data/weapons';
+import type { WeaponBehavior } from '../data/weapons';
 
 /**
  * Brotato-style weapon animation (P-56): the weapon sprite moves around the hero instead of
@@ -37,7 +37,12 @@ export function swingDuration(cooldown: number): number {
  * Pose `t` seconds after the last attack. `arc` is the melee arc width (radians);
  * before the first attack pass t = Infinity.
  */
-export function weaponPose(kind: WeaponKind, t: number, cooldown: number, arc: number): WeaponPose {
+export function weaponPose(
+	kind: WeaponBehavior,
+	t: number,
+	cooldown: number,
+	arc: number,
+): WeaponPose {
 	const w = WEAPON_ANIM;
 	if (kind === 'arc') {
 		const d = swingDuration(cooldown);

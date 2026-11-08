@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { HERO_IDS } from '../src/config/constants';
 import { HEROES } from '../src/data/heroes';
-import { WEAPON_LINE_BY_ID } from '../src/data/weapon-lines';
+import { WEAPON_LINE_BY_ID } from '../src/data/weapons';
 
 describe('hero starting weapons (SDD-002 A4)', () => {
 	test('3 valid weapons per hero: favorite class, exclusives only for the owner', () => {

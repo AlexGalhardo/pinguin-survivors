@@ -8,24 +8,32 @@ import { applyBloom, shake, zoomPunch } from '../core/feel';
 import { GameInput } from '../core/input';
 import { musicForRound, playMusic } from '../core/music';
 import { trackZoom } from '../core/viewport';
+import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
 import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { ROUNDS } from '../data/rounds';
-import { levelScale, PERKS, type SecondaryId } from '../data/secondaries';
+import { levelScale, PERKS, SECONDARIES, type SecondaryId } from '../data/secondaries';
+import type { SetModifier } from '../data/sets';
 import { SUPER } from '../data/superpowers';
-import { MAGIC_FIRE_SPLASH, SIGNATURE, type SignatureWeapon } from '../data/weapons';
+import { MAX_WEAPON_SLOTS, type WeaponId } from '../data/weapons';
 import { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
 import { WeaponRing } from '../entities/WeaponRing';
-import { WeaponView } from '../entities/WeaponView';
 import { type I18nKey, t } from '../i18n';
 import { applyExtras, evaluateAchievements } from '../logic/achievements';
 import { type Bounds, clampCameraCenter, clampToArena } from '../logic/arena';
 import { biomeForRound, isBiomeStart } from '../logic/biome';
-import { applyCard, type Build, emptyBuild } from '../logic/build';
+import {
+	addWeapon,
+	applyCard,
+	type Build,
+	emptyBuild,
+	setBonuses,
+	type WeaponInstance,
+} from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
 import { difficultyMods, scaleFish } from '../logic/difficulty';
@@ -53,9 +61,10 @@ import {
 	recordRunEnd,
 } from '../logic/save';
 import { nextSpeed } from '../logic/speed';
-import { heroStats, type PlayerStats } from '../logic/stats';
+import { heroStats, type PlayerStats, replaceModifiers } from '../logic/stats';
 import { addCharge, chargeFor, superCost, superReady, superUnlocked } from '../logic/superpower';
 import { applyUpgrades } from '../logic/upgrades';
+import { leadWeapon, resolveWeapon } from '../logic/weapons';
 import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
 import { CombatSystem, HERO_RADIUS } from '../systems/CombatSystem';
 import { EnemySystem } from '../systems/EnemySystem';
@@ -118,7 +127,6 @@ export class GameScene extends Phaser.Scene {
 		clampToArena(hero, HERO_RADIUS, this.arena.bounds);
 	};
 	private weapons!: WeaponSystem;
-	private weaponView!: WeaponView;
 	private weaponRing!: WeaponRing;
 	private secondaries!: SecondarySystem;
 	private pool!: ProjectilePool;
@@ -166,11 +174,6 @@ export class GameScene extends Phaser.Scene {
 	/** Kills needed for the next superpower (grows by 5 per cast this run). */
 	get superCost(): number {
 		return superCost(this.run.counters.superUses ?? 0);
-	}
-
-	/** Id of the current signature weapon (pause screen). */
-	get signatureId(): string {
-		return this.weapons.weapon.id;
 	}
 
 	get superIsUnlocked(): boolean {
@@ -236,6 +239,8 @@ export class GameScene extends Phaser.Scene {
 			this.run.maxHp = this.stats.maxHp;
 			this.run.hp = this.stats.maxHp;
 		}
+		this.initWeapons(heroDef.startingWeapons[0], params.weapons, Boolean(resume));
+		this.quickReloadTime = 0;
 
 		this.controls = new GameInput(this, save.settings.keys);
 		this.controls.on('speed', () => this.setSpeed(nextSpeed(this.speed)));
@@ -314,22 +319,22 @@ export class GameScene extends Phaser.Scene {
 		this.weapons = new WeaponSystem(
 			this.rng,
 			this.stats,
-			SIGNATURE[heroId][tier - 1] as SignatureWeapon,
+			this.build,
 			this.pool,
 			(e, amount, crit, bleedChance) =>
 				this.combat.weaponHit(e, amount, crit, { bleedChance }),
 			(x, y, a, r) => this.fx.slash(x, y, a, r),
 			(element) => this.elementUsedAt.set(element, this.run.elapsed),
-			(angle, cooldown) => {
-				this.hero.attack(angle, cooldown);
-				this.weaponView.fire(angle, cooldown);
-				const tag = this.weapons.weapon.tag;
+			(slot, angle, cooldown) => {
+				// Only the first weapon drives the hero's attack animation.
+				if (slot === 0) this.hero.attack(angle, cooldown);
+				this.weaponRing.fire(slot, angle, cooldown);
+				const tag = resolveWeapon(this.build.weapons[slot] as WeaponInstance).tag;
 				this.fx.play(
 					tag === 'melee' ? 'sfx.swing' : tag === 'firearm' ? 'sfx.shotgun' : 'sfx.cast',
 				);
 			},
 		);
-		this.weaponView = new WeaponView(this, this.weapons.weapon);
 		this.weaponRing = new WeaponRing(this);
 		this.secondaries = new SecondarySystem(
 			this,
@@ -339,6 +344,8 @@ export class GameScene extends Phaser.Scene {
 			this.pool,
 			this.area,
 			(e, amount, crit, element) => this.combat.weaponHit(e, amount, crit, { element }),
+			this.weapons.bonus,
+			(slot, angle, cooldown) => this.weaponRing.fire(slot, angle, cooldown),
 		);
 		this.superpower = new SuperpowerSystem(
 			this.rng,
@@ -386,15 +393,7 @@ export class GameScene extends Phaser.Scene {
 		this.moving = intent.x !== 0 || intent.y !== 0;
 		const move = inputToWorld(intent.x, intent.y);
 		this.hero.update(dt, move, this.collideHero);
-		if (this.moving) this.weaponView.face(Math.atan2(move.y, move.x));
-		this.weaponView.update(dt, this.hero.x, this.hero.y);
-		this.weaponRing.update(
-			dt,
-			Object.keys(this.build.secondaries) as SecondaryId[],
-			this.hero.x,
-			this.hero.y,
-			this.enemies.grid,
-		);
+		this.weaponRing.update(dt, this.build.weapons, this.hero.x, this.hero.y, this.enemies.grid);
 		healHero(run, this.stats.regen * dt);
 		this.updatePotions(dt);
 
@@ -405,7 +404,14 @@ export class GameScene extends Phaser.Scene {
 		this.updatePerks(dt);
 		this.weapons.update(dt, this.hero.x, this.hero.y, grid);
 		this.secondaries.update(dt, this.hero.x, this.hero.y, grid);
-		this.superpower.update(dt, this.hero.x, this.hero.y, grid, this.weapons.weapon, view);
+		this.superpower.update(
+			dt,
+			this.hero.x,
+			this.hero.y,
+			grid,
+			leadWeapon(this.build.weapons),
+			view,
+		);
 		this.pool.update(dt, grid);
 		this.hostile.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
 		this.area.update(dt, grid);
@@ -416,6 +422,47 @@ export class GameScene extends Phaser.Scene {
 		this.checkRoundEnd();
 
 		this.arena.update();
+	}
+
+	/** Set bonuses currently added to `stats`, so a build change can swap them (not idempotent). */
+	private appliedSet: SetModifier[] = [];
+	private quickReloadTime = 0;
+
+	/**
+	 * Run start: `startingWeapons[0]` (the picker comes with the React hero select), or the
+	 * `?weapons=` debug list. A resumed run keeps its build; its stats already hold the bonuses.
+	 */
+	private initWeapons(
+		first: WeaponId,
+		forced: readonly WeaponInstance[] | undefined,
+		resumed: boolean,
+	): void {
+		const b = this.build;
+		b.weapons ??= [];
+		for (const id of Object.keys(b.secondaries))
+			if (!(id in SECONDARIES)) delete b.secondaries[id as SecondaryId];
+		if (!resumed) {
+			for (const w of (forced ?? [{ id: first, tier: 1 }]).slice(0, MAX_WEAPON_SLOTS))
+				addWeapon(b, w.id, w.tier);
+		} else if (b.weapons.length === 0) addWeapon(b, first);
+		if (resumed) this.appliedSet = setBonuses(b);
+		else this.refreshSetBonuses();
+	}
+
+	/** Call whenever `build.weapons` changes (shop buy/sell/fuse): swaps the set bonuses. */
+	refreshSetBonuses(): void {
+		const next = setBonuses(this.build);
+		replaceModifiers(this.stats, this.appliedSet, next);
+		this.appliedSet = next;
+	}
+
+	/** Shop fusion result (tier II-IV): feeds the weapon achievements. */
+	recordFusion(tier: number): void {
+		countRun(this.run, 'fusions');
+		if (tier >= 4) {
+			countRun(this.run, 'tierIVWeapons');
+			this.run.counters.fusedT4 = true;
+		}
 	}
 
 	private readonly worldLights: WorldLight[] = [];
@@ -506,8 +553,30 @@ export class GameScene extends Phaser.Scene {
 			rate += Math.min(PERKS.bloodlust.cap * s, PERKS.bloodlust.value * s * bleeding);
 		}
 		if (p.runAndGun && this.moving) rate += PERKS.runAndGun.value * levelScale(p.runAndGun);
+		if (p.quickReload && this.quickReloadTime > 0) {
+			this.quickReloadTime -= dt;
+			rate += PERKS.quickReload.value * levelScale(p.quickReload);
+		}
+		if (p.ironBreath) {
+			this.scratch.length = 0;
+			this.enemies.grid.queryRadius(
+				this.hero.x,
+				this.hero.y,
+				PERKS.ironBreath.radius,
+				this.scratch,
+			);
+			const near = this.scratch.filter((e) => e.alive).length;
+			const s = levelScale(p.ironBreath);
+			healHero(
+				this.run,
+				Math.min(PERKS.ironBreath.cap * s, PERKS.ironBreath.value * s * near) * dt,
+			);
+		}
 		bonus.rate = rate * (this.hasteTime > 0 ? 1 + POTION_EFFECTS.haste.attackSpeed : 1);
 		bonus.bounces = p.ricochet ?? 0;
+		bonus.echoEvery = p.arcaneEcho
+			? Math.max(2, Math.round(PERKS.arcaneEcho.value / levelScale(p.arcaneEcho)))
+			: 0;
 		this.combat.hooks.critBleed = Boolean(p.hollowPoints);
 		if (p.elementalAttunement) {
 			let distinct = 0;
@@ -550,7 +619,8 @@ export class GameScene extends Phaser.Scene {
 	private onParry(): void {
 		const level = this.build.perks.counterAttack;
 		if (!level) return;
-		const w = this.weapons.weapon;
+		const w = leadWeapon(this.build.weapons);
+		if (!w) return;
 		const damage =
 			w.damage *
 			this.stats.tagMul[w.tag] *
@@ -753,6 +823,7 @@ export class GameScene extends Phaser.Scene {
 		const kind = e.def.behavior === 'boss' ? 'boss' : e.elite ? 'elite' : 'common';
 		run.superCharge = addCharge(run.superCharge, chargeFor(kind), this.superCost);
 		if (this.superpower.active) this.superpower.killsThisCast++;
+		if (this.build.perks.quickReload) this.quickReloadTime = PERKS.quickReload.duration;
 		this.pickups.drop('xp', orbXp(e.def.xp, run.round) * this.mods.rewards, e.x, e.y);
 		const f = ECONOMY.fish;
 		let fish = 0;
@@ -770,7 +841,7 @@ export class GameScene extends Phaser.Scene {
 		const p = this.build.perks;
 		if (
 			p.butcher &&
-			this.weapons.weapon.tag === 'melee' &&
+			this.build.weapons.some((s) => resolveWeapon(s).tag === 'melee') &&
 			this.rng.next() < PERKS.butcher.value * levelScale(p.butcher)
 		)
 			this.pickups.drop('meat', this.stats.maxHp * PERKS.butcher.heal, e.x - 6, e.y);
@@ -944,14 +1015,12 @@ export class GameScene extends Phaser.Scene {
 		if (offer) {
 			const result = applyCard(this.build, this.stats, offer.card, offer.rarity);
 			countRun(this.run, 'cardsPicked');
-			if (offer.rarity === 'legendary' && offer.card.effect.type !== 'evolve')
-				countRun(this.run, 'legendaryCards');
+			if (offer.rarity === 'legendary') countRun(this.run, 'legendaryCards');
 			if (result.exclusive) countRun(this.run, 'exclusiveCards');
 			if (result.maxHpDelta > 0) {
 				this.run.maxHp = this.stats.maxHp;
 				healHero(this.run, result.maxHpDelta);
 			}
-			if (result.evolvedTo) this.evolve(result.evolvedTo);
 		}
 		startRound(this.run, this.run.round + 1);
 		this.arena.grow(this.run.round);
@@ -1007,15 +1076,6 @@ export class GameScene extends Phaser.Scene {
 		const biome = biomeForRound(this.run.round);
 		this.arena.setBiome(biome);
 		this.fx.banner(this.hero.x, this.hero.y, `biome.${biome}` as I18nKey);
-	}
-
-	private evolve(tier: 2 | 3): void {
-		this.run.tier = tier;
-		this.hero.setTier(tier);
-		this.weapons.weapon = SIGNATURE[this.run.hero][tier - 1] as SignatureWeapon;
-		this.weaponView.setWeapon(this.weapons.weapon);
-		countRun(this.run, tier === 2 ? 'evolutionsT2' : 'evolutionsT3');
-		if (tier === 3) this.run.counters.evolvedT3 = true;
 	}
 
 	private pause(): void {

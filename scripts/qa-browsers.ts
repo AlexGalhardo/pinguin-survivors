@@ -12,9 +12,9 @@ import { type Browser, chromium, firefox } from 'playwright';
 const base = process.argv[2] ?? 'http://localhost:4173';
 const outDir = process.argv[3] ?? tmpdir();
 const targets: [string, () => Promise<Browser>][] = [
-	['chrome', () => chromium.launch({ channel: 'chrome' })],
-	['edge', () => chromium.launch({ channel: 'msedge' })],
-	['firefox', () => firefox.launch()],
+	['chrome', () => chromium.launch({ channel: 'chrome', args: ['--mute-audio'] })],
+	['edge', () => chromium.launch({ channel: 'msedge', args: ['--mute-audio'] })],
+	['firefox', () => firefox.launch({ firefoxUserPrefs: { 'media.volume_scale': '0.0' } })],
 ];
 
 for (const [name, launch] of targets) {
@@ -89,7 +89,7 @@ const RESOLUTIONS: [string, number, number, number][] = [
 	['3840x2160', 3840, 2160, 1],
 	['1440x900-retina', 1440, 900, 2],
 ];
-const shell = await chromium.launch();
+const shell = await chromium.launch({ args: ['--mute-audio'] });
 for (const [label, width, height, dpr] of RESOLUTIONS) {
 	const page = await shell.newPage({ viewport: { width, height }, deviceScaleFactor: dpr });
 	const errors: string[] = [];

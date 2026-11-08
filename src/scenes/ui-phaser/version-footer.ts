@@ -2,11 +2,9 @@ import type Phaser from 'phaser';
 import { PALETTE, toCss } from '../../config/palette';
 import type { ViewSize } from '../../logic/viewport';
 import { UI_FONT } from '../../ui/font';
+import { buildLabel } from '../../ui/version-label';
 
-export function buildLabel(version: string, dev: boolean, name = ''): string {
-	const label = name ? `v${version} · ${name}` : `v${version}`;
-	return dev ? `${label} (dev)` : label;
-}
+export { buildLabel };
 
 /**
  * Build version centered in the footer (main menu and HUD), so whoever is testing knows which

@@ -86,12 +86,6 @@ export class Hero {
 		}
 	}
 
-	setTier(tier: 1 | 2 | 3): void {
-		this.tier = tier;
-		this.current = null;
-		this.loadAtlas();
-	}
-
 	flash(): void {
 		this.flashTime = 0.12;
 		this.sprite.setTint(0xff4040).setTintMode(Phaser.TintModes.FILL);

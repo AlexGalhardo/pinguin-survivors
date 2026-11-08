@@ -357,7 +357,7 @@ export type RunCounters = Partial<Record<LifetimeStat, number>> & {
 	exclusiveCards?: number;
 	superUses?: number;
 	superKillsOneCast?: number;
-	evolvedT3?: boolean;
+	fusedT4?: boolean;
 };
 
 /**
@@ -377,7 +377,7 @@ export function recordRunEnd(
 	h.exclusiveCards += counters.exclusiveCards ?? 0;
 	h.superUses += counters.superUses ?? 0;
 	h.bestRound = Math.max(h.bestRound, record.round);
-	if (counters.evolvedT3) h.evolvedT3 = 1;
+	if (counters.fusedT4) h.fusedT4 = 1;
 	p.runBests.maxRound = Math.max(p.runBests.maxRound, record.round);
 	p.runBests.killsInRun = Math.max(p.runBests.killsInRun, record.kills);
 	p.runBests.superKillsOneCast = Math.max(
@@ -407,7 +407,7 @@ export function liveProgress(
 	h.exclusiveCards += counters.exclusiveCards ?? 0;
 	h.superUses += counters.superUses ?? 0;
 	h.bestRound = Math.max(h.bestRound, run.round);
-	if (counters.evolvedT3) h.evolvedT3 = 1;
+	if (counters.fusedT4) h.fusedT4 = 1;
 	p.runBests.maxRound = Math.max(p.runBests.maxRound, run.round);
 	p.runBests.killsInRun = Math.max(p.runBests.killsInRun, run.kills);
 	p.runBests.superKillsOneCast = Math.max(

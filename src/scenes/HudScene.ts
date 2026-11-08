@@ -5,12 +5,14 @@ import { getParams } from '../core/context';
 import { GameEvents } from '../core/events';
 import { trackZoom } from '../core/viewport';
 import type { AchievementDef } from '../data/achievements';
+import { GEAR_SLOTS } from '../data/equipment';
 import { type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
 import { xpToNext } from '../logic/progression';
 import { worldToScreen } from '../logic/projection';
 import { eliteTiers, isBossRound } from '../logic/round';
 import { TITLE_FONT, UI_FONT, UI_WEIGHT } from '../ui/font';
+import { hudDue, hudWeapons, publishHud } from '../ui/hud-bridge';
 import { type Light, Lighting } from '../world/Lighting';
 import type { GameScene } from './GameScene';
 import { AchievementToast } from './ui-phaser/AchievementToast';
@@ -224,6 +226,7 @@ export class HudScene extends Phaser.Scene {
 			t(game.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: game.speed }),
 		);
 		this.fpsText.setText(t('hud.fps', { n: Math.round(this.game.loop.actualFps) }));
+		if (getParams(this).uiHud && hudDue()) this.publishReactHud(game);
 		this.debugText?.setText(
 			t('debug.stats', {
 				fps: Math.round(this.game.loop.actualFps),
@@ -237,6 +240,46 @@ export class HudScene extends Phaser.Scene {
 				y: Math.round(game.hero.y),
 			}),
 		);
+	}
+
+	/** Snapshot for the React HUD (~10 Hz); the Phaser HUD above stays until T3.7. */
+	private publishReactHud(game: GameScene): void {
+		const run = game.run;
+		const tiers = eliteTiers(run.round);
+		const boss = game.enemies.boss;
+		publishHud({
+			hp: run.hp,
+			maxHp: run.maxHp,
+			level: game.level.level,
+			xp: game.level.xp,
+			xpToNext: xpToNext(game.level.level),
+			fish: run.fish,
+			kills: run.kills,
+			round: run.round,
+			timeLeft: run.timeLeft,
+			bossRound: isBossRound(run.round),
+			boss: boss ? { id: boss.def.id, hp: boss.hp, maxHp: boss.maxHp } : null,
+			superpower: game.superIsUnlocked
+				? { charge: Math.min(run.superCharge, game.superCost), cost: game.superCost }
+				: null,
+			elite: tiers.includes('orange') ? 'orange' : tiers.length ? 'purple' : 'none',
+			weapons: hudWeapons(game.build),
+			gear: GEAR_SLOTS.map((slot) => run.gear?.equipped[slot] ?? null),
+			gambits: game.potions.flatMap((p, slot) =>
+				p.potion && p.condition
+					? [
+							{
+								slot,
+								potion: p.potion as string,
+								condition: p.condition as string,
+								used: p.used,
+							},
+						]
+					: [],
+			),
+			speed: game.speed,
+			fps: Math.round(this.game.loop.actualFps),
+		});
 	}
 
 	/** World lights → HUD coordinates (the HUD camera maps 0..view to the screen). */

@@ -230,6 +230,7 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 			ctx.fillRect(len - 8, 3, 4, 2);
 		});
 	blade('machete', 26, '#c8ced8', '#f2f4f8');
+	blade('hammer', 24, '#7d8699', '#c8ced8');
 	blade('katana', 34, '#dfe5ee', '#ffffff');
 	blade('chainsword', 36, '#7d8699', '#ffb13b', true);
 	const gun = (id: string, len: number, body: string, barrels: number, tip?: string) =>

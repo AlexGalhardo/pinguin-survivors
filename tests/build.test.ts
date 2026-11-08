@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { MAX_WEAPON_SLOTS } from '../src/data/weapon-lines';
+import { MAX_WEAPON_SLOTS } from '../src/data/weapons';
 import { addWeapon, canFuse, emptyBuild, fuse } from '../src/logic/build';
 
 describe('weapon slots and fusion (SDD-002 A1)', () => {

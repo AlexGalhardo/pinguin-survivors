@@ -3,7 +3,6 @@ import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { shake } from '../core/feel';
 import { SUPER, SUPERPOWERS, type SuperpowerDef } from '../data/superpowers';
-import type { SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import type { Element } from '../logic/combat';
 import { screenToWorld } from '../logic/projection';
@@ -11,6 +10,7 @@ import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
 import type { PlayerStats } from '../logic/stats';
 import { applyBleed, applyBurn, applyEarth, applyIce } from '../logic/status';
+import type { ActiveWeapon } from '../logic/weapons';
 import type { AreaSystem } from './AreaSystem';
 
 const CATACLYSM_ELEMENTS: readonly Element[] = ['fire', 'ice', 'earth', 'energy'];
@@ -20,6 +20,9 @@ const ELEMENT_COLOR: Record<Element, number> = {
 	earth: PALETTE.elEarth,
 	energy: PALETTE.elEnergy,
 };
+
+/** Base hit when the hero has no weapon at all (everything sold). */
+const FALLBACK_HIT = 10;
 
 /**
  * The three superpowers (P-39): Red Harvest (Jack), Carpet Bombing (Bob) and Elemental
@@ -43,11 +46,10 @@ export class SuperpowerSystem {
 		private readonly hitFn: (enemy: Enemy, amount: number, element?: Element) => void,
 	) {}
 
-	/** Damage of one signature attack (all pellets), the base of every superpower. */
-	private weaponHit(weapon: SignatureWeapon): number {
-		return (
-			weapon.damage * (weapon.count ?? 1) * this.stats.tagMul[weapon.tag] * this.stats.damage
-		);
+	/** Damage of the lead weapon's attack (all pellets), the base of every superpower. */
+	private weaponHit(weapon: ActiveWeapon | null): number {
+		if (!weapon) return FALLBACK_HIT * this.stats.damage;
+		return weapon.damage * weapon.count * this.stats.tagMul[weapon.tag] * this.stats.damage;
 	}
 
 	cast(heroId: keyof typeof SUPERPOWERS, hx: number, hy: number, scene: Phaser.Scene): void {
@@ -76,7 +78,7 @@ export class SuperpowerSystem {
 		hx: number,
 		hy: number,
 		grid: SpatialGrid<Enemy>,
-		weapon: SignatureWeapon,
+		weapon: ActiveWeapon | null,
 		view: { width: number; height: number },
 	): void {
 		if (!this.active) return;

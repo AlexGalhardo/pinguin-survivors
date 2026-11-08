@@ -138,10 +138,10 @@ export class PauseScene extends Phaser.Scene {
 			{ x: 0, y: 0, fontSize: 15, onBack: resume },
 		);
 		const weaponLines = [
-			`${t(`sig.${game.signatureId}` as I18nKey)} (T${run.tier})`,
+			...game.build.weapons.map((w) => `${t(`weapon.${w.id}.name` as I18nKey)} (T${w.tier})`),
 			...Object.entries(game.build.secondaries).map(
 				([id, lv]) =>
-					`${t(`card.weapon.${id}.name` as I18nKey)} ${t('hud.level', { n: lv as number })}`,
+					`${t(`card.active.${id}.name` as I18nKey)} ${t('hud.level', { n: lv as number })}`,
 			),
 		];
 		const perkLines = Object.entries(game.build.perks).map(

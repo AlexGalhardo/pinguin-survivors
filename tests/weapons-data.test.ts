@@ -9,7 +9,7 @@ import {
 	WEAPON_LINES,
 	WEAPON_TIER_TINT,
 	WEAPON_TIERS,
-} from '../src/data/weapon-lines';
+} from '../src/data/weapons';
 import { TABLES_FOR_TEST, t } from '../src/i18n';
 
 describe('weapon lines (SDD-002 A3)', () => {

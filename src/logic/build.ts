@@ -12,7 +12,7 @@ import {
 	WEAPON_LINE_BY_ID,
 	type WeaponId,
 	type WeaponTier,
-} from '../data/weapon-lines';
+} from '../data/weapons';
 import { addStat, type PlayerStats } from './stats';
 
 /** One weapon slot (SDD-002 RF-01). */
@@ -51,15 +51,12 @@ export function canTake(build: Build, card: CardDef): boolean {
 		}
 		case 'perk':
 			return (build.perks[e.perk] ?? 0) < MAX_LEVEL;
-		case 'evolve':
-			return build.tier === e.tier - 1;
 	}
 }
 
 export interface ApplyResult {
 	/** Max HP gained (the caller heals the same amount). */
 	maxHpDelta: number;
-	evolvedTo?: 2 | 3;
 	exclusive: boolean;
 }
 
@@ -86,10 +83,6 @@ export function applyCard(
 			build.perks[e.perk] = (build.perks[e.perk] ?? 0) + 1;
 			// Iron Skin is a flat armor bonus per level; other perks are read by the systems.
 			if (e.perk === 'ironSkin') addStat(stats, 'armor', PERKS.ironSkin.value);
-			break;
-		case 'evolve':
-			build.tier = e.tier;
-			result.evolvedTo = e.tier;
 			break;
 	}
 	return result;

@@ -44,7 +44,7 @@ export interface Projectile extends Required<Omit<ProjectileSpec, 'tint' | 'elem
 
 export type ProjectileHit = (enemy: Enemy, p: Projectile) => void;
 
-/** Shared pool for every straight-flying projectile (signature and secondary weapons). */
+/** Shared pool for every straight-flying projectile (every straight-flying weapon). */
 export class ProjectilePool {
 	private readonly items: Projectile[] = [];
 	private readonly scratch: Enemy[] = [];

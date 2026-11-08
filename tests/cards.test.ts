@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { ALL_CARDS } from '../src/data/cards';
 import { HEROES } from '../src/data/heroes';
 import { applyCard, canTake, emptyBuild, slotsUsed } from '../src/logic/build';
-import { drawCards, evolutionAvailable, rarityWeights } from '../src/logic/cards';
+import { drawCards, rarityWeights } from '../src/logic/cards';
 import { Rng } from '../src/logic/rng';
 import { baseStats } from '../src/logic/stats';
 
@@ -31,27 +31,14 @@ describe('drawCards', () => {
 			expect(new Set(offers.map((o) => o.card.id)).size).toBe(3);
 			for (const o of offers)
 				expect(o.card.hero === undefined || o.card.hero === 'bob').toBe(true);
-			for (const o of offers) expect(o.card.effect.type).not.toBe('evolve');
 		}
 	});
 
-	test('evolution is always offered once available', () => {
-		const rng = new Rng(2);
+	test('hero actives stop being offered at the max level', () => {
 		const build = emptyBuild();
-		expect(evolutionAvailable(build, 10)).toBeNull();
-		const offers = drawCards(rng, { hero: 'jack', round: 11, luck: 0, build });
-		expect(offers[0]?.card.id).toBe('evolve.2');
-		build.tier = 2;
-		expect(evolutionAvailable(build, 15)).toBeNull();
-		expect(evolutionAvailable(build, 21)).toBe(3);
-	});
-
-	test('full slots only offer upgrades of owned weapons', () => {
-		const build = emptyBuild();
-		build.secondaries = { knives: 1, molotov: 5, auxPistol: 2 };
-		expect(canTake(build, card('weapon.knives'))).toBe(true);
-		expect(canTake(build, card('weapon.molotov'))).toBe(false);
-		expect(canTake(build, card('weapon.iceShards'))).toBe(false);
+		build.secondaries = { arcaneChain: 5, frostNova: 2 };
+		expect(canTake(build, card('active.arcaneChain'))).toBe(false);
+		expect(canTake(build, card('active.frostNova'))).toBe(true);
 	});
 });
 
@@ -66,19 +53,17 @@ describe('applyCard', () => {
 		expect(stats.resist.ice).toBeCloseTo(0.13);
 	});
 
-	test('weapons and perks level up; evolution sets the tier', () => {
+	test('hero actives and perks level up', () => {
 		const stats = baseStats(HEROES.jack);
 		const build = emptyBuild();
-		applyCard(build, stats, card('weapon.knives'), 'common');
-		applyCard(build, stats, card('weapon.knives'), 'rare');
-		expect(build.secondaries.knives).toBe(2);
+		applyCard(build, stats, card('active.seismicStomp'), 'common');
+		applyCard(build, stats, card('active.seismicStomp'), 'rare');
+		expect(build.secondaries.seismicStomp).toBe(2);
 		expect(slotsUsed(build)).toBe(1);
 		const r = applyCard(build, stats, card('perk.ironSkin'), 'common');
 		expect(r.exclusive).toBe(true);
 		expect(stats.armor).toBe(18);
-		expect(applyCard(build, stats, card('evolve.2'), 'legendary').evolvedTo).toBe(2);
-		expect(build.tier).toBe(2);
-		expect(build.cards).toHaveLength(4);
+		expect(build.cards).toHaveLength(3);
 	});
 });
 
@@ -92,5 +77,15 @@ describe('1.0 card pool (SDD-002 RF-06/RF-07)', () => {
 		expect(card('perk.ironBreath').hero).toBe('jack');
 		expect(card('perk.quickReload').hero).toBe('bob');
 		expect(card('perk.arcaneEcho').hero).toBe('lucia');
+	});
+});
+
+describe('level-up pool has no weapons or evolutions (SDD-003 A6)', () => {
+	test('only stat cards, hero actives and perks', () => {
+		for (const c of ALL_CARDS) {
+			expect(c.id.startsWith('weapon.') || c.id.startsWith('evolve.')).toBe(false);
+			expect(['stat', 'secondary', 'perk']).toContain(c.effect.type);
+			expect(['stat', 'onhit', 'exclusive']).toContain(c.kind);
+		}
 	});
 });

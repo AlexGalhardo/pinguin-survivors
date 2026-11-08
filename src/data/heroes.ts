@@ -1,6 +1,6 @@
 import type { HeroId } from '../config/constants';
 import { STARTING_WEAPONS } from './unlocks';
-import type { WeaponId } from './weapon-lines';
+import type { WeaponId } from './weapons';
 
 /** Level-1 hero profiles (docs/balancing-and-simulation.md §4). */
 export interface HeroDef {

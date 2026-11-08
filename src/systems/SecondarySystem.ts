@@ -10,16 +10,18 @@ import {
 	type SecondaryId,
 } from '../data/secondaries';
 import type { Enemy } from '../entities/Enemy';
-import { boomerangDistance, scaledCount } from '../logic/boomerang';
+import { boomerangDistance } from '../logic/boomerang';
 import type { Build } from '../logic/build';
-import { type Element, rollOutgoing } from '../logic/combat';
+import { type DamageTag, type Element, rollOutgoing } from '../logic/combat';
 import { depthOf, worldToScreen } from '../logic/projection';
 import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
 import type { PlayerStats } from '../logic/stats';
+import { type ActiveWeapon, isDirect, resolveWeapon } from '../logic/weapons';
 import type { AreaSystem } from './AreaSystem';
 import type { ProjectilePool } from './ProjectilePool';
-import { ELEMENT_TINT } from './WeaponSystem';
+import { pickTarget } from './targeting';
+import { ELEMENT_TINT, type WeaponBonus } from './WeaponSystem';
 
 export type SecondaryHit = (
 	enemy: Enemy,
@@ -28,11 +30,53 @@ export type SecondaryHit = (
 	element: Element | undefined,
 ) => void;
 
+/** What an activation needs, whether it comes from a weapon slot or a hero active. */
+type ActBehavior = ActiveWeapon['behavior'] | 'stomp' | 'chain' | 'meteor' | 'nova';
+
+interface Act {
+	id: string;
+	tag: DamageTag;
+	behavior: ActBehavior;
+	damage: number;
+	cooldown: number;
+	range: number;
+	radius: number;
+	count: number;
+	element?: Element;
+	pierce: number;
+	duration: number;
+}
+
 interface OrbitState {
 	angle: number;
 	sprites: Phaser.GameObjects.Image[];
 	/** Enemy → time left before this orbit can hit it again. */
 	cooldowns: Map<Enemy, number>;
+}
+
+/** Per weapon-slot state; reset when the slot's weapon or tier changes. */
+interface SlotState {
+	id: string;
+	tier: number;
+	timer: number;
+	orbit: OrbitState | null;
+}
+
+/** Hero actives (stomp, chain, meteor, nova) at a level: damage and counts scale with it. */
+function activeAct(def: SecondaryDef, level: number): Act {
+	return {
+		id: def.id,
+		tag: def.tag,
+		behavior: def.behavior,
+		damage: def.damage * levelScale(level),
+		cooldown: def.cooldown,
+		range: def.range,
+		radius: def.radius ?? 0,
+		count: (def.count ?? 1) + (def.countPerLevel ?? 0) * (level - 1),
+		element: def.element,
+		pierce: def.pierce ?? 0,
+		duration: def.duration ?? 0,
+	};
 }
 
 interface Boomerang {
@@ -54,7 +98,7 @@ interface Deployable {
 	/** Mines: arming delay; totems: time to the next zap. */
 	timer: number;
 	life: number;
-	level: number;
+	act: Act | null;
 	alive: boolean;
 }
 
@@ -67,7 +111,8 @@ const METEOR_TIME = 0.7;
 /** Secondary weapons and weapon-like exclusives from the build (docs/gdd.md §5.1, §9). */
 export class SecondarySystem {
 	private readonly timers = new Map<SecondaryId, number>();
-	private readonly orbits = new Map<SecondaryId, OrbitState>();
+	private readonly slots: SlotState[] = [];
+	private readonly actives = new Map<string, Act>();
 	private drone: Phaser.GameObjects.Image | null = null;
 	private readonly droneAt = { x: 0, y: 0 };
 	private readonly scratch: Enemy[] = [];
@@ -88,17 +133,20 @@ export class SecondarySystem {
 		private readonly pool: ProjectilePool,
 		private readonly area: AreaSystem,
 		private readonly onHit: SecondaryHit,
+		private readonly bonus: WeaponBonus,
+		/** Weapon in `slot` activated towards `angle` (ring animation). */
+		private readonly onFire: (slot: number, angle: number, cooldown: number) => void = () => {},
 	) {
 		this.lightning = scene.add.graphics().setDepth(1e8);
 	}
 
-	/** Base damage roll for a weapon at its level, with the hero's multipliers. */
-	private roll(def: SecondaryDef, level: number): { amount: number; crit: boolean } {
+	/** Damage roll for an activation, with the hero's multipliers. */
+	private roll(def: Act): { amount: number; crit: boolean } {
 		return rollOutgoing(
 			{
-				base: def.damage * levelScale(level),
+				base: def.damage,
 				tag: def.tag,
-				multiplier: this.stats.tagMul[def.tag] * this.stats.damage,
+				multiplier: this.stats.tagMul[def.tag] * this.stats.damage * this.bonus.damage,
 				critChance: this.stats.crit,
 				critDamage: this.stats.critDamage,
 			},
@@ -108,33 +156,81 @@ export class SecondarySystem {
 
 	update(dt: number, hx: number, hy: number, grid: SpatialGrid<Enemy>): void {
 		this.novaCooldown -= dt;
+		const rate = this.stats.attackSpeed * this.bonus.rate;
+		const weapons = this.build.weapons;
+		this.trimSlots(weapons.length);
+		let aura: ActiveWeapon | null = null;
+		let drone = false;
+		for (let i = 0; i < weapons.length; i++) {
+			const w = resolveWeapon(weapons[i] as (typeof weapons)[number]);
+			let st = this.slots[i];
+			if (!st || st.id !== w.id || st.tier !== w.tier) {
+				if (st) this.dropOrbit(st);
+				st = { id: w.id, tier: w.tier, timer: 0, orbit: null };
+				this.slots[i] = st;
+			}
+			if (isDirect(w)) continue;
+			if (w.behavior === 'orbit') {
+				this.updateOrbit(st, w, dt, hx, hy, grid);
+				continue;
+			}
+			if (w.behavior === 'aura') aura ??= w;
+			if (w.behavior === 'follower') {
+				drone = true;
+				this.moveDrone(dt, hx, hy);
+			}
+			st.timer -= dt;
+			if (st.timer > 0) continue;
+			const fired = this.activate(w, hx, hy, grid);
+			st.timer = fired ? w.cooldown / rate : 0.2;
+			if (fired) {
+				const target = pickTarget(grid, hx, hy, w.range);
+				this.onFire(i, target ? Math.atan2(target.y - hy, target.x - hx) : 0, st.timer);
+			}
+		}
+		if (!drone) this.drone?.setVisible(false);
 		for (const [id, level] of Object.entries(this.build.secondaries) as [
 			SecondaryId,
 			number,
 		][]) {
 			const def: SecondaryDef = SECONDARIES[id];
-			if (def.behavior === 'orbit') {
-				this.updateOrbit(id, def, level, dt, hx, hy, grid);
-				continue;
-			}
-			if (def.behavior === 'follower') this.moveDrone(dt, hx, hy);
 			if (def.behavior === 'nova') continue;
+			const act = this.activeOf(def, level);
 			const left = (this.timers.get(id) ?? 0) - dt;
 			if (left > 0) {
 				this.timers.set(id, left);
 				continue;
 			}
-			const fired = this.activate(def, level, hx, hy, grid);
-			this.timers.set(id, fired ? def.cooldown / this.stats.attackSpeed : 0.2);
+			const fired = this.activate(act, hx, hy, grid);
+			this.timers.set(id, fired ? def.cooldown / rate : 0.2);
 		}
 		this.updateBoomerangs(dt, hx, hy, grid);
 		this.updateMines(dt, grid);
 		this.updateTotems(dt, grid);
-		this.syncAura(hx, hy);
+		this.syncAura(aura, hx, hy);
 		if (this.lightningLife > 0) {
 			this.lightningLife -= dt;
 			if (this.lightningLife <= 0) this.lightning.clear();
 		}
+	}
+
+	private activeOf(def: SecondaryDef, level: number): Act {
+		const key = `${def.id}:${level}`;
+		let act = this.actives.get(key);
+		if (!act) {
+			act = activeAct(def, level);
+			this.actives.set(key, act);
+		}
+		return act;
+	}
+
+	private dropOrbit(st: SlotState): void {
+		for (const img of st.orbit?.sprites ?? []) img.destroy();
+		st.orbit = null;
+	}
+
+	private trimSlots(n: number): void {
+		while (this.slots.length > n) this.dropOrbit(this.slots.pop() as SlotState);
 	}
 
 	/** Round end: mines, totems and boomerangs in flight disappear. */
@@ -181,9 +277,8 @@ export class SecondarySystem {
 	}
 
 	private updateMines(dt: number, grid: SpatialGrid<Enemy>): void {
-		const def = SECONDARIES.mine;
 		for (const m of this.mines) {
-			if (!m.alive) continue;
+			if (!m.alive || !m.act) continue;
 			m.life -= dt;
 			m.timer -= dt;
 			if (m.life <= 0) {
@@ -193,8 +288,8 @@ export class SecondarySystem {
 			m.sprite.setAlpha(m.timer > 0 ? 0.5 : 1);
 			if (m.timer > 0) continue;
 			if (!grid.nearest(m.x, m.y, DEPLOYABLES.mineTrigger + 20, (e) => e.alive)) continue;
-			const radius = def.radius * this.stats.area;
-			const out = this.roll(def, m.level);
+			const radius = m.act.radius * this.stats.area;
+			const out = this.roll(m.act);
 			this.area.burst(grid, m.x, m.y, radius, out.amount, undefined);
 			this.area.flash(m.x, m.y, radius, PALETTE.auraOrange, 0.3);
 			this.retire(m);
@@ -202,9 +297,8 @@ export class SecondarySystem {
 	}
 
 	private updateTotems(dt: number, grid: SpatialGrid<Enemy>): void {
-		const def = SECONDARIES.lightningTotem;
 		for (const t of this.totems) {
-			if (!t.alive) continue;
+			if (!t.alive || !t.act) continue;
 			t.life -= dt;
 			t.timer -= dt;
 			if (t.life <= 0) {
@@ -212,10 +306,10 @@ export class SecondarySystem {
 				continue;
 			}
 			if (t.timer > 0) continue;
-			const target = grid.nearest(t.x, t.y, def.range, (e) => e.alive);
+			const target = pickTarget(grid, t.x, t.y, t.act.range);
 			if (!target) continue;
 			t.timer = DEPLOYABLES.totemZap;
-			const out = this.roll(def, t.level);
+			const out = this.roll(t.act);
 			if (this.lightningLife <= 0) this.lightning.clear();
 			this.lightning.lineStyle(2, PALETTE.elEnergy, 1);
 			this.drawBolt(t, target);
@@ -224,16 +318,17 @@ export class SecondarySystem {
 		}
 	}
 
-	private syncAura(hx: number, hy: number): void {
-		if (!this.build.secondaries.flameRing) return;
-		if (!this.auraRing)
-			this.auraRing = this.scene.add
-				.image(0, 0, KEYS.ring)
-				.setTint(PALETTE.elFire)
-				.setAlpha(0.35);
-		const radius = SECONDARIES.flameRing.radius * this.stats.area;
+	private syncAura(aura: ActiveWeapon | null, hx: number, hy: number): void {
+		if (!aura) {
+			this.auraRing?.setVisible(false);
+			return;
+		}
+		this.auraRing ??= this.scene.add.image(0, 0, KEYS.ring).setAlpha(0.35);
+		const radius = aura.radius * this.stats.area;
 		const s = worldToScreen(hx, hy);
 		this.auraRing
+			.setVisible(true)
+			.setTint(aura.element ? ELEMENT_TINT[aura.element] : PALETTE.elFire)
 			.setPosition(Math.round(s.x), Math.round(s.y))
 			.setDisplaySize(radius * 2, radius * 2)
 			.setDepth(depthOf(hx, hy) - 1);
@@ -245,7 +340,7 @@ export class SecondarySystem {
 		at: { x: number; y: number },
 		timer: number,
 		life: number,
-		level: number,
+		act: Act,
 	): void {
 		let d = list.find((q) => !q.alive);
 		if (!d) {
@@ -255,12 +350,12 @@ export class SecondarySystem {
 				y: 0,
 				timer: 0,
 				life: 0,
-				level: 1,
+				act: null,
 				alive: false,
 			};
 			list.push(d);
 		}
-		Object.assign(d, { x: at.x, y: at.y, timer, life, level, alive: true });
+		Object.assign(d, { x: at.x, y: at.y, timer, life, act, alive: true });
 		const s = worldToScreen(at.x, at.y);
 		d.sprite
 			.setPosition(Math.round(s.x), Math.round(s.y))
@@ -269,10 +364,10 @@ export class SecondarySystem {
 			.setVisible(true);
 	}
 
-	private throwBoomerangs(def: SecondaryDef, level: number, base: number): void {
-		const count = scaledCount(def.count ?? 1, def.countPerLevel ?? 0, level);
+	private throwBoomerangs(def: Act, base: number): void {
+		const count = def.count;
 		for (let i = 0; i < count; i++) {
-			const out = this.roll(def, level);
+			const out = this.roll(def);
 			let b = this.boomerangs.find((q) => !q.alive);
 			if (!b) {
 				b = {
@@ -302,11 +397,8 @@ export class SecondarySystem {
 		}
 	}
 
-	private layMine(def: SecondaryDef, level: number, hx: number, hy: number): void {
-		const max = Math.min(
-			DEPLOYABLES.maxMines,
-			scaledCount(def.count ?? 3, def.countPerLevel ?? 0, level),
-		);
+	private layMine(def: Act, hx: number, hy: number): void {
+		const max = Math.min(DEPLOYABLES.maxMines, def.count);
 		const live = this.mines.filter((m) => m.alive);
 		// The oldest mine goes when the field is full.
 		if (live.length >= max) this.retire(live.reduce((a, b) => (a.life < b.life ? a : b)));
@@ -315,27 +407,21 @@ export class SecondarySystem {
 			KEYS.projectile('mine'),
 			{ x: hx, y: hy },
 			DEPLOYABLES.mineArm,
-			def.duration ?? 20,
-			level,
+			def.duration || 20,
+			def,
 		);
 	}
 
 	/** Returns false when there was no target (retry soon instead of waiting the cooldown). */
-	private activate(
-		def: SecondaryDef,
-		level: number,
-		hx: number,
-		hy: number,
-		grid: SpatialGrid<Enemy>,
-	): boolean {
+	private activate(def: Act, hx: number, hy: number, grid: SpatialGrid<Enemy>): boolean {
 		switch (def.behavior) {
 			case 'thrown': {
-				const count = (def.count ?? 1) + (def.countPerLevel ?? 0) * (level - 1);
-				const target = grid.nearest(hx, hy, def.range, (e) => e.alive);
+				const count = def.count;
+				const target = pickTarget(grid, hx, hy, def.range);
 				if (!target) return false;
 				const base = Math.atan2(target.y - hy, target.x - hx);
 				for (let i = 0; i < count; i++) {
-					const out = this.roll(def, level);
+					const out = this.roll(def);
 					this.pool.spawn({
 						x: hx,
 						y: hy,
@@ -351,35 +437,35 @@ export class SecondarySystem {
 				return true;
 			}
 			case 'boomerang': {
-				const target = grid.nearest(hx, hy, def.range, (e) => e.alive);
+				const target = pickTarget(grid, hx, hy, def.range);
 				if (!target) return false;
-				this.throwBoomerangs(def, level, Math.atan2(target.y - hy, target.x - hx));
+				this.throwBoomerangs(def, Math.atan2(target.y - hy, target.x - hx));
 				return true;
 			}
 			case 'mine':
-				this.layMine(def, level, hx, hy);
+				this.layMine(def, hx, hy);
 				return true;
 			case 'aura': {
-				const radius = (def.radius ?? 70) * this.stats.area;
-				const out = this.roll(def, level);
+				const radius = (def.radius || 70) * this.stats.area;
+				const out = this.roll(def);
 				this.area.burst(grid, hx, hy, radius, out.amount, def.element);
 				return true;
 			}
 			case 'totem': {
-				if (!grid.nearest(hx, hy, def.range, (e) => e.alive)) return false;
-				const life = def.duration ?? 6;
-				this.place(this.totems, KEYS.projectile('totem'), { x: hx, y: hy }, 0, life, level);
+				if (!pickTarget(grid, hx, hy, def.range)) return false;
+				const life = def.duration || 6;
+				this.place(this.totems, KEYS.projectile('totem'), { x: hx, y: hy }, 0, life, def);
 				return true;
 			}
 			case 'cloud': {
 				const target = this.pickCrowd(grid, hx, hy, def.range);
 				if (!target) return false;
-				const out = this.roll(def, level);
+				const out = this.roll(def);
 				this.area.zone(
 					target.x,
 					target.y,
-					(def.radius ?? 60) * this.stats.area,
-					def.duration ?? 4,
+					(def.radius || 60) * this.stats.area,
+					def.duration || 4,
 					out.amount,
 					{ poison: true, tint: PALETTE.dotPoison },
 				);
@@ -388,9 +474,9 @@ export class SecondarySystem {
 			case 'shooter':
 			case 'follower': {
 				const from = def.behavior === 'follower' ? this.droneAt : { x: hx, y: hy };
-				const target = grid.nearest(from.x, from.y, def.range, (e) => e.alive);
+				const target = pickTarget(grid, from.x, from.y, def.range);
 				if (!target) return false;
-				const out = this.roll(def, level);
+				const out = this.roll(def);
 				this.pool.spawn({
 					x: from.x,
 					y: from.y,
@@ -405,7 +491,7 @@ export class SecondarySystem {
 						: def.behavior === 'follower'
 							? PALETTE.blood
 							: PALETTE.crit,
-					pierce: def.pierce ?? 0,
+					pierce: def.pierce,
 					orient: Boolean(def.pierce),
 				});
 				return true;
@@ -413,9 +499,9 @@ export class SecondarySystem {
 			case 'lob': {
 				const target = this.pickCrowd(grid, hx, hy, def.range);
 				if (!target) return false;
-				const out = this.roll(def, level);
-				const radius = (def.radius ?? 50) * this.stats.area;
-				if (def.id === 'molotov') {
+				const out = this.roll(def);
+				const radius = (def.radius || 50) * this.stats.area;
+				if (def.element === 'fire' && def.behavior === 'lob') {
 					this.area.impact(
 						target.x,
 						target.y,
@@ -451,23 +537,23 @@ export class SecondarySystem {
 				return true;
 			}
 			case 'stomp': {
-				const radius = (def.radius ?? 100) * this.stats.area;
-				const out = this.roll(def, level);
+				const radius = (def.radius || 100) * this.stats.area;
+				const out = this.roll(def);
 				const hit = this.area.burst(grid, hx, hy, radius, out.amount, undefined);
 				for (const e of hit) e.status.stunned = Math.max(e.status.stunned, 0.6);
 				this.area.flash(hx, hy, radius, PALETTE.elEarth, 0.35);
 				return true;
 			}
 			case 'chain': {
-				const first = grid.nearest(hx, hy, def.range, (e) => e.alive);
+				const first = pickTarget(grid, hx, hy, def.range);
 				if (!first) return false;
-				const out = this.roll(def, level);
+				const out = this.roll(def);
 				this.lightning.clear().lineStyle(2, PALETTE.elEnergy, 1);
 				let from = { x: hx, y: hy };
 				let current: Enemy | undefined = first;
 				let amount = out.amount;
 				const hit = new Set<Enemy>();
-				for (let j = 0; j < (def.count ?? 5) && current; j++) {
+				for (let j = 0; j < (def.count || 5) && current; j++) {
 					this.drawBolt(from, current);
 					hit.add(current);
 					this.onHit(current, amount, out.crit && j === 0, 'energy');
@@ -488,10 +574,10 @@ export class SecondarySystem {
 				grid.queryRadius(hx, hy, def.range, this.scratch);
 				const alive = this.scratch.filter((e) => e.alive);
 				if (alive.length === 0) return false;
-				const radius = (def.radius ?? 60) * this.stats.area;
-				for (let i = 0; i < (def.count ?? 3); i++) {
+				const radius = (def.radius || 60) * this.stats.area;
+				for (let i = 0; i < (def.count || 3); i++) {
 					const target = alive[this.rng.int(0, alive.length - 1)] as Enemy;
-					const out = this.roll(def, level);
+					const out = this.roll(def);
 					this.area.impact(
 						target.x,
 						target.y,
@@ -518,8 +604,9 @@ export class SecondarySystem {
 		if (!level || this.novaCooldown > 0) return;
 		const def = SECONDARIES.frostNova;
 		this.novaCooldown = def.cooldown / levelScale(level);
+		const act = this.activeOf(def, level);
 		const radius = def.radius * this.stats.area;
-		const out = this.roll(def, level);
+		const out = this.roll(act);
 		const hit = this.area.burst(grid, hx, hy, radius, out.amount, 'ice');
 		for (const e of hit) e.status.frozen = Math.max(e.status.frozen, STATUS.ice.freeze);
 		this.area.flash(hx, hy, radius, PALETTE.elIce, 0.4);
@@ -552,20 +639,16 @@ export class SecondarySystem {
 	}
 
 	private updateOrbit(
-		id: SecondaryId,
-		def: SecondaryDef,
-		level: number,
+		slot: SlotState,
+		def: ActiveWeapon,
 		dt: number,
 		hx: number,
 		hy: number,
 		grid: SpatialGrid<Enemy>,
 	): void {
-		let state = this.orbits.get(id);
-		if (!state) {
-			state = { angle: 0, sprites: [], cooldowns: new Map() };
-			this.orbits.set(id, state);
-		}
-		const count = (def.count ?? 2) + (def.countPerLevel ?? 0) * (level - 1);
+		slot.orbit ??= { angle: 0, sprites: [], cooldowns: new Map() };
+		const state = slot.orbit;
+		const count = def.count;
 		while (state.sprites.length < count) {
 			const img = this.scene.add.image(
 				0,
@@ -597,7 +680,7 @@ export class SecondarySystem {
 				const dy = e.y - y;
 				if (dx * dx + dy * dy > (ORBIT_HIT_RADIUS + e.radius) ** 2) continue;
 				state.cooldowns.set(e, def.cooldown);
-				const out = this.roll(def, level);
+				const out = this.roll(def);
 				this.onHit(e, out.amount, out.crit, def.element);
 			}
 		});
@@ -609,7 +692,8 @@ export class SecondarySystem {
 			this.droneAt.x = hx;
 			this.droneAt.y = hy;
 		}
-		// Hovers behind-left of Bob, easing towards him.
+		this.drone.setVisible(true);
+		// Hovers behind-left of the hero, easing towards him.
 		const k = Math.min(1, dt * 4);
 		this.droneAt.x += (hx - 20 - this.droneAt.x) * k;
 		this.droneAt.y += (hy - 20 - this.droneAt.y) * k;

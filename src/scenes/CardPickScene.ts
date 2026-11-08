@@ -167,7 +167,6 @@ export class CardPickScene extends Phaser.Scene {
 
 	private tagText(offer: CardOffer, build: Build): string {
 		const e = offer.card.effect;
-		if (e.type === 'evolve') return t('cards.evolve');
 		const level =
 			e.type === 'secondary'
 				? build.secondaries[e.weapon]

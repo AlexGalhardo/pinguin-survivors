@@ -25,13 +25,12 @@ export const RARITY_WEIGHTS = {
 export type CardEffect =
 	| { type: 'stat'; stat: StatKey; value: number }
 	| { type: 'secondary'; weapon: SecondaryId }
-	| { type: 'perk'; perk: PerkId }
-	| { type: 'evolve'; tier: 2 | 3 };
+	| { type: 'perk'; perk: PerkId };
 
 export interface CardDef {
 	id: string;
-	/** UI grouping: stats, on-hit effects, weapons, exclusives and evolution. */
-	kind: 'stat' | 'onhit' | 'secondary' | 'exclusive' | 'evolution';
+	/** UI grouping: stats, on-hit effects and hero exclusives. */
+	kind: 'stat' | 'onhit' | 'exclusive';
 	hero?: HeroId;
 	effect: CardEffect;
 	/** Relative draw weight. */
@@ -75,22 +74,14 @@ export const STAT_CARDS: CardDef[] = [
 	stat('magicDamage', 'tagMul.magic', 0.12, 'onhit'),
 ];
 
-/** Exclusives that became 1.0 weapon lines (SDD-002 RF-06): no longer offered as cards. */
-const WEAPON_LINE_ONLY: readonly SecondaryId[] = ['bladeWhirl', 'grenadeBelt', 'droneSentinel'];
-
-export const SECONDARY_CARDS: CardDef[] = (Object.keys(SECONDARIES) as SecondaryId[])
-	.filter((w) => !WEAPON_LINE_ONLY.includes(w))
-	.map((w) => {
-		const def = SECONDARIES[w];
-		const hero = 'hero' in def ? def.hero : undefined;
-		return {
-			id: `weapon.${w}`,
-			kind: hero ? 'exclusive' : 'secondary',
-			hero,
-			effect: { type: 'secondary', weapon: w },
-			weight: hero ? 5 : 7,
-		};
-	});
+/** Hero-exclusive actives (stomp, chain, meteor, nova): weapons themselves are bought in the shop. */
+export const ACTIVE_CARDS: CardDef[] = (Object.keys(SECONDARIES) as SecondaryId[]).map((w) => ({
+	id: `active.${w}`,
+	kind: 'exclusive',
+	hero: SECONDARIES[w].hero,
+	effect: { type: 'secondary', weapon: w },
+	weight: 5,
+}));
 
 export const PERK_CARDS: CardDef[] = (Object.keys(PERKS) as PerkId[]).map((p) => ({
 	id: `perk.${p}`,
@@ -100,17 +91,4 @@ export const PERK_CARDS: CardDef[] = (Object.keys(PERKS) as PerkId[]).map((p) =>
 	weight: 5,
 }));
 
-export const EVOLUTION_CARDS: CardDef[] = [
-	{ id: 'evolve.2', kind: 'evolution', effect: { type: 'evolve', tier: 2 }, weight: 0 },
-	{ id: 'evolve.3', kind: 'evolution', effect: { type: 'evolve', tier: 3 }, weight: 0 },
-];
-
-export const ALL_CARDS: readonly CardDef[] = [
-	...STAT_CARDS,
-	...SECONDARY_CARDS,
-	...PERK_CARDS,
-	...EVOLUTION_CARDS,
-];
-
-/** Evolution cards unlock after beating the round-10 (tier 2) and round-20 (tier 3) bosses. */
-export const EVOLUTION_ROUND = { 2: 11, 3: 21 } as const;
+export const ALL_CARDS: readonly CardDef[] = [...STAT_CARDS, ...ACTIVE_CARDS, ...PERK_CARDS];

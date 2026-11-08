@@ -1,12 +1,5 @@
 import type { HeroId } from '../config/constants';
-import {
-	ALL_CARDS,
-	type CardDef,
-	EVOLUTION_ROUND,
-	RARITIES,
-	RARITY_WEIGHTS,
-	type Rarity,
-} from '../data/cards';
+import { ALL_CARDS, type CardDef, RARITIES, RARITY_WEIGHTS, type Rarity } from '../data/cards';
 import { type Build, canTake } from './build';
 import type { Rng } from './rng';
 
@@ -34,16 +27,7 @@ export function rollRarity(rng: Rng, round: number, luck: number): Rarity {
 	return RARITIES[rng.weightedIndex(rarityWeights(round, luck))] as Rarity;
 }
 
-export function evolutionAvailable(build: Build, round: number): 2 | 3 | null {
-	if (build.tier === 1 && round >= EVOLUTION_ROUND[2]) return 2;
-	if (build.tier === 2 && round >= EVOLUTION_ROUND[3]) return 3;
-	return null;
-}
-
-/**
- * Three distinct cards for the end of a round. Exclusive cards only for their hero; an
- * available evolution is always one of the three (P-23).
- */
+/** Three distinct cards for the end of a round. Exclusive cards only for their hero. */
 export function drawCards(
 	rng: Rng,
 	ctx: { hero: HeroId; round: number; luck: number; build: Build },
@@ -51,11 +35,6 @@ export function drawCards(
 	count = 3,
 ): CardOffer[] {
 	const offers: CardOffer[] = [];
-	const evolve = evolutionAvailable(ctx.build, ctx.round);
-	if (evolve) {
-		const card = pool.find((c) => c.effect.type === 'evolve' && c.effect.tier === evolve);
-		if (card) offers.push({ card, rarity: 'legendary' });
-	}
 	const candidates = pool.filter(
 		(c) =>
 			c.weight > 0 && (c.hero === undefined || c.hero === ctx.hero) && canTake(ctx.build, c),

@@ -464,7 +464,11 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 	};
 }
 
-const browser = await chromium.launch({ channel: 'chrome', headless: !flag('headed') });
+const browser = await chromium.launch({
+	channel: 'chrome',
+	headless: !flag('headed'),
+	args: ['--mute-audio'],
+});
 console.log('hero   lvl  seed  round  outcome     kills  gameSec  wallSec');
 for (const level of levels) {
 	for (const hero of heroes) {
