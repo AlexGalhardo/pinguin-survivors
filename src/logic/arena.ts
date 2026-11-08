@@ -120,12 +120,19 @@ export interface Prop extends Obstacle {
 	variant: number;
 }
 
-/** Solid props of an arena (RF-07): deterministic per seed, never near the hero spawn. */
+/**
+ * Solid props of an arena (RF-07): deterministic per seed. Big rocks (3-5x the hero) are only
+ * placed with a free lane of `OBSTACLES.minGap` to every other prop and to the edge, away from
+ * the hero spawn, and never past `OBSTACLES.maxCoverage` of the floor.
+ */
 export function propLayout(seed: number, layout: PropLayout, b: Bounds): Prop[] {
 	const t = ARENA.tile;
 	const clear = ARENA.propClearTiles * t;
+	const gap = OBSTACLES.minGap;
 	const rng = new Rng(seed ^ 0x9e3779b9);
 	const props: Prop[] = [];
+	const area = (b.maxX - b.minX) * (b.maxY - b.minY);
+	let covered = 0;
 	// Skip the outer ring: it is the spawn lane.
 	for (let ty = b.minY + t; ty < b.maxY - t; ty += t) {
 		for (let tx = b.minX + t; tx < b.maxX - t; tx += t) {
@@ -133,8 +140,14 @@ export function propLayout(seed: number, layout: PropLayout, b: Bounds): Prop[] 
 			const variant = rng.int(0, Math.max(0, layout.decoVariants - 1));
 			const x = tx + rng.range(0.25, 0.75) * t;
 			const y = ty + rng.range(0.25, 0.75) * t;
-			if (Math.hypot(x, y) < clear) continue;
-			const r = OBSTACLES.radiusByVariant[variant] ?? OBSTACLES.radiusByVariant[0];
+			const r =
+				OBSTACLES.radiusByVariant[variant] ?? (OBSTACLES.radiusByVariant[0] as number);
+			if (Math.hypot(x, y) < clear + r) continue;
+			const edge = Math.min(x - b.minX, b.maxX - x, y - b.minY, b.maxY - y);
+			if (edge < r + gap) continue;
+			if (props.some((p) => Math.hypot(p.x - x, p.y - y) < p.r + r + gap)) continue;
+			if (covered + Math.PI * r * r > area * OBSTACLES.maxCoverage) continue;
+			covered += Math.PI * r * r;
 			props.push({ x, y, r, variant });
 		}
 	}

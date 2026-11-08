@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { ARENA } from '../src/data/arena';
+import { OBSTACLES } from '../src/data/obstacles';
 import {
 	arenaBounds,
 	arenaSide,
@@ -125,4 +126,24 @@ describe('clampCameraCenter (RF-05)', () => {
 		expect(c).toEqual({ x: b.maxX - 480, y: b.minY + 270 });
 		expect(clampCameraCenter({ x: 10, y: 20 }, 960, 540, b)).toEqual({ x: 10, y: 20 });
 	});
+});
+
+it('big obstacles keep a free lane between them and leave most of the floor open', () => {
+	for (let seed = 1; seed <= 50; seed++) {
+		for (const round of [1, 10, 30]) {
+			const b = arenaBounds(round);
+			const props = propLayout(seed, { decoVariants: 4, decoDensity: 0.05 }, b);
+			let covered = 0;
+			for (const [i, p] of props.entries()) {
+				covered += Math.PI * p.r * p.r;
+				for (const q of props.slice(i + 1))
+					expect(Math.hypot(p.x - q.x, p.y - q.y)).toBeGreaterThanOrEqual(
+						p.r + q.r + OBSTACLES.minGap,
+					);
+			}
+			expect(covered).toBeLessThanOrEqual(
+				(b.maxX - b.minX) * (b.maxY - b.minY) * OBSTACLES.maxCoverage,
+			);
+		}
+	}
 });

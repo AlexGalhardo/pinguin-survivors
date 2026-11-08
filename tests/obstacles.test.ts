@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { BIOMES } from '../src/art/manifest';
+import { OBSTACLES } from '../src/data/obstacles';
 import { arenaBounds, propLayout } from '../src/logic/arena';
 import { ObstacleField, pushOut } from '../src/logic/obstacles';
 
@@ -28,9 +29,10 @@ describe('obstacles', () => {
 
 	test('queries only return obstacles within reach and follow setProps', () => {
 		const field = new ObstacleField(propLayout(3, BIOMES.ruins, arenaBounds(5)));
+		const reach = 10 + Math.max(...OBSTACLES.radiusByVariant);
 		for (const o of field.near(100, 100, 10)) {
-			expect(Math.abs(o.x - 100)).toBeLessThanOrEqual(23);
-			expect(Math.abs(o.y - 100)).toBeLessThanOrEqual(23);
+			expect(Math.abs(o.x - 100)).toBeLessThanOrEqual(reach);
+			expect(Math.abs(o.y - 100)).toBeLessThanOrEqual(reach);
 		}
 		field.setProps([]);
 		expect(field.near(0, 0, 1000)).toHaveLength(0);

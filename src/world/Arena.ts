@@ -3,6 +3,7 @@ import { BIOMES, KEYS } from '../art/manifest';
 import type { BiomeId } from '../config/constants';
 import { activeBudget } from '../core/tier';
 import { ARENA } from '../data/arena';
+import { OBSTACLES } from '../data/obstacles';
 import {
 	arenaBounds,
 	arenaSide,
@@ -162,15 +163,20 @@ export class Arena {
 		const t = ARENA.tile;
 		let props = propLayout(this.seed, def, this.bounds);
 		if (previous) {
-			// Props from the old inner area stay put; the rest come from the fresh layout.
+			// Props from the old inner area stay put; the rest come from the fresh layout, keeping
+			// the free lane to the props that stayed.
+			const kept = this.props;
 			props = [
-				...this.props,
+				...kept,
 				...props.filter(
 					(p) =>
-						p.x < previous.minX + t ||
-						p.x > previous.maxX - t ||
-						p.y < previous.minY + t ||
-						p.y > previous.maxY - t,
+						(p.x < previous.minX + t ||
+							p.x > previous.maxX - t ||
+							p.y < previous.minY + t ||
+							p.y > previous.maxY - t) &&
+						kept.every(
+							(k) => Math.hypot(k.x - p.x, k.y - p.y) >= k.r + p.r + OBSTACLES.minGap,
+						),
 				),
 			];
 		}
@@ -178,10 +184,14 @@ export class Arena {
 		props.forEach((p, i) => {
 			let img = this.propImages[i];
 			if (!img) {
-				img = this.scene.add.image(0, 0, KEYS.deco(def.id, 0)).setOrigin(0.5, 0.85);
+				img = this.scene.add
+					.image(0, 0, KEYS.deco(def.id, 0))
+					.setOrigin(0.5, OBSTACLES.originY);
 				this.propImages.push(img);
 			}
-			img.setTexture(KEYS.deco(def.id, p.variant))
+			img.setTexture(KEYS.deco(def.id, p.variant));
+			const width = OBSTACLES.widthByVariant[p.variant] ?? img.frame.width;
+			img.setScale(width / img.frame.width)
 				.setPosition(Math.round(p.x), Math.round(p.y))
 				.setDepth(p.y)
 				.setVisible(true);

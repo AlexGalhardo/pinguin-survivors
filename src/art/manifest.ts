@@ -61,12 +61,12 @@ export const KEYS = {
 } as const;
 
 export const BIOMES = {
-	antarctica: { id: 'antarctica', tileVariants: 4, decoVariants: 4, decoDensity: 0.03 },
-	forest: { id: 'forest', tileVariants: 4, decoVariants: 4, decoDensity: 0.05 },
-	city: { id: 'city', tileVariants: 4, decoVariants: 4, decoDensity: 0.045 },
+	antarctica: { id: 'antarctica', tileVariants: 4, decoVariants: 4, decoDensity: 0.06 },
+	forest: { id: 'forest', tileVariants: 4, decoVariants: 4, decoDensity: 0.1 },
+	city: { id: 'city', tileVariants: 4, decoVariants: 4, decoDensity: 0.09 },
 	// Legacy biomes (endless mode): research station and ruined city keep their PixelLab atlas.
-	station: { id: 'station', tileVariants: 4, decoVariants: 3, decoDensity: 0.035 },
-	ruins: { id: 'ruins', tileVariants: 4, decoVariants: 3, decoDensity: 0.045 },
+	station: { id: 'station', tileVariants: 4, decoVariants: 3, decoDensity: 0.07 },
+	ruins: { id: 'ruins', tileVariants: 4, decoVariants: 3, decoDensity: 0.09 },
 } as const satisfies Record<BiomeId, { id: BiomeId; [k: string]: unknown }>;
 
 /** Final files loaded in Boot when present; placeholders cover every missing key. */

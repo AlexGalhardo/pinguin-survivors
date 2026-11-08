@@ -3,6 +3,7 @@ import { MAX_ENEMIES } from '../config/constants';
 import { ARENA } from '../data/arena';
 import { DANGER, type DangerMods, EXTRA_WAVES } from '../data/difficulty';
 import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
+import { OBSTACLES } from '../data/obstacles';
 import { Enemy } from '../entities/Enemy';
 import {
 	type Bounds,
@@ -174,9 +175,21 @@ export class EnemySystem {
 				if (!e.alive) continue;
 			}
 			let v = { vx: 0, vy: 0 };
-			if (step.move === 'seek')
-				v = seekWithSeparation(e, hero.x, hero.y, this.grid, this.scratch);
-			else if (step.move === 'charge') {
+			if (step.move === 'seek') {
+				const blockers =
+					this.obstacles && e.def.behavior !== 'flyer' && e !== this.boss
+						? this.obstacles.near(e.x, e.y, e.radius + OBSTACLES.avoidLookahead)
+						: undefined;
+				v = seekWithSeparation(
+					e,
+					hero.x,
+					hero.y,
+					this.grid,
+					this.scratch,
+					undefined,
+					blockers,
+				);
+			} else if (step.move === 'charge') {
 				const mul = e.ai.chargeMul || AI.chargeSpeed;
 				v = { vx: e.chargeX * e.speed * mul, vy: e.chargeY * e.speed * mul };
 			}
