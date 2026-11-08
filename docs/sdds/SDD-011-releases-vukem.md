@@ -11,6 +11,8 @@
 - RF-05 `scripts/release.ts <version>`: valida árvore limpa e gates (`lint`, `typecheck`, `test`, `build`), atualiza `package.json`, move `[Unreleased]` para `[X.Y.Z] - data` com links de comparação, commit `chore(release): X.Y.Z`, tag anotada `vX.Y.Z`, `git push --follow-tags`, `gh release create` com o corpo gerado (`--prerelease` se `< 1.0.0`).
 - RF-06 `scripts/release-backfill.ts`: gera os releases retroativos a partir do CHANGELOG renomeado e das novas tags (idempotente: pula release existente).
 
+- RF-07 **Assets do release** (`.github/workflows/release-assets.yml`): ao publicar um release (ou `workflow_dispatch` com o input `tag`), o CI faz checkout da tag e anexa `pinguin-survivors-<versão>-windows-x64.zip` (`build:desktop`, `apps/desktop/dist/full/win-unpacked`), `pinguin-survivors-demo-<versão>-windows-x64.zip` (`build:desktop:demo`) e `pinguin-survivors-<versão>-android-debug.apk` (`assembleDebug`). Os builds têm som (sem `SOUND_MUTED`). Os jobs de build só leem o repositório e passam os arquivos por artifact; só o job `publish` tem `contents: write` e roda `gh release upload --clobber`, que **substitui** um asset de mesmo nome (reexecutar para uma tag sobrescreve os arquivos já anexados). Action de terceiros (`setup-bun`) pinada por SHA; as oficiais por tag.
+
 ## Critérios de aceite
 
 | # | Assert | Verificação |

@@ -75,6 +75,7 @@ Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 - `package.json.version` = tag sem `v`. Versão de trabalho após o retag: **0.0.11**.
 - **Release GitHub** por tag: título `vX.Y.Z`; corpo em grupos Keep a Changelog (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`, só os não vazios), linhas `- **escopo:** Descrição ([abc1234](…/commit/sha))`; `0.x` marcados **pre-release**.
 - **Fluxo ao fechar um marco**: micro-commits → `docs(roadmap): close <marco>` → `bun scripts/release.ts X.Y.Z` (gates, bump, CHANGELOG, commit `chore(release): X.Y.Z`, tag anotada, `git push --follow-tags`, `gh release create`). Detalhes em [sdds/SDD-011](sdds/SDD-011-releases-vukem.md).
+- **Assets do release** (SDD-011 RF-07): publicar o release dispara `release-assets.yml`, que anexa os zips do Windows (completo e demo) e o APK debug do Android. Para uma tag existente: `gh workflow run release-assets.yml -f tag=vX.Y.Z` (atenção: `--clobber` substitui assets de mesmo nome). Releases criados com o `GITHUB_TOKEN` de um workflow não disparam outros workflows; `bun scripts/release.ts` usa o seu login do `gh`, então dispara.
 - `CHANGELOG.md` (Keep a Changelog 1.1.0): `[Unreleased]` no topo; seções `## [X.Y.Z] - AAAA-MM-DD`; frases para humanos em inglês; links de comparação no fim.
 - Histórico: tags `v0.1.0-alpha.1…v0.1.0-beta.8` retagueadas como `v0.0.1…v0.0.10` (tabela no CHANGELOG); as tags do Starfall foram apagadas. Regra: **uma tag por release**, nada mais.
 
