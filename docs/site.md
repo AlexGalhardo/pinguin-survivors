@@ -47,6 +47,7 @@
 - Fundo: key art escurecida (Jack ou Bob, sorteio no build, não no cliente) com vinheta; partículas de brasa em CSS (sem JS).
 - Em celular (< 900 px): coluna única, trailer acima dos botões, scroll permitido.
 - Botão "Play Demo" aponta para `/demo/`; desabilitado em telas < 1024 px com texto "Demo disponível no PC" (o jogo web não tem controles de toque na 1.0; Android é app).
+- **`/play/`** hospeda o **jogo completo** (build Vite normal, caminhos relativos) para o desenvolvedor testar pelo link (decisão de 2026-11-08). Não há link para ele no site; quem tem a URL joga. `scripts/build-site.ts` gera `/demo/` e `/play/` e o workflow `pages.yml` publica tudo.
 - Botão "Wishlist" → página da Steam com UTM; após a 1.0 vira "Comprar na Steam" + "Google Play".
 
 ## 4. Copy por idioma
