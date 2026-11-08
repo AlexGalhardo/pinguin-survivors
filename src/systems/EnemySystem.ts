@@ -12,7 +12,7 @@ import {
 	spawnRing,
 } from '../logic/arena';
 import { bossForRound } from '../logic/biome';
-import { AI, stepAi } from '../logic/enemy-ai';
+import { AI, cloakAlpha, stepAi } from '../logic/enemy-ai';
 import { type ObstacleField, pushOut } from '../logic/obstacles';
 import type { Vec2 } from '../logic/projection';
 import type { Rng } from '../logic/rng';
@@ -52,6 +52,8 @@ export class EnemySystem {
 	private readonly scratch: Enemy[] = [];
 	private spawnBudget = 0;
 	boss: Enemy | null = null;
+	/** Run seed: draws the endless-mode boss. */
+	seed = 0;
 	/** Danger multipliers on enemy HP, damage and speed (ADR-008). */
 	mods: DangerMods = DANGER[1];
 	/** Extra wave of the current round (SDD-005 RF-02): elites ×3 or spawn rate ×2. */
@@ -97,7 +99,7 @@ export class EnemySystem {
 		this.pending.clear();
 		this.boss = null;
 		if (this.bounds && isBossRound(round)) {
-			const def = bossForRound(round);
+			const def = bossForRound(round, this.seed);
 			// The ring is hidden from round 10 on (arena wider than the view), so no telegraph.
 			const p = spawnRing(this.bounds, view, this.rng, 1)[0] as SpawnPoint;
 			this.boss = this.take();
@@ -184,6 +186,8 @@ export class EnemySystem {
 				pushOut(e, e.radius, this.obstacles.near(e.x, e.y, e.radius));
 			if (this.bounds) clampToArena(e, e.radius, this.bounds);
 			e.sync(dt, v.vx < 0);
+			if (e.def.cloakRange)
+				e.setCloak(cloakAlpha(Math.hypot(e.x - hero.x, e.y - hero.y), e.def.cloakRange));
 		}
 	}
 

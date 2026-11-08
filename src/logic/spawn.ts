@@ -1,5 +1,5 @@
 import type { EnemyDef } from '../data/enemies';
-import { biomeForRound } from './biome';
+import { enemyPoolForRound } from './biome';
 import type { Rng } from './rng';
 
 export interface PendingSpawn<T> {
@@ -37,12 +37,9 @@ export class SpawnQueue<T> {
 	}
 }
 
-/** Enemies of the round's biome available this round, weighted. */
+/** Weighted pick among the enemies available this round (the biome's, or all of them in endless). */
 export function pickEnemy(rng: Rng, pool: readonly EnemyDef[], round: number): EnemyDef {
-	const biome = biomeForRound(round);
-	const available = pool.filter(
-		(e) => e.biome === biome && e.fromRound > 0 && e.fromRound <= round,
-	);
+	const available = enemyPoolForRound(round, pool);
 	if (available.length === 0) throw new Error(`no enemy available for round ${round}`);
 	return available[rng.weightedIndex(available.map((e) => e.weight))] as EnemyDef;
 }

@@ -1,6 +1,6 @@
 import type { BiomeId } from '../config/constants';
 
-/** Enemies of the 3 biomes (docs/gdd.md §11, balancing §2). Radii/speeds in world units. */
+/** Enemies of the campaign biomes and the legacy ones kept for endless (docs/gdd.md §11, §15, balancing §2). Radii/speeds in world units. */
 export type EnemyBehavior = 'chaser' | 'tank' | 'flyer' | 'ranged' | 'charger' | 'bomber' | 'boss';
 
 /** Boss attack pattern (each boss has its own AI mix; docs/gdd.md §11). */
@@ -40,11 +40,17 @@ export interface EnemyDef {
 	fromRound: number;
 	weight: number;
 	/** Placeholder look until PixelLab art (P-05 sizes). */
-	placeholder: { color: number; height: number };
+	placeholder: { color: number; height: number; shape?: 'zombie' | 'alien' };
 	/** Ranged/charger/bomber parameters. */
 	range?: number;
 	cooldown?: number;
 	boss?: BossProfile;
+	/** Reuses the sprite of another enemy (legacy art) until this one has its own. */
+	art?: string;
+	/** Multiply tint over the reused art. */
+	tint?: number;
+	/** Camouflage: semi-transparent until the hero is within this distance (world units). */
+	cloakRange?: number;
 }
 
 export const ENEMIES = {
@@ -161,7 +167,7 @@ export const ENEMIES = {
 			poolCount: 0,
 		},
 	},
-	// --- Biome 2: research station / harbor (rounds 11–20) ---
+	// --- Legacy biome: research station / harbor (endless mode) ---
 	zombieSailor: {
 		id: 'zombieSailor',
 		biome: 'station',
@@ -275,7 +281,7 @@ export const ENEMIES = {
 			poolCount: 0,
 		},
 	},
-	// --- Biome 3: ruined city (rounds 21–30) ---
+	// --- Legacy biome: ruined city with zombies (endless mode) ---
 	zombieCitizen: {
 		id: 'zombieCitizen',
 		biome: 'ruins',
@@ -402,6 +408,247 @@ export const ENEMIES = {
 			poolCount: 4,
 		},
 	},
+	// --- Biome 2: forest (rounds 11–20). Numbers copy the legacy role equivalents [1.0: calibrar]; art = legacy sprites tinted. ---
+	zombieWolf: {
+		id: 'zombieWolf',
+		art: 'zombieRat',
+		tint: 0x9ad27a,
+		biome: 'forest',
+		behavior: 'chaser',
+		hp: 14,
+		speed: 85,
+		damage: 4,
+		radius: 10,
+		xp: 1,
+		fromRound: 11,
+		weight: 10,
+		placeholder: { color: 0x6a8a4a, height: 44 },
+	},
+	zombieCrow: {
+		id: 'zombieCrow',
+		art: 'zombieGull',
+		tint: 0x6a6a7a,
+		biome: 'forest',
+		behavior: 'flyer',
+		hp: 12,
+		speed: 125,
+		damage: 3,
+		radius: 9,
+		xp: 1,
+		fromRound: 11,
+		weight: 5,
+		placeholder: { color: 0xa8b878, height: 34 },
+	},
+	zombieMoose: {
+		id: 'zombieMoose',
+		art: 'zombieSeaLion',
+		tint: 0xa08060,
+		biome: 'forest',
+		behavior: 'tank',
+		hp: 55,
+		speed: 45,
+		damage: 9,
+		radius: 17,
+		xp: 3,
+		fromRound: 12,
+		weight: 4,
+		placeholder: { color: 0x6a4e38, height: 44 },
+	},
+	zombieFox: {
+		id: 'zombieFox',
+		art: 'zombieMedic',
+		tint: 0xe08a4a,
+		biome: 'forest',
+		behavior: 'ranged',
+		hp: 24,
+		speed: 55,
+		damage: 6,
+		radius: 11,
+		xp: 2,
+		fromRound: 13,
+		weight: 3,
+		placeholder: { color: 0x9ab86a, height: 56 },
+		range: 240,
+		cooldown: 2.2,
+	},
+	sporeBloater: {
+		id: 'sporeBloater',
+		art: 'fuelBloater',
+		tint: 0xb89aff,
+		biome: 'forest',
+		behavior: 'bomber',
+		hp: 22,
+		speed: 62,
+		damage: 14,
+		radius: 12,
+		xp: 2,
+		fromRound: 14,
+		weight: 3,
+		placeholder: { color: 0xc8a02a, height: 46 },
+		range: 42,
+	},
+	zombieBoar: {
+		id: 'zombieBoar',
+		art: 'zombieNarwhal',
+		tint: 0xb07a5a,
+		biome: 'forest',
+		behavior: 'charger',
+		hp: 65,
+		speed: 55,
+		damage: 12,
+		radius: 18,
+		xp: 4,
+		fromRound: 16,
+		weight: 2,
+		placeholder: { color: 0x5a6a3a, height: 44 },
+		range: 220,
+		cooldown: 3.5,
+	},
+	mooseKing: {
+		id: 'mooseKing',
+		biome: 'forest',
+		behavior: 'boss',
+		hp: 3000,
+		speed: 45,
+		damage: 17,
+		radius: 44,
+		xp: 120,
+		fromRound: 0,
+		weight: 0,
+		placeholder: { color: 0x3a5a2a, height: 150 },
+		range: 150,
+		cooldown: 3.2,
+		boss: {
+			swipeWindup: 0.55,
+			swipeReach: 1.2,
+			chargeEvery: 0,
+			chargeWindup: 0,
+			chargeTime: 0,
+			chargeSpeed: 0,
+			roarEvery: 14,
+			summon: 'zombieWolf',
+			summonCount: 6,
+			volleyEvery: 4,
+			volleyCount: 5,
+			poolEvery: 0,
+			poolCount: 0,
+		},
+	},
+	// --- Biome 3: destroyed city with original aliens (rounds 21–30). Numbers copy the legacy role equivalents [1.0: calibrar]; code placeholders until the art lands. ---
+	acidSwarmer: {
+		id: 'acidSwarmer',
+		biome: 'city',
+		behavior: 'chaser',
+		hp: 18,
+		speed: 95,
+		damage: 6,
+		radius: 9,
+		xp: 1,
+		fromRound: 21,
+		weight: 9,
+		placeholder: { color: 0x7a4ac8, height: 44, shape: 'alien' },
+	},
+	alienFlyer: {
+		id: 'alienFlyer',
+		biome: 'city',
+		behavior: 'flyer',
+		hp: 14,
+		speed: 130,
+		damage: 5,
+		radius: 9,
+		xp: 1,
+		fromRound: 22,
+		weight: 4,
+		placeholder: { color: 0xb87aff, height: 32, shape: 'alien' },
+	},
+	armorGuard: {
+		id: 'armorGuard',
+		biome: 'city',
+		behavior: 'tank',
+		hp: 85,
+		speed: 45,
+		damage: 12,
+		radius: 17,
+		xp: 3,
+		fromRound: 22,
+		weight: 4,
+		placeholder: { color: 0x4a2a7a, height: 54, shape: 'alien' },
+	},
+	camoStalker: {
+		id: 'camoStalker',
+		cloakRange: 220,
+		biome: 'city',
+		behavior: 'ranged',
+		hp: 30,
+		speed: 60,
+		damage: 8,
+		radius: 11,
+		xp: 2,
+		fromRound: 23,
+		weight: 3,
+		placeholder: { color: 0x8a5ae0, height: 56, shape: 'alien' },
+		range: 260,
+		cooldown: 2,
+	},
+	cystBloater: {
+		id: 'cystBloater',
+		biome: 'city',
+		behavior: 'bomber',
+		hp: 26,
+		speed: 64,
+		damage: 18,
+		radius: 12,
+		xp: 2,
+		fromRound: 24,
+		weight: 3,
+		placeholder: { color: 0xd85ad8, height: 48, shape: 'alien' },
+		range: 44,
+	},
+	clawCharger: {
+		id: 'clawCharger',
+		biome: 'city',
+		behavior: 'charger',
+		hp: 90,
+		speed: 55,
+		damage: 16,
+		radius: 19,
+		xp: 5,
+		fromRound: 26,
+		weight: 2,
+		placeholder: { color: 0x5a2a9a, height: 64, shape: 'alien' },
+		range: 220,
+		cooldown: 3.5,
+	},
+	biomechColossus: {
+		id: 'biomechColossus',
+		biome: 'city',
+		behavior: 'boss',
+		hp: 3500,
+		speed: 80,
+		damage: 28,
+		radius: 42,
+		xp: 150,
+		fromRound: 0,
+		weight: 0,
+		placeholder: { color: 0x6a2aa8, height: 170, shape: 'alien' },
+		range: 95,
+		cooldown: 2.6,
+		boss: {
+			swipeWindup: 0.35,
+			swipeReach: 1.3,
+			chargeEvery: 5,
+			chargeWindup: 0.5,
+			chargeTime: 0.9,
+			chargeSpeed: 2.8,
+			roarEvery: 13,
+			summon: 'acidSwarmer',
+			summonCount: 10,
+			volleyEvery: 0,
+			volleyCount: 0,
+			poolEvery: 6,
+			poolCount: 4,
+		},
+	},
 } as const satisfies Record<string, EnemyDef>;
 
 export type EnemyId = keyof typeof ENEMIES;
@@ -413,6 +660,8 @@ export const BOSS_POOL = { radius: 46, duration: 4, dps: 0.35, scatter: 150 } as
 export const ENEMY_LIST: readonly EnemyDef[] = Object.values(ENEMIES);
 export const BOSS_BY_BIOME = {
 	antarctica: 'polarBear',
+	forest: 'mooseKing',
+	city: 'biomechColossus',
 	station: 'kraken',
 	ruins: 'abomination',
 } as const satisfies Record<BiomeId, EnemyId>;

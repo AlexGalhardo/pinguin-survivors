@@ -170,3 +170,9 @@ function bossStep(def: EnemyDef, b: BossProfile, ai: AiState, dist: number, dt: 
 		speed: b.chargeSpeed,
 	});
 }
+
+/** Camouflaged enemies fade in as the hero closes the distance: 0.25 far away, 1 inside `range`. */
+export function cloakAlpha(distance: number, range: number): number {
+	if (distance <= range) return 1;
+	return Math.max(0.25, 1 - (distance - range) / range);
+}

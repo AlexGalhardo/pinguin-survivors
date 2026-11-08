@@ -64,7 +64,11 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 	for (const e of ENEMY_LIST) {
 		const h = e.placeholder.height;
 		const w = Math.round(h * 0.7);
-		canvas(scene, KEYS.enemy(e.id), w, h, (ctx) => zombie(ctx, w, h, e.placeholder.color));
+		canvas(scene, KEYS.enemy(e.id), w, h, (ctx) =>
+			e.placeholder.shape === 'alien'
+				? alien(ctx, w, h, e.placeholder.color)
+				: zombie(ctx, w, h, e.placeholder.color),
+		);
 	}
 	for (const [tier, color] of [
 		['purple', PALETTE.auraPurple],
@@ -370,6 +374,8 @@ function canvas(
 function borderPlaceholders(scene: Phaser.Scene): void {
 	const walls = {
 		antarctica: PALETTE.rock,
+		forest: PALETTE.forestDark,
+		city: PALETTE.concrete,
 		station: PALETTE.metalDark,
 		ruins: PALETTE.brick,
 	} as const;
@@ -425,6 +431,29 @@ function penguin(ctx: CanvasRenderingContext2D, accent: number, dir: Dir): void 
 	ctx.fillRect(22, 51, 6, 3);
 }
 
+/** Original alien silhouette: domed head with three acid-green eyes over a segmented, limbless body. */
+function alien(ctx: CanvasRenderingContext2D, w: number, h: number, color: number): void {
+	ctx.fillStyle = toCss(color);
+	ctx.beginPath();
+	ctx.moveTo(w * 0.15, h);
+	ctx.lineTo(w * 0.28, h * 0.5);
+	ctx.lineTo(w * 0.72, h * 0.5);
+	ctx.lineTo(w * 0.85, h);
+	ctx.closePath();
+	ctx.fill();
+	ctx.beginPath();
+	ctx.arc(w / 2, h * 0.34, w * 0.36, Math.PI, 0);
+	ctx.lineTo(w * 0.86, h * 0.5);
+	ctx.lineTo(w * 0.14, h * 0.5);
+	ctx.closePath();
+	ctx.fill();
+	ctx.fillStyle = 'rgba(0,0,0,0.3)';
+	for (let i = 0; i < 3; i++) ctx.fillRect(w * 0.2, h * (0.62 + i * 0.12), w * 0.6, 2);
+	ctx.fillStyle = toCss(PALETTE.goo);
+	for (let i = 0; i < 3; i++)
+		ctx.fillRect(Math.round(w * (0.28 + i * 0.2)), Math.round(h * 0.3), 3, 3);
+}
+
 function zombie(ctx: CanvasRenderingContext2D, w: number, h: number, color: number): void {
 	ctx.fillStyle = toCss(color);
 	ctx.beginPath();
@@ -478,6 +507,19 @@ function splat(
 /** Ground and props of biomes 2 (station/harbor: plates, crates, barrels) and 3 (ruins). */
 function biomePlaceholders(scene: Phaser.Scene): void {
 	const looks = {
+		forest: {
+			tiles: [
+				PALETTE.forestGround,
+				PALETTE.forestMoss,
+				PALETTE.forestDirt,
+				PALETTE.forestDark,
+			],
+			props: [PALETTE.trunk, PALETTE.leaf, PALETTE.forestDirt],
+		},
+		city: {
+			tiles: [PALETTE.asphalt, PALETTE.concrete, PALETTE.rubble, PALETTE.asphalt],
+			props: [PALETTE.burnedCar, PALETTE.rubble, PALETTE.concrete],
+		},
 		station: {
 			tiles: [PALETTE.metal, PALETTE.metalDark, PALETTE.rust, PALETTE.harborWater],
 			props: [PALETTE.rust, PALETTE.metal, PALETTE.auraOrange],
@@ -487,17 +529,33 @@ function biomePlaceholders(scene: Phaser.Scene): void {
 			props: [PALETTE.concrete, PALETTE.brick, PALETTE.rubble],
 		},
 	} as const;
-	for (const id of ['station', 'ruins'] as const) {
+	for (const id of ['forest', 'city', 'station', 'ruins'] as const) {
 		const biome = BIOMES[id];
 		const look = looks[id];
 		for (let v = 0; v < biome.tileVariants; v++) {
 			canvas(scene, KEYS.tile(id, v), T, T, (ctx) => {
 				ctx.fillStyle = toCss(look.tiles[v] ?? PALETTE.metal);
 				ctx.fillRect(0, 0, T, T);
-				// Plate seams / cracks so the ground reads as man-made.
 				ctx.fillStyle = 'rgba(0,0,0,0.18)';
-				ctx.fillRect(T / 2 - 12, T / 2, 24, 1);
-				ctx.fillRect(T / 2, T / 2 - 8, 1, 16);
+				if (id === 'forest') {
+					// Grass tufts and leaf litter.
+					for (let i = 0; i < 9; i++)
+						ctx.fillRect(
+							6 + ((i * 17 + v * 5) % 52),
+							6 + ((i * 23 + v * 11) % 52),
+							2,
+							3,
+						);
+				} else if (id === 'city') {
+					// Cracked asphalt.
+					ctx.fillRect(8, 20 + v * 6, 30, 1);
+					ctx.fillRect(38, 20 + v * 6, 1, 14);
+					ctx.fillRect(20, 40, 24, 1);
+				} else {
+					// Plate seams / cracks so the ground reads as man-made.
+					ctx.fillRect(T / 2 - 12, T / 2, 24, 1);
+					ctx.fillRect(T / 2, T / 2 - 8, 1, 16);
+				}
 			});
 		}
 		for (let v = 0; v < biome.decoVariants; v++) {
@@ -505,12 +563,33 @@ function biomePlaceholders(scene: Phaser.Scene): void {
 			canvas(scene, KEYS.deco(id, v), w, w, (ctx) => {
 				const color = toCss(look.props[v] ?? PALETTE.metal);
 				ctx.fillStyle = color;
-				if (id === 'station' && v === 1) {
-					// Barrel.
-					ctx.fillRect(w * 0.3, w * 0.2, w * 0.4, w * 0.75);
+				if (id === 'forest' && v !== 2) {
+					// Tree (v 0: trunk with a dark canopy, v 1: round leafy bush).
+					ctx.fillStyle = toCss(PALETTE.trunk);
+					ctx.fillRect(w * 0.42, w * 0.55, w * 0.16, w * 0.4);
+					ctx.fillStyle = toCss(v === 0 ? PALETTE.forestDark : PALETTE.leaf);
+					ctx.beginPath();
+					ctx.arc(w / 2, w * 0.4, w * (v === 0 ? 0.38 : 0.3), 0, Math.PI * 2);
+					ctx.fill();
+				} else if (id === 'forest') {
+					// Fallen log.
+					ctx.fillRect(w * 0.08, w * 0.55, w * 0.84, w * 0.3);
 					ctx.fillStyle = 'rgba(0,0,0,0.3)';
-					ctx.fillRect(w * 0.3, w * 0.45, w * 0.4, 2);
-				} else if (id === 'ruins' && v === 2) {
+					ctx.fillRect(w * 0.08, w * 0.7, w * 0.84, 2);
+				} else if (id === 'city' && v === 0) {
+					// Burned-out car.
+					ctx.fillRect(w * 0.08, w * 0.45, w * 0.84, w * 0.35);
+					ctx.fillStyle = 'rgba(255,120,40,0.35)';
+					ctx.fillRect(w * 0.3, w * 0.3, w * 0.4, w * 0.18);
+					ctx.fillStyle = 'rgba(0,0,0,0.5)';
+					ctx.fillRect(w * 0.15, w * 0.75, w * 0.18, w * 0.12);
+					ctx.fillRect(w * 0.67, w * 0.75, w * 0.18, w * 0.12);
+				} else if (id === 'city' && v === 2) {
+					// Broken wall block with rebar.
+					ctx.fillRect(w * 0.2, w * 0.25, w * 0.6, w * 0.7);
+					ctx.fillStyle = 'rgba(0,0,0,0.35)';
+					ctx.fillRect(w * 0.45, w * 0.1, 2, w * 0.2);
+				} else if ((id === 'city' && v === 1) || (id === 'ruins' && v === 2)) {
 					// Rubble heap.
 					ctx.beginPath();
 					ctx.moveTo(0, w);
@@ -520,6 +599,11 @@ function biomePlaceholders(scene: Phaser.Scene): void {
 					ctx.lineTo(w, w);
 					ctx.closePath();
 					ctx.fill();
+				} else if (id === 'station' && v === 1) {
+					// Barrel.
+					ctx.fillRect(w * 0.3, w * 0.2, w * 0.4, w * 0.75);
+					ctx.fillStyle = 'rgba(0,0,0,0.3)';
+					ctx.fillRect(w * 0.3, w * 0.45, w * 0.4, 2);
 				} else {
 					// Crate / broken wall block.
 					ctx.fillRect(w * 0.15, w * 0.3, w * 0.7, w * 0.65);

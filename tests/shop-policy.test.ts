@@ -13,7 +13,15 @@ import {
 	type ShopState,
 	sellValue,
 } from '../src/logic/shop';
-import { fuseAll, nextShopAction, offerValue, playShop } from '../src/logic/sim/shop-policy';
+import {
+	fuseAll,
+	makeTaste,
+	nextShopAction,
+	offerValue,
+	playShop,
+	SHOP_POLICY,
+	softmaxPick,
+} from '../src/logic/sim/shop-policy';
 import { heroStats } from '../src/logic/stats';
 
 const stats = heroStats(HEROES.jack, 1, {});
@@ -173,5 +181,54 @@ describe('nextShopAction (real-game bot)', () => {
 				stats,
 			}),
 		).toEqual({ type: 'done' });
+	});
+});
+
+describe('human preference model', () => {
+	test('taste is deterministic by seed and stays inside the range', () => {
+		const a = makeTaste(7);
+		expect(makeTaste(7)).toEqual(a);
+		expect(makeTaste(8)).not.toEqual(a);
+		const [lo, hi] = SHOP_POLICY.tasteRange;
+		for (const v of Object.values(a)) {
+			expect(v).toBeGreaterThanOrEqual(lo);
+			expect(v).toBeLessThanOrEqual(hi);
+		}
+	});
+
+	test('softmax leaves a close second a real chance and a far one almost none', () => {
+		const draws = (scores: number[]) => {
+			const rng = new Rng(1);
+			let second = 0;
+			for (let i = 0; i < 4000; i++)
+				if (softmaxPick(scores, SHOP_POLICY.temperature, rng) === 1) second++;
+			return second / 4000;
+		};
+		const close = draws([1, 0.9]);
+		expect(close).toBeGreaterThan(0.25);
+		expect(close).toBeLessThan(0.45);
+		expect(draws([1, 0.3])).toBeLessThan(0.02);
+	});
+
+	test('with a preference the same seed buys the same things, and it still never overspends', () => {
+		const run = () => {
+			const build = emptyBuild();
+			addWeapon(build, 'machete', 1);
+			const r = createRunState(HEROES.jack, { seed: 4 });
+			r.round = 9;
+			r.fish = 400;
+			const rl = roll(4);
+			r.shop = open(rollOffers(rl.rng, r.round, rl.ctx, rl.pool, []));
+			const play = playShop({
+				run: r,
+				build,
+				stats,
+				roll: rl,
+				preference: { taste: makeTaste(4), rng: new Rng(44) },
+			});
+			expect(r.fish).toBeGreaterThanOrEqual(0);
+			return play.bought.map((o) => `${o.id}:${o.tier}`);
+		};
+		expect(run()).toEqual(run());
 	});
 });

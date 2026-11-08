@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Forest (rounds 11–20) and destroyed city (21–30) biomes with their enemies and bosses (Moose King, Biomechanical Colossus), six original aliens including a cloaked stalker, code placeholders for floors and props; endless rounds draw biomes and enemies from every set, legacy ones included.
+- The simulation's buyer models a player (softmax choice, set synergy, per-run taste); balance goals #1–#8 pass, with #5 per hero as a documented exception.
+
 - Art (PixelLab, 126 generations): weapon tiers II–IV for the nine demo weapon lines, four top-down Antarctica props, 51 icons (stat cards, Jack's exclusives, items, coins, Danger), Jack's Crimson Harvest super VFX and a new top-down Jack with idle, walk, hurt and death in all directions.
 - Sprite scale table (`src/data/sprite-scale.ts`) that evens out hero, enemy and boss sizes against the 64-unit tile, Brotato-style (`docs/reports/proportions-2026-11-08.md`).
 

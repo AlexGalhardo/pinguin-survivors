@@ -2,13 +2,12 @@ import type { HeroId } from '../../config/constants';
 import { ALL_CARDS } from '../../data/cards';
 import { COMBAT } from '../../data/combat';
 import { DANGER, type Danger, EXTRA_WAVES } from '../../data/difficulty';
-import { ENEMY_LIST } from '../../data/enemies';
 import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import { STARTING_WEAPONS } from '../../data/unlocks';
 import { WEAPON_LINE_BY_ID } from '../../data/weapons';
-import { biomeForRound, bossForRound } from '../biome';
+import { bossForRound, enemyPoolForRound } from '../biome';
 import {
 	addWeapon,
 	applyCard,
@@ -37,7 +36,7 @@ import { defaultSave } from '../save';
 import { addStat, heroStats, type PlayerStats, type PointStat } from '../stats';
 import { applyUpgrades } from '../upgrades';
 import { pickBest } from './card-policy';
-import { playShop } from './shop-policy';
+import { makeTaste, playShop } from './shop-policy';
 
 /**
  * Headless balance model (PLAN 3.2): a per-step approximation of a run using the real data,
@@ -209,10 +208,7 @@ interface AverageEnemy {
 
 /** Average enemy of the pool available in `round`, elites included. */
 function averageEnemy(round: number, eliteMul = 1): AverageEnemy {
-	const biome = biomeForRound(round);
-	const pool = ENEMY_LIST.filter(
-		(e) => e.biome === biome && e.fromRound > 0 && e.fromRound <= round,
-	);
+	const pool = enemyPoolForRound(round);
 	const total = pool.reduce((a, e) => a + e.weight, 0);
 	const out = { hp: 0, damage: 0, xp: 0, speed: 0 };
 	for (const e of pool) {
@@ -263,6 +259,11 @@ export function simulateRun(config: SimConfig): SimResult {
 	const mods = DANGER[danger];
 	const waves = extraWaves(config.seed, danger);
 	const run = createRunState(hero, { seed: config.seed });
+	// A shopper with favourites and a noisy pick, not a pure DPS maximizer (docs A3/A4).
+	const preference = {
+		taste: makeTaste(config.seed),
+		rng: new Rng((config.seed ^ 0x9e3779b9) >>> 0),
+	};
 	const save = defaultSave();
 	const cardPool = ALL_CARDS.filter((c) => c.effect.type === 'stat' || c.effect.type === 'perk');
 	const weaponPool = weaponCandidates(config.hero);
@@ -305,7 +306,7 @@ export function simulateRun(config: SimConfig): SimResult {
 		enemy.damage *= mods.dmg;
 		enemy.speed *= mods.speed;
 		const spawnMul = wave === 'horde' ? EXTRA_WAVES.hordeMul : 1;
-		const boss = bossForRound(round);
+		const boss = bossForRound(round, config.seed);
 		let bossHp = isBossRound(round) ? boss.hp * bossHpMul(round) * mods.hp : 0;
 		const bossDmg = boss.damage * dmgMul(round) * mods.dmg;
 		let alive = 0;
@@ -394,7 +395,7 @@ export function simulateRun(config: SimConfig): SimResult {
 		run.round = round;
 		endRound(run, roll);
 		fishEarned += run.fish - before;
-		const shop = playShop({ run, build, stats: eff, roll });
+		const shop = playShop({ run, build, stats: eff, roll, preference });
 		fishSpent += shop.spent;
 		fishRerolled += shop.rerollFish;
 		eff = effectiveStats(stats, build);

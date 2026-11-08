@@ -1,5 +1,6 @@
 import { WEAPON_LINE_BY_ID, type WeaponId, type WeaponTier } from '../../data/weapons';
 import { addWeapon, type Build, canFuse, fuse } from '../build';
+import { Rng } from '../rng';
 import type { RunState, ShopRoll } from '../run-state';
 import {
 	buy,
@@ -27,7 +28,11 @@ export const SHOP_POLICY = {
 	/** A new weapon replaces the weakest slot only if it is this much stronger. */
 	replaceFactor: 1.5,
 	/** Value bonus per owned weapon sharing a set with the offer. */
-	setSynergy: 0.1,
+	setSynergy: 0.2,
+	/** Human preference (sim): softmax temperature over offers scored relative to the best (0 = greedy). */
+	temperature: 0.15,
+	/** Human preference (sim): each run likes some weapons more, by this multiplier range per weapon. */
+	tasteRange: [0.8, 1.2] as const,
 	/** Value multiplier of an offer that fuses with an owned copy. */
 	fuseBonus: 2,
 };
@@ -50,12 +55,38 @@ function weakestSlot(build: Build, stats: PlayerStats): number {
 	return idx;
 }
 
+/** Per-run taste: a fixed multiplier per weapon, deterministic by seed (a human's favourites). */
+export function makeTaste(seed: number): Record<string, number> {
+	const rng = new Rng((seed ^ 0x5bd1e995) >>> 0);
+	const [lo, hi] = SHOP_POLICY.tasteRange;
+	return Object.fromEntries(Object.keys(WEAPON_LINE_BY_ID).map((id) => [id, rng.range(lo, hi)]));
+}
+
+/** What a shopper with preferences adds to the greedy policy: taste plus a noisy (softmax) pick. */
+export interface ShopPreference {
+	taste: Readonly<Record<string, number>>;
+	rng: Rng;
+}
+
+/** Index drawn by softmax over `scores` (each relative to the best, so the temperature is scale free). */
+export function softmaxPick(scores: readonly number[], temperature: number, rng: Rng): number {
+	const best = Math.max(...scores);
+	const weights = scores.map((s) => Math.exp((s - best) / (best * temperature)));
+	return rng.weightedIndex(weights);
+}
+
 /** Value of owning an offer now; 0 when it has no room (no free slot, no fuse, not clearly better). */
-export function offerValue(offer: Offer, build: Build, stats: PlayerStats): number {
+export function offerValue(
+	offer: Offer,
+	build: Build,
+	stats: PlayerStats,
+	taste: Readonly<Record<string, number>> = {},
+): number {
 	if (offer.kind !== 'weapon') return 0;
 	const def = WEAPON_LINE_BY_ID[offer.id as keyof typeof WEAPON_LINE_BY_ID];
 	if (!def) return 0;
-	let value = weaponValue(offer.id, offer.tier, stats);
+	const base = weaponValue(offer.id, offer.tier, stats) * (taste[offer.id] ?? 1);
+	let value = base;
 	const shared = build.weapons.filter((w) =>
 		WEAPON_LINE_BY_ID[w.id].sets.some((s) => (def.sets as readonly string[]).includes(s)),
 	).length;
@@ -67,7 +98,8 @@ export function offerValue(offer: Offer, build: Build, stats: PlayerStats): numb
 	if (build.weapons.length < 6) return value;
 	const weakest = build.weapons[weakestSlot(build, stats)];
 	if (!weakest) return 0;
-	return value > weaponValue(weakest.id, weakest.tier, stats) * SHOP_POLICY.replaceFactor
+	// Synergy sweetens a buy but never justifies swapping out a clearly stronger weapon.
+	return base > weaponValue(weakest.id, weakest.tier, stats) * SHOP_POLICY.replaceFactor
 		? value
 		: 0;
 }
@@ -102,24 +134,31 @@ export function playShop(args: {
 	build: Build;
 	stats: PlayerStats;
 	roll: ShopRoll;
+	/** Without it the policy is greedy and deterministic (the real-game bot); with it, human-like. */
+	preference?: ShopPreference;
 }): ShopPlay {
-	const { run, build, stats, roll } = args;
+	const { run, build, stats, roll, preference } = args;
+	const taste = preference?.taste ?? {};
 	const play: ShopPlay = { spent: 0, bought: [], rerolls: 0, rerollFish: 0 };
 	let shop = run.shop as ShopState;
 	const startFish = run.fish;
 	fuseAll(build);
 
 	for (;;) {
-		let bestIdx = -1;
-		let bestEff = 0;
+		const options: { i: number; eff: number }[] = [];
 		shop.offers.forEach((o, i) => {
 			if (!o || o.price > run.fish + sellGain(o, build, stats, run.round)) return;
-			const eff = offerValue(o, build, stats) / o.price;
-			if (eff > bestEff) {
-				bestEff = eff;
-				bestIdx = i;
-			}
+			const eff = offerValue(o, build, stats, taste) / o.price;
+			if (eff > 0) options.push({ i, eff });
 		});
+		let bestIdx = -1;
+		if (options.length > 0) {
+			const effs = options.map((x) => x.eff);
+			const pick = preference
+				? softmaxPick(effs, SHOP_POLICY.temperature, preference.rng)
+				: effs.indexOf(Math.max(...effs));
+			bestIdx = (options[pick] as { i: number }).i;
+		}
 		if (bestIdx >= 0) {
 			const offer = shop.offers[bestIdx] as Offer;
 			if (build.weapons.length >= 6 && !canJoin(offer, build)) {
@@ -145,7 +184,7 @@ export function playShop(args: {
 			let lockIdx = -1;
 			let lockVal = 0;
 			shop.offers.forEach((o, i) => {
-				const v = o ? offerValue(o, build, stats) : 0;
+				const v = o ? offerValue(o, build, stats, taste) : 0;
 				if (v > lockVal) {
 					lockVal = v;
 					lockIdx = i;

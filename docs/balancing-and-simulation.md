@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.6 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.7 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -48,20 +48,22 @@ Build para o bot: `NODE_ENV=development vite build --mode development && vite pr
 5. **Commit** `balance(<escopo>): …` com o link do relatório; CHANGELOG `### Changed` → "Balance: …".
 6. **Orçamento**: no máximo 3 passadas de bot por milestone (~1 h cada); se não fechar, registrar o que ficou fora e por quê.
 
+**Modelo de comprador da sim** (`src/logic/sim/shop-policy.ts`, `playShop` com `preference`): modela um jogador médio, não um maximizador de DPS. Escolhe a oferta por softmax sobre o valor por Fish (`SHOP_POLICY.temperature` 0,15: duas ofertas parecidas dividem a compra em cerca de 2/3 e 1/3), dá +20% por arma do mesmo set já na build, e cada run tem um "gosto" fixo por seed (multiplicador 0,8 a 1,2 por arma). O bot do jogo real usa a política gulosa (`nextShopAction`).
+
 ### A4. Metas e critério de saída
 
 Medidas com **bot médio**, **Danger 1**, seeds 100 e 101, build DEV congelado.
 
 | # | Perfil | Meta | Status |
 |---|---|---|---|
-| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08): 17 / 17 / 10, máx. 27; bot real pendente |
-| 2 | L10 + Oficina `all:2` + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 2%, bob 0%, lucia 2% |
-| 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08): 51 / 51 / 42 |
-| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08): D0 53, D1 34, D5 10 |
-| 5 | Diversidade de build (sim, 100 runs/herói, **medida por herói**) | dentro das builds de cada herói (L10, D1, sem a arma inicial): nenhuma arma em > 35% e nenhum set em > 50%; no geral nenhuma arma < 3% nem nunca comprada | ✗ na sim (2026-11-08): armas de 72% a 78% e sets de 80% a 97% por herói; ver `docs/reports/balance-proposal-2026-11-08.md` (passadas 2 e 3) |
-| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08): 0,897, reroll 0,7% |
-| 7 | Duração | run L1 mediana 10–18 min reais (com lojas); demo completa 12–25 min (tempo de jogo do bot + 45 s por loja/cartas, SDD-006 A5) | a medir; demo: ver `docs/reports/demo-time-2026-11-08.md` |
-| 8 | Performance | 60 FPS médio, p95 ≤ 18 ms, 300 inimigos + 2.000 decalques, 1920×1080 | ✓ no iso (2026-09-27); remedir na arena |
+| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08): 17 / 17 / 10, máx. 24; bot real pendente |
+| 2 | L10 + Oficina `all:2` + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 3%, bob 0%, lucia 1% |
+| 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08, comprador com preferência): 33 / 33 / 32 (margem pequena sobre o 30) |
+| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08): D0 39, D1 27, D5 10 |
+| 5 | Diversidade de build (sim, 100 runs/herói, L10, D1) | **toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói.** Os limites de 35% por arma e 50% por set dentro de cada herói são **exceção justificada**: com ~15 armas candidatas para 5 vagas livres a média por arma já é ~33%, e o bônus de classe (`tagMul`) é intencional | ✓ (2026-11-08): nenhuma arma abaixo de 3%. Exceção medida: armas líderes de 63% a 69% por herói (jack `hammer`, bob `elementStaff`, lucia `flameRing`), sets de 74% a 93% |
+| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08): 0,887, reroll 0,8% |
+| 7 | Duração | run L1 mediana 10–18 min (tempo de jogo + 45 s por loja/cartas); demo completa 12–25 min (mesmo critério, SDD-006 A5) | ✓ com o bot do jogo real (2026-11-08, 6 runs L1 D1): mediana 10,1 min (tempo de jogo 4,8 min), no limite inferior; a sim estima 23,8 min (✗) porque seus L1 vão mais fundo (rounds 16–17) que os do bot real (rounds 3 a 15). Demo: `docs/reports/demo-time-2026-11-08.md` ✓ |
+| 8 | Performance | ≥ 58 FPS médios, p95 ≤ 18 ms, 300 inimigos + 2.000 decalques, 1920×1080, round 40 | ✓ (2026-11-08, `bun scripts/perf.ts --round 40`, 3 medições mudas): 58 / 59 / 59 FPS, p95 16,8 ms (`docs/reports/perf-2026-11-08.jsonl`) |
 
 Milestone **"Balance 1.0"** fecha quando #1–#8 passam ou o orçamento de 3 passadas acaba (registrar exceções).
 

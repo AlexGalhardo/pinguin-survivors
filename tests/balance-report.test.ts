@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { HERO_IDS } from '../src/config/constants';
+import { WEAPON_LINE_BY_ID } from '../src/data/weapons';
 import {
 	buildShares,
 	evaluateGoals,
@@ -64,19 +65,36 @@ describe('goal checks', () => {
 		expect(goal([...at(0, 40), ...at(1, 30)], 4)?.status).toBe('n/d');
 	});
 
-	test('#5 is measured per hero: a dominant weapon or set in one hero fails it', () => {
+	test('#5 requires every shop weapon in >= 3% of the builds of some hero', () => {
 		const heroRuns = (hero: 'jack' | 'bob' | 'lucia', weapons: string[]) =>
 			Array.from({ length: 40 }, () => ev({ hero, level: 10, weapons }));
-		const dominant = [
+		const narrow = [
 			...heroRuns('jack', ['machete:1', 'hammer:2']),
 			...heroRuns('bob', ['doubleBarrel:1']),
 			...heroRuns('lucia', ['elementStaff:1']),
 		];
-		const res = goal(dominant, 5);
+		const res = goal(narrow, 5);
 		expect(res?.status).toBe('✗');
 		expect(res?.detail).toContain('jack: arma hammer 100.0%');
+		expect(res?.detail).toContain('knives 0.0%');
 		expect(goal(heroRuns('jack', ['machete:1', 'hammer:2']), 5)?.status).toBe('n/d');
-		const shares = buildShares(heroRuns('jack', ['machete:1', 'hammer:2']));
+
+		const starters = ['machete', 'doubleBarrel', 'elementStaff'];
+		const ids = Object.keys(WEAPON_LINE_BY_ID).filter((id) => !starters.includes(id));
+		const spread = HERO_IDS.flatMap((hero) =>
+			Array.from({ length: 60 }, (_, i) =>
+				ev({ hero, level: 10, weapons: [`${ids[i % ids.length]}:1`] }),
+			),
+		);
+		const ok = goal(spread, 5);
+		expect(ok?.status).toBe('✓');
+		expect(ok?.detail).toContain('abaixo de 3% em todos os heróis: nenhuma');
+	});
+
+	test('build shares ignore the starting weapon and count sets once per build', () => {
+		const shares = buildShares(
+			Array.from({ length: 10 }, () => ev({ level: 10, weapons: ['machete:1', 'hammer:2'] })),
+		);
 		expect(shares.weapons.hammer).toBe(1);
 		expect(shares.weapons.machete).toBeUndefined();
 		expect(shares.sets.blunt).toBe(1);
@@ -102,10 +120,19 @@ describe('goal checks', () => {
 		expect(goal([run(95, 30)], 6)?.status).toBe('✗');
 	});
 
-	test('#7 uses real time from bot runs only', () => {
-		expect(goal([ev({})], 7)?.status).toBe('n/d');
-		expect(goal([ev({ source: 'bot', wallS: 12 * 60 })], 7)?.status).toBe('✓');
-		expect(goal([ev({ source: 'bot', wallS: 4 * 60 })], 7)?.status).toBe('✗');
+	test('#7 is game time plus 45 s per shop, and bot runs take precedence over the sim', () => {
+		// 700 s of play + 9 shops x 45 s = 1105 s = 18.4 min
+		expect(goal([ev({ round: 10, durationS: 700 })], 7)?.status).toBe('✗');
+		// 400 s + 9 x 45 s = 805 s = 13.4 min
+		expect(goal([ev({ round: 10, durationS: 400 })], 7)?.status).toBe('✓');
+		expect(goal([ev({ round: 3, durationS: 100 })], 7)?.status).toBe('✗');
+		const mixed = [
+			ev({ round: 10, durationS: 400 }),
+			ev({ source: 'bot', round: 4, durationS: 90 }),
+		];
+		expect(goal(mixed, 7)?.status).toBe('✗');
+		expect(goal(mixed, 7)?.profile).toContain('bot');
+		expect(goal([], 7)?.status).toBe('n/d');
 	});
 });
 
@@ -132,5 +159,24 @@ describe('report output', () => {
 		for (let id = 1; id <= 8; id++) expect(md).toMatch(new RegExp(`| ${id} |`));
 		expect(md).toMatch(/\| 1 \|.*\| ✓ \|/);
 		expect(md).toContain('## Round de morte por herói, nível e Danger');
+	});
+});
+
+describe('goal #8 from perf.ts lines', () => {
+	test('needs at least one measurement and checks FPS and p95', () => {
+		const perf = (avgFps: number, p95FrameMs: number) => ({
+			avgFps,
+			p95FrameMs,
+			enemies: 300,
+			round: 40,
+		});
+		expect(evaluateGoals([], []).find((g) => g.id === 8)?.status).toBe('n/d');
+		expect(
+			evaluateGoals([], [perf(59, 16.8), perf(58, 17)]).find((g) => g.id === 8)?.status,
+		).toBe('✓');
+		expect(
+			evaluateGoals([], [perf(59, 16.8), perf(55, 16)]).find((g) => g.id === 8)?.status,
+		).toBe('✗');
+		expect(evaluateGoals([], [perf(60, 19)]).find((g) => g.id === 8)?.status).toBe('✗');
 	});
 });

@@ -363,7 +363,7 @@ export class GameScene extends Phaser.Scene {
 		// Esc always pauses, whatever the binds are.
 		this.input.keyboard?.on('keydown-ESC', () => this.pause());
 
-		const biome = biomeForRound(this.run.round);
+		const biome = biomeForRound(this.run.round, this.run.seed);
 		this.arena = new Arena(this, seed, biome, this.run.round, params.arena);
 		this.obstacles = new ObstacleField(this.arena.props);
 		this.fx = new FxSystem(this, save.settings, this.arena);
@@ -481,6 +481,7 @@ export class GameScene extends Phaser.Scene {
 		this.mods = DANGER[this.run.danger];
 		this.waves = extraWaves(this.run.seed, this.run.danger);
 		this.enemies.mods = this.mods;
+		this.enemies.seed = this.run.seed;
 		this.startEnemyRound();
 		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
 
@@ -1098,10 +1099,14 @@ export class GameScene extends Phaser.Scene {
 	/** Bob unlocks on the first round-10 boss kill, Lucia on round 20 (P-17). */
 	private onBossKilled(): void {
 		const save = getSave(this);
-		const biome = biomeForRound(this.run.round);
+		const biome = biomeForRound(this.run.round, this.run.seed);
 		addFeat(
 			save,
-			biome === 'station' ? 'bossBiome2' : biome === 'ruins' ? 'bossBiome3' : 'bossBear',
+			biome === 'forest' || biome === 'station'
+				? 'bossBiome2'
+				: biome === 'city' || biome === 'ruins'
+					? 'bossBiome3'
+					: 'bossBear',
 		);
 		if (this.run.timeLeft > 120) addFeat(save, 'bossUnder60s');
 		if (this.run.timeLeft < 5) addFeat(save, 'bossLastSecond');
@@ -1568,7 +1573,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** New biome every 10 rounds: rebuild the ground and announce it (P-18). */
 	private enterBiome(): void {
-		const biome = biomeForRound(this.run.round);
+		const biome = biomeForRound(this.run.round, this.run.seed);
 		this.arena.setBiome(biome);
 		this.fx.banner(this.hero.x, this.hero.y, `biome.${biome}` as I18nKey);
 	}

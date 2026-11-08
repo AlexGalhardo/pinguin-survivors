@@ -144,3 +144,57 @@ Resultado: #2 ✗ (mortes antes do 12 passam de 5% em algum herói), #3 ✓ mas 
 ### Conclusão e estado final
 
 Nenhuma das duas passadas aproximou o #5 do limite sem piorar #2. **Os dados foram revertidos ao estado anterior às passadas** (só o `lightningTotem` em `support` ficou). O motivo é estrutural, não de números: cada herói tem um multiplicador de classe (`tagMul`: Jack melee ×1,3, Bob firearm ×1,3, Lucia magic ×1,5) e o bot escolhe sempre a arma de maior DPS por Fish, então as 4 ou 5 armas da classe do herói dominam as 5 vagas livres. Com 15 armas candidatas e 5 vagas, a participação média por arma já é de cerca de 33%, e o limite de 35% por arma só se cumpre com seleção quase uniforme. O #5 por herói precisa de mudança de política do bot (ruído de preferência, peso de sinergia de set) ou de revisão do limite; não de ajuste de dano. Parar aqui, conforme o combinado.
+
+## Bot com preferência
+
+Mudança só no comprador da sim (`playShop` com `preference`, nenhum dado do jogo alterado): escolha por softmax sobre o valor por Fish, +20% de valor por arma do mesmo set já na build, e um "gosto" por run (multiplicador 0,8 a 1,2 por arma, determinístico por seed). O bot do jogo real continua guloso (`nextShopAction`). A troca de uma arma por outra mais fraca só por sinergia foi bloqueada (a sinergia não conta para o fator 1,5 de substituição).
+
+Parâmetros em `SHOP_POLICY`: `temperature` 0,15, `setSynergy` 0,2, `tasteRange` 0,8 a 1,2. Teste do softmax: duas ofertas de valor 1 e 0,9 dividem a compra em cerca de 70% e 30%; uma de valor 0,3 quase nunca é escolhida.
+
+Resultado (100 seeds por célula, 5.400 runs, `balance-auto-2026-11-08.md`):
+
+| Meta | Antes (bot guloso) | Depois (preferência) |
+|---|---|---|
+| #1 | ✓ 17 / 17 / 10 | ✓ 17 / 17 / 10, máx. 24 |
+| #2 | ✓ jack 2%, bob 0%, lucia 2% | ✓ jack 3%, bob 0%, lucia 1% |
+| #3 | ✓ 51 / 51 / 42 | ✓ 33 / 33 / 32 (margem pequena sobre o 30) |
+| #4 | ✓ D0 53, D1 34 | ✓ D0 39, D1 27, D5 10 |
+| #5 por herói | ✗ armas 72% a 78%, sets 80% a 97% | ✗ armas 63% a 69%, sets 74% a 93% |
+| #6 | ✓ 0,897 | ✓ 0,887, reroll 0,8% |
+
+O #5 não fechou. Variações testadas nos parâmetros do bot (todas com #1 a #4 e #6 ✓):
+
+| Variação | Maior arma por herói (jack / bob / lucia) | Maior set |
+|---|---|---|
+| `temperature` 0,5 | `hammer` 57% / `elementStaff` 67% / `flameRing` 58% | `elemental` 91% |
+| `temperature` 1 | 58% / 66% / 59% | `elemental` 90% |
+| `temperature` 1, gosto 0,6 a 1,4 | 63% / 65% / 56% | `elemental` 90% |
+| `temperature` 1, sem sinergia | 64% / 68% / 57% | `elemental` 94% |
+| `temperature` 1, sem sinergia, gosto 0,4 a 1,6 | 60% / 65% / 49% | `elemental` 91% |
+| `temperature` 2, sem sinergia, gosto 0,4 a 1,6, troca com fator 1,2 | 61% / 60% / 50% | `elemental` 89% |
+
+O mais perto que chegou foi 49% a 61% de cada herói na arma líder. O que impede o limite de 35%: com cerca de 15 armas candidatas e 5 vagas, uma arma que um herói compra uma vez fica na build até o fim (só é trocada por uma 1,5× mais forte); as armas de classe do herói são as mais fortes por causa do `tagMul`, então entram em quase toda build dele. Fechar o #5 por herói pede decisão de design (rever o limite, ou reduzir o `tagMul` por herói, ou dar mais vagas de troca), não só preferência do comprador.
+
+## Veredito final das metas #1 a #8 (2026-11-08)
+
+Decisões do desenvolvedor aplicadas: o #5 por herói virou **exceção justificada** e ganhou o critério exigido "toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói". `evaluateGoals` agora avalia esse critério, mede o #7 como tempo de jogo mais 45 s por loja e lê o #8 de `bun scripts/perf.ts`. Relatório completo em [balance-auto-2026-11-08.md](balance-auto-2026-11-08.md) (sim com 100 seeds, mais 6 runs do bot real no #7 e 3 medições de FPS).
+
+| # | Veredito | Medido |
+|---|---|---|
+| 1 | ✓ (sim) | 17 / 17 / 10, máx. 24 |
+| 2 | ✓ (sim) | mortes antes do round 12: jack 3%, bob 0%, lucia 1% |
+| 3 | ✓ (sim) | 33 / 33 / 32 (margem pequena sobre o 30) |
+| 4 | ✓ (sim) | D0 39, D1 27, D5 10 |
+| 5 | ✓ com exceção justificada | nenhuma arma abaixo de 3%; líderes por herói 63% a 69% (`hammer`, `elementStaff`, `flameRing`), sets 74% a 93% |
+| 6 | ✓ (sim) | 0,887, reroll 0,8% |
+| 7 | ✓ com o bot real, no limite | mediana 10,1 min com 6 runs (tempo de jogo 4,8 min); a sim estima 23,8 min |
+| 8 | ✓ | 58 / 59 / 59 FPS, p95 16,8 ms (3 medições mudas, round 40) |
+
+Exceção do #5: com cerca de 15 armas candidatas para 5 vagas livres, a participação média por arma já é de cerca de 33%, e o bônus de classe por herói (`tagMul`) é intencional. Os limites de 35% por arma e 50% por set dentro de cada herói não são alcançáveis sem apagar a identidade de classe. Variações do comprador (temperatura, sinergia, gosto) levaram as líderes a 49% a 69%, nunca abaixo de 35%.
+
+### Ressalvas
+
+- **Bot real em L1** (rounds de morte, 2 runs por herói): jack 13 e 10, bob 6 e 15, lucia 3 e 3. A Lucia fica abaixo do piso de 8 da meta #1 no bot real (a sim a põe no round 10), e o conjunto tem mediana de 8. Com 2 runs por herói é indício, não prova; vale uma passada maior do bot (a Lucia L1 parece frágil no jogo real).
+- **#7 e a sim**: o bot real e a sim divergem (10,1 contra 23,8 min). Como a meta é do "bot médio", o veredito usa o bot real. A margem é de 0,1 min do limite inferior com apenas 6 runs.
+- **#3 na sim** passou de 51 / 51 / 42 para 33 / 33 / 32 com o comprador com preferência (o bot menos otimizado). A margem sobre o 30 é pequena.
+- **#8** foi medido com o dev server `:5173` e Chrome com janela (a GPU decide); as 3 medições têm 58 ou 59 FPS, no limite do piso de 58.

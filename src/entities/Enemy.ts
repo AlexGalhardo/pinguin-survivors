@@ -4,6 +4,7 @@ import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import type { EnemyDef } from '../data/enemies';
 import { ROUNDS } from '../data/rounds';
+import { spriteScale } from '../data/sprite-scale';
 import type { Element } from '../logic/combat';
 import { type AiState, newAi } from '../logic/enemy-ai';
 import { spriteDir } from '../logic/hero-anim';
@@ -86,12 +87,14 @@ export class Enemy implements Mover {
 		speedMul = 1,
 	): void {
 		const e = elite ? ROUNDS.elite[elite] : null;
-		const scale = e?.scale ?? 1;
+		const eliteScale = e?.scale ?? 1;
+		// Drawn size = elite multiplier x the art standardization scale; hit radius ignores the latter.
+		const scale = eliteScale * spriteScale(def.id);
 		this.def = def;
 		this.x = x;
 		this.y = y;
 		this.z = def.behavior === 'flyer' ? 18 : 0;
-		this.radius = def.radius * scale;
+		this.radius = def.radius * eliteScale;
 		this.speed = def.speed * speedMul;
 		this.maxHp = def.hp * hpMul * (e?.hp ?? 1);
 		this.hp = this.maxHp;
@@ -109,12 +112,17 @@ export class Enemy implements Mover {
 		this.baseScale = scale;
 		this.swayPhase = Math.random() * Math.PI * 2;
 		this.sprite
-			.setTexture(KEYS.enemy(def.id))
+			.setTexture(KEYS.enemy(def.art ?? def.id))
 			.setScale(scale)
 			.setAngle(0)
-			.setVisible(true)
-			.clearTint();
-		this.anims = registerCharacterAnims(this.scene, KEYS.enemy(def.id), ANIM_FPS, ANIM_LOOPS);
+			.setVisible(true);
+		this.restoreTint();
+		this.anims = registerCharacterAnims(
+			this.scene,
+			KEYS.enemy(def.art ?? def.id),
+			ANIM_FPS,
+			ANIM_LOOPS,
+		);
 		this.sprite.setOrigin(0.5, this.anims?.walk?.anchorY ?? 0.95);
 		this.facing = 's';
 		this.lastX = x;
@@ -135,6 +143,17 @@ export class Enemy implements Mover {
 		}
 		this.bar?.bg.setVisible(false);
 		this.bar?.fill.setVisible(false);
+	}
+
+	/** Back to the enemy's base look: no tint, or the multiply tint of reused art. */
+	private restoreTint(): void {
+		this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
+		if (this.def.tint !== undefined) this.sprite.setTint(this.def.tint);
+	}
+
+	/** Camouflage fade (`EnemyDef.cloakRange`). */
+	setCloak(alpha: number): void {
+		this.sprite.setAlpha(alpha);
 	}
 
 	despawn(): void {
@@ -174,14 +193,14 @@ export class Enemy implements Mover {
 			this.sprite.setAlpha(1);
 		} else if (!this.telegraph) {
 			this.sprite.setAlpha(1);
-			if (this.hitFlash <= 0) this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
+			if (this.hitFlash <= 0) this.restoreTint();
 		}
 		this.flashCooldown -= dt;
 		if (this.hitFlash > 0 && Enemy.reducedFlashes) this.hitFlash = 0;
 		if (this.hitFlash > 0) {
 			this.hitFlash -= dt;
 			this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
-			if (this.hitFlash <= 0) this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
+			if (this.hitFlash <= 0) this.restoreTint();
 		}
 	}
 
@@ -216,7 +235,7 @@ export class Enemy implements Mover {
 		const { dir, flip } = spriteDir(this.facing);
 		const d = meta.dirs.includes(dir) ? dir : 's';
 		this.sprite.setFlipX(flip && d === dir);
-		this.sprite.play(`${KEYS.enemy(this.def.id)}.${name}.${d}`, true);
+		this.sprite.play(`${KEYS.enemy(this.def.art ?? this.def.id)}.${name}.${d}`, true);
 	}
 
 	/** Shown only once the elite has taken damage, above its head. */
