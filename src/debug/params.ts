@@ -1,4 +1,5 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
+import type { PlatformTier } from '../core/platform/types';
 import { ARENA } from '../data/arena';
 import { DANGER_LEVELS, type Danger } from '../data/difficulty';
 import {
@@ -14,7 +15,10 @@ export interface DebugParams {
 	seed?: number;
 	hero?: HeroId;
 	round?: number;
+	/** Hero art tier 1-3 (`?tier=2`). */
 	tier?: 1 | 2 | 3;
+	/** Effects tier for QA (`?tier=low|mid|high`, SDD-007); the numeric form is the hero art tier. */
+	fxTier?: PlatformTier;
 	/** Danger 0-5 of the run (ADR-008). */
 	danger?: Danger;
 	/** Starting weapon (QA); `weapons` forces the whole bar. */
@@ -27,6 +31,8 @@ export interface DebugParams {
 	debug: boolean;
 	skipMenu: boolean;
 }
+
+const PLATFORM_TIERS: readonly PlatformTier[] = ['low', 'mid', 'high'];
 
 function flag(value: string | null): boolean {
 	return value === '1' || value === 'true';
@@ -62,6 +68,7 @@ export function parseDebugParams(search: string): DebugParams {
 		seed: nonNegativeInt(p.get('seed')),
 		hero: HERO_IDS.find((h) => h === hero),
 		round: round !== undefined && round >= 1 ? round : undefined,
+		fxTier: PLATFORM_TIERS.find((x) => x === p.get('tier')),
 		tier: tier === 1 || tier === 2 || tier === 3 ? tier : undefined,
 		danger: DANGER_LEVELS.find((d) => d === danger),
 		weapon: weapon && weapon in WEAPON_LINE_BY_ID ? (weapon as WeaponId) : undefined,

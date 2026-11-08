@@ -15,6 +15,7 @@ import { applyBloom, shake, zoomPunch } from '../core/feel';
 import { GameInput } from '../core/input';
 import { musicForRound, playMusic } from '../core/music';
 import { platform, reportAchievements } from '../core/platform';
+import { activeBudget } from '../core/tier';
 import { trackZoom } from '../core/viewport';
 import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DEMO, STEAM_URL } from '../data/demo';
@@ -470,7 +471,7 @@ export class GameScene extends Phaser.Scene {
 
 		const cam = this.cameras.main;
 		trackZoom(this, cam);
-		if (save.settings.bloomOptIn) applyBloom(cam);
+		if (save.settings.bloomOptIn && activeBudget().bloom) applyBloom(cam);
 		Enemy.reducedFlashes = save.settings.reducedFlashes;
 		this.snapCamera();
 		this.enemies.obstacles = this.obstacles;

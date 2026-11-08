@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { BIOMES, KEYS } from '../art/manifest';
 import type { BiomeId } from '../config/constants';
+import { activeBudget } from '../core/tier';
 import { ARENA } from '../data/arena';
 import {
 	arenaBounds,
@@ -40,7 +41,7 @@ export class Arena {
 	) {
 		this.side = sideOverride ?? arenaSide(round);
 		this.bounds = arenaBounds(round, sideOverride);
-		this.gore = new GoreLayer(scene, this.bounds, GROUND_DEPTH + 1);
+		this.gore = new GoreLayer(scene, this.bounds, GROUND_DEPTH + 1, activeBudget().decalCap);
 		this.rebuild();
 	}
 

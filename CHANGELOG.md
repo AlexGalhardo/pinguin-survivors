@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Effects follow the platform performance tier (SDD-007): low caps decals at 1,000, turns off dynamic lights and bloom and halves particles; mid sits between; `?tier=low|mid|high` forces it for QA.
+
 - Every game text uses Roboto (no pixel font) for readability; Pixelify Sans and Rubik are removed.
 
 ## [0.1.0] - 2026-11-08

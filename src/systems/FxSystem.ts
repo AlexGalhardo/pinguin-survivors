@@ -2,9 +2,11 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
+import { activeBudget } from '../core/tier';
 import { ARENA } from '../data/arena';
 import type { SfxKey } from '../data/sfx';
 import { type I18nKey, t } from '../i18n';
+import { scaleParticles } from '../logic/performance';
 import { depthOf, worldToScreen } from '../logic/projection';
 import type { NumberSize, Settings } from '../logic/save';
 import { UI_FONT } from '../ui/font';
@@ -81,13 +83,14 @@ export class FxSystem {
 		if (this.settings.gore === 'reduced') count = Math.ceil(count / 3);
 		const s = worldToScreen(x, y, 14);
 		this.spurt.setParticleTint(this.splatKind === 'goo' ? PALETTE.goo : PALETTE.blood);
-		this.spurt.explode(count, s.x, s.y);
+		this.spurt.explode(scaleParticles(count, activeBudget().particleScale), s.x, s.y);
 	}
 
 	/** Chunks of the enemy fly out and leave a stain where they land. */
 	burst(x: number, y: number, count: number): void {
 		if (this.settings.gore === 'reduced') return;
-		for (let i = 0; i < count; i++) {
+		const gibs = scaleParticles(count, activeBudget().particleScale);
+		for (let i = 0; i < gibs; i++) {
 			let g = this.gibs.find((q) => !q.alive);
 			if (!g) {
 				if (this.gibs.length >= MAX_GIBS) return;

@@ -3,6 +3,7 @@ import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
 import { getParams } from '../core/context';
 import { GameEvents } from '../core/events';
+import { activeBudget } from '../core/tier';
 import { trackZoom } from '../core/viewport';
 import type { AchievementDef } from '../data/achievements';
 import { GEAR_SLOTS } from '../data/equipment';
@@ -24,7 +25,7 @@ import type { GameScene } from './GameScene';
  */
 export class HudScene extends Phaser.Scene {
 	private debugText?: Phaser.GameObjects.Text;
-	private lighting!: Lighting;
+	private lighting: Lighting | null = null;
 	private readonly hudLights: Light[] = [];
 
 	constructor() {
@@ -42,7 +43,7 @@ export class HudScene extends Phaser.Scene {
 				strokeThickness: 3,
 			});
 		}
-		this.lighting = new Lighting(this, 0.62);
+		if (activeBudget().dynamicLights) this.lighting = new Lighting(this, 0.62);
 		const onUnlock = (defs: AchievementDef[]) => {
 			sfx(this, 'sfx.achievement');
 			for (const def of defs) showToast(`${t('ach.unlocked')}: ${achievementName(def)}`);
@@ -54,7 +55,7 @@ export class HudScene extends Phaser.Scene {
 		const cam = this.cameras.main;
 		trackZoom(this, cam, (view) => {
 			cam.centerOn(view.width / 2, view.height / 2);
-			this.lighting.resize(view.width, view.height);
+			this.lighting?.resize(view.width, view.height);
 		});
 	}
 
@@ -121,10 +122,13 @@ export class HudScene extends Phaser.Scene {
 
 	/** World lights → HUD coordinates (the HUD camera maps 0..view to the screen). */
 	private drawLights(game: GameScene): void {
+		if (!this.lighting) return;
 		const view = game.cameras.main.worldView;
 		const out = this.hudLights;
 		out.length = 0;
+		const max = activeBudget().maxLights;
 		for (const l of game.collectLights()) {
+			if (out.length >= max) break;
 			const s = worldToScreen(l.x, l.y, 16);
 			out.push({ x: s.x - view.x, y: s.y - view.y, radius: l.radius, strength: l.strength });
 		}

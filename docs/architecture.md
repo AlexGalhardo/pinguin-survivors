@@ -83,7 +83,7 @@
 - Toque: `TouchControls` escreve o vetor do analógico e as ações em `src/core/touch-bridge.ts`; o `GameInput` lê esses valores junto com teclado e gamepad (`src/core/input.ts`).
 - Foco e input de menus no React (`src/ui/focus.tsx`, `focus-nav.ts`): teclado, gamepad (via `GameInput` em modo menu), toque; o `GameInput` do mundo é desligado enquanto um painel modal está aberto.
 - Não há mais telas Phaser de UI: menus, HUD, loja, cartas, pausa e fim de partida são React (T3.7). Restam em Phaser: `BootScene`, `GameScene` e `HudScene` (luz e overlay de debug). `installCrispText` e `src/scenes/ui-phaser/` foram removidos.
-- Tailwind v4 com `@theme` gerado de `palette.ts` (`bun scripts/export-palette-css.ts`); tipografia Rubik/Pixelify Sans/Noto Sans SC; sem zoom inteiro no overlay.
+- Tailwind v4 com `@theme` gerado de `palette.ts` (`bun scripts/export-palette-css.ts`); tipografia Roboto (+ Noto Sans SC sob demanda para ZH); sem zoom inteiro no overlay.
 
 ## 5. Estrutura de pastas
 
@@ -142,9 +142,10 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 
 ## 8. Gore, luz e performance
 
-- Decalques carimbados na `DynamicTexture` da arena (teto 4.000; ao passar do teto sai o mais antigo, `src/world/Arena.ts`), recarimbados ao crescer; gore reduzido/gosma por settings.
+- Decalques carimbados na `DynamicTexture` da arena (teto por tier, 4.000 no `high`; ao passar do teto sai o mais antigo, `src/world/GoreLayer.ts`), recarimbados ao crescer; gore reduzido/gosma por settings.
 - Luz: `DynamicTexture` de escuridão do tamanho da tela com luzes em ERASE (herói, tiros, fogo, elites, boss, superpoder); vinheta; bloom opcional (desligado por padrão, P-65).
-- Orçamento: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 1920×1080 na arena 40×40 (`bun scripts/perf.ts --round 40`, SDD-001 RF-10); o `Platform.tier` já existe (`detectTier`), mas a redução por tier (decalques, luzes, bloom, partículas) ainda não está ligada ao código: fica com a SDD-007.
+- Orçamento: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 1920×1080 na arena 40×40 (`bun scripts/perf.ts --round 40`, SDD-001 RF-10); o `Platform.tier` (`detectTier`) escolhe o orçamento de efeitos.
+- Orçamento por tier (`src/data/performance.ts`, `tierBudget()` em `src/logic/performance.ts`, tier ativo em `src/core/tier.ts`; `?tier=low|mid|high` força para QA): `low` = 1.000 decalques, sem luzes dinâmicas, sem bloom, 50% das partículas e gibs; `mid` = 2.000 decalques, até 24 luzes, bloom opcional, 75% das partículas; `high` = o jogo completo (4.000, 64 luzes, 100%). O bloom continua opt-in nas Configurações; o tier só o proíbe.
 
 ## 9. Persistência e plataforma
 

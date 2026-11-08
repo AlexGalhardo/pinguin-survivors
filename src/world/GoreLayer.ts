@@ -10,7 +10,7 @@ const GORE_KEY = 'arena.gore';
  * Gore mode (reduced / goo) is decided by the caller: it only picks the frames it passes in.
  */
 export class GoreLayer {
-	private readonly log = new DecalLog();
+	private readonly log: DecalLog;
 	private texture: Phaser.Textures.DynamicTexture | null = null;
 	private image: Phaser.GameObjects.Image | null = null;
 	private dirty = false;
@@ -19,7 +19,9 @@ export class GoreLayer {
 		private readonly scene: Phaser.Scene,
 		private bounds: Bounds,
 		private readonly depth: number,
+		cap?: number,
 	) {
+		this.log = new DecalLog(cap);
 		this.build();
 	}
 
