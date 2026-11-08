@@ -8,7 +8,9 @@
  */
 import { chromium, type Page } from 'playwright';
 
-const base = process.argv[2] ?? 'http://localhost:5173';
+const args = process.argv.slice(2);
+const react = args.includes('--react');
+const base = args.find((a) => !a.startsWith('--')) ?? 'http://localhost:5173';
 
 type SceneProbe = { active: string[]; history: number; round: number | null };
 
@@ -52,6 +54,17 @@ page.on('console', (m) => {
 	if (m.type() === 'error') errors.push(m.text());
 });
 
+if (react) {
+	await reactFlow();
+	await browser.close();
+	if (errors.length > 0) {
+		console.error(`FAIL page errors:\n${errors.join('\n')}`);
+		process.exit(1);
+	}
+	console.log('E2E (React UI) passed');
+	process.exit(0);
+}
+
 await page.goto(base, { waitUntil: 'load' });
 await page.waitForFunction(() => '__GAME__' in window);
 await waitFor(page, 'main menu', (p) => p.active.includes('MainMenu'));
@@ -77,7 +90,11 @@ interface GameProbe {
 		fish: number;
 		timeLeft: number;
 		pendingLevelUps: number;
-		shop: { offers: ({ price: number } | null)[]; rerolls: number; locks: boolean[] } | null;
+		shop: {
+			offers: ({ price: number; kind: string } | null)[];
+			rerolls: number;
+			locks: boolean[];
+		} | null;
 		lockedOffers: unknown[];
 	};
 	build: { weapons: unknown[] };
@@ -146,10 +163,13 @@ await game(page, (g: GameProbe) => {
 	g.run.fish = 500;
 });
 const bought = await game(page, (g: GameProbe) => {
+	// The mixed shop also sells gear and potions: reroll until a weapon shows up.
+	const weaponIndex = (): number =>
+		(g.run.shop?.offers ?? []).findIndex((o) => o?.kind === 'weapon');
+	for (let i = 0; i < 6 && weaponIndex() < 0; i++) g.shopReroll();
 	const before = g.run.fish;
-	const offers = g.run.shop?.offers ?? [];
-	const i = offers.findIndex((o) => o);
-	const price = offers[i]?.price ?? 0;
+	const i = weaponIndex();
+	const price = g.run.shop?.offers[i]?.price ?? 0;
 	g.shopBuy(i);
 	return { before, price, after: g.run.fish, weapons: g.build.weapons.length };
 });
@@ -163,7 +183,7 @@ const rerolled = await game(page, (g: GameProbe) => {
 	g.shopReroll();
 	return { spent: before - g.run.fish, rerolls: g.run.shop?.rerolls };
 });
-if (rerolled.spent <= 0 || rerolled.rerolls !== 1) {
+if (rerolled.spent <= 0 || (rerolled.rerolls ?? 0) < 1) {
 	console.error(`FAIL reroll: ${JSON.stringify(rerolled)}`);
 	process.exit(1);
 }
@@ -247,3 +267,89 @@ if (errors.length > 0) {
 	process.exit(1);
 }
 console.log('E2E passed');
+/** Menu (React) → run → React level-up cards → shop → pause → settings → quit → game over → menu. */
+async function reactFlow(): Promise<void> {
+	await page.goto(`${base}/?reactUi=1`, { waitUntil: 'load' });
+	await page.waitForFunction(() => '__GAME__' in window);
+	const ui = page.locator('#ui');
+	const see = async (label: string, text: string | RegExp, timeout = 15000): Promise<void> => {
+		try {
+			await ui.getByText(text).first().waitFor({ state: 'visible', timeout });
+		} catch {
+			console.error(`FAIL ${label}: "${text}" not shown`);
+			process.exit(1);
+		}
+		console.log(`ok   ${label}`);
+	};
+	const click = async (name: string | RegExp): Promise<void> => {
+		// Screens mount in two renders (focus scope), so let them settle before clicking.
+		await page.waitForTimeout(500);
+		await ui.getByRole('button', { name }).first().click();
+	};
+	await see('React main menu', 'PLAY');
+	// The menu can still be booting under the first click: retry until the next screen shows.
+	for (let i = 0; i < 4 && !(await ui.getByText('START RUN').first().isVisible()); i++)
+		await click('PLAY');
+	await see('React hero select', 'START RUN');
+	await click('START RUN');
+	await waitFor(page, 'run started (round 1)', (p) => p.active.includes('Game') && p.round === 1);
+
+	await game(page, (g: GameProbe) => {
+		g.run.pendingLevelUps = 1;
+		g.run.timeLeft = 0;
+	});
+	await see('React level-up cards', /LEVEL UP/);
+	await ui.locator('div.grid button').first().click();
+	await see('React shop after the card', 'NEXT ROUND');
+	await game(page, (g: GameProbe) => {
+		g.run.fish = 500;
+	});
+	const spent = await game(page, (g: GameProbe) => {
+		const before = g.run.fish;
+		const offers = g.run.shop?.offers ?? [];
+		const i = offers.findIndex((o) => o);
+		g.shopBuy(i);
+		return before - g.run.fish;
+	});
+	if (spent <= 0) {
+		console.error('FAIL shop purchase (any kind) did not debit Fish');
+		process.exit(1);
+	}
+	console.log('ok   purchase debited Fish');
+	await click(/^REROLL/);
+	await click('NEXT ROUND');
+	await waitFor(
+		page,
+		'round 2 after the shop',
+		(p) => p.active.includes('Game') && p.round === 2,
+	);
+
+	await page.keyboard.press('Escape');
+	await see('React pause', 'PAUSED');
+	await click('SETTINGS');
+	await see('React settings over the pause', /^SETTINGS$/);
+	await click('BACK');
+	await see('pause again after settings', 'PAUSED');
+	await click('RESUME');
+	await page.waitForFunction(
+		() => !document.getElementById('ui')?.textContent?.includes('PAUSED'),
+	);
+	console.log('ok   resumed');
+	await page.waitForTimeout(400);
+	await page.keyboard.press('Escape');
+	await see('pause reopens with Esc', 'PAUSED');
+	await page.waitForTimeout(400);
+	await page.keyboard.press('Escape');
+	await page.waitForFunction(
+		() => !document.getElementById('ui')?.textContent?.includes('PAUSED'),
+	);
+	console.log('ok   Esc resumes');
+	await page.waitForTimeout(400);
+	await page.keyboard.press('Escape');
+	await see('pause reopens again', 'PAUSED');
+	await click('QUIT RUN');
+	await click('YES, QUIT');
+	await see('React game over', 'YOU DIED');
+	await click('MAIN MENU');
+	await see('back on the React main menu', 'PLAY');
+}

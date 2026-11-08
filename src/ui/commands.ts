@@ -2,7 +2,10 @@ import type { StartRunRequest } from './components/HeroSelect';
 
 /** UI to game bridge (SDD-004 RF-03). The game binds the implementation; the UI never imports the game engine. */
 export interface GameCommands {
-	pickCard: (cardId: string) => void;
+	/** Level-up: pick the card at `index` of the offered cards. */
+	pickCard: (index: number) => void;
+	/** Level-up: spend one card reroll (Workshop `insight`). */
+	rerollCards: () => void;
 	/** Shop: buy the offer in shop slot `index` (see `ShopOfferView.index`). */
 	buy: (index: number) => void;
 	/** Shop: pay the reroll price and redraw the unlocked offers. */
@@ -16,6 +19,14 @@ export interface GameCommands {
 	closeShop: () => void;
 	pause: () => void;
 	resume: () => void;
+	/** Pause: open the settings screen; its Back returns to the pause menu. */
+	pauseSettings: () => void;
+	/** Pause: quit the run (already confirmed in the UI). */
+	quitRun: () => void;
+	/** Run over: start a new run with the same hero, Danger and weapon. */
+	playAgain: () => void;
+	/** Run over: back to the main menu. */
+	backToMenu: () => void;
 }
 
 let impl: Partial<GameCommands> = {};
@@ -27,7 +38,8 @@ export function bindCommands(next: Partial<GameCommands>): void {
 
 /** Commands not bound yet are ignored, so UI built ahead of the game never throws. */
 export const commands: GameCommands = {
-	pickCard: (id) => impl.pickCard?.(id),
+	pickCard: (index) => impl.pickCard?.(index),
+	rerollCards: () => impl.rerollCards?.(),
 	buy: (index) => impl.buy?.(index),
 	reroll: () => impl.reroll?.(),
 	lock: (index) => impl.lock?.(index),
@@ -36,6 +48,10 @@ export const commands: GameCommands = {
 	closeShop: () => impl.closeShop?.(),
 	pause: () => impl.pause?.(),
 	resume: () => impl.resume?.(),
+	pauseSettings: () => impl.pauseSettings?.(),
+	quitRun: () => impl.quitRun?.(),
+	playAgain: () => impl.playAgain?.(),
+	backToMenu: () => impl.backToMenu?.(),
 };
 
 /**

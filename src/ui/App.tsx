@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { Hud } from './components/Hud';
 import { MenuHost } from './components/MenuHost';
+import { RunHost } from './components/RunHost';
 import { ShopHost } from './components/ShopHost';
 import { ToastHost } from './components/Toast';
 import { useUiStore } from './store';
@@ -16,6 +17,7 @@ export function App(): ReactElement {
 			<MenuHost />
 			<Hud version={VERSION} />
 			<ShopHost />
+			<RunHost />
 			<ToastHost />
 		</>
 	);
