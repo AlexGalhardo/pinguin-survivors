@@ -18,7 +18,7 @@ if ((await $`git status --porcelain`.text()).trim() !== '') {
 	process.exit(1);
 }
 const previousTag =
-	(await $`git describe --tags --abbrev=0 --match v*`.nothrow().text()).trim() || null;
+	(await $`git describe --tags --abbrev=0 --match ${'v*'}`.nothrow().text()).trim() || null;
 const notes = await releaseNotes(previousTag, 'HEAD', version);
 
 if (dryRun) {
