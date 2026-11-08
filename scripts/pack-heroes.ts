@@ -5,14 +5,17 @@
 // anchorY is where the feet are (0..1 of the frame height): the lowest opaque row over every south
 // frame of the animation (frame 0 of a walk can be mid-step with a raised foot, which made the hero
 // float), per animation because template (96 px) and v3 (132 px) animations use different canvases.
-// Usage: bun scripts/pack-heroes.ts [key ...]
+// Usage: bun scripts/pack-heroes.ts [--from <dir>] [key ...]
 
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
 import { shelfPack } from './lib/shelf-pack';
 
-const IN = 'art-src/pixellab/anim';
+const args = process.argv.slice(2);
+const fromAt = args.indexOf('--from');
+/** `--from <dir>` packs from another source folder (e.g. art-src/pixellab/anim-v2), so the old frames stay untouched. */
+const IN = fromAt >= 0 ? (args[fromAt + 1] ?? 'art-src/pixellab/anim') : 'art-src/pixellab/anim';
 /** Heroes go to public/assets/heroes; enemies and bosses (enemy.<id>) and NPCs (npc.<id>) to public/assets/enemies. */
 const outDir = (key: string): string =>
 	key.startsWith('enemy.') || key.startsWith('npc.')
@@ -123,5 +126,8 @@ async function packKey(key: string): Promise<void> {
 	);
 }
 
-const keys = process.argv.slice(2).length ? process.argv.slice(2) : readdirSync(IN);
+const keys = (fromAt >= 0 ? args.filter((_a, i) => i !== fromAt && i !== fromAt + 1) : args).filter(
+	Boolean,
+);
+if (keys.length === 0) keys.push(...readdirSync(IN));
 for (const key of keys) await packKey(key);
