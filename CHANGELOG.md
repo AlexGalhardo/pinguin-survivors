@@ -9,6 +9,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2026-11-08
 
+### Added
+
+- **tree:** Edit the skill tree from the pause and the shop ([46b2d1b](https://github.com/AlexGalhardo/pinguin-survivors/commit/46b2d1b))
+- **art:** The Moose King boss gets its own animated art ([0a00ba1](https://github.com/AlexGalhardo/pinguin-survivors/commit/0a00ba1))
+- **tree:** Show ranks on the tree screen and refund one rank at a time ([e9598fb](https://github.com/AlexGalhardo/pinguin-survivors/commit/e9598fb))
+- **ui:** Phone landscape layout and touch gestures for the skill tree ([ecbf75c](https://github.com/AlexGalhardo/pinguin-survivors/commit/ecbf75c))
+- **shop:** Gear equips on purchase and there is no bag ([0596892](https://github.com/AlexGalhardo/pinguin-survivors/commit/0596892))
+- **tree:** Ranked passive nodes that take up to 5 points ([0add8d6](https://github.com/AlexGalhardo/pinguin-survivors/commit/0add8d6))
+- **shop:** Healing potions refill at every round start ([db6bcea](https://github.com/AlexGalhardo/pinguin-survivors/commit/db6bcea))
+
+### Changed
+
+- **danger:** Make Danger 0 an easy mode with half enemy HP and damage ([ae9a84b](https://github.com/AlexGalhardo/pinguin-survivors/commit/ae9a84b))
+
+### Fixed
+
+- **art:** Give the Moose King boss a sprite until its own art lands ([57a3442](https://github.com/AlexGalhardo/pinguin-survivors/commit/57a3442))
+
+### Maintenance
+
+- **site:** Host the full game at /play/ next to the demo ([89b7ff2](https://github.com/AlexGalhardo/pinguin-survivors/commit/89b7ff2))
+- **repo:** Record ranked tree nodes, the in-run tree and this round of tasks ([4dd6338](https://github.com/AlexGalhardo/pinguin-survivors/commit/4dd6338))
+- **art:** Keep the new kraken and abomination candidates for review ([c1c0a4a](https://github.com/AlexGalhardo/pinguin-survivors/commit/c1c0a4a))
+- **platform:** Check that unlocked achievements reach the platform ([9faaaff](https://github.com/AlexGalhardo/pinguin-survivors/commit/9faaaff))
+- **sim:** Let the playtest bot buy healing potions and the Magnetic ([01139b2](https://github.com/AlexGalhardo/pinguin-survivors/commit/01139b2))
+- **desktop:** Smoke the exe from a fresh profile through the save slots ([8067717](https://github.com/AlexGalhardo/pinguin-survivors/commit/8067717))
+- **repo:** Keep the local wireframe prompts file out of git ([682ee98](https://github.com/AlexGalhardo/pinguin-survivors/commit/682ee98))
+- **marketing:** Add the Steam page texts in four languages (T5.8) ([368c9c7](https://github.com/AlexGalhardo/pinguin-survivors/commit/368c9c7))
+- **marketing:** Add the trailer script draft (T9.3) ([9dcc2f9](https://github.com/AlexGalhardo/pinguin-survivors/commit/9dcc2f9))
+- **balance:** Turn the developer's playtest feedback into 7 hypotheses ([778a8c5](https://github.com/AlexGalhardo/pinguin-survivors/commit/778a8c5))
+- **release:** Require micro-commits and releases that list each commit ([a4ccff5](https://github.com/AlexGalhardo/pinguin-survivors/commit/a4ccff5))
+
 ## [0.4.0] - 2026-11-08
 
 ## [0.3.0] - 2026-11-08
