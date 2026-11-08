@@ -16,7 +16,7 @@ import {
 	POTION_TYPES,
 	type PotionType,
 } from '../data/potions';
-import type { Lang } from '../i18n';
+import { LANGS, type Lang } from '../i18n';
 import {
 	type AchievementProgress,
 	type AchievementState,
@@ -216,7 +216,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 	const s = isObj(r.settings) ? r.settings : {};
 	const vol = isObj(s.volume) ? s.volume : {};
 	const settings: Settings = {
-		lang: oneOf(s.lang, ['en', 'pt-BR'] as const, base.settings.lang),
+		lang: oneOf(s.lang, LANGS, base.settings.lang),
 		volume: {
 			master: num(vol.master, base.settings.volume.master, 0, 1),
 			music: num(vol.music, base.settings.volume.music, 0, 1),

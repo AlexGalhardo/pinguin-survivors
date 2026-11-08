@@ -17,6 +17,7 @@ export const shopPtBR = {
 	'shop.offers': 'OFERTAS',
 	'shop.kind.weapon': 'Arma',
 	'shop.kind.item': 'Item',
+	'shop.kind.potion': 'Poção',
 	'shop.kind.gear': 'Equipamento',
 	'shop.set.blade': 'Lâmina',
 	'shop.set.blunt': 'Contundente',

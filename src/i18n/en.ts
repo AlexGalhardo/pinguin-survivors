@@ -50,6 +50,8 @@ export const en = {
 	'settings.fullscreen': 'Fullscreen: {v}',
 	'lang.en': 'English',
 	'lang.pt-BR': 'Português (BR)',
+	'lang.es': 'Español',
+	'lang.zh-CN': '简体中文',
 	'settings.bloom': 'Bloom (glow): {v}',
 	'settings.numberSize': 'Damage number size: {v}',
 	'settings.reducedFlashes': 'Reduced flashes: {v}',

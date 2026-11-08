@@ -9,7 +9,7 @@ import { weaponName } from './Hud';
 
 /** What the shop screen shows; the game publishes it (offers, wallet and the 6 weapon slots). */
 export interface ShopOfferData {
-	kind: 'weapon' | 'item' | 'gear';
+	kind: 'weapon' | 'item' | 'gear' | 'potion';
 	id: string;
 	/** Weapon/item tier 1..4, or gear rarity 1..3. */
 	tier: number;
@@ -47,11 +47,14 @@ const label = (key: string): string => (t(key as I18nKey) as string | undefined)
 export function offerName(o: Pick<ShopOfferData, 'kind' | 'id'>): string {
 	if (o.kind === 'weapon') return weaponName(o.id);
 	if (o.kind === 'gear') return label(`gear.${o.id}`);
+	if (o.kind === 'potion') return label(`potion.${o.id}`);
 	return label(`item.${o.id}.name`);
 }
 
 const tierColor = (kind: ShopOfferData['kind'], tier: number): string =>
-	kind === 'gear' ? '' : toCss(WEAPON_TIER_TINT[Math.min(4, Math.max(1, tier)) as WeaponTier]);
+	kind === 'gear' || kind === 'potion'
+		? ''
+		: toCss(WEAPON_TIER_TINT[Math.min(4, Math.max(1, tier)) as WeaponTier]);
 
 function Offer(props: {
 	offer: ShopOfferData | null;
@@ -84,7 +87,8 @@ function Offer(props: {
 				</div>
 				<div className="text-[0.85em] text-text-dim">
 					{t(`shop.kind.${offer.kind}` as I18nKey)}
-					{offer.kind !== 'gear' && ` · ${toRoman(offer.tier)}`}
+					{(offer.kind === 'weapon' || offer.kind === 'item') &&
+						` · ${toRoman(offer.tier)}`}
 					{offer.sets.length > 0 &&
 						` · ${offer.sets.map((s) => label(`shop.set.${s}`)).join(' / ')}`}
 				</div>

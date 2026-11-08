@@ -5,8 +5,8 @@
 @import "./palette.css";
 
 @theme {
-	--font-body: "Rubik", sans-serif;
-	--font-title: "Pixelify Sans", "Rubik", sans-serif;
+	--font-body: "Rubik", "Noto Sans SC", sans-serif;
+	--font-title: "Pixelify Sans", "Rubik", "Noto Sans SC", sans-serif;
 }
 
 /* Without preflight, text and buttons would fall back to the browser's black; give the overlay a base

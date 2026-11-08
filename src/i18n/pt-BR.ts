@@ -51,6 +51,8 @@ export const ptBR: Record<I18nKey, string> = {
 	'settings.fullscreen': 'Tela cheia: {v}',
 	'lang.en': 'English',
 	'lang.pt-BR': 'Português (BR)',
+	'lang.es': 'Español',
+	'lang.zh-CN': '简体中文',
 	'settings.bloom': 'Bloom (brilho): {v}',
 	'settings.numberSize': 'Tamanho dos números de dano: {v}',
 	'settings.reducedFlashes': 'Flashes reduzidos: {v}',

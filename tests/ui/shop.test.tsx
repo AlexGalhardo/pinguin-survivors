@@ -82,4 +82,23 @@ describe('Shop', () => {
 		expect(calls).toEqual(['fuse:0,1', 'sell:2']);
 		cleanup();
 	});
+
+	test('draws gear (name and rarity colour) and potion offers', () => {
+		const { calls, a } = actions();
+		const d = data({
+			offers: [
+				{ kind: 'gear', id: 'helmet.crown', tier: 3, price: 40, sets: [] },
+				{ kind: 'potion', id: 'heal', tier: 1, price: 9, sets: [] },
+				null,
+				null,
+			],
+		});
+		const { getByText, container } = render(<Shop data={d} actions={a} />);
+		expect(getByText('Emperor Crown').className).toContain('text-rarity-legendary');
+		expect(getByText('Heal')).toBeTruthy();
+		expect(container.textContent).toContain('Potion');
+		fireEvent.click(getByText('BUY · 9'));
+		expect(calls).toEqual(['buy:1']);
+		cleanup();
+	});
 });

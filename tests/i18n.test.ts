@@ -22,6 +22,8 @@ describe('i18n', () => {
 	test('detects Portuguese browsers', () => {
 		expect(detectLang('pt-BR')).toBe('pt-BR');
 		expect(detectLang('pt-PT')).toBe('pt-BR');
+		expect(detectLang('es-MX')).toBe('es');
+		expect(detectLang('zh-TW')).toBe('zh-CN');
 		expect(detectLang('en-US')).toBe('en');
 		expect(detectLang(undefined)).toBe('en');
 	});

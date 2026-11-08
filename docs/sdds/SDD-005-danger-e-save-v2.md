@@ -8,7 +8,7 @@
 - RF-02 Waves extras: rounds sorteados (seed) entre 4 e 19 que recebem `elite` (×3 de elites) ou `horde` (×2 spawn); avisados na loja do round anterior a partir do D2.
 - RF-03 Desbloqueio: vencer o boss do round 20 no danger D marca `progress.hero[h].dangerUnlocked = max(atual, D+1)`.
 - RF-04 `HeroSelect` mostra danger selecionável até o desbloqueado e melhor round por danger.
-- RF-05 **Save v2**: `SAVE_VERSION = 2`; campos novos `pearls`, `progress.hero[h].dangerUnlocked`, `progress.hero[h].bestRoundByDanger[6]`, `unlocks.startingWeapons`, `settings.locale ∈ en|pt-BR|es|zh-CN`; removidos `fish`, `difficulty`, `settings.voice*`, `activeRun` (incompatível: descartado com aviso).
+- RF-05 **Save v2**: `SAVE_VERSION = 2`; campos novos `pearls`, `progress.hero[h].dangerUnlocked`, `progress.hero[h].bestRoundByDanger[6]`, `unlocks.startingWeapons`, `settings.lang ∈ en|pt-BR|es|zh-CN` (o campo `lang` já existente faz o papel de `locale`); removidos `fish`, `difficulty`, `settings.voice*`, `activeRun` (incompatível: descartado com aviso).
 - RF-06 Migração v1→v2 idempotente; `activeRun` v1 descartado; `difficulty` → `dangerUnlocked = 1` para todos.
 - RF-07 Export/import `.json` continua; Electron grava também em arquivo para Steam Cloud (SDD-007).
 

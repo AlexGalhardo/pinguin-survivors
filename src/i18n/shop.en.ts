@@ -17,6 +17,7 @@ export const shopEn = {
 	'shop.offers': 'OFFERS',
 	'shop.kind.weapon': 'Weapon',
 	'shop.kind.item': 'Item',
+	'shop.kind.potion': 'Potion',
 	'shop.kind.gear': 'Gear',
 	'shop.set.blade': 'Blade',
 	'shop.set.blunt': 'Blunt',

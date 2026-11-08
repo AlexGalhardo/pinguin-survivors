@@ -17,6 +17,7 @@ export const shopZhCN = {
 	'shop.offers': '商品',
 	'shop.kind.weapon': '武器',
 	'shop.kind.item': '道具',
+	'shop.kind.potion': '药水',
 	'shop.kind.gear': '装备',
 	'shop.set.blade': '利刃',
 	'shop.set.blunt': '钝器',

@@ -308,8 +308,8 @@ Specs: [SDD-009](docs/sdds/SDD-009-i18n-es-zh.md), [SDD-012](docs/sdds/SDD-012-a
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T7.5** Músicas dos biomas 2–3 (2 × 45 s), SFX de armas novas (8), bosses (3), UI/meta (4), `sfx.bossDown` · Est.: 4 h · Assets: ~1.200 créditos · Assert: chaves no manifest; `docs/audio.md` §6 zerado.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T7.6** i18n ES e ZH: tradução (estagiario/`text-editor`), glossário, fonte CJK sob demanda, layouts · Resp.: estagiario traduz; orquestrador revisa · Est.: 12 h · Assert: `bun scripts/i18n-check.ts` 0/0/0 (SDD-009 A2); screenshots ZH/ES sem overflow (A3); glossário "revisado".
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T7.6** i18n ES e ZH: tradução (estagiario/`text-editor`), glossário, fonte CJK sob demanda, layouts · Resp.: estagiario traduz; orquestrador revisa · Est.: 12 h · Assert: `bun scripts/i18n-check.ts` 0/0/0 (SDD-009 A2); screenshots ZH/ES sem overflow (A3); glossário "revisado". · Evidência (2026-11-08): `bun scripts/i18n-check.ts` 0/0/0 em pt-BR, es e zh-CN (A2); screenshots ES e ZH (menu React, HUD, loja) em 1920×1080 sem overflow (A3); `LANGS` com 4 idiomas, Noto Sans SC carregada só em zh-CN, seletor nos Settings React e Phaser; glossário `docs/i18n-glossary.md` revisado.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): `i18n-check` re-executado 0/0/0; abri `lang-zh-shop.png` (CJK legível, sem overflow); `settings.lang` cobre o `locale` da SDD-005 (texto da SDD ajustado).
 - [ ] **T7.7** Steam: conquistas (mapa das 131 + novas), Steam Cloud, leaderboards por herói × danger · Resp.: senior · Dep.: T5.4 · Est.: 10 h · Assert: conquista dispara no overlay; save aparece em 2ª máquina (SDD-007 A3, A6); leaderboard recebe score.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T7.8** Conquistas novas (danger, sets, fusão IV, rounds) e textos nos 4 idiomas · Resp.: senior + estagiario · Est.: 4 h · Assert: `tests/achievements.test.ts`; `i18n-check` 0/0/0.

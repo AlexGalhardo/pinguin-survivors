@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Spanish and Simplified Chinese (SDD-009): full tables, `bun scripts/i18n-check.ts`, a glossary, the Noto Sans SC font loaded only for Chinese, and both languages in the settings.
+- The React shop shows gear (rarity color) and potion offers.
+
 - Danger 0–5 in game: modifiers per Danger, extra elite/horde waves with a banner and a shop warning, next Danger unlocked per hero by the round-20 boss, best round per Danger; Danger and starting weapon chosen in the hero select; `?danger=` and `?weapon=` for QA.
 - Shop offers mix weapons, gear and (from round 5) run potions; `purchase` applies each kind.
 - Demo build (`bun run build:demo`): Jack, rounds 1–10, Danger up to 1, with a bundle check; demo saves import into the full game.

@@ -12,6 +12,7 @@ mock.module('../../src/core/storage', () => ({
 	},
 }));
 mock.module('../../src/core/display', () => ({ setResolution: () => {} }));
+mock.module('../../src/ui/lang-font', () => ({ ensureLangFont: async () => {} }));
 
 const { defaultSave } = await import('../../src/logic/save');
 const { menuView } = await import('../../src/ui/menu-controller');
@@ -111,9 +112,14 @@ describe('settings and controls', () => {
 		expect(view('settings').data.master).toBeCloseTo(master - 0.1);
 	});
 
-	test('language cycles to the next supported language', () => {
-		view('settings').actions.adjust('language', 1);
-		expect(save.settings.lang).toBe('pt-BR');
+	test('language cycles through the 4 supported languages', async () => {
+		const seen: string[] = [];
+		for (let i = 0; i < 3; i++) {
+			view('settings').actions.adjust('language', 1);
+			await new Promise((r) => setTimeout(r, 0));
+			seen.push(save.settings.lang);
+		}
+		expect(seen).toEqual(['pt-BR', 'es', 'zh-CN']);
 	});
 
 	test('controls reset restores the default binds', () => {

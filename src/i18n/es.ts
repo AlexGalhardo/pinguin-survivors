@@ -52,6 +52,8 @@ export const es: Record<I18nKey, string> = {
 	'settings.fullscreen': 'Pantalla completa: {v}',
 	'lang.en': 'English',
 	'lang.pt-BR': 'Português (BR)',
+	'lang.es': 'Español',
+	'lang.zh-CN': '简体中文',
 	'settings.bloom': 'Brillo (resplandor): {v}',
 	'settings.numberSize': 'Tamaño de números de daño: {v}',
 	'settings.reducedFlashes': 'Destellos reducidos: {v}',

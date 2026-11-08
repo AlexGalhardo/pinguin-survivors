@@ -50,6 +50,8 @@ export const zhCN: Record<I18nKey, string> = {
 	'settings.fullscreen': '全屏：{v}',
 	'lang.en': 'English',
 	'lang.pt-BR': 'Português (BR)',
+	'lang.es': 'Español',
+	'lang.zh-CN': '简体中文',
 	'settings.bloom': '辉光：{v}',
 	'settings.numberSize': '伤害数字大小：{v}',
 	'settings.reducedFlashes': '减少闪光：{v}',

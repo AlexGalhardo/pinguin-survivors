@@ -1,10 +1,17 @@
 import { en, type I18nKey } from './en';
+import { es } from './es';
 import { ptBR } from './pt-BR';
+import { zhCN } from './zh-CN';
 
-export const LANGS = ['en', 'pt-BR'] as const;
+export const LANGS = ['en', 'pt-BR', 'es', 'zh-CN'] as const;
 export type Lang = (typeof LANGS)[number];
 
-const TABLES: Record<Lang, Record<I18nKey, string>> = { en, 'pt-BR': ptBR };
+const TABLES: Record<Lang, Record<I18nKey, string>> = {
+	en,
+	'pt-BR': ptBR,
+	es,
+	'zh-CN': zhCN,
+};
 
 let current: Lang = 'en';
 
@@ -16,9 +23,13 @@ export function getLang(): Lang {
 	return current;
 }
 
-/** Browser language → supported language (Portuguese variants → pt-BR). */
+/** Browser language → supported language (pt-* → pt-BR, es-* → es, zh-* → zh-CN, else en). */
 export function detectLang(navigatorLang: string | undefined): Lang {
-	return navigatorLang?.toLowerCase().startsWith('pt') ? 'pt-BR' : 'en';
+	const l = navigatorLang?.toLowerCase() ?? '';
+	if (l.startsWith('pt')) return 'pt-BR';
+	if (l.startsWith('es')) return 'es';
+	if (l.startsWith('zh')) return 'zh-CN';
+	return 'en';
 }
 
 export function t(key: I18nKey, vars?: Record<string, string | number>): string {

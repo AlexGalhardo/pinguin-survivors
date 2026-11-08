@@ -6,6 +6,7 @@ import { exportSave, importSave } from '../core/storage';
 import { RESOLUTION_IDS } from '../data/display';
 import { type I18nKey, LANGS, setLang, t } from '../i18n';
 import { type GoreMode, NUMBER_SIZES } from '../logic/save';
+import { ensureLangFont } from '../ui/lang-font';
 import { MenuList } from './ui-phaser/MenuList';
 import { setupScreen } from './ui-phaser/screen';
 
@@ -50,10 +51,14 @@ export class SettingsScene extends Phaser.Scene {
 							v: t(`lang.${s.lang}` as I18nKey),
 						}),
 					onAdjust: (d) => {
-						s.lang = cycle(LANGS, s.lang, d);
-						setLang(s.lang);
-						persist(this);
-						this.scene.restart(data);
+						// Text rasterizes once: wait for the language font before rebuilding the scene.
+						const next = cycle(LANGS, s.lang, d);
+						void ensureLangFont(next).then(() => {
+							s.lang = next;
+							setLang(next);
+							persist(this);
+							this.scene.restart(data);
+						});
 					},
 				},
 				{

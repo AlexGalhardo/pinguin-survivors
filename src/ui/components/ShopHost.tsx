@@ -18,11 +18,8 @@ export function toShopData(v: ShopView): ShopData {
 	return {
 		round: v.round,
 		fish: v.fish,
-		// Potion offers are not drawn by `Shop` yet: they show as an empty slot.
 		offers: v.offers.map((o) =>
-			o && o.kind !== 'potion'
-				? { kind: o.kind, id: o.id, tier: o.tier, price: o.price, sets: o.sets }
-				: null,
+			o ? { kind: o.kind, id: o.id, tier: o.tier, price: o.price, sets: o.sets } : null,
 		),
 		locks: v.offers.map((o) => o?.locked ?? false),
 		rerollPrice: v.rerollPrice,

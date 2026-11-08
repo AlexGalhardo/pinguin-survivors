@@ -11,6 +11,7 @@ import { loadSave } from './core/storage';
 import { parseDebugParams } from './debug/params';
 import { detectLang, setLang } from './i18n';
 import { installCrispText } from './scenes/ui-phaser/text-quality';
+import { ensureLangFont } from './ui/lang-font';
 import { mountUi } from './ui/mount';
 import { publishSave } from './ui/save-bridge';
 import { uiStore } from './ui/store';
@@ -18,6 +19,7 @@ import { uiStore } from './ui/store';
 const params = parseDebugParams(window.location.search);
 const save = loadSave(detectLang(navigator.language));
 setLang(save.settings.lang);
+await ensureLangFont(save.settings.lang);
 initDisplay(save.settings.resolution);
 
 // Text objects rasterize once, so the pixel font must be ready before the first scene.

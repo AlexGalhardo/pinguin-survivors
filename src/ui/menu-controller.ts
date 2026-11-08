@@ -17,6 +17,7 @@ import { buyUpgrade, upgradeCost, upgradeLevel } from '../logic/upgrades';
 import { achievementDescription, achievementName } from './achievement-text';
 import { menuCommands } from './commands';
 import type { SettingsRow } from './components/Settings';
+import { ensureLangFont } from './lang-font';
 import type { MenuView } from './Router';
 import { getUiSave, touchSave } from './save-bridge';
 import { uiStore } from './store';
@@ -30,7 +31,18 @@ const cycle = <T>(list: readonly T[], value: T, dir: number): T =>
 	list[(list.indexOf(value) + dir + list.length) % list.length] as T;
 
 /** Menu-only UI state (not saved): selected hero on the hero screen and the action waiting for a key. */
-const state: { hero: HeroId | null; waiting: Action | null } = { hero: null, waiting: null };
+const state: {
+	hero: HeroId | null;
+	waiting: Action | null;
+	/** Set when settings were opened from the pause menu: Back runs this instead of going to the main menu. */
+	settingsBack: (() => void) | null;
+} = { hero: null, waiting: null, settingsBack: null };
+
+/** Opens the settings screen over a running game; `back` restores the caller (pause menu). */
+export function openSettingsFrom(back: () => void): void {
+	state.settingsBack = back;
+	go('settings');
+}
 
 const go = (screen: MenuScreenId | 'none'): void => uiStore.set({ screen });
 const toMenu = (): void => go('main-menu');
@@ -230,10 +242,16 @@ function settings(save: SaveData): MenuView {
 			menuCommands.refreshAudio();
 		};
 		switch (row) {
-			case 'language':
-				s.lang = cycle(LANGS, s.lang, dir);
-				setLang(s.lang);
-				break;
+			case 'language': {
+				// The CJK font loads on demand, so the language switches once it is ready.
+				const next = cycle(LANGS, s.lang, dir);
+				void ensureLangFont(next).then(() => {
+					s.lang = next;
+					setLang(next);
+					persist(save);
+				});
+				return;
+			}
 			case 'resolution':
 				s.resolution = cycle(RESOLUTION_IDS, s.resolution, dir);
 				setResolution(s.resolution);
@@ -289,7 +307,12 @@ function settings(save: SaveData): MenuView {
 			controls: () => go('controls'),
 			exportSave: () => exportSave(save),
 			importSave: () => pickImport(save),
-			back: toMenu,
+			back: () => {
+				const back = state.settingsBack;
+				state.settingsBack = null;
+				if (back) back();
+				else toMenu();
+			},
 		},
 	};
 }
