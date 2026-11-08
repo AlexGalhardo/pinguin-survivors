@@ -1,9 +1,9 @@
 import type { ReactElement, ReactNode } from 'react';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
-import { MenuBackground } from './MenuBackground';
 
-/** Shared frame of the menu screens: title, scrollable body, Esc/B goes back. */
+/** Shared frame of the menu screens: title, scrollable body, Esc/B goes back. Plain dark backdrop
+ * (no main menu art) so the player focuses on the menu, as the developer asked. */
 export function MenuScreen(props: {
 	title: string;
 	onBack: () => void;
@@ -16,7 +16,6 @@ export function MenuScreen(props: {
 			onBack={props.onBack}
 			className="fixed inset-0 flex flex-col items-center gap-[2vh] overflow-hidden bg-night px-[3vw] py-[3vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light"
 		>
-			<MenuBackground />
 			<h1 className="relative font-title text-[2em] font-bold">{props.title}</h1>
 			<div
 				className={`relative flex min-h-0 w-full flex-1 flex-col items-center gap-2 overflow-y-auto ${props.wide ? 'max-w-[90rem]' : 'max-w-[44rem]'}`}
