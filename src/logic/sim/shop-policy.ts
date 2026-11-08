@@ -2,6 +2,7 @@ import { WEAPON_FUSE_MAX } from '../../data/rarity';
 import { WEAPON_LINE_BY_ID, type WeaponId, type WeaponTier } from '../../data/weapons';
 import { addWeapon, type Build, canFuse, fuse } from '../build';
 import { type ItemDrop, pickUpGear, type RunGear } from '../equipment';
+import type { HealPotionState } from '../heal-potion';
 import { Rng } from '../rng';
 import type { RunState, ShopRoll } from '../run-state';
 import {
@@ -15,6 +16,7 @@ import {
 	sellValue,
 } from '../shop';
 import type { PlayerStats } from '../stats';
+import type { SupportLevels } from '../support';
 import { weaponDps } from './run-sim';
 
 /**
@@ -37,6 +39,12 @@ export const SHOP_POLICY = {
 	tasteRange: [0.8, 1.2] as const,
 	/** Value multiplier of an offer that fuses with an owned copy. */
 	fuseBonus: 2,
+	/** Real-game bot: a healing potion level is wanted every this many rounds (1 + round / n, up to the cap). */
+	potionEveryRounds: 5,
+	/** Real-game bot: Magnetic is wanted from this round on, one level every `magneticEveryRounds`, up to level 3. */
+	magneticFromRound: 3,
+	magneticEveryRounds: 6,
+	magneticMaxLevel: 3,
 };
 
 /** Power of a weapon at a tier for this hero: the sim's own crowd-aware DPS (what a player would see). */
@@ -240,6 +248,39 @@ export interface ShopView {
 	round: number;
 	build: Build;
 	stats: PlayerStats;
+	/** Support item levels and healing potion of the run (the real-game bot passes them). */
+	support?: SupportLevels;
+	healPotion?: HealPotionState;
+	/** Skip `extraBuy` (to measure the game without the healing potion and support items). */
+	skipExtras?: boolean;
+}
+
+/**
+ * Support and healing potion offers a reasonable player takes once no weapon is worth buying: a
+ * healing potion level every few rounds, Magnetic up to level 3 (it saves chasing orbs). Index or -1.
+ */
+export function extraBuy(v: ShopView): number {
+	const potionLevel = v.healPotion?.level ?? 0;
+	const magnetic = v.support?.magnetic ?? 0;
+	const wantPotion =
+		potionLevel < Math.min(10, 1 + Math.floor(v.round / SHOP_POLICY.potionEveryRounds));
+	const wantMagnetic =
+		v.round >= SHOP_POLICY.magneticFromRound &&
+		magnetic <
+			Math.min(
+				SHOP_POLICY.magneticMaxLevel,
+				1 +
+					Math.floor(
+						(v.round - SHOP_POLICY.magneticFromRound) / SHOP_POLICY.magneticEveryRounds,
+					),
+			);
+	return v.offers.findIndex(
+		(o) =>
+			o !== null &&
+			o.price <= v.fish &&
+			((o.kind === 'healPotion' && wantPotion) ||
+				(o.kind === 'support' && o.id === 'magnetic' && wantMagnetic)),
+	);
 }
 
 /**
@@ -269,6 +310,9 @@ export function nextShopAction(v: ShopView): ShopAction {
 			return { type: 'sell', slot: weakestSlot(build, stats) };
 		return { type: 'buy', index: best };
 	}
+
+	const extra = v.skipExtras ? -1 : extraBuy(v);
+	if (extra >= 0) return { type: 'buy', index: extra };
 
 	if (!v.locks.some(Boolean)) {
 		let lockIdx = -1;
@@ -304,7 +348,13 @@ export function takeDrop(
 	drop: ItemDrop,
 ): 'weapon' | 'swap' | 'gear' | 'skipped' {
 	if (drop.kind === 'gear') {
-		pickUpGear(gear, stats, drop.id, { rarity: drop.rarity, affixes: drop.affixes });
+		pickUpGear(
+			gear,
+			stats,
+			drop.id,
+			{ rarity: drop.rarity, affixes: drop.affixes },
+			{ keepBetter: true },
+		);
 		return 'gear';
 	}
 	const tier = drop.rarity as WeaponTier;

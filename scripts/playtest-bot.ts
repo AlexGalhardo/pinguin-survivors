@@ -9,7 +9,7 @@
 //
 // Usage: bun scripts/playtest-bot.ts [--url http://localhost:5183] [--heroes jack,bob,lucia]
 //   [--levels 1,10,30] [--runs 1] [--seed 100] [--speed 4] [--max 1500] [--potions]
-//   [--cards smart|first] [--json out.jsonl] [--headed]
+//   [--no-extras] [--cards smart|first] [--json out.jsonl] [--headed]
 // --speed runs N simulation substeps per frame (same dt as 1x, so collisions stay exact).
 // --max is the wall-clock limit per run in seconds.
 import { appendFileSync } from 'node:fs';
@@ -41,6 +41,8 @@ const maxSeconds = Number(arg('max', '1500'));
 const cardMode = arg('cards', 'smart');
 const jsonOut = arg('json', '');
 const potions = flag('potions');
+/** Do not buy the healing potion or Magnetic (baseline for calibration runs). */
+const noExtras = flag('no-extras');
 /** Skill knobs: seconds between movement decisions and chance of a random wrong move. */
 const react = Number(arg('react', '0'));
 const mistakes = Number(arg('mistakes', '0'));
@@ -371,6 +373,8 @@ interface ShopTick {
 	fish: number;
 	build: Build;
 	stats: unknown;
+	support: Record<string, number>;
+	healPotion: { level: number; rarity: number; charges: number; cooldown: number; kills: number };
 	shop: {
 		offers: ({ kind: string; id: string; tier: number; price: number } | null)[];
 		locks: boolean[];
@@ -396,6 +400,9 @@ async function playShopStep(
 		round: s.round,
 		build: s.build,
 		stats: s.stats as PlayerStats,
+		support: s.support,
+		healPotion: s.healPotion as never,
+		skipExtras: noExtras,
 	});
 	const fishAfter = await page.evaluate(
 		([a]) => {
@@ -475,6 +482,8 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 						rerolls: number;
 					} | null;
 					phase: string;
+					support: Record<string, number>;
+					healPotion: ShopTick['healPotion'];
 				};
 				build: Build;
 				stats: unknown;
@@ -492,6 +501,8 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 				elapsed: game.run.elapsed,
 				outcome: game.demoWon ? 'demoWin' : game.outcome,
 				build: game.build,
+				support: game.run.support,
+				healPotion: game.run.healPotion,
 				fish: game.run.fish,
 				shop: game.run.shop
 					? {

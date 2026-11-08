@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { HEROES } from '../src/data/heroes';
 import { addWeapon, emptyBuild, fuse } from '../src/logic/build';
+import { emptyHealPotion } from '../src/logic/heal-potion';
 import { Rng } from '../src/logic/rng';
 import { createRunState, type ShopRoll, weaponCandidates } from '../src/logic/run-state';
 import {
@@ -14,12 +15,14 @@ import {
 	sellValue,
 } from '../src/logic/shop';
 import {
+	extraBuy,
 	fuseAll,
 	makeTaste,
 	nextShopAction,
 	offerValue,
 	playShop,
 	SHOP_POLICY,
+	type ShopView,
 	softmaxPick,
 } from '../src/logic/sim/shop-policy';
 import { heroStats } from '../src/logic/stats';
@@ -230,5 +233,48 @@ describe('human preference model', () => {
 			return play.bought.map((o) => `${o.id}:${o.tier}`);
 		};
 		expect(run()).toEqual(run());
+	});
+});
+
+describe('bot buys of the healing potion and Magnetic (SDD-014)', () => {
+	const offers = [
+		{ kind: 'healPotion', id: 'healPotion', tier: 1, price: 20 },
+		{ kind: 'support', id: 'magnetic', tier: 1, price: 20 },
+		{ kind: 'support', id: 'swift', tier: 1, price: 20 },
+		null,
+	] as const;
+	const view = (over: Partial<ShopView>): ShopView =>
+		({
+			offers,
+			locks: [false, false, false, false],
+			rerolls: 0,
+			fish: 100,
+			round: 1,
+			build: emptyBuild(),
+			stats: stats,
+			...over,
+		}) as ShopView;
+
+	test('one potion level from the start, more every 5 rounds; never Swift', () => {
+		expect(extraBuy(view({}))).toBe(0);
+		expect(extraBuy(view({ healPotion: { ...emptyHealPotion(), level: 1 } }))).toBe(-1);
+		expect(extraBuy(view({ round: 5, healPotion: { ...emptyHealPotion(), level: 1 } }))).toBe(
+			0,
+		);
+	});
+
+	test('Magnetic from round 3 up to level 3, and only when affordable', () => {
+		const potion = { ...emptyHealPotion(), level: 9 };
+		expect(extraBuy(view({ round: 2, healPotion: potion }))).toBe(-1);
+		expect(extraBuy(view({ round: 3, healPotion: potion }))).toBe(1);
+		expect(extraBuy(view({ round: 3, healPotion: potion, fish: 10 }))).toBe(-1);
+		expect(extraBuy(view({ round: 40, healPotion: potion, support: { magnetic: 3 } }))).toBe(
+			-1,
+		);
+	});
+
+	test('skipExtras keeps the weapon-only policy', () => {
+		expect(nextShopAction(view({ skipExtras: true })).type).not.toBe('buy');
+		expect(nextShopAction(view({}))).toEqual({ type: 'buy', index: 0 });
 	});
 });
