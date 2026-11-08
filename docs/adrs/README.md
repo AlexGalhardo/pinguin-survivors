@@ -21,3 +21,4 @@ Decisões de produto anteriores à virada comercial (P-01…P-68) estão em [ADR
 | [ADR-013](ADR-013-demo-rounds-1-10-jack.md) | Demo: rounds 1–10, só Jack, save migra | Aceito |
 | [ADR-014](ADR-014-site-github-pages.md) | Site e `/demo` no mesmo build Vite, GitHub Pages | Aceito |
 | [ADR-015](ADR-015-versionamento-vukem.md) | Versionamento padrão vukem e retag do histórico | Aceito |
+| [ADR-016](ADR-016-biomas-floresta-cidade-aliens.md) | Bioma 2 floresta, bioma 3 cidade destruída com aliens originais; endless sorteia biomas legados | Aceito (nomes propostos) |

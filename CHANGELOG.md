@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Design (ADR-016): biome 2 becomes a forest (rounds 11–20) and biome 3 a destroyed city with an original alien faction (rounds 21–30); from round 31 the endless mode draws biomes and enemies from every set, including the legacy station and ruins.
+
 - Effects follow the platform performance tier (SDD-007): low caps decals at 1,000, turns off dynamic lights and bloom and halves particles; mid sits between; `?tier=low|mid|high` forces it for QA.
 
 - Every game text uses Roboto (no pixel font) for readability; Pixelify Sans and Rubik are removed.

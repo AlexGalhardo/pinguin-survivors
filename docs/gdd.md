@@ -1,6 +1,6 @@
 # Game Design Document — Pinguin Survivors
 
-> **Versão** 2.0 · **Data** 2026-11-08 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
+> **Versão** 2.1 · **Data** 2026-11-08 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
 > Substitui `game-design.md` e `ui-hud.md`. Números em [balancing-and-simulation.md](balancing-and-simulation.md) (Parte B); decisões em [brainstorming.md](brainstorming.md) (B-xx) e [adrs/](adrs/README.md); histórico anterior (P-xx) no `docs/decisions.md` removido, recuperável pelo git (`git log -- docs/decisions.md`). Arte em [visual.md](visual.md); som em [audio.md](audio.md); técnica em [architecture.md](architecture.md); especificações de implementação em [sdds/](sdds/README.md).
 > Onde este documento e o código atual divergem, **este documento é o alvo** e o [ROADMAP.md](../ROADMAP.md) lista o trabalho para alinhar o código.
 
@@ -193,23 +193,49 @@ As três exclusivas marcadas "vira arma" passam a ser **armas iniciais/da loja e
 
 Papéis por bioma: **enxame** (rápido e frágil), **voador** (ignora props), **tanque**, **à distância** (cospe), **explosivo** (nuvem de veneno), **investida**. Elites usam o mesmo sprite ×1,25 (roxo) / ×1,4 (laranja) com aura e barra de HP, drop garantido de Fish.
 
-| Bioma | Inimigos | Boss |
+| Bioma (campanha) | Inimigos | Boss |
 |---|---|---|
-| Antártida | pinguim zumbi, skua, foca, cientista, pinguim inchado, morsa | **Urso polar zumbi** (patada, investida, rugido que invoca pinguins) |
-| Estação / porto | marinheiro, gaivota, leão-marinho, médico, bloater de combustível, narval | **Kraken do Porto** (tentáculo, rajada de tinta, invoca marinheiros) |
-| Cidade em ruínas | cidadão, rato, pombo, policial de choque, soldado, bloater ácido, brutamontes | **Abominação** (investidas, poças de ácido, invoca ratos) |
+| Antártida (rounds 1–10) | pinguim zumbi, skua, foca, cientista, pinguim inchado, morsa | **Urso polar zumbi** (patada, investida, rugido que invoca pinguins) |
+| Floresta (rounds 11–20) — proposta | lobo zumbi (enxame), corvo zumbi (voador), alce zumbi (tanque), raposa cuspidora (à distância), bloater fúngico (explosivo), javali zumbi (investida) | **Alce-rei zumbi** (investida de chifres, rugido que invoca lobos) |
+| Cidade destruída (rounds 21–30) — proposta | Vespa-Ácido (enxame), Sentinela Alada (voador), Couraçado (tanque), Espreitador Óptico (à distância), Cisto Biomecânico (explosivo), Rasgador Biomecânico (investida) | **Colosso Biomecânico** (esmagamento, poças de ácido, invoca Vespas-Ácido) |
+| Endless (rounds 31+) | todos os inimigos das campanhas, incluindo os legados estação de pesquisa (marinheiro, gaivota, leão-marinho, médico, bloater de combustível, narval) e cidade em ruínas (cidadão, rato, pombo, policial de choque, soldado, bloater ácido, brutamontes) | sorteado entre todos: urso polar zumbi, alce-rei zumbi, colosso biomecânico, **Kraken do Porto** (tentáculo, rajada de tinta, invoca marinheiros) e **Abominação** (investidas, poças de ácido, invoca ratos) |
+
+Os nomes da floresta e da cidade destruída são propostas (ADR-016) até a aprovação do desenvolvedor. Conceitos e linhas de inspiração por inimigo estão na §15.
 
 Números em balancing-and-simulation.md Parte B §2.
 
 ## 15. Biomas
 
-Rounds 1–10 Antártida → 11–20 estação de pesquisa/porto → 21–30 cidade em ruínas → repete (escala por volta). Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool próprio de inimigos. Banner de chegada e troca de música no round 11/21.
+**Campanha** (rounds 1–30, ADR-016):
+
+- **1–10 Antártida**: neve pisoteada, noite polar, zumbis pinguins e focas.
+- **11–20 Floresta** (proposta): noite de coníferas, musgo, terra e névoa; zumbis de animais da mata (lobo, corvo, alce, raposa, javali) e um fungo inchado que solta esporos.
+- **21–30 Cidade destruída** (proposta): concreto e asfalto queimados, fumaça, vidro quebrado; facção alienígena original, com metal cinza e brilho verde-ácido.
+
+**Conceitos dos aliens** (proposta; cada um com a inspiração de gênero e o que não copiar):
+
+| Papel | Nome | Conceito curto | Inspiração de gênero | Não copiar |
+|---|---|---|---|---|
+| enxame | Vespa-Ácido | criaturas pequenas em nuvem, rápidas e frágeis, deixam rastro de ácido | enxame com ácido | silhueta de xenomorfo, cabeça dolicocéfala, cauda-lâmina |
+| voador | Sentinela Alada | corpo biomecânico com asas de membrana, ignora props, sinaliza o herói | biomecânico | qualquer morfologia de criatura icônica de filme |
+| tanque | Couraçado | guerreiro blindado com placas e escudo de energia, lento e pesado | ficção militar blindada | armaduras e silhuetas de facções de Warhammer ou do Predador |
+| à distância | Espreitador Óptico | camuflagem óptica (ondula e some ao parar), dispara plasma | caçador com camuflagem óptica | máscara, dreadlocks e armas do caçador icônico |
+| explosivo | Cisto Biomecânico | saco que incha e estoura numa nuvem ácida | biomecânico orgânico | — |
+| investida | Rasgador Biomecânico | garras retráteis, arranca em linha reta | caçador rápido | lâmina de cauda |
+| boss | Colosso Biomecânico | máquina-criatura de placas, esmagamento e poças de ácido, invoca Vespas-Ácido | colosso biomecânico | conceito de rainha/mãe de colmeia com ovos |
+
+Regra geral: a facção é original. Não usar nomes, designs, silhuetas icônicas ou marcas registradas de obras existentes, incluindo xenomorfo, Predador (yautja), facções e unidades de Warhammer (Tyranids, Space Marines, Necrons, Orks, Eldar, Chaos, Imperium e similares).
+
+**Endless** (rounds 31+): sem campanha fixa. A cada 10 rounds, o bioma (visual, tileset, pool de inimigos e boss) é sorteado pela seed da run entre Antártida, floresta, cidade destruída, estação de pesquisa (legado) e cidade em ruínas (legado). O pool de inimigos inclui todos, legados incluídos; o boss de cada sorteio é escolhido entre todos os bosses. Detalhes em §16.
+
+Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool próprio de inimigos. Banner de chegada e troca de música no round 11/21.
 
 ## 16. Dificuldade (Danger) e endless
 
 - **Danger 0–5 por herói** (ADR-008): vencer o boss do round 20 no Danger D libera D+1 para aquele herói.
 - Por danger: multiplicadores de HP/dano dos inimigos e de drops; **waves de elite/horda extras** (D0–1 nenhuma, D2–3 uma, D4–5 três), avisadas na loja a partir do D2.
 - **Endless** sem vitória; a cada volta de 30 rounds HP ×1,6 e dano ×1,5 (balancing-and-simulation.md Parte B §2).
+- **Visual e pool no endless** (round 31+): a cada 10 rounds, a seed da run sorteia o bioma entre Antártida, floresta, cidade destruída, estação de pesquisa e cidade em ruínas. O pool de inimigos e o boss usam todos os assets (ADR-016).
 - Conquistas e leaderboards por herói e danger.
 
 ## 17. Economia

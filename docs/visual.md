@@ -1,6 +1,6 @@
 # Art Bible — Pinguin Survivors
 
-> **Versão** 2.2 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
+> **Versão** 2.3 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
 
 ## Índice
 
@@ -32,6 +32,7 @@
 
 - Altura lógica **540 px**, zoom inteiro pela altura (`floor(h/540)`): 1920×1080 → ×2 (960×540 lógicos); 2560×1440 → ×2 (1280×720); 2400×1080 (celular landscape) → ×2 (1200×540).
 - 1 tile = 64 px = 64 unidades de mundo. Herói ~88 px de altura ocupa ~1,4 tile: legível no celular a ×2.
+- **Biomas e paleta** (ADR-016): 1 Antártida, noite polar azul-cinza (campanha 1–10). 2 floresta (proposta): noite de coníferas, musgo, terra e névoa (campanha 11–20). 3 cidade destruída (proposta): concreto e asfalto queimados, fumaça; aliens em metal cinza com brilho verde-ácido (campanha 21–30). Endless (31+): sorteio por seed entre os cinco biomas, incluindo estação e cidade em ruínas (legados).
 - Depth por `y` (pés). Sombra elíptica suave sob personagens e armas.
 - Nada depende de projeção iso: `screenX = x`, `screenY = y`.
 
@@ -58,7 +59,7 @@
 
 ## 5. Arena: chão, bordas e props
 
-- **Tileset top-down 64×64 por bioma** (`create_topdown_tileset` / `create-tiles-pro`, `view: top-down`): 4–6 variantes de chão sem costura + **borda** (parede/gelo/contêiner/entulho) com cantos. Antártida: neve pisoteada cinza-azulada; estação: placas de aço com gelo; ruínas: asfalto rachado.
+- **Tileset top-down 64×64 por bioma** (`create_topdown_tileset` / `create-tiles-pro`, `view: top-down`): 4–6 variantes de chão sem costura + **borda** (parede/gelo/contêiner/entulho) com cantos. Antártida: neve pisoteada cinza-azulada; estação: placas de aço com gelo (legado, endless); ruínas: asfalto rachado (legado, endless). Campanha 2–3: floresta e cidade destruída (proposta, ADR-016).
 - **Props** `high top-down` 32–64 px, 3–5 por bioma (cristais, rochas, caixotes, barris, contêineres, carros queimados, entulho); sólidos leves.
 - Decalques de sangue carimbados numa `DynamicTexture` do tamanho da arena (recriada quando cresce).
 

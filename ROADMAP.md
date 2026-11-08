@@ -322,6 +322,10 @@ Specs: [SDD-009](docs/sdds/SDD-009-i18n-es-zh.md), [SDD-012](docs/sdds/SDD-012-a
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [x] **T7.12** QA cross-browser e E2E completos; `scripts/qa-browsers.ts` · Resp.: estagiario · Assert: zero erros/4xx em Chrome/Edge/Firefox. · Evidência (2026-11-08): `bun scripts/qa-browsers.ts` (fluxo React, sem som) em Chrome 156, Edge 157 e Firefox 159: 0 erros, 0 4xx/5xx, FPS 59,6/56/55,2; 6 resoluções no Chrome sem scroll — `docs/reports/qa-browsers-2026-11-08.md`. E2E completo (`bun run e2e`, `--demo`) verde.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): relatório lido; e2e padrão e demo re-executados verdes nesta sessão.
+- [ ] **T7.14** Biomas da campanha (ADR-016): rounds 11–20 floresta, 21–30 cidade destruída com 6 aliens originais + boss; endless 31+ sorteia bioma e inimigos de todo o acervo (incluindo estação e ruínas legados) · Resp.: senior · Est.: 10 h · Assert: `tests/biome.test.ts` (campanha e endless determinístico, todo inimigo possível no endless); screenshots `round=11` e `round=21` em 1920×1080; `bun scripts/i18n-check.ts` 0/0/0.
+  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [ ] **T7.15** Arte dos biomas novos: tileset + props de floresta e cidade destruída; concepts 4 direções dos 6 aliens + boss (🛑 aprovação do desenvolvedor antes de animar) · Resp.: orquestrador (skill `pinguin-art-assets`) · Est.: 10 h · Assets: a medir (`GET /balance`), lotes ≤ 200 gerações · Assert: prancha 3×3 por bioma; concepts em `art-src/pixellab/concepts/aliens/`.
+  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T7.13** Releases `0.1.4+` por sub-bloco.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 

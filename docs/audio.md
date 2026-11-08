@@ -1,6 +1,6 @@
 # Direção de Som — Pinguin Survivors
 
-> **Versão** 2.1 · **Data** 2026-11-08 · Ferramenta única: **ElevenLabs** (`ELEVENLABS_API_KEY` só no `.env`). Pipeline na skill `.agents/skills/pinguin-audio-assets`; log bruto em `art-src/elevenlabs/log.jsonl`; decisão de remover vozes em [adrs/ADR-009](adrs/ADR-009-remover-vozes.md).
+> **Versão** 2.2 · **Data** 2026-11-08 · Ferramenta única: **ElevenLabs** (`ELEVENLABS_API_KEY` só no `.env`). Pipeline na skill `.agents/skills/pinguin-audio-assets`; log bruto em `art-src/elevenlabs/log.jsonl`; decisão de remover vozes em [adrs/ADR-009](adrs/ADR-009-remover-vozes.md).
 
 ## Índice
 
@@ -90,7 +90,7 @@ Histórico, mantido para referência (arquivos e código na branch `legacy-voice
 | SFX de bosses | `sfx.krakenInk`, `sfx.abominationAcid`, `sfx.bossDeath` | ~12 |
 | SFX de UI/meta | `sfx.pearls`, `sfx.dangerUnlock`, `sfx.equip`, `sfx.demoEnd` | ~16 |
 | ~~Música da loja~~ (feito, 2026-11-08) | `music.shop` (30 s) | ~380 |
-| Música dos biomas 2–3 | `music.station`, `music.ruins` (45 s cada) | ~1.120 |
+| Música dos biomas 2–3 (proposta, ADR-016) | `music.forest`, `music.city` (45 s cada; nomes antigos `music.station`, `music.ruins` ficam para o endless legado) | ~1.120 |
 | Sting de boss derrotado | `sfx.bossDown` | ~4 |
 
 Total estimado **~1.600 créditos** de 58.198 disponíveis (renova em 14/11/2026). Sobra para 2–3 takes de cada música.
