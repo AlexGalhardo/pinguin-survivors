@@ -15,9 +15,8 @@ import { addStat, type PlayerStats, type StatKey } from './stats';
 
 export type KillKind = 'common' | 'elite' | 'boss';
 
-/** Gear found this run: the bag plus what is worn in each slot (ids from GEAR). */
+/** Gear of this run: what is worn in each slot (ids from GEAR). There is no bag (SDD-014 RF-30). */
 export interface RunGear {
-	bag: string[];
 	equipped: Record<GearSlot, string | null>;
 	/**
 	 * Rarity and affixes rolled for an item id (ADR-017). Items without a roll (drops from before
@@ -42,7 +41,6 @@ export function itemRoll(gear: RunGear, id: string): ItemRoll {
 
 export function emptyGear(): RunGear {
 	return {
-		bag: [],
 		equipped: Object.fromEntries(GEAR_SLOTS.map((s) => [s, null])) as Record<
 			GearSlot,
 			string | null
@@ -82,53 +80,47 @@ function applyStats(stats: PlayerStats, gear: RunGear, id: string, sign: 1 | -1)
 	applyAffixes(stats, itemRoll(gear, id).affixes, sign);
 }
 
+/** What left the build when equipment came in: the replaced item, or the new one when it was rejected. */
+export interface GearSale {
+	id: string;
+	rarity: Rarity;
+}
+
+export interface PickUp {
+	result: 'equipped' | 'rejected';
+	/** The item to sell for Fish (`gearSellValue`), or null when the slot was free. */
+	sold: GearSale | null;
+}
+
 /**
- * Wears `id` from the bag; whatever was in that slot goes back to the bag. Stats are updated in
- * place. Returns false for unknown ids or items not in the bag.
+ * Wears `id` at once in its slot; the item that was there leaves the run and is sold by the caller
+ * (`sold`). Stats are updated in place. With `keepBetter` (ground drops) a worn item of higher
+ * rarity stays and the newcomer is the one sold (`rejected`). Unknown ids are rejected unsold.
  */
-export function equip(gear: RunGear, stats: PlayerStats, id: string): boolean {
-	const def = GEAR_BY_ID[id];
-	const i = gear.bag.indexOf(id);
-	if (!def || i < 0) return false;
-	gear.bag.splice(i, 1);
-	const old = gear.equipped[def.slot];
-	if (old) unequipTo(gear, stats, def.slot);
-	gear.equipped[def.slot] = id;
-	applyStats(stats, gear, id, 1);
-	return true;
-}
-
-/** Takes off what is worn in `slot` and puts it in the bag. */
-export function unequip(gear: RunGear, stats: PlayerStats, slot: GearSlot): boolean {
-	return unequipTo(gear, stats, slot);
-}
-
-function unequipTo(gear: RunGear, stats: PlayerStats, slot: GearSlot): boolean {
-	const id = gear.equipped[slot];
-	const def = id ? GEAR_BY_ID[id] : undefined;
-	if (!id || !def) return false;
-	applyStats(stats, gear, id, -1);
-	gear.equipped[slot] = null;
-	gear.bag.push(id);
-	return true;
-}
-
-/** Picked up from the ground: goes to the bag and is worn right away when the slot is free. */
 export function pickUpGear(
 	gear: RunGear,
 	stats: PlayerStats,
 	id: string,
 	roll?: ItemRoll,
-): 'equipped' | 'bag' {
+	opts: { keepBetter?: boolean } = {},
+): PickUp {
 	const def = GEAR_BY_ID[id];
-	if (roll && roll.rarity >= (gear.rolls?.[id]?.rarity ?? 0))
-		gear.rolls = { ...gear.rolls, [id]: roll };
-	gear.bag.push(id);
-	if (def && !gear.equipped[def.slot]) {
-		equip(gear, stats, id);
-		return 'equipped';
+	if (!def) return { result: 'rejected', sold: null };
+	const incoming = roll ?? { rarity: LEGACY_GEAR_RARITY[def.rarity], affixes: [] };
+	const old = gear.equipped[def.slot];
+	let sold: GearSale | null = null;
+	if (old) {
+		const oldRarity = itemRoll(gear, old).rarity;
+		if (opts.keepBetter && oldRarity > incoming.rarity)
+			return { result: 'rejected', sold: { id, rarity: incoming.rarity } };
+		applyStats(stats, gear, old, -1);
+		if (gear.rolls) delete gear.rolls[old];
+		sold = { id: old, rarity: oldRarity };
 	}
-	return 'bag';
+	if (roll) gear.rolls = { ...gear.rolls, [id]: roll };
+	gear.equipped[def.slot] = id;
+	applyStats(stats, gear, id, 1);
+	return { result: 'equipped', sold };
 }
 
 /** A rarity IV or V drop (ADR-017): a weapon or an equipment item with its rolled affixes. */
@@ -179,9 +171,8 @@ export function rollItemDrops(
 export function normalizeGear(raw: unknown): RunGear {
 	const out = emptyGear();
 	if (typeof raw !== 'object' || raw === null) return out;
-	const r = raw as { bag?: unknown; equipped?: unknown; rolls?: unknown };
+	const r = raw as { equipped?: unknown; rolls?: unknown };
 	const known = (v: unknown): v is string => typeof v === 'string' && v in GEAR_BY_ID;
-	out.bag = Array.isArray(r.bag) ? r.bag.filter(known) : [];
 	if (typeof r.equipped === 'object' && r.equipped !== null) {
 		for (const slot of GEAR_SLOTS) {
 			const id = (r.equipped as Record<string, unknown>)[slot];

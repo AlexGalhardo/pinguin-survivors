@@ -1,14 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { DROPS, GEAR, GEAR_RARITIES, GEAR_SLOTS } from '../src/data/equipment';
 import { HEROES } from '../src/data/heroes';
-import {
-	emptyGear,
-	equip,
-	pickUpGear,
-	rollGearDrop,
-	rollHealDrop,
-	unequip,
-} from '../src/logic/equipment';
+import { emptyGear, pickUpGear, rollGearDrop, rollHealDrop } from '../src/logic/equipment';
 import { Rng } from '../src/logic/rng';
 import { heroStats } from '../src/logic/stats';
 
@@ -54,22 +47,55 @@ describe('drops', () => {
 	});
 });
 
-describe('equip / unequip', () => {
-	test('stats follow what is worn; swapping returns the old item to the bag', () => {
+describe('wearing equipment (no bag)', () => {
+	test('equips at once; the old item of the slot leaves and is reported for sale', () => {
 		const base = heroStats(HEROES.jack, 1, []);
 		const stats = heroStats(HEROES.jack, 1, []);
 		const gear = emptyGear();
-		expect(pickUpGear(gear, stats, 'armor.kevlar')).toBe('equipped');
+		expect(pickUpGear(gear, stats, 'armor.kevlar')).toEqual({ result: 'equipped', sold: null });
 		expect(stats.armor).toBeCloseTo(base.armor + 4);
-		expect(pickUpGear(gear, stats, 'armor.juggernaut')).toBe('bag');
-		expect(equip(gear, stats, 'armor.juggernaut')).toBe(true);
+		expect(pickUpGear(gear, stats, 'armor.juggernaut')).toEqual({
+			result: 'equipped',
+			sold: { id: 'armor.kevlar', rarity: 2 },
+		});
+		expect(gear.equipped.armor).toBe('armor.juggernaut');
 		expect(stats.armor).toBeCloseTo(base.armor + 7);
 		expect(stats.maxHp).toBeCloseTo(base.maxHp + 30);
-		expect(gear.bag).toEqual(['armor.kevlar']);
-		expect(unequip(gear, stats, 'armor')).toBe(true);
-		expect(stats.armor).toBeCloseTo(base.armor);
-		expect(stats.maxHp).toBeCloseTo(base.maxHp);
-		expect(gear.bag.sort()).toEqual(['armor.juggernaut', 'armor.kevlar']);
-		expect(equip(gear, stats, 'ring.doom')).toBe(false);
+		expect(gear).not.toHaveProperty('bag');
+	});
+
+	test('a ground drop never replaces a worn item of higher rarity: the drop is sold instead', () => {
+		const stats = heroStats(HEROES.jack, 1, []);
+		const gear = emptyGear();
+		pickUpGear(gear, stats, 'helmet.crown', {
+			rarity: 5,
+			affixes: [{ stat: 'armor', value: 2 }],
+		});
+		const armor = stats.armor;
+		expect(pickUpGear(gear, stats, 'helmet.wool', undefined, { keepBetter: true })).toEqual({
+			result: 'rejected',
+			sold: { id: 'helmet.wool', rarity: 1 },
+		});
+		expect(gear.equipped.helmet).toBe('helmet.crown');
+		expect(stats.armor).toBe(armor);
+		// Equal or better rarity does replace, and the old roll goes away with the old item.
+		const better = pickUpGear(
+			gear,
+			stats,
+			'helmet.pot',
+			{ rarity: 5, affixes: [] },
+			{ keepBetter: true },
+		);
+		expect(better).toEqual({ result: 'equipped', sold: { id: 'helmet.crown', rarity: 5 } });
+		expect(gear.rolls?.['helmet.crown']).toBeUndefined();
+		expect(stats.armor).toBeLessThan(armor);
+	});
+
+	test('unknown ids are rejected without a sale', () => {
+		const gear = emptyGear();
+		expect(pickUpGear(gear, heroStats(HEROES.jack, 1, []), 'ring.nope')).toEqual({
+			result: 'rejected',
+			sold: null,
+		});
 	});
 });

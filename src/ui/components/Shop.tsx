@@ -9,7 +9,7 @@ import { formatStat } from '../../logic/format';
 import type { PlayerPanelView } from '../../logic/item-view';
 import type { OfferDescription } from '../../logic/shop-describe';
 import { resolveWeapon } from '../../logic/weapons';
-import { useUiScale } from '../compact';
+import { useCompact, useUiScale } from '../compact';
 import { FocusScope } from '../focus';
 import { merchantLine } from '../merchant';
 import { AtlasIcon } from './AtlasIcon';
@@ -155,8 +155,12 @@ function outcomeText(d: OfferDescription): string {
 			return t('shop.outcome.barFull');
 		case 'equip':
 			return t('shop.outcome.equip', { slot: t(`shop.slot.${o.slot}` as I18nKey) });
-		case 'bag':
-			return t('shop.outcome.bag', { slot: t(`shop.slot.${o.slot}` as I18nKey) });
+		case 'replace':
+			return t('shop.outcome.replace', {
+				name: label(`gear.${o.worn}`),
+				rarity: numeral(o.wornRarity),
+				n: o.sellFish,
+			});
 		case 'potion':
 			return t('shop.outcome.potion');
 		case 'support': {
@@ -179,8 +183,11 @@ function OfferExplain({
 	offer,
 	worn,
 	dense,
+	sentenceOnly,
 }: {
 	offer: ShopOfferData;
+	/** Phone landscape: just the sentence of what buying does. */
+	sentenceOnly?: boolean;
 	/** Short screens: drop the small labels above the two cards. */
 	dense: boolean;
 	/** The item now worn in the slot this offer would take (equipment only). */
@@ -190,8 +197,10 @@ function OfferExplain({
 	const rarity = offer.rarity ?? offer.tier;
 	const affixes = offer.affixes ?? offer.description?.affixes ?? [];
 	return (
-		<div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-hidden">
-			{offer.kind === 'gear' && (
+		<div
+			className={`flex min-h-0 flex-1 flex-col overflow-hidden ${dense ? 'gap-0.5' : 'gap-1.5'}`}
+		>
+			{!sentenceOnly && offer.kind === 'gear' && (
 				<div className={`grid min-h-0 gap-2 ${worn ? 'grid-cols-2' : 'grid-cols-1'}`}>
 					{worn && (
 						<div className="flex min-w-0 flex-col gap-0.5">
@@ -205,19 +214,21 @@ function OfferExplain({
 					</div>
 				</div>
 			)}
-			{offer.kind === 'weapon' && (
+			{!sentenceOnly && offer.kind === 'weapon' && (
 				<WeaponCardView item={{ id: offer.id, tier: rarity, affixes }} />
 			)}
-			{offer.kind !== 'gear' && offer.kind !== 'weapon' && (
+			{!sentenceOnly && offer.kind !== 'gear' && offer.kind !== 'weapon' && (
 				<div className="font-bold" style={{ color: offerColor(offer) }}>
 					{offerName(offer)}
 				</div>
 			)}
 			{d ? (
 				<>
-					<p className="m-0 font-bold">{outcomeText(d)}</p>
-					<div className="grid grid-cols-2 gap-x-4">
-						{d.statChanges.map((c) => {
+					<p className={`m-0 font-bold ${sentenceOnly ? 'truncate' : ''}`}>
+						{outcomeText(d)}
+					</p>
+					<div className="grid grid-cols-2 gap-x-4" hidden={false}>
+						{(sentenceOnly ? [] : d.statChanges).map((c) => {
 							const up = c.after > c.before;
 							return (
 								<div key={c.stat} className={up ? 'text-xp' : 'text-blood'}>
@@ -365,6 +376,12 @@ export function Shop({
 	const firstOffer = data.offers.findIndex((o) => o !== null);
 	const [picked, setPicked] = useState(0);
 	const scale = useUiScale();
+	// Phone landscape: two offers per page (◀ ▶), no merchant sprite and only the sentence of the explanation.
+	const compact = useCompact();
+	const [offerPage, setOfferPage] = useState(0);
+	const OFFERS_PER_PAGE = compact ? 2 : data.offers.length;
+	const offerPages = Math.max(1, Math.ceil(data.offers.length / OFFERS_PER_PAGE));
+	const shownPage = Math.min(offerPage, offerPages - 1);
 	const icon = Math.max(32, Math.round(48 * scale));
 	const shown = data.offers[picked] ?? data.offers[firstOffer] ?? null;
 	// The merchant comments on what the player just did; purely cosmetic.
@@ -418,7 +435,7 @@ export function Shop({
 			};
 
 	return (
-		<FocusScope className="fixed inset-0 flex flex-col gap-[1vh] overflow-hidden bg-night px-[2vw] py-[1.5vh] font-body text-[clamp(0.55rem,1.55vh,2.4rem)] text-text-light">
+		<FocusScope className="fixed inset-0 flex flex-col gap-[1vh] overflow-hidden bg-night px-[2vw] py-[1.5vh] [@media(max-height:400px)]:gap-0 [@media(max-height:400px)]:py-0.5 font-body text-[clamp(0.55rem,1.55vh,2.4rem)] text-text-light">
 			<header className="flex flex-wrap items-center justify-between gap-2">
 				<Heading className="min-w-[16rem] flex-1">
 					{t('shop.title', { n: data.round })}
@@ -438,10 +455,43 @@ export function Shop({
 			</header>
 
 			<main className="grid min-h-0 flex-1 grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-3">
-				<Panel fit title={t('shop.merchant')} className="min-h-0">
+				<Panel
+					fit
+					title={
+						<span className="flex items-center gap-2">
+							<span className="flex-1">{t('shop.merchant')}</span>
+							{offerPages > 1 && (
+								<span className="flex items-center gap-1 font-normal tracking-normal">
+									<Btn
+										onActivate={() =>
+											setOfferPage((shownPage - 1 + offerPages) % offerPages)
+										}
+										className="min-h-8 border-snow px-2 py-0"
+										label="-"
+									>
+										◀
+									</Btn>
+									<span className="tabular-nums">
+										{shownPage + 1}/{offerPages}
+									</span>
+									<Btn
+										onActivate={() =>
+											setOfferPage((shownPage + 1) % offerPages)
+										}
+										className="min-h-8 border-snow px-2 py-0"
+										label="+"
+									>
+										▶
+									</Btn>
+								</span>
+							)}
+						</span>
+					}
+					className="min-h-0"
+				>
 					<div className="flex items-center gap-3">
 						{/* Pixel art only scales by whole numbers: below ~970 px of height it would not fit, so only the speech stays. */}
-						{scale >= 0.9 && (
+						{scale >= 0.9 && !compact && (
 							<MerchantSprite
 								scale={scale >= 1.5 ? 2 : 1}
 								title={t('shop.merchant')}
@@ -464,20 +514,28 @@ export function Shop({
 							if (el) setPicked(Number(el.dataset.offer));
 						}}
 					>
-						{data.offers.map((o, i) => (
-							<OfferCard
-								key={o ? `${o.id}-${i}` : `sold-${i}`}
-								offer={o}
-								index={i}
-								locked={data.locks[i] ?? false}
-								fish={data.fish}
-								actions={actions}
-								icon={icon}
-							/>
-						))}
+						{data.offers.map((o, i) =>
+							i >= shownPage * OFFERS_PER_PAGE &&
+							i < (shownPage + 1) * OFFERS_PER_PAGE ? (
+								<OfferCard
+									key={o ? `${o.id}-${i}` : `sold-${i}`}
+									offer={o}
+									index={i}
+									locked={data.locks[i] ?? false}
+									fish={data.fish}
+									actions={actions}
+									icon={icon}
+								/>
+							) : null,
+						)}
 					</div>
 					{shown && (
-						<OfferExplain offer={shown} worn={wornFor(shown)} dense={scale < 0.9} />
+						<OfferExplain
+							offer={shown}
+							worn={wornFor(shown)}
+							dense={scale < 0.9}
+							sentenceOnly={compact}
+						/>
 					)}
 				</Panel>
 

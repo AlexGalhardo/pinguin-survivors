@@ -36,7 +36,8 @@ export const shopEn = {
 	'shop.outcome.fuse': 'Fuses with the weapon in slot {slot}: {from} → {to}, +{n} new affixes.',
 	'shop.outcome.barFull': 'All 6 weapon slots are full: sell or fuse one first.',
 	'shop.outcome.equip': 'Worn at once ({slot}).',
-	'shop.outcome.bag': 'Goes to the bag: the {slot} slot is already taken.',
+	'shop.outcome.replace':
+		'Replaces {name} {rarity}: worn at once, the old one is sold for {n} Fish.',
 	'shop.outcome.potion': 'Adds one speed potion to the run.',
 	'shop.affixes': 'Affixes',
 	'shop.noAffixes': 'No affixes',

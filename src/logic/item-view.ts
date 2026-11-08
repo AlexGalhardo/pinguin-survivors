@@ -80,8 +80,6 @@ export interface PlayerPanelView {
 	weapons: WeaponSlotView[];
 	/** The five equipment slots in order: helmet, armor, legs, ring, amulet. */
 	gear: GearSlotView[];
-	/** Equipment in the bag (not worn). */
-	bag: GearItemView[];
 	/** Support items owned, at most `SUPPORT_SLOTS`. */
 	support: SupportSlotView[];
 	supportSlots: number;
@@ -143,7 +141,6 @@ export function buildPlayerPanel(ctx: {
 			const id = gear.equipped[slot];
 			return { slot, item: id ? gearItemView(gear, id) : null };
 		}),
-		bag: gear.bag.map((id) => gearItemView(gear, id)),
 		support: SUPPORT_IDS.filter((id) => (ctx.support[id] ?? 0) > 0).map((id) => ({
 			id,
 			level: ctx.support[id] ?? 0,

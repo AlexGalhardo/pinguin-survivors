@@ -17,18 +17,16 @@ import { growAffixes, rollAffixes } from '../src/logic/affixes';
 import { addWeapon, canFuse, emptyBuild, fuse, mergeInto, setBonuses } from '../src/logic/build';
 import {
 	emptyGear,
-	equip,
 	itemRoll,
 	normalizeGear,
 	pickUpGear,
 	rollItemDrops,
-	unequip,
 } from '../src/logic/equipment';
 import { emptyHealPotion } from '../src/logic/heal-potion';
 import { buildPlayerPanel } from '../src/logic/item-view';
 import { Rng } from '../src/logic/rng';
 import { createRunState, gearCandidates, purchase, shopPool } from '../src/logic/run-state';
-import { rollOffers } from '../src/logic/shop';
+import { gearSellValue, rollOffers } from '../src/logic/shop';
 import { describeOffer } from '../src/logic/shop-describe';
 import { baseStats } from '../src/logic/stats';
 import { hudWeapons } from '../src/ui/hud-bridge';
@@ -201,7 +199,7 @@ describe('describeOffer', () => {
 		});
 	});
 
-	test('equipment is worn at once or goes to the bag when the slot is taken; potions are stock', () => {
+	test('equipment is worn at once, selling the item of the slot; potions are stock', () => {
 		const build = emptyBuild();
 		const offer = { kind: 'gear' as const, id: 'helmet.wool', tier: 1, price: 12 };
 		const worn = describeOffer(offer, { build, gear, stats });
@@ -211,11 +209,19 @@ describe('describeOffer', () => {
 		]);
 		const taken = emptyGear();
 		taken.equipped.helmet = 'helmet.pot';
-		expect(describeOffer(offer, { build, gear: taken, stats }).outcome).toEqual({
-			type: 'bag',
+		const replaced = describeOffer(offer, { build, gear: taken, stats, round: 4 });
+		expect(replaced.outcome).toEqual({
+			type: 'replace',
 			slot: 'helmet',
 			worn: 'helmet.pot',
+			wornRarity: 1,
+			sellFish: gearSellValue(1, 4),
 		});
+		// Net stats: the new item minus the one that is sold.
+		expect(replaced.statChanges).toEqual([
+			{ stat: 'maxHp', before: stats.maxHp, after: stats.maxHp + 6 },
+			{ stat: 'armor', before: stats.armor, after: stats.armor - 1 },
+		]);
 		const potion = describeOffer(
 			{ kind: 'potion', id: 'haste', tier: 1, price: 25 },
 			{ build, gear, stats },
@@ -254,9 +260,9 @@ describe('drops: IV from Elites, V from Bosses', () => {
 		expect(itemRoll(gear, 'helmet.crown').rarity).toBe(5);
 		expect(stats.armor).toBe(armor + 3);
 		expect(stats.maxHp).toBe(hp + (GEAR_BY_ID['helmet.crown']?.stats.maxHp ?? 0));
-		unequip(gear, stats, 'helmet');
+		// Replacing it removes its stats and its affixes with it.
+		pickUpGear(gear, stats, 'helmet.wool');
 		expect(stats.armor).toBe(armor);
-		expect(equip(gear, stats, 'helmet.crown')).toBe(true);
 	});
 });
 
@@ -266,7 +272,6 @@ describe('save migration of equipment', () => {
 			bag: ['helmet.pot', 'helmet.miner', 'nope'],
 			equipped: { helmet: 'helmet.crown', armor: null, legs: 'helmet.wool' },
 		});
-		expect(old.bag).toEqual(['helmet.pot', 'helmet.miner']);
 		expect(old.equipped.helmet).toBe('helmet.crown');
 		expect(old.equipped.legs).toBeNull();
 		expect(itemRoll(old, 'helmet.pot')).toEqual({ rarity: 1, affixes: [] });
@@ -292,7 +297,7 @@ describe('save migration of equipment', () => {
 			affixes: [{ stat: 'luck', value: 0.04 }],
 		});
 		expect(out.rolls?.['helmet.pot']).toBeUndefined();
-		expect(normalizeGear(null).bag).toEqual([]);
+		expect(normalizeGear(null)).toEqual(emptyGear());
 	});
 
 	test('the shop catalog of gear still maps one-to-one to I to III', () => {
@@ -328,7 +333,6 @@ describe('scene hooks: merge on buy, player panel, HUD rarity', () => {
 			rarity: 5,
 			affixes: [{ stat: 'luck', value: 0.04 }],
 		});
-		pickUpGear(gear, stats, 'helmet.wool');
 		const panel = buildPlayerPanel({
 			build,
 			gear,
@@ -349,9 +353,6 @@ describe('scene hooks: merge on buy, player panel, HUD rarity', () => {
 		]);
 		expect(panel.gear[0]?.item).toMatchObject({ id: 'helmet.crown', rarity: 5 });
 		expect(panel.gear[0]?.item?.affixes).toEqual([{ stat: 'luck', value: 0.04 }]);
-		expect(panel.bag).toEqual([
-			expect.objectContaining({ id: 'helmet.wool', rarity: 1, affixes: [] }),
-		]);
 		expect(panel.stats.find((s) => s.key === 'maxHp')?.value).toBe(stats.maxHp);
 		expect(hudWeapons(build)[0]).toMatchObject({ id: 'hammer', tier: 4, rarity: 4 });
 	});

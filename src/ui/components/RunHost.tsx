@@ -62,8 +62,6 @@ export function RunHost(): ReactElement | null {
 				actions={{
 					resume: commands.resume,
 					settings: commands.pauseSettings,
-					equip: commands.equip,
-					unequip: commands.unequip,
 					quit: commands.quitRun,
 				}}
 			/>

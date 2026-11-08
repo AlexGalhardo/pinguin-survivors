@@ -28,6 +28,7 @@ import { cycle, isBossRound, roundDuration } from './round';
 import type { RunCounters, SaveData } from './save';
 import {
 	buy,
+	gearSellValue,
 	type Offer,
 	rollOffers,
 	type ShopCandidate,
@@ -214,8 +215,7 @@ export function shopPool(
 
 /**
  * Buys the offer in slot `index` and applies it to the run: weapons go to a free slot (no free
- * slot → refused, nothing debited; fuse or sell first), gear to the bag (worn at once if the slot
- * is free), potions to `run.shopPotions`, support items and the healing potion level up. Returns the offer, or null when refused.
+ * slot → refused, nothing debited; fuse or sell first), gear worn at once (the old item of that slot is sold), potions to `run.shopPotions`, support items and the healing potion level up. Returns the offer, or null when refused.
  */
 export function purchase(
 	run: RunState,
@@ -236,10 +236,12 @@ export function purchase(
 		addWeapon(ctx.build, offer.id as WeaponId, offer.tier as WeaponTier, offer.affixes);
 	else if (offer.kind === 'gear') {
 		run.gear = run.gear ?? emptyGear();
-		pickUpGear(run.gear, ctx.stats, offer.id, {
+		// The worn item of that slot is sold for Fish (no bag, SDD-014 RF-30).
+		const { sold } = pickUpGear(run.gear, ctx.stats, offer.id, {
 			rarity: offer.tier as 1 | 2 | 3,
 			affixes: offer.affixes ?? [],
 		});
+		if (sold) run.fish += gearSellValue(sold.rarity, run.round);
 	} else if (offer.kind === 'support' && isSupportId(offer.id)) {
 		buySupport(run.support, offer.id, ctx.stats);
 	} else if (offer.kind === 'healPotion') {

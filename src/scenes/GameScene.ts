@@ -23,7 +23,7 @@ import { DEMO, STEAM_URL } from '../data/demo';
 import { DANGER, type Danger, type DangerMods } from '../data/difficulty';
 import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
-import { GEAR_BY_ID, GEAR_SLOTS, type GearSlot } from '../data/equipment';
+import { GEAR_BY_ID, GEAR_SLOTS } from '../data/equipment';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { WEAPON_FUSE_MAX } from '../data/rarity';
@@ -69,13 +69,11 @@ import {
 } from '../logic/difficulty';
 import {
 	emptyGear,
-	equip,
 	type ItemDrop,
 	pickUpGear,
 	rollGearDrop,
 	rollHealDrop,
 	rollItemDrops,
-	unequip,
 } from '../logic/equipment';
 import { formatStat } from '../logic/format';
 import { inArc } from '../logic/geometry';
@@ -115,6 +113,7 @@ import {
 } from '../logic/save';
 import {
 	buy as buyOffer,
+	gearSellValue,
 	lock as lockOffer,
 	offerPrice,
 	rerollPrice,
@@ -565,8 +564,6 @@ export class GameScene extends Phaser.Scene {
 				uiStore.set({ screen: 'main-menu' });
 				this.scene.stop();
 			},
-			equip: (id) => this.equipGear(id),
-			unequip: (slot) => this.unequipGear(slot),
 		});
 		const stopWatching = watchSuspend(() => this.suspend());
 		this.events.once('shutdown', () => {
@@ -1179,26 +1176,30 @@ export class GameScene extends Phaser.Scene {
 		this.fx.banner(this.hero.x, this.hero.y, 'fx.weaponSold', { name, n: fish });
 	}
 
-	/** Stepped on a gear drop: into the bag, worn at once when its slot is free. */
+	/**
+	 * Stepped on a gear drop: worn at once, the old item of that slot sold for Fish (no bag). A
+	 * worn item of higher rarity stays and the drop is sold instead.
+	 */
 	private pickUpGear(id: string, item: ItemDrop | null = null): void {
 		const gear = this.run.gear ?? emptyGear();
 		this.run.gear = gear;
-		const result = pickUpGear(
+		const { result, sold } = pickUpGear(
 			gear,
 			this.stats,
 			id,
 			item ? { rarity: item.rarity, affixes: item.affixes } : undefined,
+			{ keepBetter: true },
 		);
 		this.syncMaxHp();
 		this.fx.play('sfx.card');
-		this.fx.banner(
-			this.hero.x,
-			this.hero.y,
-			result === 'equipped' ? 'fx.gearEquipped' : 'fx.gearBag',
-			{
-				name: t(`gear.${id}` as I18nKey),
-			},
-		);
+		const name = t(`gear.${id}` as I18nKey);
+		const fish = sold ? gearSellValue(sold.rarity, this.run.round) : 0;
+		this.run.fish += fish;
+		if (result === 'rejected')
+			this.fx.banner(this.hero.x, this.hero.y, 'fx.gearSold', { name, n: fish });
+		else if (sold)
+			this.fx.banner(this.hero.x, this.hero.y, 'fx.gearReplaced', { name, n: fish });
+		else this.fx.banner(this.hero.x, this.hero.y, 'fx.gearEquipped', { name });
 	}
 
 	/** Max HP follows the stats (gear, cards); current HP is kept within it. */
@@ -1461,29 +1462,8 @@ export class GameScene extends Phaser.Scene {
 					const id = gear.equipped[slot];
 					return { slot, id, detail: id ? this.gearDetail(id) : '' };
 				}),
-				bag: gear.bag.map((id, i) => ({
-					key: `${id}#${i}`,
-					id,
-					detail: this.gearDetail(id),
-				})),
 			},
 		});
-	}
-
-	private equipGear(id: string): void {
-		if (!this.uiPaused || !this.run.gear) return;
-		equip(this.run.gear, this.stats, id);
-		this.fx.play('sfx.equip');
-		this.syncMaxHp();
-		this.publishPauseView();
-	}
-
-	private unequipGear(slot: string): void {
-		if (!this.uiPaused || !this.run.gear) return;
-		unequip(this.run.gear, this.stats, slot as GearSlot);
-		this.fx.play('sfx.equip');
-		this.syncMaxHp();
-		this.publishPauseView();
 	}
 
 	private closeReactPause(): void {
@@ -1548,6 +1528,7 @@ export class GameScene extends Phaser.Scene {
 								stats: this.stats,
 								support: run.support,
 								healPotion: run.healPotion,
+								round: run.round,
 							}),
 							sets:
 								o.kind === 'weapon'

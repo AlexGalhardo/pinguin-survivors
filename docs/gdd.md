@@ -149,7 +149,7 @@ Lista final e números em `src/data/weapons.ts` e balancing-and-simulation.md Pa
 ## 9. Loja do fim de round
 
 - Abre **ao fim de cada round** com o tempo pausado, em tela estilo **ARPG (Diablo)** (ADR-006):
-  - **Esquerda**: paper doll do herói, stats da run com deltas, **5 slots de equipamento** (elmo, armadura, pernas, anel, amuleto) e mochila, 6 slots de arma com fusão.
+  - **Esquerda**: paper doll do herói, stats da run com deltas, **5 slots de equipamento** (elmo, armadura, pernas, anel, amuleto) sem mochila (comprar equipa na hora e o item que estava no slot é vendido), 6 slots de arma com fusão.
   - **Direita**: **NPC lojista** (pinguim velho mercador com carrinho de peixes, idle animado, falas curtas por texto) com **4 ofertas** (só **armas, equipamentos e poções de velocidade**, raridades **I a III**, cada uma já com seus afixos), preço em Fish, **reroll** (preço cresce a cada uso na mesma loja; base cresce por round) e **lock** grátis por oferta (persiste entre lojas).
   - Rodapé: Fish da run, próximo round, avisos de elite/horda (Danger ≥ 2), botão "Próximo round".
 - Oferta ponderada por **sorte**, round e classes que o herói já tem (leve viés para sinergia).

@@ -37,7 +37,8 @@ export const shopEs = {
 		'Se fusiona con el arma de la ranura {slot}: {from} → {to}, +{n} afijos nuevos.',
 	'shop.outcome.barFull': 'Las 6 ranuras de arma están llenas: vende o fusiona una antes.',
 	'shop.outcome.equip': 'Se equipa al instante ({slot}).',
-	'shop.outcome.bag': 'Va a la mochila: la ranura {slot} ya está ocupada.',
+	'shop.outcome.replace':
+		'Sustituye {name} {rarity}: se equipa al instante y el antiguo se vende por {n} Fish.',
 	'shop.outcome.potion': 'Añade una poción de velocidad a la partida.',
 	'shop.affixes': 'Afijos',
 	'shop.noAffixes': 'Sin afijos',

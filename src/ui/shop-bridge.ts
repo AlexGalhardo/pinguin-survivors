@@ -30,12 +30,12 @@ export type { OfferDescription, OfferOutcome, StatChange } from '../logic/shop-d
  * - `description`: what buying does, from `describeOffer`: `outcome.type` is `newWeapon` (slot,
  *   `fusableWith` = slot of an identical copy you could fuse with next), `fuse` (slot,
  *   fromRarity to toRarity, `newAffixes` extra affixes the result rolls), `barFull`, `equip`
- *   (worn at once in `slot`), `bag` (`slot` is taken by `worn`) or `potion`; plus `statChanges`
+ *   (worn at once in `slot`), `replace` (worn at once; the item `worn` of that slot, rarity `wornRarity`, is sold for `sellFish`) or `potion`; plus `statChanges`
  *   (`{ stat, before, after }`, only stats that change).
  *
  * Player panel (`ShopView.player`, same shape for the pause screen via `PlayerPanelView`): current
  * hero `stats`, `weapons` (slot, id, rarity I to V, affixes, stats, sets, sell value), the five
- * `gear` slots (item with rarity, affixes and base stats, or null) and the `bag`.
+ * `gear` slots (item with rarity, affixes and base stats, or null) and no bag: equipment is worn at once and the old item is sold.
  *
  * Support items and the healing potion (SDD-014): offers of `kind` `support` and `healPotion`
  * (rarity I, `description.outcome` `support` or `healPotion` with level before/after), and

@@ -128,7 +128,7 @@ Largura máxima de conteúdo: 56 rem (listas, configurações), 90 rem (loja, pa
 ## 7. Iconografia
 
 - Ícones vêm do atlas (`AtlasIcon`, `background-position`, escala inteira, `image-rendering: pixelated`). Nunca escala fracionária em pixel art.
-- Tamanhos: 24 px (moeda no HUD), 32–44 px (gear e bolsa), 48 px (slots de arma), 56 px (ofertas da loja), 64 px (arma inicial na ficha). `HeroSprite` e `MerchantSprite` usam o frame cheio com escala 1–3.
+- Tamanhos: 24 px (moeda no HUD), 32–44 px (gear), 48 px (slots de arma), 56 px (ofertas da loja), 64 px (arma inicial na ficha). `HeroSprite` e `MerchantSprite` usam o frame cheio com escala 1–3.
 - Herói bloqueado: silhueta (`brightness(0)`) com cadeado SVG inline.
 - Glifos de texto permitidos como ornamento: `◀ ▶ ◆ ✦ ⟳` (sem tradução).
 
@@ -144,7 +144,7 @@ Largura máxima de conteúdo: 56 rem (listas, configurações), 90 rem (loja, pa
 | `Btn` | `Btn.tsx` | Botão focável; `variant`: `primary` (ouro), `secondary` (neutro), `danger` (sangue) |
 | Botão de item por raridade | `Btn` com `tint` (`rarityCss(n)`) | Comprar, Trava, Vender e Fundir levam a cor da raridade do item (I branco, II azul, III verde, IV roxo, V laranja): borda e texto na cor, fundo a 14 % (32 % no hover e foco, com brilho). Desabilitado: borda tracejada, sem fundo e texto da cor misturado ao `text-dim` (contraste AA mantido). Classe `.rarity-btn` em `theme.css` |
 | `MenuScreen`, `BackBtn`, `AdjustRow` | `MenuScreen.tsx` | Quadro das telas de menu, voltar, linha ◀ valor ▶ com dica |
-| `PlayerPanel` | `PlayerPanel.tsx` | Ficha do jogador: três números de destaque, stats, 6 armas, equipamento, bolsa, card do item focado |
+| `PlayerPanel` | `PlayerPanel.tsx` | Ficha do jogador: três números de destaque, stats, 6 armas, equipamento, card do item focado (só visualização) |
 | `WeaponCardView`, `GearCardView`, `AffixLines`, `SlotIcon` | `ItemViews.tsx` | Tooltip de arma e de equipamento (base ◆, separador, afixos ✦), ícone de slot |
 | `Shop`, `Pause` | `Shop.tsx`, `Pause.tsx` | Loja (lojista, ofertas, comparação com o equipado, jogador) e pausa (ficha grande + 3 botões) |
 | `HeroSprite`, `MerchantSprite` | `HeroSprite.tsx`, `MerchantSprite.tsx` | Personagens animados em idle |

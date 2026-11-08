@@ -14,6 +14,12 @@ Três frentes independentes entre si, especificadas juntas porque mexem nos mesm
 - RF-06 Apagar sempre pede confirmação. Apagar o slot ativo desliga o slot (volta ao estado "sem slot").
 - RF-07 Export/import `.json` das configurações continua pelo slot ativo; importar sem slot ligado cria o jogo no primeiro slot livre.
 
+## Requisitos: sem mochila (equipamento)
+
+- RF-30 `RunGear.bag` e as ações equipar/desequipar da pausa saem. **Comprar equipamento equipa na hora** no slot dele; o item que estava no slot é **vendido automaticamente** por `gearSellValue(raridade, round)` (metade do preço de prateleira da raridade dele, como as armas). `describeOffer` ganha o resultado `replace` (`worn`, `wornRarity`, `sellFish`) e os `statChanges` já são o líquido (novo menos o vendido); a loja diz "Substitui {nome} {raridade}: equipa na hora e o antigo é vendido por {n} Fish".
+- RF-31 Mesma regra para equipamento pego no chão (drops comuns, IV e V). Decisão de implementação: se o item usado no slot tem raridade **maior** que a do drop, o usado fica e é o drop que é vendido (`keepBetter`); raridade igual ou maior no drop substitui. Sem isso um drop comum trocaria um item V.
+- RF-32 Armas: sem mudança (compra num slot livre; com 6 cheias só se houver fusão; sem guardar). A pausa é só visualização (stats, armas e equipamento com raridade e afixos); a loja só tem Comprar, Vender (armas) e Fundir. Sem compatibilidade de save para o formato antigo da run.
+
 ## Requisitos: itens de suporte
 
 - RF-10 Categoria nova da loja (`kind: 'support'`, raridade I). Comprar de novo o mesmo item sobe o nível, de 1 a 5; no nível 5 o item deixa de ser oferecido.
@@ -49,6 +55,7 @@ Três frentes independentes entre si, especificadas juntas porque mexem nos mesm
 | A3 | Menu: sem slot só "Novo jogo"; novo jogo em slot vazio liga e abre a seleção; sobrescrever e apagar pedem confirmação | `bun test tests/ui/menus.test.tsx tests/ui/menu-controller.test.ts` |
 | A4 | Suporte: nível 1–5, 4 slots, Magnético cresce, stat só pela diferença; loja oferece e esconde no máx. | `bun test tests/support-potion.test.ts` |
 | A5 | Poção: níveis 1–10 (compras), cheia em todo início de round, bebe a ≤ 50% com 2 s de recarga, regra de subida de raridade, drops só de Elite (II/III) e Boss (IV/V) | `bun test tests/support-potion.test.ts` |
+| A7 | Equipamento: comprar equipa e vende o item do slot (Fish certos), `describeOffer` diz o que é vendido, drop pior não troca item melhor, pausa sem mochila | `bun test tests/equipment.test.ts tests/rarity.test.ts tests/run-state.test.ts` e `bun run e2e` |
 | A6 | No jogo: orbe a 150 u só é puxada com Magnético; poção bebe, recarrega e sobe de raridade; HUD e loja mostram | `bun run e2e` e capturas 1920×1080 |
 
 ## Riscos e decisões

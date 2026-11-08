@@ -36,7 +36,7 @@ interface GameProbe {
 			rerolls: number;
 			locks: boolean[];
 		} | null;
-		gear?: { bag: string[]; equipped: Record<string, string | null> };
+		gear?: { equipped: Record<string, string | null> };
 	};
 	build: { weapons: unknown[] };
 	arena: { sideTiles: number };
@@ -259,17 +259,15 @@ async function fullFlow(): Promise<void> {
 	step = 'arena grew 10x10 to 11x11 and both weapons are on the ring';
 	console.log('ok   arena grew 10x10 to 11x11 and both weapons are on the ring');
 
-	// Pause: equipment from the bag, settings and Esc.
+	// Pause is view-only: worn equipment is shown, with no bag and no equip actions (SDD-014 RF-30).
 	await game((g) => {
-		g.run.gear = { bag: ['helmet.wool'], equipped: { helmet: null } };
+		g.run.gear = { equipped: { helmet: 'helmet.wool' } };
 	});
 	await page.keyboard.press('Escape');
 	await see('React pause', 'PAUSED');
-	await click('Wool Beanie');
-	const worn = await game((g) => g.run.gear?.equipped.helmet);
-	if (worn !== 'helmet.wool') fail(`equipping from the pause bag: ${worn}`);
-	step = 'equipped from the pause bag';
-	console.log('ok   equipped from the pause bag');
+	if ((await ui.textContent())?.match(/BAG/)) fail('the pause screen still has a bag');
+	step = 'pause shows no bag';
+	console.log('ok   pause shows no bag');
 	await click('SETTINGS');
 	await see('React settings over the pause', /^SETTINGS$/);
 	await click('BACK');

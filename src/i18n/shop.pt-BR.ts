@@ -36,7 +36,8 @@ export const shopPtBR = {
 	'shop.outcome.fuse': 'Funde com a arma do slot {slot}: {from} → {to}, +{n} afixos novos.',
 	'shop.outcome.barFull': 'Os 6 slots de arma estão cheios: venda ou funda uma antes.',
 	'shop.outcome.equip': 'Vestido na hora ({slot}).',
-	'shop.outcome.bag': 'Vai para a mochila: o slot {slot} já está ocupado.',
+	'shop.outcome.replace':
+		'Substitui {name} {rarity}: equipa na hora e o antigo é vendido por {n} Fish.',
 	'shop.outcome.potion': 'Adiciona uma poção de velocidade à run.',
 	'shop.affixes': 'Afixos',
 	'shop.noAffixes': 'Sem afixos',

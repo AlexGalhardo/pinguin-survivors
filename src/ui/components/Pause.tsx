@@ -15,18 +15,15 @@ export interface PauseData {
 	stats: readonly { key: string; value: string }[];
 	/** Passive cards and hero actives owned (`card.perk.<id>` / `card.active.<id>` are the names). */
 	cards: readonly { name: string; level: number }[];
-	/** Worn equipment per slot and the bag (`detail` is the old text summary, unused by this screen). */
+	/** Worn equipment per slot (`detail` is the old text summary, unused by this screen). */
 	gear: {
 		slots: readonly { slot: string; id: string | null; detail?: string }[];
-		bag: readonly { key: string; id: string; detail?: string }[];
 	};
 }
 
 export interface PauseActions {
 	resume: () => void;
 	settings: () => void;
-	equip: (id: string) => void;
-	unequip: (slot: string) => void;
 	/** Called only after the player confirms. */
 	quit: () => void;
 }
@@ -46,15 +43,11 @@ function fallbackPanel(data: PauseData): PlayerPanelData {
 			slot: s.slot,
 			item: s.id ? { id: s.id, rarity: catalogRarity(s.id), affixes: [] } : null,
 		})),
-		bag: data.gear.bag.map((b) => ({
-			key: b.key,
-			item: { id: b.id, rarity: catalogRarity(b.id), affixes: [] },
-		})),
 		cards: data.cards,
 	};
 }
 
-/** Pause menu: the whole build as a big player sheet (stats, weapons, equipment, bag) and three actions. */
+/** Pause menu: the whole build as a big player sheet (stats, weapons, equipment; view only) and three actions. */
 export function Pause({
 	data,
 	actions,
@@ -83,12 +76,9 @@ export function Pause({
 							? panelFromView(panel, {
 									maxWeapons: MAX_WEAPON_SLOTS,
 									cards: data.cards,
-									withBag: true,
 								})
 							: fallbackPanel(data)
 					}
-					onGear={actions.unequip}
-					onBag={(_key, id) => actions.equip(id)}
 				/>
 			</Panel>
 			<footer className="flex w-full max-w-[90rem] flex-wrap items-center justify-center gap-2">

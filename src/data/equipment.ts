@@ -3,7 +3,7 @@ import type { StatKey } from '../logic/stats';
 /**
  * RPG equipment dropped during a run (P-66, user request): 5 slots, 10 items each
  * (3 common, 4 rare, 3 legendary). Common zombies drop commons, elites drop rares and bosses
- * drop legendaries. Items belong to the run: equip/unequip them in the pause menu.
+ * drop legendaries. Items belong to the run and are worn at once (no bag; the item of that slot is sold).
  */
 export const GEAR_SLOTS = ['helmet', 'armor', 'legs', 'ring', 'amulet'] as const;
 export type GearSlot = (typeof GEAR_SLOTS)[number];

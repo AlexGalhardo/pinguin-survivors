@@ -69,6 +69,11 @@ export function sellValue(paid: number): number {
 	return Math.floor(paid * SHOP.sellRatio);
 }
 
+/** Fish for the equipment that makes room for a new one (or a rejected drop): half its shelf price at its rarity. */
+export function gearSellValue(rarity: number, round: number): number {
+	return sellValue(offerPrice('gear', rarity, round));
+}
+
 function weight(c: ShopCandidate, round: number, ctx: ShopContext): number {
 	const { base, perRound } = SHOP.tierWeights;
 	let w = Math.max(1, (base[c.tier - 1] ?? 1) + (perRound[c.tier - 1] ?? 0) * round);

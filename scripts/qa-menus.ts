@@ -78,7 +78,7 @@ for (const [w, h] of VP) {
 	await p.waitForFunction(`window.__GAME__ && ${G}.run`, null, { timeout: 30000 });
 	await p.waitForTimeout(2500);
 	await p.evaluate(
-		`(() => { const s = ${G}; const g = s.run.gear; g.equipped.helmet = 'helmet.miner'; g.equipped.armor = 'armor.kevlar'; g.bag.push('helmet.crown', 'legs.skates'); g.rolls = { 'helmet.miner': { rarity: 3, affixes: [{ stat: 'maxHp', value: 7 }, { stat: 'dodge', value: 0.012 }] }, 'armor.kevlar': { rarity: 2, affixes: [{ stat: 'regen', value: 0.2 }] }, 'helmet.crown': { rarity: 5, affixes: [{ stat: 'damage', value: 0.06 }, { stat: 'crit', value: 0.02 }, { stat: 'luck', value: 0.03 }, { stat: 'armor', value: 1.4 }] } }; s.run.fish = 400; s.pause(); })()`,
+		`(() => { const s = ${G}; const g = s.run.gear; g.equipped.helmet = 'helmet.miner'; g.equipped.armor = 'armor.kevlar'; g.rolls = { 'helmet.miner': { rarity: 3, affixes: [{ stat: 'maxHp', value: 7 }, { stat: 'dodge', value: 0.012 }] }, 'armor.kevlar': { rarity: 2, affixes: [{ stat: 'regen', value: 0.2 }] }, 'helmet.crown': { rarity: 5, affixes: [{ stat: 'damage', value: 0.06 }, { stat: 'crit', value: 0.02 }, { stat: 'luck', value: 0.03 }, { stat: 'armor', value: 1.4 }] } }; s.run.fish = 400; s.pause(); })()`,
 	);
 	await p.waitForTimeout(900);
 	await shot('pause');

@@ -26,7 +26,7 @@ import {
 	weaponCandidates,
 } from '../src/logic/run-state';
 import { defaultSave } from '../src/logic/save';
-import { lock, type Offer, rollOffers, type ShopState } from '../src/logic/shop';
+import { gearSellValue, lock, type Offer, rollOffers, type ShopState } from '../src/logic/shop';
 import { baseStats } from '../src/logic/stats';
 
 test('run starts with the hero profile and round timer', () => {
@@ -199,4 +199,29 @@ describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
 		expect(s.fish).toBe(before);
 		expect(purchase(s, 0, { build, stats })).toBeNull();
 	});
+});
+
+test('buying equipment wears it at once and sells the item of that slot (no bag)', () => {
+	const stats = baseStats(HEROES.jack);
+	const build = emptyBuild();
+	const s = createRunState(HEROES.jack, { seed: 1 });
+	s.round = 6;
+	s.fish = 200;
+	s.shop = {
+		offers: [
+			{ kind: 'gear', id: 'helmet.wool', tier: 1, price: 24 },
+			{ kind: 'gear', id: 'helmet.crown', tier: 3, price: 80, affixes: [] },
+			null,
+			null,
+		],
+		locks: [false, false, false, false],
+		rerolls: 0,
+	};
+	purchase(s, 0, { build, stats });
+	expect(s.fish).toBe(176);
+	purchase(s, 1, { build, stats });
+	expect(s.gear?.equipped.helmet).toBe('helmet.crown');
+	// 200 - 24 - 80, plus half of the wool price at rarity I for round 6.
+	expect(s.fish).toBe(176 - 80 + gearSellValue(1, 6));
+	expect(s.gear).not.toHaveProperty('bag');
 });

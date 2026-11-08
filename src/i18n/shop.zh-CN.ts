@@ -35,7 +35,7 @@ export const shopZhCN = {
 	'shop.outcome.fuse': '与第 {slot} 格的武器融合：{from} → {to}，新增 {n} 个词缀。',
 	'shop.outcome.barFull': '6 个武器槽已满：请先出售或融合一把。',
 	'shop.outcome.equip': '立即装备（{slot}）。',
-	'shop.outcome.bag': '放入背包：{slot} 槽已被占用。',
+	'shop.outcome.replace': '替换 {name} {rarity}：立即装备，旧装备以 {n} 鱼出售。',
 	'shop.outcome.potion': '为本局增加一瓶加速药水。',
 	'shop.affixes': '词缀',
 	'shop.noAffixes': '无词缀',

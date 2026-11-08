@@ -10,7 +10,7 @@ import type { Affix } from './affixes';
 import { type Build, setBonuses } from './build';
 import { itemRoll, type RunGear } from './equipment';
 import { type HealPotionState, healShare } from './heal-potion';
-import type { Offer } from './shop';
+import { gearSellValue, type Offer } from './shop';
 import { addStat, getStat, type PlayerStats, type StatKey } from './stats';
 import { isSupportId, type SupportLevels, supportLevel, supportValue } from './support';
 
@@ -32,7 +32,8 @@ export type OfferOutcome =
 	| { type: 'fuse'; slot: number; fromRarity: Rarity; toRarity: Rarity }
 	| { type: 'barFull' }
 	| { type: 'equip'; slot: GearSlot }
-	| { type: 'bag'; slot: GearSlot; worn: string }
+	/** The new item is worn at once; the one in the slot is sold for `sellFish`. */
+	| { type: 'replace'; slot: GearSlot; worn: string; wornRarity: Rarity; sellFish: number }
 	| { type: 'potion'; potion: string }
 	/** Support item: level `from` (0 = new) to `to`; `value` is the item number at `to`. */
 	| { type: 'support'; id: string; from: number; to: number; value: number }
@@ -82,8 +83,8 @@ function changesFrom(stats: PlayerStats, delta: Map<StatKey, number>): StatChang
 /**
  * Spells out exactly what buying `offer` does with the current build, gear and stats (pure; `stats`
  * are the hero's current effective stats). Weapons: a new slot (with the fusion you could do next)
- * or, with the bar full, a fusion into the identical copy; equipment: worn at once or sent to the
- * bag when the slot is taken; potions: added to the run stock. Stat changes include the item's
+ * or, with the bar full, a fusion into the identical copy; equipment: worn at once, selling the
+ * item that was in the slot; potions: added to the run stock. Stat changes include the item's
  * affixes and any set bonus the purchase unlocks.
  */
 export function describeOffer(
@@ -92,6 +93,8 @@ export function describeOffer(
 		build: Build;
 		gear: RunGear;
 		stats: PlayerStats;
+		/** Round of the shop (sale prices grow with it). */
+		round?: number;
 		support?: SupportLevels;
 		healPotion?: HealPotionState;
 	},
@@ -166,17 +169,33 @@ export function describeOffer(
 		const worn = ctx.gear.equipped[slot];
 		const baseStats = def?.stats ?? {};
 		const result: OfferDescription = { ...base, baseStats };
-		if (worn) return { ...result, outcome: { type: 'bag', slot, worn } };
-		const delta = netChanges([
+		const gained = [
 			...Object.entries(baseStats).map(([stat, value]) => ({
 				stat: stat as StatKey,
 				value: value as number,
 			})),
 			...affixes,
-		]);
+		];
+		const delta = netChanges(gained);
+		if (!worn)
+			return {
+				...result,
+				outcome: { type: 'equip', slot },
+				statChanges: changesFrom(ctx.stats, delta),
+			};
+		const wornRoll = itemRoll(ctx.gear, worn);
+		for (const [stat, value] of Object.entries(GEAR_BY_ID[worn]?.stats ?? {}))
+			delta.set(stat as StatKey, (delta.get(stat as StatKey) ?? 0) - (value as number));
+		for (const a of wornRoll.affixes) delta.set(a.stat, (delta.get(a.stat) ?? 0) - a.value);
 		return {
 			...result,
-			outcome: { type: 'equip', slot },
+			outcome: {
+				type: 'replace',
+				slot,
+				worn,
+				wornRarity: wornRoll.rarity,
+				sellFish: gearSellValue(wornRoll.rarity, ctx.round ?? 0),
+			},
 			statChanges: changesFrom(ctx.stats, delta),
 		};
 	}
@@ -206,5 +225,5 @@ export function describeOffer(
 	return base;
 }
 
-/** Rarity numeral of an owned equipment item, for the bag and the equipped slots. */
+/** Rarity numeral of an owned equipment item, for the equipped slots. */
 export const ownedRarity = (gear: RunGear, id: string): Rarity => itemRoll(gear, id).rarity;
