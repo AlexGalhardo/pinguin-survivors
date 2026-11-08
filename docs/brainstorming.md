@@ -1,7 +1,7 @@
 # Brainstorming — Pinguin Survivors 1.0 comercial
 
 > **Versão** 1.0 · **Data** 2026-11-08 · **Método** entrevista em rodadas (skill `grilling`, 30 perguntas de múltipla escolha) com o desenvolvedor, conduzida pelo Game Director (sessão de agente).
-> Este documento registra **o que foi decidido e o que foi descartado** na virada do projeto para a versão comercial (Steam + Android, demo no Steam Next Fest de fevereiro de 2027). As decisões viram ADRs em [adrs/](adrs/) e entram no [gdd.md](gdd.md); as decisões anteriores (P-01…P-68) continuam em [decisions.md](decisions.md) e valem onde não forem substituídas aqui.
+> Este documento registra **o que foi decidido e o que foi descartado** na virada do projeto para a versão comercial (Steam + Android, demo no Steam Next Fest de fevereiro de 2027). As decisões viram ADRs em [adrs/](adrs/) e entram no [gdd.md](gdd.md); as decisões anteriores (P-01…P-68) continuam no `docs/decisions.md` removido (recuperável pelo git) e valem onde não forem substituídas aqui.
 
 ## Índice
 

@@ -20,7 +20,7 @@
 
 ## 2. Engenharia de som
 
-- Formato: **MP3 44,1 kHz 128 kbps** (saída da API). Música em loop com crossfade de 800 ms (`src/core/music.ts`); SFX via `sfx(scene, key)` (`src/core/audio.ts`) com volume por chave, limite de vozes simultâneas e variação de pitch ±5% (`src/data/sfx.ts`).
+- Formato: **MP3 44,1 kHz 128 kbps** (saída da API). Música em loop com crossfade de 800 ms (`src/core/music.ts`); SFX via `sfx(scene, key)` (`src/core/audio.ts`) com volume por chave, limite de instâncias simultâneas por chave (`polyphony`, `src/logic/sfx-limiter.ts`) e variação de pitch ±5% (`src/data/sfx.ts`).
 - Loudness alvo: SFX −14 LUFS, música −18 LUFS (normalização offline ao gerar).
 - Mixagem: canais master, música, SFX (voz removido). Ducking de −6 dB na música durante o superpoder e o rugido do boss.
 - Variações: hit, shotgun, splat, zombieDeath (3 takes), swing (2) sorteados por `SFX_VARIANTS`.
