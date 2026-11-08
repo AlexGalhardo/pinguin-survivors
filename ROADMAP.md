@@ -174,8 +174,8 @@ Specs: [SDD-004](docs/sdds/SDD-004-ui-react-tailwind.md), [SDD-005](docs/sdds/SD
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): Lighthouse rodado por mim; Btn com `min-h-11 min-w-11` em todos os botões React.
 - [ ] **T3.11** 🛑 Inscrição no Next Fest até 2027-01-10 (depende de T15.1 Steamworks) · Resp.: dev · Assert: confirmação da Steamworks por e-mail.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T3.12** Release `0.1.0` (entra na fase beta: jogo completo jogável com UI React).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T3.12** Release `0.1.0` (entra na fase beta: jogo completo jogável com UI React). · Evidência (2026-11-08): `bun scripts/release.ts 0.1.0` (clone limpo, gates verdes) → [release v0.1.0](https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.1.0); pre-release; `package.json` 0.1.0; 14 tags = 14 releases. O conteúdo do M3 já tinha saído em `v0.0.13` (release por marco feita com o código pronto); `v0.1.0` marca a entrada na fase beta.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): `gh release view v0.1.0` pre-release, título = tag.
 
 ### Auditoria do marco M3
 
@@ -183,9 +183,9 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 - [x] Todos os asserts das tarefas `[x]` re-executados e conferidos (Auditoria de cada tarefa marcada). · 2026-11-08: ver `docs/reports/audit-m3-2026-11-08.md`.
 - [x] SDDs do marco em "Aprovada" e implementação sem contradizer nenhum RF (grep pelos arquivos/funções citados). · SDD-004, SDD-005 (desvios documentados).
-- [ ] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release.
-- [ ] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release.
-- [ ] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio.
+- [x] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release. · gates do `release.ts` em `v0.1.0`.
+- [x] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release. · `v0.1.0`.
+- [x] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio. · `[0.1.0] - 2026-11-08`.
 - [x] Docs afetados atualizados (gdd/visual/audio/architecture/balancing Parte B/site) e sem links quebrados. · architecture 2.3, workflow 2.1, README; lint:md 0.
 - [x] Saldos PixelLab/ElevenLabs registrados se o marco gastou assets. · M3 não gastou assets.
 - [x] Relatório `docs/reports/audit-m3-<data>.md` gravado (tabela tarefa · status · evidência). · `docs/reports/audit-m3-2026-11-08.md`.
