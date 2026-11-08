@@ -1,12 +1,16 @@
 import { achEn } from './achievements.en';
 import { cardsEn } from './cards.en';
 import { gearEn } from './gear.en';
+import { screensEn } from './screens.en';
+import { shopEn } from './shop.en';
 import { weaponsEn } from './weapons.en';
 
 export const en = {
 	...achEn,
 	...cardsEn,
 	...gearEn,
+	...screensEn,
+	...shopEn,
 	...weaponsEn,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',

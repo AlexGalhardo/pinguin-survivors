@@ -2,12 +2,16 @@ import { achPtBR } from './achievements.pt-BR';
 import { cardsPtBR } from './cards.pt-BR';
 import type { I18nKey } from './en';
 import { gearPtBR } from './gear.pt-BR';
+import { screensPtBR } from './screens.pt-BR';
+import { shopPtBR } from './shop.pt-BR';
 import { weaponsPtBR } from './weapons.pt-BR';
 
 export const ptBR: Record<I18nKey, string> = {
 	...achPtBR,
 	...cardsPtBR,
 	...gearPtBR,
+	...screensPtBR,
+	...shopPtBR,
 	...weaponsPtBR,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Carregando…',
