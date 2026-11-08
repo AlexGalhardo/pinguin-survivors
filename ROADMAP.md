@@ -214,8 +214,8 @@ Specs: [SDD-012](docs/sdds/SDD-012-arte-topdown-e-vfx.md), [docs/audio.md](docs/
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): screenshot `jack-super-vfx.png` gerado pelo Senior C; 13 ≥ 12 frames.
 - [~] **T4.10** Registro: `docs/visual.md` §10–§13 e `docs/audio.md` §6–§7 com saldos · Resp.: estagiario · Assert: saldo PixelLab após M4 ≥ 3.500 (mês de janeiro). · Progresso (2026-11-08): saldos registrados — PixelLab 2.320 → 2.194 (126 gerações) em `docs/visual.md` §10; ElevenLabs 58.198 → 57.679 (519 créditos) em `docs/audio.md` §6. O assert (saldo ≥ 3.500 após o M4) depende da renovação mensal. · Bloqueado (data): saldos registrados (PixelLab 2.025 após 295 gerações no M4/M7; ElevenLabs 56.461); o assert (≥ 3.500 em janeiro) só é verificável após a renovação mensal.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T4.11** Release `0.2.0` como **Latest**, fora de pre-release (decisão do desenvolvedor, 2026-11-08): `bun scripts/release.ts 0.2.0 --stable`.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T4.11** Release `0.2.0` como **Latest**, fora de pre-release (decisão do desenvolvedor, 2026-11-08): `bun scripts/release.ts 0.2.0 --stable`. · Evidência (2026-11-08): `bun scripts/release.ts 0.2.0 --stable` (clone limpo, gates verdes) → [release v0.2.0](https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.2.0); `isPrerelease: false`; `GET /releases/latest` = `v0.2.0`; `package.json` 0.2.0; 15 tags = 15 releases.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): grupos Added/Fixed com links; Latest confirmado pela API.
 
 ### Auditoria do marco M4
 
@@ -223,9 +223,9 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 - [x] Todos os asserts das tarefas `[x]` re-executados e conferidos (Auditoria de cada tarefa marcada). · `docs/reports/audit-m4-2026-11-08.md`; T4.4 é gate do desenvolvedor, T4.10 depende da renovação.
 - [x] SDDs do marco em "Aprovada" e implementação sem contradizer nenhum RF (grep pelos arquivos/funções citados). · SDD-012 1.1, ADR-016.
-- [ ] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release.
-- [ ] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release.
-- [ ] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio.
+- [x] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release. · gates do `release.ts` em `v0.2.0`.
+- [x] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release. · `v0.2.0` é **Latest** por decisão do desenvolvedor (SDD-011 1.1).
+- [x] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio. · `[0.2.0] - 2026-11-08`.
 - [x] Docs afetados atualizados (gdd/visual/audio/architecture/balancing Parte B/site) e sem links quebrados. · lint:md 0.
 - [x] Saldos PixelLab/ElevenLabs registrados se o marco gastou assets. · PixelLab 2.025, ElevenLabs 56.461.
 - [x] Relatório `docs/reports/audit-m4-<data>.md` gravado (tabela tarefa · status · evidência). · `docs/reports/audit-m4-2026-11-08.md`.
