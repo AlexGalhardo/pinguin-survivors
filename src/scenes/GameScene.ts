@@ -14,7 +14,7 @@ import { GameEvents } from '../core/events';
 import { applyBloom, shake, zoomPunch } from '../core/feel';
 import { GameInput } from '../core/input';
 import { musicForRound, playMusic } from '../core/music';
-import { platform } from '../core/platform';
+import { platform, reportAchievements } from '../core/platform';
 import { trackZoom } from '../core/viewport';
 import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DEMO, STEAM_URL } from '../data/demo';
@@ -54,7 +54,7 @@ import {
 } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
-import { demoEndReason, demoHero } from '../logic/demo';
+import { demoEndReason, demoHero, demoHidesAchievement } from '../logic/demo';
 import {
 	type ExtraWave,
 	extraWaves,
@@ -1137,7 +1137,9 @@ export class GameScene extends Phaser.Scene {
 		const fresh = evaluateAchievements(progress, save.achievements, Date.now());
 		if (fresh.length > 0) {
 			persist(this);
-			this.game.events.emit(GameEvents.AchievementsUnlocked, fresh);
+			const shown = fresh.filter((d) => !demoHidesAchievement(d));
+			reportAchievements(shown);
+			if (shown.length > 0) this.game.events.emit(GameEvents.AchievementsUnlocked, shown);
 		}
 	}
 
@@ -1586,7 +1588,7 @@ export class GameScene extends Phaser.Scene {
 				level: this.level.level,
 				round: run.round,
 				weapons: this.build.weapons.map((w) => `${w.id}:${w.tier}`),
-				cause: this.outcome,
+				cause: this.demoWon ? 'demoWin' : this.outcome,
 				durationS: Math.round(run.elapsed),
 				platform: platform().kind,
 				fishEarned,
@@ -1626,6 +1628,7 @@ export class GameScene extends Phaser.Scene {
 		recordBestRound(save, run.hero, run.danger, run.round);
 		const previousBest = save.progress.hero[run.hero].bestRound;
 		const fresh = recordRunEnd(save, record, run.counters, Date.now());
+		reportAchievements(fresh.filter((d) => !demoHidesAchievement(d)));
 		persist(this);
 		this.scene.stop('Hud');
 		hudStore.set({ hud: null });
@@ -1659,7 +1662,9 @@ export class GameScene extends Phaser.Scene {
 					kind: 'hero' as const,
 					hero: hero as 'bob' | 'lucia',
 				})),
-				...fresh.map((def) => ({ kind: 'achievement' as const, def })),
+				...fresh
+					.filter((d) => !demoHidesAchievement(d))
+					.map((def) => ({ kind: 'achievement' as const, def })),
 			],
 		});
 	}

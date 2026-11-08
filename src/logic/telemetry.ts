@@ -10,7 +10,7 @@ import { DANGER_LEVELS, type Danger } from '../data/difficulty';
  */
 export const TELEMETRY_LIMIT = 200;
 
-export type RunEndCause = 'death' | 'bossTimeout' | 'quit';
+export type RunEndCause = 'death' | 'bossTimeout' | 'quit' | 'demoWin';
 export type TelemetrySource = 'player' | 'sim' | 'bot';
 
 export interface RunEndEvent {
@@ -60,7 +60,7 @@ function isRunEnd(v: unknown): v is RunEndEvent {
 		typeof e.round === 'number' &&
 		Array.isArray(e.weapons) &&
 		e.weapons.every((w) => typeof w === 'string') &&
-		['death', 'bossTimeout', 'quit'].includes(e.cause as string) &&
+		['death', 'bossTimeout', 'quit', 'demoWin'].includes(e.cause as string) &&
 		typeof e.durationS === 'number'
 	);
 }

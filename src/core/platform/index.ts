@@ -24,3 +24,8 @@ export function platform(): Platform {
 export function setPlatform(p: Platform | undefined): void {
 	current = p;
 }
+
+/** Tells the platform (Steam on Electron, no-op on the web) about newly earned achievements. */
+export function reportAchievements(defs: readonly { id: string }[]): void {
+	for (const d of defs) platform().achievements.unlock(d.id);
+}

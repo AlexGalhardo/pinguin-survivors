@@ -8,7 +8,7 @@ import { GAMBIT_CONDITIONS, POTION_PRICES, POTION_TYPES } from '../data/potions'
 import { UPGRADES } from '../data/upgrades';
 import { LANGS, setLang } from '../i18n';
 import { achievementProgress, availablePoints, buyExtra, extraLevel } from '../logic/achievements';
-import { demoAllowsHero, demoDanger } from '../logic/demo';
+import { demoAllowsHero, demoDanger, demoHidesAchievement } from '../logic/demo';
 import { maxSelectableDanger } from '../logic/difficulty';
 import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/keybinds';
 import { freePoints, xpToNext } from '../logic/progression';
@@ -115,6 +115,7 @@ function heroSelect(save: SaveData): MenuView {
 			heroes: HERO_IDS.map((id) => ({
 				id,
 				unlocked: save.heroes[id].unlocked && demoAllowsHero(id),
+				demoLocked: !demoAllowsHero(id),
 				level: save.heroes[id].level,
 				bestRound: save.progress.hero[id].bestRound,
 				maxDanger: demoDanger(maxSelectableDanger(save, id)),
@@ -365,7 +366,8 @@ function controls(save: SaveData): MenuView {
 function achievements(save: SaveData): MenuView {
 	const unlockedAt = (id: string): number => save.achievements.unlocked[id] ?? 0;
 	// Unlocked first (newest first), then the closest ones to completion.
-	const sorted = [...ACHIEVEMENTS].sort((a, b) => {
+	const visible = ACHIEVEMENTS.filter((a) => !demoHidesAchievement(a));
+	const sorted = [...visible].sort((a, b) => {
 		const ua = unlockedAt(a.id);
 		const ub = unlockedAt(b.id);
 		if (ua || ub) return ub - ua;
@@ -375,7 +377,7 @@ function achievements(save: SaveData): MenuView {
 		screen: 'achievements',
 		data: {
 			done: Object.keys(save.achievements.unlocked).length,
-			total: ACHIEVEMENTS.length,
+			total: visible.length,
 			points: availablePoints(save.achievements),
 			rows: sorted.map((def) => ({
 				id: def.id,

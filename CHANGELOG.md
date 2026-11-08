@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- The React menus draw the Jack or Bob key art behind them (integer pixel scale, darkened for readability).
+- Earned achievements are reported to the platform (Steam on desktop, no-op on the web); the demo hides achievements and heroes outside its scope and logs a demo win as `demoWin`.
+
 - Windows desktop shell (`apps/desktop/`, SDD-007): Electron 45.2.3 with a frameless fullscreen window, `window.platform` bridge (atomic `save.json`, export dialog, Steam overlay links), steamworks.js 0.4.0 when an App ID exists, `bun run build:desktop[:demo]` and a manual `desktop.yml` workflow.
 
 - Demo rules in game: Jack only, rounds 1–10, Danger up to 1, and the DemoEnd screen with the wishlist button; `bun run e2e -- --demo`.

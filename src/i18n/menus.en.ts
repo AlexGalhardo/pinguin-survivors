@@ -5,4 +5,8 @@ export const menusEn = {
 	'select.weapon': 'Starting weapon: {name}',
 	'select.play': 'START RUN',
 	'hero.condition': 'Change condition',
+	'touch.stick': 'Move stick',
+	'touch.super': 'Superpower',
+	'touch.speed': 'Game speed',
+	'touch.pause': 'Pause',
 } as const;

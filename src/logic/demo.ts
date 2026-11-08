@@ -1,4 +1,5 @@
 import type { HeroId } from '../config/constants';
+import type { AchievementDef } from '../data/achievements';
 import { DEMO, type DemoConfig } from '../data/demo';
 import type { Danger } from '../data/difficulty';
 
@@ -39,4 +40,31 @@ export function demoEndReason(
 	if (!demo.enabled) return null;
 	if (state.died) return 'lost';
 	return state.cleared && round >= demo.maxRound ? 'won' : null;
+}
+
+/** Feats that need a boss beyond the demo's last round. */
+const FEATS_BEYOND_DEMO = new Set(['unlockLucia', 'bossBiome2', 'bossBiome3']);
+
+/**
+ * Achievements the demo cannot reach (SDD-006 RF-04): rounds past `maxRound`, Danger wins
+ * (they need the round 20 boss), later biomes and heroes the demo does not offer.
+ */
+export function demoHidesAchievement(def: AchievementDef, demo: DemoConfig = DEMO): boolean {
+	if (!demo.enabled) return false;
+	if (def.hero && !demoAllowsHero(def.hero, demo)) return true;
+	const c = def.condition;
+	switch (c.kind) {
+		case 'runBest':
+			return c.stat === 'maxRound' && c.value > demo.maxRound;
+		case 'hero':
+			return (
+				(c.stat === 'bestRound' && c.value > demo.maxRound) || c.stat === 'dangerUnlocked'
+			);
+		case 'allHeroesStat':
+			return c.stat === 'dangerUnlocked';
+		case 'feat':
+			return FEATS_BEYOND_DEMO.has(c.feat);
+		default:
+			return false;
+	}
 }

@@ -9,6 +9,8 @@ import { AdjustRow, MenuScreen } from './MenuScreen';
 export interface HeroSelectHero {
 	id: HeroId;
 	unlocked: boolean;
+	/** Not playable in the demo build: shows "available in the full game". */
+	demoLocked?: boolean;
 	level: number;
 	bestRound: number;
 	/** Highest Danger the hero can pick (`maxSelectableDanger`). */
@@ -92,7 +94,9 @@ export function HeroSelect({
 							>
 								{h.unlocked
 									? `${t('select.level', { n: h.level })} · ${t('select.best', { n: h.bestRound })}`
-									: `${t('select.locked')}${hint ? ` · ${t(hint)}` : ''}`}
+									: h.demoLocked
+										? t('demo.fullGame')
+										: `${t('select.locked')}${hint ? ` · ${t(hint)}` : ''}`}
 							</span>
 						</Btn>
 					);

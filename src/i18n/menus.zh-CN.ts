@@ -5,4 +5,8 @@ export const menusZhCN = {
 	'select.weapon': '初始武器：{name}',
 	'select.play': '开始对局',
 	'hero.condition': '更改条件',
+	'touch.stick': '移动摇杆',
+	'touch.super': '超能力',
+	'touch.speed': '游戏速度',
+	'touch.pause': '暂停',
 } as const;

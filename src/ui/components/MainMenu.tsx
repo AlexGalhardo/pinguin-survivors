@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import { t } from '../../i18n';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
+import { MenuBackground } from './MenuBackground';
 
 export interface MainMenuData {
 	pearls: number;
@@ -45,8 +46,9 @@ export function MainMenu({
 		{ id: 'settings', label: t('menu.settings'), run: actions.settings },
 	];
 	return (
-		<FocusScope className="fixed inset-0 flex items-center bg-night/40 pl-[8vw] font-body text-[clamp(0.9rem,2vh,1.25rem)] text-text-light">
-			<div className="flex w-[min(24rem,80vw)] flex-col gap-2 rounded border border-snow-dark bg-night/80 p-4">
+		<FocusScope className="fixed inset-0 flex items-center bg-night pl-[8vw] font-body text-[clamp(0.9rem,2vh,1.25rem)] text-text-light">
+			<MenuBackground />
+			<div className="relative flex w-[min(24rem,80vw)] flex-col gap-2 rounded border border-snow-dark bg-night/80 p-4">
 				<h1 className="text-center font-title text-[2.2em] leading-none font-bold">
 					{t('game.title')}
 				</h1>

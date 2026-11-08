@@ -1,6 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
+import { MenuBackground } from './MenuBackground';
 
 /** Shared frame of the menu screens: title, scrollable body, Esc/B goes back. */
 export function MenuScreen(props: {
@@ -13,11 +14,12 @@ export function MenuScreen(props: {
 	return (
 		<FocusScope
 			onBack={props.onBack}
-			className="fixed inset-0 flex flex-col items-center gap-[2vh] overflow-hidden bg-night/95 px-[3vw] py-[3vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light"
+			className="fixed inset-0 flex flex-col items-center gap-[2vh] overflow-hidden bg-night px-[3vw] py-[3vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light"
 		>
-			<h1 className="font-title text-[2em] font-bold">{props.title}</h1>
+			<MenuBackground />
+			<h1 className="relative font-title text-[2em] font-bold">{props.title}</h1>
 			<div
-				className={`flex min-h-0 w-full flex-1 flex-col items-center gap-2 overflow-y-auto ${props.wide ? 'max-w-[90rem]' : 'max-w-[44rem]'}`}
+				className={`relative flex min-h-0 w-full flex-1 flex-col items-center gap-2 overflow-y-auto ${props.wide ? 'max-w-[90rem]' : 'max-w-[44rem]'}`}
 			>
 				{props.children}
 			</div>

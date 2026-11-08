@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { ACHIEVEMENTS } from '../src/data/achievements';
 import { BUILD_TAG, DEMO, type DemoConfig } from '../src/data/demo';
 import {
 	demoAllowsDanger,
@@ -7,6 +8,7 @@ import {
 	demoDanger,
 	demoEndReason,
 	demoHero,
+	demoHidesAchievement,
 } from '../src/logic/demo';
 
 const on: DemoConfig = { enabled: true, maxRound: 10, heroes: ['jack'], maxDanger: 1 };
@@ -48,5 +50,27 @@ describe('demo gating (SDD-006)', () => {
 	test('tests run as the full build', () => {
 		expect(DEMO.enabled).toBe(false);
 		expect(BUILD_TAG).toBe('full-build');
+	});
+});
+
+describe('demo achievements (SDD-006 RF-04)', () => {
+	const hidden = (id: string): boolean =>
+		demoHidesAchievement(
+			ACHIEVEMENTS.find((a) => a.id === id) as (typeof ACHIEVEMENTS)[number],
+			on,
+		);
+
+	test('rounds past 10, Danger wins and other heroes are hidden in the demo', () => {
+		expect(hidden('round.2')).toBe(false);
+		expect(hidden('round.4')).toBe(true);
+		expect(hidden('heroRound.jack.2')).toBe(true);
+		expect(hidden('dangerWin.jack.1')).toBe(true);
+		expect(hidden('heroLevel.bob.1')).toBe(true);
+		expect(hidden('kills.1')).toBe(false);
+		expect(hidden('feat.bossBiome2')).toBe(true);
+	});
+
+	test('nothing is hidden in the full game', () => {
+		expect(ACHIEVEMENTS.some((a) => demoHidesAchievement(a, off))).toBe(false);
 	});
 });
