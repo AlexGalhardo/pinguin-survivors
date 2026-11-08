@@ -1,9 +1,12 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../config/palette';
-import { getSave } from '../core/context';
-import { playMusic } from '../core/music';
+import { getParams, getSave, setRunDanger, setRunHero, setRunWeapon } from '../core/context';
+import { playMusic, refreshMusicVolume } from '../core/music';
+import type { WeaponId } from '../data/weapons';
 import { t } from '../i18n';
 import { availablePoints } from '../logic/achievements';
+import { bindMenuCommands } from '../ui/commands';
+import { uiStore } from '../ui/store';
 import { queueResume, type RunResume } from './GameScene';
 import { MenuBackground } from './ui-phaser/MenuBackground';
 import { MenuList } from './ui-phaser/MenuList';
@@ -20,6 +23,30 @@ export class MainMenuScene extends Phaser.Scene {
 	create(): void {
 		const save = getSave(this);
 		playMusic(this, 'music.menu');
+		// The React menus (?reactUi=1) drive the run start through these commands.
+		bindMenuCommands({
+			startRun: ({ hero, danger, weapon }) => {
+				setRunHero(this.game, hero);
+				setRunDanger(this.game, danger);
+				// GameScene only accepts it if it is one of the hero's starting weapons.
+				setRunWeapon(this.game, weapon as WeaponId);
+				this.scene.start('Game');
+			},
+			continueRun: () => {
+				if (!save.activeRun) return;
+				queueResume(
+					this.game,
+					structuredClone(save.activeRun.state) as unknown as RunResume,
+				);
+				this.scene.start('Game');
+			},
+			refreshAudio: () => refreshMusicVolume(this),
+			toggleFullscreen: () => this.scale.toggleFullscreen(),
+		});
+		if (getParams(this).reactUi) {
+			uiStore.set({ screen: 'main-menu' });
+			return;
+		}
 		const background = new MenuBackground(this);
 		const panel = this.add
 			.rectangle(0, 0, PANEL_W, 150, 0x0b0e14, 0.72)

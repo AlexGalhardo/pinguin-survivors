@@ -3,7 +3,7 @@
 interface ImportMetaEnv {
 	/** "true" mutes every sound (set in .env). */
 	readonly SOUND_MUTED?: string;
-	/** "true" builds the Steam demo (SDD-007). */
+	/** "1" or "true" builds the demo (SDD-006). */
 	readonly VITE_DEMO?: string;
 }
 

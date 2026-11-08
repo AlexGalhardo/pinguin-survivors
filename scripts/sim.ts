@@ -1,8 +1,9 @@
 // Balance table from the headless model (PLAN 2.6/3.2): death round per hero × level.
-// Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]] [--danger 0-5]  (--rounds prints damage taken per round)
+// Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]] [--danger 0-5] [--jsonl file [runs]]  (--rounds prints damage taken per round)
 import { HERO_IDS } from '../src/config/constants';
-import type { Danger } from '../src/data/difficulty';
+import { DANGER_LEVELS, type Danger } from '../src/data/difficulty';
 import { STARTING_WEAPONS } from '../src/data/unlocks';
+import { UPGRADES } from '../src/data/upgrades';
 import { WEAPON_LINE_BY_ID, type WeaponId } from '../src/data/weapons';
 import { simulateMany, simulateRun } from '../src/logic/sim/run-sim';
 
@@ -76,4 +77,43 @@ if (process.argv.includes('--report')) {
 	console.log(
 		`\n#6  spent/earned ${(spent / earned).toFixed(3)}  reroll/spent ${((100 * rerolled) / spent).toFixed(1)}%`,
 	);
+}
+
+// --jsonl file [runs=30]: run-end events for scripts/balance-report.ts over hero × level × Danger.
+// Workshop profile follows the goals: L10 → all:2, L20+ → all:4 (SDD-013, A4 #2/#3).
+if (process.argv.includes('--jsonl')) {
+	const file = process.argv[process.argv.indexOf('--jsonl') + 1] as string;
+	const n = Number(process.argv[process.argv.indexOf('--jsonl') + 2]) || 30;
+	const lines: string[] = [];
+	for (const hero of HERO_IDS)
+		for (const level of [1, 10, 20])
+			for (const d of DANGER_LEVELS) {
+				const workshop = level >= 20 ? 4 : level >= 10 ? 2 : 0;
+				const upgrades = Object.fromEntries(
+					UPGRADES.map((u) => [u.id, Math.min(u.maxLevel, workshop)]),
+				);
+				for (let i = 0; i < n; i++) {
+					const r = simulateRun({ hero, level, seed: 100 + i, danger: d, upgrades });
+					lines.push(
+						JSON.stringify({
+							version: 'sim',
+							hero,
+							danger: d,
+							level,
+							round: r.round,
+							weapons: r.weapons,
+							cause: r.diedToBoss ? 'bossTimeout' : 'death',
+							durationS: Math.round(r.seconds),
+							platform: 'web',
+							source: 'sim',
+							workshop,
+							fishEarned: r.fish,
+							fishSpent: r.fishSpent,
+							fishRerolled: r.fishRerolled,
+						}),
+					);
+				}
+			}
+	await Bun.write(file, `${lines.join('\n')}\n`);
+	console.log(`${file}: ${lines.length} runs`);
 }

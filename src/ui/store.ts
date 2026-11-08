@@ -1,7 +1,8 @@
 import { useSyncExternalStore } from 'react';
+import type { MenuView } from './Router';
 
-/** Screens the React overlay can show; `none` renders nothing (T3.x adds the real ones). */
-export type UiScreen = 'none';
+/** Screens the React overlay can show: a menu screen or `none` (in-run overlays have their own stores). */
+export type UiScreen = 'none' | MenuView['screen'];
 
 export interface UiState {
 	screen: UiScreen;

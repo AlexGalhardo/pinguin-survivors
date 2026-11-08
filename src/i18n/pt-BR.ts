@@ -35,16 +35,13 @@ export const ptBR: Record<I18nKey, string> = {
 	'select.unlockLucia': 'Vença o chefe do round 20',
 	'select.level': 'Nível {n}',
 	'select.best': 'Recorde: round {n}',
-	'select.start': 'ENTER  começar · ← → herói · ↑ ↓ dificuldade · ESC voltar',
-	'select.difficulty': '↑ DIFICULDADE: {v} ↓',
-	'difficulty.easy': 'FÁCIL',
-	'difficulty.normal': 'NORMAL',
-	'difficulty.hard': 'DIFÍCIL',
-	'difficulty.easy.desc':
-		'Zumbis batem 25% menos, têm 25% menos vida, são 25% mais lentos e dropam 25% menos peixe/XP',
-	'difficulty.normal.desc': 'O desafio planejado',
-	'difficulty.hard.desc':
-		'Zumbis batem 25% mais, têm 25% mais vida, são 25% mais rápidos e dropam 25% mais peixe/XP',
+	'select.start': 'ENTER  começar · ← → herói · ↑ ↓ perigo · ESC voltar',
+	'select.dangerMods':
+		'Vida ×{hp} · dano ×{dmg} · velocidade ×{speed} · drops ×{drops} · {waves} ondas extras',
+	'fx.wave.elite': 'ONDA DE ELITES!',
+	'fx.wave.horde': 'ONDA DE HORDA!',
+	'shop.nextWave.elite': 'Aviso: onda de elites no próximo round',
+	'shop.nextWave.horde': 'Aviso: onda de horda no próximo round',
 	'role.jack': 'Corpo a corpo · resistente · parry',
 	'role.bob': 'Armas de fogo · rápido · críticos',
 	'role.lucia': 'Magia · frágil · elementos',

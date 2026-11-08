@@ -3,30 +3,17 @@ import {
 	DANGER,
 	type Danger,
 	type DangerMods,
-	DIFFICULTIES,
-	DIFFICULTY,
-	type Difficulty,
-	type DifficultyMods,
 	EXTRA_WAVES,
 	MAX_DANGER_UNLOCKED,
 } from '../data/difficulty';
 import { Rng } from './rng';
 import type { SaveData } from './save';
 
-export function difficultyMods(d: Difficulty | undefined): DifficultyMods {
-	return DIFFICULTY[d ?? 'normal'];
-}
-
-/** Whole fish after the reward multiplier; fractions become a chance of one extra fish. */
-export function scaleFish(fish: number, mods: DifficultyMods, roll: number): number {
-	const raw = fish * mods.rewards;
+/** Whole drops after the Danger multiplier; fractions become a chance of one extra (`roll` in [0, 1)). */
+export function scaleDrops(count: number, mul: number, roll: number): number {
+	const raw = count * mul;
 	const whole = Math.floor(raw);
 	return whole + (roll < raw - whole ? 1 : 0);
-}
-
-export function nextDifficulty(d: Difficulty, dir: -1 | 1): Difficulty {
-	const i = DIFFICULTIES.indexOf(d);
-	return DIFFICULTIES[(i + dir + DIFFICULTIES.length) % DIFFICULTIES.length] as Difficulty;
 }
 
 export function dangerMods(d: Danger): DangerMods {

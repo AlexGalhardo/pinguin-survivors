@@ -1,0 +1,176 @@
+{
+	"version": 2,
+	"settings": {
+		"lang": "en",
+		"volume": {
+			"master": 0.8,
+			"music": 0.6,
+			"sfx": 0.8
+		},
+		"gore": "max",
+		"screenShake": true,
+		"bloomOptIn": false,
+		"numberSize": "normal",
+		"reducedFlashes": false,
+		"keys": {
+			"up": "KeyW",
+			"down": "KeyS",
+			"left": "KeyA",
+			"right": "KeyD",
+			"super": "Space",
+			"speed": "Tab",
+			"pause": "KeyP"
+		},
+		"damageNumbers": true,
+		"resolution": "auto"
+	},
+	"heroes": {
+		"jack": {
+			"unlocked": true,
+			"level": 14,
+			"xp": 220,
+			"points": {
+				"crit": 3,
+				"maxHp": 4,
+				"armor": 2
+			}
+		},
+		"bob": {
+			"unlocked": false,
+			"level": 1,
+			"xp": 0,
+			"points": {}
+		},
+		"lucia": {
+			"unlocked": false,
+			"level": 1,
+			"xp": 0,
+			"points": {}
+		}
+	},
+	"fish": 0,
+	"pearls": 96,
+	"bestRoundByDanger": {
+		"jack": [10, 10, 0, 0, 0, 0],
+		"bob": [0, 0, 0, 0, 0, 0],
+		"lucia": [0, 0, 0, 0, 0, 0]
+	},
+	"potions": {
+		"heal": 0,
+		"megaHeal": 0,
+		"shield": 0,
+		"rage": 0,
+		"antidote": 0,
+		"haste": 0
+	},
+	"gambits": [
+		{
+			"potion": null,
+			"condition": null
+		},
+		{
+			"potion": null,
+			"condition": null
+		},
+		{
+			"potion": null,
+			"condition": null
+		}
+	],
+	"upgrades": {
+		"vitality": 2,
+		"might": 1,
+		"insight": 1
+	},
+	"progress": {
+		"lifetime": {
+			"kills": 2210,
+			"elitePurpleKills": 0,
+			"eliteOrangeKills": 0,
+			"bossKills": 0,
+			"runs": 9,
+			"fishEarned": 0,
+			"cardsPicked": 0,
+			"legendaryCards": 0,
+			"fusions": 0,
+			"tierIVWeapons": 0,
+			"crits": 0,
+			"parries": 0,
+			"dodges": 0,
+			"bleedKills": 0,
+			"poisonKills": 0,
+			"fireKills": 0,
+			"iceKills": 0,
+			"earthKills": 0,
+			"energyKills": 0,
+			"potionsUsed": 0,
+			"damageDealt": 0,
+			"secondsPlayed": 0,
+			"gibs": 0
+		},
+		"hero": {
+			"jack": {
+				"exclusiveCards": 0,
+				"superUses": 0,
+				"bestRound": 10,
+				"fusedT4": 0,
+				"dangerUnlocked": 1
+			},
+			"bob": {
+				"exclusiveCards": 0,
+				"superUses": 0,
+				"bestRound": 0,
+				"fusedT4": 0,
+				"dangerUnlocked": 1
+			},
+			"lucia": {
+				"exclusiveCards": 0,
+				"superUses": 0,
+				"bestRound": 0,
+				"fusedT4": 0,
+				"dangerUnlocked": 1
+			}
+		},
+		"heroLevels": {
+			"jack": 14,
+			"bob": 1,
+			"lucia": 1
+		},
+		"runBests": {
+			"killsInRun": 410,
+			"superKillsOneCast": 0,
+			"maxRound": 10
+		},
+		"feats": []
+	},
+	"achievements": {
+		"unlocked": {
+			"kills.1": 1769000000000,
+			"runs.1": 1769000100000
+		},
+		"spent": 0,
+		"purchases": []
+	},
+	"history": [
+		{
+			"id": "demo-run-9",
+			"startedAt": 1769100000000,
+			"endedAt": 1769100900000,
+			"hero": "jack",
+			"heroLevel": 14,
+			"tier": 1,
+			"round": 10,
+			"outcome": "death",
+			"durationSec": 900,
+			"kills": 410,
+			"damageDealt": 52000,
+			"fishEarned": 120,
+			"xpEarned": 900,
+			"levelsGained": 3,
+			"secondaries": [],
+			"cards": ["damage", "maxHp"],
+			"seed": 9
+		}
+	],
+	"activeRun": null
+}

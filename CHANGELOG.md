@@ -9,12 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Danger 0–5 in game: modifiers per Danger, extra elite/horde waves with a banner and a shop warning, next Danger unlocked per hero by the round-20 boss, best round per Danger; Danger and starting weapon chosen in the hero select; `?danger=` and `?weapon=` for QA.
+- Shop offers mix weapons, gear and (from round 5) run potions; `purchase` applies each kind.
+- Demo build (`bun run build:demo`): Jack, rounds 1–10, Danger up to 1, with a bundle check; demo saves import into the full game.
+- React menus wired to the save behind `?reactUi=1` (main menu, hero select, hero screen and Workshop, settings, controls, achievements, extras, history).
+
 - `Platform` layer (SDD-007): web implementation (localStorage, `.json` export/import, performance tier) and a `window.platform` bridge for the Electron and Capacitor shells; `src/core/storage.ts` delegates to it.
 
 - End-of-round flow in game (SDD-003): round end → queued level-up cards → React shop (buy by slot, reroll, lock, sell, fuse) → next round with autosave; Fish turn into Pearls at the end of the run, and the Workshop, potions and menu wallet spend Pearls.
 
 - Level-up offers 4 cards (stats, exclusive actives and passives only), a new `harvesting` stat that multiplies end-of-round Fish, and the Workshop upgrade Insight (one card reroll per run) (SDD-003 RF-05, RF-08).
 - Danger 0–5 rules (SDD-005): HP/damage/speed/drop modifiers, seeded extra waves from Danger 2, per-hero unlock by beating the round-20 boss, best round per Danger in the save and `--danger N` in the simulation.
+
+### Removed
+
+- The old difficulty setting (`settings.difficulty`, `DIFFICULTIES`, `difficultyMods`), replaced by Danger.
 
 ## [0.0.12] - 2026-11-08
 

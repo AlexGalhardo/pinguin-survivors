@@ -44,7 +44,7 @@ const react = Number(arg('react', '0'));
 const mistakes = Number(arg('mistakes', '0'));
 /** Start round (debug `?round=`): cards are not granted, so use it for boss checks only. */
 const startRound = arg('round', '');
-const difficulty = arg('difficulty', 'normal');
+const danger = arg('danger', '1');
 /** Workshop levels: `all:3` or `vitality:5,might:3`. */
 const upgrades = parseUpgrades(arg('upgrades', ''));
 
@@ -354,7 +354,7 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 		[SAVE_KEY, saveFor(hero, level)] as const,
 	);
 	await page.goto(
-		`${url}/?skipMenu=1&hero=${hero}&seed=${seed}&difficulty=${difficulty}${startRound ? `&round=${startRound}` : ''}`,
+		`${url}/?skipMenu=1&hero=${hero}&seed=${seed}&danger=${danger}${startRound ? `&round=${startRound}` : ''}`,
 	);
 	const start = Date.now();
 	let installed = false;

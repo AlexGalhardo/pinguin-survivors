@@ -1,22 +1,32 @@
 import type { HeroId } from '../config/constants';
-import type { Danger, Difficulty } from '../data/difficulty';
+import type { Danger } from '../data/difficulty';
 import { ECONOMY, PEARLS, SHOP } from '../data/economy';
+import { GEAR } from '../data/equipment';
 import type { HeroDef } from '../data/heroes';
-import { WEAPON_LINES, WEAPON_TIERS } from '../data/weapons';
-import type { Build } from './build';
+import { POTION_TYPES, type PotionType } from '../data/potions';
+import {
+	MAX_WEAPON_SLOTS,
+	WEAPON_LINES,
+	WEAPON_TIERS,
+	type WeaponId,
+	type WeaponTier,
+} from '../data/weapons';
+import { addWeapon, type Build } from './build';
 import { type CardOffer, drawCards } from './cards';
-import type { RunGear } from './equipment';
+import { emptyGear, pickUpGear, type RunGear } from './equipment';
 import { roundEndFish } from './progression';
 import type { Rng } from './rng';
 import { cycle, isBossRound, roundDuration } from './round';
 import type { RunCounters, SaveData } from './save';
 import {
+	buy,
 	type Offer,
 	rollOffers,
 	type ShopCandidate,
 	type ShopContext,
 	type ShopState,
 } from './shop';
+import type { PlayerStats } from './stats';
 
 export type RunPhase = 'round' | 'cards' | 'shop';
 
@@ -24,9 +34,7 @@ export type RunPhase = 'round' | 'cards' | 'shop';
 export interface RunState {
 	hero: HeroId;
 	tier: 1 | 2 | 3;
-	/** Chosen before the run (P-62); missing in snapshots older than the feature = normal. */
-	difficulty?: Difficulty;
-	/** Danger 0–5 of the run (ADR-008); replaces `difficulty`. */
+	/** Danger 0–5 of the run (ADR-008), chosen before the run. */
 	danger: Danger;
 	seed: number;
 	round: number;
@@ -56,6 +64,8 @@ export interface RunState {
 	pearlsEarned: number;
 	/** Level-up card rerolls left this run (from the Workshop `insight` upgrade). */
 	cardRerollsLeft: number;
+	/** Potions bought in the shop this run, waiting for the "round start" gambit. */
+	shopPotions: Partial<Record<PotionType, number>>;
 }
 
 export function createRunState(
@@ -64,7 +74,6 @@ export function createRunState(
 		seed: number;
 		round?: number;
 		tier?: 1 | 2 | 3;
-		difficulty?: Difficulty;
 		danger?: Danger;
 		cardRerolls?: number;
 	},
@@ -73,7 +82,6 @@ export function createRunState(
 	return {
 		hero: hero.id,
 		tier: opts.tier ?? 1,
-		difficulty: opts.difficulty ?? 'normal',
 		danger: opts.danger ?? 1,
 		seed: opts.seed,
 		round,
@@ -92,6 +100,7 @@ export function createRunState(
 		shop: null,
 		lockedOffers: [],
 		pearlsEarned: 0,
+		shopPotions: {},
 		cardRerollsLeft: opts.cardRerolls ?? 0,
 	};
 }
@@ -142,6 +151,57 @@ export function weaponCandidates(hero: HeroId): ShopCandidate[] {
 			}),
 		),
 	);
+}
+
+/** Equipment for sale: rarity (common, rare, legendary) is the tier, so prices follow `gearPrices`. */
+export function gearCandidates(): ShopCandidate[] {
+	return GEAR.map((g) => ({
+		kind: 'gear',
+		id: g.id,
+		tier: ['common', 'rare', 'legendary'].indexOf(g.rarity) + 1,
+		sets: [],
+	}));
+}
+
+/** Run potions, sold from `SHOP.potionsFromRound` on (RF-09); empty before that. */
+export function potionCandidates(round: number): ShopCandidate[] {
+	if (round < SHOP.potionsFromRound) return [];
+	return POTION_TYPES.map((id) => ({ kind: 'potion', id, tier: 1, sets: [] }));
+}
+
+/** Everything the shop of `round` can offer a hero (weapons, gear and, later, potions). */
+export function shopPool(hero: HeroId, round: number): ShopCandidate[] {
+	return [...weaponCandidates(hero), ...gearCandidates(), ...potionCandidates(round)];
+}
+
+/**
+ * Buys the offer in slot `index` and applies it to the run: weapons go to a free slot (no free
+ * slot → refused, nothing debited; fuse or sell first), gear to the bag (worn at once if the slot
+ * is free), potions to `run.shopPotions`. Returns the offer, or null when refused.
+ */
+export function purchase(
+	run: RunState,
+	index: number,
+	ctx: { build: Build; stats: PlayerStats },
+): Offer | null {
+	const shop = run.shop;
+	const offer = shop?.offers[index];
+	if (!shop || !offer) return null;
+	if (offer.kind === 'weapon' && ctx.build.weapons.length >= MAX_WEAPON_SLOTS) return null;
+	const bought = buy(shop, run.fish, index);
+	if (!bought) return null;
+	run.shop = bought.state;
+	run.fish = bought.fish;
+	if (offer.kind === 'weapon')
+		addWeapon(ctx.build, offer.id as WeaponId, offer.tier as WeaponTier);
+	else if (offer.kind === 'gear') {
+		run.gear = run.gear ?? emptyGear();
+		pickUpGear(run.gear, ctx.stats, offer.id);
+	} else if (offer.kind === 'potion') {
+		const id = offer.id as PotionType;
+		run.shopPotions[id] = (run.shopPotions[id] ?? 0) + 1;
+	}
+	return offer;
 }
 
 export interface ShopRoll {

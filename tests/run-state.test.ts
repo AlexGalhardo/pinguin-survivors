@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { HEROES } from '../src/data/heroes';
 import { WEAPON_LINES } from '../src/data/weapons';
-import { emptyBuild } from '../src/logic/build';
+import { addWeapon, emptyBuild } from '../src/logic/build';
 import { Rng } from '../src/logic/rng';
 import { roundDuration } from '../src/logic/round';
 import {
@@ -9,19 +9,24 @@ import {
 	damageHero,
 	endRound,
 	finishRun,
+	gearCandidates,
 	healHero,
 	leaveShop,
+	potionCandidates,
+	purchase,
 	queueLevelUps,
 	rerollCards,
 	resolveLevelUp,
 	roundClearFish,
 	roundClearPearls,
 	type ShopRoll,
+	shopPool,
 	startRound,
 	weaponCandidates,
 } from '../src/logic/run-state';
 import { defaultSave } from '../src/logic/save';
-import { lock, type Offer, type ShopState } from '../src/logic/shop';
+import { lock, type Offer, rollOffers, type ShopState } from '../src/logic/shop';
+import { baseStats } from '../src/logic/stats';
 
 test('run starts with the hero profile and round timer', () => {
 	const s = createRunState(HEROES.lucia, { seed: 5, round: 3 });
@@ -125,5 +130,72 @@ describe('level-up card rerolls', () => {
 
 	test('harvesting multiplies the Fish of a round', () => {
 		expect(roundClearFish(4, 0.5)).toBe(Math.floor(4 * 1.5));
+	});
+});
+
+describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
+	test('gear candidates carry rarity as tier; potions only from round 5', () => {
+		const gear = gearCandidates();
+		expect(gear.length).toBeGreaterThan(0);
+		expect(new Set(gear.map((g) => g.tier))).toEqual(new Set([1, 2, 3]));
+		expect(potionCandidates(4)).toEqual([]);
+		expect(potionCandidates(5).map((p) => p.id)).toContain('heal');
+	});
+
+	test('mixed pool offers weapons, gear and potions over many seeds', () => {
+		const kinds = new Set<string>();
+		for (let seed = 0; seed < 200; seed++) {
+			const offers = rollOffers(
+				new Rng(seed),
+				8,
+				{ hero: 'jack', buildSets: [], luck: 0 },
+				shopPool('jack', 8),
+				[],
+			);
+			expect(new Set(offers.map((o) => o.id)).size).toBe(4);
+			for (const o of offers) kinds.add(o.kind);
+		}
+		expect(kinds).toEqual(new Set(['weapon', 'gear', 'potion']));
+		for (let seed = 0; seed < 50; seed++)
+			for (const o of rollOffers(
+				new Rng(seed),
+				2,
+				{ hero: 'jack', buildSets: [], luck: 0 },
+				shopPool('jack', 2),
+				[],
+			))
+				expect(o.kind).not.toBe('potion');
+	});
+
+	test('purchase debits Fish and applies weapon, gear and potion; refuses a full bar', () => {
+		const stats = baseStats(HEROES.jack);
+		const build = emptyBuild();
+		const s = createRunState(HEROES.jack, { seed: 1 });
+		s.round = 6;
+		s.fish = 1000;
+		s.shop = {
+			offers: [
+				{ kind: 'weapon', id: 'machete', tier: 1, price: 20 },
+				{ kind: 'gear', id: 'helmet.wool', tier: 1, price: 24 },
+				{ kind: 'potion', id: 'heal', tier: 1, price: 15 },
+				{ kind: 'weapon', id: 'hammer', tier: 1, price: 20 },
+			],
+			locks: [false, false, false, false],
+			rerolls: 0,
+		};
+		expect(purchase(s, 0, { build, stats })?.id).toBe('machete');
+		expect(build.weapons).toEqual([{ id: 'machete', tier: 1 }]);
+		const hp = stats.maxHp;
+		purchase(s, 1, { build, stats });
+		expect(s.gear?.equipped.helmet).toBe('helmet.wool');
+		expect(stats.maxHp).toBeGreaterThan(hp);
+		purchase(s, 2, { build, stats });
+		expect(s.shopPotions.heal).toBe(1);
+		expect(s.fish).toBe(1000 - 20 - 24 - 15);
+		for (let i = 0; i < 5; i++) addWeapon(build, 'knives', 1);
+		const before = s.fish;
+		expect(purchase(s, 3, { build, stats })).toBeNull();
+		expect(s.fish).toBe(before);
+		expect(purchase(s, 0, { build, stats })).toBeNull();
 	});
 });

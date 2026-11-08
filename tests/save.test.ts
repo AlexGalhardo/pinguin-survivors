@@ -10,6 +10,7 @@ import {
 	SAVE_VERSION,
 	serializeSave,
 } from '../src/logic/save';
+import demoFixture from './fixtures/save-demo.json';
 import v1Fixture from './fixtures/save-v1.json';
 
 function run(over: Partial<RunRecord> = {}): RunRecord {
@@ -171,5 +172,28 @@ describe('liveProgress', () => {
 		expect(p.heroLevels.bob).toBe(4);
 		expect(s.progress.lifetime.kills).toBe(90);
 		expect(s.progress.lifetime.runs).toBe(0);
+	});
+});
+
+describe('demo save → full game (SDD-006 A4)', () => {
+	test('a save written by the demo imports without error and keeps Jack progress', () => {
+		const raw = JSON.stringify(demoFixture);
+		const s = parseSave(raw);
+		expect(s.version).toBe(SAVE_VERSION);
+		expect(s.heroes.jack).toMatchObject({ unlocked: true, level: 14, xp: 220 });
+		expect(s.heroes.jack.points).toEqual({ crit: 3, maxHp: 4, armor: 2 });
+		expect(s.heroes.bob.unlocked).toBe(false);
+		expect(s.pearls).toBe(96);
+		expect(s.upgrades.insight).toBe(1);
+		expect(s.achievements.unlocked['kills.1']).toBe(1769000000000);
+		expect(s.progress.hero.jack.bestRound).toBe(10);
+		expect(s.bestRoundByDanger.jack).toEqual([10, 10, 0, 0, 0, 0]);
+		expect(s.history).toHaveLength(1);
+	});
+
+	test('re-importing is stable (idempotent)', () => {
+		const once = parseSave(JSON.stringify(demoFixture));
+		expect(parseSave(serializeSave(once))).toEqual(once);
+		expect(serializeSave(once)).toBe(serializeSave(parseSave(JSON.stringify(demoFixture))));
 	});
 });

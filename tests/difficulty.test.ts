@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { DANGER, DANGER_LEVELS, EXTRA_WAVES } from '../src/data/difficulty';
-import { dangerMods, extraWaves } from '../src/logic/difficulty';
+import { dangerMods, extraWaves, scaleDrops } from '../src/logic/difficulty';
 
 describe('Danger 0-5', () => {
 	test('D1 is the baseline and every stat grows with the Danger', () => {
@@ -33,5 +33,14 @@ describe('Danger 0-5', () => {
 		expect(extraWaves(42, 5)).toEqual(extraWaves(42, 5));
 		const rounds = extraWaves(7, 4).map((w) => w.round);
 		expect(rounds).toEqual([...rounds].sort((a, b) => a - b));
+	});
+});
+
+describe('scaleDrops', () => {
+	test('whole part always drops; the fraction is a chance of one more', () => {
+		expect(scaleDrops(1, 1.5, 0.9)).toBe(1);
+		expect(scaleDrops(1, 1.5, 0.1)).toBe(2);
+		expect(scaleDrops(1, 0.9, 0.95)).toBe(0);
+		expect(scaleDrops(1, 0.9, 0.5)).toBe(1);
 	});
 });

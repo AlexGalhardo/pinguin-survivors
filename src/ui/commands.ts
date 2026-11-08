@@ -1,8 +1,7 @@
-import type { HeroId } from '../config/constants';
+import type { StartRunRequest } from './components/HeroSelect';
 
 /** UI to game bridge (SDD-004 RF-03). The game binds the implementation; the UI never imports the game engine. */
 export interface GameCommands {
-	startRun: (hero: HeroId, weapon: string) => void;
 	pickCard: (cardId: string) => void;
 	/** Shop: buy the offer in shop slot `index` (see `ShopOfferView.index`). */
 	buy: (index: number) => void;
@@ -28,7 +27,6 @@ export function bindCommands(next: Partial<GameCommands>): void {
 
 /** Commands not bound yet are ignored, so UI built ahead of the game never throws. */
 export const commands: GameCommands = {
-	startRun: (hero, weapon) => impl.startRun?.(hero, weapon),
 	pickCard: (id) => impl.pickCard?.(id),
 	buy: (index) => impl.buy?.(index),
 	reroll: () => impl.reroll?.(),
@@ -38,4 +36,31 @@ export const commands: GameCommands = {
 	closeShop: () => impl.closeShop?.(),
 	pause: () => impl.pause?.(),
 	resume: () => impl.resume?.(),
+};
+
+/**
+ * Menu-level commands the React menus need from the game. Bound once at boot (not per scene),
+ * so they survive scene changes, unlike the in-run commands above.
+ */
+export interface MenuCommands {
+	/** Starts a run; the game reads hero, danger and starting weapon from the request. */
+	startRun: (request: StartRunRequest) => void;
+	/** Resumes the saved run (`save.activeRun`). */
+	continueRun: () => void;
+	/** Settings volume changed: re-apply music and sfx volume. */
+	refreshAudio: () => void;
+	toggleFullscreen: () => void;
+}
+
+let menuImpl: Partial<MenuCommands> = {};
+
+export function bindMenuCommands(next: Partial<MenuCommands>): void {
+	menuImpl = next;
+}
+
+export const menuCommands: MenuCommands = {
+	startRun: (request) => menuImpl.startRun?.(request),
+	continueRun: () => menuImpl.continueRun?.(),
+	refreshAudio: () => menuImpl.refreshAudio?.(),
+	toggleFullscreen: () => menuImpl.toggleFullscreen?.(),
 };

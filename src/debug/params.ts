@@ -1,6 +1,6 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
 import { ARENA } from '../data/arena';
-import { DIFFICULTIES, type Difficulty } from '../data/difficulty';
+import { DANGER_LEVELS, type Danger } from '../data/difficulty';
 import {
 	MAX_WEAPON_SLOTS,
 	WEAPON_LINE_BY_ID,
@@ -9,13 +9,16 @@ import {
 } from '../data/weapons';
 import type { WeaponInstance } from '../logic/build';
 
-/** Debug/test options from the URL, e.g. ?skipMenu=1&hero=bob&round=10&seed=1&debug=1&god=1&tier=2&difficulty=hard&arena=40 */
+/** Debug/test options from the URL, e.g. ?skipMenu=1&hero=bob&round=10&seed=1&debug=1&god=1&tier=2&danger=5&arena=40&weapon=hammer */
 export interface DebugParams {
 	seed?: number;
 	hero?: HeroId;
 	round?: number;
 	tier?: 1 | 2 | 3;
-	difficulty?: Difficulty;
+	/** Danger 0-5 of the run (ADR-008). */
+	danger?: Danger;
+	/** Starting weapon (QA); `weapons` forces the whole bar. */
+	weapon?: WeaponId;
 	/** Forces the arena side in tiles (QA). */
 	arena?: number;
 	/** Forces the run's weapons (QA): `?weapons=machete:2,knives`, up to 6 slots. */
@@ -25,6 +28,8 @@ export interface DebugParams {
 	skipMenu: boolean;
 	/** Shows the React HUD (SDD-004 T3.3) next to the Phaser one until T3.7 replaces it. */
 	uiHud: boolean;
+	/** Shows the React menus (SDD-004 T3.6) instead of the Phaser ones. */
+	reactUi: boolean;
 }
 
 function flag(value: string | null): boolean {
@@ -54,19 +59,22 @@ export function parseDebugParams(search: string): DebugParams {
 	const hero = p.get('hero');
 	const round = nonNegativeInt(p.get('round'));
 	const tier = nonNegativeInt(p.get('tier'));
-	const difficulty = p.get('difficulty');
+	const danger = nonNegativeInt(p.get('danger'));
+	const weapon = p.get('weapon');
 	const arena = nonNegativeInt(p.get('arena'));
 	return {
 		seed: nonNegativeInt(p.get('seed')),
 		hero: HERO_IDS.find((h) => h === hero),
 		round: round !== undefined && round >= 1 ? round : undefined,
 		tier: tier === 1 || tier === 2 || tier === 3 ? tier : undefined,
-		difficulty: DIFFICULTIES.find((d) => d === difficulty),
+		danger: DANGER_LEVELS.find((d) => d === danger),
+		weapon: weapon && weapon in WEAPON_LINE_BY_ID ? (weapon as WeaponId) : undefined,
 		arena: arena !== undefined && arena >= 1 ? Math.min(arena, ARENA.maxSide) : undefined,
 		weapons: weaponList(p.get('weapons')),
 		god: flag(p.get('god')),
 		debug: flag(p.get('debug')),
 		skipMenu: flag(p.get('skipMenu')),
 		uiHud: flag(p.get('uiHud')),
+		reactUi: flag(p.get('reactUi')),
 	};
 }

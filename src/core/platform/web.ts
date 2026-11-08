@@ -1,3 +1,4 @@
+import { BUILD_TAG, isDemoBuild } from '../../data/demo';
 import type { Platform, PlatformTier } from './types';
 
 /** Effects tier from the device: weak CPU or little memory → low (SDD-007 RF-05). */
@@ -42,7 +43,8 @@ export function createWebPlatform(deps: WebDeps = {}): Platform {
 	return {
 		kind: 'web',
 		tier: deps.tier ?? detectTier(nav?.hardwareConcurrency, nav?.deviceMemory),
-		isDemo: deps.isDemo ?? import.meta.env?.VITE_DEMO === 'true',
+		isDemo: deps.isDemo ?? isDemoBuild(),
+		buildTag: BUILD_TAG,
 		cloud: false,
 		save: {
 			load(key) {

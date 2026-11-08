@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { MAX_ENEMIES } from '../config/constants';
 import { ARENA } from '../data/arena';
-import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
+import { DANGER, type DangerMods, EXTRA_WAVES } from '../data/difficulty';
 import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { Enemy } from '../entities/Enemy';
 import {
@@ -52,8 +52,10 @@ export class EnemySystem {
 	private readonly scratch: Enemy[] = [];
 	private spawnBudget = 0;
 	boss: Enemy | null = null;
-	/** Difficulty multipliers on enemy HP, damage and speed (P-62). */
-	mods: DifficultyMods = DIFFICULTY.normal;
+	/** Danger multipliers on enemy HP, damage and speed (ADR-008). */
+	mods: DangerMods = DANGER[1];
+	/** Extra wave of the current round (SDD-005 RF-02): elites ×3 or spawn rate ×2. */
+	wave: 'elite' | 'horde' | null = null;
 	/** Solid decorations walkers slide around (flyers and bosses ignore them). */
 	obstacles: ObstacleField | null = null;
 	/** Arena walls: every enemy, flyers and boss included, stays inside (RF-03). */
@@ -83,7 +85,7 @@ export class EnemySystem {
 			x,
 			y,
 			hpMul(this.round) * m.hp,
-			dmgMul(this.round) * m.damage,
+			dmgMul(this.round) * m.dmg,
 			null,
 			m.speed * speedMul(this.round),
 		);
@@ -105,7 +107,7 @@ export class EnemySystem {
 				p.x,
 				p.y,
 				bossHpMul(round) * m.hp,
-				dmgMul(round) * m.damage,
+				dmgMul(round) * m.dmg,
 				null,
 				m.speed * speedMul(round),
 			);
@@ -115,13 +117,17 @@ export class EnemySystem {
 	update(dt: number, round: number, hero: Vec2, view: Bounds): void {
 		this.round = round;
 		this.pending.update(dt, (p) => this.materialize(p.x, p.y, p.data, view, true));
-		this.spawnBudget += spawnRate(round) * dt;
+		this.spawnBudget +=
+			spawnRate(round) * (this.wave === 'horde' ? EXTRA_WAVES.hordeMul : 1) * dt;
 		while (this.spawnBudget >= 1) {
 			this.spawnBudget -= 1;
 			if (this.active.length + this.pending.size >= MAX_ENEMIES || !this.bounds) break;
 			const data = {
 				def: pickEnemy(this.rng, ENEMY_LIST, round),
-				elite: rollElite(round, this.rng.next()),
+				elite: rollElite(
+					round,
+					this.rng.next() / (this.wave === 'elite' ? EXTRA_WAVES.eliteMul : 1),
+				),
 			};
 			const p = spawnRing(this.bounds, view, this.rng, 1)[0] as SpawnPoint;
 			if (p.telegraph) {
@@ -198,7 +204,7 @@ export class EnemySystem {
 			x,
 			y,
 			hpMul(this.round) * this.mods.hp,
-			dmgMul(this.round) * this.mods.damage,
+			dmgMul(this.round) * this.mods.dmg,
 			data.elite,
 			this.mods.speed * speedMul(this.round),
 		);

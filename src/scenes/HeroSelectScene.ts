@@ -2,9 +2,11 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { HERO_IDS, type HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
-import { getSave, persist, setRunHero } from '../core/context';
+import { getRunDanger, getSave, setRunDanger, setRunHero } from '../core/context';
+import type { Danger } from '../data/difficulty';
+import { DANGER } from '../data/difficulty';
 import { type I18nKey, t } from '../i18n';
-import { nextDifficulty } from '../logic/difficulty';
+import { maxSelectableDanger } from '../logic/difficulty';
 import { setupScreen, text } from './ui-phaser/screen';
 
 const UNLOCK_HINT: Record<HeroId, I18nKey | null> = {
@@ -16,6 +18,7 @@ const UNLOCK_HINT: Record<HeroId, I18nKey | null> = {
 /** Pick one of the three penguins; locked ones show how to unlock them (P-17). */
 export class HeroSelectScene extends Phaser.Scene {
 	private index = 0;
+	private danger: Danger = 1;
 
 	constructor() {
 		super('HeroSelect');
@@ -64,18 +67,32 @@ ${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 			.setOrigin(0.5, 0);
 		const diff = this.add.text(0, 0, '', text(12, PALETTE.crit)).setOrigin(0.5, 0);
 		const diffInfo = this.add.text(0, 0, '', text(8, PALETTE.textDim, 360)).setOrigin(0.5, 0);
-		const showDifficulty = () => {
-			const d = save.settings.difficulty;
-			diff.setText(t('select.difficulty', { v: t(`difficulty.${d}` as I18nKey) }));
-			diffInfo.setText(t(`difficulty.${d}.desc` as I18nKey));
+		this.danger = getRunDanger(this) ?? 1;
+		const showDanger = () => {
+			const hero = HERO_IDS[this.index] as HeroId;
+			const max = maxSelectableDanger(save, hero);
+			this.danger = Math.min(this.danger, max) as Danger;
+			const m = DANGER[this.danger];
+			diff.setText(
+				`${t('select.danger', { n: this.danger })} · ${t('select.dangerBest', { n: save.bestRoundByDanger[hero][this.danger] ?? 0 })}`,
+			);
+			diffInfo.setText(
+				t('select.dangerMods', {
+					hp: m.hp,
+					dmg: m.dmg,
+					speed: m.speed,
+					drops: m.drops,
+					waves: m.extraWaves,
+				}),
+			);
 		};
-		const changeDifficulty = (dir: -1 | 1) => {
-			save.settings.difficulty = nextDifficulty(save.settings.difficulty, dir);
-			persist(this);
-			showDifficulty();
+		const changeDanger = (dir: -1 | 1) => {
+			const max = maxSelectableDanger(save, HERO_IDS[this.index] as HeroId);
+			this.danger = ((this.danger + dir + max + 1) % (max + 1)) as Danger;
+			showDanger();
 		};
-		showDifficulty();
-		diff.setInteractive({ useHandCursor: true }).on('pointerdown', () => changeDifficulty(1));
+		showDanger();
+		diff.setInteractive({ useHandCursor: true }).on('pointerdown', () => changeDanger(1));
 		const highlight = () =>
 			cards.forEach((c, i) => {
 				c.frame.setStrokeStyle(2, i === this.index ? PALETTE.crit : PALETTE.rarityCommon);
@@ -85,15 +102,16 @@ ${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 		const move = (d: number) => {
 			this.index = (this.index + d + cards.length) % cards.length;
 			highlight();
+			showDanger();
 		};
 		kb?.on('keydown-LEFT', () => move(-1));
 		kb?.on('keydown-A', () => move(-1));
 		kb?.on('keydown-RIGHT', () => move(1));
 		kb?.on('keydown-D', () => move(1));
-		kb?.on('keydown-UP', () => changeDifficulty(-1));
-		kb?.on('keydown-W', () => changeDifficulty(-1));
-		kb?.on('keydown-DOWN', () => changeDifficulty(1));
-		kb?.on('keydown-S', () => changeDifficulty(1));
+		kb?.on('keydown-UP', () => changeDanger(-1));
+		kb?.on('keydown-W', () => changeDanger(-1));
+		kb?.on('keydown-DOWN', () => changeDanger(1));
+		kb?.on('keydown-S', () => changeDanger(1));
 		kb?.on('keydown-ENTER', () => this.start());
 		kb?.on('keydown-SPACE', () => this.start());
 		kb?.on('keydown-ESC', () => this.scene.start('MainMenu'));
@@ -118,6 +136,7 @@ ${t('select.best', { n: save.progress.hero[hero].bestRound })}`
 			return;
 		}
 		setRunHero(this.game, hero);
+		setRunDanger(this.game, this.danger);
 		this.scene.start('Game');
 	}
 }

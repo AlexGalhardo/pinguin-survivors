@@ -8,7 +8,7 @@ import { createStore } from './store';
 export interface ShopOfferView {
 	/** Shop slot 0..3, the argument of `buy` and `lock`. */
 	index: number;
-	kind: 'weapon' | 'item' | 'gear';
+	kind: 'weapon' | 'item' | 'gear' | 'potion';
 	/** Weapon line id (translate with `weapon.<id>.name`). */
 	id: string;
 	/** Tier I..IV (gear: rarity 1..3). */
@@ -41,6 +41,8 @@ export interface ShopFusionView {
 export interface ShopView {
 	/** Round just cleared. */
 	round: number;
+	/** Extra waves of the next round, shown from Danger 2 on (`elite` or `horde`). */
+	nextWaves: ('elite' | 'horde')[];
 	fish: number;
 	/** `null` slots were bought and stay empty until the next reroll. */
 	offers: (ShopOfferView | null)[];

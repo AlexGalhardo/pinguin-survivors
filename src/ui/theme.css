@@ -8,3 +8,16 @@
 	--font-body: "Rubik", sans-serif;
 	--font-title: "Pixelify Sans", "Rubik", sans-serif;
 }
+
+/* Without preflight, text and buttons would fall back to the browser's black; give the overlay a base
+   color in the base layer so text-* utilities still override it. */
+@layer base {
+	#ui {
+		color: var(--color-text-light);
+		font-family: var(--font-body);
+	}
+
+	#ui button {
+		color: inherit;
+	}
+}

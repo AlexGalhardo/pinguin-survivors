@@ -1,26 +1,6 @@
 /**
- * Difficulty levels picked before a run (P-62). Global multipliers on top of the round scaling:
- * enemy damage, HP and speed, and the fish/XP they drop. NORMAL is the balanced baseline.
- */
-export const DIFFICULTIES = ['easy', 'normal', 'hard'] as const;
-export type Difficulty = (typeof DIFFICULTIES)[number];
-
-export interface DifficultyMods {
-	damage: number;
-	hp: number;
-	speed: number;
-	rewards: number;
-}
-
-export const DIFFICULTY: Record<Difficulty, DifficultyMods> = {
-	easy: { damage: 0.75, hp: 0.75, speed: 0.75, rewards: 0.75 },
-	normal: { damage: 1, hp: 1, speed: 1, rewards: 1 },
-	hard: { damage: 1.25, hp: 1.25, speed: 1.25, rewards: 1.25 },
-};
-
-/**
- * Danger 0–5 (ADR-008, SDD-005 RF-01): replaces the three global difficulties above, which stay
- * only until HeroSelect and GameScene move to Danger. D1 is the balanced baseline.
+ * Danger 0–5 (ADR-008, SDD-005 RF-01): picked per run, unlocked per hero. D1 is the balanced
+ * baseline.
  */
 export const DANGER_LEVELS = [0, 1, 2, 3, 4, 5] as const;
 export type Danger = (typeof DANGER_LEVELS)[number];

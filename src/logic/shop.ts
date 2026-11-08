@@ -1,7 +1,8 @@
 import { SHOP } from '../data/economy';
+import { POTION_PRICES, type PotionType } from '../data/potions';
 import type { Rng } from './rng';
 
-export type OfferKind = 'weapon' | 'item' | 'gear';
+export type OfferKind = 'weapon' | 'item' | 'gear' | 'potion';
 
 /** Minimal shape the shop needs from the weapon/item/gear catalogs (keeps it decoupled from them). */
 export interface ShopCandidate {
@@ -41,7 +42,13 @@ export function rerollPrice(round: number, rerolls: number): number {
 	return SHOP.rerollBase + round + step * rerolls;
 }
 
-export function offerPrice(kind: OfferKind, tier: number, round: number): number {
+/** Price in Fish; run potions have a flat price by type (pass the potion id). */
+export function offerPrice(kind: OfferKind, tier: number, round: number, id?: string): number {
+	if (kind === 'potion') {
+		const price = POTION_PRICES[id as PotionType];
+		if (price === undefined) throw new Error(`shop: unknown potion ${id}`);
+		return price;
+	}
 	const table = kind === 'gear' ? SHOP.gearPrices : SHOP.weaponPrices;
 	const base = table[tier - 1];
 	if (base === undefined) throw new Error(`shop: invalid ${kind} tier ${tier}`);
@@ -80,8 +87,14 @@ export function rollOffers(
 	const open = pool.filter((c) => !c.hero || c.hero === ctx.hero);
 	for (let i = 0; i < offers.length; i++) {
 		if (offers[i]) continue;
-		const avail = open.filter((c) => !used.has(c.id));
+		let avail = open.filter((c) => !used.has(c.id));
 		if (avail.length === 0) throw new Error('shop: candidate pool too small');
+		// Mixed pools pick the kind first so a big weapon catalog cannot crowd out gear and potions.
+		const kinds = [...new Set(avail.map((c) => c.kind))];
+		if (kinds.length > 1) {
+			const kind = kinds[rng.weightedIndex(kinds.map((k) => SHOP.kindShare[k]))] as OfferKind;
+			avail = avail.filter((c) => c.kind === kind);
+		}
 		const c = avail[
 			rng.weightedIndex(avail.map((a) => weight(a, round, ctx)))
 		] as ShopCandidate;
@@ -90,7 +103,7 @@ export function rollOffers(
 			kind: c.kind,
 			id: c.id,
 			tier: c.tier,
-			price: offerPrice(c.kind, c.tier, round),
+			price: offerPrice(c.kind, c.tier, round, c.id),
 		};
 	}
 	return offers as Offer[];

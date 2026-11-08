@@ -14,11 +14,23 @@ describe('parseDebugParams', () => {
 			debug: true,
 			skipMenu: true,
 			uiHud: false,
+			reactUi: false,
 		});
+	});
+
+	test('danger and weapon are validated', () => {
+		expect(parseDebugParams('?danger=5&weapon=hammer')).toMatchObject({
+			danger: 5,
+			weapon: 'hammer',
+		});
+		expect(parseDebugParams('?danger=6&weapon=nope').danger).toBeUndefined();
+		expect(parseDebugParams('?danger=6&weapon=nope').weapon).toBeUndefined();
+		expect(parseDebugParams('?danger=0').danger).toBe(0);
 	});
 
 	test('arena forces the side, clamped to the maximum', () => {
 		expect(parseDebugParams('?uiHud=1').uiHud).toBe(true);
+		expect(parseDebugParams('?reactUi=1').reactUi).toBe(true);
 		expect(parseDebugParams('?arena=12').arena).toBe(12);
 		expect(parseDebugParams('?arena=99').arena).toBe(40);
 		expect(parseDebugParams('?arena=0').arena).toBeUndefined();

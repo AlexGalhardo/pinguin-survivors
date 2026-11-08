@@ -12,6 +12,8 @@ export interface Platform {
 	tier: PlatformTier;
 	/** Demo build (VITE_DEMO). */
 	isDemo: boolean;
+	/** `demo-build` only in the demo bundle; `scripts/build-demo.ts` greps for it (SDD-006 A1). */
+	buildTag: 'demo-build' | 'full-build';
 	/** The save is synced by the store (Steam Cloud) on its own. */
 	cloud: boolean;
 	save: {
