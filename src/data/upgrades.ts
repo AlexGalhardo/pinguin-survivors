@@ -31,6 +31,8 @@ export const UPGRADES = [
 	{ id: 'magnet', stat: 'pickupRange', perLevel: 8, maxLevel: 5, baseCost: 25, costGrowth: 1.4 },
 	{ id: 'wisdom', stat: 'xpGain', perLevel: 0.04, maxLevel: 10, baseCost: 45, costGrowth: 1.4 },
 	{ id: 'fortune', stat: 'luck', perLevel: 0.02, maxLevel: 5, baseCost: 60, costGrowth: 1.5 },
+	// One reroll of the level-up cards per run.
+	{ id: 'insight', stat: 'cardRerolls', perLevel: 1, maxLevel: 1, baseCost: 80, costGrowth: 1 },
 ] as const satisfies readonly UpgradeDef[];
 
 export type UpgradeId = (typeof UPGRADES)[number]['id'];

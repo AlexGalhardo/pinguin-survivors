@@ -29,6 +29,8 @@ export const cardsPtBR: Record<keyof typeof cardsEn, string> = {
 	'card.luck.desc': '+{v} de sorte',
 	'card.xpGain.name': 'Instinto de Sobrevivência',
 	'card.xpGain.desc': '+{v} de XP ganho',
+	'card.harvesting.name': 'Acumulador de Peixes',
+	'card.harvesting.desc': '+{v} de Fish no fim de cada round',
 	'card.resistFire.name': 'Casaco Antichamas',
 	'card.resistFire.desc': '+{v} de resistência a fogo',
 	'card.resistEarth.name': 'Couro de Pedra',

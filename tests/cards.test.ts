@@ -23,12 +23,12 @@ describe('rarity', () => {
 });
 
 describe('drawCards', () => {
-	test('3 distinct cards, exclusives only for the hero', () => {
+	test('4 distinct cards, exclusives only for the hero', () => {
 		const rng = new Rng(1);
 		for (let i = 0; i < 300; i++) {
 			const offers = drawCards(rng, { hero: 'bob', round: 5, luck: 0, build: emptyBuild() });
-			expect(offers).toHaveLength(3);
-			expect(new Set(offers.map((o) => o.card.id)).size).toBe(3);
+			expect(offers).toHaveLength(4);
+			expect(new Set(offers.map((o) => o.card.id)).size).toBe(4);
 			for (const o of offers)
 				expect(o.card.hero === undefined || o.card.hero === 'bob').toBe(true);
 		}
@@ -87,5 +87,25 @@ describe('level-up pool has no weapons or evolutions (SDD-003 A6)', () => {
 			expect(['stat', 'secondary', 'perk']).toContain(c.effect.type);
 			expect(['stat', 'onhit', 'exclusive']).toContain(c.kind);
 		}
+	});
+});
+
+describe('level-up offers and harvesting (SDD-003 RF-05, RF-08)', () => {
+	test('every draw is 4 stat or exclusive cards across rounds and heroes', () => {
+		const rng = new Rng(3);
+		for (const hero of ['jack', 'bob', 'lucia'] as const)
+			for (let round = 1; round <= 40; round += 3) {
+				const offers = drawCards(rng, { hero, round, luck: 0.1, build: emptyBuild() });
+				expect(offers).toHaveLength(4);
+				for (const o of offers)
+					expect(['stat', 'secondary', 'perk']).toContain(o.card.effect.type);
+			}
+	});
+
+	test('harvesting starts at 0 and the card raises it with rarity', () => {
+		const stats = baseStats(HEROES.jack);
+		expect(stats.harvesting).toBe(0);
+		applyCard(emptyBuild(), stats, card('harvesting'), 'rare');
+		expect(stats.harvesting).toBeCloseTo(0.16);
 	});
 });

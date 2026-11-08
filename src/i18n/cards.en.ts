@@ -28,6 +28,8 @@ export const cardsEn = {
 	'card.luck.desc': '+{v} luck',
 	'card.xpGain.name': 'Survivor Instinct',
 	'card.xpGain.desc': '+{v} XP gained',
+	'card.harvesting.name': 'Fish Hoarder',
+	'card.harvesting.desc': '+{v} Fish at the end of each round',
 	'card.resistFire.name': 'Fireproof Coat',
 	'card.resistFire.desc': '+{v} fire resistance',
 	'card.resistEarth.name': 'Rock Hide',

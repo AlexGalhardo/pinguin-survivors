@@ -32,6 +32,10 @@ export interface PlayerStats {
 	pickupRange: number;
 	luck: number;
 	xpGain: number;
+	/** Extra Fish at the end of a round: Fish × (1 + harvesting) (SDD-003 RF-08). */
+	harvesting: number;
+	/** Level-up card rerolls available in a run (Workshop `insight`). */
+	cardRerolls: number;
 }
 
 /** Automatic growth per level above 1 (docs/balancing-and-simulation.md §4). */
@@ -87,6 +91,8 @@ export function baseStats(hero: HeroDef): PlayerStats {
 		pickupRange: 60,
 		luck: 0,
 		xpGain: 1,
+		harvesting: 0,
+		cardRerolls: 0,
 	};
 }
 

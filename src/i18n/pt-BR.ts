@@ -152,6 +152,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'upgrade.magnet': 'Ímã (alcance de coleta)',
 	'upgrade.wisdom': 'Sabedoria (ganho de XP)',
 	'upgrade.fortune': 'Fortuna (sorte)',
+	'upgrade.insight': 'Intuição (re-sorteio de cartas)',
 	'stat.attackSpeed': 'Velocidade de ataque',
 	'stat.regen': 'Regeneração de HP',
 	'stat.armor': 'Armadura',

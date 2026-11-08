@@ -35,6 +35,7 @@ const STAT_SCORE: Partial<Record<StatKey, number>> = {
 	shockChance: 12,
 	parry: 10,
 	xpGain: 4,
+	harvesting: 14,
 	pickupRange: 4,
 	'resist.fire': 6,
 	'resist.earth': 6,

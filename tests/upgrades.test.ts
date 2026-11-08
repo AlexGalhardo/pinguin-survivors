@@ -42,3 +42,14 @@ describe('upgrades', () => {
 			for (let l = 0; l < u.maxLevel; l++) expect(upgradeCost(u, l)).toBeGreaterThan(0);
 	});
 });
+
+describe('insight upgrade', () => {
+	test('grants exactly one card reroll per run', () => {
+		const insight = UPGRADES.find((u) => u.id === 'insight');
+		if (!insight) throw new Error('insight missing');
+		expect(insight.maxLevel).toBe(1);
+		expect(applyUpgrades(heroStats(HEROES.jack, 1, {}), { insight: 1 }).cardRerolls).toBe(1);
+		expect(applyUpgrades(heroStats(HEROES.jack, 1, {}), { insight: 9 }).cardRerolls).toBe(1);
+		expect(heroStats(HEROES.jack, 1, {}).cardRerolls).toBe(0);
+	});
+});

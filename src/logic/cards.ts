@@ -1,5 +1,12 @@
 import type { HeroId } from '../config/constants';
-import { ALL_CARDS, type CardDef, RARITIES, RARITY_WEIGHTS, type Rarity } from '../data/cards';
+import {
+	ALL_CARDS,
+	type CardDef,
+	LEVEL_UP_CARDS,
+	RARITIES,
+	RARITY_WEIGHTS,
+	type Rarity,
+} from '../data/cards';
 import { type Build, canTake } from './build';
 import type { Rng } from './rng';
 
@@ -27,12 +34,12 @@ export function rollRarity(rng: Rng, round: number, luck: number): Rarity {
 	return RARITIES[rng.weightedIndex(rarityWeights(round, luck))] as Rarity;
 }
 
-/** Three distinct cards for the end of a round. Exclusive cards only for their hero. */
+/** Distinct level-up cards (4 by default): stats and hero exclusives only, never weapons or items. */
 export function drawCards(
 	rng: Rng,
 	ctx: { hero: HeroId; round: number; luck: number; build: Build },
 	pool: readonly CardDef[] = ALL_CARDS,
-	count = 3,
+	count = LEVEL_UP_CARDS,
 ): CardOffer[] {
 	const offers: CardOffer[] = [];
 	const candidates = pool.filter(

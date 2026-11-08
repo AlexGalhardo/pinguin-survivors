@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { HEROES } from '../src/data/heroes';
 import { WEAPON_LINES } from '../src/data/weapons';
+import { emptyBuild } from '../src/logic/build';
 import { Rng } from '../src/logic/rng';
 import { roundDuration } from '../src/logic/round';
 import {
@@ -11,6 +12,7 @@ import {
 	healHero,
 	leaveShop,
 	queueLevelUps,
+	rerollCards,
 	resolveLevelUp,
 	roundClearFish,
 	roundClearPearls,
@@ -109,5 +111,19 @@ describe('shop flow, Fish and Pearls', () => {
 		expect(save.pearls).toBe(11);
 		expect(finishRun(s, save)).toBe(0);
 		expect(save.pearls).toBe(11);
+	});
+});
+
+describe('level-up card rerolls', () => {
+	test('each Workshop reroll is spent once and redraws 4 cards', () => {
+		const s = createRunState(HEROES.jack, { seed: 1, cardRerolls: 1 });
+		const ctx = { luck: 0, build: emptyBuild() };
+		expect(rerollCards(s, new Rng(1), ctx)).toHaveLength(4);
+		expect(s.cardRerollsLeft).toBe(0);
+		expect(rerollCards(s, new Rng(1), ctx)).toBeNull();
+	});
+
+	test('harvesting multiplies the Fish of a round', () => {
+		expect(roundClearFish(4, 0.5)).toBe(Math.floor(4 * 1.5));
 	});
 });

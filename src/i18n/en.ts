@@ -150,6 +150,7 @@ export const en = {
 	'upgrade.magnet': 'Magnet (pickup range)',
 	'upgrade.wisdom': 'Wisdom (XP gain)',
 	'upgrade.fortune': 'Fortune (luck)',
+	'upgrade.insight': 'Insight (card reroll)',
 	'stat.attackSpeed': 'Attack speed',
 	'stat.regen': 'HP regen',
 	'stat.armor': 'Armor',

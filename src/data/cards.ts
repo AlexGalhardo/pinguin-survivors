@@ -22,6 +22,9 @@ export const RARITY_WEIGHTS = {
 	luckShift: 100,
 } as const;
 
+/** Cards offered per level-up (SDD-003 RF-05). */
+export const LEVEL_UP_CARDS = 4;
+
 export type CardEffect =
 	| { type: 'stat'; stat: StatKey; value: number }
 	| { type: 'secondary'; weapon: SecondaryId }
@@ -59,6 +62,7 @@ export const STAT_CARDS: CardDef[] = [
 	stat('pickupRange', 'pickupRange', 20),
 	stat('luck', 'luck', 0.05),
 	stat('xpGain', 'xpGain', 0.1),
+	stat('harvesting', 'harvesting', 0.1),
 	stat('resistFire', 'resist.fire', 0.08),
 	stat('resistEarth', 'resist.earth', 0.08),
 	stat('resistIce', 'resist.ice', 0.08),

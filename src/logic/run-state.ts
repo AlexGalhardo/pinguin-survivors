@@ -3,6 +3,8 @@ import type { Difficulty } from '../data/difficulty';
 import { ECONOMY, PEARLS, SHOP } from '../data/economy';
 import type { HeroDef } from '../data/heroes';
 import { WEAPON_LINES, WEAPON_TIERS } from '../data/weapons';
+import type { Build } from './build';
+import { type CardOffer, drawCards } from './cards';
 import type { RunGear } from './equipment';
 import { roundEndFish } from './progression';
 import type { Rng } from './rng';
@@ -50,11 +52,19 @@ export interface RunState {
 	lockedOffers: (Offer | null)[];
 	/** Pearls earned by finished rounds, paid out at `finishRun`. */
 	pearlsEarned: number;
+	/** Level-up card rerolls left this run (from the Workshop `insight` upgrade). */
+	cardRerollsLeft: number;
 }
 
 export function createRunState(
 	hero: HeroDef,
-	opts: { seed: number; round?: number; tier?: 1 | 2 | 3; difficulty?: Difficulty },
+	opts: {
+		seed: number;
+		round?: number;
+		tier?: 1 | 2 | 3;
+		difficulty?: Difficulty;
+		cardRerolls?: number;
+	},
 ): RunState {
 	const round = opts.round ?? 1;
 	return {
@@ -78,6 +88,7 @@ export function createRunState(
 		shop: null,
 		lockedOffers: [],
 		pearlsEarned: 0,
+		cardRerollsLeft: opts.cardRerolls ?? 0,
 	};
 }
 
@@ -185,4 +196,15 @@ export function finishRun(state: RunState, save: SaveData): number {
 	state.pearlsEarned = 0;
 	state.fish = 0;
 	return gain;
+}
+
+/** Spends one card reroll and draws a fresh set of level-up cards; null when none is left. */
+export function rerollCards(
+	state: RunState,
+	rng: Rng,
+	ctx: { luck: number; build: Build },
+): CardOffer[] | null {
+	if (state.cardRerollsLeft <= 0) return null;
+	state.cardRerollsLeft--;
+	return drawCards(rng, { hero: state.hero, round: state.round, ...ctx });
 }

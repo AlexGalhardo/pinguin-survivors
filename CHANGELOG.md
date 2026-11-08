@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Level-up offers 4 cards (stats, exclusive actives and passives only), a new `harvesting` stat that multiplies end-of-round Fish, and the Workshop upgrade Insight (one card reroll per run) (SDD-003 RF-05, RF-08).
+
 ## [0.0.12] - 2026-11-08
 
 ### Added
