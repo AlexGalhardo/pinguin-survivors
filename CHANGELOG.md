@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Windows desktop shell (`apps/desktop/`, SDD-007): Electron 45.2.3 with a frameless fullscreen window, `window.platform` bridge (atomic `save.json`, export dialog, Steam overlay links), steamworks.js 0.4.0 when an App ID exists, `bun run build:desktop[:demo]` and a manual `desktop.yml` workflow.
+
 - Demo rules in game: Jack only, rounds 1–10, Danger up to 1, and the DemoEnd screen with the wishlist button; `bun run e2e -- --demo`.
 - Local telemetry toggle and JSONL export in Settings; set and tier IV progress recorded after every build change.
 

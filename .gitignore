@@ -23,3 +23,19 @@ questions-to-dev.md
 # Site (SDD-008): the demo build is copied here by scripts/build-site.ts
 site/public/demo/
 site/.astro/
+# Desktop shell (SDD-007): bundled output and packaged builds
+apps/desktop/app/
+apps/desktop/dist/
+# Mobile shell (SDD-007): generated web assets and native build output
+apps/mobile/www/
+apps/mobile/node_modules
+apps/mobile/android/build/
+apps/mobile/android/app/build/
+apps/mobile/android/.gradle/
+apps/mobile/android/local.properties
+apps/mobile/android/capacitor-cordova-android-plugins/
+apps/mobile/android/app/src/main/assets/public/
+apps/mobile/android/app/src/main/assets/capacitor.config.json
+apps/mobile/android/app/src/main/assets/capacitor.plugins.json
+apps/mobile/*.keystore
+apps/mobile/*.jks

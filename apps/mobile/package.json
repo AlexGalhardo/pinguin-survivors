@@ -1,0 +1,22 @@
+{
+	"name": "pinguin-survivors-mobile",
+	"version": "0.0.1",
+	"private": true,
+	"description": "Capacitor shell (Android, landscape) for Pinguin Survivors: loads the game build and exposes window.platform.",
+	"author": "Alex Galhardo",
+	"scripts": {
+		"prepare:web": "bun scripts/prepare-web.ts",
+		"sync": "bun run prepare:web && bunx cap sync android",
+		"bundle:debug": "bun run sync && cd android && ./gradlew bundleDebug",
+		"bundle:release": "bun run sync && cd android && ./gradlew bundleRelease"
+	},
+	"dependencies": {
+		"@capacitor/android": "8.6.0",
+		"@capacitor/app": "8.1.2",
+		"@capacitor/core": "8.6.0",
+		"@capacitor/preferences": "8.0.1"
+	},
+	"devDependencies": {
+		"@capacitor/cli": "8.6.0"
+	}
+}

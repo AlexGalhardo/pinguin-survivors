@@ -8,6 +8,8 @@
 		"dev": "bunx --bun vite",
 		"build": "bun check && bunx --bun vite build",
 		"build:demo": "bun scripts/build-demo.ts",
+		"build:desktop": "bun scripts/build-desktop.ts",
+		"build:desktop:demo": "bun scripts/build-desktop.ts --demo",
 		"preview": "bunx --bun vite preview",
 		"test": "bun test",
 		"test:watch": "bun test --watch",

@@ -1,0 +1,19 @@
+# Windows x64 for Steam (SDD-007 RF-03): an unpacked folder that Steam uploads; Steam installs it.
+# Output goes to apps/desktop/dist/<full|demo>/ (scripts/build-desktop.ts overrides the folder).
+appId: xyz.lekzera.pinguin-survivors
+productName: Pinguin Survivors
+directories:
+    output: dist/full
+files:
+    - app/**
+    - package.json
+# The Steamworks native binaries cannot be loaded from inside the asar archive.
+asarUnpack:
+    - "**/node_modules/steamworks.js/**"
+win:
+    target:
+        - target: dir
+          arch: x64
+    # Unsigned builds (Steam does not need signing). Skipping the rcedit step also avoids the
+    # winCodeSign download, which fails to extract on Windows without symlink rights.
+    signAndEditExecutable: false

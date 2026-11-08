@@ -1,0 +1,36 @@
+name: Desktop
+
+# Windows x64 build for Steam (SDD-007 RF-06). Manual only for now: nothing is published from here.
+on:
+    workflow_dispatch:
+        inputs:
+            flavor:
+                description: Which build to produce
+                type: choice
+                options: [both, full, demo]
+                default: both
+
+permissions:
+    contents: read
+
+jobs:
+    windows:
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+              with:
+                  bun-version: 1.4.4
+            - run: bun install --frozen-lockfile
+            - run: bun install --frozen-lockfile
+              working-directory: apps/desktop
+            - if: inputs.flavor != 'demo'
+              run: bun run build:desktop
+            - if: inputs.flavor != 'full'
+              run: bun run build:desktop:demo
+            - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              with:
+                  name: pinguin-survivors-windows-${{ inputs.flavor }}
+                  path: apps/desktop/dist/*/win-unpacked
+                  if-no-files-found: error
+                  retention-days: 14
