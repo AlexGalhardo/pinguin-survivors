@@ -1,6 +1,6 @@
 # SDD-010 — Remoção de vozes e legendas
 
-**Versão** 1.0 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [009](../adrs/ADR-009-remover-vozes.md)
+**Versão** 1.1 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [009](../adrs/ADR-009-remover-vozes.md)
 
 ## Pré-condição
 
@@ -18,7 +18,7 @@ Branch `legacy-voices` criada a partir de `main` e enviada ao origin em 2026-11-
 
 | # | Assert | Verificação |
 |---|---|---|
-| A1 | `rg -n "voice\|subtitle\|vo\." src tests scripts --glob '!**/voice-limiter*' --glob '!**/sfx-limiter*'` retorna vazio | grep |
+| A1 | `rg -n "voice\|subtitle\|vo\." src tests scripts --glob '!**/voice-limiter*' --glob '!**/sfx-limiter*' --glob '!tests/fixtures/**' --glob '!tests/save.test.ts'` retorna vazio (a fixture v1 e o teste da migração citam os campos antigos de propósito) | grep |
 | A2 | `ls public/assets/audio` não contém `vo/`; `du -sh public/assets` cai ≥ 3 MB | shell |
 | A3 | `bun run lint && bun run typecheck && bun test && bun run build` verdes | gates |
 | A4 | E2E completo sem erros de console após a remoção | `bun run e2e` |
