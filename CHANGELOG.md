@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Six weapon slots in `src/logic/build.ts` (`addWeapon`, `canFuse`, `fuse`, `setCounts`, `setBonuses`), set bonuses at 2/4/6 in `src/data/sets.ts` and `applyModifiers` in `src/logic/stats.ts` (SDD-002).
 - Starting weapons per hero (`HeroDef.startingWeapons`) and three new exclusive passives: Iron Breath (Jack), Quick Reload (Bob) and Arcane Echo (Lucia); their in-game effects land with the weapon-slot integration.
 - React 19 + Tailwind CSS v4 overlay infrastructure (SDD-004): `#ui` over the canvas, `src/ui/App.tsx`, a UI store on `useSyncExternalStore`, typed UI→game commands and CSS color tokens generated from `palette.ts` (`scripts/export-palette-css.ts`).
+- Simulation with six weapon slots, run Fish, an end-of-round shop played by `src/logic/sim/shop-policy.ts` (buy by value per Fish, fuse, replace, lock, reroll) and Pearls at the end of the run (SDD-013).
 
 ### Fixed
 

@@ -1,16 +1,25 @@
 import type { HeroId } from '../../config/constants';
+import { ALL_CARDS } from '../../data/cards';
 import { COMBAT } from '../../data/combat';
 import { ENEMY_LIST } from '../../data/enemies';
 import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
-import { levelScale, SECONDARIES, type SecondaryId } from '../../data/secondaries';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
-import { SIGNATURE, type SignatureWeapon } from '../../data/weapons';
+import { STARTING_WEAPONS } from '../../data/unlocks';
+import { WEAPON_LINE_BY_ID } from '../../data/weapon-lines';
 import { biomeForRound, bossForRound } from '../biome';
-import { applyCard, type Build, emptyBuild } from '../build';
+import {
+	addWeapon,
+	applyCard,
+	type Build,
+	emptyBuild,
+	setBonuses,
+	setCounts,
+	type WeaponInstance,
+} from '../build';
 import { drawCards } from '../cards';
 import { armorReduction } from '../combat';
-import { orbXp, roundEndFish } from '../progression';
+import { orbXp } from '../progression';
 import { Rng } from '../rng';
 import {
 	bossHpMul,
@@ -21,9 +30,12 @@ import {
 	roundDuration,
 	spawnRate,
 } from '../round';
-import { heroStats, type PlayerStats, type PointStat } from '../stats';
+import { createRunState, endRound, finishRun, leaveShop, weaponCandidates } from '../run-state';
+import { defaultSave } from '../save';
+import { addStat, heroStats, type PlayerStats, type PointStat } from '../stats';
 import { applyUpgrades } from '../upgrades';
 import { pickBest } from './card-policy';
+import { playShop } from './shop-policy';
 
 /**
  * Headless balance model (PLAN 3.2): a per-step approximation of a run using the real data,
@@ -60,7 +72,7 @@ export interface SimConfig {
 	seed: number;
 	/** Stat points spread evenly over these stats (level − 1 points). */
 	pointPlan?: PointStat[];
-	/** Start from this weapon tier (debug). */
+	/** Tier of the starting weapon (debug). */
 	tier?: 1 | 2 | 3;
 	/** Workshop upgrade levels by id (applied to the starting stats like the game). */
 	upgrades?: Record<string, number>;
@@ -75,7 +87,13 @@ export interface SimResult {
 	seconds: number;
 	damageTaken: number;
 	xp: number;
+	/** Fish earned over the run (spent or not). */
 	fish: number;
+	fishSpent: number;
+	/** Pearls paid at the end of the run (rounds + fish / 10). */
+	pearls: number;
+	/** Final weapon slots as `id:tier`. */
+	weapons: string[];
 	diedToBoss: boolean;
 	cards: string[];
 	/** Damage taken per round (index = round − 1), for calibration against the bot. */
@@ -105,81 +123,75 @@ function engaged(full: number, half: number, alive: number): number {
 	return (full * alive) / (alive + half);
 }
 
-/** Signature weapon damage per second into the crowd (crit averaged). */
-export function heroDps(stats: PlayerStats, weapon: SignatureWeapon, alive = 300): number {
-	const perHit = weapon.damage * stats.tagMul[weapon.tag] * stats.damage * critAvg(stats);
-	const full =
-		weapon.kind === 'arc'
-			? SIM.hits.arc * stats.area
-			: weapon.kind === 'spread'
-				? // Pellets: a share of the cone lands, piercing adds a second target.
-					SIM.hits.spread * (1 + (weapon.pierce ?? 0) * 0.3)
-				: SIM.hits.bolt * (1 + (weapon.pierce ?? 0) * 0.5);
-	const targets = engaged(full, SIM.engageHalf[weapon.kind], alive);
-	return perHit * targets * weapon.rate * stats.attackSpeed;
+/**
+ * Damage per second of one weapon slot (crit averaged). `single` = all hits on one target (boss);
+ * otherwise a crowd factor by behavior, as in the old signature/secondary model.
+ */
+export function weaponDps(
+	stats: PlayerStats,
+	w: WeaponInstance,
+	alive = 300,
+	single = false,
+): number {
+	const def = WEAPON_LINE_BY_ID[w.id];
+	const t = def.tiers[w.tier - 1] as (typeof def.tiers)[number];
+	const x = t.extra;
+	const hit = t.damage * stats.tagMul[def.classTag] * stats.damage * critAvg(stats);
+	const rate = stats.attackSpeed / t.cooldown;
+	const count = x.count ?? 1;
+	const crowd = (full: number, half: number) => (single ? 1 : engaged(full, half, alive));
+	switch (def.behavior) {
+		case 'arc':
+			return hit * crowd(SIM.hits.arc * stats.area, SIM.engageHalf.arc) * rate;
+		case 'spread':
+			// Pellets: about half land; piercing adds a second target in a crowd.
+			return (
+				hit *
+				count *
+				0.5 *
+				(single ? 1.4 : crowd(1, SIM.engageHalf.spread) * (1 + (x.pierce ?? 0) * 0.3)) *
+				rate
+			);
+		case 'bolt':
+			return (
+				hit * crowd(SIM.hits.bolt * (1 + (x.pierce ?? 0) * 0.5), SIM.engageHalf.bolt) * rate
+			);
+		case 'thrown':
+			return hit * count * rate;
+		case 'shooter':
+		case 'follower':
+			return hit * count * rate;
+		case 'lob':
+			// Molotov burns 6 ticks; grenades explode once.
+			return hit * (w.id === 'molotov' ? 6 : 1) * crowd(2.5 * stats.area, 6) * rate;
+		case 'orbit':
+			// Per-enemy hit cooldown: each blade touches ~1.2 enemies per cooldown in a crowd.
+			return hit * count * crowd(1.2, 6) * (0.4 / t.cooldown) * stats.attackSpeed;
+		case 'boomerang':
+			return hit * Math.floor(count) * crowd(2, 6) * rate;
+		case 'mine':
+			return hit * crowd(2 * stats.area, 6) * rate;
+		case 'aura':
+			return hit * crowd(3 * stats.area, 6) * rate;
+		case 'totem':
+			return hit * (x.duration ?? 6) * rate;
+		case 'cloud':
+			return hit * (x.duration ?? 4) * crowd(2.5 * stats.area, 6) * rate;
+	}
 }
 
-/** Damage per second of the build's secondaries (average targets per activation). */
-export function secondaryDps(stats: PlayerStats, build: Build, alive = 300): number {
+/** Total damage per second of the six slots. */
+export function buildDps(stats: PlayerStats, build: Build, alive = 300, single = false): number {
 	let total = 0;
-	for (const [id, level] of Object.entries(build.secondaries) as [SecondaryId, number][]) {
-		const d = SECONDARIES[id] as (typeof SECONDARIES)[SecondaryId] & {
-			count?: number;
-			countPerLevel?: number;
-			duration?: number;
-		};
-		const hit =
-			d.damage * levelScale(level) * stats.tagMul[d.tag] * stats.damage * critAvg(stats);
-		const count = (d.count ?? 1) + (d.countPerLevel ?? 0) * (level - 1);
-		const rate = stats.attackSpeed / d.cooldown;
-		const crowd = (n: number) => engaged(n, 6, alive);
-		switch (d.behavior) {
-			case 'thrown':
-				total += hit * count * rate;
-				break;
-			case 'shooter':
-			case 'follower':
-				total += hit * rate;
-				break;
-			case 'lob':
-				// Molotov burns 6 ticks; grenades explode once.
-				total += hit * (d.id === 'molotov' ? 6 : 1) * crowd(2.5 * stats.area) * rate;
-				break;
-			case 'stomp':
-				total += hit * crowd(4 * stats.area) * rate;
-				break;
-			case 'chain':
-				total += hit * (1 + 0.8 + 0.64 + 0.51 + 0.41) * rate * (alive > 4 ? 1 : 0.5);
-				break;
-			case 'meteor':
-				total += hit * count * crowd(2 * stats.area) * rate;
-				break;
-			case 'orbit':
-				// Each blade touches ~1.2 enemies per second in a crowd (per-enemy cooldown).
-				total += hit * count * crowd(1.2);
-				break;
-			case 'boomerang':
-				// Out and back through the line: ~2 hits per throw.
-				total += hit * Math.floor(count) * crowd(2) * rate;
-				break;
-			case 'mine':
-				total += hit * crowd(2 * stats.area) * rate;
-				break;
-			case 'aura':
-				total += hit * crowd(3 * stats.area) * (1 / d.cooldown);
-				break;
-			case 'totem':
-				// Zaps once per second for its duration.
-				total += hit * (d.duration ?? 6) * rate;
-				break;
-			case 'cloud':
-				total += hit * (d.duration ?? 4) * crowd(2.5 * stats.area) * rate;
-				break;
-			case 'nova':
-				break;
-		}
-	}
+	for (const w of build.weapons) total += weaponDps(stats, w, alive, single);
 	return total;
+}
+
+/** Stats with the build's set bonuses on top (cards already live in `stats`). */
+export function effectiveStats(stats: PlayerStats, build: Build): PlayerStats {
+	const eff = structuredClone(stats);
+	for (const m of setBonuses(build)) addStat(eff, m.stat, m.value);
+	return eff;
 }
 
 interface AverageEnemy {
@@ -236,32 +248,43 @@ export function simulateRun(config: SimConfig): SimResult {
 		spendPoints(config.level, config.pointPlan ?? POINT_PLANS[config.hero]),
 	);
 	applyUpgrades(stats, config.upgrades ?? {});
-	const tier = config.tier ?? 1;
-	const build = emptyBuild(tier);
-	let weapon = SIGNATURE[config.hero][tier - 1] as SignatureWeapon;
+	const build = emptyBuild();
+	addWeapon(build, STARTING_WEAPONS[config.hero][0], config.tier ?? 1);
+	let eff = effectiveStats(stats, build);
 	const superDef = SUPERPOWERS[config.hero];
 	const superOn = config.level >= SUPER.unlockLevel;
+	const run = createRunState(hero, { seed: config.seed });
+	const save = defaultSave();
+	const cardPool = ALL_CARDS.filter((c) => c.effect.type === 'stat' || c.effect.type === 'perk');
+	const weaponPool = weaponCandidates(config.hero);
 	let hp = stats.maxHp;
 	let kills = 0;
 	let seconds = 0;
 	let damageTaken = 0;
 	let xp = 0;
-	let fish = 0;
+	let fishEarned = 0;
+	let fishSpent = 0;
 	let charge = 0;
 	const perRound: number[] = [];
-	const result = (round: number, diedToBoss: boolean): SimResult => ({
-		hero: config.hero,
-		level: config.level,
-		round,
-		kills,
-		seconds,
-		damageTaken,
-		xp,
-		fish,
-		diedToBoss,
-		cards: [...build.cards],
-		perRound,
-	});
+	const result = (round: number, diedToBoss: boolean): SimResult => {
+		const pearls = finishRun(run, save);
+		return {
+			hero: config.hero,
+			level: config.level,
+			round,
+			kills,
+			seconds,
+			damageTaken,
+			xp,
+			fish: fishEarned,
+			fishSpent,
+			pearls,
+			weapons: build.weapons.map((w) => `${w.id}:${w.tier}`),
+			diedToBoss,
+			cards: [...build.cards],
+			perRound,
+		};
+	};
 
 	for (let round = 1; round <= SIM.maxRound; round++) {
 		const duration = roundDuration(round);
@@ -279,14 +302,10 @@ export function simulateRun(config: SimConfig): SimResult {
 			const spawned = Math.floor(spawnBudget);
 			spawnBudget -= spawned;
 			alive = Math.min(300, alive + spawned);
-			let dmg =
-				(heroDps(stats, weapon, alive) + secondaryDps(stats, build, alive)) * SIM.step;
+			let dmg = buildDps(eff, build, alive) * SIM.step;
 			if (bossHp > 0) {
 				// Single-target damage on the boss: the crowd factor does not apply.
-				const single =
-					(heroDps(stats, weapon, 1e9) / SIM.hits[weapon.kind] +
-						secondaryDps(stats, build, 1)) *
-					SIM.step;
+				const single = buildDps(eff, build, alive, true) * SIM.step;
 				bossHp -= single * SIM.bossFocus;
 				dmg *= 1 - SIM.bossFocus;
 			}
@@ -302,20 +321,23 @@ export function simulateRun(config: SimConfig): SimResult {
 				const cleared = Math.floor(alive * SIM.superClear);
 				alive -= cleared;
 				kills += cleared;
+				const main = build.weapons[0] as WeaponInstance;
+				const mainDef = WEAPON_LINE_BY_ID[main.id];
+				const mainTier = mainDef.tiers[main.tier - 1] as (typeof mainDef.tiers)[number];
 				const burst =
-					weapon.damage *
-					(weapon.count ?? 1) *
-					stats.tagMul[weapon.tag] *
-					stats.damage *
+					mainTier.damage *
+					(mainTier.extra.count ?? 1) *
+					eff.tagMul[mainDef.classTag] *
+					eff.damage *
 					superDef.damageMul *
 					(superDef.explosions ?? superDef.duration / SUPER.tick);
 				if (bossHp > 0) bossHp -= burst * 0.5;
 			}
 			const avoid =
-				(1 - Math.min(COMBAT.dodgeCap, stats.dodge)) *
-				(1 - Math.min(COMBAT.parryCap, stats.parry));
-			const armor = 1 - armorReduction(stats.armor);
-			let hits = contactRate(alive, stats.moveSpeed, enemy.speed) * SIM.step;
+				(1 - Math.min(COMBAT.dodgeCap, eff.dodge)) *
+				(1 - Math.min(COMBAT.parryCap, eff.parry));
+			const armor = 1 - armorReduction(eff.armor);
+			let hits = contactRate(alive, eff.moveSpeed, enemy.speed) * SIM.step;
 			let incoming = hits * enemy.damage;
 			if (bossHp > 0) {
 				const bossHits = SIM.bossHitRate * SIM.bossLand * SIM.step;
@@ -323,7 +345,7 @@ export function simulateRun(config: SimConfig): SimResult {
 				incoming += bossHits * bossDmg;
 			}
 			const loss = incoming * avoid * armor;
-			hp = Math.min(stats.maxHp, hp - loss + stats.regen * SIM.step);
+			hp = Math.min(eff.maxHp, hp - loss + eff.regen * SIM.step);
 			damageTaken += loss;
 			taken += loss;
 			if (hp <= 0) {
@@ -334,20 +356,32 @@ export function simulateRun(config: SimConfig): SimResult {
 		}
 		perRound.push(taken);
 		if (isBossRound(round) && bossHp > 0) return result(round, true);
-		hp = Math.min(stats.maxHp, hp + stats.maxHp * ROUNDS.roundEndHeal);
-		fish += roundEndFish(round);
-		const offers = drawCards(rng, {
-			hero: config.hero,
-			round: round + 1,
-			luck: stats.luck,
-			build,
-		});
+		hp = Math.min(eff.maxHp, hp + eff.maxHp * ROUNDS.roundEndHeal);
+		const offers = drawCards(
+			rng,
+			{ hero: config.hero, round: round + 1, luck: stats.luck, build },
+			cardPool,
+			4,
+		);
 		const offer = offers[pickBest(offers, build, config.hero)];
 		if (offer) {
 			const r = applyCard(build, stats, offer.card, offer.rarity);
 			hp += r.maxHpDelta;
-			if (r.evolvedTo) weapon = SIGNATURE[config.hero][r.evolvedTo - 1] as SignatureWeapon;
 		}
+		eff = effectiveStats(stats, build);
+		const before = run.fish;
+		const roll = {
+			rng,
+			pool: weaponPool,
+			ctx: { hero: config.hero, buildSets: Object.keys(setCounts(build)), luck: eff.luck },
+		};
+		run.round = round;
+		endRound(run, roll);
+		fishEarned += run.fish - before;
+		const shop = playShop({ run, build, stats: eff, roll });
+		fishSpent += shop.spent;
+		eff = effectiveStats(stats, build);
+		leaveShop(run);
 	}
 	return result(SIM.maxRound + 1, false);
 }
@@ -363,6 +397,8 @@ export interface SimSummary {
 	bossDeaths: number;
 	avgKills: number;
 	avgXp: number;
+	avgPearls: number;
+	avgFishSpent: number;
 }
 
 export function simulateMany(
@@ -387,5 +423,7 @@ export function simulateMany(
 		bossDeaths: results.filter((r) => r.diedToBoss).length,
 		avgKills: avg((r) => r.kills),
 		avgXp: avg((r) => r.xp),
+		avgPearls: avg((r) => r.pearls),
+		avgFishSpent: avg((r) => r.fishSpent),
 	};
 }

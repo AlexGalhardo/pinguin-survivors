@@ -13,6 +13,16 @@ describe('headless run sim', () => {
 		expect(a).toEqual(b);
 	});
 
+	test('plays the shop: six-slot build, Fish spent, Pearls paid', () => {
+		const r = simulateRun({ hero: 'bob', level: 10, seed: 3 });
+		expect(r.weapons.length).toBeGreaterThanOrEqual(1);
+		expect(r.weapons.length).toBeLessThanOrEqual(6);
+		expect(r.fishSpent).toBeGreaterThan(0);
+		expect(r.fishSpent).toBeLessThanOrEqual(r.fish + 200);
+		expect(r.pearls).toBeGreaterThan(0);
+		expect(r.weapons.some((w) => !w.endsWith(':1'))).toBe(true);
+	});
+
 	test('different seeds can change the build', () => {
 		const runs = [1, 2, 3, 4, 5].map((seed) => simulateRun({ hero: 'bob', level: 10, seed }));
 		expect(new Set(runs.map((r) => r.cards.join(','))).size).toBeGreaterThan(1);

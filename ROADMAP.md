@@ -128,8 +128,8 @@ Specs: [SDD-002](docs/sdds/SDD-002-armas-slots-classes-tiers.md), [SDD-003](docs
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T2.8** Cartas de level-up: 4 opções, só stats/exclusivas; fila de level-ups · Resp.: senior · Dep.: T2.5 · Est.: 4 h · Assert: `tests/cards.test.ts` (A6).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T2.9** Sim e bot: `shop-policy.ts`, 6 slots, Fish/Pérolas (`SDD-013` RF-01/02 parcial) · Resp.: senior · Dep.: T2.7 · Est.: 10 h · Assert: `bun scripts/sim.ts 20` < 60 s; `tests/sim.test.ts` determinístico.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T2.9** Sim e bot: `shop-policy.ts`, 6 slots, Fish/Pérolas (`SDD-013` RF-01/02 parcial) · Resp.: senior · Dep.: T2.7 · Est.: 10 h · Assert: `bun scripts/sim.ts 20` < 60 s; `tests/sim.test.ts` determinístico. · Evidência (2026-11-08): `bun scripts/sim.ts 20` em 2,9 s; `tests/sim.test.ts` + `tests/shop-policy.test.ts` 13 pass (determinístico por seed); `src/logic/sim/shop-policy.ts` (compra por valor/Fish, fusão, troca com 6 slots cheios, lock, reroll); sim com 6 slots, Fish da run, loja por round e Pérolas no fim. Bot real com loja (`--danger`, `--weapons`, JSONL) depende da loja na cena (T2.7/T3.4). Sim fora da meta (L1 morre no round 26–52): é o T2.10.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado (2,9 s, 13 pass, biome limpo).
 - [ ] **T2.10** 1ª passada de balanceamento do design 1.0 (metas #1, #5, #6 da Parte A4) · Resp.: estagiario roda bot/sim; orquestrador ajusta `src/data` · Dep.: T2.9 · Est.: 8 h · Assert: `docs/reports/balance-<data>.md` com #1, #5, #6 ✓
   - [ ] Auditoria: Parte B atualizada no mesmo commit.
 - [ ] **T2.11** Release `0.0.13` com todo o M2 (uma release por marco).

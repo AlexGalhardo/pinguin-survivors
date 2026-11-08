@@ -5,12 +5,12 @@ import { simulateMany, simulateRun } from '../src/logic/sim/run-sim';
 
 const runs = Number(process.argv[2] ?? 40);
 const LEVELS = [1, 5, 10, 20, 30];
-console.log('hero   lvl  avgRound  median  past30  bossDeaths  avgKills  avgXp');
+console.log('hero   lvl  avgRound  median  past30  bossDeaths  avgKills  avgXp  pearls  fishSpent');
 for (const hero of HERO_IDS) {
 	for (const level of LEVELS) {
 		const s = simulateMany(hero, level, runs);
 		console.log(
-			`${hero.padEnd(6)} ${String(level).padStart(3)}  ${s.avgRound.toFixed(1).padStart(8)}  ${String(s.medianRound).padStart(6)}  ${`${Math.round(s.past30 * 100)}%`.padStart(6)}  ${String(s.bossDeaths).padStart(10)}  ${Math.round(s.avgKills).toString().padStart(8)}  ${Math.round(s.avgXp).toString().padStart(5)}`,
+			`${hero.padEnd(6)} ${String(level).padStart(3)}  ${s.avgRound.toFixed(1).padStart(8)}  ${String(s.medianRound).padStart(6)}  ${`${Math.round(s.past30 * 100)}%`.padStart(6)}  ${String(s.bossDeaths).padStart(10)}  ${Math.round(s.avgKills).toString().padStart(8)}  ${Math.round(s.avgXp).toString().padStart(5)}  ${Math.round(s.avgPearls).toString().padStart(6)}  ${Math.round(s.avgFishSpent).toString().padStart(9)}`,
 		);
 	}
 }
