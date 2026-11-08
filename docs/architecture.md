@@ -1,6 +1,6 @@
 # Arquitetura técnica — Pinguin Survivors
 
-> **Versão** 2.0 · **Data** 2026-11-08 · Alvo da 1.0 (top-down, React, ports). Onde o código atual (iso, cenas Phaser de UI) diverge, as SDDs em [sdds/](sdds/README.md) descrevem a migração e o [ROADMAP.md](../ROADMAP.md) a agenda. Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.1 · **Data** 2026-11-08 · Alvo da 1.0 (top-down, React, ports). Onde o código atual ainda diverge do alvo, as SDDs em [sdds/](sdds/README.md) descrevem a migração e o [ROADMAP.md](../ROADMAP.md) a agenda. Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 
@@ -116,14 +116,14 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 
 - Canvas com `scale.mode = NONE` controlado por `src/core/display.ts`: renderiza na resolução escolhida (Auto = pixels nativos, ou SD/HD/FHD/2K/3K/4K) e estica para a janela.
 - **Zoom inteiro pela altura 540**: 1920×1080 → ×2 (960×540 lógicos); 2560×1440 → ×2 (1280×720); 2400×1080 landscape → ×2 (1200×540); 3840×2160 → ×4; 1366×768 → ×1.
-- Spawn fora da área visível real quando a arena for maior que a tela.
+- Spawn em anel interno de 1 tile junto à borda; posições fora do retângulo visível da câmera + 48 px quando existirem; caso contrário, qualquer ponto do anel com telegraph de 0,5 s (SDD-001 RF-04).
 - Overlay React independente do zoom do canvas (texto nítido em qualquer resolução).
 
 ## 8. Gore, luz e performance
 
-- Decalques carimbados na `DynamicTexture` da arena (teto 4.000, fusão dos antigos), recarimbados ao crescer; gore reduzido/gosma por settings.
+- Decalques carimbados na `DynamicTexture` da arena (teto 4.000; ao passar do teto sai o mais antigo, `src/world/Arena.ts`), recarimbados ao crescer; gore reduzido/gosma por settings.
 - Luz: `DynamicTexture` de escuridão do tamanho da tela com luzes em ERASE (herói, tiros, fogo, elites, boss, superpoder); vinheta; bloom opcional (desligado por padrão, P-65).
-- Orçamento: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 1920×1080 (`scripts/perf.ts`); `Platform.tier = low` reduz decalques (1.000), desliga luzes e bloom, corta partículas 50%.
+- Orçamento: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 1920×1080 na arena 40×40 (`bun scripts/perf.ts --round 40`, SDD-001 RF-10); `Platform.tier = low` reduz decalques (1.000), desliga luzes e bloom, corta partículas 50%.
 
 ## 9. Persistência e plataforma
 

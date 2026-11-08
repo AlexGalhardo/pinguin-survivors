@@ -1,6 +1,6 @@
 # Art Bible — Pinguin Survivors
 
-> **Versão** 2.0 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
+> **Versão** 2.1 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
 
 ## Índice
 
@@ -110,7 +110,7 @@ Saldo em 2026-11-08: **2.320 gerações até 14/11**, depois 5.000/mês. Plano d
 
 ## 11. Inventário de assets e pendências
 
-**Prontos**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), 19 inimigos com walk, 3 bosses (urso com walk; kraken e abominação estáticos), 17 armas (1 tier), projéteis, pickups, 12+7 ícones, tiles iso (a substituir) e decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
+**Prontos**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), 19 inimigos com walk, 3 bosses (urso com walk; kraken e abominação estáticos), 17 armas (1 tier), projéteis, pickups, 12+7 ícones, tiles iso removidos (frames `tile.*` iso, 129ad1b; tiles top-down em SDD-012), decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
 
 **Pendentes para a 1.0** (ordem de impacto): tileset top-down + bordas dos 3 biomas → props top-down → lojista → QA dos personagens no top-down → tiers II–IV das armas (~48 imagens) → ícones de cartas/itens/poções (~90) → VFX dos 3 superpoderes → walks do kraken/abominação e voadores → ataques de inimigos e bosses → key art de capa Steam e capsules.
 
@@ -195,7 +195,7 @@ Tamanho final aceito como gerado: **~88 px de altura num canvas de 96** (P-05 at
 
 ### 2026-09-27 — Chão e decorações dos 3 biomas; walks animados
 
-- **Tiles**: `/create-tiles-pro` isométrico 64×32 (`tile_depth_ratio 0`, `segmentation`, seed 12; ~25–40 gerações por lote de 16). Os tiles vêm com bordas/biséis e formas tortas, então não entram crus: `bun scripts/pack-iso-tile.ts <tile> <saida> --iso 31,12,31,12,0.8` lê a textura dentro do losango e a reprojeta no losango 64×32 exato com **amostragem espelhada** (as bordas sempre casam; sem costura entre tiles da mesma família).
+- **Tiles**: `/create-tiles-pro` isométrico 64×32 (`tile_depth_ratio 0`, `segmentation`, seed 12; ~25–40 gerações por lote de 16). Os tiles vêm com bordas/biséis e formas tortas, então não entram crus (histórico: `pack-iso-tile.ts` foi removido no 129ad1b, SDD-001 RF-09): `bun scripts/pack-iso-tile.ts <tile> <saida> --iso 31,12,31,12,0.8` lê a textura dentro do losango e a reprojeta no losango 64×32 exato com **amostragem espelhada** (as bordas sempre casam; sem costura entre tiles da mesma família).
   - Antártida (`art-src/pixellab/tiles/antarctica-12`, prompt "packed snow… trampled grey snow… powder… pebbles"): família texturizada `tile_01/05/09/13` → `tile.antarctica.0–3`. O 1º lote (`antarctica-11`, vista `top-down`) saiu em losango 1:1 com bisel e foi descartado.
   - Estação (`station-12`, "worn dark steel deck plates with rivets and frost…"): placas de aço `tile_00/04/08/12` → `tile.station.0–3` (o concreto rachado ficou manchado demais repetido).
   - Ruínas (`ruins-12`, "cracked dark asphalt…"): asfalto `tile_00/01/02/08` → `tile.ruins.0–3`.
