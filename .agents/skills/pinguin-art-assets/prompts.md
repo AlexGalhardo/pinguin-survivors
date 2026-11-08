@@ -86,7 +86,7 @@ a single {weapon_name} weapon lying horizontally, blade or head pointing to the 
 seamless tileable ground texture seen from directly above, {surface} at night, {wear}, uniform, no objects, lineless, high top-down
 ```
 
-- `{surface}`: `packed grey-blue snow` (Antártida), `worn dark steel deck plates with rivets and frost` (estação), `cracked dark asphalt` (ruínas). Os dois últimos são os prompts do log (`station-12`, `ruins-12`).
+- `{surface}`: `packed grey-blue snow` (Antártida); `mossy forest floor with pine needles and frost` (floresta, **proposta**, ADR-016); `scorched concrete and cracked asphalt with rubble` (cidade destruída, **proposta**, ADR-016). Legado do endless (ADR-016): `worn dark steel deck plates with rivets and frost` (estação, log `station-12`) e `cracked dark asphalt` (cidade em ruínas, log `ruins-12`); não gerar de novo sem QA.
 - `{wear}`: `trampled footprints` ou `small ice cracks`.
 - Borda: `{edge_element}` (parede, gelo, contêiner, entulho) com cantos; **(proposta)** o texto exato da borda ainda não está no log.
 

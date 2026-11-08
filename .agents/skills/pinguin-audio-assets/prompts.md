@@ -51,8 +51,10 @@ Instrumental {genre} track for {context}: {instrumentation}, {mood}, {bpm} bpm, 
 | `music.round` | 140 | 45 s | djent com riffs drop-tuned, bumbo duplo, baixo sintetizado |
 | `music.late` | 155 | 45 s | death metal industrial, sintetizador dissonante, cidade em chamas |
 | `music.boss` | 170 | 45 s | blast beats, tremolo, industrial, baixo rugindo |
-| `music.station` (pendente) | **(proposta)** 120 | 45 s | estação e porto: metal industrial com sirene e vento de mar |
-| `music.ruins` (pendente) | **(proposta)** 150 | 45 s | cidade em ruínas: industrial sujo com percussão de metal |
+| `music.forest` (pendente) | **(proposta)** 110 | 45 s | floresta: drone de vento entre pinheiros, cordas graves, percussão de madeira e tambores lentos (ADR-016) |
+| `music.city` (pendente) | **(proposta)** 150 | 45 s | cidade destruída: industrial sujo com percussão de metal e pulsos sintéticos alienígenas (ADR-016) |
+| `music.station` (legado, endless) | (sem uso na campanha) | 45 s | estação e porto: metal industrial com sirene e vento de mar (ADR-016) |
+| `music.ruins` (legado, endless) | (sem uso na campanha) | 45 s | cidade em ruínas: industrial sujo com percussão de metal (ADR-016) |
 
 ### 3.2 Parâmetros da API
 

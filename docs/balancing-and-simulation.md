@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.5 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.6 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -125,7 +125,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 - `dmgMul(N) = (1 + 0,26·(N−1)) · 1,08^ciclo · 1,5^volta` (`src/data/rounds.ts`: `dmgPerRound` 0,26, `dmgPerCycle` 1,08, `dmgPerLoop` 1,5; 2026-11-08, commit `2f822aa`)
 - `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos** [1.0: revisar]
 - Bosses: HP base × `1,35^ciclo` (round 10 ×1, 20 ×1,35, 30 ×1,82…)
-- Biomas: rounds 1–10 Antártida, 11–20 estação/porto, 21–30 cidade em ruínas, depois repete (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
+- Biomas da campanha: rounds 1–10 Antártida, 11–20 floresta, 21–30 cidade destruída (ADR-016); no endless, a cada 10 rounds a seed sorteia entre os cinco biomas, incluindo estação e cidade em ruínas legados (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
 
 #### 2.1 Antártida (rounds 1–10)
 
@@ -138,7 +138,49 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | bloaterPenguin | explosivo (40 u) | 18 | 60 | 14 | 12 | 2 | 5 | 3 |
 | zombieWalrus | investida (200 u, 4 s) | 60 | 50 | 12 | 18 | 4 | 7 | 2 |
 
-#### 2.2 Estação de pesquisa / porto (rounds 11–20)
+#### 2.2 Floresta (rounds 11–20) — proposta, ADR-016 [1.0: calibrar]
+
+Papéis iguais aos da campanha antiga; números copiados do papel equivalente (enxame ← ratos, voador ← gaivota, tanque ← leão-marinho, à distância ← médico, explosivo ← bloater de combustível, investida ← narval). Números marcados [1.0: calibrar] no título da tabela.
+
+| Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
+|---|---|---|---|---|---|---|---|---|
+| zombieWolf | enxame (rápido e frágil) | 8 | 130 | 3 | 7 | 1 | 11 | 6 |
+| zombieCrow | voador | 12 | 125 | 4 | 9 | 1 | 11 | 5 |
+| zombieMoose | tanque | 60 | 45 | 10 | 17 | 3 | 12 | 4 |
+| zombieFox | à distância (240 u, 2,2 s) [1.0: revisar] | 24 | 55 | 7 | 11 | 2 | 13 | 3 |
+| sporeBloater | explosivo (42 u) | 22 | 62 | 16 | 12 | 2 | 14 | 3 |
+| zombieBoar | investida (220 u, 3,5 s) | 70 | 55 | 14 | 18 | 4 | 16 | 2 |
+
+#### 2.3 Cidade destruída (rounds 21–30) — proposta, ADR-016 [1.0: calibrar]
+
+Papéis iguais aos da campanha antiga; números copiados do papel equivalente (enxame ← ratos, voador ← pombo, tanque ← policial de choque, à distância ← soldado, explosivo ← bloater ácido, investida ← brutamontes). Os aliens são originais (ADR-016 decisão 4).
+
+| Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
+|---|---|---|---|---|---|---|---|---|
+| acidSwarmer | enxame (rápido e frágil, rastro de ácido) | 8 | 130 | 3 | 7 | 1 | 21 | 6 |
+| alienFlyer | voador | 14 | 125 | 5 | 9 | 1 | 22 | 4 |
+| armorGuard | tanque | 80 | 45 | 12 | 16 | 3 | 22 | 4 |
+| camoStalker | à distância (260 u, 2 s) [1.0: revisar] | 30 | 60 | 8 | 11 | 2 | 23 | 3 |
+| cystBloater | explosivo (44 u) | 26 | 64 | 18 | 12 | 2 | 24 | 3 |
+| clawCharger | investida (220 u, 3,5 s) | 90 | 55 | 16 | 19 | 5 | 26 | 2 |
+
+#### 2.4 Bosses (pool rotativo)
+
+Campanha: urso polar (10), Alce-rei zumbi (20, proposta [1.0: calibrar]) e Colosso biomecânico (30, proposta [1.0: calibrar]). Os bosses legados kraken e abomination entram só no endless (ADR-016 decisão 7).
+
+| Boss | Round | HP base | Vel. | Dano | Raio | Alcance | Recarga | Padrão |
+|---|---|---|---|---|---|---|---|---|
+| polarBear | 10 (+30·k) | 3000 | 70 | 25 | 40 | 90 u | 3 s | patada 0,4 s de preparo, alcance ×1,3; investida a cada 8 s; rugido a cada 12 s invoca 6× zombiePenguin |
+| mooseKing [1.0: calibrar] | 20 (+30·k) | 3000 | 70 | 25 | 40 | 90 u | 3 s | mesmo papel do urso polar (proposta): investida de chifres a cada 8 s; rugido a cada 12 s invoca 6× zombieWolf |
+| biomechColossus [1.0: calibrar] | 30 (+30·k) | 3500 | 80 | 28 | 42 | 95 u | 2,6 s | mesmo papel da abominação (proposta): investida a cada 5 s; 4 poças de ácido a cada 6 s; rugido a cada 13 s invoca 10× acidSwarmer |
+| kraken (legado, endless) | 20 (+30·k) | 3000 | 45 | 22 | 44 | 150 u | 2,6 s | patada 0,55 s de preparo, alcance ×1,2; rajada de 7 projéteis a cada 4 s; rugido a cada 14 s invoca 6× zombieSailor |
+| abomination (legado, endless) | 30 (+30·k) | 3500 | 80 | 28 | 42 | 95 u | 2,6 s | patada 0,35 s de preparo, alcance ×1,3; investida a cada 5 s; 4 poças de ácido a cada 6 s; rugido a cada 13 s invoca 10× zombieRat |
+
+Rajada do kraken: 170 u/s, alcance 520 u [1.0: revisar], dano 35% do dano do boss. Poças da abominação: raio 46 u, 4 s, 35% do dano do boss por segundo.
+
+Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultrawide incluso). [1.0: revisar]
+
+#### 2.5 Legado do endless: estação de pesquisa / porto (ADR-016 decisão 7)
 
 | Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
 |---|---|---|---|---|---|---|---|---|
@@ -149,7 +191,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | fuelBloater | explosivo (42 u) | 22 | 62 | 16 | 12 | 2 | 14 | 3 |
 | zombieNarwhal | investida (220 u, 3,5 s) | 70 | 55 | 14 | 18 | 4 | 16 | 2 |
 
-#### 2.3 Cidade em ruínas (rounds 21–30)
+#### 2.6 Legado do endless: cidade em ruínas (ADR-016 decisão 7)
 
 | Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
 |---|---|---|---|---|---|---|---|---|
@@ -160,18 +202,6 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | zombieSoldier | à distância (260 u, 2 s) [1.0: revisar] | 30 | 60 | 8 | 11 | 2 | 23 | 3 |
 | acidBloater | explosivo (44 u) | 26 | 64 | 18 | 12 | 2 | 24 | 3 |
 | zombieBrute | investida (220 u, 3,5 s) | 90 | 55 | 16 | 19 | 5 | 26 | 2 |
-
-#### 2.4 Bosses (pool rotativo)
-
-| Boss | Round | HP base | Vel. | Dano | Raio | Alcance | Recarga | Padrão |
-|---|---|---|---|---|---|---|---|---|
-| polarBear | 10 (+30·k) | 3000 | 70 | 25 | 40 | 90 u | 3 s | patada 0,4 s de preparo, alcance ×1,3; investida a cada 8 s; rugido a cada 12 s invoca 6× zombiePenguin |
-| kraken | 20 (+30·k) | 3000 | 45 | 22 | 44 | 150 u | 2,6 s | patada 0,55 s de preparo, alcance ×1,2; rajada de 7 projéteis a cada 4 s; rugido a cada 14 s invoca 6× zombieSailor |
-| abomination | 30 (+30·k) | 3500 | 80 | 28 | 42 | 95 u | 2,6 s | patada 0,35 s de preparo, alcance ×1,3; investida a cada 5 s; 4 poças de ácido a cada 6 s; rugido a cada 13 s invoca 10× zombieRat |
-
-Rajada do kraken: 170 u/s, alcance 520 u [1.0: revisar], dano 35% do dano do boss. Poças da abominação: raio 46 u, 4 s, 35% do dano do boss por segundo.
-
-Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultrawide incluso). [1.0: revisar]
 
 ### 3. Combate
 

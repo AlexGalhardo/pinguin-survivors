@@ -1,6 +1,6 @@
 # Art Bible — Pinguin Survivors
 
-> **Versão** 2.3 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
+> **Versão** 2.4 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
 
 ## Índice
 
@@ -115,7 +115,7 @@ Saldo em 2026-11-08: **2.320 gerações até 14/11**, depois 5.000/mês. Plano d
 
 **Prontos**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), 19 inimigos com walk, 3 bosses (urso com walk; kraken e abominação estáticos), 17 armas (1 tier), projéteis, pickups, 12+7 ícones, tiles iso removidos (frames `tile.*` iso, 129ad1b; tiles top-down em SDD-012), decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
 
-**Pendentes para a 1.0** (ordem de impacto): tileset top-down + bordas dos 3 biomas → props top-down → lojista → QA dos personagens no top-down → tiers II–IV das armas (~48 imagens) → ícones de cartas/itens/poções (~90) → VFX dos 3 superpoderes → walks do kraken/abominação e voadores → ataques de inimigos e bosses → key art de capa Steam e capsules.
+**Pendentes para a 1.0** (ordem de impacto): tileset top-down + bordas da Antártida, floresta e cidade destruída (ADR-016; estação e cidade em ruínas ficam como legado do endless) → props top-down da floresta e da cidade destruída → concepts dos 6 aliens e do Colosso biomecânico, com aprovação do desenvolvedor antes de qualquer animação (SDD-012 RF-12) → concept e walk do Alce-rei zumbi e dos 6 inimigos da floresta → lojista → QA dos personagens no top-down → tiers II–IV das armas (~48 imagens) → ícones de cartas/itens/poções (~90) → VFX dos 3 superpoderes → walks do kraken/abominação e voadores → ataques de inimigos e bosses → key art de capa Steam e capsules.
 
 ## 12. Referências
 
@@ -123,7 +123,7 @@ Brotato (vista, ritmo, loja), Diablo 4 (luz, sangue), Halls of Torment (pixel + 
 
 ## 13. Registro de produção PixelLab (histórico, 2026-09-27)
 
-> Seção migrada de `docs/art-prompts.md` (removido em 2026-11-08): prompts, `character_id` aprovados e custos. Novas gerações continuam registradas aqui, em ordem cronológica. Log bruto: `art-src/pixellab/log.jsonl`.
+> Legado do endless (ADR-016): tiles `station` e `ruins`, inimigos da estação e da cidade em ruínas, bosses kraken e abominação. Seção migrada de `docs/art-prompts.md` (removido em 2026-11-08): prompts, `character_id` aprovados e custos. Novas gerações continuam registradas aqui, em ordem cronológica. Log bruto: `art-src/pixellab/log.jsonl`.
 
 ### 2026-09-27 — Concepts dos 3 heróis (`bun scripts/pl-concepts.ts`)
 
