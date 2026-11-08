@@ -765,5 +765,469 @@
 		"src": "art-src/pixellab/borders/antarctica/1.png",
 		"group": "antarctica",
 		"trim": false
+	},
+	"weapon.doubleBarrel.t1": {
+		"src": "art-src/pixellab/images/weapon.doubleBarrel/22.png"
+	},
+	"weapon.doubleBarrel.t2": {
+		"src": "art-src/pixellab/images/weapon.doubleBarrel.t2/22.png"
+	},
+	"weapon.doubleBarrel.t3": {
+		"src": "art-src/pixellab/images/weapon.doubleBarrel.t3/22.png"
+	},
+	"weapon.doubleBarrel.t4": {
+		"src": "art-src/pixellab/images/weapon.doubleBarrel.t4/22.png"
+	},
+	"weapon.mine.t1": {
+		"src": "art-src/pixellab/images/weapon.mine/11.png"
+	},
+	"weapon.mine.t2": {
+		"src": "art-src/pixellab/images/weapon.mine.t2/11.png"
+	},
+	"weapon.mine.t3": {
+		"src": "art-src/pixellab/images/weapon.mine.t3/11.png"
+	},
+	"weapon.mine.t4": {
+		"src": "art-src/pixellab/images/weapon.mine.t4/11.png"
+	},
+	"weapon.grenadeBelt.t1": {
+		"src": "art-src/pixellab/images/weapon.grenadeBelt/11.png"
+	},
+	"weapon.grenadeBelt.t2": {
+		"src": "art-src/pixellab/images/weapon.grenadeBelt.t2/11.png"
+	},
+	"weapon.grenadeBelt.t3": {
+		"src": "art-src/pixellab/images/weapon.grenadeBelt.t3/11.png"
+	},
+	"weapon.grenadeBelt.t4": {
+		"src": "art-src/pixellab/images/weapon.grenadeBelt.t4/11.png"
+	},
+	"weapon.droneSentinel.t1": {
+		"src": "art-src/pixellab/images/weapon.droneSentinel/11.png"
+	},
+	"weapon.droneSentinel.t2": {
+		"src": "art-src/pixellab/images/weapon.droneSentinel.t2/11.png"
+	},
+	"weapon.droneSentinel.t3": {
+		"src": "art-src/pixellab/images/weapon.droneSentinel.t3/11.png"
+	},
+	"weapon.droneSentinel.t4": {
+		"src": "art-src/pixellab/images/weapon.droneSentinel.t4/11.png"
+	},
+	"weapon.elementStaff.t1": {
+		"src": "art-src/pixellab/images/weapon.elementStaff/11.png"
+	},
+	"weapon.elementStaff.t2": {
+		"src": "art-src/pixellab/images/weapon.elementStaff.t2/11.png"
+	},
+	"weapon.elementStaff.t3": {
+		"src": "art-src/pixellab/images/weapon.elementStaff.t3/11.png"
+	},
+	"weapon.elementStaff.t4": {
+		"src": "art-src/pixellab/images/weapon.elementStaff.t4/11.png"
+	},
+	"weapon.lightningTotem.t1": {
+		"src": "art-src/pixellab/images/weapon.lightningTotem/11.png"
+	},
+	"weapon.lightningTotem.t2": {
+		"src": "art-src/pixellab/images/weapon.lightningTotem.t2/22.png"
+	},
+	"weapon.lightningTotem.t3": {
+		"src": "art-src/pixellab/images/weapon.lightningTotem.t3/11.png"
+	},
+	"weapon.lightningTotem.t4": {
+		"src": "art-src/pixellab/images/weapon.lightningTotem.t4/11.png"
+	},
+	"weapon.poisonCloud.t1": {
+		"src": "art-src/pixellab/images/weapon.poisonCloud/11.png"
+	},
+	"weapon.poisonCloud.t2": {
+		"src": "art-src/pixellab/images/weapon.poisonCloud.t2/11.png"
+	},
+	"weapon.poisonCloud.t3": {
+		"src": "art-src/pixellab/images/weapon.poisonCloud.t3/22.png"
+	},
+	"weapon.poisonCloud.t4": {
+		"src": "art-src/pixellab/images/weapon.poisonCloud.t4/22.png"
+	},
+	"weapon.hammer.t1": {
+		"src": "art-src/pixellab/images/weapon.hammer.t1/11.png"
+	},
+	"weapon.hammer.t2": {
+		"src": "art-src/pixellab/images/weapon.hammer.t2/11.png"
+	},
+	"weapon.hammer.t3": {
+		"src": "art-src/pixellab/images/weapon.hammer.t3/11.png"
+	},
+	"weapon.hammer.t4": {
+		"src": "art-src/pixellab/images/weapon.hammer.t4/11.png"
+	},
+	"weapon.hammer": {
+		"src": "art-src/pixellab/images/weapon.hammer.t1/11.png"
+	},
+	"item.helmet.crown": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.helmet.crown/11.png"
+	},
+	"item.helmet.skull": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.helmet.skull/11.png"
+	},
+	"item.helmet.halo": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.helmet.halo/11.png"
+	},
+	"item.legs.greaves": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.greaves/11.png"
+	},
+	"item.legs.flippers": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.flippers/11.png"
+	},
+	"item.legs.windwalkers": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.windwalkers/11.png"
+	},
+	"item.legs.titan": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.titan/11.png"
+	},
+	"item.legs.hermes": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.hermes/11.png"
+	},
+	"item.ring.copper": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.copper/11.png"
+	},
+	"item.ring.bone": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.bone/11.png"
+	},
+	"item.ring.iron": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.iron/11.png"
+	},
+	"item.ring.ruby": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.ruby/11.png"
+	},
+	"item.ring.onyx": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.onyx/11.png"
+	},
+	"item.ring.silver": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.silver/11.png"
+	},
+	"item.ring.fang": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.fang/11.png"
+	},
+	"item.ring.doom": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.doom/11.png"
+	},
+	"item.ring.berserker": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.berserker/11.png"
+	},
+	"item.ring.eclipse": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.ring.eclipse/11.png"
+	},
+	"item.amulet.shell": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.shell/11.png"
+	},
+	"item.amulet.clover": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.clover/11.png"
+	},
+	"item.amulet.magnet": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.magnet/11.png"
+	},
+	"item.amulet.ember": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.ember/11.png"
+	},
+	"item.amulet.frost": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.frost/11.png"
+	},
+	"item.amulet.storm": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.storm/11.png"
+	},
+	"item.amulet.venom": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.venom/11.png"
+	},
+	"item.amulet.phoenix": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.phoenix/11.png"
+	},
+	"item.amulet.void": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.void/11.png"
+	},
+	"item.amulet.fortune": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.amulet.fortune/11.png"
+	},
+	"icon.weapon.arcaneChain": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.weapon.arcaneChain/11.png"
+	},
+	"icon.weapon.meteorShower": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.weapon.meteorShower/11.png"
+	},
+	"icon.weapon.frostNova": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.weapon.frostNova/11.png"
+	},
+	"icon.perk.hollowPoints": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.hollowPoints/11.png"
+	},
+	"icon.perk.ricochet": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.ricochet/11.png"
+	},
+	"icon.perk.runAndGun": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.runAndGun/11.png"
+	},
+	"icon.perk.reflex": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.reflex/11.png"
+	},
+	"icon.perk.elementalAttunement": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.elementalAttunement/11.png"
+	},
+	"icon.perk.arcaneBarrier": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.arcaneBarrier/11.png"
+	},
+	"icon.perk.toxicBloom": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.toxicBloom/11.png"
+	},
+	"icon.potion.heal": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.potion.heal/11.png"
+	},
+	"icon.potion.megaHeal": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.potion.megaHeal/11.png"
+	},
+	"icon.potion.shield": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.potion.shield/11.png"
+	},
+	"icon.potion.rage": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.potion.rage/11.png"
+	},
+	"icon.potion.antidote": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.potion.antidote/11.png"
+	},
+	"icon.potion.haste": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.potion.haste/11.png"
+	},
+	"icon.harvesting": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.harvesting/11.png"
+	},
+	"icon.perk.quickReload": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.quickReload/11.png"
+	},
+	"icon.perk.arcaneEcho": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.arcaneEcho/11.png"
+	},
+	"fx.super.bob.00": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/00.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.01": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/01.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.02": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/02.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.03": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/03.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.04": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/04.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.05": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/05.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.06": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/06.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.07": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/07.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.08": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/08.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.09": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/09.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.10": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/10.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.11": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/11.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.bob.12": {
+		"src": "art-src/pixellab/anim/fx.super.bob/loop/south/12.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.00": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/00.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.01": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/01.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.02": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/02.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.03": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/03.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.04": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/04.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.05": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/05.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.06": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/06.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.07": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/07.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.08": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/08.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.09": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/09.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.10": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/10.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.11": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/11.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.lucia.12": {
+		"src": "art-src/pixellab/anim/fx.super.lucia/loop/south/12.png",
+		"group": "core",
+		"trim": false
 	}
 }

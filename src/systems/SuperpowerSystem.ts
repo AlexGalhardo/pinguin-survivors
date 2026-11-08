@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { KEYS, SUPER_FX_FRAMES } from '../art/manifest';
+import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { shake } from '../core/feel';
 import { SUPER, SUPERPOWERS, type SuperpowerDef } from '../data/superpowers';
@@ -167,9 +167,12 @@ export class SuperpowerSystem {
 		if (!scene.textures.exists(first)) return;
 		const animKey = `fx.super.${hero}`;
 		if (!scene.anims.exists(animKey)) {
+			// The loop has as many frames as the atlas holds (12 to 13 per hero).
+			let count = 0;
+			while (scene.textures.exists(KEYS.superFx(hero, count))) count++;
 			scene.anims.create({
 				key: animKey,
-				frames: Array.from({ length: SUPER_FX_FRAMES }, (_, i) => ({
+				frames: Array.from({ length: count }, (_, i) => ({
 					key: KEYS.superFx(hero, i),
 				})),
 				frameRate: 18,

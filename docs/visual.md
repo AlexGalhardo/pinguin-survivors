@@ -117,6 +117,8 @@ Saldo em 2026-11-08: **2.320 gerações até 14/11**, depois 5.000/mês. Plano d
 
 **Saldo após os lotes A e B (2026-11-08)**: **2.025 gerações** (2.107 antes; **82 gastas**, teto 150 por lote). Lote A (animações dos aliens) ~45; lote B (Antártida e conceitos alternativos) ~37; inclui 5 gerações de uma animação duplicada do Colossus e alguns jobs de animação alternativa abortados a pedido do desenvolvedor.
 
+**Saldo após os lotes T7.2, T7.4 e voadores (2026-11-08)**: **1.885 gerações** (2.022 antes; **137 gastas** nos três: T7.2 81, T7.4 34, voadores 22).
+
 ## 11. Inventário de assets e pendências
 
 **Prontos**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), 19 inimigos com walk, 3 bosses (urso com walk; kraken e abominação estáticos), 17 armas (1 tier), projéteis, pickups, 12+7 ícones, tiles iso removidos (frames `tile.*` iso, 129ad1b; tiles top-down em SDD-012), decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
@@ -275,3 +277,19 @@ Ferramentas novas: `scripts/pl-tiles.ts` agora aceita o tipo `square_topdown` e 
 - **Lote B — refações do T4.1, PARADO a pedido do desenvolvedor**: "não delete os assets dos inimigos antigos, mantenha eles no jogo". Os originais apagados (386 frames de `anim/enemy.polarBear`, `zombiePenguin`, `zombieScientist`, `zombieSeal`, `hero.bob`, `hero.lucia`) foram restaurados com `git restore`; nenhum atlas existente foi reempacotado. Ficam apenas como **alternativa para avaliação, não ligada ao jogo**, e só como conceitos (sem animação; nenhum frame animado novo foi guardado):
   - `art-src/pixellab/concepts/bob-td/` (seed 202 escolhida, sem arma) e `lucia-td/` (seed 101 escolhida, sem cajado): `create-character-v3` canvas 80, mesmo método do Jack.
   - `art-src/pixellab/concepts/enemies-redo/` (zombiePenguin, zombieScientist, zombieSeal, polarBear): recriados como personagens novos com a rotação sul antiga como `reference_image`, porque os personagens legados (feitos pelo MCP) não pertencem à conta do token da API (`404 Character not found` ao reanimar). Rotações consistentes nas 5 direções; prancha `qa/enemies-redo-sheet.png`. Animar só com aprovação.
+
+### 2026-11-08 — T7.2: armas e ícones restantes (81 gerações; teto 150)
+
+- **Tiers das 8 linhas que faltavam** (`/create-image-pixflux`, mesmo prompt do tier I + detalhe de tier, mesmo tamanho; seed 11, doubleBarrel seed 22 como o tier I): `hammer` (tiers I a IV, sem arte antes), `doubleBarrel`, `mine`, `grenadeBelt`, `droneSentinel`, `elementStaff`, `lightningTotem`, `poisonCloud`. O tier I das linhas que já tinham arte aponta para ela (`weapon.<id>.t1`); `weapon.hammer` (base) = tier I. Retries seed 22: `poisonCloud` t3 e t4 (saíram como arma de fogo) e `lightningTotem` t2. Prancha: `qa/weapon-tiers-2-sheet.png`.
+- **Ícones** (pixflux 32×32, seed 11): 28 equipamentos (`item.helmet.crown/skull/halo`, `item.legs.*`, 10 anéis, 10 amuletos), 6 poções, 9 exclusivas (7 perks de Bob e Lucia mais `quickReload` e `arcaneEcho`), 3 ativas (`icon.weapon.arcaneChain/meteorShower/frostNova`) e `icon.harvesting`. Prancha: `qa/icons-2-sheet.png`.
+- **Assert**: `tests/art-coverage.test.ts` verifica que toda linha de arma tem os 4 tiers e que toda carta, poção, equipamento, moeda e nível de danger tem ícone em `art-src/selection.json`.
+
+### 2026-11-08 — T7.4: VFX dos superpoderes de Bob e Lucia (34 gerações; teto 150)
+
+- Mesmo pipeline do Jack (`scripts/pl-fx.ts`): `/create-1-direction-object` 192 px `top-down` + `/objects/{id}/animations` `mode v3`, 12 frames pedidos (13 devolvidos), loop. Bob: bombardeio (anel de explosões laranja com fumaça); Lucia: vórtice de quatro elementos (fogo, gelo, terra e raio) com núcleo branco. Chaves `fx.super.bob.00..12` e `fx.super.lucia.00..12`; `SuperpowerSystem` conta os frames do atlas (sem constante). `object_id` Bob `395ebdfc-2cae-412a-a89b-d81c0ea97437`.
+
+### 2026-11-08 — Voadores: animação de voo nova (22 gerações; teto 120; saldo 1.885)
+
+- **Diagnóstico**: os 3 voadores legados (`zombieSkua`, `zombieGull`, `zombiePigeon`) só tinham `walk` de **1 frame por direção** (a rotação estática) e o `zombieCrow` reusa o sprite da gaivota; o jogo só os balançava por código. O `alienFlyer` tinha `walk` de 6 frames de template de quadrúpede (pernas, não asas). Nenhum tinha animação de voo.
+- **Correção** (`scripts/pl-fly.ts`): os personagens legados não podem ser reanimados com este token (404), então cada direção usa a rotação existente (`walk/<dir>/00.png`) como primeiro quadro de `/animate-with-text-v3` (`action` `flying: the creature beats its wings hard, wings sweeping from raised high to lowered low and back again, body bobbing up and down, hovering in place, seamless loop`, 8 frames mais o inicial, seed 22, ~1 geração por direção). 4 voadores × 5 direções (+ espelho) = 20 gerações (+ 2 de piloto).
+- **Integração sem tocar o walk**: os 9 frames de cada direção entram numa pasta nova `anim/enemy.<id>/fly/` e o atlas `enemy.<id>` é empacotado de novo; conferi pixel a pixel que todos os frames `walk` antigos continuam idênticos (5 por legado, 30 no alienFlyer). `Enemy.ts` escolhe `fly` para `behavior: 'flyer'` quando o atlas tem os frames (loop a 12 fps, âncora própria), senão `walk`; a sombra no chão já era um sprite separado (`z` de 18). Prancha: `qa/flyers-fly-sheet.png`.

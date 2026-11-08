@@ -1,0 +1,23 @@
+[
+	{
+		"key": "weapon.lightningTotem.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 22,
+		"prompt": "a small carved wooden totem pole on a stick held horizontally, crackling yellow lightning at the right end, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.poisonCloud.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 22,
+		"prompt": "a round green toxic gas canister tank with a valve and a short nozzle pointing right, dripping green poison, no gun, lying horizontally, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.poisonCloud.t4",
+		"w": 48,
+		"h": 24,
+		"seed": 22,
+		"prompt": "a round green toxic gas canister tank with a valve and a short nozzle pointing right, dripping green poison, no gun, lying horizontally, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	}
+]

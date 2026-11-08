@@ -16,8 +16,8 @@ import type { Mover } from '../logic/steering';
 const ELITE_BAR_W = 24;
 const FLASH_TIME = 0.06;
 const FLASH_COOLDOWN = 0.18;
-const ANIM_FPS: Record<string, number> = { walk: 10, attack: 12 };
-const ANIM_LOOPS = ['walk', 'attack'] as const;
+const ANIM_FPS: Record<string, number> = { walk: 10, attack: 12, fly: 12 };
+const ANIM_LOOPS = ['walk', 'attack', 'fly'] as const;
 
 /** Pooled enemy: world state + its sprites. Flyers hover at a fake height (z). */
 export class Enemy implements Mover {
@@ -123,7 +123,7 @@ export class Enemy implements Mover {
 			ANIM_FPS,
 			ANIM_LOOPS,
 		);
-		this.sprite.setOrigin(0.5, this.anims?.walk?.anchorY ?? 0.95);
+		this.sprite.setOrigin(0.5, this.moveAnim()?.anchorY ?? 0.95);
 		this.facing = 's';
 		this.lastX = x;
 		this.lastY = y;
@@ -207,7 +207,7 @@ export class Enemy implements Mover {
 	/** Faces the movement direction (5 drawn + 3 mirrored) and walks, or winds up an attack. */
 	/** True when the art has a real multi-frame walk (else the sprite is a still image). */
 	private hasWalkFrames(): boolean {
-		return (this.anims?.walk?.frames ?? 0) > 1;
+		return (this.moveAnim()?.frames ?? 0) > 1;
 	}
 
 	/**
@@ -223,13 +223,22 @@ export class Enemy implements Mover {
 			.setScale(this.baseScale * (1 + squash), this.baseScale * (1 - squash));
 	}
 
+	/** Flyers beat their wings (`fly`) when the atlas has the frames; everything else walks. */
+	private moveName(): 'fly' | 'walk' {
+		return this.def.behavior === 'flyer' && this.anims?.fly ? 'fly' : 'walk';
+	}
+
+	private moveAnim(): AnimMeta | undefined {
+		return this.anims?.[this.moveName()];
+	}
+
 	private animate(): void {
 		const dx = this.x - this.lastX;
 		const dy = this.y - this.lastY;
 		this.lastX = this.x;
 		this.lastY = this.y;
 		if (dx * dx + dy * dy > 0.01) this.facing = dirFromWorld(dx, dy, this.facing);
-		const name = this.telegraph && this.anims?.attack ? 'attack' : 'walk';
+		const name = this.telegraph && this.anims?.attack ? 'attack' : this.moveName();
 		const meta = this.anims?.[name];
 		if (!meta) return;
 		const { dir, flip } = spriteDir(this.facing);

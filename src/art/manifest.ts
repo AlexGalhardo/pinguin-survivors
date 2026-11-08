@@ -7,9 +7,6 @@ import type { Dir } from '../logic/projection';
  * Asset key contract (docs/visual.md). Code placeholders and final PixelLab art share
  * these keys, so swapping art never touches scenes or systems.
  */
-/** Frames of each `fx.super.<hero>` loop that exists (only Jack's so far). */
-export const SUPER_FX_FRAMES = 13;
-
 export const KEYS = {
 	/** Top-down ground tile, 64×64. */
 	tile: (biome: string, variant: number) => `tile.${biome}.${variant}`,
@@ -38,7 +35,7 @@ export const KEYS = {
 	pickup: (kind: 'xp' | 'fish' | 'meat') => `pickup.${kind}`,
 	/** Health pack healing `percent`% of max HP (25/50/75). */
 	healPack: (percent: number) => `pickup.heal.${percent}`,
-	/** Super power effect loop (PixelLab object animation, `SUPER_FX_FRAMES` frames): `fx.super.<hero>.<nn>`. */
+	/** Super power effect loop (PixelLab object animation, as many frames as the atlas has): `fx.super.<hero>.<nn>`. */
 	superFx: (hero: string, n: number) => `fx.super.${hero}.${String(n).padStart(2, '0')}`,
 	/** Equipment icon (ground and pause menu): `item.<slot>.<name>`. */
 	gear: (id: string) => `item.${id}`,

@@ -82,7 +82,7 @@ jobs:
             - uses: actions/setup-java@v6.2.0
               with:
                   distribution: temurin
-                  java-version: '21'
+                  java-version: "21"
             # The hosted runner ships the Android SDK; make sure the pieces compileSdk 36 needs are there.
             - name: Android SDK packages
               run: |

@@ -1,600 +1,1013 @@
 {
 	"frames": {
-		"fx.super.jack.00": {
+		"fx.super.bob.00": {
 			"frame": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.01": {
+		"fx.super.bob.01": {
 			"frame": { "x": 193, "y": 0, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.02": {
+		"fx.super.bob.02": {
 			"frame": { "x": 386, "y": 0, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.03": {
+		"fx.super.bob.03": {
 			"frame": { "x": 579, "y": 0, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.04": {
+		"fx.super.bob.04": {
 			"frame": { "x": 772, "y": 0, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.05": {
+		"fx.super.bob.05": {
 			"frame": { "x": 0, "y": 193, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.06": {
+		"fx.super.bob.06": {
 			"frame": { "x": 193, "y": 193, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.07": {
+		"fx.super.bob.07": {
 			"frame": { "x": 386, "y": 193, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.08": {
+		"fx.super.bob.08": {
 			"frame": { "x": 579, "y": 193, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.09": {
+		"fx.super.bob.09": {
 			"frame": { "x": 772, "y": 193, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.10": {
+		"fx.super.bob.10": {
 			"frame": { "x": 0, "y": 386, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.11": {
+		"fx.super.bob.11": {
 			"frame": { "x": 193, "y": 386, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
-		"fx.super.jack.12": {
+		"fx.super.bob.12": {
 			"frame": { "x": 386, "y": 386, "w": 192, "h": 192 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
 			"sourceSize": { "w": 192, "h": 192 }
 		},
+		"fx.super.jack.00": {
+			"frame": { "x": 579, "y": 386, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.01": {
+			"frame": { "x": 772, "y": 386, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.02": {
+			"frame": { "x": 0, "y": 579, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.03": {
+			"frame": { "x": 193, "y": 579, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.04": {
+			"frame": { "x": 386, "y": 579, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.05": {
+			"frame": { "x": 579, "y": 579, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.06": {
+			"frame": { "x": 772, "y": 579, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.07": {
+			"frame": { "x": 0, "y": 772, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.08": {
+			"frame": { "x": 193, "y": 772, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.09": {
+			"frame": { "x": 386, "y": 772, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.10": {
+			"frame": { "x": 579, "y": 772, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.11": {
+			"frame": { "x": 772, "y": 772, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.jack.12": {
+			"frame": { "x": 0, "y": 965, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.00": {
+			"frame": { "x": 193, "y": 965, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.01": {
+			"frame": { "x": 386, "y": 965, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.02": {
+			"frame": { "x": 579, "y": 965, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.03": {
+			"frame": { "x": 772, "y": 965, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.04": {
+			"frame": { "x": 0, "y": 1158, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.05": {
+			"frame": { "x": 193, "y": 1158, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.06": {
+			"frame": { "x": 386, "y": 1158, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.07": {
+			"frame": { "x": 579, "y": 1158, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.08": {
+			"frame": { "x": 772, "y": 1158, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.09": {
+			"frame": { "x": 0, "y": 1351, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.10": {
+			"frame": { "x": 193, "y": 1351, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.11": {
+			"frame": { "x": 386, "y": 1351, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
+		"fx.super.lucia.12": {
+			"frame": { "x": 579, "y": 1351, "w": 192, "h": 192 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+			"sourceSize": { "w": 192, "h": 192 }
+		},
 		"weapon.molotov.t3": {
-			"frame": { "x": 579, "y": 386, "w": 27, "h": 31 },
+			"frame": { "x": 772, "y": 1351, "w": 27, "h": 31 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 31 },
 			"sourceSize": { "w": 27, "h": 31 }
 		},
 		"weapon.mine": {
-			"frame": { "x": 607, "y": 386, "w": 24, "h": 31 },
+			"frame": { "x": 800, "y": 1351, "w": 24, "h": 31 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 31 },
+			"sourceSize": { "w": 24, "h": 31 }
+		},
+		"weapon.mine.t1": {
+			"frame": { "x": 825, "y": 1351, "w": 24, "h": 31 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 31 },
 			"sourceSize": { "w": 24, "h": 31 }
 		},
 		"weapon.molotov.t4": {
-			"frame": { "x": 632, "y": 386, "w": 28, "h": 30 },
+			"frame": { "x": 850, "y": 1351, "w": 28, "h": 30 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 28, "h": 30 },
 			"sourceSize": { "w": 28, "h": 30 }
 		},
 		"weapon.molotov": {
-			"frame": { "x": 661, "y": 386, "w": 27, "h": 30 },
+			"frame": { "x": 879, "y": 1351, "w": 27, "h": 30 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 30 },
 			"sourceSize": { "w": 27, "h": 30 }
 		},
 		"weapon.molotov.t1": {
-			"frame": { "x": 689, "y": 386, "w": 27, "h": 30 },
+			"frame": { "x": 907, "y": 1351, "w": 27, "h": 30 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 30 },
 			"sourceSize": { "w": 27, "h": 30 }
 		},
 		"weapon.flameRing.t3": {
-			"frame": { "x": 717, "y": 386, "w": 26, "h": 30 },
+			"frame": { "x": 935, "y": 1351, "w": 26, "h": 30 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 30 },
 			"sourceSize": { "w": 26, "h": 30 }
 		},
+		"weapon.mine.t3": {
+			"frame": { "x": 962, "y": 1351, "w": 24, "h": 30 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 30 },
+			"sourceSize": { "w": 24, "h": 30 }
+		},
+		"weapon.mine.t4": {
+			"frame": { "x": 987, "y": 1351, "w": 24, "h": 30 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 30 },
+			"sourceSize": { "w": 24, "h": 30 }
+		},
 		"weapon.molotov.t2": {
-			"frame": { "x": 744, "y": 386, "w": 26, "h": 29 },
+			"frame": { "x": 0, "y": 1544, "w": 26, "h": 29 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 29 },
 			"sourceSize": { "w": 26, "h": 29 }
 		},
+		"weapon.mine.t2": {
+			"frame": { "x": 27, "y": 1544, "w": 23, "h": 29 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 23, "h": 29 },
+			"sourceSize": { "w": 23, "h": 29 }
+		},
 		"weapon.bladeWhirl.t3": {
-			"frame": { "x": 771, "y": 386, "w": 28, "h": 28 },
+			"frame": { "x": 51, "y": 1544, "w": 28, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 28, "h": 28 },
 			"sourceSize": { "w": 28, "h": 28 }
 		},
 		"weapon.bladeWhirl.t4": {
-			"frame": { "x": 800, "y": 386, "w": 28, "h": 28 },
+			"frame": { "x": 80, "y": 1544, "w": 28, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 28, "h": 28 },
 			"sourceSize": { "w": 28, "h": 28 }
 		},
 		"weapon.fishBoomerang.t3": {
-			"frame": { "x": 829, "y": 386, "w": 28, "h": 28 },
+			"frame": { "x": 109, "y": 1544, "w": 28, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 28, "h": 28 },
 			"sourceSize": { "w": 28, "h": 28 }
 		},
 		"proj.meteor": {
-			"frame": { "x": 858, "y": 386, "w": 27, "h": 28 },
+			"frame": { "x": 138, "y": 1544, "w": 27, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 28 },
 			"sourceSize": { "w": 27, "h": 28 }
 		},
 		"weapon.fishBoomerang": {
-			"frame": { "x": 886, "y": 386, "w": 25, "h": 28 },
+			"frame": { "x": 166, "y": 1544, "w": 25, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 25, "h": 28 },
 			"sourceSize": { "w": 25, "h": 28 }
 		},
 		"weapon.fishBoomerang.t1": {
-			"frame": { "x": 912, "y": 386, "w": 25, "h": 28 },
+			"frame": { "x": 192, "y": 1544, "w": 25, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 25, "h": 28 },
 			"sourceSize": { "w": 25, "h": 28 }
 		},
 		"weapon.fishBoomerang.t2": {
-			"frame": { "x": 938, "y": 386, "w": 25, "h": 28 },
+			"frame": { "x": 218, "y": 1544, "w": 25, "h": 28 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 25, "h": 28 },
 			"sourceSize": { "w": 25, "h": 28 }
 		},
 		"weapon.flameRing.t4": {
-			"frame": { "x": 964, "y": 386, "w": 24, "h": 25 },
+			"frame": { "x": 244, "y": 1544, "w": 24, "h": 25 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 25 },
 			"sourceSize": { "w": 24, "h": 25 }
 		},
 		"weapon.seismicStomp": {
-			"frame": { "x": 0, "y": 579, "w": 48, "h": 24 },
+			"frame": { "x": 269, "y": 1544, "w": 48, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 24 },
 			"sourceSize": { "w": 48, "h": 24 }
 		},
 		"weapon.auxPistol.t4": {
-			"frame": { "x": 49, "y": 579, "w": 28, "h": 24 },
+			"frame": { "x": 318, "y": 1544, "w": 28, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 28, "h": 24 },
 			"sourceSize": { "w": 28, "h": 24 }
 		},
 		"weapon.bladeWhirl": {
-			"frame": { "x": 78, "y": 579, "w": 24, "h": 24 },
+			"frame": { "x": 347, "y": 1544, "w": 24, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
 			"sourceSize": { "w": 24, "h": 24 }
 		},
 		"weapon.bladeWhirl.t1": {
-			"frame": { "x": 103, "y": 579, "w": 24, "h": 24 },
+			"frame": { "x": 372, "y": 1544, "w": 24, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
 			"sourceSize": { "w": 24, "h": 24 }
 		},
 		"weapon.bladeWhirl.t2": {
-			"frame": { "x": 128, "y": 579, "w": 24, "h": 24 },
+			"frame": { "x": 397, "y": 1544, "w": 24, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
 			"sourceSize": { "w": 24, "h": 24 }
 		},
 		"weapon.flameRing.t2": {
-			"frame": { "x": 153, "y": 579, "w": 21, "h": 24 },
+			"frame": { "x": 422, "y": 1544, "w": 21, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 21, "h": 24 },
 			"sourceSize": { "w": 21, "h": 24 }
 		},
 		"weapon.flameRing": {
-			"frame": { "x": 175, "y": 579, "w": 20, "h": 24 },
+			"frame": { "x": 444, "y": 1544, "w": 20, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 20, "h": 24 },
 			"sourceSize": { "w": 20, "h": 24 }
 		},
 		"weapon.flameRing.t1": {
-			"frame": { "x": 196, "y": 579, "w": 20, "h": 24 },
+			"frame": { "x": 465, "y": 1544, "w": 20, "h": 24 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 20, "h": 24 },
 			"sourceSize": { "w": 20, "h": 24 }
 		},
 		"weapon.arcaneChain": {
-			"frame": { "x": 217, "y": 579, "w": 45, "h": 23 },
+			"frame": { "x": 486, "y": 1544, "w": 45, "h": 23 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 45, "h": 23 },
 			"sourceSize": { "w": 45, "h": 23 }
 		},
 		"weapon.iceShards.t3": {
-			"frame": { "x": 263, "y": 579, "w": 44, "h": 23 },
+			"frame": { "x": 532, "y": 1544, "w": 44, "h": 23 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 23 },
 			"sourceSize": { "w": 44, "h": 23 }
 		},
 		"weapon.iceShards.t4": {
-			"frame": { "x": 308, "y": 579, "w": 44, "h": 23 },
+			"frame": { "x": 577, "y": 1544, "w": 44, "h": 23 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 23 },
 			"sourceSize": { "w": 44, "h": 23 }
 		},
+		"weapon.lightningTotem.t3": {
+			"frame": { "x": 622, "y": 1544, "w": 46, "h": 22 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 46, "h": 22 },
+			"sourceSize": { "w": 46, "h": 22 }
+		},
 		"weapon.iceShards": {
-			"frame": { "x": 353, "y": 579, "w": 44, "h": 22 },
+			"frame": { "x": 669, "y": 1544, "w": 44, "h": 22 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 22 },
 			"sourceSize": { "w": 44, "h": 22 }
 		},
 		"weapon.iceShards.t1": {
-			"frame": { "x": 398, "y": 579, "w": 44, "h": 22 },
+			"frame": { "x": 714, "y": 1544, "w": 44, "h": 22 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 22 },
 			"sourceSize": { "w": 44, "h": 22 }
 		},
 		"weapon.iceShards.t2": {
-			"frame": { "x": 443, "y": 579, "w": 44, "h": 22 },
+			"frame": { "x": 759, "y": 1544, "w": 44, "h": 22 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 22 },
 			"sourceSize": { "w": 44, "h": 22 }
 		},
 		"weapon.lightningTotem": {
-			"frame": { "x": 488, "y": 579, "w": 44, "h": 22 },
+			"frame": { "x": 804, "y": 1544, "w": 44, "h": 22 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 22 },
+			"sourceSize": { "w": 44, "h": 22 }
+		},
+		"weapon.lightningTotem.t1": {
+			"frame": { "x": 849, "y": 1544, "w": 44, "h": 22 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 22 },
 			"sourceSize": { "w": 44, "h": 22 }
 		},
 		"weapon.poisonCloud": {
-			"frame": { "x": 533, "y": 579, "w": 22, "h": 22 },
+			"frame": { "x": 894, "y": 1544, "w": 22, "h": 22 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 22 },
 			"sourceSize": { "w": 22, "h": 22 }
 		},
+		"weapon.poisonCloud.t1": {
+			"frame": { "x": 917, "y": 1544, "w": 22, "h": 22 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 22 },
+			"sourceSize": { "w": 22, "h": 22 }
+		},
+		"weapon.poisonCloud.t2": {
+			"frame": { "x": 940, "y": 1544, "w": 20, "h": 22 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 20, "h": 22 },
+			"sourceSize": { "w": 20, "h": 22 }
+		},
+		"weapon.doubleBarrel.t4": {
+			"frame": { "x": 961, "y": 1544, "w": 60, "h": 21 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 21 },
+			"sourceSize": { "w": 60, "h": 21 }
+		},
 		"weapon.crossbow.t3": {
-			"frame": { "x": 556, "y": 579, "w": 48, "h": 20 },
+			"frame": { "x": 0, "y": 1574, "w": 48, "h": 20 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 20 },
 			"sourceSize": { "w": 48, "h": 20 }
 		},
 		"weapon.crossbow.t4": {
-			"frame": { "x": 605, "y": 579, "w": 48, "h": 20 },
+			"frame": { "x": 49, "y": 1574, "w": 48, "h": 20 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 20 },
+			"sourceSize": { "w": 48, "h": 20 }
+		},
+		"weapon.lightningTotem.t2": {
+			"frame": { "x": 98, "y": 1574, "w": 48, "h": 20 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 20 },
 			"sourceSize": { "w": 48, "h": 20 }
 		},
 		"weapon.crossbow.t2": {
-			"frame": { "x": 654, "y": 579, "w": 46, "h": 20 },
+			"frame": { "x": 147, "y": 1574, "w": 46, "h": 20 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 46, "h": 20 },
 			"sourceSize": { "w": 46, "h": 20 }
 		},
 		"weapon.frostNova": {
-			"frame": { "x": 701, "y": 579, "w": 46, "h": 20 },
+			"frame": { "x": 194, "y": 1574, "w": 46, "h": 20 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 46, "h": 20 },
 			"sourceSize": { "w": 46, "h": 20 }
 		},
 		"weapon.fishBoomerang.t4": {
-			"frame": { "x": 748, "y": 579, "w": 22, "h": 20 },
+			"frame": { "x": 241, "y": 1574, "w": 22, "h": 20 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 20 },
 			"sourceSize": { "w": 22, "h": 20 }
 		},
 		"weapon.autoShotgun": {
-			"frame": { "x": 771, "y": 579, "w": 72, "h": 19 },
+			"frame": { "x": 264, "y": 1574, "w": 72, "h": 19 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 72, "h": 19 },
 			"sourceSize": { "w": 72, "h": 19 }
 		},
+		"weapon.hammer.t4": {
+			"frame": { "x": 337, "y": 1574, "w": 54, "h": 19 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 19 },
+			"sourceSize": { "w": 54, "h": 19 }
+		},
 		"weapon.knives.t2": {
-			"frame": { "x": 844, "y": 579, "w": 48, "h": 19 },
+			"frame": { "x": 392, "y": 1574, "w": 48, "h": 19 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 19 },
 			"sourceSize": { "w": 48, "h": 19 }
 		},
+		"weapon.hammer.t3": {
+			"frame": { "x": 441, "y": 1574, "w": 41, "h": 19 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 19 },
+			"sourceSize": { "w": 41, "h": 19 }
+		},
+		"weapon.lightningTotem.t4": {
+			"frame": { "x": 483, "y": 1574, "w": 31, "h": 19 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 31, "h": 19 },
+			"sourceSize": { "w": 31, "h": 19 }
+		},
 		"weapon.arcaneStaff": {
-			"frame": { "x": 893, "y": 579, "w": 64, "h": 18 },
+			"frame": { "x": 515, "y": 1574, "w": 64, "h": 18 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 18 },
 			"sourceSize": { "w": 64, "h": 18 }
 		},
 		"weapon.machete.t3": {
-			"frame": { "x": 958, "y": 579, "w": 60, "h": 18 },
+			"frame": { "x": 580, "y": 1574, "w": 60, "h": 18 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 18 },
 			"sourceSize": { "w": 60, "h": 18 }
 		},
 		"weapon.crossbow": {
-			"frame": { "x": 0, "y": 604, "w": 48, "h": 18 },
+			"frame": { "x": 641, "y": 1574, "w": 48, "h": 18 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
 			"sourceSize": { "w": 48, "h": 18 }
 		},
 		"weapon.crossbow.t1": {
-			"frame": { "x": 49, "y": 604, "w": 48, "h": 18 },
+			"frame": { "x": 690, "y": 1574, "w": 48, "h": 18 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
 			"sourceSize": { "w": 48, "h": 18 }
 		},
 		"weapon.grenadeBelt": {
-			"frame": { "x": 98, "y": 604, "w": 48, "h": 18 },
+			"frame": { "x": 739, "y": 1574, "w": 48, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
+			"sourceSize": { "w": 48, "h": 18 }
+		},
+		"weapon.grenadeBelt.t1": {
+			"frame": { "x": 788, "y": 1574, "w": 48, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
+			"sourceSize": { "w": 48, "h": 18 }
+		},
+		"weapon.grenadeBelt.t2": {
+			"frame": { "x": 837, "y": 1574, "w": 48, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
+			"sourceSize": { "w": 48, "h": 18 }
+		},
+		"weapon.grenadeBelt.t3": {
+			"frame": { "x": 886, "y": 1574, "w": 48, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
+			"sourceSize": { "w": 48, "h": 18 }
+		},
+		"weapon.grenadeBelt.t4": {
+			"frame": { "x": 935, "y": 1574, "w": 48, "h": 18 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
 			"sourceSize": { "w": 48, "h": 18 }
 		},
 		"weapon.knives.t3": {
-			"frame": { "x": 147, "y": 604, "w": 48, "h": 18 },
+			"frame": { "x": 0, "y": 1595, "w": 48, "h": 18 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 18 },
 			"sourceSize": { "w": 48, "h": 18 }
 		},
+		"weapon.droneSentinel.t3": {
+			"frame": { "x": 49, "y": 1595, "w": 26, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 18 },
+			"sourceSize": { "w": 26, "h": 18 }
+		},
+		"weapon.droneSentinel.t4": {
+			"frame": { "x": 76, "y": 1595, "w": 26, "h": 18 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 18 },
+			"sourceSize": { "w": 26, "h": 18 }
+		},
 		"weapon.chainsword": {
-			"frame": { "x": 196, "y": 604, "w": 63, "h": 16 },
+			"frame": { "x": 103, "y": 1595, "w": 63, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 63, "h": 16 },
 			"sourceSize": { "w": 63, "h": 16 }
 		},
+		"weapon.elementStaff.t3": {
+			"frame": { "x": 167, "y": 1595, "w": 61, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 16 },
+			"sourceSize": { "w": 61, "h": 16 }
+		},
+		"weapon.doubleBarrel.t2": {
+			"frame": { "x": 229, "y": 1595, "w": 60, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 16 },
+			"sourceSize": { "w": 60, "h": 16 }
+		},
+		"weapon.doubleBarrel.t3": {
+			"frame": { "x": 290, "y": 1595, "w": 60, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 16 },
+			"sourceSize": { "w": 60, "h": 16 }
+		},
+		"weapon.elementStaff.t4": {
+			"frame": { "x": 351, "y": 1595, "w": 60, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 16 },
+			"sourceSize": { "w": 60, "h": 16 }
+		},
+		"weapon.poisonCloud.t3": {
+			"frame": { "x": 412, "y": 1595, "w": 46, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 46, "h": 16 },
+			"sourceSize": { "w": 46, "h": 16 }
+		},
+		"weapon.poisonCloud.t4": {
+			"frame": { "x": 459, "y": 1595, "w": 46, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 46, "h": 16 },
+			"sourceSize": { "w": 46, "h": 16 }
+		},
 		"weapon.droneSentinel": {
-			"frame": { "x": 260, "y": 604, "w": 27, "h": 16 },
+			"frame": { "x": 506, "y": 1595, "w": 27, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 16 },
 			"sourceSize": { "w": 27, "h": 16 }
 		},
+		"weapon.droneSentinel.t1": {
+			"frame": { "x": 534, "y": 1595, "w": 27, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 16 },
+			"sourceSize": { "w": 27, "h": 16 }
+		},
+		"weapon.droneSentinel.t2": {
+			"frame": { "x": 562, "y": 1595, "w": 25, "h": 16 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 25, "h": 16 },
+			"sourceSize": { "w": 25, "h": 16 }
+		},
 		"weapon.auxPistol": {
-			"frame": { "x": 288, "y": 604, "w": 23, "h": 16 },
+			"frame": { "x": 588, "y": 1595, "w": 23, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 23, "h": 16 },
 			"sourceSize": { "w": 23, "h": 16 }
 		},
 		"weapon.auxPistol.t1": {
-			"frame": { "x": 312, "y": 604, "w": 23, "h": 16 },
+			"frame": { "x": 612, "y": 1595, "w": 23, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 23, "h": 16 },
 			"sourceSize": { "w": 23, "h": 16 }
 		},
 		"weapon.auxPistol.t2": {
-			"frame": { "x": 336, "y": 604, "w": 23, "h": 16 },
+			"frame": { "x": 636, "y": 1595, "w": 23, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 23, "h": 16 },
 			"sourceSize": { "w": 23, "h": 16 }
 		},
 		"weapon.auxPistol.t3": {
-			"frame": { "x": 360, "y": 604, "w": 23, "h": 16 },
+			"frame": { "x": 660, "y": 1595, "w": 23, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 23, "h": 16 },
 			"sourceSize": { "w": 23, "h": 16 }
 		},
 		"proj.grenade": {
-			"frame": { "x": 384, "y": 604, "w": 11, "h": 16 },
+			"frame": { "x": 684, "y": 1595, "w": 11, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 11, "h": 16 },
 			"sourceSize": { "w": 11, "h": 16 }
 		},
 		"proj.bottle": {
-			"frame": { "x": 396, "y": 604, "w": 9, "h": 16 },
+			"frame": { "x": 696, "y": 1595, "w": 9, "h": 16 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 9, "h": 16 },
 			"sourceSize": { "w": 9, "h": 16 }
 		},
 		"weapon.rocketShotgun": {
-			"frame": { "x": 406, "y": 604, "w": 73, "h": 15 },
+			"frame": { "x": 706, "y": 1595, "w": 73, "h": 15 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 73, "h": 15 },
 			"sourceSize": { "w": 73, "h": 15 }
 		},
 		"weapon.knives": {
-			"frame": { "x": 480, "y": 604, "w": 48, "h": 15 },
+			"frame": { "x": 780, "y": 1595, "w": 48, "h": 15 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 15 },
 			"sourceSize": { "w": 48, "h": 15 }
 		},
 		"weapon.knives.t1": {
-			"frame": { "x": 529, "y": 604, "w": 48, "h": 15 },
+			"frame": { "x": 829, "y": 1595, "w": 48, "h": 15 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 15 },
 			"sourceSize": { "w": 48, "h": 15 }
 		},
 		"weapon.knives.t4": {
-			"frame": { "x": 578, "y": 604, "w": 48, "h": 15 },
+			"frame": { "x": 878, "y": 1595, "w": 48, "h": 15 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 15 },
 			"sourceSize": { "w": 48, "h": 15 }
 		},
 		"weapon.stormStaff": {
-			"frame": { "x": 627, "y": 604, "w": 74, "h": 14 },
+			"frame": { "x": 927, "y": 1595, "w": 74, "h": 14 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 74, "h": 14 },
 			"sourceSize": { "w": 74, "h": 14 }
 		},
 		"proj.spit": {
-			"frame": { "x": 702, "y": 604, "w": 13, "h": 14 },
+			"frame": { "x": 1002, "y": 1595, "w": 13, "h": 14 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 14 },
 			"sourceSize": { "w": 13, "h": 14 }
 		},
 		"weapon.doubleBarrel": {
-			"frame": { "x": 716, "y": 604, "w": 62, "h": 13 },
+			"frame": { "x": 0, "y": 1614, "w": 62, "h": 13 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 62, "h": 13 },
+			"sourceSize": { "w": 62, "h": 13 }
+		},
+		"weapon.doubleBarrel.t1": {
+			"frame": { "x": 63, "y": 1614, "w": 62, "h": 13 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 62, "h": 13 },
 			"sourceSize": { "w": 62, "h": 13 }
 		},
 		"weapon.elementStaff": {
-			"frame": { "x": 779, "y": 604, "w": 61, "h": 13 },
+			"frame": { "x": 126, "y": 1614, "w": 61, "h": 13 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 13 },
 			"sourceSize": { "w": 61, "h": 13 }
 		},
+		"weapon.elementStaff.t1": {
+			"frame": { "x": 188, "y": 1614, "w": 61, "h": 13 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 13 },
+			"sourceSize": { "w": 61, "h": 13 }
+		},
+		"weapon.elementStaff.t2": {
+			"frame": { "x": 250, "y": 1614, "w": 59, "h": 13 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 59, "h": 13 },
+			"sourceSize": { "w": 59, "h": 13 }
+		},
 		"weapon.machete.t4": {
-			"frame": { "x": 841, "y": 604, "w": 56, "h": 13 },
+			"frame": { "x": 310, "y": 1614, "w": 56, "h": 13 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 13 },
 			"sourceSize": { "w": 56, "h": 13 }
 		},
 		"weapon.meteorShower": {
-			"frame": { "x": 898, "y": 604, "w": 45, "h": 13 },
+			"frame": { "x": 367, "y": 1614, "w": 45, "h": 13 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 45, "h": 13 },
 			"sourceSize": { "w": 45, "h": 13 }
 		},
+		"weapon.hammer.t2": {
+			"frame": { "x": 413, "y": 1614, "w": 30, "h": 12 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 12 },
+			"sourceSize": { "w": 30, "h": 12 }
+		},
 		"proj.orb": {
-			"frame": { "x": 944, "y": 604, "w": 9, "h": 12 },
+			"frame": { "x": 444, "y": 1614, "w": 9, "h": 12 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 9, "h": 12 },
 			"sourceSize": { "w": 9, "h": 12 }
 		},
 		"weapon.machete.t2": {
-			"frame": { "x": 954, "y": 604, "w": 62, "h": 11 },
+			"frame": { "x": 454, "y": 1614, "w": 62, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 62, "h": 11 },
 			"sourceSize": { "w": 62, "h": 11 }
 		},
 		"weapon.machete": {
-			"frame": { "x": 0, "y": 623, "w": 61, "h": 11 },
+			"frame": { "x": 517, "y": 1614, "w": 61, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 11 },
 			"sourceSize": { "w": 61, "h": 11 }
 		},
 		"weapon.machete.t1": {
-			"frame": { "x": 62, "y": 623, "w": 61, "h": 11 },
+			"frame": { "x": 579, "y": 1614, "w": 61, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 61, "h": 11 },
 			"sourceSize": { "w": 61, "h": 11 }
 		},
+		"weapon.hammer": {
+			"frame": { "x": 641, "y": 1614, "w": 33, "h": 11 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 33, "h": 11 },
+			"sourceSize": { "w": 33, "h": 11 }
+		},
+		"weapon.hammer.t1": {
+			"frame": { "x": 675, "y": 1614, "w": 33, "h": 11 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 33, "h": 11 },
+			"sourceSize": { "w": 33, "h": 11 }
+		},
 		"pickup.meat": {
-			"frame": { "x": 124, "y": 623, "w": 13, "h": 11 },
+			"frame": { "x": 709, "y": 1614, "w": 13, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 13, "h": 11 },
 			"sourceSize": { "w": 13, "h": 11 }
 		},
 		"pickup.xp": {
-			"frame": { "x": 138, "y": 623, "w": 8, "h": 11 },
+			"frame": { "x": 723, "y": 1614, "w": 8, "h": 11 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 11 },
 			"sourceSize": { "w": 8, "h": 11 }
 		},
 		"weapon.katana": {
-			"frame": { "x": 147, "y": 623, "w": 75, "h": 8 },
+			"frame": { "x": 732, "y": 1614, "w": 75, "h": 8 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 75, "h": 8 },
 			"sourceSize": { "w": 75, "h": 8 }
 		},
 		"pickup.fish": {
-			"frame": { "x": 223, "y": 623, "w": 14, "h": 7 },
+			"frame": { "x": 808, "y": 1614, "w": 14, "h": 7 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 14, "h": 7 },
 			"sourceSize": { "w": 14, "h": 7 }
 		},
 		"proj.knife": {
-			"frame": { "x": 238, "y": 623, "w": 24, "h": 5 },
+			"frame": { "x": 823, "y": 1614, "w": 24, "h": 5 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 5 },
 			"sourceSize": { "w": 24, "h": 5 }
 		},
 		"proj.blade": {
-			"frame": { "x": 263, "y": 623, "w": 17, "h": 5 },
+			"frame": { "x": 848, "y": 1614, "w": 17, "h": 5 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 5 },
 			"sourceSize": { "w": 17, "h": 5 }
 		}
 	},
-	"meta": { "image": "core.png", "size": { "w": 1024, "h": 1024 }, "scale": "1" }
+	"meta": { "image": "core.png", "size": { "w": 1024, "h": 2048 }, "scale": "1" }
 }

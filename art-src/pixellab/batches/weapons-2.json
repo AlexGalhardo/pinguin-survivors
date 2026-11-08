@@ -1,0 +1,177 @@
+[
+	{
+		"key": "weapon.hammer.t1",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single heavy iron sledgehammer lying horizontally, big square head pointing to the right, wrapped wooden handle on the left, simple, clean metal, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.hammer.t2",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single heavy iron sledgehammer lying horizontally, big square head pointing to the right, wrapped wooden handle on the left, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.hammer.t3",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single heavy iron sledgehammer lying horizontally, big square head pointing to the right, wrapped wooden handle on the left, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.hammer.t4",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single heavy iron sledgehammer lying horizontally, big square head pointing to the right, wrapped wooden handle on the left, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.doubleBarrel.t2",
+		"w": 64,
+		"h": 32,
+		"seed": 22,
+		"prompt": "a single sawed-off double-barrel shotgun lying horizontally, barrels pointing to the right, worn wooden stock on the left, two dark steel barrels side by side, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.doubleBarrel.t3",
+		"w": 64,
+		"h": 32,
+		"seed": 22,
+		"prompt": "a single sawed-off double-barrel shotgun lying horizontally, barrels pointing to the right, worn wooden stock on the left, two dark steel barrels side by side, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.doubleBarrel.t4",
+		"w": 64,
+		"h": 32,
+		"seed": 22,
+		"prompt": "a single sawed-off double-barrel shotgun lying horizontally, barrels pointing to the right, worn wooden stock on the left, two dark steel barrels side by side, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.mine.t2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a round olive military landmine with a blinking red light and a carry handle, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.mine.t3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a round olive military landmine with a blinking red light and a carry handle, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.mine.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a round olive military landmine with a blinking red light and a carry handle, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.grenadeBelt.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a leather belt with four green frag grenades held horizontally, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.grenadeBelt.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a leather belt with four green frag grenades held horizontally, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.grenadeBelt.t4",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a leather belt with four green frag grenades held horizontally, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.droneSentinel.t2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a small hovering military sentry drone with two rotors and a red camera eye, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.droneSentinel.t3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a small hovering military sentry drone with two rotors and a red camera eye, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.droneSentinel.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a small hovering military sentry drone with two rotors and a red camera eye, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.elementStaff.t2",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single crooked wooden magic staff lying horizontally, glowing cyan crystal at the right end, four small gems (red, green, cyan, yellow) set around the crystal, rough wooden shaft to the left, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.elementStaff.t3",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single crooked wooden magic staff lying horizontally, glowing cyan crystal at the right end, four small gems (red, green, cyan, yellow) set around the crystal, rough wooden shaft to the left, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.elementStaff.t4",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single crooked wooden magic staff lying horizontally, glowing cyan crystal at the right end, four small gems (red, green, cyan, yellow) set around the crystal, rough wooden shaft to the left, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.lightningTotem.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a small carved wooden totem pole on a stick held horizontally, crackling yellow lightning at the right end, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.lightningTotem.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a small carved wooden totem pole on a stick held horizontally, crackling yellow lightning at the right end, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.lightningTotem.t4",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a small carved wooden totem pole on a stick held horizontally, crackling yellow lightning at the right end, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.poisonCloud.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a toxic gas sprayer canister with a nozzle pointing right, dripping green poison, held horizontally, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.poisonCloud.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a toxic gas sprayer canister with a nozzle pointing right, dripping green poison, held horizontally, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.poisonCloud.t4",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a toxic gas sprayer canister with a nozzle pointing right, dripping green poison, held horizontally, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	}
+]
