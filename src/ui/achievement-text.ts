@@ -9,7 +9,7 @@ export function achievementName(def: AchievementDef): string {
 
 export function achievementDescription(def: AchievementDef): string {
 	const c = def.condition;
-	let n = 'value' in c ? c.value : 0;
+	let n = def.display ?? ('value' in c ? c.value : 0);
 	// Time is stored in seconds but described in hours.
 	if (c.kind === 'lifetime' && c.stat === 'secondsPlayed') n = n / 3600;
 	return t(`ach.${def.family}.desc` as I18nKey, {

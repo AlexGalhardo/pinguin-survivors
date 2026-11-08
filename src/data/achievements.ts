@@ -1,5 +1,6 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
 import type { StatKey } from '../logic/stats';
+import { SET_IDS, SET_THRESHOLDS, type SetId } from './sets';
 
 /**
  * Global achievements (shared by every hero; P-41). Each one is worth 1 achievement point.
@@ -47,7 +48,7 @@ export const HERO_STATS = [
 export type HeroStat = (typeof HERO_STATS)[number];
 
 /** Best value reached inside a single run. */
-export const RUN_BESTS = ['killsInRun', 'superKillsOneCast', 'maxRound'] as const;
+export const RUN_BESTS = ['killsInRun', 'superKillsOneCast', 'maxRound', 'tierIVSlots'] as const;
 export type RunBest = (typeof RUN_BESTS)[number];
 
 /** One-off feats flagged by gameplay events. */
@@ -73,6 +74,8 @@ export type AchievementCondition =
 	| { kind: 'hero'; hero: HeroId; stat: HeroStat; value: number }
 	| { kind: 'heroLevel'; hero: HeroId; value: number }
 	| { kind: 'allHeroesLevel'; value: number }
+	| { kind: 'allHeroesStat'; stat: HeroStat; value: number }
+	| { kind: 'set'; set: SetId; value: number }
 	| { kind: 'runBest'; stat: RunBest; value: number }
 	| { kind: 'feat'; feat: Feat }
 	| { kind: 'achievements'; value: number };
@@ -85,6 +88,8 @@ export interface AchievementDef {
 	tier: number;
 	/** Hero shown in the name/description, when the family is per hero. */
 	hero?: HeroId;
+	/** Number shown as `{n}` when it is not the condition value (e.g. the Danger of a win). */
+	display?: number;
 	condition: AchievementCondition;
 }
 
@@ -139,13 +144,43 @@ for (const hero of HERO_IDS) {
 			condition: { kind: 'heroLevel', hero, value },
 		});
 }
+// Winning the round 20 boss on Danger D unlocks D + 1 (SDD-005 RF-03), so `dangerUnlocked >= D + 1`.
+for (const hero of HERO_IDS)
+	for (const danger of [1, 2, 3, 4, 5])
+		defs.push({
+			id: `dangerWin.${hero}.${danger}`,
+			family: 'dangerWin',
+			tier: danger,
+			hero,
+			display: danger,
+			condition: { kind: 'hero', hero, stat: 'dangerUnlocked', value: danger + 1 },
+		});
+for (const danger of [1, 2, 3, 4, 5])
+	defs.push({
+		id: `dangerAll.${danger}`,
+		family: 'dangerAll',
+		tier: danger,
+		display: danger,
+		condition: { kind: 'allHeroesStat', stat: 'dangerUnlocked', value: danger + 1 },
+	});
+for (const set of SET_IDS)
+	for (const [i, value] of SET_THRESHOLDS.entries())
+		defs.push({
+			id: `set.${set}.${i + 1}`,
+			family: `set.${set}`,
+			tier: i + 1,
+			condition: { kind: 'set', set, value },
+		});
+runBest('endless', 'maxRound', [60]);
 lifetime('runs', 'runs', [1, 10, 50, 100, 500]);
 lifetime('fish', 'fishEarned', [100, 1_000, 10_000, 100_000]);
 lifetime('cards', 'cardsPicked', [50, 500, 2_000]);
 lifetime('legendary', 'legendaryCards', [1, 25, 100]);
 lifetime('fuse', 'fusions', [1]);
+lifetime('fuseMany', 'fusions', [25, 100]);
 lifetime('weaponT4', 'tierIVWeapons', [1]);
 perHero('heroT4', 'fusedT4', [1]);
+runBest('tierIVSlots', 'tierIVSlots', [2, 4, 6]);
 perHero('exclusive', 'exclusiveCards', [10, 100]);
 perHero('super', 'superUses', [1, 25, 100]);
 runBest('superCast', 'superKillsOneCast', [50, 150]);

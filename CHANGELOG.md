@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- 47 new achievements (178 total) for Danger wins, set completion, fusions and tier IV loadouts, and round 60, in four languages; `src/data/steam-achievements.ts` maps every achievement to a Steam API name.
+
 - Static commercial site in Astro 7.4.7 (`site/`, SDD-008): landing in four languages with SEO, hreflang, sitemap and the playable demo under `/demo/`; `scripts/build-site.ts` builds it, and `.github/workflows/pages.yml` deploys only when run manually.
 
 - Balance tooling (SDD-013): `scripts/balance-report.ts` turns sim/bot JSONL into a goals #1–#8 report, `sim.ts --jsonl` covers hero × level × Danger, local opt-in telemetry (`src/logic/telemetry.ts`), and the playtest bot plays the shop step by step with the sim's policy.

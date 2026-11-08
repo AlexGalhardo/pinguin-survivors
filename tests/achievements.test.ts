@@ -117,3 +117,65 @@ test('every achievement family has EN/PT-BR name and description', async () => {
 		}
 	}
 });
+
+describe('1.0 achievements: Danger, sets, fusion, endless', () => {
+	const unlocked = (p = emptyProgress()) => {
+		const state = emptyAchievementState();
+		evaluateAchievements(p, state, 1);
+		return Object.keys(state.unlocked);
+	};
+
+	test('Danger wins follow dangerUnlocked per hero and for everyone', () => {
+		const p = emptyProgress();
+		p.hero.jack.dangerUnlocked = 3; // beat D1 and D2 with Jack
+		const ids = unlocked(p);
+		expect(ids).toContain('dangerWin.jack.1');
+		expect(ids).toContain('dangerWin.jack.2');
+		expect(ids).not.toContain('dangerWin.jack.3');
+		expect(ids).not.toContain('dangerWin.bob.1');
+		expect(ids.some((id) => id.startsWith('dangerAll.'))).toBe(false);
+		for (const h of ['jack', 'bob', 'lucia'] as const) p.hero[h].dangerUnlocked = 6;
+		const all = unlocked(p);
+		for (let d = 1; d <= 5; d++) expect(all).toContain(`dangerAll.${d}`);
+		expect(all).toContain('dangerWin.lucia.5');
+	});
+
+	test('set achievements unlock at 2, 4 and 6 weapons', () => {
+		const p = emptyProgress();
+		p.setBest.gun = 4;
+		const ids = unlocked(p);
+		expect(ids).toContain('set.gun.1');
+		expect(ids).toContain('set.gun.2');
+		expect(ids).not.toContain('set.gun.3');
+		expect(ids).not.toContain('set.blade.1');
+	});
+
+	test('tier IV slots, many fusions and round 60', () => {
+		const p = emptyProgress();
+		p.runBests.tierIVSlots = 6;
+		p.lifetime.fusions = 30;
+		p.runBests.maxRound = 60;
+		const ids = unlocked(p);
+		expect(ids).toEqual(
+			expect.arrayContaining([
+				'tierIVSlots.1',
+				'tierIVSlots.2',
+				'tierIVSlots.3',
+				'fuse.1',
+				'fuseMany.1',
+				'endless.1',
+				'round.7',
+			]),
+		);
+		expect(ids).not.toContain('fuseMany.2');
+	});
+
+	test('progress bars for the new conditions', () => {
+		const p = emptyProgress();
+		p.setBest.blade = 3;
+		p.hero.bob.dangerUnlocked = 1;
+		const find = (id: string) => ACHIEVEMENTS.find((a) => a.id === id);
+		expect(achievementProgress(find('set.blade.2') as never, p)).toBe(0.75);
+		expect(achievementProgress(find('dangerAll.1') as never, p)).toBe(0.5);
+	});
+});

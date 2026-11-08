@@ -13,6 +13,7 @@ import {
 	RUN_BESTS,
 	type RunBest,
 } from '../data/achievements';
+import { SET_IDS, type SetId } from '../data/sets';
 import { addStat, type PlayerStats } from './stats';
 
 /** Everything achievements read; lives in the save (global, shared by all heroes). */
@@ -21,6 +22,8 @@ export interface AchievementProgress {
 	hero: Record<HeroId, Record<HeroStat, number>>;
 	heroLevels: Record<HeroId, number>;
 	runBests: Record<RunBest, number>;
+	/** Most weapons of each set owned at once in any run (set achievements). */
+	setBest: Record<SetId, number>;
 	feats: Feat[];
 }
 
@@ -42,6 +45,7 @@ export function emptyProgress(): AchievementProgress {
 		) as Record<HeroId, Record<HeroStat, number>>,
 		heroLevels: Object.fromEntries(HERO_IDS.map((h) => [h, 1])) as Record<HeroId, number>,
 		runBests: zeros(RUN_BESTS),
+		setBest: zeros(SET_IDS),
 		feats: [],
 	};
 }
@@ -60,6 +64,10 @@ function met(c: AchievementCondition, p: AchievementProgress, unlockedCount: num
 			return p.heroLevels[c.hero] >= c.value;
 		case 'allHeroesLevel':
 			return HERO_IDS.every((h) => p.heroLevels[h] >= c.value);
+		case 'allHeroesStat':
+			return HERO_IDS.every((h) => p.hero[h][c.stat] >= c.value);
+		case 'set':
+			return p.setBest[c.set] >= c.value;
 		case 'runBest':
 			return p.runBests[c.stat] >= c.value;
 		case 'feat':
@@ -142,6 +150,10 @@ export function achievementProgress(def: AchievementDef, p: AchievementProgress)
 				return p.heroLevels[c.hero];
 			case 'allHeroesLevel':
 				return Math.min(...HERO_IDS.map((h) => p.heroLevels[h]));
+			case 'allHeroesStat':
+				return Math.min(...HERO_IDS.map((h) => p.hero[h][c.stat]));
+			case 'set':
+				return p.setBest[c.set];
 			case 'runBest':
 				return p.runBests[c.stat];
 			default:

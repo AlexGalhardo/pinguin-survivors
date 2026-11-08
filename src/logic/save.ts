@@ -16,6 +16,7 @@ import {
 	POTION_TYPES,
 	type PotionType,
 } from '../data/potions';
+import { SET_IDS, type SetId } from '../data/sets';
 import { LANGS, type Lang } from '../i18n';
 import {
 	type AchievementProgress,
@@ -283,6 +284,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		) as AchievementProgress['hero'],
 		heroLevels: numRecord(p.heroLevels, HERO_IDS, bp.heroLevels),
 		runBests: numRecord(p.runBests, RUN_BESTS, bp.runBests),
+		setBest: numRecord(p.setBest, SET_IDS, bp.setBest),
 		feats: Array.isArray(p.feats)
 			? FEATS.filter((f) => (p.feats as unknown[]).includes(f))
 			: [],
@@ -438,6 +440,21 @@ export function liveProgress(
 	for (const hero of HERO_IDS) p.heroLevels[hero] = save.heroes[hero].level;
 	p.heroLevels[run.hero] = Math.max(p.heroLevels[run.hero], heroLevel);
 	return p;
+}
+
+/** Most weapons of `set` owned at once so far (set achievements); call when the build changes. */
+export function recordSetCount(save: SaveData, set: SetId, n: number): void {
+	save.progress.setBest[set] = Math.max(save.progress.setBest[set], n);
+}
+
+/** `recordSetCount` for every set of a build (`setCounts(build)`). */
+export function recordBuildSets(save: SaveData, counts: Partial<Record<SetId, number>>): void {
+	for (const set of SET_IDS) recordSetCount(save, set, counts[set] ?? 0);
+}
+
+/** Most tier IV weapons owned at once in a run (call after each fusion or purchase). */
+export function recordTierIVSlots(save: SaveData, n: number): void {
+	save.progress.runBests.tierIVSlots = Math.max(save.progress.runBests.tierIVSlots, n);
 }
 
 export function addFeat(save: SaveData, feat: (typeof FEATS)[number]): void {

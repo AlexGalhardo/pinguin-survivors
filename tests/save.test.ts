@@ -6,7 +6,10 @@ import {
 	parseSave,
 	pushHistory,
 	type RunRecord,
+	recordBuildSets,
 	recordRunEnd,
+	recordSetCount,
+	recordTierIVSlots,
 	SAVE_VERSION,
 	serializeSave,
 } from '../src/logic/save';
@@ -233,5 +236,24 @@ describe('telemetry in the save (SDD-013 A5)', () => {
 		expect(back.telemetry.at(-1)?.round).toBe(249);
 		expect(back.settings.telemetry).toBe(true);
 		expect(parseSave(serializeSave(back))).toEqual(back);
+	});
+});
+
+describe('set and tier IV records (T7.8)', () => {
+	test('keep the best value, survive a round-trip, default to zero', () => {
+		const s = defaultSave();
+		recordSetCount(s, 'blade', 3);
+		recordSetCount(s, 'blade', 2);
+		recordBuildSets(s, { gun: 4, blade: 1 });
+		recordTierIVSlots(s, 2);
+		recordTierIVSlots(s, 1);
+		expect(s.progress.setBest.blade).toBe(3);
+		expect(s.progress.setBest.gun).toBe(4);
+		expect(s.progress.runBests.tierIVSlots).toBe(2);
+		const back = parseSave(serializeSave(s));
+		expect(back.progress.setBest).toEqual(s.progress.setBest);
+		const old = parseSave(JSON.stringify(v1Fixture));
+		expect(old.progress.setBest.blade).toBe(0);
+		expect(old.progress.runBests.tierIVSlots).toBe(0);
 	});
 });
