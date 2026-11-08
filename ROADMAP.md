@@ -132,8 +132,8 @@ Specs: [SDD-002](docs/sdds/SDD-002-armas-slots-classes-tiers.md), [SDD-003](docs
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado (2,9 s, 13 pass, biome limpo).
 - [~] **T2.10** 1ª passada de balanceamento do design 1.0 (metas #1, #5, #6 da Parte A4) · Resp.: estagiario roda bot/sim; orquestrador ajusta `src/data` · Dep.: T2.9 · Est.: 8 h · Assert: `docs/reports/balance-<data>.md` com #1, #5, #6 ✓ · Progresso (2026-11-08): 1ª passada com a sim em `docs/reports/balance-2026-11-08.md` — #1 ✓ (L1 mediana 18/17/10, ninguém passa do 30), #6 ✓ (gasto/ganho 0,903; reroll 0,5%), #5 ✓ nas armas (9,7–32,7%) e ✗ no set `elemental` (67,7% > 50%: toda arma mágica é `elemental`) — pergunta ao desenvolvedor em `questions-to-dev.md`. · Bloqueado (2026-11-08): aguarda decisão do desenvolvedor sobre o set `elemental` (meta #5); demais metas ✓.
   - [ ] Auditoria: Parte B atualizada no mesmo commit.
-- [ ] **T2.11** Release `0.0.13` com todo o M2 (uma release por marco).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T2.11** Release `0.0.13` com todo o M2 (uma release por marco). · Evidência (2026-11-08): `bun scripts/release.ts 0.0.13` (gates verdes, rodado em clone limpo de `origin/main` porque os agentes mantêm a árvore suja) → [release v0.0.13](https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.0.13); pre-release; 13 tags = 13 releases; `package.json` 0.0.13.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): `gh release view v0.0.13`: grupos Added/Changed/Fixed com links; inclui também o trabalho do M3 já entregue.
 
 ### Auditoria do marco M2
 
@@ -141,9 +141,9 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 - [x] Todos os asserts das tarefas `[x]` re-executados e conferidos (Auditoria de cada tarefa marcada). · 2026-11-08: 64 testes do M2, grep A7, sim; T2.10 `[~]` com motivo.
 - [x] SDDs do marco em "Aprovada" e implementação sem contradizer nenhum RF (grep pelos arquivos/funções citados). · SDD-002 1.1, SDD-003; desvios documentados no relatório.
-- [ ] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release.
-- [ ] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release.
-- [ ] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio.
+- [x] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release. · gates do `release.ts` em `v0.0.13`.
+- [x] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release. · `v0.0.13`.
+- [x] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio. · `[0.0.13] - 2026-11-08`.
 - [x] Docs afetados atualizados (gdd/visual/audio/architecture/balancing Parte B/site) e sem links quebrados. · balancing 2.3, architecture 2.2.
 - [x] Saldos PixelLab/ElevenLabs registrados se o marco gastou assets. · M2 não gastou assets.
 - [x] Relatório `docs/reports/audit-m2-<data>.md` gravado (tabela tarefa · status · evidência). · `docs/reports/audit-m2-2026-11-08.md`.
@@ -170,8 +170,8 @@ Specs: [SDD-004](docs/sdds/SDD-004-ui-react-tailwind.md), [SDD-005](docs/sdds/SD
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado exit 0; amostra `<div title="Sair">Iniciar jogo {t("ok")}</div>` acusa `attr Sair` e `text Iniciar jogo`, ignora `t()`.
 - [x] **T3.9** Danger 0–5: `difficulty.ts`, waves extras, desbloqueio por herói, aviso na loja · Resp.: senior · Dep.: T3.4 · Est.: 6 h · Assert: `tests/difficulty.test.ts`, `tests/progression.test.ts` (SDD-005 A1, A4). · Evidência (2026-11-08): `tests/difficulty.test.ts` (A1, 500 seeds, `scaleDrops`) e `tests/progression.test.ts` (A4) verdes; jogo usa `dangerMods(run.danger)`, waves extras com banner, desbloqueio no boss do round 20 e `recordBestRound`; HeroSelect (Phaser e React) escolhe Danger até `maxSelectableDanger`; aviso de wave na loja do D2 em diante; `settings.difficulty`/`DIFFICULTIES` removidos; `?danger=` e `?weapon=`.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): browser `?danger=5&weapon=hammer` (mods 1,75/1,5/1,12/1,5, 3 waves extras, só `hammer`, 0 erros) e `?danger=5&seed=3&round=7` (aviso na loja, round 8 com `wave === 'elite'`) no relatório do Senior A; re-executei 303 testes e e2e sem som.
-- [ ] **T3.10** Acessibilidade: Lighthouse ≥ 90 na `MainMenu`; hit targets ≥ 44 px · Resp.: estagiario · Est.: 2 h · Assert: relatório chrome-devtools (A6).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T3.10** Acessibilidade: Lighthouse ≥ 90 na `MainMenu`; hit targets ≥ 44 px · Resp.: estagiario · Est.: 2 h · Assert: relatório chrome-devtools (A6). · Evidência (2026-11-08): Lighthouse (Chrome DevTools) na MainMenu React: Accessibility 100 (meta ≥ 90; A6); `docs/reports/a11y-2026-11-08.md`: 0 alvos < 44 px em MainMenu, Settings, HeroSelect e loja (1920×1080).
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): Lighthouse rodado por mim; Btn com `min-h-11 min-w-11` em todos os botões React.
 - [ ] **T3.11** 🛑 Inscrição no Next Fest até 2027-01-10 (depende de T15.1 Steamworks) · Resp.: dev · Assert: confirmação da Steamworks por e-mail.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T3.12** Release `0.1.0` (entra na fase beta: jogo completo jogável com UI React).
