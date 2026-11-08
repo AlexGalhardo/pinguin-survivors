@@ -49,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `scripts/qa-browsers.ts` walks the React flow in Chrome, Edge and Firefox (muted) and writes a report with errors, 4xx/5xx and FPS per browser.
+
 - Balance pass for 1.0: every Workshop upgrade gives ×0.6 per level (Insight unchanged) and the Element Staff base damage rises 10 → 16 (`docs/reports/balance-proposal-2026-11-08.md`).
 
 ### Removed

@@ -320,8 +320,8 @@ Specs: [SDD-009](docs/sdds/SDD-009-i18n-es-zh.md), [SDD-012](docs/sdds/SDD-012-a
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): testes re-executados; relatório gerado `docs/reports/balance-auto-2026-11-08.md` lido.
 - [ ] **T7.11** **Balance 1.0**: metas A4 #1–#8 (até 3 passadas de bot) · Resp.: estagiario roda; orquestrador ajusta · Dep.: T7.10 · Est.: 16 h · Assert: `docs/reports/balance-1.0.md` com #1–#8 ✓ ou exceções justificadas (A4). · Progresso (2026-11-08): passada 1 de 3 aplicada (Oficina ×0,6; `elementStaff` 10→16) — #1, #3, #4, #6 ✓; #2 ✗ em 100 seeds (2–3% morrem no boss do 10) e #5 ✗ (arma líder ~39%, set `elemental` 83%) aguardam decisão do desenvolvedor sobre as metas e o set (`questions-to-dev.md` #3 e #8); #7/#8 precisam do bot e do perf.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T7.12** QA cross-browser e E2E completos; `scripts/qa-browsers.ts` · Resp.: estagiario · Assert: zero erros/4xx em Chrome/Edge/Firefox.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T7.12** QA cross-browser e E2E completos; `scripts/qa-browsers.ts` · Resp.: estagiario · Assert: zero erros/4xx em Chrome/Edge/Firefox. · Evidência (2026-11-08): `bun scripts/qa-browsers.ts` (fluxo React, sem som) em Chrome 156, Edge 157 e Firefox 159: 0 erros, 0 4xx/5xx, FPS 59,6/56/55,2; 6 resoluções no Chrome sem scroll — `docs/reports/qa-browsers-2026-11-08.md`. E2E completo (`bun run e2e`, `--demo`) verde.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): relatório lido; e2e padrão e demo re-executados verdes nesta sessão.
 - [ ] **T7.13** Releases `0.1.4+` por sub-bloco.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
