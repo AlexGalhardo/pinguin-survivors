@@ -7,7 +7,7 @@ allowed-tools: Read, Glob, Grep, Bash, Write, Edit
 model: sonnet
 ---
 
-> **Pinguin Survivors:** skill de terceiros (`Donchitos/Claude-Code-Game-Studios`, MIT). Ela assume as pastas `design/` e `production/` do Claude-Code-Game-Studios. **Mapeie:** `design/gdd/*` → `docs/gdd.md` e `docs/balancing-and-simulation.md`; `design/art/*` → `docs/visual.md`; `production/*` (relatórios, planos, checklists) → `docs/reports/<skill>-<data>.md`; sprints/milestones → `PLAN.md`. Não invoque agentes que não existem aqui.
+> **Pinguin Survivors:** skill de terceiros (`Donchitos/Claude-Code-Game-Studios`, MIT). Ela assume as pastas `design/` e `production/` do Claude-Code-Game-Studios. **Mapeie:** `design/gdd/*` → `docs/gdd.md` e `docs/balancing-and-simulation.md`; `design/art/*` → `docs/visual.md`; `production/*` (relatórios, planos, checklists) → `docs/reports/<skill>-<data>.md`; sprints/milestones → `ROADMAP.md`. Não invoque agentes que não existem aqui. Referências a `.claude/docs/*.md`, `project.yaml` e `yaml-helper.sh` são do CCGS e **não existem neste repositório**: ignore-as; nos pontos de decisão pergunte ao desenvolvedor (gates 🛑) e grave relatórios em `docs/reports/`.
 
 
 > (Config automática do CCGS removida: este projeto não tem `production/` nem os hooks do CCGS; use os padrões da skill.)
@@ -53,7 +53,7 @@ If no argument is provided, ask the user for a bug description before proceeding
 > `P4-Wishlist` ("would be nice someday") and `P4 — Won't fix / Deferred`
 > ("accepted risk, not doing it") mean opposite things, and nothing at runtime
 > surfaces a disagreement between the producer and consumer of the field. If you change this ladder, change
-> `.claude/skills/bug-triage/SKILL.md` in the same commit.
+> `.agents/skills/bug-triage/SKILL.md` in the same commit.
 **Status**: Open
 **Reported**: [Date]
 **Reporter**: [Name]
