@@ -1,0 +1,60 @@
+{
+	"seed": 12,
+	"type": "done",
+	"action": "Touching up pixels",
+	"tile_id": "03496fbf-0b76-45df-86d9-e8a9b6bd3545",
+	"progress": 0.85,
+	"tile_name": "1). seamless tileable ground texture seen from dir",
+	"billing_usage": {
+		"usd": 0,
+		"type": "generations",
+		"generations": 15
+	},
+	"generation_id": "c182f1b7-04de-4c56-8b79-d2c7e532e504",
+	"usage_cost_usd": 0.115,
+	"billing_charged": true,
+	"tile_description": "1). seamless tileable ground texture seen from directly above, packed grey-blue snow at night with trampled footprints, uniform, no objects, lineless, high top-down 2). seamless tileable ground texture seen from directly above, dark blue-grey compacted snow with small ice cracks at night, uniform, no objects, lineless, high top-down 3). seamless tileable ground texture seen from directly above, light powdery snow with soft drifts at night, uniform, no objects, lineless, high top-down 4). seamless tileable ground texture seen from directly above, frozen blue ice with faint scratches at night, uniform, no objects, lineless, high top-down",
+	"saved_to_database": true,
+	"generation_started_at": "2026-11-08T18:02:11.997841+00:00",
+	"original_image_n_colors": 6434,
+	"experiment_art_direction": {
+		"side": ["#2A384F", "#1D273B", "#121A2B"],
+		"palette": [
+			{
+				"hex": "#B0C4DB",
+				"role": "surface 0"
+			},
+			{
+				"hex": "#8EA7C5",
+				"role": "surface 1"
+			},
+			{
+				"hex": "#6D8AA6",
+				"role": "surface 2"
+			},
+			{
+				"hex": "#4E6A8A",
+				"role": "surface 3"
+			},
+			{
+				"hex": "#334E6B",
+				"role": "surface 4"
+			},
+			{
+				"hex": "#2A384F",
+				"role": "side 0"
+			},
+			{
+				"hex": "#1D273B",
+				"role": "side 1"
+			},
+			{
+				"hex": "#121A2B",
+				"role": "side 2"
+			}
+		],
+		"surface": ["#B0C4DB", "#8EA7C5", "#6D8AA6", "#4E6A8A", "#334E6B"],
+		"art_direction": "The snow and ice textures are designed for a nighttime setting, emphasizing cool blues and desaturated grays. Each surface type (packed snow, icy cracks, powdery drifts, frozen ice) will utilize the given surface palette, adjusting for subtle textural differences to convey material and light reflection. The side palette provides a deep, muted base, suggesting the cold, dark sub-surface beneath the snow and ice, ensuring a clear material distinction from the surface."
+	},
+	"quantized_image_n_colors": 42
+}

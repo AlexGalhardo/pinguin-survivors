@@ -1,33 +1,75 @@
 {
 	"frames": {
+		"border.antarctica.0": {
+			"frame": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"border.antarctica.1": {
+			"frame": { "x": 65, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.antarctica.0": {
+			"frame": { "x": 130, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.antarctica.1": {
+			"frame": { "x": 195, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.antarctica.2": {
+			"frame": { "x": 260, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.antarctica.3": {
+			"frame": { "x": 325, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
 		"deco.antarctica.0": {
-			"frame": { "x": 0, "y": 0, "w": 38, "h": 38 },
+			"frame": { "x": 390, "y": 0, "w": 38, "h": 38 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 38 },
 			"sourceSize": { "w": 38, "h": 38 }
 		},
 		"deco.antarctica.1": {
-			"frame": { "x": 39, "y": 0, "w": 38, "h": 32 },
+			"frame": { "x": 429, "y": 0, "w": 38, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 32 },
 			"sourceSize": { "w": 38, "h": 32 }
 		},
 		"deco.antarctica.2": {
-			"frame": { "x": 78, "y": 0, "w": 41, "h": 31 },
+			"frame": { "x": 468, "y": 0, "w": 41, "h": 31 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 31 },
 			"sourceSize": { "w": 41, "h": 31 }
 		},
 		"deco.antarctica.3": {
-			"frame": { "x": 120, "y": 0, "w": 40, "h": 30 },
+			"frame": { "x": 510, "y": 0, "w": 40, "h": 30 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 30 },
 			"sourceSize": { "w": 40, "h": 30 }
 		}
 	},
-	"meta": { "image": "antarctica.png", "size": { "w": 256, "h": 64 }, "scale": "1" }
+	"meta": { "image": "antarctica.png", "size": { "w": 1024, "h": 64 }, "scale": "1" }
 }

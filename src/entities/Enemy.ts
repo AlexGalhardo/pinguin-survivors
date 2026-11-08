@@ -89,7 +89,7 @@ export class Enemy implements Mover {
 		const e = elite ? ROUNDS.elite[elite] : null;
 		const eliteScale = e?.scale ?? 1;
 		// Drawn size = elite multiplier x the art standardization scale; hit radius ignores the latter.
-		const scale = eliteScale * spriteScale(def.id);
+		const scale = eliteScale * spriteScale(def.art ?? def.id);
 		this.def = def;
 		this.x = x;
 		this.y = y;

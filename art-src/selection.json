@@ -735,5 +735,35 @@
 	"deco.city.3": {
 		"src": "art-src/pixellab/images/prop.city.3/11.png",
 		"group": "city"
+	},
+	"tile.antarctica.0": {
+		"src": "art-src/pixellab/tiles/antarctica-td/0.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"tile.antarctica.1": {
+		"src": "art-src/pixellab/tiles/antarctica-td/2.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"tile.antarctica.2": {
+		"src": "art-src/pixellab/tiles/antarctica-td/4.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"tile.antarctica.3": {
+		"src": "art-src/pixellab/tiles/antarctica-td/6.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"border.antarctica.0": {
+		"src": "art-src/pixellab/borders/antarctica/0.png",
+		"group": "antarctica",
+		"trim": false
+	},
+	"border.antarctica.1": {
+		"src": "art-src/pixellab/borders/antarctica/1.png",
+		"group": "antarctica",
+		"trim": false
 	}
 }

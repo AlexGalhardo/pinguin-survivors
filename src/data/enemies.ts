@@ -427,7 +427,8 @@ export const ENEMIES = {
 	zombieCrow: {
 		id: 'zombieCrow',
 		art: 'zombieGull',
-		tint: 0x6a6a7a,
+		// Lighter and warmer than before: the dark tint made the crow vanish on the forest floor.
+		tint: 0xd9c8a8,
 		biome: 'forest',
 		behavior: 'flyer',
 		hp: 12,

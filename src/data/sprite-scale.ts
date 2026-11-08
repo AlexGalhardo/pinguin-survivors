@@ -36,6 +36,15 @@ export const ENEMY_SPRITE_SCALE: Readonly<Record<string, number>> = {
 	zombieWalrus: 1.2,
 	polarBear: 1.25,
 	kraken: 1.1,
+	// City faction (ADR-016): measured south frames 44-56 px, hero 72.
+	acidSwarmer: 1.3,
+	alienFlyer: 1.25,
+	clawCharger: 1.1,
+	armorGuard: 1.2,
+	cystBloater: 1.15,
+	camoStalker: 1.15,
+	// Boss: 113-144 px in a 160 canvas, drawn at 164-209 u (2.3-2.9x the hero).
+	biomechColossus: 1.45,
 };
 
 export const spriteScale = (id: string): number => ENEMY_SPRITE_SCALE[id] ?? 1;
