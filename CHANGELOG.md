@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enemies spawn on the inner ring of the arena; spawns inside the camera view show a 0.5 s `fx.spawnMark` first, and the camera follows the hero with a frame-rate-independent lerp, clamped to the walls and centered on axes where the arena is smaller than the view (SDD-001 RF-04, RF-05).
 - `GoreLayer`: persistent blood decals in world coordinates (cap 4,000) re-stamped when the arena grows (SDD-001 RF-08).
 - UI focus manager for keyboard, gamepad and touch (`FocusScope`, `useFocusable`, spatial navigation) and an accessible toast queue (SDD-004).
+- Six weapon slots in game (SDD-002): each slot runs its weapon line at its tier on a ring around the hero, targeting bosses and elites first; set bonuses and the passives Iron Breath, Quick Reload and Arcane Echo apply; `?weapons=id[:tier],…` forces a loadout.
+- React HUD behind `?uiHud=1` (HP, XP, Fish, round timer, boss bar, six weapon slots by tier, gear, gambits, super, FPS).
+- Shared prompt templates for PixelLab and ElevenLabs assets (`.agents/skills/pinguin-*-assets/prompts.md`).
 
 ### Fixed
 
@@ -31,8 +34,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The world is top-down in a square arena (ADR-003, SDD-001): `src/logic/projection.ts` replaces the isometric projection (depth by `y`, input without rotation), `src/world/Arena.ts` replaces the chunk streamer with a 64-px tile floor, walls, solid props and centered growth per round, and heroes, enemies and projectiles stay inside the walls. `?arena=NN` forces the arena side for QA.
 - `VoiceLimiter` renamed to `SfxLimiter` (`src/logic/sfx-limiter.ts`) and the per-key `voices` field of `src/data/sfx.ts` to `polyphony`; `menu.subtitle` renamed to `menu.tagline`.
 - `docs/balancing-and-simulation.md` Part B tags the numbers the square arena affects with `[1.0: revisar]`; SDD-001 A6 now matches the 540-unit logical height.
+- The signature weapon, weapon evolution by card and the weapon/evolution cards (`card.weapon.*` → `card.active.*` for the four exclusive actives); achievements `evolveT2/evolveT3/heroT3` become `fuse/weaponT4/heroT4`.
 - Blade Whirl, Grenade Belt and Drone Sentinel left the card pool: they are weapon lines in 1.0 (SDD-002 RF-06).
 - Phaser UI helpers moved from `src/ui/` to `src/scenes/ui-phaser/` so `src/ui/` holds only React.
+- Balance, first pass of the 1.0 design (`docs/reports/balance-2026-11-08.md`): enemy damage per round 0.08 → 0.26 and tier I weapon damage evened out by crowd DPS.
+- `scripts/perf.ts` takes `--round`, `--seconds`, `--width`, `--height` and `--base` (1920×1080 by default); every browser script runs with `--mute-audio` and tests use `SOUND_MUTED=true`.
 
 ### Removed
 
