@@ -81,3 +81,16 @@ describe('applyCard', () => {
 		expect(build.cards).toHaveLength(4);
 	});
 });
+
+describe('1.0 card pool (SDD-002 RF-06/RF-07)', () => {
+	test('exclusives that became weapons are not cards; new passives are', () => {
+		const ids = ALL_CARDS.map((c) => c.id);
+		for (const w of ['bladeWhirl', 'grenadeBelt', 'droneSentinel'])
+			expect(ids).not.toContain(`weapon.${w}`);
+		for (const p of ['ironBreath', 'quickReload', 'arcaneEcho'])
+			expect(ids).toContain(`perk.${p}`);
+		expect(card('perk.ironBreath').hero).toBe('jack');
+		expect(card('perk.quickReload').hero).toBe('bob');
+		expect(card('perk.arcaneEcho').hero).toBe('lucia');
+	});
+});

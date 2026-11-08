@@ -250,6 +250,10 @@ export const PERKS = {
 	elementalAttunement: { id: 'elementalAttunement', hero: 'lucia', value: 0.05, cap: 0.2 },
 	arcaneBarrier: { id: 'arcaneBarrier', hero: 'lucia', value: 10 },
 	toxicBloom: { id: 'toxicBloom', hero: 'lucia', value: 8, radius: 60 },
+	// SDD-002 RF-07: replace the exclusives that became weapons. Effects are read by systems in T2.3+.
+	ironBreath: { id: 'ironBreath', hero: 'jack', value: 0.15, radius: 120, cap: 3 },
+	quickReload: { id: 'quickReload', hero: 'bob', value: 0.2, duration: 2 },
+	arcaneEcho: { id: 'arcaneEcho', hero: 'lucia', value: 6 },
 } as const;
 
 export type PerkId = keyof typeof PERKS;

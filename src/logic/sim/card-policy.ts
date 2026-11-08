@@ -63,6 +63,10 @@ const PERK_SCORE: Record<PerkId, number> = {
 	elementalAttunement: 46,
 	arcaneBarrier: 54,
 	toxicBloom: 44,
+	// shortcut: no in-game effect yet (T2.5 numbers only), so the bot rates them low; rescore in T2.10.
+	ironBreath: 20,
+	quickReload: 20,
+	arcaneEcho: 20,
 };
 
 export function scoreCard(card: CardDef, rarity: Rarity, build: Build, hero: HeroId): number {

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pure end-of-round shop (`src/logic/shop.ts`, `SHOP` in `src/data/economy.ts`): weighted offers, locks, growing reroll price, tier prices and sell value (SDD-003).
 - `bun run lint:i18n` (`scripts/lint-i18n.ts`): fails on visible text literals in `src/ui/**/*.tsx` JSX (SDD-004 A5).
 - Six weapon slots in `src/logic/build.ts` (`addWeapon`, `canFuse`, `fuse`, `setCounts`, `setBonuses`), set bonuses at 2/4/6 in `src/data/sets.ts` and `applyModifiers` in `src/logic/stats.ts` (SDD-002).
+- Starting weapons per hero (`HeroDef.startingWeapons`) and three new exclusive passives: Iron Breath (Jack), Quick Reload (Bob) and Arcane Echo (Lucia); their in-game effects land with the weapon-slot integration.
 
 ### Fixed
 
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The world is top-down in a square arena (ADR-003, SDD-001): `src/logic/projection.ts` replaces the isometric projection (depth by `y`, input without rotation), `src/world/Arena.ts` replaces the chunk streamer with a 64-px tile floor, walls, solid props and centered growth per round, and heroes, enemies and projectiles stay inside the walls. `?arena=NN` forces the arena side for QA.
 - `VoiceLimiter` renamed to `SfxLimiter` (`src/logic/sfx-limiter.ts`) and the per-key `voices` field of `src/data/sfx.ts` to `polyphony`; `menu.subtitle` renamed to `menu.tagline`.
 - `docs/balancing-and-simulation.md` Part B tags the numbers the square arena affects with `[1.0: revisar]`; SDD-001 A6 now matches the 540-unit logical height.
+- Blade Whirl, Grenade Belt and Drone Sentinel left the card pool: they are weapon lines in 1.0 (SDD-002 RF-06).
 
 ### Removed
 

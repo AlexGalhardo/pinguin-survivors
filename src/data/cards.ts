@@ -75,17 +75,22 @@ export const STAT_CARDS: CardDef[] = [
 	stat('magicDamage', 'tagMul.magic', 0.12, 'onhit'),
 ];
 
-export const SECONDARY_CARDS: CardDef[] = (Object.keys(SECONDARIES) as SecondaryId[]).map((w) => {
-	const def = SECONDARIES[w];
-	const hero = 'hero' in def ? def.hero : undefined;
-	return {
-		id: `weapon.${w}`,
-		kind: hero ? 'exclusive' : 'secondary',
-		hero,
-		effect: { type: 'secondary', weapon: w },
-		weight: hero ? 5 : 7,
-	};
-});
+/** Exclusives that became 1.0 weapon lines (SDD-002 RF-06): no longer offered as cards. */
+const WEAPON_LINE_ONLY: readonly SecondaryId[] = ['bladeWhirl', 'grenadeBelt', 'droneSentinel'];
+
+export const SECONDARY_CARDS: CardDef[] = (Object.keys(SECONDARIES) as SecondaryId[])
+	.filter((w) => !WEAPON_LINE_ONLY.includes(w))
+	.map((w) => {
+		const def = SECONDARIES[w];
+		const hero = 'hero' in def ? def.hero : undefined;
+		return {
+			id: `weapon.${w}`,
+			kind: hero ? 'exclusive' : 'secondary',
+			hero,
+			effect: { type: 'secondary', weapon: w },
+			weight: hero ? 5 : 7,
+		};
+	});
 
 export const PERK_CARDS: CardDef[] = (Object.keys(PERKS) as PerkId[]).map((p) => ({
 	id: `perk.${p}`,
