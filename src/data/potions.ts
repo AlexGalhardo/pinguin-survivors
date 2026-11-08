@@ -50,6 +50,8 @@ export const HEAL_POTION = {
 	heal: [0.25, 0.3, 0.35, 0.4, 0.5],
 	/** Drinks when HP is at or below this share of max HP. */
 	drinkBelow: 0.5,
+	/** Each empty potion refills after this many kills in the run (one at a time, up to the level). */
+	killsPerPotion: 100,
 	/** Seconds between two potions. */
 	cooldown: 2,
 	/** Upgrade drops: Elites give rarity II or III (`eliteChance` per kill), Bosses IV or V. */

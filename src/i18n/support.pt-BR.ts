@@ -5,7 +5,7 @@ export const supportPtBR = {
 	'shop.outcome.supportNew': 'Novo item de suporte, nível 1: {stat}.',
 	'shop.outcome.supportUp': 'Item de suporte do nível {from} para {to}: {stat}.',
 	'shop.outcome.healPotion':
-		'Leva de {from} para {to} poções de cura. Cada uma cura {pct}% da vida máx., bebe sozinha com 50% de vida e volta cheia no início de cada round.',
+		'Leva de {from} para {to} poções de cura. Cada uma cura {pct}% da vida máx., bebe sozinha com 50% de vida e começa cada round vazia e enche uma a cada 100 abates.',
 	'support.magnetic.name': 'Magnético',
 	'support.magnetic.desc': 'Puxa as bolinhas de XP e os Fish até você.',
 	'support.magnetic.stat': 'alcance de atração +{v}',
@@ -17,9 +17,11 @@ export const supportPtBR = {
 	'support.lucky.stat': 'sorte +{v}',
 	'support.level': 'Nv {n}/{max}',
 	'hpotion.name': 'Poção de Cura',
-	'hpotion.desc': 'Bebe sozinha com 50% de vida. Volta cheia no início de cada round.',
+	'hpotion.desc':
+		'Bebe sozinha com 50% de vida. Todo round começa vazia; cada 100 abates enchem uma.',
 	'panel.support': 'SUPORTE',
 	'panel.healPotion': '{charges}/{level} poções · cura {pct}% · raridade {rarity}',
+	'hud.potionKills': '{n}/{max} abates',
 	'hud.healPotion': 'Poções de cura',
 	'fx.potionUp': 'Poção raridade {r}',
 } as const;

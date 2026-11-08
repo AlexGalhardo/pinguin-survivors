@@ -4,12 +4,14 @@ import type { Rng } from './rng';
 
 /** The run's healing potion (SDD-014 RF-20); level 0 = not bought yet. */
 export interface HealPotionState {
-	/** Potions bought from the merchant (0 to 10): the capacity, fixed for the rest of the run. */
+	/** Potions bought from the merchant (0 to 10): the most carried at once. */
 	level: number;
 	rarity: Rarity;
 	charges: number;
 	/** Seconds until the next potion may be drunk. */
 	cooldown: number;
+	/** Kills in this round toward the next refill (0 to `killsPerPotion` - 1; 0 while full). */
+	kills: number;
 }
 
 export const emptyHealPotion = (): HealPotionState => ({
@@ -17,6 +19,7 @@ export const emptyHealPotion = (): HealPotionState => ({
 	rarity: 1,
 	charges: 0,
 	cooldown: 0,
+	kills: 0,
 });
 
 /** Share of max HP one potion of `rarity` heals. */
@@ -24,18 +27,29 @@ export const healShare = (rarity: Rarity): number => HEAL_POTION.heal[rarity - 1
 
 export const canBuyHealPotion = (p: HealPotionState): boolean => p.level < HEAL_POTION.maxLevel;
 
-/** One more potion carried (and in the pouch right away); false at the top level. */
+/** One more potion carried (it fills by kills in the next round); false at the top level. */
 export function buyHealPotion(p: HealPotionState): boolean {
 	if (!canBuyHealPotion(p)) return false;
 	p.level++;
-	p.charges++;
 	return true;
 }
 
-/** Every round starts with all the potions bought so far (developer rule, 2026-11-08). */
-export function refillHealPotion(p: HealPotionState): void {
-	p.charges = p.level;
+/** Every round starts with the potions empty; kills refill them (developer rule, 2026-11-08). */
+export function emptyHealPotionCharges(p: HealPotionState): void {
+	p.charges = 0;
+	p.kills = 0;
 	p.cooldown = 0;
+}
+
+/** Counts kills toward refilling: every `killsPerPotion` kills one empty potion fills, never past the level. */
+export function addPotionKills(p: HealPotionState, n = 1): void {
+	if (p.level === 0 || p.charges >= p.level) return;
+	p.kills += n;
+	while (p.kills >= HEAL_POTION.killsPerPotion && p.charges < p.level) {
+		p.kills -= HEAL_POTION.killsPerPotion;
+		p.charges++;
+	}
+	if (p.charges >= p.level) p.kills = 0;
 }
 
 /**

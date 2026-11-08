@@ -35,12 +35,15 @@ export interface HudSnapshot {
 	/** Worn gear ids per slot (helmet, armor, legs, ring, amulet); null = empty. */
 	gear: (string | null)[];
 	gambits: HudGambit[];
-	/** Healing potion charges, maximum (potions bought) and rarity (color); null before the first is bought. Refilled each round. */
+	/** Healing potion charges, maximum, rarity (color) and kill progress to the next refill; null before the first is bought. */
 	healPotion: {
 		charges: number;
 		/** Most potions carried (the level). */
 		level: number;
 		rarity: 1 | 2 | 3 | 4 | 5;
+		/** Kills toward the next refill, out of `killsPerPotion` (0 while full). */
+		kills: number;
+		killsPerPotion: number;
 	} | null;
 	speed: number;
 	fps: number;

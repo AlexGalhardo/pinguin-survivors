@@ -44,17 +44,18 @@ describe('HudView healing potion', () => {
 		const { getByTitle } = render(
 			<HudView
 				hud={snapshot({
-					healPotion: { charges: 2, level: 3, rarity: 4 },
+					healPotion: { charges: 2, level: 3, rarity: 4, kills: 37, killsPerPotion: 100 },
 				})}
 			/>,
 		);
 		const el = getByTitle('Healing potions');
 		expect(el.textContent).toContain('2/3');
+		expect(el.textContent).toContain('37/100 kills');
 		// Empty: dimmed, no rarity color, still counting.
 		const empty = render(
 			<HudView
 				hud={snapshot({
-					healPotion: { charges: 0, level: 3, rarity: 4 },
+					healPotion: { charges: 0, level: 3, rarity: 4, kills: 5, killsPerPotion: 100 },
 				})}
 			/>,
 		);

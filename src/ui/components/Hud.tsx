@@ -32,7 +32,7 @@ function Flask({ color, full }: { color: string; full: boolean }): ReactElement 
 	);
 }
 
-/** Healing potion state under the HP bar: ready or empty flask and `cargas/máx.` (refilled each round). */
+/** Healing potion state under the HP bar: ready or empty flask, `cargas/máx.` and kills to the next refill. */
 function PotionStatus({
 	potion,
 }: {
@@ -40,6 +40,7 @@ function PotionStatus({
 }): ReactElement {
 	const color = toCss(rarityColor(potion.rarity));
 	const ready = potion.charges > 0;
+	const full = potion.charges >= potion.level;
 	return (
 		<div
 			className="flex items-center gap-1.5 font-bold tabular-nums"
@@ -50,6 +51,11 @@ function PotionStatus({
 			<span className={ready ? '' : 'text-text-dim'}>
 				{potion.charges}/{potion.level}
 			</span>
+			{!full && (
+				<span className="text-[0.8em] font-medium text-text-dim">
+					{t('hud.potionKills', { n: potion.kills, max: potion.killsPerPotion })}
+				</span>
+			)}
 		</div>
 	);
 }

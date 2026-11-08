@@ -5,10 +5,10 @@ import { MAGNETIC, SUPPORT_SLOTS } from '../src/data/support';
 import { emptyBuild } from '../src/logic/build';
 import { emptyGear } from '../src/logic/equipment';
 import {
+	addPotionKills,
 	buyHealPotion,
 	emptyHealPotion,
 	healShare,
-	refillHealPotion,
 	rollPotionDrop,
 	tickHealPotion,
 	upgradeRarity,
@@ -118,13 +118,15 @@ describe('healing potion (SDD-014 RF-20)', () => {
 		for (let i = 1; i <= HEAL_POTION.maxLevel; i++) expect(buyHealPotion(p)).toBe(true);
 		expect(buyHealPotion(p)).toBe(false);
 		expect(p.level).toBe(10);
-		expect(p.charges).toBe(10);
+		// Buying raises the capacity only: kills fill the potions during the next round.
+		expect(p.charges).toBe(0);
 	});
 
 	test('drinks once at 50% HP or less, one at a time with a 2 s cooldown', () => {
 		const p = emptyHealPotion();
 		buyHealPotion(p);
 		buyHealPotion(p);
+		p.charges = 2;
 		expect(tickHealPotion(p, 0.1, 51, 100)).toBe(0);
 		expect(tickHealPotion(p, 0.1, 50, 100)).toBe(25);
 		expect(p.charges).toBe(1);
@@ -138,25 +140,43 @@ describe('healing potion (SDD-014 RF-20)', () => {
 		expect(tickHealPotion(p, 0.1, 10, 200)).toBe(100);
 	});
 
-	test('each purchase adds one potion for the rest of the run; every round starts full', () => {
+	test('refills one empty potion per 100 kills, never past the level; every round starts empty', () => {
+		const p = emptyHealPotion();
+		buyHealPotion(p);
+		buyHealPotion(p);
+		buyHealPotion(p);
+		p.charges = 0;
+		addPotionKills(p, 99);
+		expect(p).toMatchObject({ charges: 0, kills: 99 });
+		addPotionKills(p);
+		expect(p).toMatchObject({ charges: 1, kills: 0 });
+		// A burst of kills fills one at a time and the surplus carries over.
+		addPotionKills(p, 250);
+		expect(p).toMatchObject({ charges: 3, kills: 0 });
+		// Full: kills are not banked.
+		addPotionKills(p, 500);
+		expect(p).toMatchObject({ charges: 3, kills: 0 });
+		// Drinking restarts the count from what was left.
+		p.charges = 2;
+		addPotionKills(p, 40);
+		expect(p.kills).toBe(40);
+		// No potion owned: nothing to count.
+		const none = emptyHealPotion();
+		addPotionKills(none, 300);
+		expect(none).toMatchObject({ charges: 0, kills: 0 });
+		// The next round starts with every potion empty and the kill count reset.
 		const run = createRunState(HEROES.jack, { seed: 1 });
 		buyHealPotion(run.healPotion);
 		buyHealPotion(run.healPotion);
-		expect(run.healPotion).toMatchObject({ level: 2, charges: 2 });
-		run.healPotion.charges = 0;
+		run.healPotion.charges = 2;
+		run.healPotion.kills = 60;
 		run.shop = {
 			offers: [null, null, null, null],
 			locks: [false, false, false, false],
 			rerolls: 0,
 		};
 		leaveShop(run);
-		expect(run.healPotion.charges).toBe(2);
-		// Never more than 10 potions from the merchant.
-		const p = emptyHealPotion();
-		for (let i = 0; i < 15; i++) buyHealPotion(p);
-		expect(p.level).toBe(10);
-		refillHealPotion(p);
-		expect(p.charges).toBe(10);
+		expect(run.healPotion).toMatchObject({ charges: 0, kills: 0 });
 	});
 
 	test('drops: only Elites (II, III) and Bosses (IV, V), only if you own one below V', () => {
@@ -193,7 +213,7 @@ describe('healing potion (SDD-014 RF-20)', () => {
 			rerolls: 0,
 		};
 		expect(purchase(run, 0, { build, stats })?.kind).toBe('healPotion');
-		expect(run.healPotion).toMatchObject({ level: 1, charges: 1, rarity: 1 });
+		expect(run.healPotion).toMatchObject({ level: 1, charges: 0, rarity: 1 });
 		const panel = buildPlayerPanel({
 			build,
 			gear: emptyGear(),
@@ -205,7 +225,7 @@ describe('healing potion (SDD-014 RF-20)', () => {
 		expect(panel.healPotion).toEqual({
 			level: 1,
 			maxLevel: 10,
-			charges: 1,
+			charges: 0,
 			rarity: 1,
 			healShare: 0.25,
 		});

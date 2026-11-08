@@ -19,8 +19,8 @@ import {
 	buyHealPotion,
 	canBuyHealPotion,
 	emptyHealPotion,
+	emptyHealPotionCharges,
 	type HealPotionState,
-	refillHealPotion,
 } from './heal-potion';
 import { roundEndFish } from './progression';
 import type { Rng } from './rng';
@@ -124,7 +124,7 @@ export function createRunState(
 export function startRound(state: RunState, round: number): void {
 	state.round = round;
 	state.timeLeft = roundDuration(round);
-	refillHealPotion(state.healPotion);
+	emptyHealPotionCharges(state.healPotion);
 }
 
 /** Applies damage to the hero; returns true when the hero died. */
