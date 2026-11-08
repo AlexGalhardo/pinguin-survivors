@@ -225,3 +225,22 @@ describe('lists', () => {
 		expect(uiStore.get().screen).toBe('achievements');
 	});
 });
+
+describe('skill tree opened from a run', () => {
+	test('only the run hero, and Back hands control back to the run', async () => {
+		const { openTreeFrom } = await import('../../src/ui/menu-controller');
+		save.heroes.bob.unlocked = true;
+		save.heroes.jack.level = 5;
+		let back = 0;
+		openTreeFrom('jack', () => back++);
+		const tree = view('skill-tree');
+		expect(tree.data.heroes).toEqual(['jack']);
+		tree.actions.allocate('jack.blade.s1');
+		expect(save.heroes.jack.tree).toContain('jack.blade.s1');
+		view('skill-tree').actions.back();
+		expect(back).toBe(1);
+		// Outside a run Back goes to the hero screen again.
+		view('skill-tree').actions.back();
+		expect(back).toBe(1);
+	});
+});

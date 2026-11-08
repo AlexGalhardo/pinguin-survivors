@@ -21,6 +21,8 @@ export interface GameCommands {
 	resume: () => void;
 	/** Pause: open the settings screen; its Back returns to the pause menu. */
 	pauseSettings: () => void;
+	/** Pause and shop: open the skill tree of the run's hero; its Back applies the changes and returns. */
+	openTree: () => void;
 	/** Pause: quit the run (already confirmed in the UI). */
 	quitRun: () => void;
 	/** Run over: start a new run with the same hero, Danger and weapon. */
@@ -49,6 +51,7 @@ export const commands: GameCommands = {
 	pause: () => impl.pause?.(),
 	resume: () => impl.resume?.(),
 	pauseSettings: () => impl.pauseSettings?.(),
+	openTree: () => impl.openTree?.(),
 	quitRun: () => impl.quitRun?.(),
 	playAgain: () => impl.playAgain?.(),
 	backToMenu: () => impl.backToMenu?.(),

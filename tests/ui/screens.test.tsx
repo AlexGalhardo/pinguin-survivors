@@ -98,6 +98,7 @@ describe('Pause', () => {
 		const actions = {
 			resume: () => calls.push('resume'),
 			settings: () => calls.push('settings'),
+			tree: () => calls.push('tree'),
 			quit: () => calls.push('quit'),
 		};
 		const { getAllByText, getByText, queryByText } = render(

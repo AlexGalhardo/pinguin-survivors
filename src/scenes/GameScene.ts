@@ -121,6 +121,7 @@ import {
 	sellValue,
 } from '../logic/shop';
 import { describeOffer } from '../logic/shop-describe';
+import { heroTree, treeStats } from '../logic/skill-tree';
 import { nextSpeed } from '../logic/speed';
 import {
 	getStat,
@@ -147,7 +148,7 @@ import { WeaponSystem } from '../systems/WeaponSystem';
 import { cardDescription, cardName } from '../ui/card-text';
 import { bindCommands } from '../ui/commands';
 import { hudStore } from '../ui/hud-bridge';
-import { openSettingsFrom } from '../ui/menu-controller';
+import { openSettingsFrom, openTreeFrom } from '../ui/menu-controller';
 import { publishPlayerPanel } from '../ui/player-bridge';
 import { publishDemoEnd, publishLevelUp, publishPause, publishRunOver } from '../ui/run-bridge';
 import { publishShop, type ShopView } from '../ui/shop-bridge';
@@ -548,6 +549,7 @@ export class GameScene extends Phaser.Scene {
 			pause: () => this.pause(),
 			resume: () => this.closeReactPause(),
 			pauseSettings: () => openSettingsFrom(() => uiStore.set({ screen: 'none' })),
+			openTree: () => this.openTree(),
 			quitRun: () => {
 				this.closeReactPause();
 				this.quitRun();
@@ -1200,6 +1202,32 @@ export class GameScene extends Phaser.Scene {
 		else if (sold)
 			this.fx.banner(this.hero.x, this.hero.y, 'fx.gearReplaced', { name, n: fish });
 		else this.fx.banner(this.hero.x, this.hero.y, 'fx.gearEquipped', { name });
+	}
+
+	/**
+	 * Opens the hero's skill tree from the pause or the shop. Levels gained in this run count as
+	 * tree points; on Back the old tree bonus is swapped for the new one and max HP follows.
+	 */
+	private openTree(): void {
+		const save = getSave(this);
+		const h = save.heroes[this.run.hero];
+		h.level = this.level.level;
+		h.xp = this.level.xp;
+		const before = [...h.tree];
+		openTreeFrom(this.run.hero, () => {
+			const tree = heroTree(this.run.hero);
+			const mods = (a: readonly string[]) =>
+				(Object.entries(treeStats(tree, a)) as [StatKey, number][]).map(
+					([stat, value]) => ({
+						stat,
+						value,
+					}),
+				);
+			replaceModifiers(this.stats, mods(before), mods(h.tree));
+			this.syncMaxHp();
+			persist(this);
+			uiStore.set({ screen: 'none' });
+		});
 	}
 
 	/** Max HP follows the stats (gear, cards); current HP is kept within it. */

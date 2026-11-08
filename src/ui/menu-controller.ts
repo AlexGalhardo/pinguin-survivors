@@ -57,11 +57,23 @@ const state: {
 	waiting: Action | null;
 	/** Set when settings were opened from the pause menu: Back runs this instead of going to the main menu. */
 	settingsBack: (() => void) | null;
+	/** Set while the tree is open from a run: only that hero, and Back returns to the run. */
+	treeBack: (() => void) | null;
 	/** What the save slot screen is for: pick the slot of a new game or load an existing one. */
 	slotsMode: 'load' | 'new';
-} = { hero: null, waiting: null, settingsBack: null, slotsMode: 'load' };
+} = { hero: null, waiting: null, settingsBack: null, treeBack: null, slotsMode: 'load' };
 
 /** Opens the settings screen over a running game; `back` restores the caller (pause menu). */
+/**
+ * Opens the skill tree from a run (pause or shop): only the run's hero, and Back calls `back`
+ * (the game applies the new tree to the run's stats there).
+ */
+export function openTreeFrom(hero: HeroId, back: () => void): void {
+	state.hero = hero;
+	state.treeBack = back;
+	go('skill-tree');
+}
+
 export function openSettingsFrom(back: () => void): void {
 	state.settingsBack = back;
 	go('settings');
@@ -259,6 +271,7 @@ function heroScreen(save: SaveData): MenuView {
 
 /** Passive skill tree of the selected hero (ADR-019): allocate paths, refund or reset for Pearls. */
 function skillTree(save: SaveData): MenuView {
+	const inRun = state.treeBack !== null;
 	const unlocked = HERO_IDS.filter((h) => save.heroes[h].unlocked);
 	const hero = heroOf(save);
 	const h = save.heroes[hero];
@@ -266,7 +279,7 @@ function skillTree(save: SaveData): MenuView {
 	return {
 		screen: 'skill-tree',
 		data: {
-			heroes: unlocked,
+			heroes: inRun ? [hero] : unlocked,
 			hero,
 			level: h.level,
 			allocated: h.tree,
@@ -299,7 +312,12 @@ function skillTree(save: SaveData): MenuView {
 				h.tree = [];
 				persist(save);
 			},
-			back: () => go('hero'),
+			back: () => {
+				const back = state.treeBack;
+				state.treeBack = null;
+				if (back) back();
+				else go('hero');
+			},
 		},
 	};
 }

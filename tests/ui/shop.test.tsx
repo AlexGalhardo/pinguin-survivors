@@ -38,6 +38,7 @@ const actions = () => {
 			sell: (s: number) => calls.push(`sell:${s}`),
 			fuse: (x: number, y: number) => calls.push(`fuse:${x},${y}`),
 			next: () => calls.push('next'),
+			tree: () => calls.push('tree'),
 		},
 	};
 };

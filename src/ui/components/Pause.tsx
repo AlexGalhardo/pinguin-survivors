@@ -24,6 +24,8 @@ export interface PauseData {
 export interface PauseActions {
 	resume: () => void;
 	settings: () => void;
+	/** Opens the skill tree of the run's hero. */
+	tree: () => void;
 	/** Called only after the player confirms. */
 	quit: () => void;
 }
@@ -102,6 +104,9 @@ export function Pause({
 					<>
 						<Btn onActivate={actions.resume} variant="primary" className="min-w-48">
 							{t('pause.resume')}
+						</Btn>
+						<Btn onActivate={actions.tree} variant="secondary" className="min-w-48">
+							{t('menu.workshop')}
 						</Btn>
 						<Btn onActivate={actions.settings} variant="secondary" className="min-w-48">
 							{t('menu.settings')}

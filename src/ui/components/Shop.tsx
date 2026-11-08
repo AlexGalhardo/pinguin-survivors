@@ -74,6 +74,8 @@ export interface ShopData {
 export interface ShopActions {
 	buy: (index: number) => void;
 	reroll: () => void;
+	/** Opens the skill tree of the run's hero. */
+	tree: () => void;
 	lock: (index: number) => void;
 	sell: (slot: number) => void;
 	fuse: (a: number, b: number) => void;
@@ -578,6 +580,9 @@ export function Shop({
 					variant="secondary"
 				>
 					{t('shop.reroll', { n: data.rerollPrice })}
+				</Btn>
+				<Btn onActivate={actions.tree} variant="secondary">
+					{t('menu.workshop')}
 				</Btn>
 				<Btn onActivate={actions.next} variant="primary" className="min-w-52 text-[1.15em]">
 					{t('shop.next')}

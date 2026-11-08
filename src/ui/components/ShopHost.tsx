@@ -1,11 +1,13 @@
 import { type ReactElement, useSyncExternalStore } from 'react';
 import { commands } from '../commands';
 import { type ShopView, shopStore } from '../shop-bridge';
+import { useUiStore } from '../store';
 import { Shop, type ShopActions, type ShopData } from './Shop';
 
 const ACTIONS: ShopActions = {
 	buy: commands.buy,
 	reroll: commands.reroll,
+	tree: commands.openTree,
 	lock: commands.lock,
 	sell: commands.sell,
 	fuse: commands.fuse,
@@ -45,6 +47,8 @@ export function toShopData(v: ShopView): ShopData {
 /** Shows the shop while the game is in its `shop` phase (the view is non-null). */
 export function ShopHost(): ReactElement | null {
 	const view = useSyncExternalStore(shopStore.subscribe, () => shopStore.get().shop);
-	if (!view) return null;
+	// A menu opened from the shop (the skill tree) replaces it until Back.
+	const screen = useUiStore((s) => s.screen);
+	if (!view || screen !== 'none') return null;
 	return <Shop data={toShopData(view)} actions={ACTIONS} />;
 }
