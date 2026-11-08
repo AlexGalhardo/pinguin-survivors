@@ -92,8 +92,8 @@ Specs: [SDD-001](docs/sdds/SDD-001-arena-topdown.md), [SDD-010](docs/sdds/SDD-01
   - [x] Auditoria: importar um save real exportado do `0.0.10` no build novo sem erro. · Conferido (2026-11-08, orquestrador): save gerado por `serializeSave` do código de `v0.0.10` (`git archive`) lido pelo `parseSave` novo → `version 2`, Jack L17/XP 900 e conquistas mantidos, `activeRun null`, `dangerUnlocked 1`, reparse idêntico.
 - [x] **T1.9** `docs/balancing-and-simulation.md` Parte B: marcar `[1.0: revisar]` nos itens afetados pela arena; `architecture.md` conferido · Resp.: estagiario · Est.: 2 h · Assert: `rg -c "1.0: revisar" docs/balancing-and-simulation.md` ≥ 5. · Evidência (2026-11-08): `rg -c "1.0: revisar"` = 12 (11 marcações + legenda); `architecture.md` conferido sem resquício iso/chunks; SDD-001 A6 corrigida (v1.1: 640 u > altura lógica 540).
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado = 12; lido o diff de `balancing-and-simulation.md` (12 linhas, só etiquetas e versão 2.1).
-- [ ] **T1.10** Release `0.0.12` com todo o M1, só depois de todas as auditorias do marco marcadas (decisão do desenvolvedor em 2026-11-08: uma release por marco) · Resp.: orquestrador · Assert: `gh release view v0.0.12` pre-release.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T1.10** Release `0.0.12` com todo o M1, só depois de todas as auditorias do marco marcadas (decisão do desenvolvedor em 2026-11-08: uma release por marco) · Resp.: orquestrador · Assert: `gh release view v0.0.12` pre-release. · Evidência (2026-11-08): `bun scripts/release.ts 0.0.12` (gates lint/typecheck/test/build verdes) → https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.0.12; `gh release view v0.0.12` pre-release; `package.json.version === '0.0.12'`; 12 tags = 12 releases.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): corpo com `### Added/Changed/Fixed` e links de commit; CHANGELOG `[0.0.12] - 2026-11-08` com `[Unreleased]` vazio.
 
 ### Auditoria do marco M1
 
@@ -101,9 +101,9 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 - [x] Todos os asserts das tarefas `[x]` re-executados e conferidos (Auditoria de cada tarefa marcada). · 2026-11-08: T1.1–T1.9 com auditoria marcada; re-execução em `docs/reports/audit-m1-2026-11-08.md`.
 - [x] SDDs do marco em "Aprovada" e implementação sem contradizer nenhum RF (grep pelos arquivos/funções citados). · SDD-001 1.1, SDD-010 1.1, SDD-005 (RF-05 parcial sem contradição, ver relatório).
-- [ ] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release.
-- [ ] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release.
-- [ ] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio.
+- [x] `bun run lint && bun run typecheck && bun test && bun run build` verdes no commit do release. · gates do `release.ts` em `v0.0.12`.
+- [x] Release `vX.Y.Z` conferido (`gh release view`): título = tag, grupos Keep a Changelog, links de commit válidos, `0.x` pre-release. · `v0.0.12`.
+- [x] `CHANGELOG.md` com a seção da versão datada e `[Unreleased]` vazio. · `[0.0.12] - 2026-11-08`.
 - [x] Docs afetados atualizados (gdd/visual/audio/architecture/balancing Parte B/site) e sem links quebrados. · links `decisions.md` corrigidos; demais conferidos.
 - [x] Saldos PixelLab/ElevenLabs registrados se o marco gastou assets. · M1 não gastou assets.
 - [x] Relatório `docs/reports/audit-m1-<data>.md` gravado (tabela tarefa · status · evidência). · `docs/reports/audit-m1-2026-11-08.md`.
