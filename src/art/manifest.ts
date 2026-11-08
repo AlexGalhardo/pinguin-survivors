@@ -65,8 +65,8 @@ export const KEYS = {
 
 export const BIOMES = {
 	antarctica: { id: 'antarctica', tileVariants: 4, decoVariants: 4, decoDensity: 0.03 },
-	forest: { id: 'forest', tileVariants: 4, decoVariants: 3, decoDensity: 0.05 },
-	city: { id: 'city', tileVariants: 4, decoVariants: 3, decoDensity: 0.045 },
+	forest: { id: 'forest', tileVariants: 4, decoVariants: 4, decoDensity: 0.05 },
+	city: { id: 'city', tileVariants: 4, decoVariants: 4, decoDensity: 0.045 },
 	// Legacy biomes (endless mode): research station and ruined city keep their PixelLab atlas.
 	station: { id: 'station', tileVariants: 4, decoVariants: 3, decoDensity: 0.035 },
 	ruins: { id: 'ruins', tileVariants: 4, decoVariants: 3, decoDensity: 0.045 },

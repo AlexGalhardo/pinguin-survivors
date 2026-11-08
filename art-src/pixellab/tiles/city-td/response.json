@@ -1,0 +1,60 @@
+{
+	"seed": 12,
+	"type": "done",
+	"action": "Touching up pixels",
+	"tile_id": "c663f9fd-f3d6-4605-9334-053888c76188",
+	"progress": 0.85,
+	"tile_name": "1). seamless tileable ground texture seen from dir",
+	"billing_usage": {
+		"usd": 0,
+		"type": "generations",
+		"generations": 15
+	},
+	"generation_id": "b4c1e3f5-86ec-4f4d-a081-44b10318353c",
+	"usage_cost_usd": 0.115,
+	"billing_charged": true,
+	"tile_description": "1). seamless tileable ground texture seen from directly above, cracked dark burned asphalt at night with soot stains, uniform, no objects, lineless, high top-down 2). seamless tileable ground texture seen from directly above, grey concrete slabs with cracks and ash at night, uniform, no objects, lineless, high top-down 3). seamless tileable ground texture seen from directly above, rubble dust and gravel with small broken bricks at night, uniform, no objects, lineless, high top-down 4). seamless tileable ground texture seen from directly above, scorched pavement with scattered broken glass shards and ash at night, uniform, no objects, lineless, high top-down",
+	"saved_to_database": true,
+	"generation_started_at": "2026-11-08T17:23:33.578576+00:00",
+	"original_image_n_colors": 96,
+	"experiment_art_direction": {
+		"side": ["#332E2E", "#221D1D", "#1A1515"],
+		"palette": [
+			{
+				"hex": "#4F4F4F",
+				"role": "surface 0"
+			},
+			{
+				"hex": "#3C3C3C",
+				"role": "surface 1"
+			},
+			{
+				"hex": "#2A2A2A",
+				"role": "surface 2"
+			},
+			{
+				"hex": "#1F1F1F",
+				"role": "surface 3"
+			},
+			{
+				"hex": "#151515",
+				"role": "surface 4"
+			},
+			{
+				"hex": "#332E2E",
+				"role": "side 0"
+			},
+			{
+				"hex": "#221D1D",
+				"role": "side 1"
+			},
+			{
+				"hex": "#1A1515",
+				"role": "side 2"
+			}
+		],
+		"surface": ["#4F4F4F", "#3C3C3C", "#2A2A2A", "#1F1F1F", "#151515"],
+		"art_direction": "The terrain tiles should evoke a post-apocalyptic, desolate night scene. The primary materials are dark, cracked asphalt, grey concrete, rubble, and scorched pavement, all covered in ash and soot. Lighting is minimal, emphasizing deep shadows and a muted, desaturated color palette to create a grim and oppressive mood. Textures should be highly detailed at the pixel level, showcasing fine cracks, dust, and scattered debris like glass shards and small broken bricks, maintaining a seamless and uniform appearance across all tiles."
+	},
+	"quantized_image_n_colors": 29
+}

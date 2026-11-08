@@ -1,0 +1,75 @@
+{
+	"frames": {
+		"border.city.0": {
+			"frame": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"border.city.1": {
+			"frame": { "x": 65, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.city.0": {
+			"frame": { "x": 130, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.city.1": {
+			"frame": { "x": 195, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.city.2": {
+			"frame": { "x": 260, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.city.3": {
+			"frame": { "x": 325, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"deco.city.2": {
+			"frame": { "x": 390, "y": 0, "w": 42, "h": 44 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 42, "h": 44 },
+			"sourceSize": { "w": 42, "h": 44 }
+		},
+		"deco.city.0": {
+			"frame": { "x": 433, "y": 0, "w": 59, "h": 43 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 59, "h": 43 },
+			"sourceSize": { "w": 59, "h": 43 }
+		},
+		"deco.city.3": {
+			"frame": { "x": 493, "y": 0, "w": 48, "h": 40 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 40 },
+			"sourceSize": { "w": 48, "h": 40 }
+		},
+		"deco.city.1": {
+			"frame": { "x": 542, "y": 0, "w": 40, "h": 38 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 38 },
+			"sourceSize": { "w": 40, "h": 38 }
+		}
+	},
+	"meta": { "image": "city.png", "size": { "w": 1024, "h": 64 }, "scale": "1" }
+}

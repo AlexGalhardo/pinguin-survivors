@@ -1,0 +1,60 @@
+{
+	"seed": 12,
+	"type": "done",
+	"action": "Touching up pixels",
+	"tile_id": "b1a9d16d-4cc1-4fd1-af8e-b2016c37538b",
+	"progress": 0.85,
+	"tile_name": "1). seamless tileable ground texture seen from dir",
+	"billing_usage": {
+		"usd": 0,
+		"type": "generations",
+		"generations": 15
+	},
+	"generation_id": "39124762-dd5c-45b1-a6a0-bc67c78d15aa",
+	"usage_cost_usd": 0.115,
+	"billing_charged": true,
+	"tile_description": "1). seamless tileable ground texture seen from directly above, dark forest floor with moss and fallen pine needles at night, uniform, no objects, lineless, high top-down 2). seamless tileable ground texture seen from directly above, packed dark brown forest dirt with small roots and leaf litter at night, uniform, no objects, lineless, high top-down 3). seamless tileable ground texture seen from directly above, dark green grass with scattered fallen leaves at night, uniform, no objects, lineless, high top-down 4). seamless tileable ground texture seen from directly above, muddy forest path with pebbles and moss at night, uniform, no objects, lineless, high top-down",
+	"saved_to_database": true,
+	"generation_started_at": "2026-11-08T17:20:56.441278+00:00",
+	"original_image_n_colors": 14997,
+	"experiment_art_direction": {
+		"side": ["#383228", "#2a261f", "#1f1b17"],
+		"palette": [
+			{
+				"hex": "#3a4a35",
+				"role": "surface 0"
+			},
+			{
+				"hex": "#2e3f28",
+				"role": "surface 1"
+			},
+			{
+				"hex": "#24331f",
+				"role": "surface 2"
+			},
+			{
+				"hex": "#1b2816",
+				"role": "surface 3"
+			},
+			{
+				"hex": "#142010",
+				"role": "surface 4"
+			},
+			{
+				"hex": "#383228",
+				"role": "side 0"
+			},
+			{
+				"hex": "#2a261f",
+				"role": "side 1"
+			},
+			{
+				"hex": "#1f1b17",
+				"role": "side 2"
+			}
+		],
+		"surface": ["#3a4a35", "#2e3f28", "#24331f", "#1b2816", "#142010"],
+		"art_direction": "The forest floor is depicted at night, illuminated by a subtle, ambient moon glow that lends a cool, muted tone to the palette. Textures are soft and organic, emphasizing moss, pine needles, and leaf litter through subtle variations in hue and value. The overall mood is mysterious and tranquil, with deep shadows providing strong contrast and definition to the various ground covers."
+	},
+	"quantized_image_n_colors": 98
+}

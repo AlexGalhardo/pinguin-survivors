@@ -1,0 +1,66 @@
+[
+	{
+		"key": "prop.forest.0",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a dark green pine tree seen from above, dense layered conifer branches with a little snow dust, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	},
+	{
+		"key": "prop.forest.1",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a bare dead tree with twisted dark branches seen from above, no leaves, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	},
+	{
+		"key": "prop.forest.2",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a fallen mossy log with broken branches lying on the ground, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	},
+	{
+		"key": "prop.forest.3",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a mossy grey boulder with ferns growing around it, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	},
+	{
+		"key": "prop.city.0",
+		"w": 64,
+		"h": 64,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a burned out wrecked car, charred black metal, rusted, melted tires, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	},
+	{
+		"key": "prop.city.1",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a heap of concrete rubble and broken bricks with rebar sticking out, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	},
+	{
+		"key": "prop.city.2",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a broken concrete wall section with exposed rebar and cracks, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	},
+	{
+		"key": "prop.city.3",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "an overturned rusty dumpster with spilled trash, game prop sprite, high top-down, single color black outline, transparent background, desaturated dark night palette"
+	}
+]

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Forest and destroyed-city art (PixelLab, 87 generations): seamless 64×64 floor tiles, borders and four solid props each; concepts for the six original aliens and the Biomechanical Colossus await approval before animation.
+
 - Forest and city music with music per biome (endless follows the drawn biome), eight weapon SFX, boss roars and boss-down, and UI hover/confirm/back sounds (ElevenLabs, normalized), plus kraken ink, abomination acid, Pearls earned, Danger unlocked, equip and demo end.
 
 - The React UI draws atlas art: weapon tiers in the HUD, shop and pause, gear and item icons, card icons, Fish and Pearl coins and Danger icons, with the old text as fallback.

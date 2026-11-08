@@ -275,6 +275,42 @@ const SFX: SfxDef[] = [
 		durationSeconds: 1.5,
 		variants: 1,
 	},
+	{
+		key: 'sfx.krakenInk',
+		text: 'giant kraken tentacle spitting a volley of thick black ink with a wet splatting whoosh, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.abominationAcid',
+		text: 'bubbling green acid pool splashing and sizzling on the ground with a wet hiss, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.pearls',
+		text: 'handful of shiny pearls clinking into a pouch with a soft bright chime, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.dangerUnlock',
+		text: 'ominous danger level unlocked sting: low distorted guitar chord with a dark metallic chime, cartoon gritty',
+		durationSeconds: 1.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.equip',
+		text: 'leather armor strap buckling with a short metallic clasp click, cartoon gritty',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.demoEnd',
+		text: 'short triumphant demo complete sting with a distorted guitar power chord and a bright metallic chime, cartoon gritty',
+		durationSeconds: 2.0,
+		variants: 1,
+	},
 ];
 
 const OUT = 'public/assets/audio/sfx';
