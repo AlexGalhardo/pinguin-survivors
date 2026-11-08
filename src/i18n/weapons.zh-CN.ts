@@ -1,0 +1,20 @@
+/** 武器线名称（src/data/weapons.ts）。 */
+export const weaponsZhCN = {
+	'weapon.machete.name': '砍刀',
+	'weapon.hammer.name': '大锤',
+	'weapon.knives.name': '投掷飞刀',
+	'weapon.fishBoomerang.name': '鱼形回旋镖',
+	'weapon.bladeWhirl.name': '刀刃旋风',
+	'weapon.doubleBarrel.name': '双管猎枪',
+	'weapon.auxPistol.name': '备用手枪',
+	'weapon.crossbow.name': '十字弩',
+	'weapon.molotov.name': '燃烧瓶',
+	'weapon.mine.name': '近距地雷',
+	'weapon.grenadeBelt.name': '手榴弹带',
+	'weapon.droneSentinel.name': '哨兵无人机',
+	'weapon.elementStaff.name': '元素法杖',
+	'weapon.iceShards.name': '冰晶碎片',
+	'weapon.flameRing.name': '火焰环',
+	'weapon.lightningTotem.name': '雷电图腾',
+	'weapon.poisonCloud.name': '毒云',
+} as const;

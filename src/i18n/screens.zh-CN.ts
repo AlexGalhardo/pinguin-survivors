@@ -1,0 +1,14 @@
+/** 升级、暂停、结束与解锁界面（src/ui/components）。 */
+export const screensZhCN = {
+	'levelup.title': '升级 · {n}',
+	'levelup.reroll': '刷新 · 剩余 {n}',
+	'rarity.common': '普通',
+	'rarity.rare': '稀有',
+	'rarity.epic': '史诗',
+	'rarity.legendary': '传说',
+	'pause.no': '继续游戏',
+	'over.pearls': '+{n} 珍珠',
+	'unlock.weapon': '新武器',
+	'unlock.achievement': '成就',
+	'unlock.ok': '继续',
+} as const;
