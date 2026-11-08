@@ -15,22 +15,36 @@ export interface UpgradeDef {
 }
 
 export const UPGRADES = [
-	{ id: 'vitality', stat: 'maxHp', perLevel: 5, maxLevel: 10, baseCost: 30, costGrowth: 1.35 },
-	{ id: 'might', stat: 'damage', perLevel: 0.03, maxLevel: 10, baseCost: 40, costGrowth: 1.4 },
+	{ id: 'vitality', stat: 'maxHp', perLevel: 3, maxLevel: 10, baseCost: 30, costGrowth: 1.35 },
+	{ id: 'might', stat: 'damage', perLevel: 0.018, maxLevel: 10, baseCost: 40, costGrowth: 1.4 },
 	{
 		id: 'haste',
 		stat: 'attackSpeed',
-		perLevel: 0.02,
+		perLevel: 0.012,
 		maxLevel: 10,
 		baseCost: 40,
 		costGrowth: 1.4,
 	},
-	{ id: 'plating', stat: 'armor', perLevel: 1, maxLevel: 8, baseCost: 35, costGrowth: 1.4 },
-	{ id: 'recovery', stat: 'regen', perLevel: 0.1, maxLevel: 8, baseCost: 35, costGrowth: 1.4 },
-	{ id: 'swiftness', stat: 'moveSpeed', perLevel: 3, maxLevel: 5, baseCost: 45, costGrowth: 1.5 },
-	{ id: 'magnet', stat: 'pickupRange', perLevel: 8, maxLevel: 5, baseCost: 25, costGrowth: 1.4 },
-	{ id: 'wisdom', stat: 'xpGain', perLevel: 0.04, maxLevel: 10, baseCost: 45, costGrowth: 1.4 },
-	{ id: 'fortune', stat: 'luck', perLevel: 0.02, maxLevel: 5, baseCost: 60, costGrowth: 1.5 },
+	{ id: 'plating', stat: 'armor', perLevel: 0.6, maxLevel: 8, baseCost: 35, costGrowth: 1.4 },
+	{ id: 'recovery', stat: 'regen', perLevel: 0.06, maxLevel: 8, baseCost: 35, costGrowth: 1.4 },
+	{
+		id: 'swiftness',
+		stat: 'moveSpeed',
+		perLevel: 1.8,
+		maxLevel: 5,
+		baseCost: 45,
+		costGrowth: 1.5,
+	},
+	{
+		id: 'magnet',
+		stat: 'pickupRange',
+		perLevel: 4.8,
+		maxLevel: 5,
+		baseCost: 25,
+		costGrowth: 1.4,
+	},
+	{ id: 'wisdom', stat: 'xpGain', perLevel: 0.024, maxLevel: 10, baseCost: 45, costGrowth: 1.4 },
+	{ id: 'fortune', stat: 'luck', perLevel: 0.012, maxLevel: 5, baseCost: 60, costGrowth: 1.5 },
 	// One reroll of the level-up cards per run.
 	{ id: 'insight', stat: 'cardRerolls', perLevel: 1, maxLevel: 1, baseCost: 80, costGrowth: 1 },
 ] as const satisfies readonly UpgradeDef[];

@@ -33,6 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Level-up offers 4 cards (stats, exclusive actives and passives only), a new `harvesting` stat that multiplies end-of-round Fish, and the Workshop upgrade Insight (one card reroll per run) (SDD-003 RF-05, RF-08).
 - Danger 0–5 rules (SDD-005): HP/damage/speed/drop modifiers, seeded extra waves from Danger 2, per-hero unlock by beating the round-20 boss, best round per Danger in the save and `--danger N` in the simulation.
 
+### Changed
+
+- Balance pass for 1.0: every Workshop upgrade gives ×0.6 per level (Insight unchanged) and the Element Staff base damage rises 10 → 16 (`docs/reports/balance-proposal-2026-11-08.md`).
+
 ### Removed
 
 - The old difficulty setting (`settings.difficulty`, `DIFFICULTIES`, `difficultyMods`), replaced by Danger.

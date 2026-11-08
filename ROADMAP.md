@@ -316,9 +316,9 @@ Specs: [SDD-009](docs/sdds/SDD-009-i18n-es-zh.md), [SDD-012](docs/sdds/SDD-012-a
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T7.9** Key art e capsules da Steam (6 peças) e OG image do site · Resp.: orquestrador · Est.: 4 h · Assets: ~400 · Assert: arquivos nas dimensões exigidas em `art-src/steam/`; 🛑 dev aprova.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T7.10** `balance-report.ts`, telemetria local opt-in, `--danger` no bot (SDD-013 RF-03…05) · Resp.: senior · Est.: 8 h · Assert: SDD-013 A1–A3, A5.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T7.11** **Balance 1.0**: metas A4 #1–#8 (até 3 passadas de bot) · Resp.: estagiario roda; orquestrador ajusta · Dep.: T7.10 · Est.: 16 h · Assert: `docs/reports/balance-1.0.md` com #1–#8 ✓ ou exceções justificadas (A4).
+- [x] **T7.10** `balance-report.ts`, telemetria local opt-in, `--danger` no bot (SDD-013 RF-03…05) · Resp.: senior · Est.: 8 h · Assert: SDD-013 A1–A3, A5. · Evidência (2026-11-08): `scripts/balance-report.ts` + `src/logic/sim/balance-report.ts` (A1–A2: metas #1–#8 ✓/✗/n/d a partir de JSONL da sim ou do bot), `sim.ts --jsonl` herói × nível × Danger (A3), telemetria opt-in no save com teto 200 e export (A5); `tests/balance-report.test.ts`, `tests/telemetry.test.ts`, `tests/save.test.ts` verdes; `--danger` no bot.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): testes re-executados; relatório gerado `docs/reports/balance-auto-2026-11-08.md` lido.
+- [ ] **T7.11** **Balance 1.0**: metas A4 #1–#8 (até 3 passadas de bot) · Resp.: estagiario roda; orquestrador ajusta · Dep.: T7.10 · Est.: 16 h · Assert: `docs/reports/balance-1.0.md` com #1–#8 ✓ ou exceções justificadas (A4). · Progresso (2026-11-08): passada 1 de 3 aplicada (Oficina ×0,6; `elementStaff` 10→16) — #1, #3, #4, #6 ✓; #2 ✗ em 100 seeds (2–3% morrem no boss do 10) e #5 ✗ (arma líder ~39%, set `elemental` 83%) aguardam decisão do desenvolvedor sobre as metas e o set (`questions-to-dev.md` #3 e #8); #7/#8 precisam do bot e do perf.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T7.12** QA cross-browser e E2E completos; `scripts/qa-browsers.ts` · Resp.: estagiario · Assert: zero erros/4xx em Chrome/Edge/Firefox.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.

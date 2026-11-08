@@ -77,3 +77,31 @@ Minha recomendação: aplicar **Oficina ×0,6 + `elementStaff` 16** (resolve #3 
 - Tudo medido na sim, que reage pouco ao dano das armas (ver [balance-2026-11-08.md](balance-2026-11-08.md)). O bot real precisa confirmar `elementStaff` e a Oficina antes de fechar.
 - Com 30 seeds, os valores de #3 e #5 oscilam entre rodadas; só os resultados com 100 seeds devem decidir.
 - Mexer na Oficina muda a progressão do jogador novo (vê-se menos poder por Pérola gasta); conferir a economia em Pérolas (SDD-003 RF-07) antes de aplicar.
+
+## Aplicado
+
+Aplicada só a recomendação (reversível, sem commit ainda): Oficina `perLevel` ×0,6 em todas as linhas com stat (`insight` fica) e `elementStaff` dano base 10 → 16. Nada mais mudou: nem o set `elemental`, nem as metas.
+
+| Arquivo | Campo | De | Para |
+|---|---|---|---|
+| `src/data/upgrades.ts` | `vitality` / `might` / `haste` | 5 / 0,03 / 0,02 | 3 / 0,018 / 0,012 |
+| idem | `plating` / `recovery` / `swiftness` | 1 / 0,1 / 3 | 0,6 / 0,06 / 1,8 |
+| idem | `magnet` / `wisdom` / `fortune` | 8 / 0,04 / 0,02 | 4,8 / 0,024 / 0,012 |
+| `src/data/weapons.ts` | `elementStaff` dano base (tiers I a IV) | 10 (10 / 15 / 22 / 31) | 16 (16 / 24 / 35 / 50) |
+
+Resultado medido (`SOUND_MUTED=true bun scripts/sim.ts 1 --jsonl … N` + `bun scripts/balance-report.ts`; o relatório de hoje em [balance-auto-2026-11-08.md](balance-auto-2026-11-08.md) foi sobrescrito com 30 seeds por célula):
+
+| Meta | Antes (30 seeds) | Depois, 30 seeds | Depois, 100 seeds |
+|---|---|---|---|
+| #1 L1 | ✓ 18 / 16 / 10, máx. 27 | ✓ 18 / 17 / 10, máx. 27 | ✓ 17 / 17 / 10, máx. 27 |
+| #2 L10 + `all:2` | ✗ morte mais cedo 10 | ✓ morte mais cedo 22 | ✗ jack 2%, bob 0%, Lucia 3% morrem antes do 12 |
+| #3 L20 + `all:4` | ✗ 61 / 61 / 42 | ✓ 51 / 56 / 44 | ✓ 48 / 51 / 42 |
+| #4 Danger | ✓ | ✓ D0 61, D1 36, D5 10 | ✓ D0 52, D1 33, D5 10 |
+| #5 diversidade | ✗ `molotov` 38,9%, `elemental` 71,1% | ✗ `hammer` 42,2%, `elemental` 83,3% | ✗ `molotov` 39,3%, `elemental` 84,3% |
+| #6 economia | ✓ 0,900 | ✓ 0,896, reroll 0,6% | ✓ 0,896, reroll 0,7% |
+
+Leitura:
+
+- **#3 fechado** em 30 e em 100 seeds. **#2 fechado em 30 seeds**; com 100 sobram 2 a 3% de mortes no boss do round 10, como previsto. Segue a proposta de relaxar a meta para ≤ 5% das runs (decisão do desenvolvedor).
+- **#5 piorou um pouco**: com a `elementStaff` mais forte, ela e o set `elemental` entram em mais builds (83% a 84% dos casos). O resultado confirma a leitura da proposta: o #5 não fecha com números de dano; depende das opções 1 a 3 acima e da decisão sobre o set `elemental`.
+- O espelho em `docs/balancing-and-simulation.md` (Parte B §6, linhas `elementStaff`, e §8b, tabela da Oficina) foi atualizado.

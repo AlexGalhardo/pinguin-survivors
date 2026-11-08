@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.3 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.4 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -322,10 +322,10 @@ Só o maior patamar atingido vale. Valores são totais por patamar (`SET_BONUSES
 | droneSentinel | firearm | gun + support | II | 9 | 0,32 | 231 | 28,4 |
 | droneSentinel | firearm | gun + support | III | 13 | 0,3 | 242 | 43,3 |
 | droneSentinel | firearm | gun + support | IV | 19 | 0,29 | 253 | 64,8 |
-| elementStaff | magic | elemental | I | 10 | 0,77 | 260 | 13 |
-| elementStaff | magic | elemental | II | 15 | 0,73 | 273 | 20,5 |
-| elementStaff | magic | elemental | III | 22 | 0,69 | 286 | 31,8 |
-| elementStaff | magic | elemental | IV | 31 | 0,68 | 299 | 45,8 |
+| elementStaff | magic | elemental | I | 16 | 0,77 | 260 | 20,8 |
+| elementStaff | magic | elemental | II | 24 | 0,73 | 273 | 32,9 |
+| elementStaff | magic | elemental | III | 35 | 0,69 | 286 | 50,7 |
+| elementStaff | magic | elemental | IV | 50 | 0,68 | 299 | 73,5 |
 | iceShards | magic | elemental | I | 8 | 0,5 | 60 | 16 |
 | iceShards | magic | elemental | II | 12 | 0,47 | 63 | 25,3 |
 | iceShards | magic | elemental | III | 18 | 0,45 | 66 | 40 |
@@ -370,15 +370,18 @@ Compartilhados pelos heróis; aplicados aos stats iniciais de toda run. Preço d
 
 | Upgrade | Stat | Por nível | Nível máx. | Preço base | Crescimento |
 |---|---|---|---|---|---|
-| vitality | maxHp | +5 | 10 | 30 | ×1,35 |
-| might | damage | +0,03 | 10 | 40 | ×1,4 |
-| haste | attackSpeed | +0,02 | 10 | 40 | ×1,4 |
-| plating | armor | +1 | 8 | 35 | ×1,4 |
-| recovery | regen | +0,1 | 8 | 35 | ×1,4 |
-| swiftness | moveSpeed | +3 | 5 | 45 | ×1,5 |
-| magnet | pickupRange | +8 | 5 | 25 | ×1,4 |
-| wisdom | xpGain | +0,04 | 10 | 45 | ×1,4 |
-| fortune | luck | +0,02 | 5 | 60 | ×1,5 |
+| vitality | maxHp | +3 | 10 | 30 | ×1,35 |
+| might | damage | +0,018 | 10 | 40 | ×1,4 |
+| haste | attackSpeed | +0,012 | 10 | 40 | ×1,4 |
+| plating | armor | +0,6 | 8 | 35 | ×1,4 |
+| recovery | regen | +0,06 | 8 | 35 | ×1,4 |
+| swiftness | moveSpeed | +1,8 | 5 | 45 | ×1,5 |
+| magnet | pickupRange | +4,8 | 5 | 25 | ×1,4 |
+| wisdom | xpGain | +0,024 | 10 | 45 | ×1,4 |
+| fortune | luck | +0,012 | 5 | 60 | ×1,5 |
+| insight | cardRerolls | +1 | 1 | 80 | ×1 |
+
+Bônus por nível ×0,6 em relação ao desenho original (balance-proposal-2026-11-08: a Oficina cheia no L20 batia o teto de 60 rounds); `insight` é uma contagem de rerolls de carta por run.
 
 A loja de extras das conquistas (`ACHIEVEMENT_SHOP`, P-61) soma no máximo +10 HP, +0,2 regen, +1 armadura, +1% crítico, +10% dano crítico, +1% esquiva, +1% aparar, +2% vel. de ataque, +2% dano e +5 vel.; é pequena demais para mudar a curva e fica fora da sim.
 

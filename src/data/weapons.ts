@@ -248,7 +248,7 @@ const LINES = [
 		classTag: 'magic',
 		sets: ['elemental'],
 		behavior: 'bolt',
-		damage: 10,
+		damage: 16,
 		cooldown: 1 / 1.3,
 		range: 260,
 		extra: { pierce: 1, projectileSpeed: 300 },
