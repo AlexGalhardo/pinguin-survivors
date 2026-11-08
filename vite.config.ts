@@ -1,4 +1,5 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8')) as {
@@ -18,6 +19,7 @@ function assetFiles(dir = 'public/assets'): string[] {
 }
 
 export default defineConfig({
+	plugins: [tailwindcss()],
 	base: './',
 	// SOUND_* variables from .env are exposed to the game (import.meta.env.SOUND_MUTED).
 	envPrefix: ['VITE_', 'SOUND_'],

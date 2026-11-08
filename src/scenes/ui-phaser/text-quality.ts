@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { LOGICAL_H } from '../config/constants';
-import { UI_WEIGHT } from './font';
+import { LOGICAL_H } from '../../config/constants';
+import { UI_WEIGHT } from '../../ui/font';
 
 /** Text raster resolution cap (4 = 4K / Retina); higher only costs memory. */
 const MAX_TEXT_RESOLUTION = 4;

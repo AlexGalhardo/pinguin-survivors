@@ -22,6 +22,12 @@
         height: 100dvh;
         overflow: hidden;
       }
+      #ui {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        pointer-events: none;
+      }
       #game canvas {
         display: block;
         image-rendering: pixelated;
@@ -30,6 +36,7 @@
   </head>
   <body>
     <div id="game"></div>
+    <div id="ui"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

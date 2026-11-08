@@ -3,8 +3,8 @@ import { PALETTE } from '../config/palette';
 import { getSave, persist } from '../core/context';
 import { type I18nKey, t } from '../i18n';
 import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/keybinds';
-import { MenuList } from '../ui/MenuList';
-import { setupScreen, text } from '../ui/screen';
+import { MenuList } from './ui-phaser/MenuList';
+import { setupScreen, text } from './ui-phaser/screen';
 
 /** Rebind gameplay keys (PLAN 7.1). Enter on an action, then press the new key; Esc cancels. */
 export class ControlsScene extends Phaser.Scene {

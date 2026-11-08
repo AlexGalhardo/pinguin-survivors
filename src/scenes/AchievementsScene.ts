@@ -6,7 +6,7 @@ import { ACHIEVEMENTS } from '../data/achievements';
 import { t } from '../i18n';
 import { achievementProgress, availablePoints } from '../logic/achievements';
 import { achievementDescription, achievementName } from '../ui/achievement-text';
-import { setupScreen, text } from '../ui/screen';
+import { setupScreen, text } from './ui-phaser/screen';
 
 const ROW_H = 26;
 

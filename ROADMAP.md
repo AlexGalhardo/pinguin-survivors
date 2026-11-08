@@ -152,8 +152,8 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 Specs: [SDD-004](docs/sdds/SDD-004-ui-react-tailwind.md), [SDD-005](docs/sdds/SDD-005-danger-e-save-v2.md). 🛑 Antes de T3.1: confirmar com o desenvolvedor as versões exatas de `react`, `react-dom`, `tailwindcss`, `@tailwindcss/vite` (estáveis no dia).
 
-- [ ] **T3.1** Infra: dependências fixas, `<div id="ui">`, `App.tsx`, `store.ts`, `commands.ts`, `theme.css` com tokens de `palette.ts`, plugin Tailwind no Vite · Resp.: senior · Est.: 6 h · Assert: `bun run build` OK; `rg -n "Phaser" src/ui` vazio (A1).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T3.1** Infra: dependências fixas, `<div id="ui">`, `App.tsx`, `store.ts`, `commands.ts`, `theme.css` com tokens de `palette.ts`, plugin Tailwind no Vite · Resp.: senior · Est.: 6 h · Assert: `bun run build` OK; `rg -n "Phaser" src/ui` vazio (A1). · Evidência (2026-11-08): `vite build` OK com Tailwind; `rg -n "Phaser" src/ui` vazio (helpers Phaser movidos para `src/scenes/ui-phaser/`, removidos no T3.7); `#ui` sobre o canvas, `App.tsx`, `store.ts` (`useSyncExternalStore`), `commands.ts`, `theme.css` + `palette.css` gerado de `palette.ts` (`scripts/export-palette-css.ts`); `bun test tests/ui` 3 pass.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): snapshot do índice exportado (`git checkout-index`) → typecheck 214 arquivos sem erro, 222 testes, biome limpo, `vite build` OK; grep A1 vazio.
 - [ ] **T3.2** Gerenciador de foco (teclado, gamepad, toque) e `Toast` · Resp.: senior · Dep.: T3.1 · Est.: 6 h · Assert: teste de componente de navegação por setas/`Enter`/`Esc`.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T3.3** `Hud` (HP, XP, Fish, round/timer, boss, 6 armas, equipamento, gambits, superpoder, 2×, FPS, rodapé) · Resp.: senior · Dep.: T3.2 · Est.: 8 h · Assert: screenshot em 1920×1080 e 2400×1080 sem overflow (A7).

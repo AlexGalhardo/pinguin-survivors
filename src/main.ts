@@ -10,7 +10,8 @@ import { installGamepad } from './core/gamepad';
 import { loadSave } from './core/storage';
 import { parseDebugParams } from './debug/params';
 import { detectLang, setLang } from './i18n';
-import { installCrispText } from './ui/text-quality';
+import { installCrispText } from './scenes/ui-phaser/text-quality';
+import { mountUi } from './ui/mount';
 
 const params = parseDebugParams(window.location.search);
 const save = loadSave(detectLang(navigator.language));
@@ -42,6 +43,7 @@ installCrispText(game);
 setParams(game, params);
 setSave(game, save);
 attachGame(game);
+mountUi(document.getElementById('ui'));
 installGamepad(game, () => game.scene.isActive('Game'));
 
 if (import.meta.env.DEV) {

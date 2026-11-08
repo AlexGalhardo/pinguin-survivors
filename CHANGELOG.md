@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `bun run lint:i18n` (`scripts/lint-i18n.ts`): fails on visible text literals in `src/ui/**/*.tsx` JSX (SDD-004 A5).
 - Six weapon slots in `src/logic/build.ts` (`addWeapon`, `canFuse`, `fuse`, `setCounts`, `setBonuses`), set bonuses at 2/4/6 in `src/data/sets.ts` and `applyModifiers` in `src/logic/stats.ts` (SDD-002).
 - Starting weapons per hero (`HeroDef.startingWeapons`) and three new exclusive passives: Iron Breath (Jack), Quick Reload (Bob) and Arcane Echo (Lucia); their in-game effects land with the weapon-slot integration.
+- React 19 + Tailwind CSS v4 overlay infrastructure (SDD-004): `#ui` over the canvas, `src/ui/App.tsx`, a UI store on `useSyncExternalStore`, typed UI→game commands and CSS color tokens generated from `palette.ts` (`scripts/export-palette-css.ts`).
 
 ### Fixed
 
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `VoiceLimiter` renamed to `SfxLimiter` (`src/logic/sfx-limiter.ts`) and the per-key `voices` field of `src/data/sfx.ts` to `polyphony`; `menu.subtitle` renamed to `menu.tagline`.
 - `docs/balancing-and-simulation.md` Part B tags the numbers the square arena affects with `[1.0: revisar]`; SDD-001 A6 now matches the 540-unit logical height.
 - Blade Whirl, Grenade Belt and Drone Sentinel left the card pool: they are weapon lines in 1.0 (SDD-002 RF-06).
+- Phaser UI helpers moved from `src/ui/` to `src/scenes/ui-phaser/` so `src/ui/` holds only React.
 
 ### Removed
 

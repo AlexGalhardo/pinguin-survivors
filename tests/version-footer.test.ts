@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { buildLabel } from '../src/ui/version-footer';
+import { buildLabel } from '../src/scenes/ui-phaser/version-footer';
 
 test('footer shows the SemVer build, tagged in dev', () => {
 	expect(buildLabel('0.1.0-alpha.1', false)).toBe('v0.1.0-alpha.1');

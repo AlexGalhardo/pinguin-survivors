@@ -4,10 +4,10 @@ import { getSave } from '../core/context';
 import { playMusic } from '../core/music';
 import { t } from '../i18n';
 import { availablePoints } from '../logic/achievements';
-import { MenuBackground } from '../ui/MenuBackground';
-import { MenuList } from '../ui/MenuList';
-import { setupScreen, text } from '../ui/screen';
 import { queueResume, type RunResume } from './GameScene';
+import { MenuBackground } from './ui-phaser/MenuBackground';
+import { MenuList } from './ui-phaser/MenuList';
+import { setupScreen, text } from './ui-phaser/screen';
 
 /** Wide enough for the longest label ("HISTÓRICO DE PARTIDAS") at the menu font size. */
 const PANEL_W = 340;

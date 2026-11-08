@@ -4,8 +4,8 @@ import { getSave, persist } from '../core/context';
 import { ACHIEVEMENT_SHOP } from '../data/achievements';
 import { type I18nKey, t } from '../i18n';
 import { availablePoints, buyExtra, extraLevel } from '../logic/achievements';
-import { MenuList } from '../ui/MenuList';
-import { setupScreen, text } from '../ui/screen';
+import { MenuList } from './ui-phaser/MenuList';
+import { setupScreen, text } from './ui-phaser/screen';
 
 const PERCENT = new Set<string>(['crit', 'critDamage', 'dodge', 'parry', 'attackSpeed', 'damage']);
 

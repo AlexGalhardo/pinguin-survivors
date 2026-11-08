@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
-import { PALETTE, toCss } from '../config/palette';
-import type { ViewSize } from '../logic/viewport';
-import { UI_FONT } from './font';
+import { PALETTE, toCss } from '../../config/palette';
+import type { ViewSize } from '../../logic/viewport';
+import { UI_FONT } from '../../ui/font';
 
 export function buildLabel(version: string, dev: boolean, name = ''): string {
 	const label = name ? `v${version} · ${name}` : `v${version}`;

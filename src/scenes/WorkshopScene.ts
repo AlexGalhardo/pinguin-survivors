@@ -4,8 +4,8 @@ import { getSave, persist } from '../core/context';
 import { UPGRADES } from '../data/upgrades';
 import { type I18nKey, t } from '../i18n';
 import { buyUpgrade, upgradeCost, upgradeLevel } from '../logic/upgrades';
-import { MenuList } from '../ui/MenuList';
-import { setupScreen, text } from '../ui/screen';
+import { MenuList } from './ui-phaser/MenuList';
+import { setupScreen, text } from './ui-phaser/screen';
 
 const PERCENT_STATS = new Set<string>(['damage', 'attackSpeed', 'xpGain', 'luck']);
 

@@ -7,9 +7,9 @@ import { type I18nKey, t } from '../i18n';
 import { emptyGear, equip, unequip } from '../logic/equipment';
 import { getStat, type StatKey } from '../logic/stats';
 import { menuPx, UI_FONT } from '../ui/font';
-import { MenuList } from '../ui/MenuList';
-import { text } from '../ui/screen';
 import type { GameScene } from './GameScene';
+import { MenuList } from './ui-phaser/MenuList';
+import { text } from './ui-phaser/screen';
 
 /** Stats listed on the pause screen, in order (percent ones are shown ×100). */
 const STAT_ROWS: StatKey[] = [

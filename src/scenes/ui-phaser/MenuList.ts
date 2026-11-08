@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
-import { PALETTE, toCss } from '../config/palette';
-import { sfx } from '../core/audio';
-import { menuPx, UI_FONT } from './font';
+import { PALETTE, toCss } from '../../config/palette';
+import { sfx } from '../../core/audio';
+import { menuPx, UI_FONT } from '../../ui/font';
 
 export interface MenuItem {
 	/** Label is re-read on every refresh so values (volume, language…) stay current. */

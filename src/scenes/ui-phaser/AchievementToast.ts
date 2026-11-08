@@ -1,11 +1,11 @@
 import type Phaser from 'phaser';
-import { KEYS } from '../art/manifest';
-import { PALETTE, toCss } from '../config/palette';
-import { sfx } from '../core/audio';
-import type { AchievementDef } from '../data/achievements';
-import { t } from '../i18n';
-import { achievementName } from './achievement-text';
-import { UI_FONT } from './font';
+import { KEYS } from '../../art/manifest';
+import { PALETTE, toCss } from '../../config/palette';
+import { sfx } from '../../core/audio';
+import type { AchievementDef } from '../../data/achievements';
+import { t } from '../../i18n';
+import { achievementName } from '../../ui/achievement-text';
+import { UI_FONT } from '../../ui/font';
 
 const WIDTH = 300;
 const HEIGHT = 56;

@@ -6,8 +6,8 @@ import { exportSave, importSave } from '../core/storage';
 import { RESOLUTION_IDS } from '../data/display';
 import { type I18nKey, LANGS, setLang, t } from '../i18n';
 import { type GoreMode, NUMBER_SIZES } from '../logic/save';
-import { MenuList } from '../ui/MenuList';
-import { setupScreen } from '../ui/screen';
+import { MenuList } from './ui-phaser/MenuList';
+import { setupScreen } from './ui-phaser/screen';
 
 const GORE: GoreMode[] = ['max', 'reduced', 'goo'];
 const cycle = <T>(list: readonly T[], value: T, dir: number): T =>

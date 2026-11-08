@@ -3,7 +3,7 @@ import { PALETTE } from '../config/palette';
 import { getSave } from '../core/context';
 import { getLang, type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
-import { setupScreen, text } from '../ui/screen';
+import { setupScreen, text } from './ui-phaser/screen';
 
 /** Last 20 runs, newest first (P-43). */
 export class HistoryScene extends Phaser.Scene {

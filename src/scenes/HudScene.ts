@@ -10,11 +10,11 @@ import { formatTime } from '../logic/format';
 import { xpToNext } from '../logic/progression';
 import { worldToScreen } from '../logic/projection';
 import { eliteTiers, isBossRound } from '../logic/round';
-import { AchievementToast } from '../ui/AchievementToast';
 import { TITLE_FONT, UI_FONT, UI_WEIGHT } from '../ui/font';
-import { addVersionFooter } from '../ui/version-footer';
 import { type Light, Lighting } from '../world/Lighting';
 import type { GameScene } from './GameScene';
+import { AchievementToast } from './ui-phaser/AchievementToast';
+import { addVersionFooter } from './ui-phaser/version-footer';
 
 /** Brotato-style HUD: big bars with the numbers inside, readable counters. */
 const BAR_W = 190;

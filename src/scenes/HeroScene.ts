@@ -14,8 +14,8 @@ import {
 import { getLang, type I18nKey, t } from '../i18n';
 import { freePoints, xpToNext } from '../logic/progression';
 import { getStat, heroStats, POINT_VALUES, type PointStat } from '../logic/stats';
-import { type MenuItem, MenuList } from '../ui/MenuList';
-import { setupScreen, text } from '../ui/screen';
+import { type MenuItem, MenuList } from './ui-phaser/MenuList';
+import { setupScreen, text } from './ui-phaser/screen';
 
 const PERCENT = new Set<string>(['attackSpeed', 'dodge', 'parry', 'crit']);
 

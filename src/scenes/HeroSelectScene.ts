@@ -5,7 +5,7 @@ import { PALETTE } from '../config/palette';
 import { getSave, persist, setRunHero } from '../core/context';
 import { type I18nKey, t } from '../i18n';
 import { nextDifficulty } from '../logic/difficulty';
-import { setupScreen, text } from '../ui/screen';
+import { setupScreen, text } from './ui-phaser/screen';
 
 const UNLOCK_HINT: Record<HeroId, I18nKey | null> = {
 	jack: null,

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { KEYS } from '../art/manifest';
-import type { ViewSize } from '../logic/viewport';
+import { KEYS } from '../../art/manifest';
+import type { ViewSize } from '../../logic/viewport';
 
 const EMBER = 'fx.ember';
 const SHADE = 'fx.menuShade';

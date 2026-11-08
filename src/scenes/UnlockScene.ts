@@ -4,7 +4,7 @@ import type { HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import { sfx } from '../core/audio';
 import { type I18nKey, t } from '../i18n';
-import { setupScreen, text } from '../ui/screen';
+import { setupScreen, text } from './ui-phaser/screen';
 
 export interface UnlockData {
 	heroes: HeroId[];

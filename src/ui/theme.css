@@ -1,0 +1,5 @@
+/* Utilities only: no preflight, so the game canvas and the legacy menus keep their styles. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "./palette.css";

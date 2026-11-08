@@ -1,8 +1,8 @@
 import type Phaser from 'phaser';
-import { PALETTE, toCss } from '../config/palette';
-import { trackZoom } from '../core/viewport';
-import type { ViewSize } from '../logic/viewport';
-import { menuPx, TITLE_FONT, UI_FONT, UI_WEIGHT } from './font';
+import { PALETTE, toCss } from '../../config/palette';
+import { trackZoom } from '../../core/viewport';
+import type { ViewSize } from '../../logic/viewport';
+import { menuPx, TITLE_FONT, UI_FONT, UI_WEIGHT } from '../../ui/font';
 import { addVersionFooter } from './version-footer';
 
 export const text = (size: number, color: number = PALETTE.textLight, wrap?: number) => ({

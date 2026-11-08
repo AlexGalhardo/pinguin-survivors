@@ -6,8 +6,8 @@ import { getLang, t } from '../i18n';
 import { formatTime } from '../logic/format';
 import type { RunRecord } from '../logic/save';
 import { TITLE_FONT } from '../ui/font';
-import { MenuList } from '../ui/MenuList';
-import { setupScreen, text } from '../ui/screen';
+import { MenuList } from './ui-phaser/MenuList';
+import { setupScreen, text } from './ui-phaser/screen';
 
 interface GameOverData {
 	record: RunRecord;
