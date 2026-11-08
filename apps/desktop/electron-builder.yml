@@ -14,6 +14,6 @@ win:
     target:
         - target: dir
           arch: x64
-    # Unsigned builds (Steam does not need signing). Skipping the rcedit step also avoids the
-    # winCodeSign download, which fails to extract on Windows without symlink rights.
-    signAndEditExecutable: false
+    icon: build/icon.ico
+    # Unsigned builds (Steam does not need signing); the exe icon and metadata are still applied.
+    signExecutable: false

@@ -142,6 +142,11 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 - `SaveData` v2 (SDD-005) via `Platform.save`; `src/core/storage.ts` delega para `platform()`. Web = `localStorage` + export/import de `.json`; Electron e Capacitor entram pela ponte `window.platform` (`createElectronPlatform`, `createCapacitorPlatform`); o campo `cloud` da ponte indica que a loja sincroniza o save sozinha (`Platform.cloud`).
 - Autosave no início de cada round (`GameScene`, P-43) e ao sair da loja; `Continue` no menu.
 - Conquistas e leaderboards pela `Platform`; na web são no-op (`achievements.unlock() {}`).
+- **Desktop (Electron, `apps/desktop/`)**:
+  - Conquistas: o jogo chama `platform().achievements.unlock(id)` com o id interno; o shell traduz por `STEAM_ACHIEVEMENTS` (`src/data/steam-achievements.ts`, `ACH_*`) antes de `steamworks.js`. Sem Steam o shell só registra no log.
+  - Steam Cloud: `cloud` é `true` quando o `steamworks.js` inicializa (precisa de `steam_appid.txt` ao lado do `.exe` ou `STEAM_APP_ID`; o `480` só vale em execução sem empacotar). O save fica em `%APPDATA%\pinguin-survivors-desktop\save.json` (pasta `userData` do Electron, igual para demo e completo, então a demo e o jogo completo compartilham o save). Configuração de **Auto-Cloud** no Steamworks (a cargo do desenvolvedor): Root = `WinAppDataRoaming`, Subdirectory = `pinguin-survivors-desktop`, Pattern = `save.json`, sem recursão, plataforma Windows. `save.backup.json` (cópia de um save ilegível) **não** entra na Cloud.
+  - Leaderboards `hero_<id>_danger_<d>`: o `steamworks.js` 0.4.0 (a última versão estável) não tem API de leaderboards; `leaderboards.submit` só registra no log até haver outra solução (outro binding ou Steamworks Web API).
+  - Ícone do `.exe`: gerado em cada `build:desktop` a partir de `public/assets/heroes/portrait.jack.png` (`apps/desktop/build/icon.ico`, ignorado pelo git).
 
 ## 10. Builds: jogo, demo, desktop, mobile, site
 

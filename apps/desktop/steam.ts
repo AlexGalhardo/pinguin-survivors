@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { app } from 'electron';
+import { STEAM_ACHIEVEMENTS, steamApiName } from '../../src/data/steam-achievements';
 
 /**
  * Steamworks bridge (steamworks.js). Everything here is best effort: without an App ID or a
@@ -53,16 +54,21 @@ export function initSteam(): void {
 
 export const steamReady = (): boolean => client !== null;
 
-/** Unlocks an achievement by its Steamworks API name (the internal id until the map lands, T7.7). */
+/** Unlocks an achievement: the game sends its internal id, Steamworks wants the `ACH_*` API name. */
 export function unlockAchievement(id: string): void {
+	const name = STEAM_ACHIEVEMENTS[id] ?? steamApiName(id);
 	if (!client) {
-		console.log(`[steam] achievement ${id} (no Steam)`);
+		console.log(`[steam] achievement ${id} -> ${name} (no Steam)`);
 		return;
 	}
-	if (!client.achievement.activate(id)) console.warn(`[steam] achievement ${id} not activated`);
+	if (!client.achievement.activate(name))
+		console.warn(`[steam] achievement ${name} not activated`);
 }
 
-/** steamworks.js 0.4 has no leaderboard API: logged until T7.7 picks a solution. */
+/**
+ * Leaderboards `hero_<id>_danger_<d>`: steamworks.js 0.4.0 (the latest stable) has no leaderboard
+ * API, so this only logs. Needs another binding or a Steamworks Web API call to become real.
+ */
 export function submitScore(board: string, score: number): void {
 	console.log(`[steam] leaderboard ${board} = ${score} (not supported by steamworks.js 0.4)`);
 }
