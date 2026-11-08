@@ -344,7 +344,7 @@ Spec: [SDD-007](docs/sdds/SDD-007-ports-electron-capacitor.md).
 
 - [ ] **T8.1** 🛑 Conta Google Play Console; app criado; classificação IARC 16+ preenchida · Resp.: dev · Assert: app em "rascunho" no Console.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T8.2** `apps/mobile/` Capacitor, landscape, `Preferences`, safe areas, joystick + botões de toque na HUD, `tier` baixo · Resp.: senior · Dep.: T5.3 · Est.: 14 h · Assert: AAB gerado (SDD-007 A4); QA em aparelho 6,7" com ≥ 55 FPS no round 10 registrado.
+- [ ] **T8.2** `apps/mobile/` Capacitor, landscape, `Preferences`, safe areas, joystick + botões de toque na HUD, `tier` baixo · Resp.: senior · Dep.: T5.3 · Est.: 14 h · Assert: AAB gerado (SDD-007 A4); QA em aparelho 6,7" com ≥ 55 FPS no round 10 registrado. · Progresso (2026-11-08): `apps/mobile/` Capacitor 8.6.0 (core, android, app, preferences; cli dev), landscape (`sensorLandscape`), imersivo, safe areas, ponte `window.platform` com `Preferences` hidratado e `tier: 'low'`, `TouchControls` (joystick + super/velocidade/pausa) via `src/core/touch-bridge.ts`; `./gradlew bundleDebug` gerou `app-debug.aab` (15,8 MB) localmente (A4 parcial). Falta: QA em aparelho 6,7" ≥ 55 FPS no round 10 (dev) e AAB release assinado (keystore do dev).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T8.3** Workflow `android.yml` com assinatura por secrets · Resp.: estagiario · Est.: 3 h · Assert: run verde com artefato AAB.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.

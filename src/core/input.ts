@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { Action, KeyBinds } from '../logic/keybinds';
 import { gamepadMove } from './gamepad';
+import { onTouchAction, touchMove } from './touch-bridge';
 
 /** Arrow keys always move too, whatever the binds are. */
 const ARROWS: Record<'up' | 'down' | 'left' | 'right', string> = {
@@ -50,7 +51,10 @@ export class GameInput {
 		scene.events.on(Phaser.Scenes.Events.RESUME, clear);
 		scene.events.on(Phaser.Scenes.Events.WAKE, clear);
 		if (scene.sys.game.device.input.touch) this.installTouch(scene);
+		// On-screen buttons (React TouchControls) trigger the same handlers as their keys.
+		const offTouch = onTouchAction((action) => this.handlers.get(action)?.());
 		scene.events.once('shutdown', () => {
+			offTouch();
 			kb.off('keydown', onDown);
 			kb.off('keyup', onUp);
 			scene.game.events.off(Phaser.Core.Events.BLUR, clear);
@@ -73,7 +77,8 @@ export class GameInput {
 		if (x !== 0 || y !== 0) return { x, y };
 		if (gamepadMove.connected && (gamepadMove.x !== 0 || gamepadMove.y !== 0))
 			return { x: gamepadMove.x, y: gamepadMove.y };
-		return this.touch;
+		if (this.touch.x !== 0 || this.touch.y !== 0) return this.touch;
+		return touchMove;
 	}
 
 	/** Floating joystick: the first finger down anywhere becomes the stick center. */

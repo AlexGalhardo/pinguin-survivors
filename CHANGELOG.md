@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Android shell (`apps/mobile/`, Capacitor 8.6.0, SDD-007 RF-04): landscape immersive WebView, `window.platform` bridge over Preferences, safe areas, on-screen joystick and buttons (`TouchControls`, `?touch=1` to preview), and a manual `android.yml` workflow that builds the AAB.
+
 - The React menus draw the Jack or Bob key art behind them (integer pixel scale, darkened for readability).
 - Earned achievements are reported to the platform (Steam on desktop, no-op on the web); the demo hides achievements and heroes outside its scope and logs a demo win as `demoWin`.
 

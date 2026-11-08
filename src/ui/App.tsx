@@ -4,6 +4,7 @@ import { MenuHost } from './components/MenuHost';
 import { RunHost } from './components/RunHost';
 import { ShopHost } from './components/ShopHost';
 import { ToastHost } from './components/Toast';
+import { TouchControls } from './components/TouchControls';
 import { useUiStore } from './store';
 import { buildLabel } from './version-label';
 
@@ -18,6 +19,7 @@ export function App(): ReactElement {
 			<Hud version={VERSION} />
 			<ShopHost />
 			<RunHost />
+			<TouchControls />
 			<ToastHost />
 		</>
 	);

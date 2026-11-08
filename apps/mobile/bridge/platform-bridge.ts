@@ -54,7 +54,7 @@ void plugins?.App?.addListener('backButton', () => {
 	window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape' }));
 });
 
-const entry = document.querySelector<HTMLScriptElement>('script[data-game-entry]')?.dataset
-	.gameEntry;
+const entry =
+	document.querySelector<HTMLScriptElement>('script[data-game-entry]')?.dataset.gameEntry;
 if (!entry) throw new Error('platform-bridge: missing data-game-entry');
 await import(/* @vite-ignore */ entry);
