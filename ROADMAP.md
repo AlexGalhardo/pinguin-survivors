@@ -346,8 +346,8 @@ Spec: [SDD-007](docs/sdds/SDD-007-ports-electron-capacitor.md).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T8.2** `apps/mobile/` Capacitor, landscape, `Preferences`, safe areas, joystick + botões de toque na HUD, `tier` baixo · Resp.: senior · Dep.: T5.3 · Est.: 14 h · Assert: AAB gerado (SDD-007 A4); QA em aparelho 6,7" com ≥ 55 FPS no round 10 registrado. · Progresso (2026-11-08): `apps/mobile/` Capacitor 8.6.0 (core, android, app, preferences; cli dev), landscape (`sensorLandscape`), imersivo, safe areas, ponte `window.platform` com `Preferences` hidratado e `tier: 'low'`, `TouchControls` (joystick + super/velocidade/pausa) via `src/core/touch-bridge.ts`; `./gradlew bundleDebug` gerou `app-debug.aab` (15,8 MB) localmente (A4 parcial). Falta: QA em aparelho 6,7" ≥ 55 FPS no round 10 (dev) e AAB release assinado (keystore do dev).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T8.3** Workflow `android.yml` com assinatura por secrets · Resp.: estagiario · Est.: 3 h · Assert: run verde com artefato AAB.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T8.3** Workflow `android.yml` com assinatura por secrets · Resp.: estagiario · Est.: 3 h · Assert: run verde com artefato AAB. · Evidência (2026-11-08): run 42499006510 do `android.yml` (`build_type=debug`) `success` com artefato `pinguin-survivors-debug-aab` (15,7 MB); assinatura de release lida de secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`) — o AAB assinado depende do keystore do desenvolvedor.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): 1ª run falhou (`gradlew` sem +x); corrigido em commit próprio e re-executado verde; artefato listado via API.
 - [ ] **T8.4** Teste interno (Play Console) com 5+ aparelhos · Resp.: dev · Assert: relatório pré-lançamento do Console sem crashes.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T8.5** Release `0.1.x` (mobile).
