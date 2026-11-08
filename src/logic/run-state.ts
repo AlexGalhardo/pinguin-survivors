@@ -1,5 +1,5 @@
 import type { HeroId } from '../config/constants';
-import type { Difficulty } from '../data/difficulty';
+import type { Danger, Difficulty } from '../data/difficulty';
 import { ECONOMY, PEARLS, SHOP } from '../data/economy';
 import type { HeroDef } from '../data/heroes';
 import { WEAPON_LINES, WEAPON_TIERS } from '../data/weapons';
@@ -26,6 +26,8 @@ export interface RunState {
 	tier: 1 | 2 | 3;
 	/** Chosen before the run (P-62); missing in snapshots older than the feature = normal. */
 	difficulty?: Difficulty;
+	/** Danger 0–5 of the run (ADR-008); replaces `difficulty`. */
+	danger: Danger;
 	seed: number;
 	round: number;
 	/** Seconds left in the current round. */
@@ -63,6 +65,7 @@ export function createRunState(
 		round?: number;
 		tier?: 1 | 2 | 3;
 		difficulty?: Difficulty;
+		danger?: Danger;
 		cardRerolls?: number;
 	},
 ): RunState {
@@ -71,6 +74,7 @@ export function createRunState(
 		hero: hero.id,
 		tier: opts.tier ?? 1,
 		difficulty: opts.difficulty ?? 'normal',
+		danger: opts.danger ?? 1,
 		seed: opts.seed,
 		round,
 		timeLeft: roundDuration(round),

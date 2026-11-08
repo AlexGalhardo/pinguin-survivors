@@ -1,6 +1,7 @@
 import type { HeroId } from '../../config/constants';
 import { ALL_CARDS } from '../../data/cards';
 import { COMBAT } from '../../data/combat';
+import { DANGER, type Danger, EXTRA_WAVES } from '../../data/difficulty';
 import { ENEMY_LIST } from '../../data/enemies';
 import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
@@ -19,6 +20,7 @@ import {
 } from '../build';
 import { drawCards } from '../cards';
 import { armorReduction } from '../combat';
+import { extraWaves } from '../difficulty';
 import { orbXp } from '../progression';
 import { Rng } from '../rng';
 import {
@@ -72,6 +74,8 @@ export interface SimConfig {
 	seed: number;
 	/** Stat points spread evenly over these stats (level − 1 points). */
 	pointPlan?: PointStat[];
+	/** Danger 0–5 (default 1, the baseline). */
+	danger?: Danger;
 	/** Tier of the starting weapon (debug). */
 	tier?: 1 | 2 | 3;
 	/** Workshop upgrade levels by id (applied to the starting stats like the game). */
@@ -204,7 +208,7 @@ interface AverageEnemy {
 }
 
 /** Average enemy of the pool available in `round`, elites included. */
-function averageEnemy(round: number): AverageEnemy {
+function averageEnemy(round: number, eliteMul = 1): AverageEnemy {
 	const biome = biomeForRound(round);
 	const pool = ENEMY_LIST.filter(
 		(e) => e.biome === biome && e.fromRound > 0 && e.fromRound <= round,
@@ -222,12 +226,12 @@ function averageEnemy(round: number): AverageEnemy {
 	let eliteHp = 1;
 	let eliteDmg = 1;
 	if (tiers.includes('purple')) {
-		eliteHp += ROUNDS.purpleShare * (ROUNDS.elite.purple.hp - 1);
-		eliteDmg += ROUNDS.purpleShare * (ROUNDS.elite.purple.damage - 1);
+		eliteHp += ROUNDS.purpleShare * eliteMul * (ROUNDS.elite.purple.hp - 1);
+		eliteDmg += ROUNDS.purpleShare * eliteMul * (ROUNDS.elite.purple.damage - 1);
 	}
 	if (tiers.includes('orange')) {
-		eliteHp += ROUNDS.orangeShare * (ROUNDS.elite.orange.hp - 1);
-		eliteDmg += ROUNDS.orangeShare * (ROUNDS.elite.orange.damage - 1);
+		eliteHp += ROUNDS.orangeShare * eliteMul * (ROUNDS.elite.orange.hp - 1);
+		eliteDmg += ROUNDS.orangeShare * eliteMul * (ROUNDS.elite.orange.damage - 1);
 	}
 	out.hp *= hpMul(round) * eliteHp;
 	out.damage *= dmgMul(round) * eliteDmg;
@@ -255,6 +259,9 @@ export function simulateRun(config: SimConfig): SimResult {
 	let eff = effectiveStats(stats, build);
 	const superDef = SUPERPOWERS[config.hero];
 	const superOn = config.level >= SUPER.unlockLevel;
+	const danger = config.danger ?? 1;
+	const mods = DANGER[danger];
+	const waves = extraWaves(config.seed, danger);
 	const run = createRunState(hero, { seed: config.seed });
 	const save = defaultSave();
 	const cardPool = ALL_CARDS.filter((c) => c.effect.type === 'stat' || c.effect.type === 'perk');
@@ -292,17 +299,22 @@ export function simulateRun(config: SimConfig): SimResult {
 
 	for (let round = 1; round <= SIM.maxRound; round++) {
 		const duration = roundDuration(round);
-		const enemy = averageEnemy(round);
+		const wave = waves.find((w) => w.round === round)?.kind;
+		const enemy = averageEnemy(round, wave === 'elite' ? EXTRA_WAVES.eliteMul : 1);
+		enemy.hp *= mods.hp;
+		enemy.damage *= mods.dmg;
+		enemy.speed *= mods.speed;
+		const spawnMul = wave === 'horde' ? EXTRA_WAVES.hordeMul : 1;
 		const boss = bossForRound(round);
-		let bossHp = isBossRound(round) ? boss.hp * bossHpMul(round) : 0;
-		const bossDmg = boss.damage * dmgMul(round);
+		let bossHp = isBossRound(round) ? boss.hp * bossHpMul(round) * mods.hp : 0;
+		const bossDmg = boss.damage * dmgMul(round) * mods.dmg;
 		let alive = 0;
 		let spawnBudget = 0;
 		let overflow = 0;
 		let taken = 0;
 		for (let t = 0; t < duration; t += SIM.step) {
 			seconds += SIM.step;
-			spawnBudget += spawnRate(round) * SIM.step;
+			spawnBudget += spawnRate(round) * spawnMul * SIM.step;
 			const spawned = Math.floor(spawnBudget);
 			spawnBudget -= spawned;
 			alive = Math.min(300, alive + spawned);
@@ -319,7 +331,7 @@ export function simulateRun(config: SimConfig): SimResult {
 			alive -= killed;
 			kills += killed;
 			charge += killed;
-			xp += killed * orbXp(enemy.xp, round);
+			xp += killed * orbXp(enemy.xp, round) * mods.drops;
 			if (superOn && charge >= SUPER.charge && (bossHp > 0 || alive >= 25)) {
 				charge = 0;
 				const cleared = Math.floor(alive * SIM.superClear);
@@ -412,9 +424,10 @@ export function simulateMany(
 	runs: number,
 	seed = 1,
 	upgrades: Record<string, number> = {},
+	danger: Danger = 1,
 ): SimSummary {
 	const results = Array.from({ length: runs }, (_, i) =>
-		simulateRun({ hero, level, seed: seed + i, upgrades }),
+		simulateRun({ hero, level, seed: seed + i, upgrades, danger }),
 	);
 	const rounds = results.map((r) => r.round).sort((a, b) => a - b);
 	const avg = (f: (r: SimResult) => number) => results.reduce((a, r) => a + f(r), 0) / runs;

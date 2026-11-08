@@ -1,28 +1,37 @@
 import { describe, expect, test } from 'bun:test';
-import { DIFFICULTY } from '../src/data/difficulty';
-import { difficultyMods, nextDifficulty, scaleFish } from '../src/logic/difficulty';
+import { DANGER, DANGER_LEVELS, EXTRA_WAVES } from '../src/data/difficulty';
+import { dangerMods, extraWaves } from '../src/logic/difficulty';
 
-describe('difficulty', () => {
-	test('easy and hard are ±25% on everything, normal is neutral', () => {
-		for (const k of ['damage', 'hp', 'speed', 'rewards'] as const) {
-			expect(DIFFICULTY.easy[k]).toBe(0.75);
-			expect(DIFFICULTY.normal[k]).toBe(1);
-			expect(DIFFICULTY.hard[k]).toBe(1.25);
+describe('Danger 0-5', () => {
+	test('D1 is the baseline and every stat grows with the Danger', () => {
+		expect(dangerMods(1)).toEqual({ hp: 1, dmg: 1, speed: 1, drops: 1, extraWaves: 0 });
+		for (const d of DANGER_LEVELS.slice(1)) {
+			const prev = DANGER[(d - 1) as 0 | 1 | 2 | 3 | 4];
+			expect(DANGER[d].hp).toBeGreaterThan(prev.hp);
+			expect(DANGER[d].dmg).toBeGreaterThan(prev.dmg);
+			expect(DANGER[d].extraWaves).toBeGreaterThanOrEqual(prev.extraWaves);
 		}
-		expect(difficultyMods(undefined)).toBe(DIFFICULTY.normal);
 	});
 
-	test('fish rewards keep fractions as a chance', () => {
-		expect(scaleFish(4, DIFFICULTY.easy, 0.9)).toBe(3);
-		expect(scaleFish(4, DIFFICULTY.hard, 0.9)).toBe(5);
-		expect(scaleFish(1, DIFFICULTY.hard, 0.2)).toBe(2);
-		expect(scaleFish(1, DIFFICULTY.hard, 0.3)).toBe(1);
-		expect(scaleFish(1, DIFFICULTY.easy, 0.8)).toBe(0);
+	test('A1: extraWaves is empty on D0/1, 1 round on D2/3, 3 distinct rounds in [4, 19] on D4/5', () => {
+		const [min, max] = EXTRA_WAVES.rounds;
+		const expected = { 0: 0, 1: 0, 2: 1, 3: 1, 4: 3, 5: 3 } as const;
+		for (let seed = 0; seed < 500; seed++)
+			for (const d of DANGER_LEVELS) {
+				const waves = extraWaves(seed, d);
+				expect(waves).toHaveLength(expected[d]);
+				expect(new Set(waves.map((w) => w.round)).size).toBe(expected[d]);
+				for (const w of waves) {
+					expect(w.round).toBeGreaterThanOrEqual(min);
+					expect(w.round).toBeLessThanOrEqual(max);
+					expect(['elite', 'horde']).toContain(w.kind);
+				}
+			}
 	});
 
-	test('cycles', () => {
-		expect(nextDifficulty('normal', 1)).toBe('hard');
-		expect(nextDifficulty('hard', 1)).toBe('easy');
-		expect(nextDifficulty('easy', -1)).toBe('hard');
+	test('waves are deterministic by seed and sorted by round', () => {
+		expect(extraWaves(42, 5)).toEqual(extraWaves(42, 5));
+		const rounds = extraWaves(7, 4).map((w) => w.round);
+		expect(rounds).toEqual([...rounds].sort((a, b) => a - b));
 	});
 });

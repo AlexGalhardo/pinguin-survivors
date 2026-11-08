@@ -1,16 +1,21 @@
 // Balance table from the headless model (PLAN 2.6/3.2): death round per hero × level.
-// Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]]  (--rounds prints damage taken per round)
+// Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]] [--danger 0-5]  (--rounds prints damage taken per round)
 import { HERO_IDS } from '../src/config/constants';
+import type { Danger } from '../src/data/difficulty';
 import { STARTING_WEAPONS } from '../src/data/unlocks';
 import { WEAPON_LINE_BY_ID, type WeaponId } from '../src/data/weapons';
 import { simulateMany, simulateRun } from '../src/logic/sim/run-sim';
 
-const runs = Number(process.argv[2] ?? 40);
+const runs = Number(process.argv[2]) || 40;
+const dangerArg = Number(process.argv[process.argv.indexOf('--danger') + 1]);
+const danger = (
+	process.argv.includes('--danger') ? Math.min(5, Math.max(0, dangerArg || 0)) : 1
+) as Danger;
 const LEVELS = [1, 5, 10, 20, 30];
 console.log('hero   lvl  avgRound  median  past30  bossDeaths  avgKills  avgXp  pearls  fishSpent');
 for (const hero of HERO_IDS) {
 	for (const level of LEVELS) {
-		const s = simulateMany(hero, level, runs);
+		const s = simulateMany(hero, level, runs, 1, {}, danger);
 		console.log(
 			`${hero.padEnd(6)} ${String(level).padStart(3)}  ${s.avgRound.toFixed(1).padStart(8)}  ${String(s.medianRound).padStart(6)}  ${`${Math.round(s.past30 * 100)}%`.padStart(6)}  ${String(s.bossDeaths).padStart(10)}  ${Math.round(s.avgKills).toString().padStart(8)}  ${Math.round(s.avgXp).toString().padStart(5)}  ${Math.round(s.avgPearls).toString().padStart(6)}  ${Math.round(s.avgFishSpent).toString().padStart(9)}`,
 		);
@@ -19,7 +24,7 @@ for (const hero of HERO_IDS) {
 if (process.argv.includes('--rounds')) {
 	for (const hero of HERO_IDS)
 		for (const level of LEVELS) {
-			const r = simulateRun({ hero, level, seed: 100 });
+			const r = simulateRun({ hero, level, seed: 100, danger });
 			console.log(
 				`${hero} L${level} →${r.round}: ${r.perRound.map((d) => Math.round(d)).join(' ')}`,
 			);
@@ -33,7 +38,7 @@ if (process.argv.includes('--report')) {
 	console.log('\n#1  L1 death round (median / max / share past 30)');
 	for (const hero of HERO_IDS) {
 		const rs = Array.from({ length: n }, (_, i) =>
-			simulateRun({ hero, level: 1, seed: 100 + i }),
+			simulateRun({ hero, level: 1, seed: 100 + i, danger }),
 		).map((r) => r.round);
 		rs.sort((a, b) => a - b);
 		console.log(
@@ -48,7 +53,7 @@ if (process.argv.includes('--report')) {
 	let total = 0;
 	for (const hero of HERO_IDS)
 		for (let i = 0; i < n; i++) {
-			const r = simulateRun({ hero, level: 10, seed: 100 + i });
+			const r = simulateRun({ hero, level: 10, seed: 100 + i, danger });
 			total++;
 			earned += r.fish;
 			spent += r.fishSpent;

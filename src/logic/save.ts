@@ -7,7 +7,7 @@ import {
 	type LifetimeStat,
 	RUN_BESTS,
 } from '../data/achievements';
-import { DIFFICULTIES, type Difficulty } from '../data/difficulty';
+import { DANGER_LEVELS, DIFFICULTIES, type Difficulty } from '../data/difficulty';
 import { RESOLUTION_IDS, type ResolutionId } from '../data/display';
 import {
 	GAMBIT_CONDITIONS,
@@ -49,7 +49,7 @@ export interface Settings {
 	numberSize: NumberSize;
 	reducedFlashes: boolean;
 	keys: KeyBinds;
-	/** Last difficulty picked in the hero select (P-62). */
+	/** @deprecated Replaced by Danger per hero (`progress.hero[h].dangerUnlocked`); kept until HeroSelect/GameScene move to Danger. */
 	difficulty: Difficulty;
 	damageNumbers: boolean;
 	resolution: ResolutionId;
@@ -107,6 +107,8 @@ export interface SaveData {
 	settings: Settings;
 	heroes: Record<HeroId, HeroSave>;
 	fish: number;
+	/** Best round per hero and Danger 0–5 (SDD-005 RF-05); index = Danger. */
+	bestRoundByDanger: Record<HeroId, number[]>;
 	/** Meta currency (SDD-005 RF-05); Fish→Pearls conversion lands with T2.7. */
 	pearls: number;
 	potions: Record<PotionType, number>;
@@ -139,6 +141,9 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 		) as Record<HeroId, HeroSave>,
 		fish: 0,
 		pearls: 0,
+		bestRoundByDanger: Object.fromEntries(
+			HERO_IDS.map((h) => [h, [0, 0, 0, 0, 0, 0]]),
+		) as Record<HeroId, number[]>,
 		potions: Object.fromEntries(POTION_TYPES.map((p) => [p, 0])) as Record<PotionType, number>,
 		gambits: Array.from({ length: GAMBIT_SLOTS }, () => ({ potion: null, condition: null })),
 		upgrades: {},
@@ -306,6 +311,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		heroes,
 		fish: num(r.fish, 0),
 		pearls: num(r.pearls, 0),
+		bestRoundByDanger: parseBestByDanger(r.bestRoundByDanger),
 		potions: numRecord(r.potions, POTION_TYPES, base.potions),
 		gambits,
 		upgrades: isObj(r.upgrades)
@@ -320,6 +326,16 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 			.slice(0, HISTORY_SIZE),
 		activeRun: isRunSnapshot(r.activeRun) ? r.activeRun : null,
 	};
+}
+
+function parseBestByDanger(v: unknown): Record<HeroId, number[]> {
+	const src = isObj(v) ? v : {};
+	return Object.fromEntries(
+		HERO_IDS.map((h) => {
+			const row = Array.isArray(src[h]) ? (src[h] as unknown[]) : [];
+			return [h, DANGER_LEVELS.map((d) => num(row[d], 0))];
+		}),
+	) as Record<HeroId, number[]>;
 }
 
 function isRunRecord(v: unknown): v is RunRecord {
