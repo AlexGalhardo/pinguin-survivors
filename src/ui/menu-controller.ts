@@ -29,6 +29,7 @@ import {
 	canRefund,
 	heroTree,
 	refundCost,
+	refundOne,
 	resetCost,
 	treePoints,
 } from '../logic/skill-tree';
@@ -288,7 +289,7 @@ function skillTree(save: SaveData): MenuView {
 			refund: (id) => {
 				if (!canRefund(tree, h.tree, id) || save.pearls < refundCost()) return;
 				save.pearls -= refundCost();
-				h.tree = h.tree.filter((n) => n !== id);
+				h.tree = refundOne(h.tree, id);
 				persist(save);
 			},
 			reset: () => {

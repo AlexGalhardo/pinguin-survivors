@@ -19,14 +19,27 @@ export function treePoints(level: number, allocated: readonly string[]): number 
 	return Math.max(0, Math.floor(level) - 1 - allocated.length);
 }
 
-/** Keeps only real node ids of this tree, without duplicates, and only nodes still linked to the start. */
+/** Ranks of a node in an allocation (each rank is one entry of the id). */
+export function rankOf(allocated: readonly string[], id: string): number {
+	let n = 0;
+	for (const a of allocated) if (a === id) n++;
+	return n;
+}
+
+/**
+ * Keeps only real node ids of this tree, at most `maxRank` entries per node, and only nodes
+ * still linked to the start.
+ */
 export function sanitizeAllocation(tree: HeroTree, allocated: readonly unknown[]): string[] {
-	const ids = new Set(
-		allocated.filter(
-			(id): id is string => typeof id === 'string' && id in tree.nodes && id !== tree.start,
-		),
-	);
-	return [...reachable(tree, ids)];
+	const ranks = new Map<string, number>();
+	for (const id of allocated) {
+		if (typeof id !== 'string' || id === tree.start) continue;
+		const node = tree.nodes[id];
+		if (!node) continue;
+		ranks.set(id, Math.min(node.maxRank, (ranks.get(id) ?? 0) + 1));
+	}
+	const linked = reachable(tree, new Set(ranks.keys()));
+	return [...linked].flatMap((id) => Array<string>(ranks.get(id) ?? 1).fill(id));
 }
 
 /** Allocated nodes connected to the start through allocated nodes. */
@@ -79,16 +92,33 @@ export function allocate(
 	allocated: readonly string[],
 	target: string,
 ): string[] | null {
+	// An allocated ranked node takes one more rank for one point.
+	const rank = rankOf(allocated, target);
+	if (rank > 0) {
+		const max = tree.nodes[target]?.maxRank ?? 1;
+		return rank < max && treePoints(level, allocated) > 0 ? [...allocated, target] : null;
+	}
 	const path = pathTo(tree, allocated, target);
 	if (path.length === 0 || path.length > treePoints(level, allocated)) return null;
 	return [...allocated, ...path];
 }
 
-/** A node can be refunded when every other allocated node stays linked to the start. */
+/**
+ * One rank of a node can be refunded when the node keeps another rank, or when every other
+ * allocated node stays linked to the start without it.
+ */
 export function canRefund(tree: HeroTree, allocated: readonly string[], id: string): boolean {
-	if (!allocated.includes(id)) return false;
+	const rank = rankOf(allocated, id);
+	if (rank === 0) return false;
+	if (rank > 1) return true;
 	const rest = new Set(allocated.filter((a) => a !== id));
 	return reachable(tree, rest).size === rest.size;
+}
+
+/** The allocation without one rank of `id` (its last entry). */
+export function refundOne(allocated: readonly string[], id: string): string[] {
+	const i = allocated.lastIndexOf(id);
+	return i < 0 ? [...allocated] : [...allocated.slice(0, i), ...allocated.slice(i + 1)];
 }
 
 /** Pearl price to refund one node and to reset the whole tree. */

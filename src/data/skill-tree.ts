@@ -29,7 +29,10 @@ export interface TreeNode {
 	name?: string;
 	x: number;
 	y: number;
+	/** Stats of one rank; a node with `maxRank` > 1 adds them again for every rank (linear). */
 	stats: Partial<Record<StatKey, number>>;
+	/** Ranks the node can take (1 for most; ranked nodes go 0/5 → 5/5, one point per rank). */
+	maxRank: number;
 	links: string[];
 }
 
@@ -77,6 +80,9 @@ export const TREE = {
 	smallUnits: 1.5,
 	/** Spine length per branch; the keystone sits on the last node. */
 	spine: 12,
+	/** Spine indices whose small node is ranked (up to `maxRank` points), developer request 2026-11-08. */
+	rankedSpine: [1, 6, 11],
+	maxRank: 5,
 	/** Spine indices with a side cluster (3 small nodes + 1 notable), alternating sides. */
 	clusters: [3, 5, 8, 10],
 	clusterSize: 3,
@@ -263,8 +269,8 @@ function round4(v: number): number {
 /** Builds the tree of one hero (pure and deterministic; cached by `heroTree`). */
 export function buildTree(hero: HeroId): HeroTree {
 	const nodes: Record<string, TreeNode> = {};
-	const add = (n: Omit<TreeNode, 'links'>): TreeNode => {
-		const node = { ...n, links: [] };
+	const add = (n: Omit<TreeNode, 'links' | 'maxRank'> & { maxRank?: number }): TreeNode => {
+		const node = { ...n, maxRank: n.maxRank ?? 1, links: [] };
 		nodes[n.id] = node;
 		return node;
 	};
@@ -296,6 +302,10 @@ export function buildTree(hero: HeroId): HeroTree {
 				x: round4(dx * r),
 				y: round4(dy * r),
 				stats: isKey ? { ...def.keystone.stats } : nextSmall(),
+				maxRank:
+					!isKey && (TREE.rankedSpine as readonly number[]).includes(i)
+						? TREE.maxRank
+						: 1,
 			});
 			link(spine[i - 1] as TreeNode, node);
 			spine.push(node);
