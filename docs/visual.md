@@ -293,3 +293,14 @@ Ferramentas novas: `scripts/pl-tiles.ts` agora aceita o tipo `square_topdown` e 
 - **Diagnóstico**: os 3 voadores legados (`zombieSkua`, `zombieGull`, `zombiePigeon`) só tinham `walk` de **1 frame por direção** (a rotação estática) e o `zombieCrow` reusa o sprite da gaivota; o jogo só os balançava por código. O `alienFlyer` tinha `walk` de 6 frames de template de quadrúpede (pernas, não asas). Nenhum tinha animação de voo.
 - **Correção** (`scripts/pl-fly.ts`): os personagens legados não podem ser reanimados com este token (404), então cada direção usa a rotação existente (`walk/<dir>/00.png`) como primeiro quadro de `/animate-with-text-v3` (`action` `flying: the creature beats its wings hard, wings sweeping from raised high to lowered low and back again, body bobbing up and down, hovering in place, seamless loop`, 8 frames mais o inicial, seed 22, ~1 geração por direção). 4 voadores × 5 direções (+ espelho) = 20 gerações (+ 2 de piloto).
 - **Integração sem tocar o walk**: os 9 frames de cada direção entram numa pasta nova `anim/enemy.<id>/fly/` e o atlas `enemy.<id>` é empacotado de novo; conferi pixel a pixel que todos os frames `walk` antigos continuam idênticos (5 por legado, 30 no alienFlyer). `Enemy.ts` escolhe `fly` para `behavior: 'flyer'` quando o atlas tem os frames (loop a 12 fps, âncora própria), senão `walk`; a sombra no chão já era um sprite separado (`z` de 18). Prancha: `qa/flyers-fly-sheet.png`.
+
+### 2026-11-08 — T4.4: conceito do lojista (6 gerações; só prancha, gate do desenvolvedor)
+
+- Pinguim lojista estilo vendedor de ARPG (mochila enorme com espadas e peças de armadura, cinto de poções de velocidade, bolsa de moedas, capuz), `scripts/pl-merchant.ts`, 2 seeds (101 e 202), 8 rotações cada. Prancha com sul, leste, norte e oeste: `art-src/pixellab/qa/merchant-concept.png`. **Sem animação e sem integração** até o desenvolvedor aprovar uma das seeds.
+
+### 2026-11-08 — T7.3: animação de ataque nova (50 gerações; teto 150)
+
+- `scripts/pl-fly.ts --anim attack` (`/animate-with-text-v3` a partir da rotação `walk/<dir>/00.png`, 8 frames mais o inicial, seed 22, 5 direções). Atiradores (`zombieScientist`, `zombieMedic`, `zombieSoldier`, `camoStalker`): recuo do braço e disparo. Chargers (`zombieWalrus`, `zombieNarwhal`, `zombieBrute`, `clawCharger`): cabeça baixa e investida. Chefes (`polarBear`, `biomechColossus`): ergue os braços e bate no chão. Prancha: `qa/attack-sheet.png`.
+- Entra como animação `attack` no mesmo atlas `enemy.<id>`; os frames `walk` continuam idênticos pixel a pixel (conferido nos 10). `Enemy.ts` já tocava `attack` durante o telegraph; em jogo o zombieWalrus (round 7) toca `attack.n`.
+- Fora: `kraken`, `abomination` (só 1 frame de `walk`, não regenerar), `mooseKing` (sem arte) e novos voadores (o GDD não pede).
+- Obstáculos grandes (`propbig`): cancelado pelo coordenador; nada gerado foi mantido.

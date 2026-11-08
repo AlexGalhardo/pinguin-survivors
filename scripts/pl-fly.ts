@@ -3,8 +3,9 @@
 // account (404 when re-animated), so each frame set is generated from the existing 00.png of the
 // `walk` direction with /animate-with-text-v3 (about 1 generation per direction).
 // The `walk` frames are never touched: the result is a new `fly` folder packed into the same atlas.
-// Usage: bun scripts/pl-fly.ts <id> [--frames 8] [--dirs south,east] [--action "text"] [--out <dir>]
-// Output (default): art-src/pixellab/anim/enemy.<id>/fly/<direction>/<nn>.png
+// `--anim attack` reuses it for attack animations (T7.3).
+// Usage: bun scripts/pl-fly.ts <id> [--anim fly] [--frames 8] [--dirs south,east] [--action "text"] [--out <dir>]
+// Output (default): art-src/pixellab/anim/enemy.<id>/<anim>/<direction>/<nn>.png
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { api, generationsLeft, logGeneration, waitJob } from './lib/pixellab';
 
@@ -25,7 +26,8 @@ const dirs = (opt('--dirs') ?? 'south,south-east,east,north-east,north').split('
 const action =
 	opt('--action') ??
 	'flying: the creature beats its wings hard, wings sweeping from raised high to lowered low and back again, body bobbing up and down, hovering in place, seamless loop';
-const out = opt('--out') ?? `art-src/pixellab/anim/enemy.${id}/fly`;
+const anim = opt('--anim') ?? 'fly';
+const out = opt('--out') ?? `art-src/pixellab/anim/enemy.${id}/${anim}`;
 const SEED = Number(opt('--seed') ?? 22);
 const before = await generationsLeft();
 
@@ -56,14 +58,14 @@ for (const dir of dirs) {
 	logGeneration({
 		kind: 'animation',
 		key: `enemy.${id}`,
-		anim: 'fly',
+		anim,
 		endpoint: '/animate-with-text-v3',
 		direction: dir,
 		seed: SEED,
 		prompt: action,
 		frames: images.length,
 	});
-	console.log(`enemy.${id} fly ${dir}: ${images.length} frames`);
+	console.log(`enemy.${id} ${anim} ${dir}: ${images.length} frames`);
 }
 const after = await generationsLeft();
 if (before !== null && after !== null) console.log(`generations used: ${before - after}`);
