@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- The merchant talks in a speech bubble (open, buy, out of Fish, reroll, fuse, leave) in four languages; the shop layout fits 1366×768 up to 2560×1440.
+- `DemoEnd` screen with a Steam wishlist button (URL placeholder until the app id exists).
+
 - Spanish and Simplified Chinese (SDD-009): full tables, `bun scripts/i18n-check.ts`, a glossary, the Noto Sans SC font loaded only for Chinese, and both languages in the settings.
 - The React shop shows gear (rarity color) and potion offers.
 

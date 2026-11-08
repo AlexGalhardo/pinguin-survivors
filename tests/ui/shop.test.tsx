@@ -101,4 +101,30 @@ describe('Shop', () => {
 		expect(calls).toEqual(['buy:1']);
 		cleanup();
 	});
+
+	test('the merchant speaks: opening line, then buy, no-Fish and reroll lines', async () => {
+		const { merchantLine } = await import('../../src/ui/merchant');
+		const lines = (e: 'open' | 'buy' | 'noFish' | 'reroll') =>
+			[0, 0.4, 0.9].map((r) => merchantLine(e, () => r));
+		const { calls, a } = actions();
+		const { getByRole, getByText } = render(<Shop data={data({ fish: 40 })} actions={a} />);
+		const said = () => getByRole('status').textContent ?? '';
+		expect(lines('open')).toContain(said());
+		fireEvent.click(getByText('BUY · 14'));
+		expect(lines('buy')).toContain(said());
+		expect(calls).toEqual(['buy:0']);
+		fireEvent.click(getByText('REROLL · 7'));
+		expect(lines('reroll')).toContain(said());
+		cleanup();
+	});
+
+	test('running out of Fish after a purchase triggers the no-Fish line', async () => {
+		const { merchantLine } = await import('../../src/ui/merchant');
+		const { a } = actions();
+		const { getByRole, getByText } = render(<Shop data={data({ fish: 14 })} actions={a} />);
+		fireEvent.click(getByText('BUY · 14'));
+		const noFish = [0, 0.4, 0.9].map((r) => merchantLine('noFish', () => r));
+		expect(noFish).toContain(getByRole('status').textContent ?? '');
+		cleanup();
+	});
 });

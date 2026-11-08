@@ -173,3 +173,59 @@ describe('Unlock', () => {
 		cleanup();
 	});
 });
+
+describe('DemoEnd', () => {
+	test('shows the summary, the Bob teaser and a wishlist button with the Steam URL', async () => {
+		const { DemoEnd } = await import('../../src/ui/components/DemoEnd');
+		const calls: string[] = [];
+		const { container, getByText } = render(
+			<DemoEnd
+				data={{
+					won: true,
+					round: 10,
+					kills: 500,
+					seconds: 600,
+					damage: 99999,
+					bobLocked: true,
+					wishlistUrl: 'https://store.steampowered.com/app/TBD',
+				}}
+				actions={{
+					wishlist: () => calls.push('wishlist'),
+					playAgain: () => calls.push('again'),
+					menu: () => calls.push('menu'),
+				}}
+			/>,
+		);
+		expect(container.textContent).toContain('DEMO COMPLETE');
+		expect(container.textContent).toContain('Round 10');
+		expect(container.textContent).toContain('Bob is unlocked in the full game');
+		const wish = getByText('WISHLIST ON STEAM');
+		expect(wish.getAttribute('data-href')).toBe('https://store.steampowered.com/app/TBD');
+		fireEvent.click(wish);
+		fireEvent.click(getByText('PLAY AGAIN'));
+		key('Escape');
+		expect(calls).toEqual(['wishlist', 'again', 'menu']);
+		cleanup();
+	});
+
+	test('a lost demo hides the teaser when Bob is already unlocked', async () => {
+		const { DemoEnd } = await import('../../src/ui/components/DemoEnd');
+		const { container } = render(
+			<DemoEnd
+				data={{
+					won: false,
+					round: 4,
+					kills: 1,
+					seconds: 5,
+					damage: 1,
+					bobLocked: false,
+					wishlistUrl: 'x',
+				}}
+				actions={{ wishlist: () => {}, playAgain: () => {}, menu: () => {} }}
+			/>,
+		);
+		expect(container.textContent).toContain('DEMO OVER');
+		expect(container.textContent).not.toContain('Bob is unlocked');
+		cleanup();
+	});
+});

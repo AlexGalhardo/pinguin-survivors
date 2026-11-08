@@ -3,6 +3,7 @@ import { cardsEs } from './cards.es';
 import type { I18nKey } from './en';
 import { gearEs } from './gear.es';
 import { menusEs } from './menus.es';
+import { merchantEs } from './merchant.es';
 import { screensEs } from './screens.es';
 import { shopEs } from './shop.es';
 import { weaponsEs } from './weapons.es';
@@ -12,6 +13,7 @@ export const es: Record<I18nKey, string> = {
 	...cardsEs,
 	...gearEs,
 	...menusEs,
+	...merchantEs,
 	...screensEs,
 	...shopEs,
 	...weaponsEs,

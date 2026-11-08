@@ -1,9 +1,10 @@
-import type { ReactElement } from 'react';
+import { type ReactElement, useState } from 'react';
 import { toCss } from '../../config/palette';
 import { WEAPON_TIER_TINT, type WeaponTier } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
 import { toRoman } from '../../logic/achievements';
 import { FocusScope } from '../focus';
+import { merchantLine } from '../merchant';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
 
@@ -66,7 +67,7 @@ function Offer(props: {
 	const { offer, index, actions } = props;
 	if (!offer) {
 		return (
-			<div className="flex min-h-24 items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
+			<div className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
 				{t('shop.sold')}
 			</div>
 		);
@@ -75,7 +76,7 @@ function Offer(props: {
 	const affordable = props.fish >= offer.price;
 	return (
 		<div
-			className="flex min-h-24 items-stretch gap-2 rounded border-2 bg-night/80 p-2"
+			className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-stretch gap-2 rounded border-2 bg-night/80 p-2"
 			style={{ borderColor: tint || undefined }}
 		>
 			<div className="flex min-w-0 flex-1 flex-col justify-center">
@@ -93,7 +94,7 @@ function Offer(props: {
 						` · ${offer.sets.map((s) => label(`shop.set.${s}`)).join(' / ')}`}
 				</div>
 			</div>
-			<div className="flex flex-col gap-1">
+			<div className="flex items-center gap-2">
 				<Btn
 					onActivate={() => actions.buy(index)}
 					disabled={!affordable}
@@ -121,7 +122,7 @@ function WeaponCard(props: {
 	const { weapon, slot, partner, actions } = props;
 	if (!weapon) {
 		return (
-			<div className="flex min-h-24 items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
+			<div className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
 				{t('shop.empty')}
 			</div>
 		);
@@ -129,7 +130,7 @@ function WeaponCard(props: {
 	const tint = toCss(WEAPON_TIER_TINT[weapon.tier]);
 	return (
 		<div
-			className="flex min-h-24 flex-col justify-between gap-1 rounded border-2 bg-night/80 p-2"
+			className="flex min-h-[clamp(3.5rem,7vh,6rem)] flex-col justify-between gap-1 rounded border-2 bg-night/80 p-2"
 			style={{ borderColor: tint }}
 		>
 			<div className="truncate font-bold" style={{ color: tint }}>
@@ -163,7 +164,40 @@ export function fusePartner(weapons: ShopData['weapons'], slot: number): number 
 }
 
 /** End-of-round shop (ARPG style): inventory and gear on the left, merchant and offers on the right. */
-export function Shop({ data, actions }: { data: ShopData; actions: ShopActions }): ReactElement {
+export function Shop({
+	data,
+	actions: game,
+}: {
+	data: ShopData;
+	actions: ShopActions;
+}): ReactElement {
+	const [speech, setSpeech] = useState(() => merchantLine('open'));
+	// The merchant comments on what the player just did; purely cosmetic.
+	const actions: ShopActions = {
+		...game,
+		buy: (i) => {
+			const offer = data.offers[i];
+			const left = data.fish - (offer?.price ?? 0);
+			const cheapest = Math.min(
+				data.rerollPrice,
+				...data.offers.flatMap((o, j) => (o && j !== i ? [o.price] : [])),
+			);
+			setSpeech(merchantLine(left < cheapest ? 'noFish' : 'buy'));
+			game.buy(i);
+		},
+		reroll: () => {
+			setSpeech(merchantLine('reroll'));
+			game.reroll();
+		},
+		fuse: (a, b) => {
+			setSpeech(merchantLine('fuse'));
+			game.fuse(a, b);
+		},
+		next: () => {
+			setSpeech(merchantLine('leave'));
+			game.next();
+		},
+	};
 	const slots = Array.from({ length: MAX_WEAPONS }, (_, i) => data.weapons[i]);
 	return (
 		<FocusScope className="fixed inset-0 flex flex-col bg-night/95 font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light">
@@ -175,7 +209,7 @@ export function Shop({ data, actions }: { data: ShopData; actions: ShopActions }
 			</header>
 
 			<main className="grid min-h-0 flex-1 grid-cols-2 gap-[2vw] px-[2vw] py-[2vh]">
-				<section className="flex min-h-0 flex-col gap-[1.5vh]">
+				<section className="flex min-h-0 flex-col gap-[1.5vh] overflow-y-auto">
 					<h2 className="font-title text-[1.2em] text-text-dim">{t('shop.weapons')}</h2>
 					<div className="grid grid-cols-2 gap-2">
 						{slots.map((w, i) => (
@@ -208,13 +242,22 @@ export function Shop({ data, actions }: { data: ShopData; actions: ShopActions }
 					</div>
 				</section>
 
-				<section className="flex min-h-0 flex-col gap-[1.5vh]">
+				<section className="flex min-h-0 flex-col gap-[1.5vh] overflow-y-auto">
 					<div className="flex items-center gap-3 rounded border border-snow-dark bg-night/60 p-3">
 						<div className="flex size-14 items-center justify-center rounded-full border-2 border-ice font-title text-[1.6em]">
 							?
 						</div>
-						<div className="font-title text-[1.3em] font-bold">
-							{t('shop.merchant')}
+						<div className="flex min-w-0 flex-1 flex-col gap-1">
+							<div className="font-title text-[1.3em] font-bold">
+								{t('shop.merchant')}
+							</div>
+							<div
+								role="status"
+								aria-live="polite"
+								className="rounded border border-ice/50 bg-night/80 px-3 py-1 text-[0.95em] italic"
+							>
+								{speech}
+							</div>
 						</div>
 					</div>
 					<h2 className="font-title text-[1.2em] text-text-dim">{t('shop.offers')}</h2>

@@ -3,6 +3,7 @@ import { cardsZhCN } from './cards.zh-CN';
 import type { I18nKey } from './en';
 import { gearZhCN } from './gear.zh-CN';
 import { menusZhCN } from './menus.zh-CN';
+import { merchantZhCN } from './merchant.zh-CN';
 import { screensZhCN } from './screens.zh-CN';
 import { shopZhCN } from './shop.zh-CN';
 import { weaponsZhCN } from './weapons.zh-CN';
@@ -12,6 +13,7 @@ export const zhCN: Record<I18nKey, string> = {
 	...cardsZhCN,
 	...gearZhCN,
 	...menusZhCN,
+	...merchantZhCN,
 	...screensZhCN,
 	...shopZhCN,
 	...weaponsZhCN,

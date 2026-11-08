@@ -30,3 +30,6 @@ export const DEMO: DemoConfig = {
 	heroes: ['jack'],
 	maxDanger: 1,
 };
+
+/** Steam store page for the wishlist button. Placeholder until the app id exists (T15.1). */
+export const STEAM_URL = 'https://store.steampowered.com/app/TBD';

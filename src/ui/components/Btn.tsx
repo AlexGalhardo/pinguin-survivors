@@ -7,6 +7,8 @@ export function Btn(props: {
 	disabled?: boolean;
 	className?: string;
 	label?: string;
+	/** Exposed as `data-href` (e.g. the wishlist target) for tests and tooling. */
+	href?: string;
 	children: ReactNode;
 }): ReactElement {
 	const f = useFocusable({ onActivate: props.onActivate, disabled: props.disabled });
@@ -16,6 +18,7 @@ export function Btn(props: {
 			ref={f.ref}
 			disabled={props.disabled}
 			aria-label={props.label}
+			data-href={props.href}
 			{...f.props}
 			// No Tailwind preflight (keeps the game canvas untouched), so reset the native button look here.
 			className={`min-h-11 min-w-11 cursor-pointer appearance-none rounded border bg-night/80 px-3 py-1 font-bold [font-family:inherit] outline-offset-2 transition-colors enabled:hover:bg-snow-dark/60 data-[focused=true]:outline-2 data-[focused=true]:outline-crit disabled:cursor-not-allowed disabled:opacity-40 ${props.className ?? ''}`}
