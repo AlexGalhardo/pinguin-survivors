@@ -190,8 +190,7 @@ export class Arena {
 				this.propImages.push(img);
 			}
 			img.setTexture(KEYS.deco(def.id, p.variant));
-			const width = OBSTACLES.widthByVariant[p.variant] ?? img.frame.width;
-			img.setScale(width / img.frame.width)
+			img.setScale(OBSTACLES.scaleByVariant[p.variant] ?? 1)
 				.setPosition(Math.round(p.x), Math.round(p.y))
 				.setDepth(p.y)
 				.setVisible(true);
