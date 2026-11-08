@@ -71,6 +71,70 @@
 		"legal": "© Alex Galhardo. Steam is a trademark of Valve Corporation. Google Play is a trademark of Google LLC.",
 		"version": "Site version {v}",
 		"privacy": "Privacy (TBD)",
-		"press": "Press (TBD)"
+		"press": "Press kit"
+	},
+	"press": {
+		"meta": {
+			"title": "Press kit — Pinguin Survivors",
+			"description": "Fact sheet, descriptions, screenshots and key art for Pinguin Survivors, the arena survivor with penguins, zombies and DOOM-style gore."
+		},
+		"title": "Press kit",
+		"intro": "Everything you need to write about Pinguin Survivors. Screenshots are captured from the game at 1920×1080.",
+		"back": "Back to the game page",
+		"facts": {
+			"title": "Fact sheet",
+			"game": "Title",
+			"developer": "Developer",
+			"platforms": "Platforms",
+			"price": "Price",
+			"release": "Release date",
+			"genre": "Genre",
+			"languages": "Languages",
+			"website": "Website",
+			"gameValue": "Pinguin Survivors",
+			"developerValue": "Alex Galhardo",
+			"platformsValue": "Windows (Steam) and Android (Google Play); a demo runs in desktop browsers",
+			"priceValue": "US$ 4.99 planned on Steam (final price TBD)",
+			"releaseValue": "TBD (demo planned for Steam Next Fest, 22 Feb – 1 Mar 2027)",
+			"genreValue": "Top-down arena survivor roguelite",
+			"languagesValue": "English, Português (BR), Español, 简体中文 (planned for 1.0)",
+			"websiteValue": "This site"
+		},
+		"desc": {
+			"shortTitle": "Short description",
+			"short": "Pinguin Survivors is a top-down arena survivor with penguins, zombies and DOOM-style gore: survive timed rounds, shop between them and build a six-weapon arsenal.",
+			"longTitle": "Long description",
+			"long1": "Three penguins, Jack, Bob and Lucia, hold the line against three hundred zombies a round. Each round is timed; when it ends a merchant opens shop and you buy, fuse and sell weapons, items and gear before the next one.",
+			"long2": "Six slots fire on their own while you dodge. Level-ups offer four stat cards, every hero levels from 1 to 100 and keeps it between runs, Danger 0–5 raises the stakes, and the endless mode has no victory screen. The gore is DOOM-grade, with a toggle for maximum, reduced or green goo."
+		},
+		"features": {
+			"title": "Key features",
+			"f1": "Three heroes with their own weapons and superpowers: Jack (melee), Bob (firearms), Lucia (magic).",
+			"f2": "Six auto-firing weapon slots, four tiers each, set bonuses and fusion.",
+			"f3": "A merchant shop after every round: reroll, lock, sell and fuse.",
+			"f4": "Level 1–100 per hero that never resets, plus Danger 0–5 unlocked per hero.",
+			"f5": "Boss every 10 rounds and endless rounds with no victory screen.",
+			"f6": "Controller, keyboard and touch; four languages; no voice acting."
+		},
+		"shots": {
+			"title": "Screenshots",
+			"note": "1920×1080 JPEG. Click an image for the full size.",
+			"menu": "Main menu",
+			"jack": "Jack fighting a horde with six weapons",
+			"lucia": "Lucia with elemental weapons at round 14",
+			"levelUp": "Level-up with four stat cards",
+			"shop": "The merchant shop between rounds"
+		},
+		"downloads": {
+			"title": "Logo and key art",
+			"keyArtJack": "Key art: Jack (PNG)",
+			"keyArtBob": "Key art: Bob (PNG)",
+			"logo": "Icon (SVG)",
+			"note": "Free to use when covering the game."
+		},
+		"contact": {
+			"title": "Contact",
+			"value": "TBD — press contact will be published before the release"
+		}
 	}
 }

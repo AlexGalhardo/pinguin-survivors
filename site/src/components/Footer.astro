@@ -1,12 +1,14 @@
 ---
-import type { Copy } from '../i18n';
+import { type Copy, type Locale, localePath } from '../i18n';
 import pkg from '../../package.json';
 
 interface Props {
+	locale: Locale;
 	copy: Copy;
 }
 
-const { copy } = Astro.props;
+const { locale, copy } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <footer
@@ -14,7 +16,12 @@ const { copy } = Astro.props;
 >
 	<span>{copy.footer.legal}</span>
 	<span>{copy.footer.privacy}</span>
-	<span>{copy.footer.press}</span>
+	<a
+		href={`${base}${localePath(locale)}press/`}
+		class="underline hover:text-text-light focus-visible:outline-2 focus-visible:outline-crit"
+	>
+		{copy.footer.press}
+	</a>
 	<span>{copy.footer.made}</span>
 	<span>{copy.footer.version.replace('{v}', pkg.version)}</span>
 </footer>

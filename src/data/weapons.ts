@@ -279,7 +279,7 @@ const LINES = [
 	line({
 		id: 'lightningTotem',
 		classTag: 'magic',
-		sets: ['elemental'],
+		sets: ['support'],
 		behavior: 'totem',
 		element: 'energy',
 		damage: 16,

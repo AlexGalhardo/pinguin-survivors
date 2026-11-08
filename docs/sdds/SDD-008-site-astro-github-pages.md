@@ -18,7 +18,7 @@
 - `site/astro.config.mjs`: `site: process.env.SITE_URL`, `base: process.env.SITE_BASE ?? '/'`, `i18n: { defaultLocale: 'en', locales: ['en','pt-br','es','zh-cn'] }`, `integrations: [sitemap()]`, `vite: { plugins: [tailwindcss()] }`.
 - `site/src/pages/index.astro`, `site/src/pages/[lang]/index.astro`, `site/src/i18n/*.json` (copy nos 4 idiomas, chaves iguais ao jogo quando fizer sentido), `site/src/components/{Nav,Hero,Trailer,Footer,LangSwitch}.astro`, `site/src/styles/theme.css` (tokens exportados de `src/config/palette.ts` por `bun scripts/export-palette-css.ts`).
 - `site/public/`: `demo/` (gerado, gitignored), `og.png`, `trailer-poster.png`, `robots.txt`, `favicon.svg`.
-- Dependências fixas: `astro`, `@astrojs/sitemap`, `tailwindcss`, `@tailwindcss/vite`, `@fontsource/rubik`, `@fontsource/pixelify-sans`, `@fontsource/noto-sans-sc`.
+- Dependências fixas: `astro`, `@astrojs/sitemap`, `tailwindcss`, `@tailwindcss/vite`, `@fontsource/roboto`, `@fontsource/noto-sans-sc`.
 
 ## Critérios de aceite
 

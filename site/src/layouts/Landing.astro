@@ -1,18 +1,19 @@
 ---
-import { getImage, Picture } from 'astro:assets';
-import '@fontsource/pixelify-sans/700.css';
-import '@fontsource/rubik/500.css';
-import '@fontsource/rubik/700.css';
+import { Picture } from 'astro:assets';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/roboto/900.css';
 // Only the Simplified Chinese slices: the browser downloads a slice when ZH glyphs appear.
 import '@fontsource/noto-sans-sc/chinese-simplified-500.css';
 import '@fontsource/noto-sans-sc/chinese-simplified-700.css';
 import '../styles/theme.css';
+import SeoHead from '../components/SeoHead.astro';
 import Footer from '../components/Footer.astro';
 import Hero from '../components/Hero.astro';
 import Nav from '../components/Nav.astro';
 import Trailer from '../components/Trailer.astro';
 import { KEY_ART } from '../art';
-import { COPY, LOCALE_TAGS, LOCALES, type Locale, localePath } from '../i18n';
+import { COPY, LOCALE_TAGS, type Locale } from '../i18n';
 
 interface Props {
 	locale: Locale;
@@ -20,41 +21,13 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = COPY[locale];
-const base = import.meta.env.BASE_URL;
-const abs = (path: string): string => new URL(base + path, Astro.site).href;
-
 const art = KEY_ART;
-const og = await getImage({ src: art, width: 1200, height: 630, format: 'png', fit: 'cover' });
-const ogUrl = new URL(og.src, Astro.site).href;
 ---
 
 <!doctype html>
 <html lang={LOCALE_TAGS[locale]}>
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>{copy.meta.title}</title>
-		<meta name="description" content={copy.meta.description} />
-		<link rel="canonical" href={abs(localePath(locale))} />
-		<link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
-		{
-			LOCALES.map((l) => (
-				<link rel="alternate" hreflang={LOCALE_TAGS[l]} href={abs(localePath(l))} />
-			))
-		}
-		<link rel="alternate" hreflang="x-default" href={abs(localePath('en'))} />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content={copy.meta.title} />
-		<meta property="og:description" content={copy.meta.description} />
-		<meta property="og:url" content={abs(localePath(locale))} />
-		<meta property="og:image" content={ogUrl} />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta property="og:locale" content={LOCALE_TAGS[locale].replace('-', '_')} />
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content={copy.meta.title} />
-		<meta name="twitter:description" content={copy.meta.description} />
-		<meta name="twitter:image" content={ogUrl} />
+		<SeoHead locale={locale} title={copy.meta.title} description={copy.meta.description} />
 	</head>
 	<body
 		class="relative flex min-h-dvh flex-col overflow-x-hidden font-body min-[900px]:h-dvh min-[900px]:overflow-hidden"
@@ -87,6 +60,6 @@ const ogUrl = new URL(og.src, Astro.site).href;
 			<Hero locale={locale} copy={copy} />
 			<Trailer copy={copy} poster={art} />
 		</main>
-		<Footer copy={copy} />
+		<Footer locale={locale} copy={copy} />
 	</body>
 </html>

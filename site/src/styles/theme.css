@@ -2,8 +2,13 @@
 @import "./palette.css";
 
 @theme {
-	--font-body: "Rubik", "Noto Sans SC", system-ui, sans-serif;
-	--font-title: "Pixelify Sans", "Rubik", "Noto Sans SC", system-ui, sans-serif;
+	--font-body: "Roboto", "Noto Sans SC", system-ui, sans-serif;
+	--font-title: "Roboto", "Noto Sans SC", system-ui, sans-serif;
+}
+
+/* Titles use the heaviest Roboto weight (no pixel fonts); unlayered, so it wins over `font-bold`. */
+.font-title {
+	font-weight: 900;
 }
 
 html {

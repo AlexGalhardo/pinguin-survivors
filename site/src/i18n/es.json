@@ -71,6 +71,70 @@
 		"legal": "© Alex Galhardo. Steam es una marca de Valve Corporation. Google Play es una marca de Google LLC.",
 		"version": "Versión del sitio {v}",
 		"privacy": "Privacidad (TBD)",
-		"press": "Prensa (TBD)"
+		"press": "Kit de prensa"
+	},
+	"press": {
+		"meta": {
+			"title": "Kit de prensa — Pinguin Survivors",
+			"description": "Ficha técnica, descripciones, capturas y key art de Pinguin Survivors, el arena survivor con pingüinos, zombis y gore estilo DOOM."
+		},
+		"title": "Kit de prensa",
+		"intro": "Todo lo que necesitas para escribir sobre Pinguin Survivors. Las capturas se toman del juego en 1920×1080.",
+		"back": "Volver a la página del juego",
+		"facts": {
+			"title": "Ficha técnica",
+			"game": "Título",
+			"developer": "Desarrollador",
+			"platforms": "Plataformas",
+			"price": "Precio",
+			"release": "Fecha de lanzamiento",
+			"genre": "Género",
+			"languages": "Idiomas",
+			"website": "Sitio web",
+			"gameValue": "Pinguin Survivors",
+			"developerValue": "Alex Galhardo",
+			"platformsValue": "Windows (Steam) y Android (Google Play); la demo funciona en navegadores de escritorio",
+			"priceValue": "US$ 4,99 previstos en Steam (precio final por definir)",
+			"releaseValue": "Por definir (demo prevista para el Steam Next Fest, 22 feb – 1 mar 2027)",
+			"genreValue": "Arena survivor roguelite con cámara cenital",
+			"languagesValue": "English, Português (BR), Español, 简体中文 (previstos para la 1.0)",
+			"websiteValue": "Este sitio"
+		},
+		"desc": {
+			"shortTitle": "Descripción corta",
+			"short": "Pinguin Survivors es un arena survivor con cámara cenital, pingüinos, zombis y gore estilo DOOM: sobrevive a rounds cronometrados, compra en la tienda entre ellos y arma un arsenal de seis armas.",
+			"longTitle": "Descripción larga",
+			"long1": "Tres pingüinos, Jack, Bob y Lucia, resisten a trescientos zombis por round. Cada round tiene tiempo; al terminar, un mercader abre la tienda y compras, fusionas y vendes armas, objetos y equipo antes del siguiente.",
+			"long2": "Seis ranuras disparan solas mientras esquivas. Cada subida de nivel ofrece cuatro cartas de atributo, cada héroe sube del nivel 1 al 100 y lo conserva entre partidas, el Danger 0–5 sube la apuesta y el modo endless no tiene pantalla de victoria. El gore es de nivel DOOM, con opción de máximo, reducido o baba verde."
+		},
+		"features": {
+			"title": "Características principales",
+			"f1": "Tres héroes con armas y superpoderes propios: Jack (cuerpo a cuerpo), Bob (armas de fuego), Lucia (magia).",
+			"f2": "Seis ranuras de arma automáticas, cuatro tiers cada una, bonos de set y fusión.",
+			"f3": "Tienda del mercader tras cada round: reroll, lock, venta y fusión.",
+			"f4": "Nivel 1–100 por héroe que nunca se reinicia, y Danger 0–5 desbloqueado por héroe.",
+			"f5": "Jefe cada 10 rounds y rounds infinitos, sin pantalla de victoria.",
+			"f6": "Mando, teclado y táctil; cuatro idiomas; sin voces."
+		},
+		"shots": {
+			"title": "Capturas",
+			"note": "JPEG 1920×1080. Haz clic en la imagen para el tamaño completo.",
+			"menu": "Menú principal",
+			"jack": "Jack contra una horda con seis armas",
+			"lucia": "Lucia con armas elementales en el round 14",
+			"levelUp": "Subida de nivel con cuatro cartas de atributo",
+			"shop": "La tienda del mercader entre rounds"
+		},
+		"downloads": {
+			"title": "Logo y key art",
+			"keyArtJack": "Key art: Jack (PNG)",
+			"keyArtBob": "Key art: Bob (PNG)",
+			"logo": "Icono (SVG)",
+			"note": "Uso libre al hablar del juego."
+		},
+		"contact": {
+			"title": "Contacto",
+			"value": "Por definir — el contacto de prensa se publicará antes del lanzamiento"
+		}
 	}
 }

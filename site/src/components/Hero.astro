@@ -1,5 +1,5 @@
 ---
-import { WISHLIST_URL } from '../links';
+import { BUY_URL, SITE_RELEASED, WISHLIST_URL } from '../links';
 import type { Copy, Locale } from '../i18n';
 
 interface Props {
@@ -36,11 +36,11 @@ const bullets = [copy.hero.bullet1, copy.hero.bullet2, copy.hero.bullet3];
 			{copy.cta.demoUnavailable}
 		</span>
 		<a
-			href={WISHLIST_URL}
+			href={SITE_RELEASED ? BUY_URL : WISHLIST_URL}
 			rel="noopener"
 			class="flex min-h-12 items-center rounded border-2 border-crit px-6 text-lg font-bold text-crit hover:bg-crit/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crit"
 		>
-			♥ {copy.cta.wishlist}
+			{SITE_RELEASED ? `★ ${copy.cta.buy}` : `♥ ${copy.cta.wishlist}`}
 		</a>
 	</div>
 	<p class="text-sm text-text-dim">{copy.demo.note}</p>

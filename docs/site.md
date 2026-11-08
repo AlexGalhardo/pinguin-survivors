@@ -34,7 +34,7 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │ [logo] Pinguin Survivors            [EN ▾] [Steam] [Google Play] [GitHub] │  navbar 56 px
 ├────────────────────────────────┬─────────────────────────────────────┤
-│ TÍTULO (Pixelify Sans)         │                                     │
+│ TÍTULO (Roboto 900)            │                                     │
 │ Pitch 2–3 frases               │   [ trailer 16:9 / poster ]         │
 │ 3 bullets (ganchos)            │   (placeholder até a 1.0)           │
 │ [ ▶ Play Demo ]  [ ♥ Wishlist ]│                                     │
@@ -83,7 +83,7 @@ ES e ZH traduzidos do EN pelo agente `text-editor` e revisados antes do deploy.
 
 ## 7. Identidade visual do site
 
-Tokens de `src/config/palette.ts` exportados para CSS: fundo noite polar, painéis escuros com borda metálica, destaque vermelho-sangue nos CTAs, dourado para "Wishlist". Títulos em Pixelify Sans, corpo em Rubik (Noto Sans SC em ZH). Nenhum asset de terceiros; ícones de lojas são os badges oficiais da Steam e do Google Play dentro das regras de marca de cada uma.
+Tokens de `src/config/palette.ts` exportados para CSS: fundo noite polar, painéis escuros com borda metálica, destaque vermelho-sangue nos CTAs, dourado para "Wishlist". Títulos em Roboto 900 e corpo em Roboto 500/700, sem fontes pixeladas (Noto Sans SC só em ZH). Nenhum asset de terceiros; ícones de lojas são os badges oficiais da Steam e do Google Play dentro das regras de marca de cada uma.
 
 ## 8. SEO, compartilhamento e legal
 

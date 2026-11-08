@@ -107,9 +107,10 @@ export function evaluateGoals(events: readonly RunEndEvent[]): GoalResult[] {
 		}
 	}
 
-	// #2 L10 + Workshop all:2.
+	// #2 L10 + Workshop all:2 (docs A4: at most 5% of the runs die before round 12).
 	{
-		const goal = 'cada herói passa do boss 20 em ≥ 1 run; nenhum morre antes do 12';
+		const goal =
+			'cada herói passa do boss 20 em ≥ 1 run; ≤ 5% das runs morrem antes do round 12';
 		const profile = 'L10, D1, Oficina all:2';
 		const rows = HERO_IDS.map((hero) =>
 			pick(events, { hero, level: 10, danger: 1, workshopMin: 2 }),
@@ -118,14 +119,14 @@ export function evaluateGoals(events: readonly RunEndEvent[]): GoalResult[] {
 			out.push(nd(2, profile, goal, 'falta herói sem runs'));
 		else {
 			const passes = rows.map((r) => r.some((e) => e.round > 20));
-			const earliest = Math.min(...rows.flatMap((r) => r.map((e) => e.round)));
+			const early = rows.map((r) => r.filter((e) => e.round < 12).length / r.length);
 			out.push(
 				result(
 					2,
 					profile,
 					goal,
-					passes.every(Boolean) && earliest >= 12,
-					`passam do 20: ${passes.map((p, i) => `${HERO_IDS[i]} ${p ? 'sim' : 'não'}`).join(', ')}; morte mais cedo ${earliest}`,
+					passes.every(Boolean) && early.every((e) => e <= 0.05),
+					`passam do 20: ${passes.map((p, i) => `${HERO_IDS[i]} ${p ? 'sim' : 'não'}`).join(', ')}; morrem antes do 12: ${early.map((e, i) => `${HERO_IDS[i]} ${pct(e)}`).join(', ')}`,
 				),
 			);
 		}
@@ -179,35 +180,49 @@ export function evaluateGoals(events: readonly RunEndEvent[]): GoalResult[] {
 		}
 	}
 
-	// #5 build diversity (all runs at D1, L10).
+	// #5 build diversity, measured per hero (docs A4): each hero's builds at L10, D1.
 	{
-		const goal = 'nenhuma arma em > 35% nem < 3% das builds; nenhum set em > 50%';
-		const profile = 'L10, D1 (armas da loja, sem a inicial)';
+		const goal =
+			'por herói: nenhuma arma em > 35% nem set em > 50% das builds; nenhuma arma abaixo de 3% ou nunca comprada (geral)';
+		const profile = 'L10, D1, por herói (armas da loja, sem a inicial)';
 		const rows = pick(events, { level: 10, danger: 1 });
-		if (rows.length < 30) out.push(nd(5, profile, goal, `só ${rows.length} runs (mínimo 30)`));
+		const perHero = HERO_IDS.map((hero) => ({
+			hero,
+			rows: rows.filter((e) => e.hero === hero),
+		}));
+		if (perHero.some((h) => h.rows.length < 30))
+			out.push(nd(5, profile, goal, 'menos de 30 runs em algum herói'));
 		else {
-			const { weapons, sets } = buildShares(rows);
-			const all = Object.entries(weapons);
-			const seen = new Set(Object.keys(weapons));
+			const top = (m: Record<string, number>) =>
+				Object.entries(m).sort((a, b) => b[1] - a[1])[0] ?? ['-', 0];
+			const heroes = perHero.map(({ hero, rows: r }) => {
+				const { weapons, sets } = buildShares(r);
+				return { hero, weapon: top(weapons), set: top(sets) };
+			});
+			const all = buildShares(rows);
+			const seen = new Set(Object.keys(all.weapons));
 			const missing = Object.keys(WEAPON_LINE_BY_ID).filter(
 				(id) =>
 					!seen.has(id) && !HERO_IDS.some((h: HeroId) => STARTING_WEAPONS[h][0] === id),
 			);
-			const top = all.sort((a, b) => b[1] - a[1])[0];
-			const low = all.sort((a, b) => a[1] - b[1])[0];
-			const topSet = Object.entries(sets).sort((a, b) => b[1] - a[1])[0];
+			const low = Object.entries(all.weapons).sort((a, b) => a[1] - b[1])[0];
 			const ok =
-				(top?.[1] ?? 0) <= 0.35 &&
+				heroes.every((h) => h.weapon[1] <= 0.35 && h.set[1] <= 0.5) &&
 				(low?.[1] ?? 1) >= 0.03 &&
-				missing.length === 0 &&
-				(topSet?.[1] ?? 0) <= 0.5;
+				missing.length === 0;
+			const detail = heroes
+				.map(
+					(h) =>
+						`${h.hero}: arma ${h.weapon[0]} ${pct(h.weapon[1])}, set ${h.set[0]} ${pct(h.set[1])}`,
+				)
+				.join('; ');
 			out.push(
 				result(
 					5,
 					profile,
 					goal,
 					ok,
-					`maior arma ${top?.[0]} ${pct(top?.[1] ?? 0)}, menor ${low?.[0]} ${pct(low?.[1] ?? 0)}, nunca compradas: ${missing.join(', ') || 'nenhuma'}; maior set ${topSet?.[0]} ${pct(topSet?.[1] ?? 0)}`,
+					`${detail}; menor arma geral ${low?.[0]} ${pct(low?.[1] ?? 0)}, nunca compradas: ${missing.join(', ') || 'nenhuma'}`,
 				),
 			);
 		}

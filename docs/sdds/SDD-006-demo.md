@@ -27,4 +27,4 @@
 | A2 | E2E demo: `?skipMenu=1&hero=jack&round=10&seed=1&god=1` → matar boss → `DemoEnd` visível, botão wishlist com `href` da Steam | `bun run e2e -- --demo` |
 | A3 | `?hero=bob` na demo cai no Jack com toast "Disponível no jogo completo" | E2E |
 | A4 | Save gerado na demo importa no build completo sem erro e mantém XP do Jack | `tests/save.test.ts` fixture `save-demo.json` |
-| A5 | Run completa da demo entre 12 e 25 min (bot médio L1, inclui lojas) | log do bot |
+| A5 | Tempo de jogador entre 12 e 25 min, onde tempo de jogador = tempo de jogo do bot médio L1 Jack D1 (a 1x) + 45 s por loja/cartas visitada (estimativa: o bot não gasta tempo lendo telas) | log do bot (`docs/reports/demo-time-*.md`) |

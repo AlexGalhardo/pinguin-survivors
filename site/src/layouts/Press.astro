@@ -1,0 +1,162 @@
+---
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/roboto/900.css';
+import '@fontsource/noto-sans-sc/chinese-simplified-500.css';
+import '@fontsource/noto-sans-sc/chinese-simplified-700.css';
+import '../styles/theme.css';
+import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
+import SeoHead from '../components/SeoHead.astro';
+import { COPY, LOCALE_TAGS, type Locale, localePath } from '../i18n';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = COPY[locale];
+const press = copy.press;
+const base = import.meta.env.BASE_URL;
+const asset = (path: string): string => `${base}press/${path}`;
+
+const facts = [
+	[press.facts.game, press.facts.gameValue],
+	[press.facts.developer, press.facts.developerValue],
+	[press.facts.platforms, press.facts.platformsValue],
+	[press.facts.price, press.facts.priceValue],
+	[press.facts.release, press.facts.releaseValue],
+	[press.facts.genre, press.facts.genreValue],
+	[press.facts.languages, press.facts.languagesValue],
+	[press.facts.website, press.facts.websiteValue],
+] as const;
+const features = [
+	press.features.f1,
+	press.features.f2,
+	press.features.f3,
+	press.features.f4,
+	press.features.f5,
+	press.features.f6,
+];
+const shots = [
+	['menu', press.shots.menu],
+	['jack-horde', press.shots.jack],
+	['lucia-magic', press.shots.lucia],
+	['level-up', press.shots.levelUp],
+	['shop', press.shots.shop],
+] as const;
+const downloads = [
+	[asset('keyart/keyart-jack.png'), press.downloads.keyArtJack],
+	[asset('keyart/keyart-bob.png'), press.downloads.keyArtBob],
+	[`${base}favicon.svg`, press.downloads.logo],
+] as const;
+const h2 = 'font-title text-2xl font-bold';
+---
+
+<!doctype html>
+<html lang={LOCALE_TAGS[locale]}>
+	<head>
+		<SeoHead
+			locale={locale}
+			title={press.meta.title}
+			description={press.meta.description}
+			page="press/"
+		/>
+	</head>
+	<body class="flex min-h-dvh flex-col font-body">
+		<Nav locale={locale} copy={copy} page="press/" />
+		<main class="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-[4vw] py-8">
+			<header class="flex flex-col gap-3">
+				<h1 class="font-title text-4xl font-bold">{press.title}</h1>
+				<p class="max-w-[70ch] text-text-light">{press.intro}</p>
+				<a
+					href={`${base}${localePath(locale)}`}
+					class="w-fit text-sm text-crit underline focus-visible:outline-2 focus-visible:outline-crit"
+				>
+					← {press.back}
+				</a>
+			</header>
+
+			<section aria-labelledby="facts" class="flex flex-col gap-3">
+				<h2 id="facts" class={h2}>{press.facts.title}</h2>
+				<dl class="grid gap-x-6 gap-y-2 sm:grid-cols-[max-content_1fr]">
+					{
+						facts.map(([label, value]) => (
+							<>
+								<dt class="font-bold text-text-dim">{label}</dt>
+								<dd>{value}</dd>
+							</>
+						))
+					}
+				</dl>
+			</section>
+
+			<section aria-labelledby="descriptions" class="flex flex-col gap-3">
+				<h2 id="descriptions" class={h2}>{press.desc.shortTitle}</h2>
+				<p class="max-w-[70ch]">{press.desc.short}</p>
+				<h2 class={h2}>{press.desc.longTitle}</h2>
+				<p class="max-w-[70ch]">{press.desc.long1}</p>
+				<p class="max-w-[70ch]">{press.desc.long2}</p>
+			</section>
+
+			<section aria-labelledby="features" class="flex flex-col gap-3">
+				<h2 id="features" class={h2}>{press.features.title}</h2>
+				<ul class="max-w-[70ch] list-disc space-y-1 pl-5">
+					{features.map((f) => <li>{f}</li>)}
+				</ul>
+			</section>
+
+			<section aria-labelledby="shots" class="flex flex-col gap-3">
+				<h2 id="shots" class={h2}>{press.shots.title}</h2>
+				<p class="text-sm text-text-dim">{press.shots.note}</p>
+				<ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+					{
+						shots.map(([file, alt]) => (
+							<li>
+								<a
+									href={asset(`screenshots/${file}.jpg`)}
+									class="block overflow-hidden rounded border border-snow-dark focus-visible:outline-2 focus-visible:outline-crit"
+								>
+									<img
+										src={asset(`screenshots/${file}.jpg`)}
+										alt={alt}
+										width="1920"
+										height="1080"
+										loading="lazy"
+										class="aspect-video w-full object-cover"
+									/>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section aria-labelledby="downloads" class="flex flex-col gap-3">
+				<h2 id="downloads" class={h2}>{press.downloads.title}</h2>
+				<ul class="flex flex-wrap gap-3">
+					{
+						downloads.map(([href, label]) => (
+							<li>
+								<a
+									href={href}
+									download
+									class="flex min-h-11 items-center rounded border-2 border-crit px-4 font-bold text-crit hover:bg-crit/10 focus-visible:outline-2 focus-visible:outline-crit"
+								>
+									{label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+				<p class="text-sm text-text-dim">{press.downloads.note}</p>
+			</section>
+
+			<section aria-labelledby="contact" class="flex flex-col gap-3">
+				<h2 id="contact" class={h2}>{press.contact.title}</h2>
+				<p>{press.contact.value}</p>
+			</section>
+		</main>
+		<Footer locale={locale} copy={copy} />
+	</body>
+</html>

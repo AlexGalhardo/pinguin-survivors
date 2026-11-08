@@ -105,3 +105,42 @@ Leitura:
 - **#3 fechado** em 30 e em 100 seeds. **#2 fechado em 30 seeds**; com 100 sobram 2 a 3% de mortes no boss do round 10, como previsto. Segue a proposta de relaxar a meta para ≤ 5% das runs (decisão do desenvolvedor).
 - **#5 piorou um pouco**: com a `elementStaff` mais forte, ela e o set `elemental` entram em mais builds (83% a 84% dos casos). O resultado confirma a leitura da proposta: o #5 não fecha com números de dano; depende das opções 1 a 3 acima e da decisão sobre o set `elemental`.
 - O espelho em `docs/balancing-and-simulation.md` (Parte B §6, linhas `elementStaff`, e §8b, tabela da Oficina) foi atualizado.
+
+## Critérios novos e passadas 2 e 3 (decisões do desenvolvedor)
+
+O desenvolvedor aprovou: `lightningTotem` passa para o set `support`; a meta #2 vira "≤ 5% das runs morrem antes do round 12"; a meta #5 é medida **por herói** (limites de 35% por arma e 50% por set dentro das builds de cada herói). `evaluateGoals` e a Parte A4 do balancing foram atualizados e testados. Medido com 100 seeds por célula (5.400 runs).
+
+Estado com os dados atuais (só o set do `lightningTotem` mudou):
+
+| Meta | Resultado |
+|---|---|
+| #1 | ✓ 17 / 17 / 10, máx. 27 |
+| #2 | ✓ morrem antes do 12: jack 2%, bob 0%, lucia 2% |
+| #3 | ✓ 51 / 51 / 42 |
+| #4 | ✓ D0 53, D1 34, D5 10 |
+| #5 por herói | ✗ jack: `hammer` 72% e set `blade` 80%; bob: `molotov` 78% e `elemental` 97%; lucia: `flameRing` 72% e `elemental` 94% |
+| #6 | ✓ 0,897, reroll 0,7% |
+
+### Passada 2 (dados, reversível)
+
+| Campo | De | Para |
+|---|---|---|
+| `hammer` dano base | 14 | 7 |
+| `molotov` dano base | 4 | 2 |
+| `flameRing` dano base | 3 | 2 |
+
+Resultado: #2 ✓ (jack 4%), #3 ✓ (45 / 48 / 42), #5 ✗: jack `bladeWhirl` 67% e set `blade` 82%; bob `elementStaff` 71% e set `explosive` 90%; lucia `iceShards` 72% e set `elemental` 87%. A arma líder só trocou de lugar.
+
+### Passada 3 (dados, reversível, sobre a passada 2)
+
+| Campo | De | Para |
+|---|---|---|
+| `bladeWhirl` dano base | 6 | 4 |
+| `elementStaff` dano base | 16 | 14 |
+| `iceShards` dano base | 8 | 7 |
+
+Resultado: #2 ✗ (mortes antes do 12 passam de 5% em algum herói), #3 ✓ mas com medianas menores (43 / 44 / 41), #5 ✗: a líder de Lucia, `iceShards`, cai para 55% e o set `elemental` fica em 78%; as de Jack e Bob continuam acima de 65%.
+
+### Conclusão e estado final
+
+Nenhuma das duas passadas aproximou o #5 do limite sem piorar #2. **Os dados foram revertidos ao estado anterior às passadas** (só o `lightningTotem` em `support` ficou). O motivo é estrutural, não de números: cada herói tem um multiplicador de classe (`tagMul`: Jack melee ×1,3, Bob firearm ×1,3, Lucia magic ×1,5) e o bot escolhe sempre a arma de maior DPS por Fish, então as 4 ou 5 armas da classe do herói dominam as 5 vagas livres. Com 15 armas candidatas e 5 vagas, a participação média por arma já é de cerca de 33%, e o limite de 35% por arma só se cumpre com seleção quase uniforme. O #5 por herói precisa de mudança de política do bot (ruído de preferência, peso de sinergia de set) ou de revisão do limite; não de ajuste de dano. Parar aqui, conforme o combinado.

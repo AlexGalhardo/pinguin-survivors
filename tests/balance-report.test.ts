@@ -64,16 +64,34 @@ describe('goal checks', () => {
 		expect(goal([...at(0, 40), ...at(1, 30)], 4)?.status).toBe('n/d');
 	});
 
-	test('#5 flags a dominant weapon', () => {
-		const dominant = Array.from({ length: 40 }, () =>
-			ev({ level: 10, weapons: ['machete:1', 'hammer:2'] }),
-		);
-		expect(goal(dominant, 5)?.status).toBe('✗');
-		expect(goal(dominant.slice(0, 5), 5)?.status).toBe('n/d');
-		const shares = buildShares(dominant);
+	test('#5 is measured per hero: a dominant weapon or set in one hero fails it', () => {
+		const heroRuns = (hero: 'jack' | 'bob' | 'lucia', weapons: string[]) =>
+			Array.from({ length: 40 }, () => ev({ hero, level: 10, weapons }));
+		const dominant = [
+			...heroRuns('jack', ['machete:1', 'hammer:2']),
+			...heroRuns('bob', ['doubleBarrel:1']),
+			...heroRuns('lucia', ['elementStaff:1']),
+		];
+		const res = goal(dominant, 5);
+		expect(res?.status).toBe('✗');
+		expect(res?.detail).toContain('jack: arma hammer 100.0%');
+		expect(goal(heroRuns('jack', ['machete:1', 'hammer:2']), 5)?.status).toBe('n/d');
+		const shares = buildShares(heroRuns('jack', ['machete:1', 'hammer:2']));
 		expect(shares.weapons.hammer).toBe(1);
 		expect(shares.weapons.machete).toBeUndefined();
 		expect(shares.sets.blunt).toBe(1);
+	});
+
+	test('#2 accepts up to 5% early deaths and fails above', () => {
+		const heroRuns = (early: number) =>
+			HERO_IDS.flatMap((hero) =>
+				Array.from({ length: 100 }, (_, i) =>
+					ev({ hero, level: 10, workshop: 2, round: i < early ? 10 : 24 }),
+				),
+			);
+		expect(goal(heroRuns(5), 2)?.status).toBe('✓');
+		expect(goal(heroRuns(6), 2)?.status).toBe('✗');
+		expect(goal(heroRuns(0).slice(100), 2)?.status).toBe('n/d');
 	});
 
 	test('#6 checks spent/earned and the reroll share', () => {

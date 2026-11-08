@@ -71,6 +71,70 @@
 		"legal": "© Alex Galhardo。Steam 是 Valve Corporation 的商标。Google Play 是 Google LLC 的商标。",
 		"version": "网站版本 {v}",
 		"privacy": "隐私政策（TBD）",
-		"press": "媒体资料（TBD）"
+		"press": "媒体资料"
+	},
+	"press": {
+		"meta": {
+			"title": "媒体资料 — Pinguin Survivors",
+			"description": "Pinguin Survivors 的资料表、简介、截图与主视觉：一款有企鹅、僵尸和 DOOM 式血腥的竞技场生存游戏。"
+		},
+		"title": "媒体资料",
+		"intro": "撰写 Pinguin Survivors 报道所需的一切。截图均来自游戏，分辨率为 1920×1080。",
+		"back": "返回游戏页面",
+		"facts": {
+			"title": "资料表",
+			"game": "名称",
+			"developer": "开发者",
+			"platforms": "平台",
+			"price": "价格",
+			"release": "发售日期",
+			"genre": "类型",
+			"languages": "语言",
+			"website": "网站",
+			"gameValue": "Pinguin Survivors",
+			"developerValue": "Alex Galhardo",
+			"platformsValue": "Windows（Steam）和 Android（Google Play）；桌面浏览器可玩试玩版",
+			"priceValue": "Steam 预计 4.99 美元（最终价格待定）",
+			"releaseValue": "待定（试玩版计划参加 2027 年 2 月 22 日至 3 月 1 日的 Steam 新品节）",
+			"genreValue": "俯视角竞技场生存 roguelite",
+			"languagesValue": "English、Português (BR)、Español、简体中文（计划于 1.0 提供）",
+			"websiteValue": "本网站"
+		},
+		"desc": {
+			"shortTitle": "简短介绍",
+			"short": "Pinguin Survivors 是一款俯视角竞技场生存游戏，有企鹅、僵尸和 DOOM 式血腥：在限时回合中求生，回合之间逛商店，打造六把武器的军械库。",
+			"longTitle": "详细介绍",
+			"long1": "三只企鹅 Jack、Bob 和 Lucia 每回合要对抗三百只僵尸。每回合都有时限，结束后商人开店，你可以在下一回合前买入、融合和出售武器、道具与装备。",
+			"long2": "六个武器槽自动开火，你只管闪避。每次升级提供四张属性卡，每位英雄从 1 级升到 100 级并在对局之间保留，危险等级 0–5 提高难度，无尽模式没有胜利画面。血腥程度堪比 DOOM，可切换为最大、减少或绿色黏液。"
+		},
+		"features": {
+			"title": "主要特色",
+			"f1": "三位英雄各有专属武器和超能力：Jack（近战）、Bob（枪械）、Lucia（魔法）。",
+			"f2": "六个自动开火的武器槽，每把武器四个阶位，含套装加成与融合。",
+			"f3": "每回合后的商人商店：刷新、锁定、出售与融合。",
+			"f4": "每位英雄 1–100 级永不重置，并按英雄解锁危险等级 0–5。",
+			"f5": "每 10 回合一个首领，无尽回合没有胜利画面。",
+			"f6": "支持手柄、键盘和触控；四种语言；无配音。"
+		},
+		"shots": {
+			"title": "截图",
+			"note": "1920×1080 JPEG。点击图片查看原图。",
+			"menu": "主菜单",
+			"jack": "Jack 用六把武器对抗尸潮",
+			"lucia": "第 14 回合的 Lucia 与元素武器",
+			"levelUp": "带四张属性卡的升级界面",
+			"shop": "回合之间的商人商店"
+		},
+		"downloads": {
+			"title": "标志与主视觉",
+			"keyArtJack": "主视觉：Jack（PNG）",
+			"keyArtBob": "主视觉：Bob（PNG）",
+			"logo": "图标（SVG）",
+			"note": "报道游戏时可自由使用。"
+		},
+		"contact": {
+			"title": "联系方式",
+			"value": "待定 — 发售前将公布媒体联系方式"
+		}
 	}
 }

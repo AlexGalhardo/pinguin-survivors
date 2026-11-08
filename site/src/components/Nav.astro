@@ -6,9 +6,10 @@ import LangSwitch from './LangSwitch.astro';
 interface Props {
 	locale: Locale;
 	copy: Copy;
+	page?: string;
 }
 
-const { locale, copy } = Astro.props;
+const { locale, copy, page = '' } = Astro.props;
 const links = [
 	{ label: copy.nav.steam, href: WISHLIST_URL },
 	{ label: copy.nav.googlePlay, href: GOOGLE_PLAY_URL },
@@ -19,7 +20,7 @@ const links = [
 <header class="flex min-h-14 flex-wrap items-center justify-between gap-2 px-[4vw] py-2">
 	<a href={import.meta.env.BASE_URL} class="font-title text-xl font-bold">{copy.hero.title}</a>
 	<nav class="flex flex-wrap items-center gap-2 text-sm">
-		<LangSwitch locale={locale} />
+		<LangSwitch locale={locale} page={page} />
 		{
 			links.map((l) => (
 				<a

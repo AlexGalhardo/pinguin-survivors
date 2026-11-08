@@ -3,9 +3,11 @@ import { COPY, LOCALE_NAMES, LOCALE_TAGS, LOCALES, type Locale, localePath } fro
 
 interface Props {
 	locale: Locale;
+	/** Page under the locale (`press/`), so the switch stays on the same page. */
+	page?: string;
 }
 
-const { locale } = Astro.props;
+const { locale, page = '' } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -23,7 +25,7 @@ const base = import.meta.env.BASE_URL;
 			LOCALES.map((l) => (
 				<li>
 					<a
-						href={`${base}${localePath(l)}`}
+						href={`${base}${localePath(l)}${page}`}
 						hreflang={LOCALE_TAGS[l]}
 						lang={LOCALE_TAGS[l]}
 						aria-current={l === locale ? 'page' : undefined}

@@ -9,10 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Site press kit at `/press/` in four languages and a `SITE_RELEASED` build flag that turns the Wishlist CTA into Buy; the site uses Roboto.
+
 - Extra starting weapons bought with Pearls per hero in the Workshop (SDD-002 RF-05): saved in `unlocks.startingWeapons`, offered in the hero select, announced by an Unlock screen; hidden in the demo.
 - Shop sound effects (open, buy, reroll, lock, fuse, out of Fish), element hit sounds (fire, ice, earth, lightning, freeze) and the shop music (ElevenLabs, loudness-normalized).
 
 ### Changed
+
+- Balance goals: #2 allows up to 5% of runs to die before round 12 and #5 is measured per hero; the Lightning Totem moves to the support set; the demo length counts 45 s per shop/cards screen.
 
 - Design (ADR-016): biome 2 becomes a forest (rounds 11–20) and biome 3 a destroyed city with an original alien faction (rounds 21–30); from round 31 the endless mode draws biomes and enemies from every set, including the legacy station and ruins.
 

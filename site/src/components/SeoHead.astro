@@ -1,0 +1,44 @@
+---
+import { getImage } from 'astro:assets';
+import { KEY_ART } from '../art';
+import { LOCALE_TAGS, LOCALES, type Locale, localePath } from '../i18n';
+
+interface Props {
+	locale: Locale;
+	title: string;
+	description: string;
+	/** Page path under the locale, e.g. `press/`; empty for the landing. */
+	page?: string;
+}
+
+const { locale, title, description, page = '' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const abs = (path: string): string => new URL(base + path, Astro.site).href;
+const og = await getImage({ src: KEY_ART, width: 1200, height: 630, format: 'png', fit: 'cover' });
+const ogUrl = new URL(og.src, Astro.site).href;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={abs(localePath(locale) + page)} />
+<link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+{
+	LOCALES.map((l) => (
+		<link rel="alternate" hreflang={LOCALE_TAGS[l]} href={abs(localePath(l) + page)} />
+	))
+}
+<link rel="alternate" hreflang="x-default" href={abs(localePath('en') + page)} />
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={abs(localePath(locale) + page)} />
+<meta property="og:image" content={ogUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content={LOCALE_TAGS[locale].replace('-', '_')} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogUrl} />

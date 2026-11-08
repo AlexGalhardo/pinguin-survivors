@@ -1,0 +1,14 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { LOCALES, type Locale } from '../../i18n';
+import Press from '../../layouts/Press.astro';
+
+export const getStaticPaths = (() =>
+	LOCALES.filter((l) => l !== 'en').map((lang) => ({
+		params: { lang },
+	}))) satisfies GetStaticPaths;
+
+const { lang } = Astro.params;
+---
+
+<Press locale={lang as Locale} />

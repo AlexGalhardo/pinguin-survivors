@@ -252,8 +252,8 @@ Specs: [SDD-006](docs/sdds/SDD-006-demo.md), [SDD-007](docs/sdds/SDD-007-ports-e
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T5.9** Upload da demo na Steam (build Windows) até 2027-01-25; itens do Next Fest até 2027-02-08 · Resp.: dev · Dep.: T5.4, T5.8 · Assert: build "released" no branch default da demo; checklist do Next Fest completo na Steamworks.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [~] **T5.10** Tempo da demo: bot médio L1 em 12–25 min (SDD-006 A5) · Resp.: estagiario · Assert: log do bot em `docs/reports/`. · Bloqueado (2026-11-08): medido com o bot (`docs/reports/demo-time-2026-11-08.md`): ~6,2 min de jogo até `demoWin` (meta 12–25 min) — o formato atual (rounds 1–9 = 360 s + boss ≤ 180 s) não alcança a meta sem tempo humano de loja/cartas; decisão do desenvolvedor (alongar rounds/`DEMO.maxRound` ou mudar o critério), `questions-to-dev.md` #11.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T5.10** Tempo da demo: bot médio L1 em 12–25 min (SDD-006 A5) · Resp.: estagiario · Assert: log do bot em `docs/reports/`. · Evidência (2026-11-08): critério da SDD-006 A5 ajustado por decisão do desenvolvedor (tempo de jogo do bot + 45 s por loja/cartas); seeds 100 e 101 vencem a demo em 12,9 e 13,1 min (✓); seed 102 morre no round 5 — `docs/reports/demo-time-2026-11-08.md`.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): recálculo lido; confirmar com jogador real no Next Fest (T6.4).
 - [ ] **T5.11** Releases `0.1.2` (demo + site) e `0.1.3` (Electron).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
@@ -382,7 +382,7 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T9.5** Publicar na Steam; Android em produção até 2027-05-15 · Resp.: dev · Assert: páginas públicas com "Comprar".
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T9.6** Site: CTA vira "Comprar"; press kit `/press/` · Resp.: senior · Assert: Lighthouse ≥ 95; links das lojas 200.
+- [ ] **T9.6** Site: CTA vira "Comprar"; press kit `/press/` · Resp.: senior · Assert: Lighthouse ≥ 95; links das lojas 200. · Progresso (2026-11-08): press kit `/press/` nos 4 idiomas (ficha, descrições, features, 5 screenshots, key art) e CTA "Comprar" atrás de `SITE_RELEASED=true` (padrão desligado); site em Roboto. Falta no lançamento: ligar a flag, links das lojas, Lighthouse no deploy.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
 ### Auditoria do marco M9

@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.4 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.5 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -54,13 +54,13 @@ Medidas com **bot médio**, **Danger 1**, seeds 100 e 101, build DEV congelado.
 
 | # | Perfil | Meta | Status |
 |---|---|---|---|
-| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | a medir no design 1.0 |
-| 2 | L10 + Oficina `all:2` + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; nenhum morre antes do 12 | a medir |
-| 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | a medir |
-| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | a medir |
-| 5 | Diversidade de build (sim, 100 runs/herói) | nenhuma arma em > 35% nem < 3% das builds finais; nenhum set em > 50% | a medir |
-| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | a medir |
-| 7 | Duração | run L1 mediana 10–18 min reais (com lojas); demo completa 12–25 min | a medir |
+| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08): 17 / 17 / 10, máx. 27; bot real pendente |
+| 2 | L10 + Oficina `all:2` + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 2%, bob 0%, lucia 2% |
+| 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08): 51 / 51 / 42 |
+| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08): D0 53, D1 34, D5 10 |
+| 5 | Diversidade de build (sim, 100 runs/herói, **medida por herói**) | dentro das builds de cada herói (L10, D1, sem a arma inicial): nenhuma arma em > 35% e nenhum set em > 50%; no geral nenhuma arma < 3% nem nunca comprada | ✗ na sim (2026-11-08): armas de 72% a 78% e sets de 80% a 97% por herói; ver `docs/reports/balance-proposal-2026-11-08.md` (passadas 2 e 3) |
+| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08): 0,897, reroll 0,7% |
+| 7 | Duração | run L1 mediana 10–18 min reais (com lojas); demo completa 12–25 min (tempo de jogo do bot + 45 s por loja/cartas, SDD-006 A5) | a medir; demo: ver `docs/reports/demo-time-2026-11-08.md` |
 | 8 | Performance | 60 FPS médio, p95 ≤ 18 ms, 300 inimigos + 2.000 decalques, 1920×1080 | ✓ no iso (2026-09-27); remedir na arena |
 
 Milestone **"Balance 1.0"** fecha quando #1–#8 passam ou o orçamento de 3 passadas acaba (registrar exceções).
@@ -257,8 +257,8 @@ Só o maior patamar atingido vale. Valores são totais por patamar (`SET_BONUSES
 | thrown | knives, fishBoomerang | vel. de ataque +5% | vel. de ataque +12% | vel. de ataque +25% |
 | gun | doubleBarrel, auxPistol, crossbow, droneSentinel | crítico +4% | crítico +10% | crítico +20% |
 | explosive | molotov, mine, grenadeBelt | área +10% | área +22% | área +40% |
-| elemental | molotov, elementStaff, iceShards, flameRing, lightningTotem | chance de queimadura +5% + chance de gelo +5% | chance de queimadura +12% + chance de gelo +12% | chance de queimadura +25% + chance de gelo +25% |
-| support | droneSentinel, poisonCloud | regen +1/s | regen +2,5/s | regen +5/s |
+| elemental | molotov, elementStaff, iceShards, flameRing | chance de queimadura +5% + chance de gelo +5% | chance de queimadura +12% + chance de gelo +12% | chance de queimadura +25% + chance de gelo +25% |
+| support | droneSentinel, poisonCloud, lightningTotem | regen +1/s | regen +2,5/s | regen +5/s |
 
 ### 5. XP e level (persistente)
 
@@ -334,10 +334,10 @@ Só o maior patamar atingido vale. Valores são totais por patamar (`SET_BONUSES
 | flameRing | magic | elemental | II | 5 | 0,38 | 79 | 13,2 |
 | flameRing | magic | elemental | III | 7 | 0,36 | 83 | 19,4 |
 | flameRing | magic | elemental | IV | 9 | 0,35 | 86 | 25,6 |
-| lightningTotem | magic | elemental | I | 16 | 7 | 170 | 2,3 |
-| lightningTotem | magic | elemental | II | 24 | 6,65 | 179 | 3,6 |
-| lightningTotem | magic | elemental | III | 35 | 6,3 | 187 | 5,6 |
-| lightningTotem | magic | elemental | IV | 50 | 6,16 | 195 | 8,1 |
+| lightningTotem | magic | support | I | 16 | 7 | 170 | 2,3 |
+| lightningTotem | magic | support | II | 24 | 6,65 | 179 | 3,6 |
+| lightningTotem | magic | support | III | 35 | 6,3 | 187 | 5,6 |
+| lightningTotem | magic | support | IV | 50 | 6,16 | 195 | 8,1 |
 | poisonCloud | magic | support | I | 6 | 4 | 230 | 1,5 |
 | poisonCloud | magic | support | II | 9 | 3,8 | 242 | 2,4 |
 | poisonCloud | magic | support | III | 13 | 3,6 | 253 | 3,6 |
