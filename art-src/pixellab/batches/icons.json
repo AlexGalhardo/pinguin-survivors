@@ -1,0 +1,359 @@
+[
+	{
+		"key": "icon.damage",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a bloody sword pointing up, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.crit",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a red crosshair target with a star spark, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.critDamage",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a cracked skull with a red star, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.dodge",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a blurred penguin silhouette dashing sideways with motion lines, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.parry",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: two crossed swords with a spark, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.area",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a blue expanding ring shockwave, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.pickupRange",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a red and silver horseshoe magnet, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.luck",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a four leaf clover, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.xpGain",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a glowing cyan crystal with an up arrow, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.resistFire",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a shield with a flame emblem, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.resistEarth",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a shield with a brown rock emblem, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.resistIce",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a shield with a blue snowflake emblem, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.resistEnergy",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a shield with a yellow lightning emblem, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.bleedChance",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a dripping blood drop with a claw scratch, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.poisonChance",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a green poison vial with a skull, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.lifesteal",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a red vampire fang with a blood drop, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.burnChance",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a burning orange flame, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.chillChance",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a light blue ice crystal, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.shockChance",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a crackling yellow electric spark, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.meleeDamage",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a machete with a red glow, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.firearmDamage",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a shotgun shell with a red glow, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.magicDamage",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a glowing purple rune orb, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.perk.bloodlust",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a red eye with a blood drop, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.perk.counterAttack",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a curved arrow around a sword, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.perk.ironSkin",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a riveted iron plate with spikes, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.perk.butcher",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a butcher cleaver with a meat chunk, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.weapon.seismicStomp",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a penguin foot stomping cracked ground, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.perk.ironBreath",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a steel chest with steaming breath clouds, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.parka",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a warm padded parka jacket, plain grey quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.leather",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a leather vest armor, plain grey quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.lifevest",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: an orange life vest, plain grey quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.chainmail",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a chainmail shirt, rare blue glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.kevlar",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a black kevlar tactical vest, rare blue glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.bloodcoat",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a blood red long coat, rare blue glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.hazmat",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a yellow hazmat suit, rare blue glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.juggernaut",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a massive heavy plate armor, legendary golden glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.dragonscale",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a dragon scale armor glowing red, legendary golden glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.armor.phantom",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a translucent ghostly phantom cloak, legendary golden glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.legs.boots",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a pair of worn leather boots, plain grey quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.legs.skates",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a pair of ice skates, plain grey quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.legs.padded",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a pair of padded pants, plain grey quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.legs.cargo",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a pair of cargo pants with pockets, rare blue glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "item.legs.ninja",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI item icon: a pair of black ninja tabi boots, rare blue glowing quality, dark fantasy RPG inventory icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.currency.fish",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a shiny orange fish coin, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.currency.pearl",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a glowing white pearl in an open oyster shell, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.danger.0",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a small pale grey skull, danger level 0, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.danger.1",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a yellow skull with a crack, danger level 1, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.danger.2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: an orange skull with horns, danger level 2, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.danger.3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a red skull with flames, danger level 3, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.danger.4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a dark red burning skull with horns and a crown of fire, danger level 4, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	},
+	{
+		"key": "icon.danger.5",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "game UI icon: a black and crimson demon skull with glowing eyes, danger level 5, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background"
+	}
+]

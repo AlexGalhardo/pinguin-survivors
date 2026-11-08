@@ -1,0 +1,23 @@
+[
+	{
+		"key": "weapon.knives.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 22,
+		"prompt": "three steel throwing knives three knives lying horizontally side by side, all blades pointing right, leather wrapped grips on the left, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.knives.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 22,
+		"prompt": "three steel throwing knives three knives lying horizontally side by side, all blades pointing right, leather wrapped grips on the left, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.fishBoomerang.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 22,
+		"prompt": "a bent V shaped wooden boomerang shaped like a fish, curved banana shape, orange and blue, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	}
+]

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import type { HeroId } from '../config/constants';
+import { HERO_SPRITE_SCALE } from '../data/sprite-scale';
 import { canInterrupt, fpsToFit, type HeroAnim, locomotion, spriteDir } from '../logic/hero-anim';
 import { type Dir, depthOf, dirFromWorld, type Vec2, worldToScreen } from '../logic/projection';
 
@@ -41,7 +42,10 @@ export class Hero {
 			.setOrigin(0.5, 0.5)
 			.setScale(0.9, 0.6)
 			.setAlpha(0.7);
-		this.sprite = scene.add.sprite(0, 0, KEYS.heroFacing(id, tier, 's')).setOrigin(0.5, 0.95);
+		this.sprite = scene.add
+			.sprite(0, 0, KEYS.heroFacing(id, tier, 's'))
+			.setOrigin(0.5, 0.95)
+			.setScale(HERO_SPRITE_SCALE[id]);
 		this.loadAtlas();
 		this.sync();
 	}

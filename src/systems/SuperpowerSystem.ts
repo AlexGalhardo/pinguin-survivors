@@ -1,11 +1,11 @@
 import type Phaser from 'phaser';
-import { KEYS } from '../art/manifest';
+import { KEYS, SUPER_FX_FRAMES } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { shake } from '../core/feel';
 import { SUPER, SUPERPOWERS, type SuperpowerDef } from '../data/superpowers';
 import type { Enemy } from '../entities/Enemy';
 import type { Element } from '../logic/combat';
-import { screenToWorld } from '../logic/projection';
+import { depthOf, screenToWorld, worldToScreen } from '../logic/projection';
 import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
 import type { PlayerStats } from '../logic/stats';
@@ -38,6 +38,8 @@ export class SuperpowerSystem {
 	/** Kills while the current cast is active (Overkill achievement). */
 	killsThisCast = 0;
 	private readonly scratch: Enemy[] = [];
+	/** Looping effect sprite that follows the hero while the cast lasts (when the art exists). */
+	private vfx: Phaser.GameObjects.Sprite | null = null;
 
 	constructor(
 		private readonly rng: Rng,
@@ -60,6 +62,7 @@ export class SuperpowerSystem {
 		this.killsThisCast = 0;
 		this.bombsLeft = this.def.explosions ?? 0;
 		shake(scene, 250, 0.006);
+		this.startVfx(heroId, scene, hx, hy);
 		this.area.flash(
 			hx,
 			hy,
@@ -148,6 +151,43 @@ export class SuperpowerSystem {
 				e.y += (dy / d) * def.pull * dt;
 			}
 		}
-		if (this.time <= 0) this.active = false;
+		this.followVfx(hx, hy);
+		if (this.time <= 0) {
+			this.active = false;
+			this.vfx?.destroy();
+			this.vfx = null;
+		}
+	}
+
+	/** `fx.super.<hero>` loop sized to the power radius; code-drawn flash only when the art is missing. */
+	private startVfx(hero: string, scene: Phaser.Scene, hx: number, hy: number): void {
+		this.vfx?.destroy();
+		this.vfx = null;
+		const first = KEYS.superFx(hero, 0);
+		if (!scene.textures.exists(first)) return;
+		const animKey = `fx.super.${hero}`;
+		if (!scene.anims.exists(animKey)) {
+			scene.anims.create({
+				key: animKey,
+				frames: Array.from({ length: SUPER_FX_FRAMES }, (_, i) => ({
+					key: KEYS.superFx(hero, i),
+				})),
+				frameRate: 18,
+				repeat: -1,
+			});
+		}
+		const size = scene.textures.getFrame(first).width;
+		this.vfx = scene.add
+			.sprite(0, 0, first)
+			.setScale((this.def.radius * 2) / size)
+			.setAlpha(0.8)
+			.play(animKey);
+		this.followVfx(hx, hy);
+	}
+
+	private followVfx(hx: number, hy: number): void {
+		if (!this.vfx) return;
+		const s = worldToScreen(hx, hy, 0);
+		this.vfx.setPosition(Math.round(s.x), Math.round(s.y)).setDepth(depthOf(hx, hy) - 1);
 	}
 }

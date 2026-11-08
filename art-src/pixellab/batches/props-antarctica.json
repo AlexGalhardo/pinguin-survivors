@@ -1,0 +1,34 @@
+[
+	{
+		"key": "prop.antarctica.0",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a cluster of pale blue ice crystals growing from the snow, game prop sprite, high top-down, single color black outline, transparent background, desaturated blue-grey polar night palette"
+	},
+	{
+		"key": "prop.antarctica.1",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a dark grey boulder half covered in snow, game prop sprite, high top-down, single color black outline, transparent background, desaturated blue-grey polar night palette"
+	},
+	{
+		"key": "prop.antarctica.2",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a wooden supply crate with a bloody handprint, half buried in snow, game prop sprite, high top-down, single color black outline, transparent background, desaturated blue-grey polar night palette"
+	},
+	{
+		"key": "prop.antarctica.3",
+		"w": 48,
+		"h": 48,
+		"seed": 11,
+		"view": "high top-down",
+		"prompt": "a frozen broken wooden sled half buried in snow, game prop sprite, high top-down, single color black outline, transparent background, desaturated blue-grey polar night palette"
+	}
+]

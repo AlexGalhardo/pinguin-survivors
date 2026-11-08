@@ -194,25 +194,25 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 Specs: [SDD-012](docs/sdds/SDD-012-arte-topdown-e-vfx.md), [docs/audio.md](docs/audio.md) §6. Só o necessário para a demo (bioma 1) e a loja; o resto em M7.
 
-- [ ] **T4.1** QA visual dos heróis e inimigos do bioma 1 na câmera top-down; prancha em `art-src/pixellab/qa/` · Resp.: estagiario gera prancha; 🛑 dev aprova a lista do que refazer · Est.: 3 h · Assets: 0 · Assert: arquivo da prancha + lista aprovada registrada em `docs/visual.md` §11.
+- [ ] **T4.1** QA visual dos heróis e inimigos do bioma 1 na câmera top-down; prancha em `art-src/pixellab/qa/` · Resp.: estagiario gera prancha; 🛑 dev aprova a lista do que refazer · Est.: 3 h · Assets: 0 · Assert: arquivo da prancha + lista aprovada registrada em `docs/visual.md` §11. · Progresso (2026-11-08): prancha `art-src/pixellab/qa/qa-top-down-antarctica.png` + `qa-notes.md` com 7 refações propostas (0 gerações) — 🛑 aguarda aprovação do desenvolvedor. Jack regerado top-down a pedido do desenvolvedor (31 gerações, 4 animações × 5 direções) e proporções padronizadas (`docs/reports/proportions-2026-11-08.md`, `src/data/sprite-scale.ts`).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T4.2** Tileset top-down 64×64 + bordas da Antártida · Resp.: orquestrador (skill `pinguin-art-assets`) · Dep.: T4.1 · Est.: 4 h · Assets: ~80 gerações · Assert: prancha 3×3 sem costura; `bun scripts/pack-atlas.ts --check` OK.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T4.3** Props top-down da Antártida (4) · Est.: 2 h · Assets: ~5 · Assert: chaves `deco.antarctica.*` sem placeholder em `?debug=1`.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T4.3** Props top-down da Antártida (4) · Est.: 2 h · Assets: ~5 · Assert: chaves `deco.antarctica.*` sem placeholder em `?debug=1`. · Evidência (2026-11-08): 4 props top-down `deco.antarctica.0..3` no atlas (4 gerações); `bun scripts/pack-atlas.ts --check` 158 chaves, 0 faltando.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): screenshot round 3 mostra os props novos.
 - [ ] **T4.4** Lojista: concept 🛑 aprovação → idle · Resp.: orquestrador · Est.: 3 h · Assets: ~10 · Assert: `npc.merchant.idle` no atlas e na `Shop`.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T4.5** Tiers II–IV das 9 armas da demo (Jack + neutras) · Est.: 4 h · Assets: ~30 · Assert: `weapon.*.t2–t4` sem placeholder para as 9 linhas.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T4.6** Ícones: cartas de stat (~25), exclusivas do Jack (6), itens (~15), moedas (2), danger (6) · Est.: 4 h · Assets: ~55 · Assert: `installPlaceholders` não lista `icon.*` dessas chaves.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T4.5** Tiers II–IV das 9 armas da demo (Jack + neutras) · Est.: 4 h · Assets: ~30 · Assert: `weapon.*.t2–t4` sem placeholder para as 9 linhas. · Evidência (2026-11-08): `weapon.<id>.t1–t4` das 9 linhas da demo (machete, knives, fishBoomerang, molotov, auxPistol, iceShards, flameRing, crossbow, bladeWhirl; 30 gerações, 3 retries); `--check` sem faltas.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): abri `art-weapons-1920.png` e `jack-new-game.png`: 6 armas com arte por tier no anel. Ressalva: knives t2/t3 inclinadas (orientação diferente de t1/t4).
+- [x] **T4.6** Ícones: cartas de stat (~25), exclusivas do Jack (6), itens (~15), moedas (2), danger (6) · Est.: 4 h · Assets: ~55 · Assert: `installPlaceholders` não lista `icon.*` dessas chaves. · Evidência (2026-11-08): 22 cartas de stat, 6 exclusivas do Jack, 15 itens, 2 moedas, 6 de danger no atlas `ui` (51 gerações).
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): `--check` re-executado; ícones ainda não usados pela UI React (só no atlas) — integração no React pendente.
 - [ ] **T4.7** Refações aprovadas em T4.1 (até 3 personagens) · Est.: 6 h · Assets: ≤ 300 · Assert: prancha pós-refação aprovada.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [x] **T4.8** SFX da loja (5) e de elementos (5); música da loja (30 s) · Resp.: orquestrador (skill `pinguin-audio-assets`) · Est.: 3 h · Assets: ~420 créditos · Assert: chaves `sfx.shop*`, `music.shop` no manifest e tocando no E2E. · Evidência (2026-11-08): 6 SFX da loja (`shopOpen`, `shopBuy`, `shopReroll`, `shopLock`, `weaponFuse`, `shopNoFish`), 5 de elementos (`fire`, `ice`, `earth`, `lightning`, `freeze`) e `music.shop` (30 s, 70 bpm), normalizados por ffmpeg; chaves no manifest e tocando na loja/hits; `tests/audio-assets.test.ts` e o E2E `--demo` conferem as 12 chaves no cache do Phaser (sem som). Gasto 519 créditos (estimativa 420; saldo 58.198 → 57.679), registrado em `docs/audio.md` §6–§7.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): teste re-executado; durações por ffprobe batem; gasto acima do teto interno de 450 que dei, mas abaixo do gate de 2.000 — anotado.
-- [ ] **T4.9** VFX do superpoder do Jack (Colheita Rubra) · Est.: 4 h · Assets: ~50 · Assert: `fx.super.jack` ≥ 12 frames no atlas.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T4.10** Registro: `docs/visual.md` §10–§13 e `docs/audio.md` §6–§7 com saldos · Resp.: estagiario · Assert: saldo PixelLab após M4 ≥ 3.500 (mês de janeiro).
+- [x] **T4.9** VFX do superpoder do Jack (Colheita Rubra) · Est.: 4 h · Assets: ~50 · Assert: `fx.super.jack` ≥ 12 frames no atlas. · Evidência (2026-11-08): `fx.super.jack` com 13 frames (10 gerações), tocado pelo `SuperpowerSystem` no cast.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): screenshot `jack-super-vfx.png` gerado pelo Senior C; 13 ≥ 12 frames.
+- [ ] **T4.10** Registro: `docs/visual.md` §10–§13 e `docs/audio.md` §6–§7 com saldos · Resp.: estagiario · Assert: saldo PixelLab após M4 ≥ 3.500 (mês de janeiro). · Progresso (2026-11-08): saldos registrados — PixelLab 2.320 → 2.194 (126 gerações) em `docs/visual.md` §10; ElevenLabs 58.198 → 57.679 (519 créditos) em `docs/audio.md` §6. O assert (saldo ≥ 3.500 após o M4) depende da renovação mensal.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T4.11** Release `0.1.1`.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.

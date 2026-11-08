@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Art (PixelLab, 126 generations): weapon tiers II–IV for the nine demo weapon lines, four top-down Antarctica props, 51 icons (stat cards, Jack's exclusives, items, coins, Danger), Jack's Crimson Harvest super VFX and a new top-down Jack with idle, walk, hurt and death in all directions.
+- Sprite scale table (`src/data/sprite-scale.ts`) that evens out hero, enemy and boss sizes against the 64-unit tile, Brotato-style (`docs/reports/proportions-2026-11-08.md`).
+
 - Site press kit at `/press/` in four languages and a `SITE_RELEASED` build flag that turns the Wishlist CTA into Buy; the site uses Roboto.
 
 - Extra starting weapons bought with Pearls per hero in the Workshop (SDD-002 RF-05): saved in `unlocks.startingWeapons`, offered in the hero select, announced by an Unlock screen; hidden in the demo.

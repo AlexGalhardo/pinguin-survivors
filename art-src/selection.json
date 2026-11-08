@@ -69,15 +69,15 @@
 		"scale": 0.5
 	},
 	"deco.antarctica.0": {
-		"src": "art-src/pixellab/images/deco.antarctica.0/11.png",
+		"src": "art-src/pixellab/images/prop.antarctica.0/11.png",
 		"group": "antarctica"
 	},
 	"deco.antarctica.1": {
-		"src": "art-src/pixellab/images/deco.antarctica.1/11.png",
+		"src": "art-src/pixellab/images/prop.antarctica.1/11.png",
 		"group": "antarctica"
 	},
 	"deco.antarctica.2": {
-		"src": "art-src/pixellab/images/deco.antarctica.2/11.png",
+		"src": "art-src/pixellab/images/prop.antarctica.2/11.png",
 		"group": "antarctica"
 	},
 	"deco.station.0": {
@@ -210,6 +210,438 @@
 	"item.helmet.hood": {
 		"src": "art-src/pixellab/images/item.helmet.hood/11.png",
 		"group": "ui",
+		"trim": false
+	},
+	"weapon.machete.t1": {
+		"src": "art-src/pixellab/images/weapon.machete/11.png"
+	},
+	"weapon.machete.t2": {
+		"src": "art-src/pixellab/images/weapon.machete.t2/11.png"
+	},
+	"weapon.machete.t3": {
+		"src": "art-src/pixellab/images/weapon.machete.t3/11.png"
+	},
+	"weapon.machete.t4": {
+		"src": "art-src/pixellab/images/weapon.machete.t4/11.png"
+	},
+	"weapon.knives.t1": {
+		"src": "art-src/pixellab/images/weapon.knives/11.png"
+	},
+	"weapon.knives.t2": {
+		"src": "art-src/pixellab/images/weapon.knives.t2/22.png"
+	},
+	"weapon.knives.t3": {
+		"src": "art-src/pixellab/images/weapon.knives.t3/22.png"
+	},
+	"weapon.knives.t4": {
+		"src": "art-src/pixellab/images/weapon.knives.t4/11.png"
+	},
+	"weapon.fishBoomerang.t1": {
+		"src": "art-src/pixellab/images/weapon.fishBoomerang/11.png"
+	},
+	"weapon.fishBoomerang.t2": {
+		"src": "art-src/pixellab/images/weapon.fishBoomerang.t2/11.png"
+	},
+	"weapon.fishBoomerang.t3": {
+		"src": "art-src/pixellab/images/weapon.fishBoomerang.t3/11.png"
+	},
+	"weapon.fishBoomerang.t4": {
+		"src": "art-src/pixellab/images/weapon.fishBoomerang.t4/22.png"
+	},
+	"weapon.molotov.t1": {
+		"src": "art-src/pixellab/images/weapon.molotov/11.png"
+	},
+	"weapon.molotov.t2": {
+		"src": "art-src/pixellab/images/weapon.molotov.t2/11.png"
+	},
+	"weapon.molotov.t3": {
+		"src": "art-src/pixellab/images/weapon.molotov.t3/11.png"
+	},
+	"weapon.molotov.t4": {
+		"src": "art-src/pixellab/images/weapon.molotov.t4/11.png"
+	},
+	"weapon.auxPistol.t1": {
+		"src": "art-src/pixellab/images/weapon.auxPistol/11.png"
+	},
+	"weapon.auxPistol.t2": {
+		"src": "art-src/pixellab/images/weapon.auxPistol.t2/11.png"
+	},
+	"weapon.auxPistol.t3": {
+		"src": "art-src/pixellab/images/weapon.auxPistol.t3/11.png"
+	},
+	"weapon.auxPistol.t4": {
+		"src": "art-src/pixellab/images/weapon.auxPistol.t4/11.png"
+	},
+	"weapon.iceShards.t1": {
+		"src": "art-src/pixellab/images/weapon.iceShards/11.png"
+	},
+	"weapon.iceShards.t2": {
+		"src": "art-src/pixellab/images/weapon.iceShards.t2/11.png"
+	},
+	"weapon.iceShards.t3": {
+		"src": "art-src/pixellab/images/weapon.iceShards.t3/11.png"
+	},
+	"weapon.iceShards.t4": {
+		"src": "art-src/pixellab/images/weapon.iceShards.t4/11.png"
+	},
+	"weapon.flameRing.t1": {
+		"src": "art-src/pixellab/images/weapon.flameRing/11.png"
+	},
+	"weapon.flameRing.t2": {
+		"src": "art-src/pixellab/images/weapon.flameRing.t2/11.png"
+	},
+	"weapon.flameRing.t3": {
+		"src": "art-src/pixellab/images/weapon.flameRing.t3/11.png"
+	},
+	"weapon.flameRing.t4": {
+		"src": "art-src/pixellab/images/weapon.flameRing.t4/11.png"
+	},
+	"weapon.crossbow.t1": {
+		"src": "art-src/pixellab/images/weapon.crossbow/11.png"
+	},
+	"weapon.crossbow.t2": {
+		"src": "art-src/pixellab/images/weapon.crossbow.t2/11.png"
+	},
+	"weapon.crossbow.t3": {
+		"src": "art-src/pixellab/images/weapon.crossbow.t3/11.png"
+	},
+	"weapon.crossbow.t4": {
+		"src": "art-src/pixellab/images/weapon.crossbow.t4/11.png"
+	},
+	"weapon.bladeWhirl.t1": {
+		"src": "art-src/pixellab/images/weapon.bladeWhirl/11.png"
+	},
+	"weapon.bladeWhirl.t2": {
+		"src": "art-src/pixellab/images/weapon.bladeWhirl.t2/11.png"
+	},
+	"weapon.bladeWhirl.t3": {
+		"src": "art-src/pixellab/images/weapon.bladeWhirl.t3/11.png"
+	},
+	"weapon.bladeWhirl.t4": {
+		"src": "art-src/pixellab/images/weapon.bladeWhirl.t4/11.png"
+	},
+	"deco.antarctica.3": {
+		"src": "art-src/pixellab/images/prop.antarctica.3/11.png",
+		"group": "antarctica"
+	},
+	"icon.damage": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.damage/11.png"
+	},
+	"icon.crit": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.crit/11.png"
+	},
+	"icon.critDamage": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.critDamage/11.png"
+	},
+	"icon.dodge": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.dodge/11.png"
+	},
+	"icon.parry": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.parry/11.png"
+	},
+	"icon.area": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.area/11.png"
+	},
+	"icon.pickupRange": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.pickupRange/11.png"
+	},
+	"icon.luck": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.luck/11.png"
+	},
+	"icon.xpGain": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.xpGain/11.png"
+	},
+	"icon.resistFire": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.resistFire/11.png"
+	},
+	"icon.resistEarth": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.resistEarth/11.png"
+	},
+	"icon.resistIce": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.resistIce/11.png"
+	},
+	"icon.resistEnergy": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.resistEnergy/11.png"
+	},
+	"icon.bleedChance": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.bleedChance/11.png"
+	},
+	"icon.poisonChance": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.poisonChance/11.png"
+	},
+	"icon.lifesteal": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.lifesteal/11.png"
+	},
+	"icon.burnChance": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.burnChance/11.png"
+	},
+	"icon.chillChance": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.chillChance/11.png"
+	},
+	"icon.shockChance": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.shockChance/11.png"
+	},
+	"icon.meleeDamage": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.meleeDamage/11.png"
+	},
+	"icon.firearmDamage": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.firearmDamage/11.png"
+	},
+	"icon.magicDamage": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.magicDamage/11.png"
+	},
+	"icon.perk.bloodlust": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.bloodlust/11.png"
+	},
+	"icon.perk.counterAttack": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.counterAttack/11.png"
+	},
+	"icon.perk.ironSkin": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.ironSkin/11.png"
+	},
+	"icon.perk.butcher": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.butcher/11.png"
+	},
+	"icon.weapon.seismicStomp": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.weapon.seismicStomp/11.png"
+	},
+	"icon.perk.ironBreath": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.perk.ironBreath/11.png"
+	},
+	"item.armor.parka": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.parka/11.png"
+	},
+	"item.armor.leather": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.leather/11.png"
+	},
+	"item.armor.lifevest": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.lifevest/11.png"
+	},
+	"item.armor.chainmail": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.chainmail/11.png"
+	},
+	"item.armor.kevlar": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.kevlar/11.png"
+	},
+	"item.armor.bloodcoat": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.bloodcoat/11.png"
+	},
+	"item.armor.hazmat": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.hazmat/11.png"
+	},
+	"item.armor.juggernaut": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.juggernaut/11.png"
+	},
+	"item.armor.dragonscale": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.dragonscale/11.png"
+	},
+	"item.armor.phantom": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.armor.phantom/11.png"
+	},
+	"item.legs.boots": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.boots/11.png"
+	},
+	"item.legs.skates": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.skates/11.png"
+	},
+	"item.legs.padded": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.padded/11.png"
+	},
+	"item.legs.cargo": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.cargo/11.png"
+	},
+	"item.legs.ninja": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/item.legs.ninja/11.png"
+	},
+	"icon.currency.fish": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.currency.fish/11.png"
+	},
+	"icon.currency.pearl": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.currency.pearl/11.png"
+	},
+	"icon.danger.0": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.danger.0/11.png"
+	},
+	"icon.danger.1": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.danger.1/11.png"
+	},
+	"icon.danger.2": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.danger.2/11.png"
+	},
+	"icon.danger.3": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.danger.3/11.png"
+	},
+	"icon.danger.4": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.danger.4/11.png"
+	},
+	"icon.danger.5": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.danger.5/11.png"
+	},
+	"fx.super.jack.00": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/00.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.01": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/01.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.02": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/02.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.03": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/03.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.04": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/04.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.05": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/05.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.06": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/06.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.07": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/07.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.08": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/08.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.09": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/09.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.10": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/10.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.11": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/11.png",
+		"group": "core",
+		"trim": false
+	},
+	"fx.super.jack.12": {
+		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/12.png",
+		"group": "core",
 		"trim": false
 	}
 }

@@ -1,0 +1,191 @@
+[
+	{
+		"key": "weapon.machete.t2",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single bloody machete weapon lying horizontally, blade pointing to the right, wrapped leather handle on the left, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.machete.t3",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single bloody machete weapon lying horizontally, blade pointing to the right, wrapped leather handle on the left, reinforced steel blade with a bright red glow along the edge and extra rivets on the grip, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.machete.t4",
+		"w": 64,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single bloody machete weapon lying horizontally, blade pointing to the right, wrapped leather handle on the left, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.knives.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a bundle of three steel throwing knives held horizontally, blades pointing right, leather wrapped grips on the left, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.knives.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a bundle of three steel throwing knives held horizontally, blades pointing right, leather wrapped grips on the left, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.knives.t4",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a bundle of three steel throwing knives held horizontally, blades pointing right, leather wrapped grips on the left, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.fishBoomerang.t2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a frozen fish shaped wooden boomerang, bent V shape, orange and blue, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.fishBoomerang.t3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a frozen fish shaped wooden boomerang, bent V shape, orange and blue, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.fishBoomerang.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a frozen fish shaped wooden boomerang, bent V shape, orange and blue, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.molotov.t2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a molotov cocktail green glass bottle held horizontally, neck with burning rag pointing right, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.molotov.t3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a molotov cocktail green glass bottle held horizontally, neck with burning rag pointing right, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.molotov.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a molotov cocktail green glass bottle held horizontally, neck with burning rag pointing right, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.auxPistol.t2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single small semi-automatic pistol lying horizontally, barrel pointing to the right, grip on the left, dark gunmetal, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.auxPistol.t3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single small semi-automatic pistol lying horizontally, barrel pointing to the right, grip on the left, dark gunmetal, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.auxPistol.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a single small semi-automatic pistol lying horizontally, barrel pointing to the right, grip on the left, dark gunmetal, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.iceShards.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a short frosty ice wand held horizontally, sharp blue ice crystal tip pointing right, wrapped grip on the left, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.iceShards.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a short frosty ice wand held horizontally, sharp blue ice crystal tip pointing right, wrapped grip on the left, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.iceShards.t4",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a short frosty ice wand held horizontally, sharp blue ice crystal tip pointing right, wrapped grip on the left, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.flameRing.t2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a glowing fiery ring of iron with flames around it, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.flameRing.t3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a glowing fiery ring of iron with flames around it, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.flameRing.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a glowing fiery ring of iron with flames around it, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.crossbow.t2",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a wooden crossbow held horizontally, loaded bolt pointing right, stock on the left, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.crossbow.t3",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a wooden crossbow held horizontally, loaded bolt pointing right, stock on the left, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.crossbow.t4",
+		"w": 48,
+		"h": 24,
+		"seed": 11,
+		"prompt": "a wooden crossbow held horizontally, loaded bolt pointing right, stock on the left, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.bladeWhirl.t2",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a spinning shuriken made of four curved steel blades, light wear and a thin colored edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.bladeWhirl.t3",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a spinning shuriken made of four curved steel blades, reinforced parts and a visible glow along the edge, game weapon item sprite, side view"
+	},
+	{
+		"key": "weapon.bladeWhirl.t4",
+		"w": 32,
+		"h": 32,
+		"seed": 11,
+		"prompt": "a spinning shuriken made of four curved steel blades, strongest glow, extra parts, sharpest detail, game weapon item sprite, side view"
+	}
+]
