@@ -18,10 +18,13 @@ import { HERO_IDS, type HeroId } from '../src/config/constants';
 import { ALL_CARDS, type CardDef, type Rarity } from '../src/data/cards';
 import { SUPER } from '../src/data/superpowers';
 import { UPGRADES } from '../src/data/upgrades';
+import { WEAPON_LINES } from '../src/data/weapons';
 import type { Build } from '../src/logic/build';
 import { SAVE_KEY } from '../src/logic/save';
 import { pickBest } from '../src/logic/sim/card-policy';
 import { POINT_PLANS, spendPoints } from '../src/logic/sim/run-sim';
+import { nextShopAction } from '../src/logic/sim/shop-policy';
+import type { PlayerStats } from '../src/logic/stats';
 
 function arg(name: string, fallback: string): string {
 	const i = process.argv.indexOf(`--${name}`);
@@ -84,6 +87,28 @@ export interface RunLog {
 	/** Boss HP share left the last time a boss was seen (0 = killed or never met). */
 	bossLeft: number;
 	rounds: RoundLog[];
+	/** Final weapon slots as `id:tier`. */
+	weapons: string[];
+	/** Shop economy: net Fish spent on buys and rerolls, the reroll part, Fish earned. */
+	fishSpent: number;
+	fishRerolled: number;
+	fishEarned: number;
+}
+
+/** The run-end event of src/logic/telemetry.ts, so `balance-report.ts` reads bot logs too. */
+function runEndEvent(log: RunLog): Record<string, unknown> {
+	const workshop = Object.values(upgrades);
+	return {
+		...log,
+		version: 'bot',
+		danger: Number(danger),
+		cause: log.outcome === 'bossTimeout' ? 'bossTimeout' : 'death',
+		durationS: log.gameSeconds,
+		platform: 'web',
+		source: 'bot',
+		workshop: workshop.length ? Math.max(...workshop) : 0,
+		wallS: log.wallSeconds,
+	};
 }
 
 function saveFor(hero: HeroId, level: number): string {
@@ -126,7 +151,7 @@ function saveFor(hero: HeroId, level: number): string {
 /** Installs the per-frame brain and the substep speed-up inside the page. */
 async function installBrain(page: Page, seed: number): Promise<boolean> {
 	return page.evaluate(
-		({ speed, superCharge, superLevel, react, mistakes, seed }) => {
+		({ speed, superCharge, superLevel, react, mistakes, seed, weaponInfo }) => {
 			type E = {
 				x: number;
 				y: number;
@@ -162,7 +187,7 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				controls: { move(): { x: number; y: number } };
 				obstacles?: { near(x: number, y: number, r: number): readonly unknown[] };
 				enemies: { active: E[]; boss: E | null };
-				weapons: { weapon: { range: number; kind: string } };
+				build: { weapons: { id: string; tier: number }[] };
 				hostile: {
 					shots: { x: number; y: number; vx: number; vy: number; alive: boolean }[];
 					pools?: { x: number; y: number; radius: number; alive: boolean }[];
@@ -239,7 +264,13 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				const boss = s.enemies.boss?.alive ? s.enemies.boss : null;
 				if (boss) bot.bossLeft = boss.hp / boss.maxHp;
 				// Boss: stay at weapon range while it walks, get out while it winds up/charges.
-				const w = s.weapons.weapon;
+				// The first slot leads the positioning: arcs hug the crowd, the rest keep distance.
+				const lead = s.build.weapons[0];
+				const info = lead ? weaponInfo[lead.id] : undefined;
+				const w = {
+					kind: info?.arc ? 'arc' : 'other',
+					range: info?.ranges[(lead?.tier ?? 1) - 1] ?? 150,
+				};
 				const bossRange = w.kind === 'arc' ? w.range * 0.75 : Math.min(180, w.range * 0.6);
 				const bossThreat = boss ? boss.telegraph || boss.ai.mode !== 'move' : false;
 				const look = 0.35 * s.stats.moveSpeed;
@@ -337,11 +368,85 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 			s.tweens.timeScale = speed;
 			return true;
 		},
-		{ speed, superCharge: SUPER.charge, superLevel: SUPER.unlockLevel, react, mistakes, seed },
+		{
+			speed,
+			superCharge: SUPER.charge,
+			superLevel: SUPER.unlockLevel,
+			react,
+			mistakes,
+			seed,
+			weaponInfo: Object.fromEntries(
+				WEAPON_LINES.map((w) => [
+					w.id,
+					{ arc: w.behavior === 'arc', ranges: w.tiers.map((t) => t.range) },
+				]),
+			),
+		},
 	);
 }
 
 const cardById = new Map(ALL_CARDS.map((c) => [c.id, c]));
+
+interface ShopTick {
+	round: number;
+	fish: number;
+	build: Build;
+	stats: unknown;
+	shop: {
+		offers: ({ kind: string; id: string; tier: number; price: number } | null)[];
+		locks: boolean[];
+		rerolls: number;
+	} | null;
+}
+
+/**
+ * One shop step per tick with the same policy as the sim (`nextShopAction`), driven through the
+ * scene's dev methods like the e2e does; `done` leaves the shop.
+ */
+async function playShopStep(
+	page: Page,
+	s: ShopTick,
+	eco: { spent: number; rerolled: number; refunds: number },
+): Promise<void> {
+	if (!s.shop) return;
+	const action = nextShopAction({
+		offers: s.shop.offers as never,
+		locks: s.shop.locks,
+		rerolls: s.shop.rerolls,
+		fish: s.fish,
+		round: s.round,
+		build: s.build,
+		stats: s.stats as PlayerStats,
+	});
+	const fishAfter = await page.evaluate(
+		([a]) => {
+			const g = (window as unknown as { __GAME__: import('phaser').Game }).__GAME__;
+			const game = g.scene.getScene('Game') as unknown as {
+				run: { fish: number };
+				shopBuy(i: number): void;
+				shopSell(slot: number): void;
+				shopFuse(a: number, b: number): void;
+				shopLock(i: number): void;
+				shopReroll(): void;
+				closeShop(): void;
+			};
+			if (a.type === 'buy') game.shopBuy(a.index);
+			else if (a.type === 'sell') game.shopSell(a.slot);
+			else if (a.type === 'fuse') game.shopFuse(a.a, a.b);
+			else if (a.type === 'lock') game.shopLock(a.index);
+			else if (a.type === 'reroll') game.shopReroll();
+			else game.closeShop();
+			return game.run.fish;
+		},
+		[action] as const,
+	);
+	const delta = s.fish - fishAfter;
+	if (action.type === 'buy') eco.spent += delta;
+	else if (action.type === 'reroll') {
+		eco.spent += delta;
+		eco.rerolled += delta;
+	} else if (action.type === 'sell') eco.refunds += -delta;
+}
 
 async function playRun(page: Page, hero: HeroId, level: number, seed: number): Promise<RunLog> {
 	await page.addInitScript(
@@ -360,6 +465,8 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 	let installed = false;
 	let outcome = 'timeLimit';
 	let snap = { round: 1, kills: 0, elapsed: 0, cards: [] as string[] };
+	let weapons: string[] = [];
+	const eco = { spent: 0, rerolled: 0, refunds: 0, fishLeft: 0 };
 	while ((Date.now() - start) / 1000 < maxSeconds) {
 		await page.waitForTimeout(installed ? 250 : 400);
 		if (!installed) {
@@ -373,8 +480,24 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 		const state = await page.evaluate(() => {
 			const g = (window as unknown as { __GAME__: import('phaser').Game }).__GAME__;
 			const game = g.scene.getScene('Game') as unknown as {
-				run: { round: number; kills: number; elapsed: number };
+				run: {
+					round: number;
+					kills: number;
+					elapsed: number;
+					fish: number;
+					shop: {
+						offers: ({
+							kind: string;
+							id: string;
+							tier: number;
+							price: number;
+						} | null)[];
+						locks: boolean[];
+						rerolls: number;
+					} | null;
+				};
 				build: Build;
+				stats: unknown;
 				outcome: string;
 			};
 			const active = new Set(g.scene.getScenes(true).map((x) => x.scene.key));
@@ -389,6 +512,15 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 				elapsed: game.run.elapsed,
 				outcome: game.outcome,
 				build: game.build,
+				fish: game.run.fish,
+				shop: game.run.shop
+					? {
+							offers: game.run.shop.offers,
+							locks: game.run.shop.locks,
+							rerolls: game.run.shop.rerolls,
+						}
+					: null,
+				stats: game.stats,
 				over: active.has('GameOver'),
 				picking: active.has('CardPick'),
 				offers: active.has('CardPick')
@@ -405,9 +537,15 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 			elapsed: state.elapsed,
 			cards: [...state.build.cards],
 		};
+		weapons = state.build.weapons.map((w) => `${w.id}:${w.tier}`);
+		eco.fishLeft = state.fish;
 		if (state.over) {
 			outcome = state.outcome;
 			break;
+		}
+		if (state.shop) {
+			await playShopStep(page, state, eco);
+			continue;
 		}
 		if (state.picking && state.offers.length > 0) {
 			const offers = state.offers.map((o) => ({
@@ -461,6 +599,10 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 		cards: snap.cards,
 		bossLeft,
 		rounds,
+		weapons,
+		fishSpent: eco.spent,
+		fishRerolled: eco.rerolled,
+		fishEarned: eco.spent - eco.refunds + eco.fishLeft,
 	};
 }
 
@@ -475,13 +617,13 @@ for (const level of levels) {
 		for (let i = 0; i < runs; i++) {
 			const seed = seed0 + i;
 			const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
-			page.on('pageerror', (e) => console.error(`[pageerror] ${e.message}`));
+			page.on('pageerror', (e) => console.error(`[pageerror] ${e.stack ?? e.message}`));
 			const log = await playRun(page, hero, level, seed);
 			await page.close();
 			console.log(
 				`${hero.padEnd(6)} ${String(level).padStart(3)}  ${String(seed).padStart(4)}  ${String(log.round).padStart(5)}  ${log.outcome.padEnd(10)}  ${String(log.kills).padStart(5)}  ${String(log.gameSeconds).padStart(7)}  ${String(log.wallSeconds).padStart(7)}${log.bossLeft > 0 ? `  boss ${Math.round(log.bossLeft * 100)}% left` : ''}`,
 			);
-			if (jsonOut) appendFileSync(jsonOut, `${JSON.stringify(log)}\n`);
+			if (jsonOut) appendFileSync(jsonOut, `${JSON.stringify(runEndEvent(log))}\n`);
 		}
 	}
 }

@@ -1,7 +1,16 @@
 import { WEAPON_LINE_BY_ID, type WeaponId, type WeaponTier } from '../../data/weapons';
 import { addWeapon, type Build, canFuse, fuse } from '../build';
 import type { RunState, ShopRoll } from '../run-state';
-import { buy, lock, type Offer, offerPrice, reroll, type ShopState, sellValue } from '../shop';
+import {
+	buy,
+	lock,
+	type Offer,
+	offerPrice,
+	reroll,
+	rerollPrice,
+	type ShopState,
+	sellValue,
+} from '../shop';
 import type { PlayerStats } from '../stats';
 import { weaponDps } from './run-sim';
 
@@ -170,4 +179,73 @@ function sellGain(offer: Offer, build: Build, stats: PlayerStats, round: number)
 	if (build.weapons.length < 6 || canJoin(offer, build)) return 0;
 	const out = build.weapons[weakestSlot(build, stats)];
 	return out ? sellValue(offerPrice('weapon', out.tier, round)) : 0;
+}
+
+export type ShopAction =
+	| { type: 'fuse'; a: number; b: number }
+	| { type: 'sell'; slot: number }
+	| { type: 'buy'; index: number }
+	| { type: 'lock'; index: number }
+	| { type: 'reroll' }
+	| { type: 'done' };
+
+export interface ShopView {
+	offers: readonly (Offer | null)[];
+	locks: readonly boolean[];
+	rerolls: number;
+	fish: number;
+	round: number;
+	build: Build;
+	stats: PlayerStats;
+}
+
+/**
+ * The same choices as `playShop`, one step at a time and without mutating anything, so the real-game
+ * bot can run them through the scene's `shopBuy/shopSell/shopFuse/shopLock/shopReroll/closeShop`:
+ * call it, perform the action, read the state again, repeat until `done`.
+ */
+export function nextShopAction(v: ShopView): ShopAction {
+	const { build, stats } = v;
+	for (let a = 0; a < build.weapons.length; a++)
+		for (let b = a + 1; b < build.weapons.length; b++)
+			if (canFuse(build, a, b)) return { type: 'fuse', a, b };
+
+	let best = -1;
+	let bestEff = 0;
+	v.offers.forEach((o, i) => {
+		if (!o || o.price > v.fish + sellGain(o, build, stats, v.round)) return;
+		const eff = offerValue(o, build, stats) / o.price;
+		if (eff > bestEff) {
+			bestEff = eff;
+			best = i;
+		}
+	});
+	const offer = v.offers[best];
+	if (offer) {
+		if (build.weapons.length >= 6 && !canJoin(offer, build))
+			return { type: 'sell', slot: weakestSlot(build, stats) };
+		return { type: 'buy', index: best };
+	}
+
+	if (!v.locks.some(Boolean)) {
+		let lockIdx = -1;
+		let lockVal = 0;
+		v.offers.forEach((o, i) => {
+			const val = o ? offerValue(o, build, stats) : 0;
+			if (val > lockVal) {
+				lockVal = val;
+				lockIdx = i;
+			}
+		});
+		if (lockIdx >= 0) return { type: 'lock', index: lockIdx };
+	}
+	const open = v.offers.filter((o): o is Offer => o !== null);
+	const avg = open.reduce((a, o) => a + o.price, 0) / Math.max(1, open.length);
+	if (
+		v.rerolls < SHOP_POLICY.maxRerolls &&
+		v.fish > SHOP_POLICY.rerollRichness * avg &&
+		v.fish >= rerollPrice(v.round, v.rerolls)
+	)
+		return { type: 'reroll' };
+	return { type: 'done' };
 }

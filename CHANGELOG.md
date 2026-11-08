@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Balance tooling (SDD-013): `scripts/balance-report.ts` turns sim/bot JSONL into a goals #1–#8 report, `sim.ts --jsonl` covers hero × level × Danger, local opt-in telemetry (`src/logic/telemetry.ts`), and the playtest bot plays the shop step by step with the sim's policy.
+
 - In-run React screens behind `?reactUi=1`: level-up cards with card reroll, pause with settings, unlocks and game over with Pearls earned; shop gear and potions are bought through `purchase`, and shop potions are drunk at the next round start. `bun run e2e -- --react` walks the whole React flow.
 
 - The merchant talks in a speech bubble (open, buy, out of Fish, reroll, fuse, leave) in four languages; the shop layout fits 1366×768 up to 2560×1440.

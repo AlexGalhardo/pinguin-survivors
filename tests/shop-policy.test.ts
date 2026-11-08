@@ -1,10 +1,19 @@
 import { describe, expect, test } from 'bun:test';
 import { HEROES } from '../src/data/heroes';
-import { addWeapon, emptyBuild } from '../src/logic/build';
+import { addWeapon, emptyBuild, fuse } from '../src/logic/build';
 import { Rng } from '../src/logic/rng';
 import { createRunState, type ShopRoll, weaponCandidates } from '../src/logic/run-state';
-import type { Offer, ShopState } from '../src/logic/shop';
-import { fuseAll, offerValue, playShop } from '../src/logic/sim/shop-policy';
+import {
+	buy,
+	lock,
+	type Offer,
+	offerPrice,
+	reroll,
+	rollOffers,
+	type ShopState,
+	sellValue,
+} from '../src/logic/shop';
+import { fuseAll, nextShopAction, offerValue, playShop } from '../src/logic/sim/shop-policy';
 import { heroStats } from '../src/logic/stats';
 
 const stats = heroStats(HEROES.jack, 1, {});
@@ -96,5 +105,73 @@ describe('shop policy', () => {
 		]);
 		playShop({ run, build, stats, roll: roll() });
 		expect(run.shop?.locks.some(Boolean)).toBe(true);
+	});
+});
+
+describe('nextShopAction (real-game bot)', () => {
+	test('stepwise play ends, never overspends and fuses equal pairs', () => {
+		for (let seed = 0; seed < 40; seed++) {
+			const build = emptyBuild();
+			addWeapon(build, 'machete', 1);
+			const run = createRunState(HEROES.jack, { seed });
+			run.round = 3 + (seed % 20);
+			run.fish = 20 + seed * 9;
+			const r = roll(seed);
+			run.shop = open(rollOffers(r.rng, run.round, r.ctx, r.pool, []));
+			for (let step = 0; step < 60; step++) {
+				const shop = run.shop as ShopState;
+				const a = nextShopAction({
+					offers: shop.offers,
+					locks: shop.locks,
+					rerolls: shop.rerolls,
+					fish: run.fish,
+					round: run.round,
+					build,
+					stats,
+				});
+				if (a.type === 'done') break;
+				if (a.type === 'fuse') expect(fuse(build, a.a, a.b)).toBe(true);
+				else if (a.type === 'sell') {
+					const w = build.weapons[a.slot];
+					run.fish += sellValue(offerPrice('weapon', w?.tier ?? 1, run.round));
+					build.weapons.splice(a.slot, 1);
+				} else if (a.type === 'buy') {
+					const bought = buy(shop, run.fish, a.index);
+					expect(bought).not.toBeNull();
+					run.shop = bought?.state ?? shop;
+					run.fish = bought?.fish ?? run.fish;
+					addWeapon(
+						build,
+						(bought?.offer.id ?? 'machete') as never,
+						(bought?.offer.tier ?? 1) as never,
+					);
+				} else if (a.type === 'lock') run.shop = lock(shop, a.index);
+				else {
+					const rr = reroll(shop, run.fish, r.rng, run.round, r.ctx, r.pool);
+					expect(rr).not.toBeNull();
+					run.shop = rr?.state ?? shop;
+					run.fish = rr?.fish ?? run.fish;
+				}
+				expect(run.fish).toBeGreaterThanOrEqual(0);
+				expect(build.weapons.length).toBeLessThanOrEqual(6);
+				expect(step).toBeLessThan(59);
+			}
+		}
+	});
+
+	test('with no Fish and nothing good to keep, it is done', () => {
+		const build = emptyBuild();
+		addWeapon(build, 'machete', 1);
+		expect(
+			nextShopAction({
+				offers: [null, null, null, null],
+				locks: [false, false, false, false],
+				rerolls: 0,
+				fish: 0,
+				round: 1,
+				build,
+				stats,
+			}),
+		).toEqual({ type: 'done' });
 	});
 });
