@@ -1,22 +1,35 @@
 // Smoke test of the packaged Windows build (SDD-007 A3): launches the .exe muted with a remote
 // debugging port, drives the React UI over CDP (menu, run, suspend pause, quit) and checks that the
 // window state file was written. Needs `bun run build:desktop` first.
-// Usage: bun scripts/smoke-desktop.ts [full|demo]
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+// Usage: bun scripts/smoke-desktop.ts [full|demo]. The demo variant stops at the death screen:
+// DemoEnd (wishlist button) is covered by `bun run e2e -- --demo`, since a packaged run has no debug hooks
+// and a standing penguin survives the demo rounds.
+import { existsSync, mkdtempSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
 
 const flavor = process.argv[2] === 'demo' ? 'demo' : 'full';
-const exe = `apps/desktop/dist/${flavor}/win-unpacked/Pinguin Survivors.exe`;
+const exe = `apps/desktop/dist/${flavor}/win-unpacked/Pinguin Survivors${flavor === 'demo' ? ' Demo' : ''}.exe`;
 if (!existsSync(exe)) throw new Error(`build first: ${exe} not found`);
 const port = 9333;
-const stateFile = join(process.env.APPDATA ?? '', 'pinguin-survivors-desktop', 'window.json');
-rmSync(stateFile, { force: true });
+// A fresh profile per run: no saved run or language leaks in from earlier launches.
+const profile = mkdtempSync(join(tmpdir(), 'pinguin-smoke-'));
+const stateFile = join(profile, 'window.json');
 
-const proc = Bun.spawn([exe, `--remote-debugging-port=${port}`, '--mute-audio', '--lang=en-US'], {
-	stdout: 'ignore',
-	stderr: 'ignore',
-});
+const proc = Bun.spawn(
+	[
+		exe,
+		`--remote-debugging-port=${port}`,
+		`--user-data-dir=${profile}`,
+		'--mute-audio',
+		'--lang=en-US',
+	],
+	{
+		stdout: 'ignore',
+		stderr: 'ignore',
+	},
+);
 
 function fail(message: string): never {
 	console.error(`FAIL ${message}`);
@@ -42,7 +55,9 @@ const see = async (label: string, text: string | RegExp, timeout = 20000) => {
 	try {
 		await ui.getByText(text).first().waitFor({ state: 'visible', timeout });
 	} catch {
-		fail(`${label}: "${text}" not shown`);
+		fail(
+			`${label}: "${text}" not shown (ui: ${((await ui.textContent()) ?? '').slice(0, 200)})`,
+		);
 	}
 	console.log(`ok   ${label}`);
 };

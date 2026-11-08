@@ -85,6 +85,7 @@ function Offer(props: {
 			</div>
 		);
 	}
+	const offerBox = compact ? 48 : offer.kind === 'weapon' ? 128 : 48;
 	const tint = tierColor(offer.kind, offer.tier);
 	const affordable = props.fish >= offer.price;
 	return (
@@ -92,12 +93,12 @@ function Offer(props: {
 			className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-stretch gap-2 rounded border-2 bg-night/80 p-2"
 			style={{ borderColor: tint || undefined }}
 		>
-			<AtlasIcon
-				frames={offerFrames(offer)}
-				size={compact ? 48 : offer.kind === 'weapon' ? 128 : 48}
-				title={offerName(offer)}
-				className="self-center"
-			/>
+			<span
+				className="flex shrink-0 items-center justify-center self-center"
+				style={{ width: offerBox, height: offerBox }}
+			>
+				<AtlasIcon frames={offerFrames(offer)} size={offerBox} title={offerName(offer)} />
+			</span>
 			<div className="flex min-w-0 flex-1 flex-col justify-center">
 				<div
 					className={`truncate font-title text-[1.15em] font-bold ${offer.kind === 'gear' ? (GEAR_RARITY_TINT[offer.tier - 1] ?? '') : ''}`}
@@ -147,6 +148,7 @@ function WeaponCard(props: {
 			</div>
 		);
 	}
+	const weaponBox = compact ? 48 : 128;
 	const tint = toCss(WEAPON_TIER_TINT[weapon.tier]);
 	return (
 		<div
@@ -154,10 +156,12 @@ function WeaponCard(props: {
 			style={{ borderColor: tint }}
 		>
 			<div className="flex items-center gap-2 truncate font-bold" style={{ color: tint }}>
-				<AtlasIcon
-					frames={weaponFrames(weapon.id, weapon.tier)}
-					size={compact ? 48 : 128}
-				/>
+				<span
+					className="flex shrink-0 items-center justify-center"
+					style={{ width: weaponBox, height: weaponBox }}
+				>
+					<AtlasIcon frames={weaponFrames(weapon.id, weapon.tier)} size={weaponBox} />
+				</span>
 				{weaponName(weapon.id)} · {toRoman(weapon.tier)}
 			</div>
 			<div className="flex gap-1">
