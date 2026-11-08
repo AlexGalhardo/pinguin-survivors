@@ -1,19 +1,30 @@
 /**
- * Performance budget check (PLAN 3.3): 300 enemies + 2,000 ground decals + lights at 2560×1080.
+ * Performance budget check (SDD-001 RF-10, A5): 300 enemies + 2,000 ground decals + lights,
+ * 1920×1080 by default, in the arena of `--round` (40 = the 40×40 cap).
  * Opens a real (headed) Chrome so WebGL runs on the GPU — headless Chromium falls back to
  * software rendering and reports single-digit FPS. Needs `bun run dev` running.
- * Usage: bun scripts/perf.ts [baseUrl=http://localhost:5173] [seconds=10]
+ * Usage: bun scripts/perf.ts [--round 40] [--seconds 10] [--width 1920] [--height 1080]
+ *        [--base http://localhost:5173]
  */
 import { chromium } from 'playwright';
 
-const base = process.argv[2] ?? 'http://localhost:5173';
-const seconds = Number(process.argv[3] ?? 10);
+function flag(name: string, fallback: string): string {
+	const i = process.argv.indexOf(`--${name}`);
+	return i >= 0 && process.argv[i + 1] ? (process.argv[i + 1] as string) : fallback;
+}
+const base = flag('base', 'http://localhost:5173');
+const round = Number(flag('round', '40'));
+const seconds = Number(flag('seconds', '10'));
+const width = Number(flag('width', '1920'));
+const height = Number(flag('height', '1080'));
 
 const browser = await chromium.launch({ channel: 'chrome', headless: false });
-const page = await browser.newPage({ viewport: { width: 2560, height: 1080 } });
+const page = await browser.newPage({ viewport: { width, height } });
 const errors: string[] = [];
 page.on('pageerror', (e) => errors.push(e.message));
-await page.goto(`${base}/?skipMenu=1&hero=lucia&round=40&seed=1&god=1`, { waitUntil: 'load' });
+await page.goto(`${base}/?skipMenu=1&hero=lucia&round=${round}&seed=1&god=1`, {
+	waitUntil: 'load',
+});
 await page.waitForFunction(() => {
 	const g = (window as unknown as { __GAME__?: import('phaser').Game }).__GAME__;
 	return g?.scene.isActive('Game') ?? false;
@@ -69,4 +80,6 @@ const result = await page.evaluate(async (secs) => {
 }, seconds);
 
 await browser.close();
-console.log(JSON.stringify({ ...result, decals: 2000, viewport: '2560x1080', errors }));
+console.log(
+	JSON.stringify({ ...result, decals: 2000, round, viewport: `${width}x${height}`, errors }),
+);
