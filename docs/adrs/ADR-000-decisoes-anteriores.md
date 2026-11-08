@@ -1,7 +1,8 @@
-# Decisões do usuário — Pinguin Survivors
+# ADR-000 — Registro das decisões anteriores à virada comercial (P-01…P-68)
 
-Registro das decisões de produto tomadas com o usuário (entrevista de 2026-09-27, 36 perguntas).
-Quando uma decisão mudar, **edite a linha** e registre a data. As decisões do jogo anterior (Starfall Survivors, D-01…D-56) ficam na branch `starfall-survivors-legacy`.
+**Data** 2026-09-27 (consolidado em 2026-11-08) · **Status** Histórico: vale onde não for superado por um ADR numerado ou por [../brainstorming.md](../brainstorming.md) (B-01…B-31). Superações principais: P-04/P-06/P-11/P-35 → ADR-003; P-20/P-21/P-63/P-67 → ADR-005; P-23/P-27 → ADR-006/007; P-62 → ADR-008; P-31/P-33 (vozes) → ADR-009; P-03/P-46 → ADR-015.
+
+Registro das decisões de produto tomadas com o desenvolvedor (entrevista de 2026-09-27, 36 perguntas, e pedidos do playdev do mesmo dia). As decisões do jogo anterior (Starfall Survivors, D-01…D-56) ficam na branch `starfall-survivors-legacy`.
 
 | # | Decisão | Motivo / nota |
 |---|---|---|
