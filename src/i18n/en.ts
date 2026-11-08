@@ -1,6 +1,7 @@
 import { achEn } from './achievements.en';
 import { cardsEn } from './cards.en';
 import { gearEn } from './gear.en';
+import { menusEn } from './menus.en';
 import { screensEn } from './screens.en';
 import { shopEn } from './shop.en';
 import { weaponsEn } from './weapons.en';
@@ -9,6 +10,7 @@ export const en = {
 	...achEn,
 	...cardsEn,
 	...gearEn,
+	...menusEn,
 	...screensEn,
 	...shopEn,
 	...weaponsEn,
