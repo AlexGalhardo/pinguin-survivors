@@ -1,5 +1,5 @@
 // Release in the vukem scheme (ADR-015, SDD-011 RF-05): gates → bump → CHANGELOG → commit → tag →
-// push → GitHub release. Usage: bun scripts/release.ts 0.0.12 [--dry-run]
+// push → GitHub release. Usage: bun scripts/release.ts 0.0.12 [--dry-run] [--stable]
 import { $ } from 'bun';
 import { REPO_URL, releaseNotes } from './lib/release-notes';
 
@@ -10,7 +10,8 @@ if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
 	process.exit(1);
 }
 const tag = `v${version}`;
-const prerelease = version.startsWith('0.');
+// 0.x releases are pre-releases unless --stable marks one as the repository's Latest (from 0.2.0 on).
+const prerelease = version.startsWith('0.') && !process.argv.includes('--stable');
 const today = new Date().toISOString().slice(0, 10);
 
 if ((await $`git status --porcelain`.text()).trim() !== '') {
@@ -62,6 +63,6 @@ await $`git tag -a ${tag} -m ${version}`;
 await $`git push origin main --follow-tags`.quiet();
 const file = `${process.env.TEMP ?? '/tmp'}/notes-${version}.md`;
 await Bun.write(file, notes);
-const flags = prerelease ? ['--prerelease'] : [];
+const flags = prerelease ? ['--prerelease'] : ['--latest'];
 await $`gh release create ${tag} --title ${tag} --notes-file ${file} ${flags}`;
 console.log(`released ${tag}`);

@@ -35,7 +35,7 @@
 | 2026-12-15 | 🛑 Conta Steamworks criada; página da Steam em rascunho | dev |
 | 2026-12-20 | 6 slots, loja, cartas de level-up, Fish/Pérolas jogáveis com placeholders | M2 → `0.0.13` |
 | 2027-01-10 | **Inscrição no Next Fest fecha (23:59 PST)**; UI React completa; Danger 0–5 | M3 → `0.1.0` |
-| 2027-01-17 | Arte top-down (chão, bordas, props, lojista, tiers) e áudio da loja | M4 → `0.1.1` |
+| 2027-01-17 | Arte top-down (chão, bordas, props, lojista, tiers) e áudio da loja | M4 → `0.2.0` (Latest) |
 | 2027-01-25 | Build da demo enviado à Steam (data de terceiros; 08/02 é a oficial para itens em revisão) | M5 |
 | 2027-02-08 | **Itens do Next Fest em revisão**; site no ar com `/demo`; Electron Windows | M5 → `0.1.2`–`0.1.3` |
 | 2027-02-22 → 03-01 | **Steam Next Fest** | M6 → `0.1.4`+ hotfixes |
@@ -214,7 +214,7 @@ Specs: [SDD-012](docs/sdds/SDD-012-arte-topdown-e-vfx.md), [docs/audio.md](docs/
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): screenshot `jack-super-vfx.png` gerado pelo Senior C; 13 ≥ 12 frames.
 - [ ] **T4.10** Registro: `docs/visual.md` §10–§13 e `docs/audio.md` §6–§7 com saldos · Resp.: estagiario · Assert: saldo PixelLab após M4 ≥ 3.500 (mês de janeiro). · Progresso (2026-11-08): saldos registrados — PixelLab 2.320 → 2.194 (126 gerações) em `docs/visual.md` §10; ElevenLabs 58.198 → 57.679 (519 créditos) em `docs/audio.md` §6. O assert (saldo ≥ 3.500 após o M4) depende da renovação mensal.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T4.11** Release `0.1.1`.
+- [ ] **T4.11** Release `0.2.0` como **Latest**, fora de pre-release (decisão do desenvolvedor, 2026-11-08): `bun scripts/release.ts 0.2.0 --stable`.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
 ### Auditoria do marco M4

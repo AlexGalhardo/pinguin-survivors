@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `scripts/release.ts --stable` publishes a 0.x release as the repository's Latest instead of a pre-release; releases from 0.2.0 on use it (SDD-011 1.1).
+
 - Runs start with 10 Fish so the first shop can sell a tier I weapon: early deaths in round 3 came from runs that never bought a weapon. Balance 1.0 closes with goals #1–#8 met or justified.
 
 - Balance goals: #2 allows up to 5% of runs to die before round 12 and #5 is measured per hero; the Lightning Totem moves to the support set; the demo length counts 45 s per shop/cards screen.
