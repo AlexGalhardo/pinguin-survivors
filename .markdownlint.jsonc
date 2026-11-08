@@ -1,0 +1,9 @@
+{
+	// markdownlint config shared by `bun run lint:md` (markdownlint-cli2) and editors.
+	"default": true,
+	"MD013": false, // line length: tables and long sentences in PT-BR
+	"MD024": { "siblings_only": true }, // repeated headings allowed across sections (Keep a Changelog)
+	"MD033": { "allowed_elements": ["div", "h1", "h3", "strong", "a", "img", "br"] }, // README header
+	"MD041": false, // first line may be a blockquote or <div>
+	"MD060": false // table pipe spacing: tables use the compact `|---|` separator row
+}
