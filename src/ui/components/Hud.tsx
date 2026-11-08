@@ -171,6 +171,7 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 					})()}
 				<div className="flex gap-1">
 					{hud.weapons.slice(0, 6).map((w, i) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: slots are positional and the same weapon can fill two of them
 						<WeaponSlot key={`${w.id}-${i}`} w={w} />
 					))}
 				</div>
