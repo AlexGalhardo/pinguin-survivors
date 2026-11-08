@@ -12,13 +12,19 @@ import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
 import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
+import { GEAR_SLOTS } from '../data/equipment';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { ROUNDS } from '../data/rounds';
 import { levelScale, PERKS, SECONDARIES, type SecondaryId } from '../data/secondaries';
 import type { SetModifier } from '../data/sets';
 import { SUPER } from '../data/superpowers';
-import { MAX_WEAPON_SLOTS, type WeaponId } from '../data/weapons';
+import {
+	MAX_WEAPON_SLOTS,
+	WEAPON_LINE_BY_ID,
+	type WeaponId,
+	type WeaponTier,
+} from '../data/weapons';
 import { Enemy } from '../entities/Enemy';
 import { Hero } from '../entities/Hero';
 import { WeaponRing } from '../entities/WeaponRing';
@@ -30,8 +36,11 @@ import {
 	addWeapon,
 	applyCard,
 	type Build,
+	canFuse,
 	emptyBuild,
+	fuse,
 	setBonuses,
+	setCounts,
 	type WeaponInstance,
 } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
@@ -41,17 +50,24 @@ import { emptyGear, pickUpGear, rollGearDrop, rollHealDrop } from '../logic/equi
 import { inArc } from '../logic/geometry';
 import { ObstacleField, pushOut } from '../logic/obstacles';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
-import { addXp, type LevelState, orbXp, roundEndFish } from '../logic/progression';
+import { addXp, type LevelState, orbXp } from '../logic/progression';
 import { depthOf, inputToWorld, worldToScreen } from '../logic/projection';
 import { Rng, randomSeed } from '../logic/rng';
-import { cycle, isBossRound } from '../logic/round';
+import { isBossRound } from '../logic/round';
 import {
 	countRun,
 	createRunState,
 	damageHero,
+	endRound,
+	finishRun,
 	healHero,
+	leaveShop,
+	queueLevelUps,
 	type RunState,
+	resolveLevelUp,
+	type ShopRoll,
 	startRound,
+	weaponCandidates,
 } from '../logic/run-state';
 import {
 	addFeat,
@@ -60,6 +76,14 @@ import {
 	type RunRecord,
 	recordRunEnd,
 } from '../logic/save';
+import {
+	buy as buyOffer,
+	lock as lockOffer,
+	offerPrice,
+	rerollPrice,
+	reroll as rerollShop,
+	sellValue,
+} from '../logic/shop';
 import { nextSpeed } from '../logic/speed';
 import { heroStats, type PlayerStats, replaceModifiers } from '../logic/stats';
 import { addCharge, chargeFor, superCost, superReady, superUnlocked } from '../logic/superpower';
@@ -75,6 +99,8 @@ import { ProjectilePool } from '../systems/ProjectilePool';
 import { SecondarySystem } from '../systems/SecondarySystem';
 import { SuperpowerSystem } from '../systems/SuperpowerSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
+import { bindCommands } from '../ui/commands';
+import { publishShop, type ShopView } from '../ui/shop-bridge';
 import { Arena } from '../world/Arena';
 import type { CardPickData } from './CardPickScene';
 import type { UnlockData } from './UnlockScene';
@@ -235,6 +261,7 @@ export class GameScene extends Phaser.Scene {
 				round: params.round,
 				tier,
 				difficulty: params.difficulty ?? save.settings.difficulty,
+				cardRerolls: this.stats.cardRerolls,
 			});
 			this.run.maxHp = this.stats.maxHp;
 			this.run.hp = this.stats.maxHp;
@@ -369,7 +396,21 @@ export class GameScene extends Phaser.Scene {
 		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
 
 		this.scene.launch('Hud');
-		this.events.once('shutdown', () => this.arena.destroy());
+		this.run.phase ??= 'round';
+		this.run.pendingLevelUps ??= 0;
+		bindCommands({
+			buy: (i) => this.shopBuy(i),
+			reroll: () => this.shopReroll(),
+			lock: (i) => this.shopLock(i),
+			sell: (slot) => this.shopSell(slot),
+			fuse: (a, b) => this.shopFuse(a, b),
+			closeShop: () => this.closeShop(),
+		});
+		this.events.once('shutdown', () => {
+			bindCommands({});
+			publishShop(null);
+			this.arena.destroy();
+		});
 	}
 
 	override update(_time: number, deltaMs: number): void {
@@ -383,6 +424,12 @@ export class GameScene extends Phaser.Scene {
 			this.deadFor += dt;
 			this.fx.update(dt);
 			if (this.deadFor >= DEATH_DELAY) this.endRun();
+			return;
+		}
+		if (this.run.phase !== 'round') {
+			// Level-up cards or the shop: the world is frozen, only effects keep playing.
+			this.fx.update(dt);
+			this.arena.update();
 			return;
 		}
 		const run = this.run;
@@ -827,8 +874,8 @@ export class GameScene extends Phaser.Scene {
 		this.pickups.drop('xp', orbXp(e.def.xp, run.round) * this.mods.rewards, e.x, e.y);
 		const f = ECONOMY.fish;
 		let fish = 0;
-		if (kind === 'boss') fish = f.bossPerCycle * (1 + cycle(run.round));
-		else if (e.elite === 'orange') fish = f.eliteOrange;
+		// Boss Fish are paid at the end of the round (`endRound`), not dropped.
+		if (e.elite === 'orange') fish = f.eliteOrange;
 		else if (e.elite === 'purple') fish = f.elitePurple;
 		else if (this.rng.next() < f.commonChance) fish = 1;
 		// Normal skips the extra roll so seeded runs keep the same RNG sequence.
@@ -885,6 +932,7 @@ export class GameScene extends Phaser.Scene {
 		const gained = addXp(this.level, xp);
 		if (gained > 0) {
 			this.levelsGained += gained;
+			queueLevelUps(this.run, gained);
 			this.fx.banner(this.hero.x, this.hero.y, 'fx.levelUp');
 			this.fx.play('sfx.levelUp');
 			if (!wasUnlocked && this.superIsUnlocked)
@@ -984,7 +1032,7 @@ export class GameScene extends Phaser.Scene {
 		if (run.timeLeft <= 0) this.finishRound();
 	}
 
-	/** Clears the arena, banks the round, then pauses for the 3 cards (P-23). */
+	/** Clears the arena, banks the round (Fish, Pearls) and goes to the level-up cards or the shop. */
 	private finishRound(): void {
 		for (const e of [...this.enemies.active]) this.fx.bloodAt(e.x, e.y, e.radius / 10);
 		this.enemies.clear();
@@ -993,22 +1041,53 @@ export class GameScene extends Phaser.Scene {
 		this.hostile.clear();
 		this.secondaries.clear();
 		healHero(this.run, this.run.maxHp * ROUNDS.roundEndHeal);
-		this.run.fish += Math.round(roundEndFish(this.run.round) * this.mods.rewards);
+		// Collecting the last orbs can still level up: it must be queued before `endRound`.
 		this.pickups.collectAll();
-		const offers = drawCards(this.rng, {
-			hero: this.run.hero,
-			round: this.run.round + 1,
-			luck: this.stats.luck,
-			build: this.build,
-		});
-		const data: CardPickData = {
-			round: this.run.round,
-			offers,
-			build: this.build,
-			onPick: (i) => this.pickCard(offers[i]),
+		const before = this.run.fish;
+		endRound(this.run, this.shopRoll(), this.stats.harvesting);
+		this.run.fish = before + Math.round((this.run.fish - before) * this.mods.rewards);
+		this.advanceRoundPhase();
+	}
+
+	private poolCache: { hero: HeroId; pool: ReturnType<typeof weaponCandidates> } | null = null;
+
+	private shopRoll(): ShopRoll {
+		const hero = this.run.hero;
+		if (this.poolCache?.hero !== hero) this.poolCache = { hero, pool: weaponCandidates(hero) };
+		return {
+			rng: this.rng,
+			pool: this.poolCache.pool,
+			ctx: {
+				hero,
+				buildSets: Object.keys(setCounts(this.build)),
+				luck: this.stats.luck,
+			},
 		};
-		this.scene.pause();
-		this.scene.launch('CardPick', data);
+	}
+
+	/** Pending level-ups come first (one card pick each), then the shop (SDD-003 RF-01, RF-05). */
+	private advanceRoundPhase(): void {
+		if (this.run.phase === 'cards') {
+			const offers = drawCards(this.rng, {
+				hero: this.run.hero,
+				round: this.run.round + 1,
+				luck: this.stats.luck,
+				build: this.build,
+			});
+			const data: CardPickData = {
+				round: this.run.round,
+				offers,
+				build: this.build,
+				onPick: (i) => this.pickCard(offers[i]),
+			};
+			this.scene.pause();
+			this.scene.launch('CardPick', data);
+			return;
+		}
+		if (this.run.phase === 'shop') {
+			if (this.scene.isPaused()) this.scene.resume();
+			this.publishShopView();
+		}
 	}
 
 	private pickCard(offer: CardOffer | undefined): void {
@@ -1022,7 +1101,135 @@ export class GameScene extends Phaser.Scene {
 				healHero(this.run, result.maxHpDelta);
 			}
 		}
-		startRound(this.run, this.run.round + 1);
+		resolveLevelUp(this.run, this.shopRoll());
+		// CardPick stops itself right after this callback: open the next scene a tick later.
+		setTimeout(() => this.advanceRoundPhase(), 0);
+	}
+
+	// --- Shop (SDD-003): commands come from the React UI through `bindCommands` -----------------
+
+	private mergeSlot(id: string, tier: number): number {
+		return this.build.weapons.findIndex((w) => w.id === id && w.tier === tier && w.tier < 4);
+	}
+
+	private publishShopView(): void {
+		const run = this.run;
+		const shop = run.shop;
+		if (!shop) {
+			publishShop(null);
+			return;
+		}
+		const full = this.build.weapons.length >= MAX_WEAPON_SLOTS;
+		const fusions: ShopView['fusions'] = [];
+		const w = this.build.weapons;
+		for (let a = 0; a < w.length; a++)
+			for (let b = a + 1; b < w.length; b++)
+				if (canFuse(this.build, a, b))
+					fusions.push({
+						a,
+						b,
+						id: (w[a] as WeaponInstance).id,
+						toTier: ((w[a] as WeaponInstance).tier + 1) as 2 | 3 | 4,
+					});
+		const price = rerollPrice(run.round, shop.rerolls);
+		publishShop({
+			round: run.round,
+			fish: run.fish,
+			offers: shop.offers.map((o, index) =>
+				o
+					? {
+							index,
+							kind: o.kind,
+							id: o.id,
+							tier: o.tier,
+							price: o.price,
+							sets:
+								o.kind === 'weapon'
+									? [...WEAPON_LINE_BY_ID[o.id as WeaponId].sets]
+									: [],
+							locked: shop.locks[index] ?? false,
+							affordable:
+								run.fish >= o.price &&
+								o.kind === 'weapon' &&
+								(!full || this.mergeSlot(o.id, o.tier) >= 0),
+						}
+					: null,
+			),
+			rerollPrice: price,
+			canReroll: run.fish >= price,
+			weapons: w.map((x, slot) => ({
+				slot,
+				id: x.id,
+				tier: x.tier,
+				sellValue: sellValue(offerPrice('weapon', x.tier, run.round)),
+			})),
+			maxWeapons: MAX_WEAPON_SLOTS,
+			fusions,
+			gear: GEAR_SLOTS.map((slot) => run.gear?.equipped[slot] ?? null),
+		});
+	}
+
+	private shopBuy(index: number): void {
+		const run = this.run;
+		const shop = run.shop;
+		const offer = shop?.offers[index];
+		if (!shop || !offer || run.phase !== 'shop' || offer.kind !== 'weapon') return;
+		const merge = this.mergeSlot(offer.id, offer.tier);
+		if (this.build.weapons.length >= MAX_WEAPON_SLOTS && merge < 0) return;
+		const bought = buyOffer(shop, run.fish, index);
+		if (!bought) return;
+		run.shop = bought.state;
+		run.fish = bought.fish;
+		const id = offer.id as WeaponId;
+		const tier = offer.tier as WeaponTier;
+		// With the bar full, the copy is merged straight into the one already owned.
+		if (!addWeapon(this.build, id, tier)) {
+			this.build.weapons[merge] = { id, tier: (tier + 1) as WeaponTier };
+			this.recordFusion(tier + 1);
+		}
+		this.refreshSetBonuses();
+		this.publishShopView();
+	}
+
+	private shopReroll(): void {
+		const run = this.run;
+		if (!run.shop || run.phase !== 'shop') return;
+		const roll = this.shopRoll();
+		const r = rerollShop(run.shop, run.fish, roll.rng, run.round, roll.ctx, roll.pool);
+		if (!r) return;
+		run.shop = r.state;
+		run.fish = r.fish;
+		this.publishShopView();
+	}
+
+	private shopLock(index: number): void {
+		if (!this.run.shop || this.run.phase !== 'shop') return;
+		this.run.shop = lockOffer(this.run.shop, index);
+		this.publishShopView();
+	}
+
+	private shopSell(slot: number): void {
+		const w = this.build.weapons[slot];
+		if (!w || this.run.phase !== 'shop') return;
+		this.run.fish += sellValue(offerPrice('weapon', w.tier, this.run.round));
+		this.build.weapons.splice(slot, 1);
+		this.refreshSetBonuses();
+		this.publishShopView();
+	}
+
+	private shopFuse(a: number, b: number): void {
+		if (this.run.phase !== 'shop' || !fuse(this.build, a, b)) return;
+		const merged = this.build.weapons[Math.min(a, b)] as WeaponInstance;
+		this.recordFusion(merged.tier);
+		this.refreshSetBonuses();
+		this.publishShopView();
+	}
+
+	/** "Next round": leaves the shop, grows the arena and starts round N+1 (autosaved). */
+	private closeShop(): void {
+		if (this.run.phase !== 'shop') return;
+		leaveShop(this.run);
+		publishShop(null);
 		this.arena.grow(this.run.round);
 		if (isBiomeStart(this.run.round)) this.enterBiome();
 		this.syncArena();
@@ -1035,7 +1242,6 @@ export class GameScene extends Phaser.Scene {
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
 		this.saveSnapshot();
-		this.scene.resume();
 	}
 
 	/**
@@ -1105,9 +1311,12 @@ export class GameScene extends Phaser.Scene {
 		const heroSave = save.heroes[run.hero];
 		heroSave.level = this.level.level;
 		heroSave.xp = this.level.xp;
-		save.fish += run.fish;
+		const fishEarned = run.fish;
+		// Fish never leave the run: they convert to Pearls here (SDD-003 RF-06, RF-07).
+		finishRun(run, save);
+		publishShop(null);
 		returnUnused(this.potions, save.potions);
-		run.counters.fishEarned = run.fish;
+		run.counters.fishEarned = fishEarned;
 		run.counters.damageDealt = run.damageDealt;
 		run.counters.secondsPlayed = run.elapsed;
 		run.counters.gibs = this.fx.gibCount;
@@ -1123,7 +1332,7 @@ export class GameScene extends Phaser.Scene {
 			durationSec: Math.round(run.elapsed),
 			kills: run.kills,
 			damageDealt: Math.round(run.damageDealt),
-			fishEarned: run.fish,
+			fishEarned,
 			xpEarned: Math.round(run.xp),
 			levelsGained: this.levelsGained,
 			secondaries: Object.entries(this.build.secondaries).map(([id, level]) => ({

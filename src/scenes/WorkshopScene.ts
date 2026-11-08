@@ -24,7 +24,7 @@ export class WorkshopScene extends Phaser.Scene {
 	create(): void {
 		const save = getSave(this);
 		const wallet = this.add.text(0, 0, '', text(12, PALETTE.fish)).setOrigin(0.5, 0);
-		const refreshWallet = () => wallet.setText(t('workshop.fish', { fish: save.fish }));
+		const refreshWallet = () => wallet.setText(t('workshop.fish', { pearls: save.pearls }));
 		const back = () => this.scene.start('MainMenu');
 		const items = UPGRADES.map((def) => ({
 			label: () => {
@@ -40,12 +40,12 @@ export class WorkshopScene extends Phaser.Scene {
 			},
 			disabled: () => {
 				const cost = upgradeCost(def, upgradeLevel(save.upgrades, def.id));
-				return cost === null || save.fish < cost;
+				return cost === null || save.pearls < cost;
 			},
 			onSelect: () => {
-				const left = buyUpgrade(def, save.upgrades, save.fish);
+				const left = buyUpgrade(def, save.upgrades, save.pearls);
 				if (left === null) return;
-				save.fish = left;
+				save.pearls = left;
 				persist(this);
 				refreshWallet();
 			},

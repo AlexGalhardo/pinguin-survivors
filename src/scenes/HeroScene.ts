@@ -87,13 +87,13 @@ export class HeroScene extends Phaser.Scene {
 					owned: save.potions[p],
 					price: POTION_PRICES[p],
 				}),
-			disabled: () => save.fish < POTION_PRICES[p],
+			disabled: () => save.pearls < POTION_PRICES[p],
 			onSelect: () => {
-				if (save.fish < POTION_PRICES[p]) return;
-				save.fish -= POTION_PRICES[p];
+				if (save.pearls < POTION_PRICES[p]) return;
+				save.pearls -= POTION_PRICES[p];
 				save.potions[p]++;
 				persist(this);
-				potionTitle.setText(t('hero.potions', { fish: save.fish }));
+				potionTitle.setText(t('hero.potions', { pearls: save.pearls }));
 			},
 		}));
 		const potionChoices: (PotionType | null)[] = [null, ...POTION_TYPES];
@@ -127,7 +127,7 @@ export class HeroScene extends Phaser.Scene {
 			onBack: back,
 		});
 		const potionTitle = this.add
-			.text(0, 0, t('hero.potions', { fish: save.fish }), text(12, PALETTE.fish))
+			.text(0, 0, t('hero.potions', { pearls: save.pearls }), text(12, PALETTE.fish))
 			.setOrigin(0.5, 0);
 		const right = new MenuList(
 			this,

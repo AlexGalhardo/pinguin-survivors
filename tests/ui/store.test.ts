@@ -20,10 +20,10 @@ describe('game commands', () => {
 	test('unbound commands are ignored; bound ones reach the game', () => {
 		bindCommands({});
 		expect(() => commands.pause()).not.toThrow();
-		const bought: string[] = [];
-		bindCommands({ buy: (id) => bought.push(id) });
-		commands.buy('offer-1');
-		expect(bought).toEqual(['offer-1']);
+		const bought: number[] = [];
+		bindCommands({ buy: (i) => bought.push(i) });
+		commands.buy(1);
+		expect(bought).toEqual([1]);
 		bindCommands({});
 	});
 });

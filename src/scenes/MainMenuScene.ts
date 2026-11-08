@@ -28,7 +28,10 @@ export class MainMenuScene extends Phaser.Scene {
 			.text(
 				0,
 				0,
-				t('menu.wallet', { fish: save.fish, points: availablePoints(save.achievements) }),
+				t('menu.wallet', {
+					pearls: save.pearls,
+					points: availablePoints(save.achievements),
+				}),
 				text(10, PALETTE.fish),
 			)
 			.setOrigin(0.5, 0);
