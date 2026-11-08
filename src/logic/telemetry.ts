@@ -6,9 +6,7 @@ import { DANGER_LEVELS, type Danger } from '../data/difficulty';
  * Local, opt-in run telemetry (SDD-013 RF-05). Nothing leaves the machine: events are kept in a
  * capped buffer the player can export as JSONL, and the same format feeds `balance-report.ts`
  * (sim and bot write it too). The caller passes `enabled` from the player's setting.
- *
- * TODO(save.ts): add `settings.telemetry: boolean` (default false) and `telemetry: RunEndEvent[]`
- * to the save, parsed with `parseRunEndEvents` and capped by `TELEMETRY_LIMIT`.
+ * The save keeps them in `telemetry` (see `parseRunEndEvents`), gated by `settings.telemetry`.
  */
 export const TELEMETRY_LIMIT = 200;
 
@@ -65,6 +63,11 @@ function isRunEnd(v: unknown): v is RunEndEvent {
 		['death', 'bossTimeout', 'quit'].includes(e.cause as string) &&
 		typeof e.durationS === 'number'
 	);
+}
+
+/** Validates a stored array (e.g. `save.telemetry`): drops junk, keeps the newest `TELEMETRY_LIMIT`. */
+export function parseRunEndEvents(v: unknown): RunEndEvent[] {
+	return (Array.isArray(v) ? v : []).filter(isRunEnd).slice(-TELEMETRY_LIMIT);
 }
 
 /** Parses JSONL text, skipping blank, malformed or foreign lines. */

@@ -10,6 +10,7 @@ import {
 	SAVE_VERSION,
 	serializeSave,
 } from '../src/logic/save';
+import type { RunEndEvent } from '../src/logic/telemetry';
 import demoFixture from './fixtures/save-demo.json';
 import v1Fixture from './fixtures/save-v1.json';
 
@@ -195,5 +196,42 @@ describe('demo save → full game (SDD-006 A4)', () => {
 		const once = parseSave(JSON.stringify(demoFixture));
 		expect(parseSave(serializeSave(once))).toEqual(once);
 		expect(serializeSave(once)).toBe(serializeSave(parseSave(JSON.stringify(demoFixture))));
+	});
+});
+
+describe('telemetry in the save (SDD-013 A5)', () => {
+	const event = (round: number): RunEndEvent => ({
+		version: '0.1.0',
+		hero: 'jack',
+		danger: 1,
+		level: 1,
+		round,
+		weapons: ['machete:1'],
+		cause: 'death',
+		durationS: 100,
+		platform: 'web',
+	});
+
+	test('defaults: opt-out and empty; old saves parse without the fields', () => {
+		const s = defaultSave();
+		expect(s.settings.telemetry).toBe(false);
+		expect(s.telemetry).toEqual([]);
+		const old = parseSave(JSON.stringify(v1Fixture));
+		expect(old.settings.telemetry).toBe(false);
+		expect(old.telemetry).toEqual([]);
+	});
+
+	test('is capped at 200, validated, and exported in the .json round-trip', () => {
+		const s = defaultSave();
+		s.settings.telemetry = true;
+		s.telemetry = Array.from({ length: 250 }, (_, i) => event(i));
+		const raw = JSON.parse(serializeSave(s));
+		raw.telemetry.push({ junk: true });
+		const back = parseSave(JSON.stringify(raw));
+		expect(back.telemetry).toHaveLength(200);
+		expect(back.telemetry[0]?.round).toBe(50);
+		expect(back.telemetry.at(-1)?.round).toBe(249);
+		expect(back.settings.telemetry).toBe(true);
+		expect(parseSave(serializeSave(back))).toEqual(back);
 	});
 });

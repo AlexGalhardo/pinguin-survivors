@@ -25,6 +25,7 @@ import {
 	evaluateAchievements,
 } from './achievements';
 import { DEFAULT_BINDS, type KeyBinds, parseBinds } from './keybinds';
+import { parseRunEndEvents, type RunEndEvent } from './telemetry';
 
 /**
  * Local save (localStorage, one JSON document). SemVer public API: bump SAVE_VERSION and add a
@@ -51,6 +52,8 @@ export interface Settings {
 	keys: KeyBinds;
 	damageNumbers: boolean;
 	resolution: ResolutionId;
+	/** Opt-in local run telemetry (SDD-013 RF-05); nothing is ever sent. */
+	telemetry: boolean;
 }
 
 export interface HeroSave {
@@ -115,6 +118,8 @@ export interface SaveData {
 	progress: AchievementProgress;
 	achievements: AchievementState;
 	history: RunRecord[];
+	/** Run-end events of this machine (newest last, capped); exported with the save. */
+	telemetry: RunEndEvent[];
 	activeRun: RunSnapshot | null;
 }
 
@@ -132,6 +137,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			keys: { ...DEFAULT_BINDS },
 			damageNumbers: true,
 			resolution: 'auto',
+			telemetry: false,
 		},
 		heroes: Object.fromEntries(
 			HERO_IDS.map((h) => [h, { unlocked: h === 'jack', level: 1, xp: 0, points: {} }]),
@@ -147,6 +153,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 		progress: emptyProgress(),
 		achievements: emptyAchievementState(),
 		history: [],
+		telemetry: [],
 		activeRun: null,
 	};
 }
@@ -232,6 +239,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		keys: parseBinds(s.keys),
 		damageNumbers: bool(s.damageNumbers, base.settings.damageNumbers),
 		resolution: oneOf(s.resolution, RESOLUTION_IDS, base.settings.resolution),
+		telemetry: bool(s.telemetry, base.settings.telemetry),
 	};
 
 	const rh = isObj(r.heroes) ? r.heroes : {};
@@ -320,6 +328,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		history: (Array.isArray(r.history) ? r.history : [])
 			.filter(isRunRecord)
 			.slice(0, HISTORY_SIZE),
+		telemetry: parseRunEndEvents(r.telemetry),
 		activeRun: isRunSnapshot(r.activeRun) ? r.activeRun : null,
 	};
 }
