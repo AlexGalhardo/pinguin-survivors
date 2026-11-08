@@ -26,10 +26,6 @@ export interface DebugParams {
 	god: boolean;
 	debug: boolean;
 	skipMenu: boolean;
-	/** Shows the React HUD (SDD-004 T3.3) next to the Phaser one until T3.7 replaces it. */
-	uiHud: boolean;
-	/** Shows the React menus (SDD-004 T3.6) instead of the Phaser ones. */
-	reactUi: boolean;
 }
 
 function flag(value: string | null): boolean {
@@ -74,7 +70,5 @@ export function parseDebugParams(search: string): DebugParams {
 		god: flag(p.get('god')),
 		debug: flag(p.get('debug')),
 		skipMenu: flag(p.get('skipMenu')),
-		uiHud: flag(p.get('uiHud')),
-		reactUi: flag(p.get('reactUi')),
 	};
 }

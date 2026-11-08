@@ -1,20 +1,7 @@
 import Phaser from 'phaser';
-import { AchievementsScene } from '../scenes/AchievementsScene';
 import { BootScene } from '../scenes/BootScene';
-import { CardPickScene } from '../scenes/CardPickScene';
-import { ControlsScene } from '../scenes/ControlsScene';
-import { ExtrasScene } from '../scenes/ExtrasScene';
-import { GameOverScene } from '../scenes/GameOverScene';
 import { GameScene } from '../scenes/GameScene';
-import { HeroScene } from '../scenes/HeroScene';
-import { HeroSelectScene } from '../scenes/HeroSelectScene';
-import { HistoryScene } from '../scenes/HistoryScene';
 import { HudScene } from '../scenes/HudScene';
-import { MainMenuScene } from '../scenes/MainMenuScene';
-import { PauseScene } from '../scenes/PauseScene';
-import { SettingsScene } from '../scenes/SettingsScene';
-import { UnlockScene } from '../scenes/UnlockScene';
-import { WorkshopScene } from '../scenes/WorkshopScene';
 import { PALETTE, toCss } from './palette';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -30,22 +17,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 	},
 	input: { keyboard: true, mouse: true, touch: false, gamepad: false },
 	disableContextMenu: true,
-	scene: [
-		BootScene,
-		MainMenuScene,
-		HeroSelectScene,
-		HeroScene,
-		WorkshopScene,
-		GameScene,
-		HudScene,
-		CardPickScene,
-		PauseScene,
-		SettingsScene,
-		ControlsScene,
-		AchievementsScene,
-		ExtrasScene,
-		HistoryScene,
-		GameOverScene,
-		UnlockScene,
-	],
+	scene: [BootScene, GameScene, HudScene],
 };

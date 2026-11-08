@@ -1,7 +1,10 @@
 import { type ReactElement, useSyncExternalStore } from 'react';
+import { platform } from '../../core/platform';
+import { STEAM_URL } from '../../data/demo';
 import { commands } from '../commands';
 import { dismissUnlock, runUiStore } from '../run-bridge';
 import { uiStore } from '../store';
+import { DemoEnd } from './DemoEnd';
 import { GameOver } from './GameOver';
 import { LevelUpCards } from './LevelUpCards';
 import { Pause } from './Pause';
@@ -11,6 +14,17 @@ import { Unlock } from './Unlock';
 export function RunHost(): ReactElement | null {
 	const s = useSyncExternalStore(runUiStore.subscribe, () => runUiStore.get());
 	const screen = useSyncExternalStore(uiStore.subscribe, () => uiStore.get().screen);
+	if (s.demoEnd)
+		return (
+			<DemoEnd
+				data={s.demoEnd}
+				actions={{
+					wishlist: () => platform().openUrl(STEAM_URL),
+					playAgain: commands.playAgain,
+					menu: commands.backToMenu,
+				}}
+			/>
+		);
 	if (s.over) {
 		const unlock = s.over.unlocks[0];
 		if (unlock)
@@ -43,6 +57,8 @@ export function RunHost(): ReactElement | null {
 				actions={{
 					resume: commands.resume,
 					settings: commands.pauseSettings,
+					equip: commands.equip,
+					unequip: commands.unequip,
 					quit: commands.quitRun,
 				}}
 			/>

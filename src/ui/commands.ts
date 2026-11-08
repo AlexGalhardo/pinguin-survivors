@@ -21,6 +21,10 @@ export interface GameCommands {
 	resume: () => void;
 	/** Pause: open the settings screen; its Back returns to the pause menu. */
 	pauseSettings: () => void;
+	/** Pause: wear a bag item. */
+	equip: (id: string) => void;
+	/** Pause: take off the item worn in `slot` (goes to the bag). */
+	unequip: (slot: string) => void;
 	/** Pause: quit the run (already confirmed in the UI). */
 	quitRun: () => void;
 	/** Run over: start a new run with the same hero, Danger and weapon. */
@@ -49,6 +53,8 @@ export const commands: GameCommands = {
 	pause: () => impl.pause?.(),
 	resume: () => impl.resume?.(),
 	pauseSettings: () => impl.pauseSettings?.(),
+	equip: (id) => impl.equip?.(id),
+	unequip: (slot) => impl.unequip?.(slot),
 	quitRun: () => impl.quitRun?.(),
 	playAgain: () => impl.playAgain?.(),
 	backToMenu: () => impl.backToMenu?.(),

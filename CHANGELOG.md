@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Demo rules in game: Jack only, rounds 1–10, Danger up to 1, and the DemoEnd screen with the wishlist button; `bun run e2e -- --demo`.
+- Local telemetry toggle and JSONL export in Settings; set and tier IV progress recorded after every build change.
+
 - 47 new achievements (178 total) for Danger wins, set completion, fusions and tier IV loadouts, and round 60, in four languages; `src/data/steam-achievements.ts` maps every achievement to a Steam API name.
 
 - Static commercial site in Astro 7.4.7 (`site/`, SDD-008): landing in four languages with SEO, hreflang, sitemap and the playable demo under `/demo/`; `scripts/build-site.ts` builds it, and `.github/workflows/pages.yml` deploys only when run manually.
@@ -40,6 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Balance pass for 1.0: every Workshop upgrade gives ×0.6 per level (Insight unchanged) and the Element Staff base damage rises 10 → 16 (`docs/reports/balance-proposal-2026-11-08.md`).
 
 ### Removed
+
+- Every Phaser UI scene (menus, hero select, hero/Workshop, settings, controls, achievements, extras, history, card pick, pause, game over, unlock), `src/scenes/ui-phaser/` and `installCrispText`: the UI is React only; `?reactUi` and `?uiHud` are gone.
 
 - The old difficulty setting (`settings.difficulty`, `DIFFICULTIES`, `difficultyMods`), replaced by Danger.
 

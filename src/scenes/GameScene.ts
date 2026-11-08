@@ -14,12 +14,14 @@ import { GameEvents } from '../core/events';
 import { applyBloom, shake, zoomPunch } from '../core/feel';
 import { GameInput } from '../core/input';
 import { musicForRound, playMusic } from '../core/music';
+import { platform } from '../core/platform';
 import { trackZoom } from '../core/viewport';
 import { MAGIC_FIRE_SPLASH } from '../data/combat';
-import { DANGER, type DangerMods } from '../data/difficulty';
+import { DEMO, STEAM_URL } from '../data/demo';
+import { DANGER, type Danger, type DangerMods } from '../data/difficulty';
 import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
-import { GEAR_SLOTS } from '../data/equipment';
+import { GEAR_BY_ID, GEAR_SLOTS, type GearSlot } from '../data/equipment';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
 import { ROUNDS } from '../data/rounds';
@@ -52,6 +54,7 @@ import {
 } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
 import type { Element } from '../logic/combat';
+import { demoEndReason, demoHero } from '../logic/demo';
 import {
 	type ExtraWave,
 	extraWaves,
@@ -59,7 +62,15 @@ import {
 	scaleDrops,
 	unlockDanger,
 } from '../logic/difficulty';
-import { emptyGear, pickUpGear, rollGearDrop, rollHealDrop } from '../logic/equipment';
+import {
+	emptyGear,
+	equip,
+	pickUpGear,
+	rollGearDrop,
+	rollHealDrop,
+	unequip,
+} from '../logic/equipment';
+import { formatStat } from '../logic/format';
 import { inArc } from '../logic/geometry';
 import { ObstacleField, pushOut } from '../logic/obstacles';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
@@ -89,7 +100,9 @@ import {
 	liveProgress,
 	type RunOutcome,
 	type RunRecord,
+	recordBuildSets,
 	recordRunEnd,
+	recordTierIVSlots,
 } from '../logic/save';
 import {
 	buy as buyOffer,
@@ -108,6 +121,7 @@ import {
 	type StatKey,
 } from '../logic/stats';
 import { addCharge, chargeFor, superCost, superReady, superUnlocked } from '../logic/superpower';
+import { recordRunEnd as recordTelemetry } from '../logic/telemetry';
 import { applyUpgrades } from '../logic/upgrades';
 import { leadWeapon, resolveWeapon } from '../logic/weapons';
 import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
@@ -124,13 +138,11 @@ import { cardDescription, cardName } from '../ui/card-text';
 import { bindCommands } from '../ui/commands';
 import { hudStore } from '../ui/hud-bridge';
 import { openSettingsFrom } from '../ui/menu-controller';
-import { publishLevelUp, publishPause, publishRunOver } from '../ui/run-bridge';
+import { publishDemoEnd, publishLevelUp, publishPause, publishRunOver } from '../ui/run-bridge';
 import { publishShop, type ShopView } from '../ui/shop-bridge';
 import { uiStore } from '../ui/store';
+import { showToast } from '../ui/toast';
 import { Arena } from '../world/Arena';
-import type { CardPickData } from './CardPickScene';
-import { formatStat } from './PauseScene';
-import type { UnlockData } from './UnlockScene';
 
 /** What a saved run snapshot holds (save.activeRun.state). */
 export interface RunResume {
@@ -262,7 +274,10 @@ export class GameScene extends Phaser.Scene {
 		const params = getParams(this);
 		const save = getSave(this);
 		const resume = takeResume(this);
-		const heroId: HeroId = resume?.run.hero ?? params.hero ?? getRunHero(this) ?? 'jack';
+		const requested: HeroId = resume?.run.hero ?? params.hero ?? getRunHero(this) ?? 'jack';
+		// The demo only has Jack: anyone else falls back to him (SDD-006 RF-03).
+		const heroId = demoHero(requested);
+		if (heroId !== requested) showToast(t('demo.fullGame'));
 		const heroDef = HEROES[heroId];
 		const heroSave = save.heroes[heroId];
 		const seed = resume?.run.seed ?? params.seed ?? randomSeed();
@@ -271,6 +286,10 @@ export class GameScene extends Phaser.Scene {
 		this.rng = new Rng(resume ? seed + resume.run.round : seed);
 		this.deadFor = -1;
 		this.outcome = 'death';
+		this.demoWon = false;
+		this.fishSpent = 0;
+		this.fishRerolled = 0;
+		this.ended = false;
 		this.speed = 1;
 		this.levelsGained = 0;
 		this.startedAt = Date.now();
@@ -310,9 +329,15 @@ export class GameScene extends Phaser.Scene {
 			this.build = emptyBuild(tier);
 			this.run = createRunState(heroDef, {
 				seed,
-				round: params.round,
+				round:
+					DEMO.enabled && params.round
+						? Math.min(params.round, DEMO.maxRound)
+						: params.round,
 				tier,
-				danger: params.danger ?? getRunDanger(this) ?? 1,
+				danger: Math.min(
+					params.danger ?? getRunDanger(this) ?? 1,
+					DEMO.enabled ? DEMO.maxDanger : 5,
+				) as Danger,
 				cardRerolls: this.stats.cardRerolls,
 			});
 			this.run.maxHp = this.stats.maxHp;
@@ -482,8 +507,14 @@ export class GameScene extends Phaser.Scene {
 			},
 			backToMenu: () => {
 				publishRunOver(null);
-				this.scene.start('MainMenu');
+				publishDemoEnd(null);
+				this.scene.stop('Hud');
+				playMusic(this, 'music.menu');
+				uiStore.set({ screen: 'main-menu' });
+				this.scene.stop();
 			},
+			equip: (id) => this.equipGear(id),
+			unequip: (slot) => this.unequipGear(slot),
 		});
 		this.events.once('shutdown', () => {
 			bindCommands({});
@@ -505,7 +536,8 @@ export class GameScene extends Phaser.Scene {
 		if (this.deadFor >= 0) {
 			this.deadFor += dt;
 			this.fx.update(dt);
-			if (this.deadFor >= DEATH_DELAY) this.endRun();
+			// The scene stays alive behind the React summary, so the run may close only once.
+			if (this.deadFor >= DEATH_DELAY && !this.ended) this.endRun();
 			return;
 		}
 		if (this.uiPaused) return;
@@ -1096,6 +1128,10 @@ export class GameScene extends Phaser.Scene {
 			this.run.counters.superKillsOneCast = Math.max(best, this.superpower.killsThisCast);
 			this.superpower.killsThisCast = 0;
 		}
+		this.evaluateAchievementsNow();
+	}
+
+	private evaluateAchievementsNow(): void {
 		const save = getSave(this);
 		const progress = liveProgress(save, this.run, this.run.counters, this.level.level);
 		const fresh = evaluateAchievements(progress, save.achievements, Date.now());
@@ -1103,6 +1139,14 @@ export class GameScene extends Phaser.Scene {
 			persist(this);
 			this.game.events.emit(GameEvents.AchievementsUnlocked, fresh);
 		}
+	}
+
+	/** After any buy, sell or fusion: set and tier IV records feed their achievements. */
+	private onBuildChanged(): void {
+		const save = getSave(this);
+		recordBuildSets(save, setCounts(this.build));
+		recordTierIVSlots(save, this.build.weapons.filter((w) => w.tier === 4).length);
+		this.evaluateAchievementsNow();
 	}
 
 	// --- Rounds and run end ---------------------------------------------------------------
@@ -1128,6 +1172,13 @@ export class GameScene extends Phaser.Scene {
 		healHero(this.run, this.run.maxHp * ROUNDS.roundEndHeal);
 		// Collecting the last orbs can still level up: it must be queued before `endRound`.
 		this.pickups.collectAll();
+		// The demo ends here: no shop after its last round (SDD-006 RF-02).
+		if (demoEndReason(this.run.round, { cleared: true, died: false }) === 'won') {
+			this.demoWon = true;
+			this.outcome = 'quit';
+			this.deadFor = DEATH_DELAY;
+			return;
+		}
 		const before = this.run.fish;
 		endRound(this.run, this.shopRoll(), this.stats.harvesting);
 		this.run.fish = before + Math.round((this.run.fish - before) * this.mods.drops);
@@ -1156,25 +1207,11 @@ export class GameScene extends Phaser.Scene {
 				luck: this.stats.luck,
 				build: this.build,
 			});
-			if (getParams(this).reactUi) {
-				this.cardOffers = offers;
-				this.publishLevelUpView();
-				return;
-			}
-			const data: CardPickData = {
-				round: this.run.round,
-				offers,
-				build: this.build,
-				onPick: (i) => this.pickCard(offers[i]),
-			};
-			this.scene.pause();
-			this.scene.launch('CardPick', data);
+			this.cardOffers = offers;
+			this.publishLevelUpView();
 			return;
 		}
-		if (this.run.phase === 'shop') {
-			if (this.scene.isPaused()) this.scene.resume();
-			this.publishShopView();
-		}
+		if (this.run.phase === 'shop') this.publishShopView();
 	}
 
 	private pickCard(offer: CardOffer | undefined): void {
@@ -1189,12 +1226,15 @@ export class GameScene extends Phaser.Scene {
 			}
 		}
 		resolveLevelUp(this.run, this.shopRoll());
-		// CardPick stops itself right after this callback: open the next scene a tick later.
-		setTimeout(() => this.advanceRoundPhase(), 0);
+		this.advanceRoundPhase();
 	}
 
-	// --- React level-up cards and pause (?reactUi=1) -------------------------------------------
+	// --- React level-up cards and pause -----------------------------------------------------
 
+	private demoWon = false;
+	private fishSpent = 0;
+	private fishRerolled = 0;
+	private ended = false;
 	private cardOffers: CardOffer[] = [];
 	private uiPaused = false;
 	private lastPauseToggle = Number.NEGATIVE_INFINITY;
@@ -1231,13 +1271,64 @@ export class GameScene extends Phaser.Scene {
 	private openReactPause(): void {
 		this.uiPaused = true;
 		this.lastPauseToggle = performance.now();
+		this.publishPauseView();
+	}
+
+	/** "Rarity · +4 armor · +8 max HP" for an equipment item. */
+	private gearDetail(id: string): string {
+		const def = GEAR_BY_ID[id];
+		if (!def) return '';
+		const stats = Object.entries(def.stats)
+			.map(([k, v]) => `${formatStat(k, v as number, true)} ${t(`gstat.${k}` as I18nKey)}`)
+			.join(' · ');
+		return `${t(`grarity.${def.rarity}` as I18nKey)} · ${stats}`;
+	}
+
+	private publishPauseView(): void {
+		const gear = this.run.gear ?? emptyGear();
+		this.run.gear = gear;
 		publishPause({
 			weapons: this.build.weapons.map((w, slot) => ({ slot, id: w.id, tier: w.tier })),
 			stats: PAUSE_STATS.map((key) => ({
 				key,
 				value: formatStat(key, getStat(this.stats, key)),
 			})),
+			cards: [
+				...Object.entries(this.build.secondaries).map(([id, level]) => ({
+					name: t(`card.active.${id}.name` as I18nKey),
+					level: level as number,
+				})),
+				...Object.entries(this.build.perks).map(([id, level]) => ({
+					name: t(`card.perk.${id}.name` as I18nKey),
+					level: level as number,
+				})),
+			],
+			gear: {
+				slots: GEAR_SLOTS.map((slot) => {
+					const id = gear.equipped[slot];
+					return { slot, id, detail: id ? this.gearDetail(id) : '' };
+				}),
+				bag: gear.bag.map((id, i) => ({
+					key: `${id}#${i}`,
+					id,
+					detail: this.gearDetail(id),
+				})),
+			},
 		});
+	}
+
+	private equipGear(id: string): void {
+		if (!this.uiPaused || !this.run.gear) return;
+		equip(this.run.gear, this.stats, id);
+		this.syncMaxHp();
+		this.publishPauseView();
+	}
+
+	private unequipGear(slot: string): void {
+		if (!this.uiPaused || !this.run.gear) return;
+		unequip(this.run.gear, this.stats, slot as GearSlot);
+		this.syncMaxHp();
+		this.publishPauseView();
 	}
 
 	private closeReactPause(): void {
@@ -1320,7 +1411,9 @@ export class GameScene extends Phaser.Scene {
 		if (!shop || !offer || run.phase !== 'shop') return;
 		if (offer.kind !== 'weapon') {
 			// Gear goes to the bag/worn slots and potions to the run stock (`purchase`).
+			const before = run.fish;
 			if (!purchase(run, index, { build: this.build, stats: this.stats })) return;
+			this.fishSpent += before - run.fish;
 			if (offer.kind === 'gear') {
 				this.syncMaxHp();
 				this.fx.play('sfx.card');
@@ -1332,6 +1425,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.build.weapons.length >= MAX_WEAPON_SLOTS && merge < 0) return;
 		const bought = buyOffer(shop, run.fish, index);
 		if (!bought) return;
+		this.fishSpent += offer.price;
 		run.shop = bought.state;
 		run.fish = bought.fish;
 		const id = offer.id as WeaponId;
@@ -1342,6 +1436,7 @@ export class GameScene extends Phaser.Scene {
 			this.recordFusion(tier + 1);
 		}
 		this.refreshSetBonuses();
+		this.onBuildChanged();
 		this.publishShopView();
 	}
 
@@ -1351,6 +1446,8 @@ export class GameScene extends Phaser.Scene {
 		const roll = this.shopRoll();
 		const r = rerollShop(run.shop, run.fish, roll.rng, run.round, roll.ctx, roll.pool);
 		if (!r) return;
+		this.fishSpent += run.fish - r.fish;
+		this.fishRerolled += run.fish - r.fish;
 		run.shop = r.state;
 		run.fish = r.fish;
 		this.publishShopView();
@@ -1368,6 +1465,7 @@ export class GameScene extends Phaser.Scene {
 		this.run.fish += sellValue(offerPrice('weapon', w.tier, this.run.round));
 		this.build.weapons.splice(slot, 1);
 		this.refreshSetBonuses();
+		this.onBuildChanged();
 		this.publishShopView();
 	}
 
@@ -1376,6 +1474,7 @@ export class GameScene extends Phaser.Scene {
 		const merged = this.build.weapons[Math.min(a, b)] as WeaponInstance;
 		this.recordFusion(merged.tier);
 		this.refreshSetBonuses();
+		this.onBuildChanged();
 		this.publishShopView();
 	}
 
@@ -1448,14 +1547,9 @@ export class GameScene extends Phaser.Scene {
 
 	private pause(): void {
 		if (this.deadFor >= 0) return;
-		if (getParams(this).reactUi) {
-			// Esc reaches both Phaser and the React pause menu: ignore the echo of a toggle.
-			const fresh = performance.now() - this.lastPauseToggle < 250;
-			if (!this.uiPaused && !fresh && this.run.phase === 'round') this.openReactPause();
-			return;
-		}
-		this.scene.pause();
-		this.scene.launch('Pause');
+		// Esc reaches both Phaser and the React pause menu: ignore the echo of a toggle.
+		const fresh = performance.now() - this.lastPauseToggle < 250;
+		if (!this.uiPaused && !fresh && this.run.phase === 'round') this.openReactPause();
 	}
 
 	/** Quit from the pause menu: the run ends normally and rewards are kept (P-26). */
@@ -1474,6 +1568,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** Banks XP/Fish, records history and achievements, then shows the game over screen. */
 	private endRun(): void {
+		this.ended = true;
 		const save = getSave(this);
 		const run = this.run;
 		const heroSave = save.heroes[run.hero];
@@ -1482,6 +1577,24 @@ export class GameScene extends Phaser.Scene {
 		const fishEarned = run.fish;
 		// Fish never leave the run: they convert to Pearls here (SDD-003 RF-06, RF-07).
 		const pearls = finishRun(run, save);
+		save.telemetry = recordTelemetry(
+			save.telemetry,
+			{
+				version: __APP_VERSION__,
+				hero: run.hero,
+				danger: run.danger,
+				level: this.level.level,
+				round: run.round,
+				weapons: this.build.weapons.map((w) => `${w.id}:${w.tier}`),
+				cause: this.outcome,
+				durationS: Math.round(run.elapsed),
+				platform: platform().kind,
+				fishEarned,
+				fishSpent: this.fishSpent,
+				fishRerolled: this.fishRerolled,
+			},
+			save.settings.telemetry,
+		);
 		publishShop(null);
 		returnUnused(this.potions, save.potions);
 		run.counters.fishEarned = fishEarned;
@@ -1514,40 +1627,40 @@ export class GameScene extends Phaser.Scene {
 		const previousBest = save.progress.hero[run.hero].bestRound;
 		const fresh = recordRunEnd(save, record, run.counters, Date.now());
 		persist(this);
-		if (getParams(this).reactUi) {
-			this.scene.stop('Hud');
-			hudStore.set({ hud: null });
-			publishRunOver({
-				over: {
-					bossTimeout: this.outcome === 'bossTimeout',
-					round: run.round,
-					kills: run.kills,
-					seconds: Math.round(run.elapsed),
-					damage: Math.round(run.damageDealt),
-					xp: Math.round(run.xp),
-					fish: fishEarned,
-					pearls,
-					levels: this.levelsGained,
-					newBest: run.round > previousBest,
-				},
-				unlocks: [
-					...this.unlockedNow.map((hero) => ({
-						kind: 'hero' as const,
-						hero: hero as 'bob' | 'lucia',
-					})),
-					...fresh.map((def) => ({ kind: 'achievement' as const, def })),
-				],
+		this.scene.stop('Hud');
+		hudStore.set({ hud: null });
+		if (DEMO.enabled && (this.demoWon || this.outcome !== 'quit')) {
+			publishDemoEnd({
+				won: this.demoWon,
+				round: run.round,
+				kills: run.kills,
+				seconds: Math.round(run.elapsed),
+				damage: Math.round(run.damageDealt),
+				bobLocked: !save.heroes.bob.unlocked,
+				wishlistUrl: STEAM_URL,
 			});
 			return;
 		}
-		if (fresh.length > 0) this.game.events.emit(GameEvents.AchievementsUnlocked, fresh);
-		this.scene.stop('Hud');
-		const summary = { key: 'GameOver', data: { record, newBest: run.round > previousBest } };
-		if (this.unlockedNow.length > 0)
-			this.scene.start('Unlock', {
-				heroes: this.unlockedNow,
-				next: summary,
-			} satisfies UnlockData);
-		else this.scene.start(summary.key, summary.data);
+		publishRunOver({
+			over: {
+				bossTimeout: this.outcome === 'bossTimeout',
+				round: run.round,
+				kills: run.kills,
+				seconds: Math.round(run.elapsed),
+				damage: Math.round(run.damageDealt),
+				xp: Math.round(run.xp),
+				fish: fishEarned,
+				pearls,
+				levels: this.levelsGained,
+				newBest: run.round > previousBest,
+			},
+			unlocks: [
+				...this.unlockedNow.map((hero) => ({
+					kind: 'hero' as const,
+					hero: hero as 'bob' | 'lucia',
+				})),
+				...fresh.map((def) => ({ kind: 'achievement' as const, def })),
+			],
+		});
 	}
 }

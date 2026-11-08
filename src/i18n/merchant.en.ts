@@ -22,4 +22,5 @@ export const merchantEn = {
 	'demo.lost': 'DEMO OVER',
 	'demo.bob': 'Bob is unlocked in the full game',
 	'demo.wishlist': 'WISHLIST ON STEAM',
+	'demo.fullGame': 'Available in the full game',
 } as const;

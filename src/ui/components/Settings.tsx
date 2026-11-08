@@ -17,6 +17,8 @@ export interface SettingsData {
 	damageNumbers: boolean;
 	numberSize: string;
 	reducedFlashes: boolean;
+	/** Opt-in local run data (never sent anywhere). */
+	telemetry: boolean;
 }
 
 export type SettingsRow =
@@ -31,13 +33,16 @@ export type SettingsRow =
 	| 'bloom'
 	| 'numbers'
 	| 'numberSize'
-	| 'flashes';
+	| 'flashes'
+	| 'telemetry';
 
 export interface SettingsActions {
 	/** Steps one row (cycle, toggle or +/-10% volume); the game persists it. */
 	adjust: (row: SettingsRow, dir: -1 | 1) => void;
 	controls: () => void;
 	exportSave: () => void;
+	/** Saves the local run-end events as JSONL. */
+	exportTelemetry: () => void;
 	importSave: () => void;
 	back: () => void;
 }
@@ -71,6 +76,8 @@ function rowLabel(row: SettingsRow, d: SettingsData): string {
 			return t('settings.numberSize', { v: t(`size.${d.numberSize}` as I18nKey) });
 		case 'flashes':
 			return t('settings.reducedFlashes', { v: onOff(d.reducedFlashes) });
+		case 'telemetry':
+			return t('settings.telemetry', { v: onOff(d.telemetry) });
 	}
 }
 
@@ -87,6 +94,7 @@ const ROWS: readonly SettingsRow[] = [
 	'numbers',
 	'numberSize',
 	'flashes',
+	'telemetry',
 ];
 
 export function Settings({
@@ -117,6 +125,9 @@ export function Settings({
 					{t('settings.import')}
 				</Btn>
 			</div>
+			<Btn onActivate={actions.exportTelemetry} className="w-full border-snow">
+				{t('settings.exportTelemetry')}
+			</Btn>
 			<Btn onActivate={actions.back} className="w-full border-snow">
 				{t('menu.back')}
 			</Btn>

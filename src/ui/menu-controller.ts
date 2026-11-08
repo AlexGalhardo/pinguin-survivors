@@ -1,6 +1,6 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
 import { setResolution } from '../core/display';
-import { exportSave, importSave, writeSave } from '../core/storage';
+import { exportSave, exportTelemetry, importSave, writeSave } from '../core/storage';
 import { ACHIEVEMENT_SHOP, ACHIEVEMENTS } from '../data/achievements';
 import { RESOLUTION_IDS } from '../data/display';
 import { HEROES } from '../data/heroes';
@@ -8,6 +8,7 @@ import { GAMBIT_CONDITIONS, POTION_PRICES, POTION_TYPES } from '../data/potions'
 import { UPGRADES } from '../data/upgrades';
 import { LANGS, setLang } from '../i18n';
 import { achievementProgress, availablePoints, buyExtra, extraLevel } from '../logic/achievements';
+import { demoAllowsHero, demoDanger } from '../logic/demo';
 import { maxSelectableDanger } from '../logic/difficulty';
 import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/keybinds';
 import { freePoints, xpToNext } from '../logic/progression';
@@ -113,10 +114,10 @@ function heroSelect(save: SaveData): MenuView {
 		data: {
 			heroes: HERO_IDS.map((id) => ({
 				id,
-				unlocked: save.heroes[id].unlocked,
+				unlocked: save.heroes[id].unlocked && demoAllowsHero(id),
 				level: save.heroes[id].level,
 				bestRound: save.progress.hero[id].bestRound,
-				maxDanger: maxSelectableDanger(save, id),
+				maxDanger: demoDanger(maxSelectableDanger(save, id)),
 				bestByDanger: save.bestRoundByDanger[id],
 				weapons: HEROES[id].startingWeapons,
 			})),
@@ -283,6 +284,9 @@ function settings(save: SaveData): MenuView {
 			case 'flashes':
 				s.reducedFlashes = !s.reducedFlashes;
 				break;
+			case 'telemetry':
+				s.telemetry = !s.telemetry;
+				break;
 		}
 		persist(save);
 	};
@@ -301,11 +305,13 @@ function settings(save: SaveData): MenuView {
 			damageNumbers: s.damageNumbers,
 			numberSize: s.numberSize,
 			reducedFlashes: s.reducedFlashes,
+			telemetry: s.telemetry,
 		},
 		actions: {
 			adjust: step,
 			controls: () => go('controls'),
 			exportSave: () => exportSave(save),
+			exportTelemetry: () => exportTelemetry(save),
 			importSave: () => pickImport(save),
 			back: () => {
 				const back = state.settingsBack;

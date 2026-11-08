@@ -4,13 +4,16 @@ import '@fontsource/rubik/500.css';
 import '@fontsource/rubik/700.css';
 import Phaser from 'phaser';
 import { gameConfig } from './config/game-config';
-import { setParams, setSave } from './core/context';
+import { setParams, setRunDanger, setRunHero, setRunWeapon, setSave } from './core/context';
 import { attachGame, currentRenderSize, initDisplay } from './core/display';
 import { installGamepad } from './core/gamepad';
+import { refreshMusicVolume } from './core/music';
 import { loadSave } from './core/storage';
+import type { WeaponId } from './data/weapons';
 import { parseDebugParams } from './debug/params';
 import { detectLang, setLang } from './i18n';
-import { installCrispText } from './scenes/ui-phaser/text-quality';
+import { queueResume, type RunResume } from './scenes/GameScene';
+import { bindMenuCommands } from './ui/commands';
 import { ensureLangFont } from './ui/lang-font';
 import { mountUi } from './ui/mount';
 import { publishSave } from './ui/save-bridge';
@@ -42,16 +45,31 @@ const game = new Phaser.Game({
 		zoom: initial.cssScale,
 	},
 });
-// Scenes boot on the next frame, so the text patch is in place before any Text exists.
-installCrispText(game);
 setParams(game, params);
 setSave(game, save);
 publishSave(save);
-if (params.reactUi && !params.skipMenu) uiStore.set({ screen: 'main-menu' });
+if (!params.skipMenu) uiStore.set({ screen: 'main-menu' });
+bindMenuCommands({
+	startRun: ({ hero, danger, weapon }) => {
+		setRunHero(game, hero);
+		setRunDanger(game, danger);
+		// GameScene only accepts it if it is one of the hero's starting weapons.
+		setRunWeapon(game, weapon as WeaponId);
+		game.scene.start('Game');
+	},
+	continueRun: () => {
+		if (!save.activeRun) return;
+		queueResume(game, structuredClone(save.activeRun.state) as unknown as RunResume);
+		game.scene.start('Game');
+	},
+	refreshAudio: () => refreshMusicVolume(game.scene.getScene('Boot')),
+	toggleFullscreen: () => game.scale.toggleFullscreen(),
+});
 attachGame(game);
 mountUi(document.getElementById('ui'));
 installGamepad(game, () => game.scene.isActive('Game'));
 
 if (import.meta.env.DEV) {
 	(window as unknown as { __GAME__: Phaser.Game }).__GAME__ = game;
+	(window as unknown as { __UI__: typeof uiStore }).__UI__ = uiStore;
 }

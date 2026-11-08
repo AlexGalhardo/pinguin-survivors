@@ -11,11 +11,20 @@ export interface PauseData {
 	weapons: readonly { slot: number; id: string; tier: WeaponTier }[];
 	/** Main stats already formatted for display (`gstat.<key>` is the label). */
 	stats: readonly { key: string; value: string }[];
+	/** Passive cards and hero actives owned (`card.perk.<id>` / `card.active.<id>` are the names). */
+	cards: readonly { name: string; level: number }[];
+	/** Worn equipment per slot and the bag; `detail` is the rarity and stats summary. */
+	gear: {
+		slots: readonly { slot: string; id: string | null; detail: string }[];
+		bag: readonly { key: string; id: string; detail: string }[];
+	};
 }
 
 export interface PauseActions {
 	resume: () => void;
 	settings: () => void;
+	equip: (id: string) => void;
+	unequip: (slot: string) => void;
 	/** Called only after the player confirms. */
 	quit: () => void;
 }
@@ -72,6 +81,58 @@ export function Pause({ data, actions }: { data: PauseData; actions: PauseAction
 							</li>
 						))}
 					</ul>
+					{data.cards.length > 0 && (
+						<>
+							<h2 className="font-title text-[1.2em] text-text-dim">
+								{t('pause.cards')}
+							</h2>
+							<ul className="space-y-1">
+								{data.cards.map((c) => (
+									<li key={c.name}>
+										{c.name} · {t('hud.level', { n: c.level })}
+									</li>
+								))}
+							</ul>
+						</>
+					)}
+				</section>
+				<section className="flex flex-1 flex-col gap-2">
+					<h2 className="font-title text-[1.2em] text-text-dim">{t('pause.gear')}</h2>
+					<ul className="space-y-1">
+						{data.gear.slots.map((g) => (
+							<li key={g.slot}>
+								<Btn
+									onActivate={() => actions.unequip(g.slot)}
+									disabled={!g.id}
+									className="w-full border-snow text-left"
+								>
+									{t(`gslot.${g.slot}` as I18nKey)}:{' '}
+									{g.id ? t(`gear.${g.id}` as I18nKey) : '—'}
+								</Btn>
+								{g.id && (
+									<div className="text-[0.8em] text-text-dim">{g.detail}</div>
+								)}
+							</li>
+						))}
+					</ul>
+					<h3 className="text-text-dim">{t('pause.bag')}</h3>
+					{data.gear.bag.length === 0 ? (
+						<p className="text-[0.8em] text-text-dim">{t('pause.bagEmpty')}</p>
+					) : (
+						<ul className="space-y-1">
+							{data.gear.bag.map((g) => (
+								<li key={g.key}>
+									<Btn
+										onActivate={() => actions.equip(g.id)}
+										className="w-full border-xp text-left"
+									>
+										{t(`gear.${g.id}` as I18nKey)}
+									</Btn>
+									<div className="text-[0.8em] text-text-dim">{g.detail}</div>
+								</li>
+							))}
+						</ul>
+					)}
 				</section>
 				<section className="flex flex-1 flex-col gap-2">
 					<h2 className="font-title text-[1.2em] text-text-dim">{t('pause.stats')}</h2>

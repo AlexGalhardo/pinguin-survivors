@@ -84,6 +84,8 @@ export const es: Record<I18nKey, string> = {
 	'settings.gore': 'Sangre: {v}',
 	'settings.shake': 'Sacudida de pantalla: {v}',
 	'settings.numbers': 'Números de daño: {v}',
+	'settings.telemetry': 'Datos locales de partidas: {v}',
+	'settings.exportTelemetry': 'Exportar datos de partidas',
 	'settings.export': 'Exportar partida',
 	'settings.import': 'Importar partida',
 	on: 'SÍ',

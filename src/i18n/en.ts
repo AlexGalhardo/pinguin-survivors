@@ -81,6 +81,8 @@ export const en = {
 	'settings.gore': 'Gore: {v}',
 	'settings.shake': 'Screen shake: {v}',
 	'settings.numbers': 'Damage numbers: {v}',
+	'settings.telemetry': 'Local run data: {v}',
+	'settings.exportTelemetry': 'Export run data',
 	'settings.export': 'Export save',
 	'settings.import': 'Import save',
 	on: 'ON',

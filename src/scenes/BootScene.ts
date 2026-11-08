@@ -5,6 +5,7 @@ import { FILES } from '../art/manifest';
 import { installPlaceholders } from '../art/placeholders';
 import { HERO_IDS } from '../config/constants';
 import { getParams } from '../core/context';
+import { playMusic } from '../core/music';
 
 export class BootScene extends Phaser.Scene {
 	constructor() {
@@ -46,6 +47,7 @@ export class BootScene extends Phaser.Scene {
 		for (const group of atlasGroups(__ASSET_FILES__))
 			registerAtlasFrames(this.textures, atlasKey(group));
 		installPlaceholders(this);
-		this.scene.start(getParams(this).skipMenu ? 'Game' : 'MainMenu');
+		if (getParams(this).skipMenu) this.scene.start('Game');
+		else playMusic(this, 'music.menu');
 	}
 }

@@ -89,6 +89,8 @@ describe('Pause', () => {
 	const data = {
 		weapons: [{ slot: 0, id: 'machete', tier: 2 as const }],
 		stats: [{ key: 'maxHp', value: '140' }],
+		cards: [],
+		gear: { slots: [], bag: [] },
 	};
 
 	test('quit needs confirmation; Esc cancels the confirmation, then resumes', () => {
@@ -96,6 +98,8 @@ describe('Pause', () => {
 		const actions = {
 			resume: () => calls.push('resume'),
 			settings: () => calls.push('settings'),
+			equip: () => calls.push('equip'),
+			unequip: () => calls.push('unequip'),
 			quit: () => calls.push('quit'),
 		};
 		const { getByText, queryByText } = render(<Pause data={data} actions={actions} />);

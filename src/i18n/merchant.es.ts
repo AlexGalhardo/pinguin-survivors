@@ -22,4 +22,5 @@ export const merchantEs = {
 	'demo.lost': 'FIN DE LA DEMO',
 	'demo.bob': 'Bob se desbloquea en el juego completo',
 	'demo.wishlist': 'AÑADIR A DESEADOS EN STEAM',
+	'demo.fullGame': 'Disponible en el juego completo',
 } as const;

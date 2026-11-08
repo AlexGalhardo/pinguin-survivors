@@ -162,8 +162,16 @@ describe('Settings and Controls', () => {
 						damageNumbers: true,
 						numberSize: 'normal',
 						reducedFlashes: false,
+						telemetry: false,
 					},
-					actions: actionsOf(['adjust', 'controls', 'exportSave', 'importSave', 'back']),
+					actions: actionsOf([
+						'adjust',
+						'controls',
+						'exportSave',
+						'exportTelemetry',
+						'importSave',
+						'back',
+					]),
 				}}
 			/>,
 		);

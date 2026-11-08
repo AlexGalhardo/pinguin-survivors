@@ -22,4 +22,5 @@ export const merchantZhCN = {
 	'demo.lost': '试玩结束',
 	'demo.bob': 'Bob 将在完整版中解锁',
 	'demo.wishlist': '在 Steam 上加入愿望单',
+	'demo.fullGame': '完整版中可用',
 } as const;

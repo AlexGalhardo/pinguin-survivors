@@ -1,5 +1,6 @@
 import type { Lang } from '../i18n';
 import { parseSave, SAVE_KEY, type SaveData, serializeSave } from '../logic/save';
+import { toJsonl } from '../logic/telemetry';
 import { platform } from './platform';
 
 const BACKUP_KEY = `${SAVE_KEY}.backup`;
@@ -19,6 +20,12 @@ export function writeSave(save: SaveData): boolean {
 }
 
 /** Hands the save over as a .json file (manual backup / move to another machine). */
+/** Local run-end events as JSONL (SDD-013 RF-05); nothing is sent anywhere. */
+export function exportTelemetry(save: SaveData): void {
+	const day = new Date().toISOString().slice(0, 10);
+	platform().save.exportFile(`pinguin-survivors-telemetry-${day}.jsonl`, toJsonl(save.telemetry));
+}
+
 export function exportSave(save: SaveData): void {
 	const day = new Date().toISOString().slice(0, 10);
 	platform().save.exportFile(`pinguin-survivors-save-${day}.json`, serializeSave(save));

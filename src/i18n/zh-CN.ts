@@ -81,6 +81,8 @@ export const zhCN: Record<I18nKey, string> = {
 	'settings.gore': '血腥：{v}',
 	'settings.shake': '屏幕震动：{v}',
 	'settings.numbers': '伤害数字：{v}',
+	'settings.telemetry': '本地对局数据：{v}',
+	'settings.exportTelemetry': '导出对局数据',
 	'settings.export': '导出存档',
 	'settings.import': '导入存档',
 	on: '开',

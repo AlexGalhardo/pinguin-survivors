@@ -82,6 +82,8 @@ export const ptBR: Record<I18nKey, string> = {
 	'settings.gore': 'Gore: {v}',
 	'settings.shake': 'Tremor de tela: {v}',
 	'settings.numbers': 'Números de dano: {v}',
+	'settings.telemetry': 'Dados locais das partidas: {v}',
+	'settings.exportTelemetry': 'Exportar dados das partidas',
 	'settings.export': 'Exportar save',
 	'settings.import': 'Importar save',
 	on: 'LIGADO',

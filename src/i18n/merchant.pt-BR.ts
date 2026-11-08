@@ -22,4 +22,5 @@ export const merchantPtBR = {
 	'demo.lost': 'FIM DA DEMO',
 	'demo.bob': 'Bob é desbloqueado no jogo completo',
 	'demo.wishlist': 'DESEJAR NA STEAM',
+	'demo.fullGame': 'Disponível no jogo completo',
 } as const;
