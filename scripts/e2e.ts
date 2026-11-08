@@ -141,7 +141,8 @@ async function gone(text: string): Promise<void> {
 
 /** Main menu → hero select → START RUN (the menu can still be booting under the first click). */
 async function startRunFromMenu(): Promise<void> {
-	await see('React main menu', 'PLAY');
+	if (!(await ui.getByText('START RUN').first().isVisible()))
+		await see('React main menu', 'PLAY');
 	for (let i = 0; i < 4 && !(await ui.getByText('START RUN').first().isVisible()); i++)
 		await click('PLAY');
 	await see('React hero select', 'START RUN');
@@ -149,9 +150,42 @@ async function startRunFromMenu(): Promise<void> {
 	await waitFor('run started (round 1)', (p) => p.active.includes('Game') && p.round === 1);
 }
 
+/** A fake gamepad (standard mapping) the test presses button by button through `window.__pad`. */
+const FAKE_PAD = `(() => {
+	const pad = { on: false, buttons: Array.from({ length: 17 }, () => ({ pressed: false })) };
+	window.__pad = pad;
+	navigator.getGamepads = () => pad.on ? [{ connected: true, axes: [0, 0, 0, 0], buttons: pad.buttons }] : [];
+})()`;
+
+async function tapPad(button: number): Promise<void> {
+	await page.evaluate(`(window.__pad.buttons[${button}].pressed = true)`);
+	await page.waitForTimeout(120);
+	await page.evaluate(`(window.__pad.buttons[${button}].pressed = false)`);
+	await page.waitForTimeout(120);
+}
+
+/** The React menu is navigable with the d-pad (up/down) and the south button (confirm). */
+async function gamepadMenu(): Promise<void> {
+	await see('React main menu (gamepad)', 'PLAY');
+	await page.waitForTimeout(600);
+	await page.evaluate('(window.__pad.on = true)');
+	const focused = async (): Promise<string> =>
+		(await ui.locator('button[data-focused="true"]').first().textContent()) ?? '';
+	await tapPad(13);
+	const second = await focused();
+	if (second === 'PLAY') fail('d-pad down did not move the focus');
+	await tapPad(12);
+	if ((await focused()) !== 'PLAY') fail('d-pad up did not move the focus back');
+	await tapPad(0);
+	await see('gamepad confirm opens the hero select', 'START RUN');
+	await page.evaluate('(window.__pad.on = false)');
+}
+
 async function fullFlow(): Promise<void> {
+	await page.addInitScript(FAKE_PAD);
 	await page.goto(base, { waitUntil: 'load' });
 	await page.waitForFunction(() => '__GAME__' in window);
+	await gamepadMenu();
 	await startRunFromMenu();
 	// The run idles for a while behind the screens: the hero must not die in the middle of them.
 	await game((g) => {

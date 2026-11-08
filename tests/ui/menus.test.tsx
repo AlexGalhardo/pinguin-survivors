@@ -48,9 +48,9 @@ const actionsOf = (names: string[]): never =>
 describe('MainMenu', () => {
 	test('lists continue only with a saved run and opens screens', () => {
 		log.length = 0;
-		const view = (continueRound: number | null): View => ({
+		const view = (continueRound: number | null, canQuit = false): View => ({
 			screen: 'main-menu',
-			data: { pearls: 12, points: 3, continueRound },
+			data: { pearls: 12, points: 3, continueRound, canQuit },
 			actions: actionsOf([
 				'continueRun',
 				'play',
@@ -59,6 +59,7 @@ describe('MainMenu', () => {
 				'achievements',
 				'history',
 				'settings',
+				'quit',
 			]),
 		});
 		const a = render(<Router view={view(null)} />);
@@ -69,6 +70,12 @@ describe('MainMenu', () => {
 		const b = render(<Router view={view(4)} />);
 		expect(b.getByText('CONTINUE (ROUND 4)')).toBeTruthy();
 		expect(b.container.textContent).toContain('12 pearls');
+		cleanup();
+		// Quit only exists in the desktop and mobile shells.
+		expect(render(<Router view={view(null)} />).queryByText('QUIT')).toBeNull();
+		cleanup();
+		fireEvent.click(render(<Router view={view(null, true)} />).getByText('QUIT'));
+		expect(log.at(-1)).toBe('quit');
 		cleanup();
 	});
 });

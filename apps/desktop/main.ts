@@ -22,11 +22,59 @@ const SAVE_DIR = (): string => app.getPath('userData');
 const saveFile = (key: string): string =>
 	join(SAVE_DIR(), key.endsWith('.backup') ? 'save.backup.json' : 'save.json');
 
+/** What is remembered between launches: fullscreen or not, and the windowed size and position. */
+interface WindowState {
+	fullscreen: boolean;
+	bounds?: { x: number; y: number; width: number; height: number };
+}
+
+const stateFile = (): string => join(SAVE_DIR(), 'window.json');
+
+function loadWindowState(): WindowState {
+	try {
+		const raw = JSON.parse(readFileSync(stateFile(), 'utf8')) as Partial<WindowState>;
+		const b = raw.bounds;
+		const ok =
+			b &&
+			[b.x, b.y, b.width, b.height].every((n) => Number.isFinite(n)) &&
+			b.width >= 640 &&
+			b.height >= 360;
+		return { fullscreen: raw.fullscreen !== false, ...(ok ? { bounds: b } : {}) };
+	} catch {
+		return { fullscreen: true };
+	}
+}
+
+let windowState: WindowState = { fullscreen: true };
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
+
+/** Debounced: resize and move fire many times a second. */
+function rememberWindow(): void {
+	if (!win) return;
+	clearTimeout(saveTimer);
+	saveTimer = setTimeout(() => {
+		if (!win) return;
+		windowState = {
+			fullscreen: win.isFullScreen(),
+			// While fullscreen the bounds are the screen: keep the last windowed ones.
+			bounds: win.isFullScreen() ? windowState.bounds : win.getBounds(),
+		};
+		try {
+			mkdirSync(SAVE_DIR(), { recursive: true });
+			writeFileSync(stateFile(), JSON.stringify(windowState), 'utf8');
+		} catch (error) {
+			console.warn('[window] state not saved', error);
+		}
+	}, 400);
+}
+
 let win: BrowserWindow | null = null;
 
 function createWindow(): void {
+	windowState = loadWindowState();
 	win = new BrowserWindow({
-		fullscreen: true,
+		fullscreen: windowState.fullscreen,
+		...(windowState.bounds ?? {}),
 		frame: false,
 		backgroundColor: '#0b0e14',
 		autoHideMenuBar: true,
@@ -51,6 +99,23 @@ function createWindow(): void {
 	});
 	win.webContents.on('will-navigate', (event, url) => {
 		if (!url.startsWith('app://game/')) event.preventDefault();
+	});
+	for (const event of ['resize', 'move', 'enter-full-screen', 'leave-full-screen'] as const)
+		win.on(event as 'resize', rememberWindow);
+	// The Steam overlay and alt-tab take focus: the game pauses (preload turns this into `pinguin:suspend`).
+	win.on('blur', () => win?.webContents.send('platform:suspend'));
+	win.on('close', () => {
+		clearTimeout(saveTimer);
+		if (!win) return;
+		windowState = {
+			fullscreen: win.isFullScreen(),
+			bounds: win.isFullScreen() ? windowState.bounds : win.getBounds(),
+		};
+		try {
+			writeFileSync(stateFile(), JSON.stringify(windowState), 'utf8');
+		} catch {
+			// best effort
+		}
 	});
 	win.on('closed', () => {
 		win = null;

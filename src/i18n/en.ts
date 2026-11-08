@@ -27,6 +27,7 @@ export const en = {
 	'menu.achievements': 'ACHIEVEMENTS',
 	'menu.history': 'MATCH HISTORY',
 	'menu.settings': 'SETTINGS',
+	'menu.quit': 'QUIT',
 	'menu.back': 'BACK',
 	'menu.wallet': '{pearls} pearls · {points} achievement points',
 	'menu.tagline': 'The last three penguins of the zombie apocalypse',

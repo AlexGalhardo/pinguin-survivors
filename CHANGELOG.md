@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Platform polish: runs pause when the window or app loses focus (Steam overlay, alt-tab, Android background); a Quit button on desktop and mobile; Android back maps to Esc; compact React layout for phone landscape (844×390 and up) with touch controls hidden under full-screen overlays; the desktop shell remembers window size and fullscreen; `scripts/qa-mobile.ts` and `scripts/smoke-desktop.ts`.
+
 - Forest and destroyed-city art (PixelLab, 87 generations): seamless 64×64 floor tiles, borders and four solid props each; concepts for the six original aliens and the Biomechanical Colossus await approval before animation.
 
 - Forest and city music with music per biome (endless follows the drawn biome), eight weapon SFX, boss roars and boss-down, and UI hover/confirm/back sounds (ElevenLabs, normalized), plus kraken ink, abomination acid, Pearls earned, Danger unlocked, equip and demo end.

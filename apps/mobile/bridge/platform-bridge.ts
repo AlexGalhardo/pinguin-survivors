@@ -14,6 +14,10 @@ interface PreferencesPlugin {
 interface AppPlugin {
 	exitApp(): Promise<void>;
 	addListener(event: 'backButton', fn: () => void): Promise<unknown>;
+	addListener(
+		event: 'appStateChange',
+		fn: (state: { isActive: boolean }) => void,
+	): Promise<unknown>;
 }
 const plugins = (
 	window as unknown as {
@@ -51,7 +55,20 @@ const bridge: PinguinBridge = {
 
 // The hardware back button behaves like Escape (pause / back in menus).
 void plugins?.App?.addListener('backButton', () => {
-	window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape' }));
+	// Phaser reads keyCode, so the synthetic Escape carries it (27).
+	window.dispatchEvent(
+		new KeyboardEvent('keydown', {
+			code: 'Escape',
+			key: 'Escape',
+			keyCode: 27,
+			which: 27,
+		} as KeyboardEventInit),
+	);
+});
+
+// Going to the background pauses the game (the pause screen resumes it).
+void plugins?.App?.addListener('appStateChange', ({ isActive }) => {
+	if (!isActive) window.dispatchEvent(new Event('pinguin:suspend'));
 });
 
 const entry =

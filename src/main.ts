@@ -8,6 +8,7 @@ import { setParams, setRunDanger, setRunHero, setRunWeapon, setSave } from './co
 import { attachGame, currentRenderSize, initDisplay } from './core/display';
 import { installGamepad } from './core/gamepad';
 import { refreshMusicVolume } from './core/music';
+import { platform } from './core/platform';
 import { loadSave } from './core/storage';
 import { forceTier } from './core/tier';
 import type { WeaponId } from './data/weapons';
@@ -64,7 +65,7 @@ bindMenuCommands({
 		game.scene.start('Game');
 	},
 	refreshAudio: () => refreshMusicVolume(game.scene.getScene('Boot')),
-	toggleFullscreen: () => game.scale.toggleFullscreen(),
+	toggleFullscreen: () => platform().fullscreen.toggle(),
 });
 attachGame(game);
 mountUi(document.getElementById('ui'));

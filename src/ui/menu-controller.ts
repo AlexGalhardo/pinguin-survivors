@@ -1,5 +1,6 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
 import { setResolution } from '../core/display';
+import { platform } from '../core/platform';
 import { exportSave, exportTelemetry, importSave, writeSave } from '../core/storage';
 import { ACHIEVEMENT_SHOP, ACHIEVEMENTS } from '../data/achievements';
 import { isDemoBuild } from '../data/demo';
@@ -87,6 +88,17 @@ function extraBonus(stat: string, value: number): string {
 		: `+${Math.round(value * 100) / 100}`;
 }
 
+/** Real fullscreen (browser) or a window that covers the whole screen (the Electron shell). */
+function isFullscreen(): boolean {
+	if (typeof document === 'undefined') return false;
+	return (
+		document.fullscreenElement !== null ||
+		(platform().kind === 'electron' &&
+			window.innerWidth >= screen.width &&
+			window.innerHeight >= screen.height)
+	);
+}
+
 function mainMenu(save: SaveData): MenuView {
 	return {
 		screen: 'main-menu',
@@ -94,6 +106,7 @@ function mainMenu(save: SaveData): MenuView {
 			pearls: save.pearls,
 			points: availablePoints(save.achievements),
 			continueRound: save.activeRun ? save.activeRun.nextRound : null,
+			canQuit: platform().kind !== 'web',
 		},
 		actions: {
 			continueRun: () => {
@@ -107,6 +120,7 @@ function mainMenu(save: SaveData): MenuView {
 			achievements: () => go('achievements'),
 			history: () => go('history'),
 			settings: () => go('settings'),
+			quit: () => platform().quit(),
 		},
 	};
 }
@@ -307,7 +321,7 @@ function settings(save: SaveData): MenuView {
 		data: {
 			lang: s.lang,
 			resolution: s.resolution,
-			fullscreen: typeof document !== 'undefined' && document.fullscreenElement !== null,
+			fullscreen: isFullscreen(),
 			master: s.volume.master,
 			music: s.volume.music,
 			sfx: s.volume.sfx,

@@ -28,6 +28,7 @@ export const zhCN: Record<I18nKey, string> = {
 	'menu.achievements': '成就',
 	'menu.history': '对局记录',
 	'menu.settings': '设置',
+	'menu.quit': '退出',
 	'menu.back': '返回',
 	'menu.wallet': '{pearls} 珍珠 · {points} 成就点',
 	'menu.tagline': '僵尸末日中最后的三只企鹅',

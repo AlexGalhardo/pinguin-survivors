@@ -15,6 +15,7 @@ import { applyBloom, shake, zoomPunch } from '../core/feel';
 import { GameInput } from '../core/input';
 import { musicForRound, playMusic } from '../core/music';
 import { platform, reportAchievements } from '../core/platform';
+import { watchSuspend } from '../core/suspend';
 import { activeBudget } from '../core/tier';
 import { trackZoom } from '../core/viewport';
 import { MAGIC_FIRE_SPLASH } from '../data/combat';
@@ -555,7 +556,9 @@ export class GameScene extends Phaser.Scene {
 			equip: (id) => this.equipGear(id),
 			unequip: (slot) => this.unequipGear(slot),
 		});
+		const stopWatching = watchSuspend(() => this.suspend());
 		this.events.once('shutdown', () => {
+			stopWatching();
 			bindCommands({});
 			publishShop(null);
 			publishLevelUp(null);
@@ -1629,6 +1632,12 @@ export class GameScene extends Phaser.Scene {
 		const biome = biomeForRound(this.run.round, this.run.seed);
 		this.arena.setBiome(biome);
 		this.fx.banner(this.hero.x, this.hero.y, `biome.${biome}` as I18nKey);
+	}
+
+	/** The player left (blur, background, Steam overlay): pause; only the pause screen resumes. */
+	private suspend(): void {
+		if (this.deadFor >= 0 || this.uiPaused || this.run.phase !== 'round') return;
+		this.openReactPause();
 	}
 
 	private pause(): void {

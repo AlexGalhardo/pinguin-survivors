@@ -28,6 +28,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'menu.achievements': 'CONQUISTAS',
 	'menu.history': 'HISTÓRICO DE PARTIDAS',
 	'menu.settings': 'CONFIGURAÇÕES',
+	'menu.quit': 'SAIR',
 	'menu.back': 'VOLTAR',
 	'menu.wallet': '{pearls} pérolas · {points} pontos de conquista',
 	'menu.tagline': 'Os três últimos pinguins do apocalipse zumbi',

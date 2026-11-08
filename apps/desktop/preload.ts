@@ -26,3 +26,6 @@ const bridge: PinguinBridge = {
 };
 
 contextBridge.exposeInMainWorld('platform', bridge);
+
+// Window blur (alt-tab, Steam overlay): the game listens for this event and pauses.
+ipcRenderer.on('platform:suspend', () => window.dispatchEvent(new Event('pinguin:suspend')));

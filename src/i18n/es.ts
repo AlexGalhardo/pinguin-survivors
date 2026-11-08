@@ -29,6 +29,7 @@ export const es: Record<I18nKey, string> = {
 	'menu.achievements': 'LOGROS',
 	'menu.history': 'HISTORIAL DE PARTIDAS',
 	'menu.settings': 'AJUSTES',
+	'menu.quit': 'SALIR',
 	'menu.back': 'VOLVER',
 	'menu.wallet': '{pearls} perlas · {points} puntos de logro',
 	'menu.tagline': 'Los últimos tres pingüinos del apocalipsis zombi',

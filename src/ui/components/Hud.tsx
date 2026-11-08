@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useSyncExternalStore } from 'react';
 import { toCss } from '../../config/palette';
+import { platform } from '../../core/platform';
+import { touchControlsEnabled } from '../../core/touch-bridge';
 import { WEAPON_TIER_TINT } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
 import { toRoman } from '../../logic/achievements';
@@ -81,6 +83,8 @@ function WeaponSlot({ w }: { w?: HudSnapshot['weapons'][number] }): ReactElement
 
 /** Full-screen gameplay HUD (React). Reads the snapshot published by the game at ~10 Hz. */
 export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }): ReactElement {
+	// Touch screens have the 1x/2x button instead of the TAB hint, and the pause button sits there.
+	const touch = touchControlsEnabled(platform().kind, window.location.search);
 	const boss = hud.boss;
 	const slots = Array.from({ length: 6 }, (_, i) => hud.weapons[i]);
 	return (
@@ -134,9 +138,11 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 			</div>
 
 			<div className="absolute top-[1.2vh] right-[1vw] flex flex-col items-end gap-1">
-				<div className={`font-bold ${hud.speed > 1 ? 'text-crit' : 'text-text-dim'}`}>
-					{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
-				</div>
+				{!touch && (
+					<div className={`font-bold ${hud.speed > 1 ? 'text-crit' : 'text-text-dim'}`}>
+						{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
+					</div>
+				)}
 				{hud.elite !== 'none' && (
 					<div
 						className={`font-bold ${hud.elite === 'orange' ? 'text-aura-orange' : 'text-aura-purple'}`}

@@ -160,6 +160,11 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
   - Leaderboards `hero_<id>_danger_<d>`: o `steamworks.js` 0.4.0 (a última versão estável) não tem API de leaderboards; `leaderboards.submit` só registra no log até haver outra solução (outro binding ou Steamworks Web API).
   - Ícone do `.exe`: gerado em cada `build:desktop` a partir de `public/assets/heroes/portrait.jack.png` (`apps/desktop/build/icon.ico`, ignorado pelo git).
 
+- **Foco e segundo plano** (`src/core/suspend.ts`): `GameScene` pausa ao perder o foco (`blur`, aba oculta ou o evento `pinguin:suspend` que os shells disparam); só a tela de pausa retoma. Electron envia o evento no `blur` da janela (inclui o overlay da Steam; o `steamworks.js` 0.4 não expõe callback de overlay), Capacitor no `appStateChange` inativo. O botão voltar do Android dispara um `Escape` sintético com `keyCode 27` (Phaser lê `keyCode`).
+- **Sair**: o menu principal mostra "Sair" só fora da web (`platform().quit`). Tela cheia das Configurações usa `platform().fullscreen.toggle`.
+- **Estado da janela (Electron)**: `window.json` em `userData` guarda tela cheia e tamanho/posição da janela, restaurados na abertura.
+- **QA**: `bun scripts/qa-mobile.ts <pasta>` (screenshots de menu, HUD, loja e pausa em 844×390, 915×412 e 1280×720 com `?touch=1`), `bun scripts/smoke-desktop.ts [full|demo]` (abre o `.exe` com porta de depuração, `--mute-audio` e `--lang=en-US`, joga, pausa por perda de foco e sai pelo menu). Telas curtas (`max-height: 500px`) usam o layout compacto (menu em 2 colunas, loja sem o lojista, pausa sem estatísticas) e os controles de toque somem sob qualquer tela cheia (`src/ui/overlay.ts`).
+
 ## 10. Builds: jogo, demo, desktop, mobile, site
 
 | Build | Comando | Saída | Usa |

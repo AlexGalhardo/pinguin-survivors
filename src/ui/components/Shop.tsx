@@ -3,6 +3,7 @@ import { toCss } from '../../config/palette';
 import { WEAPON_TIER_TINT, type WeaponTier } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
 import { toRoman } from '../../logic/achievements';
+import { useCompact } from '../compact';
 import { FocusScope } from '../focus';
 import { merchantLine } from '../merchant';
 import { AtlasIcon, weaponFrames } from './AtlasIcon';
@@ -76,6 +77,7 @@ function Offer(props: {
 	index: number;
 }): ReactElement {
 	const { offer, index, actions } = props;
+	const compact = useCompact();
 	if (!offer) {
 		return (
 			<div className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
@@ -92,7 +94,7 @@ function Offer(props: {
 		>
 			<AtlasIcon
 				frames={offerFrames(offer)}
-				size={offer.kind === 'weapon' ? 128 : 48}
+				size={compact ? 48 : offer.kind === 'weapon' ? 128 : 48}
 				title={offerName(offer)}
 				className="self-center"
 			/>
@@ -137,6 +139,7 @@ function WeaponCard(props: {
 	actions: ShopActions;
 }): ReactElement {
 	const { weapon, slot, partner, actions } = props;
+	const compact = useCompact();
 	if (!weapon) {
 		return (
 			<div className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
@@ -151,7 +154,10 @@ function WeaponCard(props: {
 			style={{ borderColor: tint }}
 		>
 			<div className="flex items-center gap-2 truncate font-bold" style={{ color: tint }}>
-				<AtlasIcon frames={weaponFrames(weapon.id, weapon.tier)} size={128} />
+				<AtlasIcon
+					frames={weaponFrames(weapon.id, weapon.tier)}
+					size={compact ? 48 : 128}
+				/>
 				{weaponName(weapon.id)} · {toRoman(weapon.tier)}
 			</div>
 			<div className="flex gap-1">
@@ -229,7 +235,7 @@ export function Shop({
 				</div>
 			</header>
 
-			<main className="grid min-h-0 flex-1 grid-cols-2 gap-[2vw] px-[2vw] py-[2vh]">
+			<main className="grid min-h-0 flex-1 grid-cols-2 gap-[2vw] px-[2vw] py-[2vh] [@media(max-height:500px)]:py-1">
 				<section className="flex min-h-0 flex-col gap-[1.5vh] overflow-y-auto">
 					<h2 className="font-title text-[1.2em] text-text-dim">{t('shop.weapons')}</h2>
 					<div className="grid grid-cols-2 gap-2">
@@ -271,7 +277,7 @@ export function Shop({
 				</section>
 
 				<section className="flex min-h-0 flex-col gap-[1.5vh] overflow-y-auto">
-					<div className="flex items-center gap-3 rounded border border-snow-dark bg-night/60 p-3">
+					<div className="flex items-center gap-3 rounded border border-snow-dark bg-night/60 p-3 [@media(max-height:500px)]:hidden">
 						<div className="flex size-14 items-center justify-center rounded-full border-2 border-ice font-title text-[1.6em]">
 							?
 						</div>

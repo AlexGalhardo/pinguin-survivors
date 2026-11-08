@@ -15,6 +15,7 @@ import {
 } from '../../core/touch-bridge';
 import { t } from '../../i18n';
 import { hudStore } from '../hud-bridge';
+import { useOverlayOpen } from '../overlay';
 
 /** Stick travel in px; the thumb never leaves this circle. */
 const RADIUS = 52;
@@ -101,7 +102,9 @@ function ActionButton(props: {
 /** Joystick plus superpower, speed and pause buttons while a run is on (Android shell or `?touch=1`). */
 export function TouchControls(): ReactElement | null {
 	const hud = useSyncExternalStore(hudStore.subscribe, () => hudStore.get().hud);
-	if (!hud || !touchControlsEnabled(platform().kind, window.location.search)) return null;
+	const covered = useOverlayOpen();
+	if (!hud || covered || !touchControlsEnabled(platform().kind, window.location.search))
+		return null;
 	const ready = hud.superpower !== null && hud.superpower.charge >= hud.superpower.cost;
 	return (
 		<div className="pointer-events-none absolute inset-0">
