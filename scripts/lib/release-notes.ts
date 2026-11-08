@@ -1,10 +1,20 @@
 // Release notes in the vukem style (https://github.com/AlexGalhardo/vukem/releases):
 // Keep a Changelog groups, one line per Conventional Commit with a bold scope and a commit link.
+// Every micro-commit since the last tag is listed, like a rebase merge (docs/workflow.md §6):
+// docs, tests, build, CI and chores go under "Maintenance" instead of being dropped.
 import { $ } from 'bun';
 
 export const REPO_URL = 'https://github.com/AlexGalhardo/pinguin-survivors';
 
-const GROUP_ORDER = ['Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security'] as const;
+const GROUP_ORDER = [
+	'Added',
+	'Changed',
+	'Deprecated',
+	'Removed',
+	'Fixed',
+	'Security',
+	'Maintenance',
+] as const;
 type Group = (typeof GROUP_ORDER)[number];
 
 const TYPE_GROUP: Record<string, Group> = {
@@ -12,7 +22,14 @@ const TYPE_GROUP: Record<string, Group> = {
 	fix: 'Fixed',
 	perf: 'Changed',
 	refactor: 'Changed',
+	balance: 'Changed',
 	revert: 'Removed',
+	docs: 'Maintenance',
+	test: 'Maintenance',
+	build: 'Maintenance',
+	ci: 'Maintenance',
+	chore: 'Maintenance',
+	style: 'Maintenance',
 };
 
 const SUBJECT_RE = /^(?<type>[a-z]+)(\((?<scope>[^)]+)\))?(?<bang>!)?:\s*(?<subject>.+)$/;
@@ -38,7 +55,9 @@ export function parseCommits(lines: string[]): CommitLine[] {
 		if (!m?.groups) continue;
 		const type = m.groups.type ?? '';
 		const text = m.groups.subject ?? '';
-		if (type === 'chore' && text.startsWith('release')) continue;
+		// The release commit itself (`chore(release): X.Y.Z`) is not a change.
+		if (type === 'chore' && (m.groups.scope === 'release' || text.startsWith('release')))
+			continue;
 		const group = m.groups.bang ? 'Changed' : TYPE_GROUP[type];
 		if (!group) continue;
 		out.push({
