@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.1 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.2 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -107,7 +107,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 
 ## Parte B — Números e fórmulas
 
-> Espelho de `src/data/*.ts` no estado de 2026-09-27 (design isométrico, arma assinada, EASY/NORMAL/HARD). Itens marcados **[1.0: revisar]** mudam com as SDDs 001–005; a tabela por arma × tier entra com a SDD-002.
+> Espelho de `src/data/*.ts` no estado de 2026-09-27 (design isométrico, arma assinada, EASY/NORMAL/HARD). Itens marcados **[1.0: revisar]** mudam com as SDDs 001–005; tabela por arma × tier (§6) e bônus de set (§4.3) seguem a SDD-002, reespelhados em 2026-11-08.
 
 ### 1. Rounds
 
@@ -246,27 +246,102 @@ Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de 
 | Cataclismo Elemental (Lucia) | 4 s; 1000% do dano mágico distribuído; raio 260 u; aplica os 4 elementos |
 | Invulnerabilidade | durante a animação (0,8 s) |
 
+#### 4.3 Bônus de set
+
+Só o maior patamar atingido vale. Valores são totais por patamar (`SET_BONUSES` em `src/data/sets.ts`). [1.0: calibrar no T2.10]
+
+| Set | Armas | 2 armas | 4 armas | 6 armas |
+|---|---|---|---|---|
+| blade | machete, knives, bladeWhirl | chance de sangramento +5% | chance de sangramento +12% | chance de sangramento +25% |
+| blunt | hammer | armadura +2 | armadura +5 | armadura +10 |
+| thrown | knives, fishBoomerang | vel. de ataque +5% | vel. de ataque +12% | vel. de ataque +25% |
+| gun | doubleBarrel, auxPistol, crossbow, droneSentinel | crítico +4% | crítico +10% | crítico +20% |
+| explosive | molotov, mine, grenadeBelt | área +10% | área +22% | área +40% |
+| elemental | molotov, elementStaff, iceShards, flameRing, lightningTotem | chance de queimadura +5% + chance de gelo +5% | chance de queimadura +12% + chance de gelo +12% | chance de queimadura +25% + chance de gelo +25% |
+| support | droneSentinel, poisonCloud | regen +1/s | regen +2,5/s | regen +5/s |
+
 ### 5. XP e level (persistente)
 
 - `xpToNext(L) = floor(30 · L^1,55 + 50)`; level máximo 100.
 - Meta de ritmo: level 10 na 3ª run, level 30 em ~15 runs, level 100 em ~150 runs (validar na sim).
 - Orbe de XP: inimigo comum 1, elite roxo 5, elite laranja 10, boss 100; × `(1 + 0,05·N)`.
 
-### 6. Armas assinadas
+### 6. Armas (17 linhas × 4 tiers)
 
-> 2026-09-27: alcance das armas do Jack +50% em todos os tiers (pedido do usuário; T1 70 → 105 u).
+> Espelho de `src/data/weapon-lines.ts` em 2026-11-08. Tiers I–IV: dano, cooldown, alcance e raio multiplicados por `TIER_SCALE`; tier III+ ganha +1 perfuração em armas que a têm.
 
-| Arma | Tag | Dano | Cadência (/s) | Alcance | Especial |
-|---|---|---|---|---|---|
-| Machete (T1) | melee | 14 | 1,4 | arco 140° · 150 u | 15% sangramento |
-| Katana (T2) | melee | 26 | 1,8 | arco 170° · 180 u | 25% sangramento, golpe duplo |
-| Espada-motosserra (T3) | melee | 48 (12 × 4) | 2,2 | arco 200° · 195 u | contínuo, 40% sangramento |
-| Escopeta cano duplo (T1) | firearm | 7 × 6 bagos | 1,1 | 220 u · 30° | knockback |
-| Escopeta automática (T2) | firearm | 8 × 7 | 1,6 | 240 u · 35° | perfura 1 |
-| Escopeta-foguete (T3) | firearm | 10 × 7 + explosão 30 | 1,4 | 260 u | explosão em área |
-| Cajado dos 4 elementos (T1) | magic | 16 | 1,3 | 260 u | alterna elemento a cada disparo; perfura 1 |
-| Cajado arcano (T2) | magic | 24 | 1,4 | 280 u | projéteis em área 40 u |
-| Cajado das Quatro Tempestades (T3) | magic | 30 | 1,8 | 300 u | 4 elementos simultâneos |
+**DPS aprox.** = dano / cooldown. Não conta projéteis por ativação, perfuração, área, crítico nem status. [1.0: calibrar no T2.10]
+
+| Arma | Classe | Sets | Tier | Dano [1.0: calibrar no T2.10] | Cooldown (s) [1.0: calibrar no T2.10] | Alcance (u) [1.0: calibrar no T2.10] | DPS aprox. [1.0: calibrar no T2.10] |
+|---|---|---|---|---|---|---|---|
+| machete | melee | blade | I | 14 | 0,71 | 150 | 19,6 |
+| machete | melee | blade | II | 21 | 0,68 | 158 | 30,9 |
+| machete | melee | blade | III | 31 | 0,64 | 165 | 48,2 |
+| machete | melee | blade | IV | 43 | 0,63 | 173 | 68,4 |
+| hammer | melee | blunt | I | 22 | 1,2 | 120 | 18,3 |
+| hammer | melee | blunt | II | 33 | 1,14 | 126 | 28,9 |
+| hammer | melee | blunt | III | 48 | 1,08 | 132 | 44,4 |
+| hammer | melee | blunt | IV | 68 | 1,06 | 138 | 64,4 |
+| knives | melee | blade + thrown | I | 8 | 1,2 | 240 | 6,7 |
+| knives | melee | blade + thrown | II | 12 | 1,14 | 252 | 10,5 |
+| knives | melee | blade + thrown | III | 18 | 1,08 | 264 | 16,7 |
+| knives | melee | blade + thrown | IV | 25 | 1,06 | 276 | 23,7 |
+| fishBoomerang | melee | thrown | I | 10 | 1,8 | 200 | 5,6 |
+| fishBoomerang | melee | thrown | II | 15 | 1,71 | 210 | 8,8 |
+| fishBoomerang | melee | thrown | III | 22 | 1,62 | 220 | 13,6 |
+| fishBoomerang | melee | thrown | IV | 31 | 1,58 | 230 | 19,6 |
+| bladeWhirl | melee | blade | I | 8 | 0,4 | 70 | 20 |
+| bladeWhirl | melee | blade | II | 12 | 0,38 | 74 | 31,6 |
+| bladeWhirl | melee | blade | III | 18 | 0,36 | 77 | 50 |
+| bladeWhirl | melee | blade | IV | 25 | 0,35 | 81 | 71 |
+| doubleBarrel | firearm | gun | I | 8 | 0,91 | 220 | 8,8 |
+| doubleBarrel | firearm | gun | II | 12 | 0,86 | 231 | 13,9 |
+| doubleBarrel | firearm | gun | III | 18 | 0,82 | 242 | 22 |
+| doubleBarrel | firearm | gun | IV | 25 | 0,8 | 253 | 31,3 |
+| auxPistol | firearm | gun | I | 7 | 0,6 | 240 | 11,7 |
+| auxPistol | firearm | gun | II | 11 | 0,57 | 252 | 19,3 |
+| auxPistol | firearm | gun | III | 15 | 0,54 | 264 | 27,8 |
+| auxPistol | firearm | gun | IV | 22 | 0,53 | 276 | 41,7 |
+| crossbow | firearm | gun | I | 16 | 1,4 | 320 | 11,4 |
+| crossbow | firearm | gun | II | 24 | 1,33 | 336 | 18 |
+| crossbow | firearm | gun | III | 35 | 1,26 | 352 | 27,8 |
+| crossbow | firearm | gun | IV | 50 | 1,23 | 368 | 40,6 |
+| molotov | firearm | explosive + elemental | I | 6 | 3 | 220 | 2 |
+| molotov | firearm | explosive + elemental | II | 9 | 2,85 | 231 | 3,2 |
+| molotov | firearm | explosive + elemental | III | 13 | 2,7 | 242 | 4,8 |
+| molotov | firearm | explosive + elemental | IV | 19 | 2,64 | 253 | 7,2 |
+| mine | firearm | explosive | I | 35 | 2,5 | 30 | 14 |
+| mine | firearm | explosive | II | 53 | 2,38 | 32 | 22,3 |
+| mine | firearm | explosive | III | 77 | 2,25 | 33 | 34,2 |
+| mine | firearm | explosive | IV | 109 | 2,2 | 35 | 49,5 |
+| grenadeBelt | firearm | explosive | I | 30 | 5 | 240 | 6 |
+| grenadeBelt | firearm | explosive | II | 45 | 4,75 | 252 | 9,5 |
+| grenadeBelt | firearm | explosive | III | 66 | 4,5 | 264 | 14,7 |
+| grenadeBelt | firearm | explosive | IV | 93 | 4,4 | 276 | 21,1 |
+| droneSentinel | firearm | gun + support | I | 6 | 0,33 | 220 | 18 |
+| droneSentinel | firearm | gun + support | II | 9 | 0,32 | 231 | 28,4 |
+| droneSentinel | firearm | gun + support | III | 13 | 0,3 | 242 | 43,3 |
+| droneSentinel | firearm | gun + support | IV | 19 | 0,29 | 253 | 64,8 |
+| elementStaff | magic | elemental | I | 16 | 0,77 | 260 | 20,8 |
+| elementStaff | magic | elemental | II | 24 | 0,73 | 273 | 32,8 |
+| elementStaff | magic | elemental | III | 35 | 0,69 | 286 | 50,6 |
+| elementStaff | magic | elemental | IV | 50 | 0,68 | 299 | 73,9 |
+| iceShards | magic | elemental | I | 6 | 0,5 | 60 | 12 |
+| iceShards | magic | elemental | II | 9 | 0,47 | 63 | 18,9 |
+| iceShards | magic | elemental | III | 13 | 0,45 | 66 | 28,9 |
+| iceShards | magic | elemental | IV | 19 | 0,44 | 69 | 43,2 |
+| flameRing | magic | elemental | I | 8 | 0,4 | 75 | 20 |
+| flameRing | magic | elemental | II | 12 | 0,38 | 79 | 31,6 |
+| flameRing | magic | elemental | III | 18 | 0,36 | 83 | 50 |
+| flameRing | magic | elemental | IV | 25 | 0,35 | 86 | 71 |
+| lightningTotem | magic | elemental | I | 12 | 7 | 170 | 1,7 |
+| lightningTotem | magic | elemental | II | 18 | 6,65 | 179 | 2,7 |
+| lightningTotem | magic | elemental | III | 26 | 6,3 | 187 | 4,1 |
+| lightningTotem | magic | elemental | IV | 37 | 6,16 | 195 | 6 |
+| poisonCloud | magic | support | I | 5 | 4 | 230 | 1,3 |
+| poisonCloud | magic | support | II | 8 | 3,8 | 242 | 2,1 |
+| poisonCloud | magic | support | III | 11 | 3,6 | 253 | 3,1 |
+| poisonCloud | magic | support | IV | 16 | 3,52 | 265 | 4,5 |
 
 ### 7. Cartas
 
