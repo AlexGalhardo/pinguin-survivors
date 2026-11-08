@@ -1,56 +1,54 @@
 # Pinguin Survivors — CLAUDE.md
 
-Endless roguelite frenético em **pixel art 2.5D isométrica 2:1** (layout Diablo 2, clima escuro Diablo 4), inspirado em Brotato. Três pinguins sobreviventes de um apocalipse zumbi: Jack (melee), Bob (fogo), Lucia (magia) — cada um com perfil de stats, 6 cartas exclusivas e um superpoder (level 5, Espaço). Gore nível DOOM.
-Stack: TypeScript + Vite + **Phaser 4.2.x** (sem Arcade: simulação própria em mundo cartesiano + projeção iso) sobre **Bun 1.4.2** (testes `bun:test`). Arte **PixelLab**, áudio **ElevenLabs**. UI **EN + PT-BR**; docs em PT-BR.
-O jogo anterior (Starfall Survivors) vive na branch `starfall-survivors-legacy` — não use nada de lá sem pedido.
+Arena survivor roguelite **top-down 2D em pixel art**, estilo Brotato, vendido na **Steam (US$ 4,99, Windows via Electron)** e no **Google Play (Android premium, Capacitor)**, com demo web em `/demo`. Três pinguins sobreviventes de um apocalipse zumbi: Jack (melee), Bob (fogo), Lucia (magia). Rounds cronometrados, **loja no fim de cada round**, **6 slots de arma** automáticos, cartas de stat no level-up, boss a cada 10 rounds, Danger 0–5, endless, gore nível DOOM, level 1–100 persistente.
+Stack: **TypeScript + Vite 8 + Phaser 4.2.x** (só o mundo; sem Arcade: simulação própria) + **React 19 + Tailwind CSS v4** (toda a UI) sobre **Bun 1.4.x** (`bun:test`). Arte **PixelLab API v2**, áudio **ElevenLabs** (sem vozes). UI em **EN, PT-BR, ES, ZH-CN**; docs em PT-BR. Site estático **Astro 7.4** em `site/` (GitHub Pages).
+**Marco**: demo no **Steam Next Fest de 22/02 a 01/03/2027** (inscrição até 10/01/2027); 1.0 depois.
+Histórico: `legacy-voices` (iso + vozes, 2026-11-08), `starfall-survivors-legacy` (jogo anterior). Não use nada de lá sem pedido.
 
 ## Comece aqui (toda sessão)
 
-1. Leia **[PLAN.md](PLAN.md)**: fases e microtarefas `[ ]`/`[x]`/`[~]`. É a fonte da verdade.
-2. Siga o protocolo em [docs/agent-workflow.md](docs/agent-workflow.md).
-3. Consulte o doc relevante antes de codar:
-   - Design → [docs/game-design.md](docs/game-design.md) · Números → [docs/balancing.md](docs/balancing.md)
-   - Arquitetura, projeção iso, pastas → [docs/architecture.md](docs/architecture.md)
-   - Arte (PixelLab) → [docs/art-and-assets.md](docs/art-and-assets.md) · prompts → [docs/art-prompts.md](docs/art-prompts.md)
-   - Áudio (ElevenLabs) → [docs/audio.md](docs/audio.md) · UI/HUD → [docs/ui-hud.md](docs/ui-hud.md)
-   - Decisões do usuário → [docs/decisions.md](docs/decisions.md) · Ferramentas → [docs/tooling.md](docs/tooling.md)
-   - Commits, versões, branches → [docs/git-and-versioning.md](docs/git-and-versioning.md)
+1. Leia **[ROADMAP.md](ROADMAP.md)**: marcos, tarefas `[ ]`/`[x]`/`[~]` com responsável, DoD, assert e auditoria. É a fonte da verdade do trabalho. (`PLAN.md` é histórico.)
+2. Siga o protocolo em [docs/workflow.md](docs/workflow.md) (sessão, papéis, convenções, DoD, git, releases padrão vukem, gates).
+3. Antes de codar, leia a **SDD** da frente em [docs/sdds/](docs/sdds/README.md) e os docs que ela cita:
+   - Design → [docs/gdd.md](docs/gdd.md) · Números e balanceamento → [docs/balancing-and-simulation.md](docs/balancing-and-simulation.md)
+   - Técnica → [docs/architecture.md](docs/architecture.md) · Arte → [docs/visual.md](docs/visual.md) · Som → [docs/audio.md](docs/audio.md)
+   - Decisões → [docs/adrs/](docs/adrs/README.md) · Entrevista de 2026-11-08 → [docs/brainstorming.md](docs/brainstorming.md)
+   - Mercado → [docs/web-research.md](docs/web-research.md) · Site → [docs/site.md](docs/site.md)
 
 ## Comandos
 
 ```
-bun install        # dependências (Bun no lugar de npm/node)
-bun run dev        # servidor Vite
-bun run build      # build de produção (dist/)
-bun test           # bun:test (lógica pura)
-bun run typecheck  # tsc --noEmit
-bun run check      # Biome (lint + format); check:fix corrige
-bun scripts/pl-concepts.ts           # concepts de heróis no PixelLab (+ sheet.png)
-bun scripts/pack-atlas.ts            # art-src/processed → public/assets/atlas
-bun scripts/qa-browsers.ts           # QA do build (com `vite preview --port 4173` rodando)
-bun run e2e                          # E2E menu → run → cartas → morte → histórico (com `bun run dev` rodando)
+bun install · bun run dev · bun run build · bun test · bun run typecheck · bun run check (Biome; check:fix corrige)
+bun run e2e                      # Playwright (com bun run dev)
+bun scripts/qa-browsers.ts       # QA do build (com vite preview --port 4173)
+bun scripts/perf.ts --round 40   # 300 inimigos + 2.000 decalques
+bun scripts/sim.ts 20            # simulação headless · bun scripts/playtest-bot.ts … # bot no jogo real
+bun scripts/pl-*.ts · el-*.ts · pack-*.ts   # arte e áudio (skills pinguin-art-assets / pinguin-audio-assets)
 ```
+
+Scripts previstos pelas SDDs e ainda não criados: `build:demo`, `build-site.ts`, `release.ts`, `balance-report.ts` (ver ROADMAP).
 
 ## Regras essenciais
 
-- **Phaser 4, não 3.** Use as skills Phaser em `.claude/skills/` antes de confiar em exemplos da web.
-- **Simulação em mundo cartesiano, render em iso** (`screenX = x−y`, `screenY = (x+y)/2 − z`, depth `x+y`). Nada de Arcade Physics.
-- Lógica pura (fórmulas, sorteios, stats, rounds, cartas, poções, progressão, chunks, iso) em `src/logic/`, sem importar Phaser, com teste `bun:test`.
-- Números de gameplay só em `src/data/` (espelhados em docs/balancing.md). Textos só em `src/i18n/` (**EN e PT-BR sempre juntos**). Cores em `src/config/palette.ts`.
-- Toda textura/animação/som tem chave em `src/art/manifest.ts`; placeholders por código e assets finais usam a mesma chave.
-- Tela cheia sem scroll, **zoom inteiro pela altura** (altura lógica 540; 2560×1080 → ×2), `pixelArt: true`.
-- Object pooling para inimigos, projéteis, pickups, gibs, decalques e números. Meta: 60 FPS com 300 inimigos + 2.000 decalques.
+- **Phaser 4, não 3.** Use as skills Phaser em `.claude/skills/` antes de confiar em exemplos da web. Phaser só renderiza o mundo; **toda UI é React** (`src/ui/`).
+- **Mundo cartesiano, câmera top-down** (`screenX = x`, `screenY = y`, depth `y`). Arena quadrada `min(10 + (N−1), 40)` tiles de 64 px. Nada de Arcade Physics; nada de iso.
+- Lógica pura em `src/logic/` (sem Phaser e sem React) com teste `bun:test`. Números só em `src/data/` (espelhados em `docs/balancing-and-simulation.md` Parte B). Textos só em `src/i18n/` (**4 idiomas sempre juntos**). Cores em `src/config/palette.ts`. Toda textura/animação/som tem chave em `src/art/manifest.ts`.
+- Tela cheia sem scroll, **zoom inteiro pela altura 540** no canvas; overlay React independente do zoom. Alvos: 1920×1080, 2560×1440, 2400×1080 (celular landscape).
+- Object pooling para tudo que nasce em massa. Meta: 60 FPS com 300 inimigos + 2.000 decalques.
+- **Arte**: reaproveitar os sprites existentes (`low top-down`); personagem novo = concept em 4 direções → **aprovação do desenvolvedor** → animação template (8 frames heróis, 6 inimigos). Armas são sprites separados em 4 tiers, animados por código. Chamadas via API v2 com o token do `.env` (o MCP `pixellab` do usuário está com token expirado). `GET /balance` antes de lotes; > 200 gerações só com aviso.
+- **Áudio**: só SFX e música; **sem vozes** (ADR-009).
+- Chaves (`PIXELLAB_API_TOKEN`, `ELEVENLABS_API_KEY`) **só no `.env`**; `TODO.md`/`STATUS.md` locais (gitignored). Nunca imprima ou commite chaves.
+- Dependências: última versão **estável**, fixada; nunca `latest`/`beta`/`rc`. Nenhuma dependência nova fora do que a SDD lista.
 - Verifique mudanças visíveis com **agent-browser** (`?skipMenu=1&hero=jack&round=5&seed=1&debug=1`).
-- **Assets só no fim da Fase 7 (P-57):** até lá, nada de gerar arte/áudio novos; sistemas usam placeholders por código com as chaves do manifest.
-- **Arte: PixelLab** (skill `pinguin-art-assets`). Todo personagem novo passa por **concept → aprovação do usuário → animação**. Vista `low top-down`, 8 direções (**5 geradas + 3 espelhadas**); animações **`template`** (1 geração/direção). **Ataques estilo Brotato (P-56):** herói animado **sem arma**; a arma é um sprite separado animado por código, e cada tier é só uma nova imagem de arma. Registre prompts em docs/art-prompts.md. `GET /balance` antes de lotes.
-- **Áudio: ElevenLabs** (skill `pinguin-audio-assets`).
-- Chaves (`PIXELLAB_API_TOKEN`, `ELEVENLABS_API_KEY`) **só no `.env`**; `TODO.md` é local (gitignored).
-- Ao terminar: marque o checklist no PLAN.md; mudanças relevantes em `[Unreleased]` do CHANGELOG.md; decisão nova → docs/decisions.md.
-- **Conventional Commits 1.0.0** e **SemVer 2.0.0** (`0.1.0-alpha.N`). Micro-commits; ao concluir cada seção: `docs(plan)` → `chore(release): X` + tag → `git push origin main --follow-tags`. Os hooks Husky estão vazios por escolha do usuário: rode `check`/`typecheck`/`test` (e `build` antes de push) à mão. Nunca `--no-verify`.
-- **Push após cada commit** (depois dos gates). **`CHANGELOG.md`** na raiz no padrão **Keep a Changelog 1.1.0** (registre em `[Unreleased]`; mova para a versão no release).
-- **Bun** no lugar de npm/node. Estilo **Biome v2**, TAB largura 4.
+- Ao terminar uma tarefa: assert do ROADMAP executado e evidência anotada na linha; `[Unreleased]` do CHANGELOG.md; decisão nova → ADR em `docs/adrs/`; spec mudou → edite a SDD primeiro.
+- **Conventional Commits 1.0.0** e **SemVer padrão vukem** (`0.0.x` alpha → `0.1.x` beta → `1.0.0`; sem sufixos). Micro-commits; gates manuais (`check`, `typecheck`, `test`; `build` antes de push); **push após cada commit**; nunca `--no-verify`. Release = tag `vX.Y.Z` + GitHub Release com grupos Keep a Changelog (`bun scripts/release.ts`).
+- Gates de aprovação do desenvolvedor (🛑): concepts de arte, gasto > 200 gerações ou > 2.000 créditos, retag/apagar tags, publicar em loja, mudar escopo.
+- **Bun** no lugar de npm/node. **Biome v2**, TAB largura 4.
+
+## Agentes
+
+Orquestrador (esta sessão) planeja, delega, **revisa todo diff**, corrige e faz push/release. `senior` (Sonnet) implementa; `estagiario` (Haiku) faz i18n, testes, relatórios e pesquisa. Até 3 em paralelo, sem worktrees. Com o plugin `context-mode` ativo, chamadas `Agent` são recusadas pelo auto mode: desative o hook ou saia do auto mode para delegar. Relatório de agente é alegação: confira antes de marcar `[x]`.
 
 ## Skills úteis
 
-Phaser 4 (28, ex.: `render-textures`, `filters-and-postfx`, `cameras`, `animations`, `scale-and-responsive`), `pinguin-art-assets`, `pinguin-audio-assets`, `agent-browser` (QA), `canvas-design`, `graphify`, `find-skills`, `grilling` (entrevistar o usuário).
-**Gamedev de terceiros (40, curadas):** `gd-*` (game feel, IA, procedural, RPG/roguelike, save, câmera, input, UI, performance, shaders, áudio, assets, itch/Steam), `gc-*` (design, arquitetura, QA Playwright, review, deploy) e `ccgs-*` (balanceamento, playtest, perf, QA, release, localização). **Use-as quando a tarefa bater** — tabela "quando usar" em [docs/tooling.md](docs/tooling.md); origem e ajustes em `.claude/skills/THIRD_PARTY.md`. Em conflito, este CLAUDE.md vence (ex.: `gc-phaser` é Phaser 3).
+Phaser 4 (28), `pinguin-art-assets`, `pinguin-audio-assets`, `agent-browser` (QA), `graphify`, `grilling`, `interview-me`, e 40 skills de gamedev de terceiros (`gd-*`, `gc-*`, `ccgs-*`): tabela "quando usar" em [docs/workflow.md](docs/workflow.md) §8. Em conflito, este CLAUDE.md vence (ex.: `gc-phaser` é Phaser 3).

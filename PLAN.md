@@ -1,6 +1,8 @@
-# PLAN.md — Pinguin Survivors
+# PLAN.md — Pinguin Survivors (histórico, congelado em 2026-11-08)
 
-> **Referência principal das sessões de agentes.** Leia inteiro antes de começar. Trabalhe na ordem, uma microtarefa por vez.
+> **Este arquivo é histórico.** Cobre as fases 0–7 do protótipo isométrico (até `0.1.0-beta.8`). O plano vigente é o **[ROADMAP.md](ROADMAP.md)**; as decisões que mudaram o jogo (top-down, 6 slots, loja, React, Steam/Android) estão em [docs/brainstorming.md](docs/brainstorming.md) e [docs/adrs/](docs/adrs/README.md). Links para docs removidos abaixo apontam para arquivos que foram mesclados em `docs/` (ver [docs/README.md](docs/README.md)).
+
+> ~~**Referência principal das sessões de agentes.** Leia inteiro antes de começar. Trabalhe na ordem, uma microtarefa por vez.~~
 > Legenda: `[ ]` pendente · `[x]` concluída · `[~]` incompleta/bloqueada (diga o motivo).
 > Ao terminar uma tarefa: marque o checkbox; mudanças relevantes vão para `[Unreleased]` do [CHANGELOG.md](CHANGELOG.md) (Keep a Changelog).
 > Git: micro-commits em **Conventional Commits 1.0.0**; ao fechar cada **seção** (0.1, 1.1, …) → bump **SemVer** (`0.1.0-alpha.N` / `0.1.0-beta.N`) + tag + `git push origin main --follow-tags`. Ver [docs/git-and-versioning.md](docs/git-and-versioning.md).

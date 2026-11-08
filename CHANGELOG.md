@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Market research on arena survivors, the Steam Next Fest of February 2027 and monetization (`docs/web-research.md`).
+- Developer interview of 2026-11-08 with the decisions for the commercial 1.0 (`docs/brainstorming.md`), Architecture Decision Records ADR-001…015 (`docs/adrs/`) and implementation specs SDD-001…013 with verifiable acceptance criteria (`docs/sdds/`).
+- Game Design Document (`docs/gdd.md`), Art Bible (`docs/visual.md`), sound direction (`docs/audio.md`), balancing and simulation playbook (`docs/balancing-and-simulation.md`), agent/git workflow (`docs/workflow.md`) and the commercial site spec (`docs/site.md`).
+- Branch `legacy-voices` with the isometric build and the hero voices before their removal.
+
+### Changed
+
+- Documentation consolidated into a few files under `docs/`; `CLAUDE.md`, `AGENTS.md` and the art/audio skills now describe the top-down, React and Steam/Android direction. `PLAN.md` is frozen as history.
+- Git remote renamed to `AlexGalhardo/pinguin-survivors`.
+
+### Removed
+
+- Legacy docs merged elsewhere: `game-design.md`, `ui-hud.md`, `art-and-assets.md`, `art-prompts.md`, `game-market.md`, `tooling.md`, `agent-workflow.md`, `git-and-versioning.md`, `balancing.md`, `decisions.md` (now `docs/adrs/ADR-000-decisoes-anteriores.md`).
+
 ## [0.1.0-beta.8] - 2026-09-27
 
 Playtest build **playdev-7** (end of the day's session).
