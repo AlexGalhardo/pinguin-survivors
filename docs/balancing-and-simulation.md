@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.2 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.3 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -122,7 +122,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 ### 2. Escala dos inimigos
 
 - `hpMul(N) = (1 + 0,15·(N−1)) · 1,12^ciclo · 1,6^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/30)` (endless: a cada volta completa pelos 3 biomas)
-- `dmgMul(N) = (1 + 0,08·(N−1)) · 1,08^ciclo · 1,5^volta`
+- `dmgMul(N) = (1 + 0,26·(N−1)) · 1,08^ciclo · 1,5^volta` (`src/data/rounds.ts`: `dmgPerRound` 0,26, `dmgPerCycle` 1,08, `dmgPerLoop` 1,5; 2026-11-08, commit `2f822aa`)
 - `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos** [1.0: revisar]
 - Bosses: HP base × `1,35^ciclo` (round 10 ×1, 20 ×1,35, 30 ×1,82…)
 - Biomas: rounds 1–10 Antártida, 11–20 estação/porto, 21–30 cidade em ruínas, depois repete (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
@@ -268,80 +268,80 @@ Só o maior patamar atingido vale. Valores são totais por patamar (`SET_BONUSES
 
 ### 6. Armas (17 linhas × 4 tiers)
 
-> Espelho de `src/data/weapon-lines.ts` em 2026-11-08. Tiers I–IV: dano, cooldown, alcance e raio multiplicados por `TIER_SCALE`; tier III+ ganha +1 perfuração em armas que a têm.
+> Espelho de `src/data/weapons.ts` em 2026-11-08 (export `WEAPON_LINES`). Tiers I–IV: dano, cooldown, alcance e raio multiplicados por `TIER_SCALE`; tier III+ ganha +1 perfuração em armas que a têm.
 
 **DPS aprox.** = dano / cooldown. Não conta projéteis por ativação, perfuração, área, crítico nem status. [1.0: calibrar no T2.10]
 
 | Arma | Classe | Sets | Tier | Dano [1.0: calibrar no T2.10] | Cooldown (s) [1.0: calibrar no T2.10] | Alcance (u) [1.0: calibrar no T2.10] | DPS aprox. [1.0: calibrar no T2.10] |
 |---|---|---|---|---|---|---|---|
-| machete | melee | blade | I | 14 | 0,71 | 150 | 19,6 |
-| machete | melee | blade | II | 21 | 0,68 | 158 | 30,9 |
-| machete | melee | blade | III | 31 | 0,64 | 165 | 48,2 |
-| machete | melee | blade | IV | 43 | 0,63 | 173 | 68,4 |
-| hammer | melee | blunt | I | 22 | 1,2 | 120 | 18,3 |
-| hammer | melee | blunt | II | 33 | 1,14 | 126 | 28,9 |
-| hammer | melee | blunt | III | 48 | 1,08 | 132 | 44,4 |
-| hammer | melee | blunt | IV | 68 | 1,06 | 138 | 64,4 |
-| knives | melee | blade + thrown | I | 8 | 1,2 | 240 | 6,7 |
-| knives | melee | blade + thrown | II | 12 | 1,14 | 252 | 10,5 |
-| knives | melee | blade + thrown | III | 18 | 1,08 | 264 | 16,7 |
-| knives | melee | blade + thrown | IV | 25 | 1,06 | 276 | 23,7 |
-| fishBoomerang | melee | thrown | I | 10 | 1,8 | 200 | 5,6 |
-| fishBoomerang | melee | thrown | II | 15 | 1,71 | 210 | 8,8 |
-| fishBoomerang | melee | thrown | III | 22 | 1,62 | 220 | 13,6 |
-| fishBoomerang | melee | thrown | IV | 31 | 1,58 | 230 | 19,6 |
-| bladeWhirl | melee | blade | I | 8 | 0,4 | 70 | 20 |
-| bladeWhirl | melee | blade | II | 12 | 0,38 | 74 | 31,6 |
-| bladeWhirl | melee | blade | III | 18 | 0,36 | 77 | 50 |
-| bladeWhirl | melee | blade | IV | 25 | 0,35 | 81 | 71 |
-| doubleBarrel | firearm | gun | I | 8 | 0,91 | 220 | 8,8 |
-| doubleBarrel | firearm | gun | II | 12 | 0,86 | 231 | 13,9 |
-| doubleBarrel | firearm | gun | III | 18 | 0,82 | 242 | 22 |
-| doubleBarrel | firearm | gun | IV | 25 | 0,8 | 253 | 31,3 |
-| auxPistol | firearm | gun | I | 7 | 0,6 | 240 | 11,7 |
-| auxPistol | firearm | gun | II | 11 | 0,57 | 252 | 19,3 |
-| auxPistol | firearm | gun | III | 15 | 0,54 | 264 | 27,8 |
-| auxPistol | firearm | gun | IV | 22 | 0,53 | 276 | 41,7 |
-| crossbow | firearm | gun | I | 16 | 1,4 | 320 | 11,4 |
-| crossbow | firearm | gun | II | 24 | 1,33 | 336 | 18 |
-| crossbow | firearm | gun | III | 35 | 1,26 | 352 | 27,8 |
-| crossbow | firearm | gun | IV | 50 | 1,23 | 368 | 40,6 |
-| molotov | firearm | explosive + elemental | I | 6 | 3 | 220 | 2 |
-| molotov | firearm | explosive + elemental | II | 9 | 2,85 | 231 | 3,2 |
-| molotov | firearm | explosive + elemental | III | 13 | 2,7 | 242 | 4,8 |
-| molotov | firearm | explosive + elemental | IV | 19 | 2,64 | 253 | 7,2 |
-| mine | firearm | explosive | I | 35 | 2,5 | 30 | 14 |
-| mine | firearm | explosive | II | 53 | 2,38 | 32 | 22,3 |
-| mine | firearm | explosive | III | 77 | 2,25 | 33 | 34,2 |
-| mine | firearm | explosive | IV | 109 | 2,2 | 35 | 49,5 |
-| grenadeBelt | firearm | explosive | I | 30 | 5 | 240 | 6 |
-| grenadeBelt | firearm | explosive | II | 45 | 4,75 | 252 | 9,5 |
-| grenadeBelt | firearm | explosive | III | 66 | 4,5 | 264 | 14,7 |
-| grenadeBelt | firearm | explosive | IV | 93 | 4,4 | 276 | 21,1 |
+| machete | melee | blade | I | 9 | 0,71 | 150 | 12,6 |
+| machete | melee | blade | II | 14 | 0,68 | 158 | 20,6 |
+| machete | melee | blade | III | 20 | 0,64 | 165 | 31,1 |
+| machete | melee | blade | IV | 28 | 0,63 | 173 | 44,5 |
+| hammer | melee | blunt | I | 14 | 1,2 | 120 | 11,7 |
+| hammer | melee | blunt | II | 21 | 1,14 | 126 | 18,4 |
+| hammer | melee | blunt | III | 31 | 1,08 | 132 | 28,7 |
+| hammer | melee | blunt | IV | 43 | 1,06 | 138 | 40,7 |
+| knives | melee | blade + thrown | I | 13 | 1,2 | 240 | 10,8 |
+| knives | melee | blade + thrown | II | 20 | 1,14 | 252 | 17,5 |
+| knives | melee | blade + thrown | III | 29 | 1,08 | 264 | 26,9 |
+| knives | melee | blade + thrown | IV | 40 | 1,06 | 276 | 37,9 |
+| fishBoomerang | melee | thrown | I | 13 | 1,8 | 200 | 7,2 |
+| fishBoomerang | melee | thrown | II | 20 | 1,71 | 210 | 11,7 |
+| fishBoomerang | melee | thrown | III | 29 | 1,62 | 220 | 17,9 |
+| fishBoomerang | melee | thrown | IV | 40 | 1,58 | 230 | 25,3 |
+| bladeWhirl | melee | blade | I | 6 | 0,4 | 70 | 15 |
+| bladeWhirl | melee | blade | II | 9 | 0,38 | 74 | 23,7 |
+| bladeWhirl | melee | blade | III | 13 | 0,36 | 77 | 36,1 |
+| bladeWhirl | melee | blade | IV | 19 | 0,35 | 81 | 54 |
+| doubleBarrel | firearm | gun | I | 7 | 0,91 | 220 | 7,7 |
+| doubleBarrel | firearm | gun | II | 11 | 0,86 | 231 | 12,7 |
+| doubleBarrel | firearm | gun | III | 15 | 0,82 | 242 | 18,3 |
+| doubleBarrel | firearm | gun | IV | 22 | 0,8 | 253 | 27,5 |
+| auxPistol | firearm | gun | I | 9 | 0,6 | 240 | 15 |
+| auxPistol | firearm | gun | II | 14 | 0,57 | 252 | 24,6 |
+| auxPistol | firearm | gun | III | 20 | 0,54 | 264 | 37 |
+| auxPistol | firearm | gun | IV | 28 | 0,53 | 276 | 53 |
+| crossbow | firearm | gun | I | 20 | 1,4 | 320 | 14,3 |
+| crossbow | firearm | gun | II | 30 | 1,33 | 336 | 22,6 |
+| crossbow | firearm | gun | III | 44 | 1,26 | 352 | 34,9 |
+| crossbow | firearm | gun | IV | 62 | 1,23 | 368 | 50,3 |
+| molotov | firearm | explosive + elemental | I | 4 | 3 | 220 | 1,3 |
+| molotov | firearm | explosive + elemental | II | 6 | 2,85 | 231 | 2,1 |
+| molotov | firearm | explosive + elemental | III | 9 | 2,7 | 242 | 3,3 |
+| molotov | firearm | explosive + elemental | IV | 12 | 2,64 | 253 | 4,5 |
+| mine | firearm | explosive | I | 24 | 2,5 | 30 | 9,6 |
+| mine | firearm | explosive | II | 36 | 2,38 | 32 | 15,2 |
+| mine | firearm | explosive | III | 53 | 2,25 | 33 | 23,6 |
+| mine | firearm | explosive | IV | 74 | 2,2 | 35 | 33,6 |
+| grenadeBelt | firearm | explosive | I | 33 | 5 | 240 | 6,6 |
+| grenadeBelt | firearm | explosive | II | 50 | 4,75 | 252 | 10,5 |
+| grenadeBelt | firearm | explosive | III | 73 | 4,5 | 264 | 16,2 |
+| grenadeBelt | firearm | explosive | IV | 102 | 4,4 | 276 | 23,2 |
 | droneSentinel | firearm | gun + support | I | 6 | 0,33 | 220 | 18 |
 | droneSentinel | firearm | gun + support | II | 9 | 0,32 | 231 | 28,4 |
 | droneSentinel | firearm | gun + support | III | 13 | 0,3 | 242 | 43,3 |
 | droneSentinel | firearm | gun + support | IV | 19 | 0,29 | 253 | 64,8 |
-| elementStaff | magic | elemental | I | 16 | 0,77 | 260 | 20,8 |
-| elementStaff | magic | elemental | II | 24 | 0,73 | 273 | 32,8 |
-| elementStaff | magic | elemental | III | 35 | 0,69 | 286 | 50,6 |
-| elementStaff | magic | elemental | IV | 50 | 0,68 | 299 | 73,9 |
-| iceShards | magic | elemental | I | 6 | 0,5 | 60 | 12 |
-| iceShards | magic | elemental | II | 9 | 0,47 | 63 | 18,9 |
-| iceShards | magic | elemental | III | 13 | 0,45 | 66 | 28,9 |
-| iceShards | magic | elemental | IV | 19 | 0,44 | 69 | 43,2 |
-| flameRing | magic | elemental | I | 8 | 0,4 | 75 | 20 |
-| flameRing | magic | elemental | II | 12 | 0,38 | 79 | 31,6 |
-| flameRing | magic | elemental | III | 18 | 0,36 | 83 | 50 |
-| flameRing | magic | elemental | IV | 25 | 0,35 | 86 | 71 |
-| lightningTotem | magic | elemental | I | 12 | 7 | 170 | 1,7 |
-| lightningTotem | magic | elemental | II | 18 | 6,65 | 179 | 2,7 |
-| lightningTotem | magic | elemental | III | 26 | 6,3 | 187 | 4,1 |
-| lightningTotem | magic | elemental | IV | 37 | 6,16 | 195 | 6 |
-| poisonCloud | magic | support | I | 5 | 4 | 230 | 1,3 |
-| poisonCloud | magic | support | II | 8 | 3,8 | 242 | 2,1 |
-| poisonCloud | magic | support | III | 11 | 3,6 | 253 | 3,1 |
-| poisonCloud | magic | support | IV | 16 | 3,52 | 265 | 4,5 |
+| elementStaff | magic | elemental | I | 10 | 0,77 | 260 | 13 |
+| elementStaff | magic | elemental | II | 15 | 0,73 | 273 | 20,5 |
+| elementStaff | magic | elemental | III | 22 | 0,69 | 286 | 31,8 |
+| elementStaff | magic | elemental | IV | 31 | 0,68 | 299 | 45,8 |
+| iceShards | magic | elemental | I | 8 | 0,5 | 60 | 16 |
+| iceShards | magic | elemental | II | 12 | 0,47 | 63 | 25,3 |
+| iceShards | magic | elemental | III | 18 | 0,45 | 66 | 40 |
+| iceShards | magic | elemental | IV | 25 | 0,44 | 69 | 56,8 |
+| flameRing | magic | elemental | I | 3 | 0,4 | 75 | 7,5 |
+| flameRing | magic | elemental | II | 5 | 0,38 | 79 | 13,2 |
+| flameRing | magic | elemental | III | 7 | 0,36 | 83 | 19,4 |
+| flameRing | magic | elemental | IV | 9 | 0,35 | 86 | 25,6 |
+| lightningTotem | magic | elemental | I | 16 | 7 | 170 | 2,3 |
+| lightningTotem | magic | elemental | II | 24 | 6,65 | 179 | 3,6 |
+| lightningTotem | magic | elemental | III | 35 | 6,3 | 187 | 5,6 |
+| lightningTotem | magic | elemental | IV | 50 | 6,16 | 195 | 8,1 |
+| poisonCloud | magic | support | I | 6 | 4 | 230 | 1,5 |
+| poisonCloud | magic | support | II | 9 | 3,8 | 242 | 2,4 |
+| poisonCloud | magic | support | III | 13 | 3,6 | 253 | 3,6 |
+| poisonCloud | magic | support | IV | 19 | 3,52 | 265 | 5,4 |
 
 ### 7. Cartas
 
