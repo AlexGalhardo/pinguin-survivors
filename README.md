@@ -53,13 +53,23 @@ Requirements: [Bun](https://bun.sh) 1.4 or newer.
 
 ```bash
 bun install
-bun run dev        # Vite dev server
-bun run build      # production build (dist/)
-bun test           # bun:test (pure logic)
-bun run typecheck  # tsc --noEmit
-bun run lint      # Biome lint + format
-bun run e2e        # Playwright end-to-end (with `bun run dev` running)
+bun run dev              # Vite dev server
+bun run build            # typecheck + production build (dist/)
+bun run build:demo       # web demo (VITE_DEMO=1, base /demo/, dist-demo/)
+bun run build:desktop    # Electron build for Windows (apps/desktop/dist/full/)
+bun run build:desktop:demo  # Electron demo build (apps/desktop/dist/demo/)
+bun test                 # bun:test (pure logic)
+bun run typecheck        # bun check (TypeScript)
+bun run lint             # Biome lint + format
+bun run lint:md          # markdownlint on the docs
+bun run lint:i18n        # no literal text in the React UI (use t())
+bun scripts/i18n-check.ts   # key and placeholder parity across languages
+bun scripts/build-site.ts   # demo + Astro site (site/dist/)
+bun scripts/balance-report.ts   # balance report from playtest logs
+bun run e2e              # Playwright end-to-end (with `bun run dev` running)
 ```
+
+Tests, sims and bot runs are silent: start the dev server with `SOUND_MUTED=true`.
 
 Debug query parameters: `?skipMenu=1&hero=jack&round=5&seed=1&debug=1`. Copy [.env.example](.env.example) to `.env` for the asset pipelines (PixelLab and ElevenLabs keys are only needed to generate assets).
 

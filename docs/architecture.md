@@ -1,6 +1,6 @@
 # Arquitetura técnica — Pinguin Survivors
 
-> **Versão** 2.2 · **Data** 2026-11-08 · Alvo da 1.0 (top-down, React, ports). Onde o código atual ainda diverge do alvo, as SDDs em [sdds/](sdds/README.md) descrevem a migração e o [ROADMAP.md](../ROADMAP.md) a agenda. Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.3 · **Data** 2026-11-08 · Estado atual do código (pós-T3.7: UI só React). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 
@@ -36,10 +36,12 @@
 
 ```
 ┌──────────────────────── React (src/ui) ────────────────────────┐
-│ Hud · MainMenu · HeroSelect · Shop · LevelUpCards · Pause · …  │  lê store ← GameEvents
-│                 store (useSyncExternalStore) · commands        │  envia GameCommands →
+│ MenuHost · RunHost · ShopHost · Hud · TouchControls · …        │  lê store ← pontes
+│   (menus, partida, loja, cartas, pausa, fim: tudo React)       │
+│        store (useSyncExternalStore) · commands                 │  envia GameCommands →
 ├──────────────────────── Phaser (src/scenes, world, …) ─────────┤
 │ BootScene (assets) · GameScene (orquestra os systems)          │
+│ HudScene (luz e overlay de debug com ?debug=1)                 │
 │ systems: Enemy · Weapon · Secondary · Combat · Area · Hostile  │
 │          Superpower · Pickup · Fx · targeting · ProjectilePool │
 │ world: Arena (chão, borda, props, GoreLayer) · Lighting        │
@@ -54,7 +56,8 @@
 ├──────────────────────── Plataforma (src/core/platform) ────────┤
 │ platform(): window.platform (ponte) → electron · capacitor;    │
 │ senão web. save, achievements, leaderboards, fullscreen, openUrl│
-│ tier (low/mid/high, detectTier)                                │
+│ tier (low/mid/high, detectTier). Shells: apps/desktop (Electron)│
+│ e apps/mobile (Capacitor) injetam a ponte; toque em touch-bridge│
 └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -74,10 +77,12 @@
 
 - `index.html`: `<canvas>` + `<div id="ui">` (`position: fixed; inset: 0; pointer-events: none`); painéis abertos ativam `pointer-events`.
 - `src/ui/store.ts`: snapshot imutável do que a UI precisa (HP, XP, Fish, round, timer, boss, build, loja, cartas pendentes, settings); `GameScene` publica por evento.
-- Pontes de dados: `src/ui/hud-bridge.ts` (`HudSnapshot`, publicado a cada `HUD_INTERVAL_MS` = 100 ms) e `src/ui/shop-bridge.ts` (`ShopView`) levam o estado do mundo para a UI; `src/ui/commands.ts` envia `GameCommands` de volta.
-- Componentes em `src/ui/components/`: `Hud`, `Shop`, `ShopHost` (monta a loja), `LevelUpCards`, `Pause`, `GameOver`, `Unlock`, `Toast`, `Btn`, além das telas de menu (`MainMenu`, `HeroSelect`, `Settings`, `Controls`, `Lists`). `src/ui/App.tsx` monta `Hud` e `ShopHost`; `Router.tsx` escolhe as telas.
+- Pontes de dados: `src/ui/hud-bridge.ts` (`HudSnapshot`, publicado a cada `HUD_INTERVAL_MS` = 100 ms), `src/ui/shop-bridge.ts` (`ShopView`), `src/ui/run-bridge.ts` (cartas de level-up, pausa, fim de partida, fim de demo, desbloqueios) e `src/ui/save-bridge.ts` (versão do save para a UI) levam o estado do mundo para a React; `src/ui/commands.ts` envia `GameCommands` de volta.
+- `src/ui/menu-controller.ts` concentra as ações dos menus (herói, configurações, exportar/importar save, telemetria); `src/ui/merchant.ts` traduz os eventos do lojista; `src/ui/lang-font.ts` carrega a fonte CJK só quando o jogador escolhe zh-CN (SDD-009).
+- Componentes em `src/ui/components/`: `MenuHost` (menus) e `RunHost` (partida) montam as telas; `Router.tsx` escolhe a tela de menu; `Hud`, `Shop`, `ShopHost`, `LevelUpCards`, `Pause`, `GameOver`, `Unlock`, `DemoEnd`, `Toast`, `Btn`, `MenuBackground` (key art do menu), `TouchControls` (controles de toque) e as telas `MainMenu`, `HeroSelect`, `HeroScreen`, `Settings`, `Controls`, `Lists`, `MenuScreen`. `src/ui/App.tsx` monta `Hud`, `ShopHost` e os hosts.
+- Toque: `TouchControls` escreve o vetor do analógico e as ações em `src/core/touch-bridge.ts`; o `GameInput` lê esses valores junto com teclado e gamepad (`src/core/input.ts`).
 - Foco e input de menus no React (`src/ui/focus.tsx`, `focus-nav.ts`): teclado, gamepad (via `GameInput` em modo menu), toque; o `GameInput` do mundo é desligado enquanto um painel modal está aberto.
-- Telas de menu ainda em Phaser (`src/scenes/*Scene.ts`) convivem com a UI React; helpers Phaser da UI em `src/scenes/ui-phaser/` ficam até o T3.7.
+- Não há mais telas Phaser de UI: menus, HUD, loja, cartas, pausa e fim de partida são React (T3.7). Restam em Phaser: `BootScene`, `GameScene` e `HudScene` (luz e overlay de debug). `installCrispText` e `src/scenes/ui-phaser/` foram removidos.
 - Tailwind v4 com `@theme` gerado de `palette.ts` (`bun scripts/export-palette-css.ts`); tipografia Rubik/Pixelify Sans/Noto Sans SC; sem zoom inteiro no overlay.
 
 ## 5. Estrutura de pastas
@@ -87,28 +92,32 @@ src/
   main.ts                   # Phaser.Game + createRoot(App)
   config/                   # constants (LOGICAL_H=540, TILE=64…), game-config, palette
   core/                     # audio, music, display, events, input, gamepad, storage, context, feel,
-                            # synthetic-keys, viewport · platform/ (bridge, web, electron, capacitor, types)
+                            # synthetic-keys, viewport, touch-bridge · platform/ (bridge, web,
+                            # electron, capacitor, types)
   data/                     # heroes enemies bosses weapons sets secondaries superpowers unlocks
                             # cards economy rounds difficulty(danger) potions upgrades achievements
-                            # arena obstacles combat display equipment sfx
+                            # steam-achievements arena obstacles combat display equipment sfx demo
   i18n/                     # ui/cards/achievements/gear/shop/weapons × en, pt-BR, es, zh-CN
-  logic/                    # puro + testado (ver §2) · sim/ (run-sim, card-policy, shop-policy)
+  logic/                    # puro + testado (ver §2) · sim/ (run-sim, card-policy, shop-policy,
+                            # balance-report) · telemetry (opt-in) · demo
   world/                    # Arena, GoreLayer, Lighting
   entities/                 # Hero, Enemy, WeaponRing, WeaponView
   systems/                  # Enemy, Weapon, Secondary, Combat, Area, Hostile, Superpower, Pickup, Fx,
                             # ProjectilePool, targeting
-  scenes/                   # GameScene e cenas de menu/telas Phaser (legado até o T3.7); ui-phaser/
-  ui/                       # App, Router, store, commands, *-bridge (hud, shop), focus(.tsx, -nav),
-                            # components/ (Hud, Shop, ShopHost, LevelUpCards, Pause, GameOver, Unlock…),
+  scenes/                   # BootScene, GameScene, HudScene (luz e overlay de debug)
+  ui/                       # App, Router, store, commands, *-bridge (hud, shop, run, save),
+                            # menu-controller, merchant, lang-font, focus(.tsx, -nav), font, toast,
+                            # components/ (MenuHost, RunHost, Hud, Shop, ShopHost, TouchControls, …),
                             # palette.css, theme.css
   art/                      # manifest (contrato), atlas, anim-atlas, weapon-art, placeholders
   debug/                    # params (flags de URL)
 apps/
-  desktop/                  # Electron (main, preload, electron-builder)
-  mobile/                   # Capacitor (android/)
+  desktop/                  # Electron: main.ts, preload.ts, steam.ts, app/ (shell), electron-builder.yml
+  mobile/                   # Capacitor: android/, bridge/platform-bridge.ts, capacitor.config.ts
 site/                       # Astro 7.4 (landing) + public/demo (gerado)
 scripts/                    # pl-*, el-*, pack-*, sim, playtest-bot, balance-report, perf, e2e,
-                            # qa-browsers, release, release-backfill, build-demo, build-site
+                            # qa-browsers, release, release-backfill, build-demo, build-desktop,
+                            # build-site, export-palette-css, lint-i18n, i18n-check
 tests/                      # *.test.ts espelhando src/logic; ui/*.test.tsx
 docs/                       # gdd, visual, audio, architecture, workflow, balancing-and-simulation,
                             # web-research, brainstorming, site, adrs/, sdds/, reports/
@@ -142,6 +151,8 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 - `SaveData` v2 (SDD-005) via `Platform.save`; `src/core/storage.ts` delega para `platform()`. Web = `localStorage` + export/import de `.json`; Electron e Capacitor entram pela ponte `window.platform` (`createElectronPlatform`, `createCapacitorPlatform`); o campo `cloud` da ponte indica que a loja sincroniza o save sozinha (`Platform.cloud`).
 - Autosave no início de cada round (`GameScene`, P-43) e ao sair da loja; `Continue` no menu.
 - Conquistas e leaderboards pela `Platform`; na web são no-op (`achievements.unlock() {}`).
+- **Telemetria local opt-in** (`save.telemetry`, padrão `false`; `src/logic/telemetry.ts`): eventos de fim de partida num buffer limitado, exportáveis em `.jsonl` pelo menu. Nada é enviado.
+- **Demo**: `isDemoBuild()` (`src/data/demo.ts`, `BUILD_TAG` de `VITE_DEMO`) liga a demo: heróis `jack`, Danger até 1, rounds 1–10; o fim (vitória ou derrota) mostra o overlay `DemoEnd`.
 - **Desktop (Electron, `apps/desktop/`)**:
   - Conquistas: o jogo chama `platform().achievements.unlock(id)` com o id interno; o shell traduz por `STEAM_ACHIEVEMENTS` (`src/data/steam-achievements.ts`, `ACH_*`) antes de `steamworks.js`. Sem Steam o shell só registra no log.
   - Steam Cloud: `cloud` é `true` quando o `steamworks.js` inicializa (precisa de `steam_appid.txt` ao lado do `.exe` ou `STEAM_APP_ID`; o `480` só vale em execução sem empacotar). O save fica em `%APPDATA%\pinguin-survivors-desktop\save.json` (pasta `userData` do Electron, igual para demo e completo, então a demo e o jogo completo compartilham o save). Configuração de **Auto-Cloud** no Steamworks (a cargo do desenvolvedor): Root = `WinAppDataRoaming`, Subdirectory = `pinguin-survivors-desktop`, Pattern = `save.json`, sem recursão, plataforma Windows. `save.backup.json` (cópia de um save ilegível) **não** entra na Cloud.
@@ -154,12 +165,13 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 |---|---|---|---|
 | Jogo completo (web interno) | `bun run build` | `dist/` | Electron e Capacitor |
 | Demo web | `bun run build:demo` (`VITE_DEMO=1`, `base /demo/`) | `dist-demo/` | copiado para `site/public/demo/` |
-| Desktop | `bun run build:desktop` | `apps/desktop/dist/*.exe` (completo e demo) | Steam |
-| Android | `bun run build:android` | AAB | Google Play |
+| Desktop (completo) | `bun run build:desktop` | `apps/desktop/dist/full/win-unpacked/*.exe` | Steam |
+| Desktop (demo) | `bun run build:desktop:demo` | `apps/desktop/dist/demo/win-unpacked/*.exe` | Steam |
+| Android | `cd apps/mobile && bun run bundle:release` (sync + Gradle `bundleRelease`) | AAB | Google Play |
 | Site | `bun scripts/build-site.ts` | `site/dist/` | GitHub Pages |
 
 ## 11. Debug
 
-`?skipMenu=1&hero=jack&round=5&seed=1&tier=2&danger=2&weapons=machete,knives&arena=12&god=1&debug=1` (flags lidas por `parseDebugParams` em `src/debug/params.ts`: `hero`, `round`, `seed`, `tier`, `danger`, `weapon`, `weapons`, `arena`, `god`, `debug`, `skipMenu`, `uiHud`). `window.__GAME__` só no dev. Overlay com FPS, contagem de entidades, placeholders em uso.
+`?skipMenu=1&hero=jack&round=5&seed=1&tier=2&danger=2&weapons=machete,knives&arena=12&god=1&debug=1` (flags lidas por `parseDebugParams` em `src/debug/params.ts`: `hero`, `round`, `seed`, `tier`, `danger`, `weapon`, `weapons`, `arena`, `god`, `debug`, `skipMenu`). `window.__GAME__` só no dev. Overlay com FPS, contagem de entidades, placeholders em uso.
 
 **Testes sem som**: `SOUND_MUTED=true` silencia `src/core/audio.ts` e `src/core/music.ts` (lido por `import.meta.env`). Os scripts Playwright (`perf`, `playtest-bot`, `qa-browsers`, `e2e`) abrem o Chrome com `--mute-audio`.

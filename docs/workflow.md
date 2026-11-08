@@ -1,6 +1,6 @@
 # Workflow — sessões de agentes, git, versionamento e ferramentas
 
-> **Versão** 2.0 · **Data** 2026-11-08 · Substitui `agent-workflow.md`, `git-and-versioning.md` e `tooling.md`. Plano de trabalho: [../ROADMAP.md](../ROADMAP.md) (o `PLAN.md` é histórico). Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.1 · **Data** 2026-11-08 · Substitui `agent-workflow.md`, `git-and-versioning.md` e `tooling.md`. Plano de trabalho: [../ROADMAP.md](../ROADMAP.md) (o `PLAN.md` é histórico). Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 
@@ -42,7 +42,7 @@ Relatório de agente é alegação, não evidência: conferir diff, testes e CI 
 - **Biome v2** (TAB largura 4, LF, UTF-8); sem ESLint/Prettier. YAML usa espaços.
 - Nomes em inglês; `PascalCase.ts` para classes/cenas/componentes, `kebab-case.ts` para módulos.
 - Lógica pura em `src/logic/` (sem Phaser e sem React), testada com `bun:test`; números só em `src/data/`; textos só em `src/i18n/` (4 idiomas juntos); cores só em `src/config/palette.ts`; chaves de assets só em `src/art/manifest.ts`.
-- UI em React + Tailwind v4 (`src/ui/`); Phaser só no mundo (`src/world`, `src/entities`, `src/systems`, `src/scenes/{Boot,Game}Scene`).
+- UI em React + Tailwind v4 (`src/ui/`); Phaser só no mundo (`src/world`, `src/entities`, `src/systems`, `src/scenes/{Boot,Game,Hud}Scene`; menus, HUD e loja são React).
 - Phaser **4** (API ≠ v3): confira as skills em `.agents/skills/` antes de copiar exemplos da web.
 - Dependências: sempre a última versão **estável**, fixada (sem `^`); nunca `latest`/`next`/`beta`. Não adicionar dependência sem a SDD listar.
 - Comentários só para o porquê, edge cases e workarounds (com motivo).
@@ -103,15 +103,18 @@ Nunca `--no-verify`. Gate falhou → corrigir a causa.
 bun install                      # dependências do jogo
 bun run dev                      # Vite dev
 bun run build                    # tsc --noEmit + vite build (dist/)
-bun run build:demo               # VITE_DEMO=1, base /demo/ (dist-demo/)     [a criar: SDD-006]
+bun run build:demo               # VITE_DEMO=1, base /demo/ (dist-demo/)
+bun run build:desktop            # Electron completo (apps/desktop/dist/full/)
+bun run build:desktop:demo       # Electron demo (apps/desktop/dist/demo/)
+bun run lint:i18n · bun scripts/i18n-check.ts   # textos JSX literais e paridade dos idiomas
 bun test · bun run typecheck · bun run lint (Biome) · bun run lint:fix
 bun run e2e                      # Playwright (com bun run dev)
 bun scripts/qa-browsers.ts       # Chrome/Edge/Firefox (com vite preview --port 4173)
 bun scripts/perf.ts --round 40   # orçamento de performance
 bun scripts/sim.ts 20            # simulação headless
 bun scripts/playtest-bot.ts …    # bot no jogo real
-bun scripts/balance-report.ts    # relatório de balanceamento             [a criar: SDD-013]
-bun scripts/release.ts X.Y.Z     # release padrão vukem                    [a criar: SDD-011]
-bun scripts/build-site.ts        # demo + Astro → site/dist                [a criar: SDD-008]
+bun scripts/balance-report.ts    # relatório de balanceamento
+bun scripts/release.ts X.Y.Z     # release padrão vukem
+bun scripts/build-site.ts        # demo + Astro → site/dist
 bun scripts/pl-*.ts · bun scripts/el-*.ts · bun scripts/pack-*.ts   # arte e áudio
 ```
