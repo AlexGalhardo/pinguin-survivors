@@ -1,0 +1,76 @@
+{
+	"meta": {
+		"title": "Pinguin Survivors — arena survivor estilo Brotato com pinguins e gore DOOM",
+		"description": "Três pinguins contra zumbis num arena survivor top-down: 6 armas automáticas, loja a cada round e level 1–100 que nunca zera."
+	},
+	"nav": {
+		"language": "Idioma",
+		"steam": "Steam",
+		"googlePlay": "Google Play",
+		"github": "GitHub"
+	},
+	"hero": {
+		"title": "Pinguin Survivors",
+		"pitch": "Três pinguins. Trezentos zumbis por round. Sangue na neve. Um arena survivor estilo Brotato em que seu progresso nunca morre.",
+		"bullet1": "Pinguins fofos, gore nível DOOM (dá para desligar, se precisar).",
+		"bullet2": "Seis armas automáticas, loja a cada round, builds que quebram o jogo.",
+		"bullet3": "Level 1–100 por herói, Danger 0–5, rounds sem fim."
+	},
+	"cta": {
+		"demo": "Jogar Demo",
+		"wishlist": "Wishlist na Steam",
+		"buy": "Comprar na Steam",
+		"demoUnavailable": "Demo disponível no PC"
+	},
+	"demo": {
+		"note": "Demo: rounds 1–10 com Jack. Só no navegador de PC."
+	},
+	"trailer": {
+		"placeholder": "Trailer em breve (data: TBD)",
+		"posterAlt": "Arte-chave de Pinguin Survivors"
+	},
+	"features": {
+		"title": "O que você encontra",
+		"f1Title": "Seis armas automáticas",
+		"f1Text": "Seis slots disparam sozinhos enquanto você desvia. Funda duas armas iguais para chegar ao tier IV.",
+		"f2Title": "Uma loja a cada round",
+		"f2Text": "Entre os rounds, um lojista vende armas, itens e equipamentos. Rerrole, trave, venda e volte à luta.",
+		"f3Title": "Subidas de nível que importam",
+		"f3Text": "A cada subida de nível, escolha uma entre quatro cartas de atributo. Seu nível 1–100 vale em todas as partidas.",
+		"f4Title": "Danger 0–5",
+		"f4Text": "Suba o Danger para mais inimigos, ondas extras e recompensas melhores. Cada herói desbloqueia o seu."
+	},
+	"heroes": {
+		"title": "Escolha seu pinguim",
+		"jackName": "Jack",
+		"jackRole": "Corpo a corpo · resistente · parry",
+		"bobName": "Bob",
+		"bobRole": "Armas de fogo · rápido · críticos",
+		"luciaName": "Lucia",
+		"luciaRole": "Magia · frágil · elementos"
+	},
+	"faq": {
+		"title": "Perguntas frequentes",
+		"q1": "Quando sai?",
+		"a1": "Ainda sem data de lançamento (TBD). A demo está prevista para a Steam Next Fest, de 22/02 a 01/03/2027.",
+		"q2": "Quanto custa?",
+		"a2": "US$ 4,99 na Steam é o preço previsto (preço final TBD no lançamento). Preço no Android: TBD.",
+		"q3": "Em quais plataformas?",
+		"a3": "Windows na Steam e Android na Google Play. A demo roda no navegador de PC.",
+		"q4": "Tem dublagem?",
+		"a4": "Não. O jogo usa só texto; o lojista fala por texto.",
+		"q5": "Quais idiomas?",
+		"a5": "Inglês, Português (BR), Espanhol e Chinês simplificado estão previstos para a 1.0 (TBD).",
+		"q6": "Tem gore?",
+		"a6": "Tem, estilo DOOM, com opção de desligar: máximo, reduzido ou gosma verde.",
+		"q7": "Qual é a classificação etária?",
+		"a7": "16+ / Mature (IARC, prevista). TBD até a classificação ser emitida."
+	},
+	"footer": {
+		"made": "Feito com Phaser 4 e Astro",
+		"legal": "© Alex Galhardo. Steam é marca da Valve Corporation. Google Play é marca do Google LLC.",
+		"version": "Versão do site {v}",
+		"privacy": "Privacidade (TBD)",
+		"press": "Imprensa (TBD)"
+	}
+}

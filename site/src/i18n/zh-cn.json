@@ -1,0 +1,76 @@
+{
+	"meta": {
+		"title": "Pinguin Survivors — 企鹅与 DOOM 式血腥的 Brotato 风格竞技场生存游戏",
+		"description": "俯视角竞技场生存：三只企鹅对抗僵尸，6 件自动武器，每回合一次商店，1–100 级成长永不清零。"
+	},
+	"nav": {
+		"language": "语言",
+		"steam": "Steam",
+		"googlePlay": "Google Play",
+		"github": "GitHub"
+	},
+	"hero": {
+		"title": "Pinguin Survivors",
+		"pitch": "三只企鹅。每回合三百只僵尸。雪地上的血。一款 Brotato 风格的竞技场生存游戏，你的成长永不消失。",
+		"bullet1": "可爱的企鹅，DOOM 级别的血腥（需要的话可以关闭）。",
+		"bullet2": "6 件自动发射的武器，每回合一次商店，能打破游戏的构筑。",
+		"bullet3": "每位英雄 1–100 级，Danger 0–5，无尽回合。"
+	},
+	"cta": {
+		"demo": "试玩 Demo",
+		"wishlist": "在 Steam 加入愿望单",
+		"buy": "在 Steam 购买",
+		"demoUnavailable": "Demo 仅限 PC"
+	},
+	"demo": {
+		"note": "Demo：使用 Jack 体验第 1–10 回合。仅限桌面浏览器。"
+	},
+	"trailer": {
+		"placeholder": "预告片即将推出（日期：TBD）",
+		"posterAlt": "Pinguin Survivors 主视觉"
+	},
+	"features": {
+		"title": "游戏特色",
+		"f1Title": "六件自动武器",
+		"f1Text": "六个武器槽自动开火，你只需躲避。合成两件相同的武器，最高升到 IV 级。",
+		"f2Title": "每回合一次商店",
+		"f2Text": "回合之间，商人出售武器、道具和装备。可刷新、锁定、出售，然后继续战斗。",
+		"f3Title": "有意义的升级",
+		"f3Text": "每次升级从四张属性卡中选一张。1–100 级的等级在每一局都会保留。",
+		"f4Title": "Danger 0–5",
+		"f4Text": "提高 Danger 可获得更多敌人、额外波次和更好的奖励。每位英雄各自解锁。"
+	},
+	"heroes": {
+		"title": "选择你的企鹅",
+		"jackName": "Jack",
+		"jackRole": "近战 · 耐打 · 格挡",
+		"bobName": "Bob",
+		"bobRole": "火器 · 迅捷 · 暴击",
+		"luciaName": "Lucia",
+		"luciaRole": "魔法 · 脆弱 · 元素"
+	},
+	"faq": {
+		"title": "常见问题",
+		"q1": "什么时候发售？",
+		"a1": "尚无发售日期（TBD）。Demo 计划参加 Steam Next Fest，时间为 2027 年 2 月 22 日至 3 月 1 日。",
+		"q2": "价格多少？",
+		"a2": "Steam 计划定价 4.99 美元（最终价格在发售时确定，TBD）。Android 价格 TBD。",
+		"q3": "支持哪些平台？",
+		"a3": "Steam 上的 Windows 版和 Google Play 上的 Android 版。Demo 可在桌面浏览器中运行。",
+		"q4": "有语音配音吗？",
+		"a4": "没有。游戏只使用文字，商人也通过文字说话。",
+		"q5": "支持哪些语言？",
+		"a5": "英语、葡萄牙语（巴西）、西班牙语和简体中文计划在 1.0 版本提供（TBD）。",
+		"q6": "有血腥内容吗？",
+		"a6": "有，DOOM 风格，可以设置：最大、减少或绿色黏液。",
+		"q7": "年龄分级是多少？",
+		"a7": "16+ / Mature（IARC，计划中）。分级正式发布前为 TBD。"
+	},
+	"footer": {
+		"made": "由 Phaser 4 与 Astro 制作",
+		"legal": "© Alex Galhardo。Steam 是 Valve Corporation 的商标。Google Play 是 Google LLC 的商标。",
+		"version": "网站版本 {v}",
+		"privacy": "隐私政策（TBD）",
+		"press": "媒体资料（TBD）"
+	}
+}

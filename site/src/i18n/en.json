@@ -1,0 +1,76 @@
+{
+	"meta": {
+		"title": "Pinguin Survivors — Brotato-style arena survivor with penguins and DOOM gore",
+		"description": "Three penguins vs. zombies in a top-down arena survivor: 6 auto-firing weapons, a shop every round, and a level 1–100 that never resets."
+	},
+	"nav": {
+		"language": "Language",
+		"steam": "Steam",
+		"googlePlay": "Google Play",
+		"github": "GitHub"
+	},
+	"hero": {
+		"title": "Pinguin Survivors",
+		"pitch": "Three penguins. Three hundred zombies a round. Blood on the snow. A Brotato-style arena survivor where your progress never dies.",
+		"bullet1": "Cute penguins, DOOM-grade gore (toggle it if you must).",
+		"bullet2": "Six auto-firing weapons, a shop every round, builds that break the game.",
+		"bullet3": "Level 1–100 per hero, Danger 0–5, endless rounds."
+	},
+	"cta": {
+		"demo": "Play Demo",
+		"wishlist": "Wishlist on Steam",
+		"buy": "Buy on Steam",
+		"demoUnavailable": "Demo available on PC"
+	},
+	"demo": {
+		"note": "Demo: rounds 1–10 with Jack. Desktop browser only."
+	},
+	"trailer": {
+		"placeholder": "Trailer coming soon (date: TBD)",
+		"posterAlt": "Pinguin Survivors key art"
+	},
+	"features": {
+		"title": "What you get",
+		"f1Title": "Six automatic weapons",
+		"f1Text": "Six slots fire on their own while you dodge. Fuse two identical weapons to reach tier IV.",
+		"f2Title": "A shop every round",
+		"f2Text": "Between rounds, a merchant sells weapons, items and gear. Reroll, lock, sell, then fight again.",
+		"f3Title": "Level-ups that matter",
+		"f3Text": "Pick one of four stat cards at every level-up. Your level 1–100 carries over to every run.",
+		"f4Title": "Danger 0–5",
+		"f4Text": "Raise the danger for more enemies, extra waves and better rewards. Each hero unlocks its own."
+	},
+	"heroes": {
+		"title": "Choose your penguin",
+		"jackName": "Jack",
+		"jackRole": "Melee · tanky · parry",
+		"bobName": "Bob",
+		"bobRole": "Firearms · fast · crits",
+		"luciaName": "Lucia",
+		"luciaRole": "Magic · fragile · elemental"
+	},
+	"faq": {
+		"title": "FAQ",
+		"q1": "When does it come out?",
+		"a1": "No release date yet (TBD). The demo is planned for the Steam Next Fest, 22 Feb – 1 Mar 2027.",
+		"q2": "What does it cost?",
+		"a2": "US$ 4.99 on Steam is the planned price (final price TBD at release). Android price TBD.",
+		"q3": "Which platforms?",
+		"a3": "Windows on Steam and Android on Google Play. The demo runs in desktop browsers.",
+		"q4": "Is there voice acting?",
+		"a4": "No. The game uses text only; the merchant speaks through text.",
+		"q5": "Which languages?",
+		"a5": "English, Português (BR), Español and 简体中文 are planned for 1.0 (TBD).",
+		"q6": "Is there gore?",
+		"a6": "Yes, DOOM-style gore, with a toggle: maximum, reduced or green goo.",
+		"q7": "What is the age rating?",
+		"a7": "16+ / Mature (IARC, planned). TBD until the rating is issued."
+	},
+	"footer": {
+		"made": "Made with Phaser 4 and Astro",
+		"legal": "© Alex Galhardo. Steam is a trademark of Valve Corporation. Google Play is a trademark of Google LLC.",
+		"version": "Site version {v}",
+		"privacy": "Privacy (TBD)",
+		"press": "Press (TBD)"
+	}
+}
