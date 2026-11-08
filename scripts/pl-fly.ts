@@ -26,7 +26,7 @@ const action =
 	opt('--action') ??
 	'flying: the creature beats its wings hard, wings sweeping from raised high to lowered low and back again, body bobbing up and down, hovering in place, seamless loop';
 const out = opt('--out') ?? `art-src/pixellab/anim/enemy.${id}/fly`;
-const SEED = 22;
+const SEED = Number(opt('--seed') ?? 22);
 const before = await generationsLeft();
 
 for (const dir of dirs) {
