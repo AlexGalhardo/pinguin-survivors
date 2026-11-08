@@ -5,7 +5,7 @@ export const supportZhCN = {
 	'shop.outcome.supportNew': '新的辅助道具，1 级：{stat}。',
 	'shop.outcome.supportUp': '辅助道具 {from} 级升至 {to} 级：{stat}。',
 	'shop.outcome.healPotion':
-		'携带的治疗药水从 {from} 瓶增至 {to} 瓶。每瓶恢复 {pct}% 最大生命，生命降到 50% 时自动饮用，每击杀 100 个敌人补充一瓶。',
+		'携带的治疗药水从 {from} 瓶增至 {to} 瓶。每瓶恢复 {pct}% 最大生命，生命降到 50% 时自动饮用，每回合开始时补满。',
 	'support.magnetic.name': '磁力',
 	'support.magnetic.desc': '将经验球和鱼吸向你。',
 	'support.magnetic.stat': '吸附范围 +{v}',
@@ -17,10 +17,9 @@ export const supportZhCN = {
 	'support.lucky.stat': '幸运 +{v}',
 	'support.level': '{n}/{max} 级',
 	'hpotion.name': '治疗药水',
-	'hpotion.desc': '生命降到 50% 时自动饮用，每击杀 100 个敌人补充一瓶。',
+	'hpotion.desc': '生命降到 50% 时自动饮用，每回合开始时补满。',
 	'panel.support': '辅助',
 	'panel.healPotion': '{charges}/{level} 瓶 · 恢复 {pct}% · 稀有度 {rarity}',
-	'hud.potionKills': '{n}/{max} 击杀',
 	'hud.healPotion': '治疗药水',
 	'fx.potionUp': '药水稀有度 {r}',
 } as const;

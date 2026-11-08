@@ -399,7 +399,7 @@ Cura e Mega Cura saíram: a cura é a **poção de cura da run** e os **itens de
 
 | Loja (Fish, mais `2 × round`) | Preço | Efeito |
 |---|---|---|
-| Poção de cura (nível 1 a 10) | 16 por nível | carrega `nível` poções, bebe a ≤ 50% de vida, 2 s entre poções, uma poção volta a cada 100 abates; cura 25 / 30 / 35 / 40 / 50% por raridade I a V |
+| Poção de cura (nível 1 a 10) | 16 por nível | carrega `nível` poções (compras, máx. 10), todas cheias no início de cada round, bebe a ≤ 50% de vida, 2 s entre poções; cura 25 / 30 / 35 / 40 / 50% por raridade I a V |
 | Item de suporte (nível 1 a 5) | 14 por nível | Magnético: raio 40 a 200 u, puxada ×1,25 a ×2,8; Botas: +4 a +20 de velocidade; Sorte: +3% a +15% |
 
 Drops de melhoria da poção: Elite 12% por abate (II ou III), Boss 100% (IV ou V). Fatia da loja por tipo (`kindShare`): suporte 12% e poção de cura 10%, renormalizadas com o que a prateleira tem.

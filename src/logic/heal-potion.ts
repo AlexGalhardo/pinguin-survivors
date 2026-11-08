@@ -4,14 +4,12 @@ import type { Rng } from './rng';
 
 /** The run's healing potion (SDD-014 RF-20); level 0 = not bought yet. */
 export interface HealPotionState {
-	/** Potions carried (1 to 10); also the refill at every round start. */
+	/** Potions bought from the merchant (0 to 10): the capacity, fixed for the rest of the run. */
 	level: number;
 	rarity: Rarity;
 	charges: number;
 	/** Seconds until the next potion may be drunk. */
 	cooldown: number;
-	/** Kills counted toward the next refill (0 to `killsPerPotion` - 1; 0 while full). */
-	kills: number;
 }
 
 export const emptyHealPotion = (): HealPotionState => ({
@@ -19,7 +17,6 @@ export const emptyHealPotion = (): HealPotionState => ({
 	rarity: 1,
 	charges: 0,
 	cooldown: 0,
-	kills: 0,
 });
 
 /** Share of max HP one potion of `rarity` heals. */
@@ -35,15 +32,10 @@ export function buyHealPotion(p: HealPotionState): boolean {
 	return true;
 }
 
-/** Counts kills toward refilling: every `killsPerPotion` kills one empty potion fills, never past the level. */
-export function addPotionKills(p: HealPotionState, n = 1): void {
-	if (p.level === 0 || p.charges >= p.level) return;
-	p.kills += n;
-	while (p.kills >= HEAL_POTION.killsPerPotion && p.charges < p.level) {
-		p.kills -= HEAL_POTION.killsPerPotion;
-		p.charges++;
-	}
-	if (p.charges >= p.level) p.kills = 0;
+/** Every round starts with all the potions bought so far (developer rule, 2026-11-08). */
+export function refillHealPotion(p: HealPotionState): void {
+	p.charges = p.level;
+	p.cooldown = 0;
 }
 
 /**

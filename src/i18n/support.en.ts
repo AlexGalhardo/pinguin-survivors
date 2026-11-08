@@ -5,7 +5,7 @@ export const supportEn = {
 	'shop.outcome.supportNew': 'New support item, level 1: {stat}.',
 	'shop.outcome.supportUp': 'Support item level {from} to {to}: {stat}.',
 	'shop.outcome.healPotion':
-		'Carry {from} to {to} healing potions. Each heals {pct}% of max HP, drinks itself at 50% HP and refills one potion every 100 kills.',
+		'Carry {from} to {to} healing potions. Each heals {pct}% of max HP, drinks itself at 50% HP and refills at the start of every round.',
 	'support.magnetic.name': 'Magnetic',
 	'support.magnetic.desc': 'Pulls XP orbs and Fish toward you.',
 	'support.magnetic.stat': 'pull range +{v}',
@@ -17,10 +17,9 @@ export const supportEn = {
 	'support.lucky.stat': 'luck +{v}',
 	'support.level': 'Lv {n}/{max}',
 	'hpotion.name': 'Healing Potion',
-	'hpotion.desc': 'Drinks itself at 50% HP. Refills one potion every 100 kills.',
+	'hpotion.desc': 'Drinks itself at 50% HP. Refills at the start of every round.',
 	'panel.support': 'SUPPORT',
 	'panel.healPotion': '{charges}/{level} potions · heals {pct}% · rarity {rarity}',
-	'hud.potionKills': '{n}/{max} kills',
 	'hud.healPotion': 'Healing potions',
 	'fx.potionUp': 'Potion rarity {r}',
 } as const;

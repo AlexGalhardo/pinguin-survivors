@@ -79,12 +79,7 @@ import {
 } from '../logic/equipment';
 import { formatStat } from '../logic/format';
 import { inArc } from '../logic/geometry';
-import {
-	addPotionKills,
-	rollPotionDrop,
-	tickHealPotion,
-	upgradeRarity,
-} from '../logic/heal-potion';
+import { rollPotionDrop, tickHealPotion, upgradeRarity } from '../logic/heal-potion';
 import { buildPlayerPanel, weaponStatsView } from '../logic/item-view';
 import { ObstacleField, pushOut } from '../logic/obstacles';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
@@ -1079,7 +1074,6 @@ export class GameScene extends Phaser.Scene {
 		if (fish > 0 && this.mods.drops !== 1)
 			fish = scaleDrops(fish, this.mods.drops, this.rng.next());
 		if (fish > 0) this.pickups.drop('fish', fish, e.x + 6, e.y + 6);
-		addPotionKills(run.healPotion);
 		const potionUp = rollPotionDrop(this.rng, kind, run.healPotion);
 		if (potionUp) this.pickups.drop('potion', potionUp, e.x + 10, e.y - 4);
 		const heal = rollHealDrop(this.rng, kind);

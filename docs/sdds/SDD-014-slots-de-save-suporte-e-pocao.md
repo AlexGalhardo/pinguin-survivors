@@ -26,11 +26,11 @@ Três frentes independentes entre si, especificadas juntas porque mexem nos mesm
 
 ## Requisitos: poção de cura
 
-- RF-20 Comprada no lojista (`kind: 'healPotion'`, id `healPotion`, preço `HEAL_POTION.price` + `pricePerRound × round`). Nível 1 = carrega 1 poção; cada compra sobe um nível até 10 (= 10 poções) e põe uma poção no bolso na hora. Recarga **por abates** (decisão do desenvolvedor, no lugar da recarga por 100 abates): a cada `HEAL_POTION.killsPerPotion` = 100 inimigos mortos na run, uma poção vazia volta a encher, uma por vez, nunca além do nível; com o estoque cheio os abates não acumulam; o contador (`kills` em `HealPotionState`) vai no snapshot da run.
+- RF-20 Comprada no lojista (`kind: 'healPotion'`, id `healPotion`, preço `HEAL_POTION.price` + `pricePerRound × round`). Nível 1 = carrega 1 poção; cada compra sobe um nível até 10 (= 10 poções) e põe uma poção no bolso na hora. Recarga **por round** (decisão do desenvolvedor, 2026-11-08, substitui a recarga por 100 abates): cada compra soma 1 à capacidade, fixa até o fim da run (máximo 10 compradas no lojista), e **todo round começa com todas as poções cheias** (`refillHealPotion` em `startRound`).
 - RF-21 Cura por raridade (`HEAL_POTION.heal`): I 25%, II 30%, III 35%, IV 40%, V 50% da vida máx. O lojista vende só a raridade I; a raridade sobe por **drop de melhoria**: Elite (12% por abate) dropa II ou III, Boss (sempre) dropa IV ou V (sorteio 50/50). Só dropa se o jogador tem a poção e ela não está na V. Ao pegar: a raridade vira a do drop se for maior, senão sobe **um** degrau (máx. V); o drop é um brilho no chão (cor da raridade) que se pega ao pisar, como equipamento. A raridade vale pela run.
 - RF-22 Uso **automático** quando a vida ≤ 50%, uma poção por vez, recarga de 2 s entre poções (`tickHealPotion`, lógica pura). Conta em `potionsUsed`.
 - RF-23 **Substitui** as poções Cura e Mega Cura e os gambits de cura: `heal` e `megaHeal` saem de `POTION_TYPES`, preços, efeitos, chaves de i18n e do bot. Ficam Escudo, Fúria, Antídoto e Pressa nos gambits. Não são cura de poção (e ficam): packs de vida do chão, carne do Açougueiro e regeneração.
-- RF-24 HUD: `HudSnapshot.healPotion` (`charges`, `level` = máximo, `rarity`, `kills`, `killsPerPotion`; `null` antes da primeira compra), desenhado sob a barra de vida (canto superior esquerdo): frasco SVG cheio na cor `rarityColor` da raridade quando há carga e apagado quando vazia, `cargas/máx.` e `abates/100` até a próxima recarga (some com o estoque cheio). Sem arte nova.
+- RF-24 HUD: `HudSnapshot.healPotion` (`charges`, `level` = máximo, `rarity`; `null` antes da primeira compra), desenhado sob a barra de vida (canto superior esquerdo): frasco SVG cheio na cor `rarityColor` da raridade quando há carga e apagado quando vazia, e `cargas/máx.`. Sem arte nova.
 
 ## Especificação
 
@@ -48,7 +48,7 @@ Três frentes independentes entre si, especificadas juntas porque mexem nos mesm
 | A2 | Escrita só vai para o slot ligado; trocar de slot troca o `SaveData` no lugar e mantém as configurações; apagar o ativo desliga | `bun test tests/platform-web.test.ts` |
 | A3 | Menu: sem slot só "Novo jogo"; novo jogo em slot vazio liga e abre a seleção; sobrescrever e apagar pedem confirmação | `bun test tests/ui/menus.test.tsx tests/ui/menu-controller.test.ts` |
 | A4 | Suporte: nível 1–5, 4 slots, Magnético cresce, stat só pela diferença; loja oferece e esconde no máx. | `bun test tests/support-potion.test.ts` |
-| A5 | Poção: níveis 1–10, recarga por 100 abates, bebe a ≤ 50% com 2 s de recarga, regra de subida de raridade, drops só de Elite (II/III) e Boss (IV/V) | `bun test tests/support-potion.test.ts` |
+| A5 | Poção: níveis 1–10 (compras), cheia em todo início de round, bebe a ≤ 50% com 2 s de recarga, regra de subida de raridade, drops só de Elite (II/III) e Boss (IV/V) | `bun test tests/support-potion.test.ts` |
 | A6 | No jogo: orbe a 150 u só é puxada com Magnético; poção bebe, recarrega e sobe de raridade; HUD e loja mostram | `bun run e2e` e capturas 1920×1080 |
 
 ## Riscos e decisões
