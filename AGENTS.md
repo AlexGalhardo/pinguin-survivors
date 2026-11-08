@@ -59,7 +59,7 @@ Resumo das regras inegociáveis:
 
 ## Comandos
 
-`bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run lint` (Biome) · `bun run lint:md` · `bun run e2e` · `bun scripts/qa-browsers.ts` · `bun scripts/perf.ts` · `bun scripts/sim.ts` · `bun scripts/playtest-bot.ts` · `bun scripts/release.ts X.Y.Z`. Use Bun, não npm/node. Scripts previstos nas SDDs e ainda não criados estão marcados no ROADMAP.
+Testes, E2E, sims, perf e bot rodam **sem som**: dev server com `SOUND_MUTED=true bun run dev` e browsers com `--mute-audio` (já nos scripts). `bun install` · `bun run dev` · `bun run build` · `bun test` · `bun run typecheck` · `bun run lint` (Biome) · `bun run lint:md` · `bun run e2e` · `bun scripts/qa-browsers.ts` · `bun scripts/perf.ts` · `bun scripts/sim.ts` · `bun scripts/playtest-bot.ts` · `bun scripts/release.ts X.Y.Z`. Use Bun, não npm/node. Scripts previstos nas SDDs e ainda não criados estão marcados no ROADMAP.
 
 ## Agentes
 
