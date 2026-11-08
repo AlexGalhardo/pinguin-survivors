@@ -2,6 +2,7 @@ import { type ReactElement, useState } from 'react';
 import type { HeroId } from '../../config/constants';
 import type { Danger } from '../../data/difficulty';
 import { type I18nKey, t } from '../../i18n';
+import { AtlasIcon } from './AtlasIcon';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
 import { AdjustRow, MenuScreen } from './MenuScreen';
@@ -104,9 +105,14 @@ export function HeroSelect({
 			</div>
 
 			<AdjustRow
-				label={`${t('select.danger', { n: shownDanger })} · ${t('select.dangerBest', {
-					n: hero.bestByDanger[shownDanger] ?? 0,
-				})}`}
+				label={
+					<span className="inline-flex items-center gap-2">
+						<AtlasIcon frames={[`icon.danger.${shownDanger}`]} size={32} />
+						{`${t('select.danger', { n: shownDanger })} · ${t('select.dangerBest', {
+							n: hero.bestByDanger[shownDanger] ?? 0,
+						})}`}
+					</span>
+				}
 				onPrev={() => setDanger(step(shownDanger, -1, hero.maxDanger + 1))}
 				onNext={() => setDanger(step(shownDanger, 1, hero.maxDanger + 1))}
 				disabled={!hero.unlocked}

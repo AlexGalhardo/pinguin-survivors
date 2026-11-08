@@ -7,6 +7,7 @@ mock.module('../../src/core/storage', () => ({
 		return true;
 	},
 	exportSave: () => {},
+	exportTelemetry: () => {},
 	importSave: async () => {
 		throw new Error('not used');
 	},

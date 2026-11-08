@@ -5,6 +5,7 @@ import { type I18nKey, t } from '../../i18n';
 import { toRoman } from '../../logic/achievements';
 import { formatTime } from '../../logic/format';
 import { type HudSnapshot, hudStore } from '../hud-bridge';
+import { AtlasIcon, weaponFrames } from './AtlasIcon';
 
 const GEAR_SLOT_KEYS = ['helmet', 'armor', 'legs', 'ring', 'amulet'] as const;
 
@@ -61,9 +62,16 @@ function WeaponSlot({ w }: { w?: HudSnapshot['weapons'][number] }): ReactElement
 				color: toCss(WEAPON_TIER_TINT[w.tier]),
 			}}
 		>
-			<span className="font-title text-[clamp(0.75rem,1.6vh,1rem)] font-bold">
-				{label.slice(0, 2).toUpperCase()}
-			</span>
+			<AtlasIcon
+				frames={weaponFrames(w.id, w.tier)}
+				size={56}
+				title={label}
+				fallback={
+					<span className="font-title text-[clamp(0.75rem,1.6vh,1rem)] font-bold">
+						{label.slice(0, 2).toUpperCase()}
+					</span>
+				}
+			/>
 			<span className="absolute right-0.5 bottom-0 text-[clamp(0.625rem,1.2vh,0.8125rem)] leading-none">
 				{toRoman(w.tier)}
 			</span>
@@ -93,7 +101,10 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 					labelClass="text-[0.75em]"
 					label={t('hud.level', { n: hud.level })}
 				/>
-				<div className="font-bold text-fish">{t('hud.fish', { n: hud.fish })}</div>
+				<div className="flex items-center gap-1 font-bold text-fish">
+					<AtlasIcon frames={['icon.currency.fish']} size={24} />
+					{t('hud.fish', { n: hud.fish })}
+				</div>
 				<div className="text-text-dim">{t('hud.kills', { n: hud.kills })}</div>
 			</div>
 

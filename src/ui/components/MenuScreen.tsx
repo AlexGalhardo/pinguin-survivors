@@ -29,7 +29,7 @@ export function MenuScreen(props: {
 
 /** Row with decrement/increment buttons around the label (touch and left/right navigation). */
 export function AdjustRow(props: {
-	label: string;
+	label: ReactNode;
 	onPrev: () => void;
 	onNext: () => void;
 	disabled?: boolean;

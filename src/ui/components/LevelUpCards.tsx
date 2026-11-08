@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import type { Rarity } from '../../data/cards';
 import { type I18nKey, t } from '../../i18n';
 import { FocusScope } from '../focus';
+import { AtlasIcon, cardIconFrames } from './AtlasIcon';
 import { Btn } from './Btn';
 
 export interface LevelUpCardData {
@@ -54,6 +55,7 @@ export function LevelUpCards({
 						<span className="text-[0.8em] uppercase">
 							{t(`rarity.${c.rarity}` as I18nKey)}
 						</span>
+						<AtlasIcon frames={cardIconFrames(c.id)} size={64} />
 						<span className="font-title text-[1.3em]">{c.name}</span>
 						<span className="font-normal text-text-light">{c.description}</span>
 					</Btn>

@@ -1,6 +1,7 @@
 import { type ReactElement, useState } from 'react';
 import type { HeroId } from '../../config/constants';
 import { type I18nKey, t } from '../../i18n';
+import { AtlasIcon } from './AtlasIcon';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
 import { AdjustRow, MenuScreen } from './MenuScreen';
@@ -155,7 +156,8 @@ export function HeroScreen({
 				</div>
 			) : (
 				<div className="flex w-full max-w-[44rem] flex-col gap-2">
-					<div className="text-center font-bold text-fish">
+					<div className="flex items-center justify-center gap-2 font-bold text-fish">
+						<AtlasIcon frames={['icon.currency.pearl']} size={32} />
 						{t('workshop.fish', { pearls: data.pearls })}
 					</div>
 					{data.upgrades.map((u) => (

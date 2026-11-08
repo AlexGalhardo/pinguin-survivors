@@ -5,6 +5,7 @@ import { type I18nKey, t } from '../../i18n';
 import { toRoman } from '../../logic/achievements';
 import { FocusScope } from '../focus';
 import { merchantLine } from '../merchant';
+import { AtlasIcon, weaponFrames } from './AtlasIcon';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
 
@@ -52,6 +53,16 @@ export function offerName(o: Pick<ShopOfferData, 'kind' | 'id'>): string {
 	return label(`item.${o.id}.name`);
 }
 
+/** Atlas frames for an offer: weapon tier art, `item.<id>` for gear, a potion icon when drawn. */
+const offerFrames = (o: Pick<ShopOfferData, 'kind' | 'id' | 'tier'>): string[] =>
+	o.kind === 'weapon'
+		? weaponFrames(o.id, o.tier)
+		: o.kind === 'gear'
+			? [`item.${o.id}`]
+			: o.kind === 'potion'
+				? [`icon.potion.${o.id}`]
+				: [`item.${o.id}`];
+
 const tierColor = (kind: ShopOfferData['kind'], tier: number): string =>
 	kind === 'gear' || kind === 'potion'
 		? ''
@@ -79,6 +90,12 @@ function Offer(props: {
 			className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-stretch gap-2 rounded border-2 bg-night/80 p-2"
 			style={{ borderColor: tint || undefined }}
 		>
+			<AtlasIcon
+				frames={offerFrames(offer)}
+				size={offer.kind === 'weapon' ? 128 : 48}
+				title={offerName(offer)}
+				className="self-center"
+			/>
 			<div className="flex min-w-0 flex-1 flex-col justify-center">
 				<div
 					className={`truncate font-title text-[1.15em] font-bold ${offer.kind === 'gear' ? (GEAR_RARITY_TINT[offer.tier - 1] ?? '') : ''}`}
@@ -133,7 +150,8 @@ function WeaponCard(props: {
 			className="flex min-h-[clamp(3.5rem,7vh,6rem)] flex-col justify-between gap-1 rounded border-2 bg-night/80 p-2"
 			style={{ borderColor: tint }}
 		>
-			<div className="truncate font-bold" style={{ color: tint }}>
+			<div className="flex items-center gap-2 truncate font-bold" style={{ color: tint }}>
+				<AtlasIcon frames={weaponFrames(weapon.id, weapon.tier)} size={128} />
 				{weaponName(weapon.id)} · {toRoman(weapon.tier)}
 			</div>
 			<div className="flex gap-1">
@@ -205,7 +223,10 @@ export function Shop({
 				<h1 className="font-title text-[1.8em] font-bold">
 					{t('shop.title', { n: data.round })}
 				</h1>
-				<div className="font-bold text-fish">{t('shop.fish', { n: data.fish })}</div>
+				<div className="flex items-center gap-1 font-bold text-fish">
+					<AtlasIcon frames={['icon.currency.fish']} size={32} />
+					{t('shop.fish', { n: data.fish })}
+				</div>
 			</header>
 
 			<main className="grid min-h-0 flex-1 grid-cols-2 gap-[2vw] px-[2vw] py-[2vh]">
@@ -235,7 +256,14 @@ export function Shop({
 											: 'border-snow-dark bg-night/50 text-text-dim'
 									}`}
 								>
-									{id ? label(`gear.${id}`) : t('shop.empty')}
+									{id ? (
+										<>
+											<AtlasIcon frames={[`item.${id}`]} size={48} />
+											{label(`gear.${id}`)}
+										</>
+									) : (
+										t('shop.empty')
+									)}
 								</div>
 							);
 						})}

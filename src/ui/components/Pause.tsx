@@ -4,6 +4,7 @@ import { WEAPON_TIER_TINT, type WeaponTier } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
 import { toRoman } from '../../logic/achievements';
 import { FocusScope } from '../focus';
+import { AtlasIcon, weaponFrames } from './AtlasIcon';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
 
@@ -77,6 +78,7 @@ export function Pause({ data, actions }: { data: PauseData; actions: PauseAction
 								className="font-bold"
 								style={{ color: toCss(WEAPON_TIER_TINT[w.tier]) }}
 							>
+								<AtlasIcon frames={weaponFrames(w.id, w.tier)} size={64} />{' '}
 								{weaponName(w.id)} · {toRoman(w.tier)}
 							</li>
 						))}
@@ -106,6 +108,7 @@ export function Pause({ data, actions }: { data: PauseData; actions: PauseAction
 									disabled={!g.id}
 									className="w-full border-snow text-left"
 								>
+									{g.id && <AtlasIcon frames={[`item.${g.id}`]} size={32} />}{' '}
 									{t(`gslot.${g.slot}` as I18nKey)}:{' '}
 									{g.id ? t(`gear.${g.id}` as I18nKey) : '—'}
 								</Btn>
@@ -126,6 +129,7 @@ export function Pause({ data, actions }: { data: PauseData; actions: PauseAction
 										onActivate={() => actions.equip(g.id)}
 										className="w-full border-xp text-left"
 									>
+										<AtlasIcon frames={[`item.${g.id}`]} size={32} />{' '}
 										{t(`gear.${g.id}` as I18nKey)}
 									</Btn>
 									<div className="text-[0.8em] text-text-dim">{g.detail}</div>

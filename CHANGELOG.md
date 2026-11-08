@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- The React UI draws atlas art: weapon tiers in the HUD, shop and pause, gear and item icons, card icons, Fish and Pearl coins and Danger icons, with the old text as fallback.
+
 - Forest (rounds 11–20) and destroyed city (21–30) biomes with their enemies and bosses (Moose King, Biomechanical Colossus), six original aliens including a cloaked stalker, code placeholders for floors and props; endless rounds draw biomes and enemies from every set, legacy ones included.
 - The simulation's buyer models a player (softmax choice, set synergy, per-run taste); balance goals #1–#8 pass, with #5 per hero as a documented exception.
 
@@ -29,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Effects follow the platform performance tier (SDD-007): low caps decals at 1,000, turns off dynamic lights and bloom and halves particles; mid sits between; `?tier=low|mid|high` forces it for QA.
 
 - Every game text uses Roboto (no pixel font) for readability; Pixelify Sans and Rubik are removed.
+
+### Fixed
+
+- The menu controller test mocks `exportTelemetry`, so `tests/ui` passes on its own.
 
 ## [0.1.0] - 2026-11-08
 
