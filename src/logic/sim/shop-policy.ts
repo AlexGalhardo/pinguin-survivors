@@ -1,8 +1,9 @@
-import { WEAPON_LINE_BY_ID, type WeaponTier } from '../../data/weapon-lines';
+import { WEAPON_LINE_BY_ID, type WeaponId, type WeaponTier } from '../../data/weapons';
 import { addWeapon, type Build, canFuse, fuse } from '../build';
 import type { RunState, ShopRoll } from '../run-state';
 import { buy, lock, type Offer, offerPrice, reroll, type ShopState, sellValue } from '../shop';
 import type { PlayerStats } from '../stats';
+import { weaponDps } from './run-sim';
 
 /**
  * "Reasonable player" shop choice shared by the headless sim and the future bot (SDD-013 RF-01):
@@ -22,12 +23,9 @@ export const SHOP_POLICY = {
 	fuseBonus: 2,
 };
 
-/** Raw power proxy of a weapon at a tier for this hero (damage × projectiles / cooldown × class). */
+/** Power of a weapon at a tier for this hero: the sim's own crowd-aware DPS (what a player would see). */
 export function weaponValue(id: string, tier: number, stats: PlayerStats): number {
-	const def = WEAPON_LINE_BY_ID[id as keyof typeof WEAPON_LINE_BY_ID];
-	const t = def.tiers[tier - 1];
-	if (!t) return 0;
-	return (t.damage * (t.extra.count ?? 1) * stats.tagMul[def.classTag]) / t.cooldown;
+	return weaponDps(stats, { id: id as WeaponId, tier: tier as WeaponTier });
 }
 
 function weakestSlot(build: Build, stats: PlayerStats): number {
@@ -85,6 +83,8 @@ export interface ShopPlay {
 	spent: number;
 	bought: Offer[];
 	rerolls: number;
+	/** Fish paid for rerolls (part of `spent`). */
+	rerollFish: number;
 }
 
 /** Plays the open shop of `run.shop` in place: mutates `run.fish`, `run.shop` and `build`. */
@@ -95,7 +95,7 @@ export function playShop(args: {
 	roll: ShopRoll;
 }): ShopPlay {
 	const { run, build, stats, roll } = args;
-	const play: ShopPlay = { spent: 0, bought: [], rerolls: 0 };
+	const play: ShopPlay = { spent: 0, bought: [], rerolls: 0, rerollFish: 0 };
 	let shop = run.shop as ShopState;
 	const startFish = run.fish;
 	fuseAll(build);
@@ -150,6 +150,7 @@ export function playShop(args: {
 			break;
 		const r = reroll(shop, run.fish, roll.rng, run.round, roll.ctx, roll.pool);
 		if (!r) break;
+		play.rerollFish += run.fish - r.fish;
 		shop = r.state;
 		run.fish = r.fish;
 		play.rerolls++;

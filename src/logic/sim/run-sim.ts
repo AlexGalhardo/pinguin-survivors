@@ -6,7 +6,7 @@ import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import { STARTING_WEAPONS } from '../../data/unlocks';
-import { WEAPON_LINE_BY_ID } from '../../data/weapon-lines';
+import { WEAPON_LINE_BY_ID } from '../../data/weapons';
 import { biomeForRound, bossForRound } from '../biome';
 import {
 	addWeapon,
@@ -53,7 +53,7 @@ export const SIM = {
 	hitPerExtra: 0.001,
 	/** Hero speed / average enemy speed at which the safe crowd is exactly `safeCrowd`. */
 	mobilityRef: 1.35,
-	/** Average enemies hit per signature attack by kind, in a full crowd. */
+	/** Average enemies hit per weapon attack by kind, in a full crowd. */
 	hits: { arc: 3.2, spread: 2.6, bolt: 1.6 },
 	/** Alive enemies at which the hero reaches half of that crowd factor (kiting = fewer targets). */
 	engageHalf: { arc: 75, spread: 30, bolt: 25 },
@@ -90,6 +90,8 @@ export interface SimResult {
 	/** Fish earned over the run (spent or not). */
 	fish: number;
 	fishSpent: number;
+	/** Part of `fishSpent` paid for rerolls. */
+	fishRerolled: number;
 	/** Pearls paid at the end of the run (rounds + fish / 10). */
 	pearls: number;
 	/** Final weapon slots as `id:tier`. */
@@ -125,7 +127,7 @@ function engaged(full: number, half: number, alive: number): number {
 
 /**
  * Damage per second of one weapon slot (crit averaged). `single` = all hits on one target (boss);
- * otherwise a crowd factor by behavior, as in the old signature/secondary model.
+ * otherwise a crowd factor by behavior, as in the pre-1.0 model.
  */
 export function weaponDps(
 	stats: PlayerStats,
@@ -264,6 +266,7 @@ export function simulateRun(config: SimConfig): SimResult {
 	let xp = 0;
 	let fishEarned = 0;
 	let fishSpent = 0;
+	let fishRerolled = 0;
 	let charge = 0;
 	const perRound: number[] = [];
 	const result = (round: number, diedToBoss: boolean): SimResult => {
@@ -278,6 +281,7 @@ export function simulateRun(config: SimConfig): SimResult {
 			xp,
 			fish: fishEarned,
 			fishSpent,
+			fishRerolled,
 			pearls,
 			weapons: build.weapons.map((w) => `${w.id}:${w.tier}`),
 			diedToBoss,
@@ -380,6 +384,7 @@ export function simulateRun(config: SimConfig): SimResult {
 		fishEarned += run.fish - before;
 		const shop = playShop({ run, build, stats: eff, roll });
 		fishSpent += shop.spent;
+		fishRerolled += shop.rerollFish;
 		eff = effectiveStats(stats, build);
 		leaveShop(run);
 	}

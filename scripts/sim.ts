@@ -1,6 +1,8 @@
 // Balance table from the headless model (PLAN 2.6/3.2): death round per hero × level.
-// Usage: bun scripts/sim.ts [runs=40] [--rounds]  (--rounds prints damage taken per round)
+// Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]]  (--rounds prints damage taken per round)
 import { HERO_IDS } from '../src/config/constants';
+import { STARTING_WEAPONS } from '../src/data/unlocks';
+import { WEAPON_LINE_BY_ID, type WeaponId } from '../src/data/weapons';
 import { simulateMany, simulateRun } from '../src/logic/sim/run-sim';
 
 const runs = Number(process.argv[2] ?? 40);
@@ -22,4 +24,51 @@ if (process.argv.includes('--rounds')) {
 				`${hero} L${level} →${r.round}: ${r.perRound.map((d) => Math.round(d)).join(' ')}`,
 			);
 		}
+}
+
+// --report [runs=100]: balance goals #1, #5, #6 (docs/balancing-and-simulation.md A4).
+// #1 is measured at L1; #5/#6 over all heroes at L10 (builds have time to fill the bar).
+if (process.argv.includes('--report')) {
+	const n = Number(process.argv[process.argv.indexOf('--report') + 1]) || 100;
+	console.log('\n#1  L1 death round (median / max / share past 30)');
+	for (const hero of HERO_IDS) {
+		const rs = Array.from({ length: n }, (_, i) =>
+			simulateRun({ hero, level: 1, seed: 100 + i }),
+		).map((r) => r.round);
+		rs.sort((a, b) => a - b);
+		console.log(
+			`${hero.padEnd(6)} median ${rs[Math.floor(n / 2)]}  max ${rs[n - 1]}  past30 ${Math.round((100 * rs.filter((r) => r > 30).length) / n)}%`,
+		);
+	}
+	const weapons: Record<string, number> = {};
+	const sets: Record<string, number> = {};
+	let earned = 0;
+	let spent = 0;
+	let rerolled = 0;
+	let total = 0;
+	for (const hero of HERO_IDS)
+		for (let i = 0; i < n; i++) {
+			const r = simulateRun({ hero, level: 10, seed: 100 + i });
+			total++;
+			earned += r.fish;
+			spent += r.fishSpent;
+			rerolled += r.fishRerolled;
+			// The starting weapon is the player's pick among three, not a shop outcome: not counted.
+			const ids = new Set(r.weapons.map((w) => w.split(':')[0] as string));
+			ids.delete(STARTING_WEAPONS[hero][0]);
+			const buildSets = new Set<string>();
+			for (const id of ids) {
+				weapons[id] = (weapons[id] ?? 0) + 1;
+				for (const set of WEAPON_LINE_BY_ID[id as WeaponId].sets) buildSets.add(set);
+			}
+			for (const set of buildSets) sets[set] = (sets[set] ?? 0) + 1;
+		}
+	console.log('\n#5  share of final builds, shop weapons only (all heroes, L10)');
+	for (const [id, c] of Object.entries(weapons).sort((a, b) => b[1] - a[1]))
+		console.log(`weapon ${id.padEnd(14)} ${((100 * c) / total).toFixed(1)}%`);
+	for (const [id, c] of Object.entries(sets).sort((a, b) => b[1] - a[1]))
+		console.log(`set    ${id.padEnd(14)} ${((100 * c) / total).toFixed(1)}%`);
+	console.log(
+		`\n#6  spent/earned ${(spent / earned).toFixed(3)}  reroll/spent ${((100 * rerolled) / spent).toFixed(1)}%`,
+	);
 }
