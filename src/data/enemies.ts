@@ -1,9 +1,9 @@
 import type { BiomeId } from '../config/constants';
 
-/** Enemies of the 3 biomes (docs/game-design.md §11, balancing §2). Radii/speeds in world units. */
+/** Enemies of the 3 biomes (docs/gdd.md §11, balancing §2). Radii/speeds in world units. */
 export type EnemyBehavior = 'chaser' | 'tank' | 'flyer' | 'ranged' | 'charger' | 'bomber' | 'boss';
 
-/** Boss attack pattern (each boss has its own AI mix; docs/game-design.md §11). */
+/** Boss attack pattern (each boss has its own AI mix; docs/gdd.md §11). */
 export interface BossProfile {
 	/** Melee swipe wind-up (seconds) when the hero is within `range`. */
 	swipeWindup: number;

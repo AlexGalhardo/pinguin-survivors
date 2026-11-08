@@ -1,4 +1,4 @@
-/** Combat constants (docs/balancing.md §3). */
+/** Combat constants (docs/balancing-and-simulation.md §3). */
 export const COMBAT = {
 	armorK: 100,
 	armorCap: 0.8,
@@ -10,7 +10,7 @@ export const COMBAT = {
 	knockback: 140,
 } as const;
 
-/** Damage-over-time and elemental effects (docs/balancing.md §3). */
+/** Damage-over-time and elemental effects (docs/balancing-and-simulation.md §3). */
 export const STATUS = {
 	bleed: { share: 0.2, duration: 3, maxStacks: 5 },
 	poison: { sharePerSecond: 0.1, duration: 4, maxStacks: 10 },

@@ -1,6 +1,6 @@
 import type { HeroId } from '../config/constants';
 
-/** Superpowers (P-39, docs/balancing.md §4.2). Damage is a multiple of the signature weapon hit. */
+/** Superpowers (P-39, docs/balancing-and-simulation.md §4.2). Damage is a multiple of the signature weapon hit. */
 export const SUPER = {
 	unlockLevel: 5,
 	charge: 100,

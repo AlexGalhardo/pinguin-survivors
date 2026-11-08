@@ -15,7 +15,7 @@ export interface CardOffer {
 	rarity: Rarity;
 }
 
-/** Rarity weights for a round and luck (docs/balancing.md §7). */
+/** Rarity weights for a round and luck (docs/balancing-and-simulation.md §7). */
 export function rarityWeights(round: number, luck: number): number[] {
 	const w = RARITY_WEIGHTS;
 	const t = Math.min(1, Math.max(0, (round - 1) / (w.endRound - 1)));

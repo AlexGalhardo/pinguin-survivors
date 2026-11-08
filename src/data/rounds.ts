@@ -1,4 +1,4 @@
-/** Round rules (docs/balancing.md §1–2). */
+/** Round rules (docs/balancing-and-simulation.md §1–2). */
 export const ROUNDS = {
 	firstDuration: 20,
 	durationStep: 5,

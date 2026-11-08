@@ -471,7 +471,7 @@ export class GameScene extends Phaser.Scene {
 		return { width: v.width, height: v.height };
 	}
 
-	// --- Perks (docs/game-design.md §5.1) -------------------------------------------------
+	// --- Perks (docs/gdd.md §5.1) -------------------------------------------------
 
 	private updatePerks(dt: number): void {
 		const p = this.build.perks;
@@ -639,7 +639,7 @@ export class GameScene extends Phaser.Scene {
 		this.heroPoisonTime = 4;
 	}
 
-	// --- Enemy special attacks (docs/game-design.md §11) -----------------------------------
+	// --- Enemy special attacks (docs/gdd.md §11) -----------------------------------
 
 	/** Bloater: poison burst on the spot, hurting the hero if close; the bloater dies. */
 	private explode(e: Enemy): void {

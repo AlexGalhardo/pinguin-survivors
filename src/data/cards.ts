@@ -13,7 +13,7 @@ export const RARITY_MUL: Record<Rarity, number> = {
 	legendary: 3.5,
 };
 
-/** Rarity weights at round 1 and round 30 (linear in between, clamped). docs/balancing.md §7. */
+/** Rarity weights at round 1 and round 30 (linear in between, clamped). docs/balancing-and-simulation.md §7. */
 export const RARITY_WEIGHTS = {
 	start: [70, 22, 7, 1],
 	end: [40, 35, 18, 7],

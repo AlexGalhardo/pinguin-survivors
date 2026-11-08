@@ -1,6 +1,6 @@
 import type { BossProfile, EnemyDef } from '../data/enemies';
 
-/** Timings of special behaviors (docs/game-design.md §11). */
+/** Timings of special behaviors (docs/gdd.md §11). */
 export const AI = {
 	rangedHold: 0.7,
 	chargeWindup: 0.5,

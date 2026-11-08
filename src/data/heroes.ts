@@ -1,9 +1,9 @@
 import type { HeroId } from '../config/constants';
 
-/** Level-1 hero profiles (docs/balancing.md §4). */
+/** Level-1 hero profiles (docs/balancing-and-simulation.md §4). */
 export interface HeroDef {
 	id: HeroId;
-	/** Approved PixelLab concept (docs/art-prompts.md); tiers and animations derive from it. */
+	/** Approved PixelLab concept (docs/visual.md §13); tiers and animations derive from it. */
 	pixellabId: string;
 	hp: number;
 	regen: number;

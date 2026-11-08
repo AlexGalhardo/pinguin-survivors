@@ -64,7 +64,7 @@ const ORBIT_HIT_RADIUS = 14;
 const LOB_TIME = 0.55;
 const METEOR_TIME = 0.7;
 
-/** Secondary weapons and weapon-like exclusives from the build (docs/game-design.md §5.1, §9). */
+/** Secondary weapons and weapon-like exclusives from the build (docs/gdd.md §5.1, §9). */
 export class SecondarySystem {
 	private readonly timers = new Map<SecondaryId, number>();
 	private readonly orbits = new Map<SecondaryId, OrbitState>();

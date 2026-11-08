@@ -3,7 +3,7 @@ import type { DamageTag, Element } from '../logic/combat';
 
 /**
  * Secondary weapons (max 3 slots, levels 1–5) and hero-exclusive abilities that behave like
- * weapons (docs/game-design.md §5.1 and §9, balancing §4.1). Level scaling: +50% damage per
+ * weapons (docs/gdd.md §5.1 and §9, balancing §4.1). Level scaling: +50% damage per
  * level above 1 unless the weapon says otherwise.
  */
 export type SecondaryBehavior =

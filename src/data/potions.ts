@@ -1,4 +1,4 @@
-/** Potions and gambit conditions (docs/game-design.md §10, balancing §8). */
+/** Potions and gambit conditions (docs/gdd.md §10, balancing §8). */
 export const POTION_TYPES = ['heal', 'megaHeal', 'shield', 'rage', 'antidote', 'haste'] as const;
 export type PotionType = (typeof POTION_TYPES)[number];
 
@@ -25,7 +25,7 @@ export type GambitCondition = (typeof GAMBIT_CONDITIONS)[number];
 
 export const GAMBIT_SLOTS = 3;
 
-/** Potion effects (docs/game-design.md §10). Durations in seconds. */
+/** Potion effects (docs/gdd.md §10). Durations in seconds. */
 export const POTION_EFFECTS = {
 	heal: { heal: 0.4 },
 	megaHeal: { heal: 0.7 },

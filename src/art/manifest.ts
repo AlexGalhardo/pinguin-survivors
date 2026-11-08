@@ -5,7 +5,7 @@ import { VO_EVENTS, VOICE } from '../data/voice';
 import type { Dir } from '../logic/iso';
 
 /**
- * Asset key contract (docs/art-and-assets.md). Code placeholders and final PixelLab art share
+ * Asset key contract (docs/visual.md). Code placeholders and final PixelLab art share
  * these keys, so swapping art never touches scenes or systems.
  */
 export const KEYS = {

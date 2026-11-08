@@ -1,4 +1,4 @@
-// Real-game playtest bot (calibrates the headless sim, PLAN 3.2 / docs/balancing.md §10).
+// Real-game playtest bot (calibrates the headless sim, PLAN 3.2 / docs/balancing-and-simulation.md §10).
 // Plays the real build in Chromium: an in-page brain dodges (scores 8 directions by crowd
 // danger each frame), casts the superpower on crowds/bosses, and picks cards with the same
 // policy as the sim. Levels, stat points and potions are injected through the save.

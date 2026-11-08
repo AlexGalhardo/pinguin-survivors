@@ -22,7 +22,7 @@ export const ELEMENT_TINT: Record<Element, number> = {
 
 export type MeleeHit = (enemy: Enemy, amount: number, crit: boolean, bleedChance: number) => void;
 
-/** Per-frame modifiers from hero perks (docs/game-design.md §5.1). */
+/** Per-frame modifiers from hero perks (docs/gdd.md §5.1). */
 export interface WeaponBonus {
 	/** Extra attack-rate multiplier (Bloodlust, Run and Gun). */
 	rate: number;

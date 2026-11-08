@@ -1,7 +1,7 @@
 import type { StatKey } from '../logic/stats';
 
 /**
- * Permanent upgrades bought with Fish in the Workshop (docs/game-design.md §12, balancing §8b).
+ * Permanent upgrades bought with Fish in the Workshop (docs/gdd.md §12, balancing §8b).
  * Shared by all heroes; each level adds `perLevel` to the stat at the start of every run.
  */
 export interface UpgradeDef {

@@ -1,7 +1,7 @@
 import type { HeroId } from '../config/constants';
 import type { DamageTag } from '../logic/combat';
 
-/** Signature weapons per hero and tier (docs/balancing.md §6). Distances in world units. */
+/** Signature weapons per hero and tier (docs/balancing-and-simulation.md §6). Distances in world units. */
 export type WeaponKind = 'arc' | 'spread' | 'bolt';
 
 export interface SignatureWeapon {

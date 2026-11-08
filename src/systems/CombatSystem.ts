@@ -32,7 +32,7 @@ export interface HitOptions {
 	noChain?: boolean;
 }
 
-/** Perk reactions wired by the scene (docs/game-design.md §5.1). */
+/** Perk reactions wired by the scene (docs/gdd.md §5.1). */
 export interface CombatHooks {
 	/** Critical hits apply bleed (Hollow Points). */
 	critBleed: boolean;

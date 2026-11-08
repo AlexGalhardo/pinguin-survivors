@@ -28,7 +28,7 @@ import { pickBest } from './card-policy';
 /**
  * Headless balance model (PLAN 3.2): a per-step approximation of a run using the real data,
  * formulas and card draws. It has no positions, so crowd behaviour is folded into the named
- * constants below, calibrated against the real-game playtest bot (docs/balancing.md §10).
+ * constants below, calibrated against the real-game playtest bot (docs/balancing-and-simulation.md §10).
  */
 /** Mutable so calibration scripts can fit it; gameplay never reads it. */
 export const SIM = {

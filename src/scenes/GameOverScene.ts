@@ -15,7 +15,7 @@ interface GameOverData {
 }
 
 /**
- * Run summary (docs/ui-hud.md §GameOver) with a real menu: in fullscreen the browser eats Esc
+ * Run summary (docs/gdd.md §21 §GameOver) with a real menu: in fullscreen the browser eats Esc
  * (it leaves fullscreen), so "main menu" must also work with arrows/Enter and the mouse.
  */
 export class GameOverScene extends Phaser.Scene {

@@ -1,4 +1,4 @@
-/** XP and Fish (docs/balancing.md §5 and §8). */
+/** XP and Fish (docs/balancing-and-simulation.md §5 and §8). */
 export const ECONOMY = {
 	maxLevel: 100,
 	xpCurve: { base: 30, exponent: 1.55, flat: 50 },

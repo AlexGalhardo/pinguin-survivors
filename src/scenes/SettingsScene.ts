@@ -14,7 +14,7 @@ const GORE: GoreMode[] = ['max', 'reduced', 'goo'];
 const cycle = <T>(list: readonly T[], value: T, dir: number): T =>
 	list[(list.indexOf(value) + dir + list.length) % list.length] as T;
 
-/** Settings from the main menu or the pause screen (docs/ui-hud.md). Saved on every change. */
+/** Settings from the main menu or the pause screen (docs/gdd.md §21). Saved on every change. */
 export class SettingsScene extends Phaser.Scene {
 	constructor() {
 		super('Settings');

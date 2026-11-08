@@ -29,7 +29,7 @@ const RARITY_COLOR: Record<Rarity, number> = {
 	legendary: PALETTE.rarityLegendary,
 };
 
-/** 3 upgrade cards between rounds, with the game paused (docs/ui-hud.md §CardPick). */
+/** 3 upgrade cards between rounds, with the game paused (docs/gdd.md §21 §CardPick). */
 export class CardPickScene extends Phaser.Scene {
 	private cards: Phaser.GameObjects.Container[] = [];
 	private focus = 0;

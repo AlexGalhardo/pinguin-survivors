@@ -1,4 +1,4 @@
-// Animates an approved PixelLab character (docs/art-and-assets.md, budget rule P-54).
+// Animates an approved PixelLab character (docs/visual.md, budget rule P-54).
 // Usage:
 //   bun scripts/pl-animate.ts --key hero.jack.t1 --char <id> --anim walk --template walking-8-frames
 //   bun scripts/pl-animate.ts --key hero.jack.t1 --char <id> --anim attack --action "slashing…" --frames 12

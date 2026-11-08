@@ -34,7 +34,7 @@ export interface PlayerStats {
 	xpGain: number;
 }
 
-/** Automatic growth per level above 1 (docs/balancing.md §4). */
+/** Automatic growth per level above 1 (docs/balancing-and-simulation.md §4). */
 export const LEVEL_GROWTH: Record<HeroId, Partial<Record<StatKey, number>>> = {
 	jack: { maxHp: 4, armor: 0.4, parry: 0.001 },
 	bob: { maxHp: 2.5, crit: 0.003, dodge: 0.001 },
