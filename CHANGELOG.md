@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.11] - 2026-11-08
+
 ### Added
 
 - Market research on arena survivors, the Steam Next Fest of February 2027 and monetization (`docs/web-research.md`).
@@ -231,7 +233,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.10...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.11...HEAD
+[0.0.11]: https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.0.11
 [0.0.10]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.7...v0.0.8
