@@ -65,6 +65,12 @@ export const SFX = {
 	'sfx.mooseKingRoar': { volume: 0.9, polyphony: 1, pitch: 0.05, ms: 2000 },
 	'sfx.colossusRoar': { volume: 0.9, polyphony: 1, pitch: 0.05, ms: 2000 },
 	'sfx.bossDown': { volume: 0.9, polyphony: 1, pitch: 0, ms: 1500 },
+	'sfx.krakenInk': { volume: 0.7, polyphony: 1, pitch: 0.05, ms: 1000 },
+	'sfx.abominationAcid': { volume: 0.7, polyphony: 1, pitch: 0.05, ms: 1000 },
+	'sfx.pearls': { volume: 0.7, polyphony: 1, pitch: 0.03, ms: 800 },
+	'sfx.dangerUnlock': { volume: 0.8, polyphony: 1, pitch: 0, ms: 1500 },
+	'sfx.equip': { volume: 0.6, polyphony: 1, pitch: 0.05, ms: 500 },
+	'sfx.demoEnd': { volume: 0.8, polyphony: 1, pitch: 0, ms: 2000 },
 } as const satisfies Record<string, SfxDef>;
 
 export type SfxKey = keyof typeof SFX;

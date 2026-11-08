@@ -61,6 +61,8 @@ Endpoint `POST /v1/sound-generation` (`text`, `duration_seconds`, `prompt_influe
 | `sfx.knife` / `sfx.boomerang` / `sfx.pistol` / `sfx.crossbow` / `sfx.molotov` / `sfx.mine` / `sfx.totem` / `sfx.flameRing` | fast throwing knife whoosh; spinning fish boomerang; small pistol crack; heavy crossbow twang; glass shatter with a fiery whoosh; mine arming beep and click; crackling lightning totem zap; ring of flames igniting ("cartoon gritty", 0,5–1 s) |
 | `sfx.uiHover` / `sfx.uiConfirm` / `sfx.uiBack` | very short soft metallic hover tick; crisp confirm click with a low thud; soft back click with a dull wooden tap (0,5 s, a API exige ≥ 0,5 s) |
 | `sfx.mooseKingRoar` / `sfx.colossusRoar` / `sfx.bossDown` | huge antlered zombie moose king roar; biomechanical alien colossus roar with metallic screech; boss defeated sting with a heavy collapse and a rising metal chime (1,5–2 s) |
+| `sfx.krakenInk` / `sfx.abominationAcid` | giant kraken tentacle spitting a volley of black ink; bubbling green acid pool splashing and sizzling (1 s) |
+| `sfx.pearls` / `sfx.dangerUnlock` / `sfx.equip` / `sfx.demoEnd` | handful of pearls clinking into a pouch; ominous danger-unlocked sting; armor strap buckling with a clasp click; short triumphant demo-complete sting |
 | `sfx.fire` / `sfx.ice` / `sfx.earth` / `sfx.lightning` / `sfx.freeze` | magic staff casting a fire bolt / an ice bolt / an earth spell / a lightning bolt; enemies freezing solid (1 s each, "cartoon gritty") |
 
 Prompts completos e parâmetros em `art-src/elevenlabs/log.jsonl`.
@@ -89,18 +91,7 @@ Histórico, mantido para referência (arquivos e código na branch `legacy-voice
 
 ## 6. Pendências para a 1.0
 
-| Item | Chaves | Estimativa |
-|---|---|---|
-| ~~SFX da loja~~ (feito, 2026-11-08, + `sfx.shopNoFish`) | `sfx.shopBuy`, `sfx.shopReroll`, `sfx.shopLock`, `sfx.weaponFuse`, `sfx.shopOpen`, `sfx.shopNoFish` | ~20 créditos |
-| ~~SFX de armas novas~~ (feito, T7.5) | `sfx.knife`, `sfx.boomerang`, `sfx.pistol`, `sfx.crossbow`, `sfx.molotov`, `sfx.mine`, `sfx.totem`, `sfx.flameRing` | ~35 |
-| ~~SFX de elementos~~ (feito, 2026-11-08) | `sfx.fire`, `sfx.ice`, `sfx.earth`, `sfx.lightning`, `sfx.freeze` | ~20 |
-| SFX de bosses (rugidos dos 2 bosses novos e `sfx.bossDown` feitos; faltam `sfx.krakenInk`, `sfx.abominationAcid`) | `sfx.mooseKingRoar`, `sfx.colossusRoar`, `sfx.bossDown` | ~12 |
-| SFX de UI/meta (hover, confirmar e voltar feitos; faltam `sfx.pearls`, `sfx.dangerUnlock`, `sfx.equip`, `sfx.demoEnd`; a conquista já existe) | `sfx.uiHover`, `sfx.uiConfirm`, `sfx.uiBack` | ~16 |
-| ~~Música da loja~~ (feito, 2026-11-08) | `music.shop` (30 s) | ~380 |
-| ~~Música dos biomas 2–3~~ (feito, T7.5, 36 s cada em vez de 45 s por causa do teto) | `music.forest`, `music.city` | ~1.120 |
-| ~~Sting de boss derrotado~~ (feito, T7.5) | `sfx.bossDown` | ~4 |
-
-Total estimado **~1.600 créditos** de 58.198 disponíveis (renova em 14/11/2026). Sobra para 2–3 takes de cada música.
+Nenhuma. Tudo o que estava listado foi gerado, normalizado e ligado (loja, elementos, armas, bosses, UI/meta e músicas de loja, floresta e cidade; ver §7). Sons novos entram aqui antes de gerar.
 
 ## 7. Orçamento
 
@@ -121,3 +112,8 @@ Plano **Creator** (ativo), 124.333 créditos no ciclo atual, 66.135 usados em 20
   - O saldo da API atualiza com alguns segundos de atraso; conferir de novo antes de somar.
 - Normalizados com `bun scripts/el-normalize.ts` (música −18 LUFS: forest −18,4 e city −18,1; SFX −14 LUFS: entre −14,4 e −16,4 nos medidos).
 - Ligação: SFX de arma tocam pelo callback do `SecondarySystem` (`WEAPON_SFX` em `GameScene`, com `grenadeBelt` → `sfx.explosion` e `poisonCloud` → `sfx.cast`); rugido por boss em `bossRoarSfx`; `sfx.bossDown` no abate do boss; sons de menu em `src/ui/focus.tsx` via `src/ui/ui-sound.ts` (ligado em `main.ts`).
+
+### Registro de 2026-11-08 (fecho das pendências)
+
+- Teto duro: 150 créditos. Gerados e ligados `sfx.krakenInk` (volley do kraken), `sfx.abominationAcid` (poças ácidas dos bosses), `sfx.pearls` (fim de run com Pérolas), `sfx.dangerUnlock` (Danger liberado), `sfx.equip` (equipar e desequipar na pausa, gear comprado na loja) e `sfx.demoEnd` (tela de fim da demo). 1 take cada, normalizados a −14 LUFS.
+- Gasto: 76 créditos (uso 67.796 → 67.872; saldo 56.537 → 56.461).

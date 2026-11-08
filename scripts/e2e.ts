@@ -259,7 +259,7 @@ async function demoFlow(): Promise<void> {
 	await waitFor('demo run started', (p) => p.active.includes('Game') && p.round === 10);
 	// The demo server starts fresh, so every audio file on disk must have been loaded (no 404).
 	const missing = await page.evaluate(
-		`['sfx.shopOpen','sfx.shopBuy','sfx.shopReroll','sfx.shopLock','sfx.weaponFuse','sfx.shopNoFish','sfx.fire','sfx.ice','sfx.earth','sfx.lightning','sfx.freeze','music.shop','music.forest','music.city','sfx.knife','sfx.boomerang','sfx.pistol','sfx.crossbow','sfx.molotov','sfx.mine','sfx.totem','sfx.flameRing','sfx.uiHover','sfx.uiConfirm','sfx.uiBack','sfx.mooseKingRoar','sfx.colossusRoar','sfx.bossDown'].filter((k) => !window.__GAME__.cache.audio.exists(k))`,
+		`['sfx.shopOpen','sfx.shopBuy','sfx.shopReroll','sfx.shopLock','sfx.weaponFuse','sfx.shopNoFish','sfx.fire','sfx.ice','sfx.earth','sfx.lightning','sfx.freeze','music.shop','music.forest','music.city','sfx.knife','sfx.boomerang','sfx.pistol','sfx.crossbow','sfx.molotov','sfx.mine','sfx.totem','sfx.flameRing','sfx.uiHover','sfx.uiConfirm','sfx.uiBack','sfx.mooseKingRoar','sfx.colossusRoar','sfx.bossDown','sfx.krakenInk','sfx.abominationAcid','sfx.pearls','sfx.dangerUnlock','sfx.equip','sfx.demoEnd'].filter((k) => !window.__GAME__.cache.audio.exists(k))`,
 	);
 	if ((missing as string[]).length > 0)
 		fail(`audio not loaded: ${(missing as string[]).join(', ')}`);

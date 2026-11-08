@@ -976,6 +976,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** Kraken ink: a fan of slow blobs aimed at the hero. */
 	private volley(e: Enemy): void {
+		if (e.def.id === 'kraken') this.fx.play('sfx.krakenInk');
 		const count = e.def.boss?.volleyCount ?? 5;
 		const aim = Math.atan2(this.hero.y - e.y, this.hero.x - e.x);
 		const spread = BOSS_VOLLEY.spread;
@@ -996,6 +997,7 @@ export class GameScene extends Phaser.Scene {
 
 	/** Abomination acid: telegraphed pools around (and under) the hero. */
 	private acidPools(e: Enemy): void {
+		this.fx.play('sfx.abominationAcid');
 		const count = e.def.boss?.poolCount ?? 3;
 		const p = BOSS_POOL;
 		for (let i = 0; i < count; i++) {
@@ -1154,7 +1156,12 @@ export class GameScene extends Phaser.Scene {
 			this.unlockedNow.push('bob');
 			this.fx.banner(this.hero.x, this.hero.y, 'unlock.bob');
 		}
-		if (this.run.round === 20) unlockDanger(save, this.run.hero, this.run.danger);
+		if (this.run.round === 20) {
+			const before = save.progress.hero[this.run.hero].dangerUnlocked;
+			unlockDanger(save, this.run.hero, this.run.danger);
+			if (save.progress.hero[this.run.hero].dangerUnlocked > before)
+				this.fx.play('sfx.dangerUnlock');
+		}
 		if (this.run.round >= 20 && !save.heroes.lucia.unlocked) {
 			save.heroes.lucia.unlocked = true;
 			addFeat(save, 'unlockLucia');
@@ -1371,6 +1378,7 @@ export class GameScene extends Phaser.Scene {
 	private equipGear(id: string): void {
 		if (!this.uiPaused || !this.run.gear) return;
 		equip(this.run.gear, this.stats, id);
+		this.fx.play('sfx.equip');
 		this.syncMaxHp();
 		this.publishPauseView();
 	}
@@ -1378,6 +1386,7 @@ export class GameScene extends Phaser.Scene {
 	private unequipGear(slot: string): void {
 		if (!this.uiPaused || !this.run.gear) return;
 		unequip(this.run.gear, this.stats, slot as GearSlot);
+		this.fx.play('sfx.equip');
 		this.syncMaxHp();
 		this.publishPauseView();
 	}
@@ -1475,7 +1484,7 @@ export class GameScene extends Phaser.Scene {
 			this.fishSpent += before - run.fish;
 			if (offer.kind === 'gear') {
 				this.syncMaxHp();
-				this.fx.play('sfx.card');
+				this.fx.play('sfx.equip');
 			}
 			this.publishShopView();
 			return;
@@ -1654,6 +1663,7 @@ export class GameScene extends Phaser.Scene {
 		const fishEarned = run.fish;
 		// Fish never leave the run: they convert to Pearls here (SDD-003 RF-06, RF-07).
 		const pearls = finishRun(run, save);
+		if (pearls > 0) this.fx.play('sfx.pearls');
 		save.telemetry = recordTelemetry(
 			save.telemetry,
 			{
@@ -1708,6 +1718,7 @@ export class GameScene extends Phaser.Scene {
 		this.scene.stop('Hud');
 		hudStore.set({ hud: null });
 		if (DEMO.enabled && (this.demoWon || this.outcome !== 'quit')) {
+			this.fx.play('sfx.demoEnd');
 			publishDemoEnd({
 				won: this.demoWon,
 				round: run.round,
