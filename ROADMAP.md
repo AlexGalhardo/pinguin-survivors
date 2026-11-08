@@ -254,7 +254,7 @@ Specs: [SDD-006](docs/sdds/SDD-006-demo.md), [SDD-007](docs/sdds/SDD-007-ports-e
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [x] **T5.10** Tempo da demo: bot médio L1 em 12–25 min (SDD-006 A5) · Resp.: estagiario · Assert: log do bot em `docs/reports/`. · Evidência (2026-11-08): critério da SDD-006 A5 ajustado por decisão do desenvolvedor (tempo de jogo do bot + 45 s por loja/cartas); seeds 100 e 101 vencem a demo em 12,9 e 13,1 min (✓); seed 102 morre no round 5 — `docs/reports/demo-time-2026-11-08.md`.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): recálculo lido; confirmar com jogador real no Next Fest (T6.4).
-- [ ] **T5.11** Releases `0.1.2` (demo + site) e `0.1.3` (Electron).
+- [ ] **T5.11** Releases `0.1.2` (demo + site) e `0.1.3` (Electron). · Nota (2026-11-08): substituída pela regra do desenvolvedor de uma release por marco (Latest a partir de `0.2.0`).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
 ### Auditoria do marco M5
@@ -298,8 +298,8 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 Specs: [SDD-009](docs/sdds/SDD-009-i18n-es-zh.md), [SDD-012](docs/sdds/SDD-012-arte-topdown-e-vfx.md) (restante), [SDD-013](docs/sdds/SDD-013-balanceamento-e-simulacao.md), [SDD-007](docs/sdds/SDD-007-ports-electron-capacitor.md) (Steam).
 
-- [ ] **T7.1** Tilesets + bordas + props dos biomas 2–3 · Resp.: orquestrador · Est.: 6 h · Assets: ~180 · Assert: prancha 3×3 por bioma; `pack-atlas --check`.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T7.1** Tilesets + bordas + props dos biomas 2–3 · Resp.: orquestrador · Est.: 6 h · Assets: ~180 · Assert: prancha 3×3 por bioma; `pack-atlas --check`. · Evidência (2026-11-08): coberto pelo T7.15 após o ADR-016 (biomas 2–3 = floresta e cidade destruída): tilesets + bordas + 4 props cada, pranchas 3×3 `art-src/pixellab/qa/forest-3x3.png` e `city-3x3.png`; `pack-atlas --check` 184/0.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): pranchas e screenshots round 11/21 conferidos.
 - [ ] **T7.2** Tiers II–IV das 8 armas restantes; ícones restantes (~70) · Est.: 6 h · Assets: ~95 · Assert: nenhum `weapon.*`/`icon.*` em placeholder.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T7.3** Kraken e abominação (base limpa + walk), voadores (3), ataques (10 inimigos + 3 bosses) · Est.: 10 h · Assets: ~185 · Assert: `enemy.*.attack` no atlas para todos os `ranged`/`charger`/bosses.
@@ -326,7 +326,7 @@ Specs: [SDD-009](docs/sdds/SDD-009-i18n-es-zh.md), [SDD-012](docs/sdds/SDD-012-a
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): abri `t714-r21.png` (cidade com alien placeholder); gates completos verdes (362 testes, lint, build, atlas --check).
 - [x] **T7.15** Arte dos biomas novos: tileset + props de floresta e cidade destruída; concepts 4 direções dos 6 aliens + boss (🛑 aprovação do desenvolvedor antes de animar) · Resp.: orquestrador (skill `pinguin-art-assets`) · Est.: 10 h · Assets: a medir (`GET /balance`), lotes ≤ 200 gerações · Assert: prancha 3×3 por bioma; concepts em `art-src/pixellab/concepts/aliens/`. · Progresso (2026-11-08): tilesets 64×64 (4 variantes) + bordas + 4 props de floresta e de cidade destruída no atlas (pranchas 3×3 sem costura em `art-src/pixellab/qa/forest-3x3.png` e `city-3x3.png`); concepts 4 direções dos 6 aliens + `biomechColossus` (2 seeds cada; variantes parecidas com obras existentes descartadas) — prancha de aprovação `art-src/pixellab/qa/aliens-concepts.png`, 🛑 aguarda o desenvolvedor escolher 1 seed por criatura. 87 gerações (saldo 2.194 → 2.107). · Evidência (2026-11-08): concepts aprovados pelo desenvolvedor; 7 aliens animados (`walk`, 5 direções + espelho, ~45 gerações) em `public/assets/enemies/enemy.<id>`, Colossus a 2,3–2,9× o herói; screenshots round 21/30 em 1920×1080.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): abri `aliens-boss-30.png` (Colossus legível, escala de boss); `--check` 184/0.
-- [ ] **T7.13** Releases `0.1.4+` por sub-bloco.
+- [ ] **T7.13** Releases `0.1.4+` por sub-bloco. · Nota (2026-11-08): substituída pela regra do desenvolvedor de uma release por marco (Latest a partir de `0.2.0`).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
 ### Auditoria do marco M7
@@ -354,7 +354,7 @@ Spec: [SDD-007](docs/sdds/SDD-007-ports-electron-capacitor.md).
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): 1ª run falhou (`gradlew` sem +x); corrigido em commit próprio e re-executado verde; artefato listado via API.
 - [ ] **T8.4** Teste interno (Play Console) com 5+ aparelhos · Resp.: dev · Assert: relatório pré-lançamento do Console sem crashes.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T8.5** Release `0.1.x` (mobile).
+- [ ] **T8.5** Release `0.1.x` (mobile). · Nota (2026-11-08): substituída pela regra do desenvolvedor de uma release por marco (Latest a partir de `0.2.0`).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
 ### Auditoria do marco M8
