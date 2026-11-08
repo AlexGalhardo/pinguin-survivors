@@ -35,6 +35,11 @@ export const PALETTE = {
 	rarityRare: 0x4f9dff,
 	rarityEpic: 0xb347ff,
 	rarityLegendary: 0xff8a1f,
+	// Weapon tier placeholder tints: I gray, II green, III blue, IV gold.
+	weaponTier1: 0x9aa3b5,
+	weaponTier2: 0x4fd06a,
+	weaponTier3: 0x4f9dff,
+	weaponTier4: 0xffc83a,
 	dotBleed: 0xa3121a,
 	dotPoison: 0x6fdc4a,
 	dotBurn: 0xff8a3a,

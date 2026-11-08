@@ -1,11 +1,13 @@
 import { achEn } from './achievements.en';
 import { cardsEn } from './cards.en';
 import { gearEn } from './gear.en';
+import { weaponsEn } from './weapons.en';
 
 export const en = {
 	...achEn,
 	...cardsEn,
 	...gearEn,
+	...weaponsEn,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',

@@ -24,6 +24,8 @@ export const KEYS = {
 	droplet: 'fx.droplet',
 	/** Signature/secondary weapon held by the hero, drawn pointing right, pivot at the grip (P-56). */
 	weapon: (id: string) => `weapon.${id}`,
+	/** Tiered weapon texture (SDD-002); placeholder tinted by tier until the art lands. */
+	weaponTier: (id: string, tier: number) => `weapon.${id}.t${tier}`,
 	muzzle: 'fx.muzzle',
 	pickup: (kind: 'xp' | 'fish' | 'meat') => `pickup.${kind}`,
 	/** Health pack healing `percent`% of max HP (25/50/75). */

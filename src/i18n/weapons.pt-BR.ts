@@ -1,0 +1,20 @@
+/** Nomes das linhas de arma (src/data/weapon-lines.ts). */
+export const weaponsPtBR = {
+	'weapon.machete.name': 'Facão',
+	'weapon.hammer.name': 'Marreta',
+	'weapon.knives.name': 'Facas de Arremesso',
+	'weapon.fishBoomerang.name': 'Bumerangue de Peixe',
+	'weapon.bladeWhirl.name': 'Redemoinho de Lâminas',
+	'weapon.doubleBarrel.name': 'Escopeta de Cano Duplo',
+	'weapon.auxPistol.name': 'Pistola Reserva',
+	'weapon.crossbow.name': 'Besta',
+	'weapon.molotov.name': 'Molotov',
+	'weapon.mine.name': 'Minas de Proximidade',
+	'weapon.grenadeBelt.name': 'Cinto de Granadas',
+	'weapon.droneSentinel.name': 'Drone-Sentinela',
+	'weapon.elementStaff.name': 'Cajado Elemental',
+	'weapon.iceShards.name': 'Estilhaços de Gelo',
+	'weapon.flameRing.name': 'Anel de Chamas',
+	'weapon.lightningTotem.name': 'Totem de Raios',
+	'weapon.poisonCloud.name': 'Nuvem de Veneno',
+} as const;

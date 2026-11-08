@@ -1,0 +1,20 @@
+/** Weapon line names (src/data/weapon-lines.ts). */
+export const weaponsEn = {
+	'weapon.machete.name': 'Machete',
+	'weapon.hammer.name': 'Sledgehammer',
+	'weapon.knives.name': 'Throwing Knives',
+	'weapon.fishBoomerang.name': 'Fish Boomerang',
+	'weapon.bladeWhirl.name': 'Blade Whirlwind',
+	'weapon.doubleBarrel.name': 'Double-Barrel Shotgun',
+	'weapon.auxPistol.name': 'Backup Pistol',
+	'weapon.crossbow.name': 'Crossbow',
+	'weapon.molotov.name': 'Molotov',
+	'weapon.mine.name': 'Proximity Mines',
+	'weapon.grenadeBelt.name': 'Grenade Belt',
+	'weapon.droneSentinel.name': 'Drone Sentinel',
+	'weapon.elementStaff.name': 'Elemental Staff',
+	'weapon.iceShards.name': 'Ice Shards',
+	'weapon.flameRing.name': 'Ring of Fire',
+	'weapon.lightningTotem.name': 'Lightning Totem',
+	'weapon.poisonCloud.name': 'Poison Cloud',
+} as const;
