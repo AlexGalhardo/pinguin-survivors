@@ -495,22 +495,23 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 						locks: boolean[];
 						rerolls: number;
 					} | null;
+					phase: string;
 				};
 				build: Build;
 				stats: unknown;
 				outcome: string;
+				// React screens replaced the old scenes: the run end is `ended` (GameOver or DemoEnd
+				// published), level-up cards wait in `cardOffers` while `run.phase` is `cards`.
+				ended: boolean;
+				demoWon: boolean;
+				cardOffers: { card: { id: string }; rarity: string }[];
 			};
-			const active = new Set(g.scene.getScenes(true).map((x) => x.scene.key));
-			const pick = g.scene.getScene('CardPick') as unknown as {
-				sys: {
-					settings: { data?: { offers: { card: { id: string }; rarity: string }[] } };
-				};
-			};
+			const picking = game.run.phase === 'cards';
 			return {
 				round: game.run.round,
 				kills: game.run.kills,
 				elapsed: game.run.elapsed,
-				outcome: game.outcome,
+				outcome: game.demoWon ? 'demoWin' : game.outcome,
 				build: game.build,
 				fish: game.run.fish,
 				shop: game.run.shop
@@ -521,13 +522,10 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 						}
 					: null,
 				stats: game.stats,
-				over: active.has('GameOver'),
-				picking: active.has('CardPick'),
-				offers: active.has('CardPick')
-					? (pick.sys.settings.data?.offers ?? []).map((o) => ({
-							id: o.card.id,
-							rarity: o.rarity,
-						}))
+				over: game.ended,
+				picking,
+				offers: picking
+					? game.cardOffers.map((o) => ({ id: o.card.id, rarity: o.rarity }))
 					: [],
 			};
 		});
@@ -555,11 +553,10 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 			const i = cardMode === 'first' ? 0 : pickBest(offers, state.build, hero);
 			await page.evaluate((index) => {
 				const g = (window as unknown as { __GAME__: import('phaser').Game }).__GAME__;
-				const pick = g.scene.getScene('CardPick') as unknown as {
-					sys: { settings: { data: unknown } };
-					pick(i: number, data: unknown): void;
-				};
-				pick.pick(index, pick.sys.settings.data);
+				// Same entry point the React cards use (`commands.pickCard`).
+				(g.scene.getScene('Game') as unknown as { reactPick(i: number): void }).reactPick(
+					index,
+				);
 			}, i);
 		}
 	}

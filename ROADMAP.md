@@ -252,7 +252,7 @@ Specs: [SDD-006](docs/sdds/SDD-006-demo.md), [SDD-007](docs/sdds/SDD-007-ports-e
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T5.9** Upload da demo na Steam (build Windows) até 2027-01-25; itens do Next Fest até 2027-02-08 · Resp.: dev · Dep.: T5.4, T5.8 · Assert: build "released" no branch default da demo; checklist do Next Fest completo na Steamworks.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T5.10** Tempo da demo: bot médio L1 em 12–25 min (SDD-006 A5) · Resp.: estagiario · Assert: log do bot em `docs/reports/`.
+- [~] **T5.10** Tempo da demo: bot médio L1 em 12–25 min (SDD-006 A5) · Resp.: estagiario · Assert: log do bot em `docs/reports/`. · Bloqueado (2026-11-08): medido com o bot (`docs/reports/demo-time-2026-11-08.md`): ~6,2 min de jogo até `demoWin` (meta 12–25 min) — o formato atual (rounds 1–9 = 360 s + boss ≤ 180 s) não alcança a meta sem tempo humano de loja/cartas; decisão do desenvolvedor (alongar rounds/`DEMO.maxRound` ou mudar o critério), `questions-to-dev.md` #11.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T5.11** Releases `0.1.2` (demo + site) e `0.1.3` (Electron).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
