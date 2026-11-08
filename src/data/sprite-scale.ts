@@ -35,6 +35,8 @@ export const ENEMY_SPRITE_SCALE: Readonly<Record<string, number>> = {
 	zombieSoldier: 1.05,
 	zombieWalrus: 1.2,
 	polarBear: 1.25,
+	// Forest boss (v3 canvas 208, 146 px tall): about 2.2x the hero, like the polar bear.
+	mooseKing: 1.1,
 	kraken: 1.1,
 	// City faction (ADR-016): measured south frames 44-56 px, hero 72.
 	acidSwarmer: 1.3,
