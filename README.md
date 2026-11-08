@@ -79,7 +79,7 @@ Everything lives in [docs/](docs/README.md): the [Game Design Document](docs/gdd
 
 ## Stability
 
-Pinguin Survivors follows [Semantic Versioning](https://semver.org) and tags releases as `vX.Y.Z` on `main`: `0.0.x` while the game is in alpha, `0.1.x` from the public demo until launch, and `1.0.0` for the commercial release ([ADR-015](docs/adrs/ADR-015-versionamento-vukem.md)). Changes are listed in [CHANGELOG.md](CHANGELOG.md), which follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+Pinguin Survivors follows [Semantic Versioning](https://semver.org) and tags releases as `vX.Y.Z` on `main`: `0.0.x` while the game is in alpha, `0.1.x` from the public demo until launch, and `1.0.0` for the commercial release ([ADR-015](docs/adrs/ADR-015-versionamento-vukem.md)). Changes are listed in [CHANGELOG.md](CHANGELOG.md), which follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Each milestone ships as one release; from `0.2.0` on, releases are marked as Latest. Every release carries the Windows builds (full and demo, as zip files) and the Android debug APK.
 
 ## Contributing
 

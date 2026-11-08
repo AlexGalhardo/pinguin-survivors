@@ -75,6 +75,14 @@ Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 - `package.json.version` = tag sem `v`. Versão de trabalho após o retag: **0.0.11**.
 - **Release GitHub** por tag: título `vX.Y.Z`; corpo em grupos Keep a Changelog (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`, só os não vazios), linhas `- **escopo:** Descrição ([abc1234](…/commit/sha))`; `0.x` marcados **pre-release**.
 - **Fluxo ao fechar um marco**: micro-commits → `docs(roadmap): close <marco>` → `bun scripts/release.ts X.Y.Z` (gates, bump, CHANGELOG, commit `chore(release): X.Y.Z`, tag anotada, `git push --follow-tags`, `gh release create`). Detalhes em [sdds/SDD-011](sdds/SDD-011-releases-vukem.md).
+- **Uma release por marco** (decisão do desenvolvedor, 2026-11-08): o marco inteiro vai numa release só (M1 → `0.0.12`, M2 → `0.0.13`). Nunca uma release por tarefa.
+- **Latest**: releases `0.x` saem como pre-release. A partir da `0.2.0` o release sai com `--stable` (`bun scripts/release.ts 0.2.0 --stable`), e o GitHub marca como Latest.
+- **Cada release leva os assets** de Windows e Android:
+  1. `bun run build:desktop` e `bun run build:desktop:demo` geram `apps/desktop/dist/full/win-unpacked/` e `apps/desktop/dist/demo/win-unpacked/`.
+  2. Zipar cada pasta `win-unpacked` (completo e demo), com o número da versão no nome.
+  3. Android: `cd apps/mobile && bun run sync` e depois `cd android && ./gradlew assembleDebug`, que gera o APK debug.
+  4. Anexar ao release existente: `gh release upload vX.Y.Z <zips> <apk>`, sem `--clobber` (ele substitui assets de mesmo nome).
+  Esse é o processo manual, usado como fallback. A automação pelo workflow `release-assets.yml` (abaixo) faz os mesmos passos.
 - **Assets do release** (SDD-011 RF-07): publicar o release dispara `release-assets.yml`, que anexa os zips do Windows (completo e demo) e o APK debug do Android. Para uma tag existente: `gh workflow run release-assets.yml -f tag=vX.Y.Z` (atenção: `--clobber` substitui assets de mesmo nome). Releases criados com o `GITHUB_TOKEN` de um workflow não disparam outros workflows; `bun scripts/release.ts` usa o seu login do `gh`, então dispara.
 - `CHANGELOG.md` (Keep a Changelog 1.1.0): `[Unreleased]` no topo; seções `## [X.Y.Z] - AAAA-MM-DD`; frases para humanos em inglês; links de comparação no fim.
 - Histórico: tags `v0.1.0-alpha.1…v0.1.0-beta.8` retagueadas como `v0.0.1…v0.0.10` (tabela no CHANGELOG); as tags do Starfall foram apagadas. Regra: **uma tag por release**, nada mais.
