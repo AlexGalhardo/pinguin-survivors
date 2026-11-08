@@ -75,9 +75,9 @@ Capacidade assumida: ~20 h de agente por semana úteis para implementação (hip
 Specs: [SDD-001](docs/sdds/SDD-001-arena-topdown.md), [SDD-010](docs/sdds/SDD-010-remocao-de-vozes.md), [SDD-005](docs/sdds/SDD-005-danger-e-save-v2.md) (parte save).
 
 - [x] **T1.1** Remover vozes e legendas (SDD-010 RF-01…05) · Resp.: orquestrador · Dep.: — · Est.: 4 h · DoD: SDD-010 A1–A5 · Assert: `rg -n "voice|subtitle|vo\." src tests scripts --glob '!**/sfx-limiter*'` vazio; `bun run build` OK · Evidência (2026-11-08): grep vazio; `public/assets` 11M → 6.2M sem `audio/vo`; lint/typecheck/171 testes/build verdes; `bun run e2e` 11/11 ok; `voice-limiter` renomeado `sfx-limiter` (RF-03).
-  - [ ] Auditoria: `du -sh public/assets` ≥ 3 MB menor que `6980b99`.
-- [ ] **T1.2** `src/logic/arena.ts` + `src/data/arena.ts` + testes (SDD-001 RF-01, RF-04) · Resp.: senior · Est.: 4 h · Assert: `bun test tests/arena.test.ts` (A1, A2 verdes)
-  - [ ] Auditoria: ler o teste de propriedade com 1.000 pontos.
+  - [x] Auditoria: `du -sh public/assets` ≥ 3 MB menor que `6980b99`. · Conferido (2026-11-08, orquestrador): `git ls-tree -l` de `public/assets` 9,89 MiB em `6980b99` → 5,83 MiB (−4,06 MiB); grep A1 vazio re-executado.
+- [x] **T1.2** `src/logic/arena.ts` + `src/data/arena.ts` + testes (SDD-001 RF-01, RF-04) · Resp.: senior · Est.: 4 h · Assert: `bun test tests/arena.test.ts` (A1, A2 verdes) · Evidência (2026-11-08): `bun test tests/arena.test.ts` 6 pass (A1, A2, A3 do clamp, `propLayout`); API `arenaSide`, `arenaBounds`, `clampToArena`, `spawnRing`, `propLayout`.
+  - [x] Auditoria: ler o teste de propriedade com 1.000 pontos. · Conferido (2026-11-08, orquestrador): `tests/arena.test.ts` checa bounds, distância ≤ 64 u da borda e fora da view+48 px nos 1.000 pontos; caso de arena visível exige telegraph.
 - [ ] **T1.3** Projeção top-down: remover `iso.ts`/`chunks.ts`/`ChunkManager`, depth por `y`, input sem rotação (RF-06, RF-09) · Resp.: senior · Dep.: T1.2 · Est.: 10 h · Assert: `rg -n "logic/iso|logic/chunks|ChunkManager" src tests` vazio; `bun test` verde
   - [ ] Auditoria: diff não toca `src/data/*` de gameplay.
 - [ ] **T1.4** `world/Arena.ts`: chão por tiles 64 px (placeholder por código), borda, props sólidos, crescimento centrado (RF-02, RF-03, RF-07) · Resp.: senior · Dep.: T1.3 · Est.: 10 h · Assert: screenshot `?skipMenu=1&hero=jack&round=1&seed=1&debug=1` com arena 10×10 inteira (A6); E2E round 1→2 cresce (`bun run e2e`)
