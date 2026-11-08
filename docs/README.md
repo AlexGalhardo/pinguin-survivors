@@ -15,6 +15,7 @@
 | [research/poe2-passive-tree.md](research/poe2-passive-tree.md) | Pesquisa: árvore de passivas do PoE2 (pontos, nós, respec, weapon set) e o que aplicar numa árvore pequena com 3 heróis |
 | [brainstorming.md](brainstorming.md) | Entrevista de 2026-11-08: decisões B-01…B-31, descartes, pendências do desenvolvedor, impacto, riscos |
 | [site.md](site.md) | Site comercial: objetivo, mensagem, estrutura da landing, copy, demo, trailer, SEO, hospedagem, checklist |
+| [marketing/trailer-script.md](marketing/trailer-script.md) | Roteiro do trailer (≤ 2 min): beats, planos com URLs de debug, textos EN e música |
 | [adrs/](adrs/README.md) | Architecture Decision Records (ADR-000 histórico, ADR-001…019) |
 | [sdds/](sdds/README.md) | Specs de implementação (SDD-001…013) com critérios de aceite verificáveis |
 | `reports/` | Relatórios de balanceamento, QA e playtest gerados pelos scripts e pelas skills `ccgs-*` |
