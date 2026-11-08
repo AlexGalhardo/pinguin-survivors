@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { ACTIVE_CARDS, PERK_CARDS, STAT_CARDS } from '../src/data/cards';
+import { ENEMY_LIST } from '../src/data/enemies';
 import { GEAR } from '../src/data/equipment';
 import { POTION_TYPES } from '../src/data/potions';
 import { WEAPON_LINES } from '../src/data/weapons';
@@ -39,4 +40,12 @@ test('the shop merchant atlas has the south idle loop the UI plays', async () =>
 		frames: Record<string, unknown>;
 	};
 	for (let i = 0; i < 4; i++) expect(atlas.frames[`idle.s.0${i}`]).toBeDefined();
+});
+
+test('every enemy and boss has an atlas: its own or the one it reuses through `art`', () => {
+	const noArt = ENEMY_LIST.filter((e) => {
+		const key = e.art ?? e.id;
+		return !existsSync(`public/assets/enemies/enemy.${key}.json`);
+	}).map((e) => e.id);
+	expect(noArt).toEqual([]);
 });

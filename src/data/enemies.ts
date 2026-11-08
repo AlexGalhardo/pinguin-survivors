@@ -507,6 +507,10 @@ export const ENEMIES = {
 	},
 	mooseKing: {
 		id: 'mooseKing',
+		// Until its own art is approved and animated (T7.3), the forest boss reuses the polar bear
+		// with the forest tint, like the other forest enemies reuse legacy sprites.
+		art: 'polarBear',
+		tint: 0x9ad27a,
 		biome: 'forest',
 		behavior: 'boss',
 		hp: 3000,
