@@ -71,9 +71,12 @@ const kind = await page.evaluate(
 );
 if (kind !== 'electron') fail(`window.platform.kind = ${kind}`);
 console.log('ok   window.platform is the Electron bridge');
-await see('main menu', 'PLAY');
+// A fresh profile has no save slot: only NEW GAME is offered, and it creates slot 1 (SDD-014).
+await see('main menu (no slot yet)', 'NEW GAME');
 await see('Quit button (desktop only)', 'QUIT');
-await click('PLAY');
+await click('NEW GAME');
+await see('save slot picker', 'START HERE');
+await click('START HERE');
 await see('hero select', 'START RUN');
 await click('START RUN');
 await see('HUD in the run', /ROUND 1/);
@@ -101,6 +104,13 @@ await click('QUIT');
 const exitCode = await Promise.race([proc.exited, Bun.sleep(10000).then(() => 'timeout')]);
 if (exitCode === 'timeout') fail('the app did not quit');
 console.log('ok   QUIT closed the app');
+const saved = JSON.parse(readFileSync(join(profile, 'save.json'), 'utf8')) as {
+	version: number;
+	slots: unknown[];
+};
+if (saved.version !== 3 || saved.slots[0] === null || saved.slots[1] !== null)
+	fail('save.json should hold slot 1 only');
+console.log('ok   save.json written with slot 1');
 if (!existsSync(stateFile)) fail('window state file was not written');
 console.log(`ok   window state saved: ${readFileSync(stateFile, 'utf8')}`);
 if (errors.length > 0) fail(`page errors: ${errors.join(' | ')}`);
