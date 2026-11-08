@@ -20,7 +20,7 @@ export function ToastHost(): ReactElement {
 		<div
 			aria-live="polite"
 			role="status"
-			className="pointer-events-none fixed top-4 right-4 flex flex-col gap-2"
+			className="pointer-events-none fixed top-[6vh] right-4 flex flex-col gap-2"
 		>
 			{queue.slice(0, MAX_VISIBLE_TOASTS).map((toast) => (
 				<ToastView key={toast.id} toast={toast} />

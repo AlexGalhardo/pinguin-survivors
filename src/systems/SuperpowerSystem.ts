@@ -5,7 +5,7 @@ import { shake } from '../core/feel';
 import { SUPER, SUPERPOWERS, type SuperpowerDef } from '../data/superpowers';
 import type { Enemy } from '../entities/Enemy';
 import type { Element } from '../logic/combat';
-import { depthOf, screenToWorld, worldToScreen } from '../logic/projection';
+import { depthOf, worldToScreen } from '../logic/projection';
 import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
 import type { PlayerStats } from '../logic/stats';
@@ -34,6 +34,8 @@ export class SuperpowerSystem {
 	private time = 0;
 	private tick = 0;
 	private bombsLeft = 0;
+	/** Starting angle of this cast's bomb rings. */
+	private bombAngle = 0;
 	private elementIndex = 0;
 	/** Kills while the current cast is active (Overkill achievement). */
 	killsThisCast = 0;
@@ -61,6 +63,7 @@ export class SuperpowerSystem {
 		this.tick = 0;
 		this.killsThisCast = 0;
 		this.bombsLeft = this.def.explosions ?? 0;
+		this.bombAngle = this.rng.range(0, Math.PI * 2);
 		shake(scene, 250, 0.006);
 		this.startVfx(heroId, scene, hx, hy);
 		this.area.flash(
@@ -76,13 +79,29 @@ export class SuperpowerSystem {
 		);
 	}
 
+	/** World offset of bomb `index`: rings around the hero, evenly spaced, odd rings half a step turned. */
+	private bombOffset(index: number): { x: number; y: number } {
+		let i = index;
+		const rings = this.def.rings ?? [];
+		for (let r = 0; r < rings.length; r++) {
+			const ring = rings[r] as { count: number; distance: number };
+			if (i < ring.count) {
+				const step = (Math.PI * 2) / ring.count;
+				const a = this.bombAngle + step * (i + (r % 2) * 0.5);
+				return { x: Math.cos(a) * ring.distance, y: Math.sin(a) * ring.distance };
+			}
+			i -= ring.count;
+		}
+		return { x: 0, y: 0 };
+	}
+
 	update(
 		dt: number,
 		hx: number,
 		hy: number,
 		grid: SpatialGrid<Enemy>,
 		weapon: ActiveWeapon | null,
-		view: { width: number; height: number },
+		_view: { width: number; height: number },
 	): void {
 		if (!this.active) return;
 		this.time -= dt;
@@ -90,15 +109,13 @@ export class SuperpowerSystem {
 		const def = this.def;
 		const base = this.weaponHit(weapon) * def.damageMul;
 		if (def.hero === 'bob') {
-			// Bombs are spread evenly over the duration across the visible screen.
+			// Bombs fall evenly over the duration in rings around Bob (inner ring first); only the
+			// pattern's starting angle varies between casts.
 			const interval = def.duration / (def.explosions ?? 1);
 			while (this.bombsLeft > 0 && this.tick <= 0) {
 				this.tick += interval;
+				const off = this.bombOffset((def.explosions ?? 0) - this.bombsLeft);
 				this.bombsLeft--;
-				const off = screenToWorld(
-					this.rng.range(-view.width / 2, view.width / 2) * 0.9,
-					this.rng.range(-view.height / 2, view.height / 2) * 0.9,
-				);
 				this.area.impact(
 					hx + off.x,
 					hy + off.y,

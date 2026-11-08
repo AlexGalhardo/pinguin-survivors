@@ -20,6 +20,8 @@ export interface SuperpowerDef {
 	radius: number;
 	/** Bombing: explosions spread over the duration. */
 	explosions?: number;
+	/** Bombing: rings around the hero, filled in order; their counts add up to `explosions`. */
+	rings?: readonly { count: number; distance: number }[];
 	/** Harvest: pull towards the hero (world units/s). */
 	pull?: number;
 }
@@ -33,6 +35,11 @@ export const SUPERPOWERS: Record<HeroId, SuperpowerDef> = {
 		damageMul: 6,
 		radius: 80,
 		explosions: 16,
+		// Bombs fall in rings around Bob, inner ring first: 6 at 100 px, then 10 at 200 px.
+		rings: [
+			{ count: 6, distance: 100 },
+			{ count: 10, distance: 200 },
+		],
 	},
 	lucia: { id: 'elementalCataclysm', hero: 'lucia', duration: 4, damageMul: 1.5, radius: 260 },
 };

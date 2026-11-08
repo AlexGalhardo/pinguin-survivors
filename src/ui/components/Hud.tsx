@@ -9,8 +9,6 @@ import { formatTime } from '../../logic/format';
 import { type HudSnapshot, hudStore } from '../hud-bridge';
 import { AtlasIcon, weaponFrames } from './AtlasIcon';
 
-const GEAR_SLOT_KEYS = ['helmet', 'armor', 'legs', 'ring', 'amulet'] as const;
-
 const name = (key: string): string => (t(key as I18nKey) as string | undefined) ?? key;
 
 export const weaponName = (id: string): string => {
@@ -86,7 +84,6 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 	// Touch screens have the 1x/2x button instead of the TAB hint, and the pause button sits there.
 	const touch = touchControlsEnabled(platform().kind, window.location.search);
 	const boss = hud.boss;
-	const slots = Array.from({ length: 6 }, (_, i) => hud.weapons[i]);
 	return (
 		<div className="pointer-events-none fixed inset-0 overflow-hidden font-body text-[clamp(0.75rem,1.5vh,1rem)] text-text-light">
 			<div className="absolute top-[1.2vh] left-[1vw] w-[clamp(11rem,16vw,20rem)] space-y-1">
@@ -138,11 +135,7 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 			</div>
 
 			<div className="absolute top-[1.2vh] right-[1vw] flex flex-col items-end gap-1">
-				{!touch && (
-					<div className={`font-bold ${hud.speed > 1 ? 'text-crit' : 'text-text-dim'}`}>
-						{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
-					</div>
-				)}
+				<div className="font-bold text-text-dim">{t('hud.fps', { n: hud.fps })}</div>
 				{hud.elite !== 'none' && (
 					<div
 						className={`font-bold ${hud.elite === 'orange' ? 'text-aura-orange' : 'text-aura-purple'}`}
@@ -150,28 +143,6 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 						{t('hud.eliteRound')}
 					</div>
 				)}
-			</div>
-
-			<div className="absolute bottom-[1.2vh] left-[1vw] space-y-1">
-				<div className="flex gap-1">
-					{GEAR_SLOT_KEYS.map((slot, i) => {
-						const id = hud.gear[i];
-						return (
-							<div
-								key={slot}
-								title={id ? name(`gear.${id}`) : undefined}
-								className={`flex size-[clamp(1.75rem,3.6vh,2.5rem)] items-center justify-center rounded border text-[0.7em] ${
-									id
-										? 'border-ice bg-night/80'
-										: 'border-snow-dark bg-night/50 text-text-dim'
-								}`}
-							>
-								{id ? name(`gear.${id}`).slice(0, 2).toUpperCase() : ''}
-							</div>
-						);
-					})}
-				</div>
-				<div className="font-bold text-text-dim">{t('hud.fps', { n: hud.fps })}</div>
 			</div>
 
 			<div className="absolute bottom-[1.2vh] left-1/2 flex -translate-x-1/2 flex-col items-center gap-2">
@@ -199,14 +170,19 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 						);
 					})()}
 				<div className="flex gap-1">
-					{slots.map((w, i) => (
-						<WeaponSlot key={w ? `${w.id}-${i}` : `empty-${i}`} w={w} />
+					{hud.weapons.slice(0, 6).map((w, i) => (
+						<WeaponSlot key={`${w.id}-${i}`} w={w} />
 					))}
 				</div>
 				{version && <div className="text-[0.7em] text-text-dim">{version}</div>}
 			</div>
 
 			<div className="absolute right-[1vw] bottom-[1.2vh] flex flex-col items-end gap-0.5 text-dot-poison">
+				{!touch && (
+					<div className={`font-bold ${hud.speed > 1 ? 'text-crit' : 'text-text-dim'}`}>
+						{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
+					</div>
+				)}
 				{hud.gambits.map((g) => (
 					<div key={g.slot} className={g.used ? 'opacity-50' : ''}>
 						{g.used ? '✕ ' : ''}

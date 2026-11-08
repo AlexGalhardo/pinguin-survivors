@@ -186,7 +186,7 @@ As três exclusivas marcadas "vira arma" passam a ser **armas iniciais/da loja e
 | Herói | Superpoder | Efeito | VFX |
 |---|---|---|---|
 | Jack | **Colheita Rubra** | tornado de lâminas 3 s, puxa inimigos, 800% do dano/s em 180 u, sangramento máximo | tornado de sangue e aço |
-| Bob | **Bombardeio** | 16 explosões em 2,5 s na área visível, 600% cada, queimadura | sinalizador, bombas, crateras |
+| Bob | **Bombardeio** | 16 explosões em 2,5 s em dois anéis em volta do Bob (6 a 100 px, depois 10 a 200 px), 600% cada, queimadura | sinalizador, bombas, crateras |
 | Lucia | **Cataclismo Elemental** | vórtice dos 4 elementos 4 s em 260 u, 1000% do dano mágico | vórtice de 4 cores, meteoro, pilares, raios |
 
 ## 14. Inimigos, elites e bosses
