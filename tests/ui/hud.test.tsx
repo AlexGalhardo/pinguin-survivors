@@ -120,6 +120,11 @@ describe('Hud over menus', () => {
 		const { runUiStore } = await import('../../src/ui/run-bridge');
 		const { uiStore } = await import('../../src/ui/store');
 		const { act } = await import('@testing-library/react');
+		const { shopStore } = await import('../../src/ui/shop-bridge');
+		// Other test files leave menus, run screens or the shop open in these shared stores.
+		uiStore.set({ screen: 'none' });
+		runUiStore.set({ levelUp: null, pause: null, over: null, demoEnd: null, unlock: null });
+		shopStore.set({ shop: null });
 		publishHud(snapshot());
 		const view = render(<Hud />);
 		expect(view.container.textContent).toContain('ROUND');
