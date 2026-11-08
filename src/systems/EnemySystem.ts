@@ -1,9 +1,16 @@
 import type Phaser from 'phaser';
 import { MAX_ENEMIES } from '../config/constants';
+import { ARENA } from '../data/arena';
 import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
 import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { Enemy } from '../entities/Enemy';
-import { type Bounds, clampToArena } from '../logic/arena';
+import {
+	type Bounds,
+	clampToArena,
+	insideBounds,
+	type SpawnPoint,
+	spawnRing,
+} from '../logic/arena';
 import { bossForRound } from '../logic/biome';
 import { AI, stepAi } from '../logic/enemy-ai';
 import { type ObstacleField, pushOut } from '../logic/obstacles';
@@ -12,6 +19,7 @@ import type { Rng } from '../logic/rng';
 import {
 	bossHpMul,
 	dmgMul,
+	type EliteTier,
 	hpMul,
 	isBossRound,
 	rollElite,
@@ -19,7 +27,7 @@ import {
 	speedMul,
 } from '../logic/round';
 import { SpatialGrid } from '../logic/spatial-grid';
-import { pickEnemy, spawnPosition } from '../logic/spawn';
+import { pickEnemy, SpawnQueue } from '../logic/spawn';
 import { speedFactor, type Tick, tickStatus } from '../logic/status';
 import { seekWithSeparation } from '../logic/steering';
 
@@ -50,6 +58,11 @@ export class EnemySystem {
 	obstacles: ObstacleField | null = null;
 	/** Arena walls: every enemy, flyers and boss included, stays inside (RF-03). */
 	bounds: Bounds | null = null;
+	/** Called when a spawn lands inside the camera view: show the telegraph there. */
+	onTelegraph: ((x: number, y: number) => void) | null = null;
+	/** Debug/audit counters: `silentInView` must stay 0 (no visible spawn without a telegraph). */
+	readonly spawnStats = { total: 0, telegraphed: 0, silentInView: 0 };
+	private readonly pending = new SpawnQueue<{ def: EnemyDef; elite: EliteTier | null }>();
 	private readonly tick: Tick = { bleed: 0, poison: 0, burn: 0 };
 
 	constructor(
@@ -76,12 +89,15 @@ export class EnemySystem {
 		);
 	}
 
-	startRound(round: number, hero: Vec2, view: { width: number; height: number }): void {
+	/** `view` is the camera's world rectangle: spawns avoid it, or are telegraphed inside it. */
+	startRound(round: number, view: Bounds): void {
 		this.spawnBudget = 0;
+		this.pending.clear();
 		this.boss = null;
-		if (isBossRound(round)) {
+		if (this.bounds && isBossRound(round)) {
 			const def = bossForRound(round);
-			const p = spawnPosition(this.rng, hero, view.width * 0.6, view.height * 0.6);
+			// The ring is hidden from round 10 on (arena wider than the view), so no telegraph.
+			const p = spawnRing(this.bounds, view, this.rng, 1)[0] as SpawnPoint;
 			this.boss = this.take();
 			const m = this.mods;
 			this.boss.spawn(
@@ -96,23 +112,22 @@ export class EnemySystem {
 		}
 	}
 
-	update(dt: number, round: number, hero: Vec2, view: { width: number; height: number }): void {
+	update(dt: number, round: number, hero: Vec2, view: Bounds): void {
 		this.round = round;
+		this.pending.update(dt, (p) => this.materialize(p.x, p.y, p.data, view, true));
 		this.spawnBudget += spawnRate(round) * dt;
 		while (this.spawnBudget >= 1) {
 			this.spawnBudget -= 1;
-			if (this.active.length >= MAX_ENEMIES) break;
-			const def = pickEnemy(this.rng, ENEMY_LIST, round);
-			const p = spawnPosition(this.rng, hero, view.width, view.height);
-			this.take().spawn(
-				def,
-				p.x,
-				p.y,
-				hpMul(round) * this.mods.hp,
-				dmgMul(round) * this.mods.damage,
-				rollElite(round, this.rng.next()),
-				this.mods.speed * speedMul(round),
-			);
+			if (this.active.length + this.pending.size >= MAX_ENEMIES || !this.bounds) break;
+			const data = {
+				def: pickEnemy(this.rng, ENEMY_LIST, round),
+				elite: rollElite(round, this.rng.next()),
+			};
+			const p = spawnRing(this.bounds, view, this.rng, 1)[0] as SpawnPoint;
+			if (p.telegraph) {
+				this.pending.add(p.x, p.y, ARENA.spawnTelegraph, data);
+				this.onTelegraph?.(p.x, p.y);
+			} else this.materialize(p.x, p.y, data, view, false);
 		}
 
 		this.grid.clear();
@@ -164,6 +179,29 @@ export class EnemySystem {
 			if (this.bounds) clampToArena(e, e.radius, this.bounds);
 			e.sync(dt, v.vx < 0);
 		}
+	}
+
+	private materialize(
+		x: number,
+		y: number,
+		data: { def: EnemyDef; elite: EliteTier | null },
+		view: Bounds,
+		telegraphed: boolean,
+	): void {
+		if (this.active.length >= MAX_ENEMIES) return;
+		const stats = this.spawnStats;
+		stats.total++;
+		if (telegraphed) stats.telegraphed++;
+		else if (insideBounds({ x, y }, view)) stats.silentInView++;
+		this.take().spawn(
+			data.def,
+			x,
+			y,
+			hpMul(this.round) * this.mods.hp,
+			dmgMul(this.round) * this.mods.damage,
+			data.elite,
+			this.mods.speed * speedMul(this.round),
+		);
 	}
 
 	kill(enemy: Enemy): void {

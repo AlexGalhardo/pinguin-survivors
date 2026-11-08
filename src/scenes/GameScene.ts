@@ -23,7 +23,7 @@ import { WeaponRing } from '../entities/WeaponRing';
 import { WeaponView } from '../entities/WeaponView';
 import { type I18nKey, t } from '../i18n';
 import { applyExtras, evaluateAchievements } from '../logic/achievements';
-import { clampToArena } from '../logic/arena';
+import { type Bounds, clampCameraCenter, clampToArena } from '../logic/arena';
 import { biomeForRound, isBiomeStart } from '../logic/biome';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
@@ -352,13 +352,13 @@ export class GameScene extends Phaser.Scene {
 		trackZoom(this, cam);
 		if (save.settings.bloomOptIn) applyBloom(cam);
 		Enemy.reducedFlashes = save.settings.reducedFlashes;
-		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
-		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);
+		this.snapCamera();
 		this.enemies.obstacles = this.obstacles;
+		this.enemies.onTelegraph = (x, y) => this.fx.spawnMark(x, y);
 		this.syncArena();
 		this.mods = difficultyMods(this.run.difficulty);
 		this.enemies.mods = this.mods;
-		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
+		this.enemies.startRound(this.run.round, this.viewBounds());
 		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
 
 		this.scene.launch('Hud');
@@ -399,8 +399,9 @@ export class GameScene extends Phaser.Scene {
 		this.updatePotions(dt);
 
 		const grid = this.enemies.grid;
+		this.followCamera(dt);
 		const view = this.viewSize();
-		this.enemies.update(dt, run.round, this.hero, view);
+		this.enemies.update(dt, run.round, this.hero, this.viewBounds());
 		this.updatePerks(dt);
 		this.weapons.update(dt, this.hero.x, this.hero.y, grid);
 		this.secondaries.update(dt, this.hero.x, this.hero.y, grid);
@@ -446,6 +447,44 @@ export class GameScene extends Phaser.Scene {
 		this.speed = speed;
 		this.time.timeScale = speed;
 		this.tweens.timeScale = speed;
+	}
+
+	/** Camera center, tracked here so the view is exact in the same frame the hero moves. */
+	private camX = 0;
+	private camY = 0;
+
+	private cameraGoal(): { x: number; y: number } {
+		const cam = this.cameras.main;
+		return clampCameraCenter(this.hero, cam.displayWidth, cam.displayHeight, this.arena.bounds);
+	}
+
+	private snapCamera(): void {
+		const g = this.cameraGoal();
+		this.camX = g.x;
+		this.camY = g.y;
+		this.cameras.main.centerOn(Math.round(g.x), Math.round(g.y));
+	}
+
+	/** Follows the hero with the old per-frame lerp 0.12 (made frame-rate independent), RF-05. */
+	private followCamera(dt: number): void {
+		const g = this.cameraGoal();
+		const k = 1 - 0.88 ** (dt * 60);
+		this.camX += (g.x - this.camX) * k;
+		this.camY += (g.y - this.camY) * k;
+		this.cameras.main.centerOn(Math.round(this.camX), Math.round(this.camY));
+	}
+
+	/** World rectangle the camera shows right now. */
+	private viewBounds(): Bounds {
+		const cam = this.cameras.main;
+		const hw = cam.displayWidth / 2;
+		const hh = cam.displayHeight / 2;
+		return {
+			minX: this.camX - hw,
+			minY: this.camY - hh,
+			maxX: this.camX + hw,
+			maxY: this.camY + hh,
+		};
 	}
 
 	private viewSize(): { width: number; height: number } {
@@ -918,7 +957,7 @@ export class GameScene extends Phaser.Scene {
 		this.arena.grow(this.run.round);
 		if (isBiomeStart(this.run.round)) this.enterBiome();
 		this.syncArena();
-		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
+		this.enemies.startRound(this.run.round, this.viewBounds());
 		if (this.enemies.boss) {
 			this.fx.play('sfx.bossRoar');
 			zoomPunch(this, 0.08, 400);

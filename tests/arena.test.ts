@@ -4,6 +4,7 @@ import {
 	arenaBounds,
 	arenaSide,
 	type Bounds,
+	clampCameraCenter,
 	clampToArena,
 	insideBounds,
 	propLayout,
@@ -109,5 +110,19 @@ describe('tileVariant (RF-07)', () => {
 		}
 		expect(plain).toBeGreaterThan(150);
 		expect(plain).toBeLessThan(400);
+	});
+});
+
+describe('clampCameraCenter (RF-05)', () => {
+	it('stays centered on an axis where the arena is smaller than the view', () => {
+		const b = arenaBounds(1);
+		expect(clampCameraCenter({ x: 300, y: -300 }, 1000, 700, b)).toEqual({ x: 0, y: 0 });
+	});
+
+	it('follows the hero but never shows past the walls when the arena is bigger', () => {
+		const b = arenaBounds(31);
+		const c = clampCameraCenter({ x: 5000, y: -5000 }, 960, 540, b);
+		expect(c).toEqual({ x: b.maxX - 480, y: b.minY + 270 });
+		expect(clampCameraCenter({ x: 10, y: 20 }, 960, 540, b)).toEqual({ x: 10, y: 20 });
 	});
 });

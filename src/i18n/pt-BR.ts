@@ -235,5 +235,6 @@ export const ptBR: Record<I18nKey, string> = {
 	'hero.jack': 'Jack',
 	'hero.bob': 'Bob',
 	'hero.lucia': 'Lucia',
-	'debug.stats': '{fps} FPS · arena {arena} · enemies {enemies} · x {x} y {y}',
+	'debug.stats':
+		'{fps} FPS · arena {arena} · enemies {enemies} · spawns {spawns} (marked {marked}, silent in view {silent}) · decals {decals} · x {x} y {y}',
 };

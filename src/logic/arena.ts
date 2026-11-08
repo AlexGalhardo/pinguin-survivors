@@ -34,6 +34,19 @@ export function clampToArena<T extends Point>(p: T, r: number, b: Bounds): T {
 	return p;
 }
 
+/**
+ * Camera center for a hero at `target`: follows the hero but never shows past the walls; an axis
+ * where the arena is smaller than the view stays centered on the arena (RF-05).
+ */
+export function clampCameraCenter(target: Point, viewW: number, viewH: number, b: Bounds): Point {
+	const axis = (v: number, min: number, max: number, span: number): number =>
+		max - min <= span ? (min + max) / 2 : Math.min(Math.max(v, min + span / 2), max - span / 2);
+	return {
+		x: axis(target.x, b.minX, b.maxX, viewW),
+		y: axis(target.y, b.minY, b.maxY, viewH),
+	};
+}
+
 export function insideBounds(p: Point, b: Bounds): boolean {
 	return p.x >= b.minX && p.x <= b.maxX && p.y >= b.minY && p.y <= b.maxY;
 }

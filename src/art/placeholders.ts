@@ -294,6 +294,17 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.fillStyle = '#ffffff';
 		ctx.fillRect(0, 4, 5, 2);
 	});
+	canvas(scene, KEYS.spawnMark, 48, 48, (ctx) => {
+		ctx.strokeStyle = '#ff3b3b';
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.arc(24, 24, 20, 0, Math.PI * 2);
+		ctx.moveTo(12, 12);
+		ctx.lineTo(36, 36);
+		ctx.moveTo(36, 12);
+		ctx.lineTo(12, 36);
+		ctx.stroke();
+	});
 	canvas(scene, KEYS.slash, 64, 32, (ctx) => {
 		ctx.strokeStyle = '#f2f4f8';
 		ctx.lineWidth = 3;
@@ -306,7 +317,7 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		['goo', PALETTE.goo, 0x2f7a1f],
 	] as const) {
 		for (let n = 0; n < 4; n++) {
-			canvas(scene, KEYS.splat(kind, n), 40, 20, (ctx) => splat(ctx, 40, 20, main, dark, n));
+			canvas(scene, KEYS.splat(kind, n), 36, 36, (ctx) => splat(ctx, 36, 36, main, dark, n));
 		}
 	}
 	for (let n = 0; n < 4; n++) {
@@ -427,7 +438,7 @@ function zombie(ctx: CanvasRenderingContext2D, w: number, h: number, color: numb
 	ctx.fillRect(Math.round(w * 0.6), Math.round(h * 0.32), 3, 2);
 }
 
-/** Irregular flat puddle (squashed 2:1 like the iso ground) with drops around it. */
+/** Irregular flat puddle with drops around it. */
 function splat(
 	ctx: CanvasRenderingContext2D,
 	w: number,

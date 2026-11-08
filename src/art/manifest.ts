@@ -20,6 +20,8 @@ export const KEYS = {
 	aura: (tier: 'purple' | 'orange') => `fx.aura.${tier}`,
 	projectile: (id: string) => `proj.${id}`,
 	slash: 'fx.slash',
+	/** Red mark where an enemy will appear inside the camera view (0.5 s telegraph). */
+	spawnMark: 'fx.spawnMark',
 	blood: 'fx.blood',
 	/** Ground splats: 4 variants each, red (`blood`) and green (`goo`, gore setting). */
 	splat: (kind: 'blood' | 'goo', n: number) => `fx.splat.${kind}.${n}`,

@@ -4,6 +4,4 @@
  */
 export const OBSTACLES = {
 	radiusByVariant: [7, 10, 13],
-	/** Chunks kept in the collision cache (the camera shows ~12–16). */
-	cacheChunks: 64,
 } as const;

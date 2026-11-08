@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
+import { ARENA } from '../data/arena';
 import type { SfxKey } from '../data/sfx';
 import { type I18nKey, t } from '../i18n';
 import { depthOf, worldToScreen } from '../logic/projection';
@@ -46,6 +47,7 @@ export class FxSystem {
 	private readonly spurt: Phaser.GameObjects.Particles.ParticleEmitter;
 	/** Gibs thrown this run (achievement counter). */
 	gibCount = 0;
+	private readonly marks: { img: Phaser.GameObjects.Image; life: number }[] = [];
 	private readonly slashes: { img: Phaser.GameObjects.Image; life: number }[] = [];
 
 	constructor(
@@ -201,7 +203,25 @@ export class FxSystem {
 			.setVisible(true);
 	}
 
+	/** Spawn telegraph: a pulsing red mark on the ground for `ARENA.spawnTelegraph` seconds. */
+	spawnMark(x: number, y: number): void {
+		let m = this.marks.find((q) => q.life <= 0);
+		if (!m) {
+			m = { img: this.scene.add.image(0, 0, KEYS.spawnMark), life: 0 };
+			this.marks.push(m);
+		}
+		m.life = ARENA.spawnTelegraph;
+		m.img.setPosition(Math.round(x), Math.round(y)).setDepth(depthOf(x, y)).setVisible(true);
+	}
+
 	update(dt: number): void {
+		for (const m of this.marks) {
+			if (m.life <= 0) continue;
+			m.life -= dt;
+			const k = m.life / ARENA.spawnTelegraph;
+			m.img.setScale(0.6 + 0.6 * k).setAlpha(m.life <= 0 ? 0 : 0.5 + 0.5 * Math.sin(k * 20));
+			if (m.life <= 0) m.img.setVisible(false);
+		}
 		for (const n of this.numbers) {
 			if (n.life <= 0) continue;
 			n.life -= dt;

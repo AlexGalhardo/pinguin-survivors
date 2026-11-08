@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Starting weapons per hero (`HeroDef.startingWeapons`) and three new exclusive passives: Iron Breath (Jack), Quick Reload (Bob) and Arcane Echo (Lucia); their in-game effects land with the weapon-slot integration.
 - React 19 + Tailwind CSS v4 overlay infrastructure (SDD-004): `#ui` over the canvas, `src/ui/App.tsx`, a UI store on `useSyncExternalStore`, typed UI→game commands and CSS color tokens generated from `palette.ts` (`scripts/export-palette-css.ts`).
 - Simulation with six weapon slots, run Fish, an end-of-round shop played by `src/logic/sim/shop-policy.ts` (buy by value per Fish, fuse, replace, lock, reroll) and Pearls at the end of the run (SDD-013).
+- Enemies spawn on the inner ring of the arena; spawns inside the camera view show a 0.5 s `fx.spawnMark` first, and the camera follows the hero with a frame-rate-independent lerp, clamped to the walls and centered on axes where the arena is smaller than the view (SDD-001 RF-04, RF-05).
+- `GoreLayer`: persistent blood decals in world coordinates (cap 4,000) re-stamped when the arena grows (SDD-001 RF-08).
 
 ### Fixed
 
