@@ -129,7 +129,7 @@ describe('Hud over menus', () => {
 		expect(view.container.textContent).toContain('ROUND');
 		act(() =>
 			runUiStore.set({
-				pause: { weapons: [], stats: [], cards: [], gear: { slots: [], bag: [] } },
+				pause: { weapons: [], stats: [], cards: [], gear: { slots: [] } },
 			}),
 		);
 		expect(view.container.textContent).toBe('');

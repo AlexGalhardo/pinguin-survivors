@@ -30,7 +30,7 @@ export function Heading(props: { children: ReactNode; className?: string }): Rea
 		<div className={`flex w-full items-center gap-3 ${props.className ?? ''}`}>
 			<span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold-aged" />
 			<span className="diamond" />
-			<h1 className="m-0 font-title text-[1.9em] leading-tight font-black tracking-[0.18em] text-text-light uppercase [text-shadow:0_2px_8px_var(--color-shadow)]">
+			<h1 className="m-0 font-title text-[1.9em] leading-tight font-black [@media(max-height:500px)]:text-[1.15em] tracking-[0.18em] text-text-light uppercase [text-shadow:0_2px_8px_var(--color-shadow)]">
 				{props.children}
 			</h1>
 			<span className="diamond" />
@@ -55,7 +55,7 @@ export function Panel(props: {
 			className={`ornate relative flex min-h-0 flex-col border border-snow-dark shadow-[inset_0_0_0_3px_var(--color-night),inset_0_0_0_4px_var(--color-snow-dark),0_4px_24px_var(--color-shadow)] ${props.className ?? ''}`}
 		>
 			{props.title !== undefined && (
-				<header className="px-4 pt-3">
+				<header className="px-4 pt-3 [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:pt-1">
 					<h2 className="m-0 flex items-center gap-2 font-title text-[1.05em] font-bold tracking-[0.14em] text-gold-bright uppercase">
 						<span className="diamond" />
 						{props.title}
@@ -65,7 +65,7 @@ export function Panel(props: {
 			)}
 			<div
 				data-panel-scroll={props.fit ? undefined : 'true'}
-				className={`flex min-h-0 flex-1 flex-col gap-2 ${props.fit ? 'p-3' : 'p-4'} ${props.fit ? 'overflow-hidden' : 'no-scrollbar overflow-y-auto'}`}
+				className={`flex min-h-0 flex-1 flex-col gap-2 ${props.fit ? 'p-3 [@media(max-height:500px)]:p-1.5' : 'p-4 [@media(max-height:500px)]:p-2'} ${props.fit ? 'overflow-hidden' : 'no-scrollbar overflow-y-auto'}`}
 			>
 				{props.children}
 			</div>

@@ -90,7 +90,11 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 	const boss = hud.boss;
 	return (
 		<div className="pointer-events-none fixed inset-0 overflow-hidden font-body text-[clamp(0.75rem,1.5vh,1rem)] text-text-light">
-			<div className="absolute top-[1.2vh] left-[1vw] w-[clamp(11rem,16vw,20rem)] space-y-1">
+			<div
+				data-hud="status"
+				className="absolute top-[1.2vh] left-[1vw] w-[clamp(11rem,16vw,20rem)] space-y-1"
+				style={touch ? { left: 'max(1vw, env(safe-area-inset-left))' } : undefined}
+			>
 				<Bar
 					value={hud.hp}
 					max={hud.maxHp}
@@ -112,9 +116,23 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 				</div>
 				<div className="text-text-dim">{t('hud.kills', { n: hud.kills })}</div>
 				{hud.healPotion && <PotionStatus potion={hud.healPotion} />}
+				{/* On touch screens the bottom corners belong to the joystick and the buttons. */}
+				{touch && hud.gambits.length > 0 && (
+					<div className="text-[0.8em] text-dot-poison">
+						{hud.gambits.map((g) => (
+							<div key={g.slot} className={g.used ? 'opacity-50' : ''}>
+								{g.used ? '✕ ' : ''}
+								{name(`potion.${g.potion}`)} · {name(`cond.${g.condition}`)}
+							</div>
+						))}
+					</div>
+				)}
 			</div>
 
-			<div className="absolute top-[1vh] left-1/2 flex -translate-x-1/2 flex-col items-center">
+			<div
+				data-hud="round"
+				className="absolute top-[1vh] left-1/2 flex -translate-x-1/2 flex-col items-center"
+			>
 				<div className="font-bold">{t('hud.round', { n: hud.round })}</div>
 				<div
 					className={`font-title text-[clamp(1.5rem,4vh,2.5rem)] font-bold ${
@@ -139,8 +157,18 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 				)}
 			</div>
 
-			<div className="absolute top-[1.2vh] right-[1vw] flex flex-col items-end gap-1">
-				<div className="font-bold text-text-dim">{t('hud.fps', { n: hud.fps })}</div>
+			<div
+				data-hud="fps"
+				className="absolute top-[1.2vh] right-[1vw] flex flex-col items-end gap-1"
+				style={
+					touch
+						? { right: 'calc(max(1.25rem, env(safe-area-inset-right)) + 3.5rem)' }
+						: undefined
+				}
+			>
+				{!touch && (
+					<div className="font-bold text-text-dim">{t('hud.fps', { n: hud.fps })}</div>
+				)}
 				{hud.elite !== 'none' && (
 					<div
 						className={`font-bold ${hud.elite === 'orange' ? 'text-aura-orange' : 'text-aura-purple'}`}
@@ -151,7 +179,10 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 			</div>
 
 			{/* Super Magic bottom left (developer, 2026-11-08); the weapons are seen on the hero, not here. */}
-			<div className="absolute bottom-[1.2vh] left-[1vw]">
+			<div
+				data-hud="super"
+				className={`absolute bottom-[1.2vh] ${touch ? 'left-1/2 -translate-x-1/2' : 'left-[1vw]'}`}
+			>
 				{hud.superpower &&
 					(() => {
 						const { charge, cost } = hud.superpower;
@@ -175,25 +206,25 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 					})()}
 			</div>
 
-			{version && (
+			{version && !touch && (
 				<div className="absolute bottom-[0.6vh] left-1/2 -translate-x-1/2 text-[0.7em] text-text-dim">
 					{version}
 				</div>
 			)}
 
-			<div className="absolute right-[1vw] bottom-[1.2vh] flex flex-col items-end gap-0.5 text-dot-poison">
-				{!touch && (
+			{!touch && (
+				<div className="absolute right-[1vw] bottom-[1.2vh] flex flex-col items-end gap-0.5 text-dot-poison">
 					<div className={`font-bold ${hud.speed > 1 ? 'text-crit' : 'text-text-dim'}`}>
 						{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
 					</div>
-				)}
-				{hud.gambits.map((g) => (
-					<div key={g.slot} className={g.used ? 'opacity-50' : ''}>
-						{g.used ? '✕ ' : ''}
-						{name(`potion.${g.potion}`)} · {name(`cond.${g.condition}`)}
-					</div>
-				))}
-			</div>
+					{hud.gambits.map((g) => (
+						<div key={g.slot} className={g.used ? 'opacity-50' : ''}>
+							{g.used ? '✕ ' : ''}
+							{name(`potion.${g.potion}`)} · {name(`cond.${g.condition}`)}
+						</div>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }

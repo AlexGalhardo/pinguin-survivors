@@ -203,19 +203,51 @@ export function SkillTree({
 		else actions.allocate(n.id);
 	};
 
-	// Drag to pan (mouse, pen and touch); the wheel pans, Ctrl+wheel zooms.
+	// Drag to pan (mouse, pen and touch, also when the finger starts on a node); two fingers pinch to
+	// zoom; the wheel pans, Ctrl+wheel zooms. A drag never counts as a tap on a node.
+	const pointers = useRef(new Map<number, { x: number; y: number }>());
+	const pinchBase = useRef(0);
+	const moved = useRef(false);
+	const spread = (): number => {
+		const [a, b] = [...pointers.current.values()];
+		return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 0;
+	};
 	const onPointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
-		if ((e.target as HTMLElement).closest('button')) return;
+		pointerType.current = e.pointerType;
+		pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+		moved.current = false;
+		if (pointers.current.size === 2) {
+			pinchBase.current = spread();
+			drag.current = null;
+			return;
+		}
+		if (e.pointerType !== 'touch' && (e.target as HTMLElement).closest('button')) return;
 		drag.current = { x: e.clientX, y: e.clientY, camX: cam.x, camY: cam.y };
-		e.currentTarget.setPointerCapture(e.pointerId);
 	};
 	const onPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
 		const d = drag.current;
 		if (!d) return;
-		setCam({ x: d.camX + e.clientX - d.x, y: d.camY + e.clientY - d.y, smooth: false });
+		if (!moved.current && Math.hypot(e.clientX - d.x, e.clientY - d.y) > 8) {
+			moved.current = true;
+			// Capture only once it is a drag, so a plain tap still reaches the node under the finger.
+			e.currentTarget.setPointerCapture(e.pointerId);
+		}
+		if (moved.current)
+			setCam({ x: d.camX + e.clientX - d.x, y: d.camY + e.clientY - d.y, smooth: false });
+	// Touch: the first tap on a node selects it (details and path preview), a second tap on the
+	// same node allocates or refunds it. Mouse and keyboard keep the one-step behavior.
+	const pointerType = useRef('mouse');
 	};
-	const stopDrag = (): void => {
-		drag.current = null;
+		// A drag that ended on a node is not a tap.
+		if (moved.current) return;
+		if (pointerType.current === 'touch' && selected !== n.id) {
+			setSelected(n.id);
+			return;
+		}
+	const stopDrag = (e: React.PointerEvent<HTMLDivElement>): void => {
+		pointers.current.delete(e.pointerId);
+		if (pointers.current.size < 2) pinchBase.current = 0;
+		if (pointers.current.size === 0) drag.current = null;
 	};
 	const onWheel = (e: React.WheelEvent<HTMLDivElement>): void => {
 		if (e.ctrlKey) {
@@ -228,6 +260,19 @@ export function SkillTree({
 	};
 
 	const i = data.heroes.indexOf(data.hero);
+		if (pointers.current.has(e.pointerId))
+			pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+		if (pointers.current.size === 2) {
+			moved.current = true;
+			const ratio = spread() / (pinchBase.current || 1);
+			if (ratio > 1.25 || ratio < 0.8) {
+				setZoomIndex((z) =>
+					Math.max(0, Math.min(ZOOMS.length - 1, z + (ratio > 1 ? 1 : -1))),
+				);
+				pinchBase.current = spread();
+			}
+			return;
+		}
 	const other = (d: number): HeroId =>
 		data.heroes[(i + d + data.heroes.length) % data.heroes.length] ?? data.hero;
 
@@ -263,19 +308,19 @@ export function SkillTree({
 				</>
 			}
 		>
-			<div className="grid h-full min-h-0 w-full flex-1 grid-cols-1 gap-3 min-[1100px]:grid-cols-[1fr_22rem]">
-				<Panel className="h-full min-h-[50vh]">
-					<div className="flex flex-wrap items-center gap-2">
+			<div className="grid h-full min-h-0 w-full flex-1 grid-cols-1 gap-3 min-[1100px]:grid-cols-[1fr_22rem] [@media(max-height:500px)]:grid-cols-[1fr_14rem] [@media(max-height:500px)]:gap-1.5">
+				<Panel className="h-full min-h-[50vh] [@media(max-height:500px)]:min-h-0">
+					<div className="flex flex-wrap items-center gap-2 [@media(max-height:500px)]:flex-nowrap [@media(max-height:500px)]:gap-1">
 						<AdjustRow
 							label={`${t(`hero.${data.hero}` as I18nKey)} · ${t('select.level', { n: data.level })}`}
 							onPrev={() => actions.selectHero(other(-1))}
 							onNext={() => actions.selectHero(other(1))}
 							disabled={data.heroes.length < 2}
 						/>
-						<div className="font-bold text-crit">
+						<div className="font-bold whitespace-nowrap text-crit [@media(max-height:500px)]:text-[0.8em]">
 							{t('tree.points', { n: data.points })}
 						</div>
-						<div className="font-bold text-fish">
+						<div className="font-bold whitespace-nowrap text-fish [@media(max-height:500px)]:text-[0.8em]">
 							{t('tree.pearls', { n: data.pearls })}
 						</div>
 						<input
@@ -284,7 +329,7 @@ export function SkillTree({
 							onChange={(e) => setQuery(e.target.value)}
 							placeholder={t('tree.search')}
 							aria-label={t('tree.search')}
-							className="min-h-11 flex-1 rounded border border-snow bg-night px-2 text-text-light [font-family:inherit]"
+							className="min-h-11 flex-1 rounded border border-snow bg-night px-2 text-text-light [font-family:inherit] [@media(max-height:500px)]:hidden"
 						/>
 						<Btn
 							onActivate={() => setZoomIndex((z) => Math.max(0, z - 1))}
@@ -328,6 +373,13 @@ export function SkillTree({
 								aria-hidden="true"
 								className="pointer-events-none absolute inset-0"
 								width={bounds.w * scale}
+						onClickCapture={(e) => {
+							// A drag or a pinch ending over a node must not allocate it.
+							if (moved.current) {
+								e.stopPropagation();
+								moved.current = false;
+							}
+						}}
 								height={bounds.h * scale}
 							>
 								{nodes.flatMap((a) =>
@@ -388,7 +440,9 @@ export function SkillTree({
 							})}
 						</div>
 					</div>
-					<Hint>{t('tree.hint')}</Hint>
+					<div className="[@media(max-height:500px)]:hidden">
+						<Hint>{t('tree.hint')}</Hint>
+					</div>
 				</Panel>
 				<Panel title={t('tree.details')}>
 					{node && (

@@ -25,7 +25,11 @@ export function MenuScreen(props: {
 		>
 			<header className={`flex w-full flex-col items-center gap-1 ${width}`}>
 				<Heading>{props.title}</Heading>
-				{props.subtitle && <Hint>{props.subtitle}</Hint>}
+				{props.subtitle && (
+					<div className="[@media(max-height:500px)]:hidden">
+						<Hint>{props.subtitle}</Hint>
+					</div>
+				)}
 			</header>
 			<Panel className={`w-full flex-1 ${width}`}>{props.children}</Panel>
 			{props.footer && (
