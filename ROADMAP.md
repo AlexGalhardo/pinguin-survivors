@@ -31,9 +31,9 @@
 |---|---|---|
 | 2026-11-08 | Estruturação concluída; release `0.0.11` | M0 |
 | 2026-11-14 | Renovação PixelLab (5.000) e ElevenLabs | — |
-| 2026-11-29 | Jogo roda top-down em arena quadrada, sem vozes, save v2 | M1 → `0.0.12`–`0.0.13` |
+| 2026-11-29 | Jogo roda top-down em arena quadrada, sem vozes, save v2 | M1 → `0.0.12` |
 | 2026-12-15 | 🛑 Conta Steamworks criada; página da Steam em rascunho | dev |
-| 2026-12-20 | 6 slots, loja, cartas de level-up, Fish/Pérolas jogáveis com placeholders | M2 → `0.0.14`–`0.0.15` |
+| 2026-12-20 | 6 slots, loja, cartas de level-up, Fish/Pérolas jogáveis com placeholders | M2 → `0.0.13` |
 | 2027-01-10 | **Inscrição no Next Fest fecha (23:59 PST)**; UI React completa; Danger 0–5 | M3 → `0.1.0` |
 | 2027-01-17 | Arte top-down (chão, bordas, props, lojista, tiers) e áudio da loja | M4 → `0.1.1` |
 | 2027-01-25 | Build da demo enviado à Steam (data de terceiros; 08/02 é a oficial para itens em revisão) | M5 |
@@ -66,7 +66,7 @@ Capacidade assumida: ~20 h de agente por semana úteis para implementação (hip
 - [x] **T0.9** Release `0.0.11` · Resp.: orquestrador · Evidência: `gh release view v0.0.11` → pre-release; `package.json.version === '0.0.11'`; 11 tags = 11 releases.
   - [x] Auditoria (2026-11-08, orquestrador): `gh release view v0.0.11 --json isPrerelease` = true; corpo com `### Added/Changed/Fixed` e links de commit; CHANGELOG `[0.0.11] - 2026-11-08` presente.
 - [x] **T0.10** README raiz no padrão open source (vukem-hexascore), `LICENSE.md` (MIT no código, assets reservados), `CONTRIBUTING.md`, `.github/SECURITY.md`, `.github/CODE_OF_CONDUCT.md`, `ci.yml`, `dependabot.yml` · Evidência: arquivos no repo; badge do CI verde após o 1º push.
-  - [ ] Auditoria: `gh run list --workflow ci.yml` verde; links do README respondem (sem 404 interno).
+  - [x] Auditoria: `gh run list --workflow ci.yml` verde; links do README respondem (sem 404 interno). · Conferido (2026-11-08, orquestrador): últimos 3 runs do `ci.yml` em `main` = success (as 2 falhas intermediárias eram formatação do `lint-i18n.ts`, corrigida em `129ad1b`); todos os links relativos do README apontam para arquivos existentes.
 - [x] **T0.11** `PLAN.md` deixa de ser versionado (pedido do desenvolvedor via `.gitignore`); histórico no git · Evidência: `git ls-files PLAN.md` vazio.
   - [x] Auditoria: `git log --oneline -- PLAN.md | head -1` mostra a remoção (2026-11-08).
 
@@ -92,7 +92,7 @@ Specs: [SDD-001](docs/sdds/SDD-001-arena-topdown.md), [SDD-010](docs/sdds/SDD-01
   - [x] Auditoria: importar um save real exportado do `0.0.10` no build novo sem erro. · Conferido (2026-11-08, orquestrador): save gerado por `serializeSave` do código de `v0.0.10` (`git archive`) lido pelo `parseSave` novo → `version 2`, Jack L17/XP 900 e conquistas mantidos, `activeRun null`, `dangerUnlocked 1`, reparse idêntico.
 - [x] **T1.9** `docs/balancing-and-simulation.md` Parte B: marcar `[1.0: revisar]` nos itens afetados pela arena; `architecture.md` conferido · Resp.: estagiario · Est.: 2 h · Assert: `rg -c "1.0: revisar" docs/balancing-and-simulation.md` ≥ 5. · Evidência (2026-11-08): `rg -c "1.0: revisar"` = 12 (11 marcações + legenda); `architecture.md` conferido sem resquício iso/chunks; SDD-001 A6 corrigida (v1.1: 640 u > altura lógica 540).
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado = 12; lido o diff de `balancing-and-simulation.md` (12 linhas, só etiquetas e versão 2.1).
-- [ ] **T1.10** Release `0.0.12` (T1.1–T1.3) e `0.0.13` (T1.4–T1.9) · Resp.: orquestrador · Assert: `gh release list` mostra as duas.
+- [ ] **T1.10** Release `0.0.12` com todo o M1, só depois de todas as auditorias do marco marcadas (decisão do desenvolvedor em 2026-11-08: uma release por marco) · Resp.: orquestrador · Assert: `gh release view v0.0.12` pre-release.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
 ### Auditoria do marco M1
@@ -132,7 +132,7 @@ Specs: [SDD-002](docs/sdds/SDD-002-armas-slots-classes-tiers.md), [SDD-003](docs
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T2.10** 1ª passada de balanceamento do design 1.0 (metas #1, #5, #6 da Parte A4) · Resp.: estagiario roda bot/sim; orquestrador ajusta `src/data` · Dep.: T2.9 · Est.: 8 h · Assert: `docs/reports/balance-<data>.md` com #1, #5, #6 ✓
   - [ ] Auditoria: Parte B atualizada no mesmo commit.
-- [ ] **T2.11** Release `0.0.14` (T2.1–T2.5) e `0.0.15` (T2.6–T2.10).
+- [ ] **T2.11** Release `0.0.13` com todo o M2 (uma release por marco).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 
 ### Auditoria do marco M2
