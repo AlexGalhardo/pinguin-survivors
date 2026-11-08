@@ -305,3 +305,17 @@ Pedido: o Boss deve dar V de forma perceptível. O equipamento V já é **garant
 | 0,25 | ✗ máx. 31 | ✓ mas Bob 52 | ✗ |
 
 Escolhi **0,10** no Boss e **0,0008** na arma IV de Elite (antes 0,0002). Com os dois: #1 ✓ 18 / 18 / 16 (máx. 27), #2 ✓, #3 ✓ 34 / 41 / 36, #4 ✓ D0 61, D1 31, D5 10, #5 ✓ (critério da A4), #6 ✓ 0,885 (reroll 12,7%). A margem do #3 do Bob diminui (41); acima de 0,12 as metas quebram. Capturas: `docs/reports/boss-v-drop-2026-11-08.jpg` (drop V no chão logo depois de um Boss, round 10) e `docs/reports/shop-rarity-2026-11-08.jpg` (loja com itens I a III, afixos e o painel do jogador com um item V).
+
+### Bot real com a raridade e os drops (2026-11-08)
+
+Rodada do `playtest-bot` (L1, D1, build DEV congelada servida por um servidor estático local, mudo, `--speed 4`, bot médio `--react 0.2 --mistakes 0.05`; o bot joga a loja pelos métodos da cena, então não depende dos seletores da UI nova): lucia 6 seeds, jack 4 e bob 3 (2 runs longas do Bob ainda não tinham terminado).
+
+| Herói | Rounds de morte | Mediana |
+|---|---|---|
+| lucia | 19, 6, 13, 6, 3, 3 | 6 |
+| jack | 10, 6, 10, 3 | 10 |
+| bob | 24, 25, 13 | 24 |
+
+- **#7 ✓: mediana 13,1 min** (tempo de jogo 6,3 min mais 45 s por loja, 13 runs), dentro da faixa de 10 a 18 min. O balanço automático (`balance-auto-2026-11-08.md`) agora inclui essas runs.
+- **#1 no bot real, por herói**: Jack 10 e Bob 24 passam; **a Lucia fica em 6**, abaixo do piso de 8 (2 de 6 runs morrem no round 3, o mesmo modo de falha do início da run). Os 10 Fish de partida ajudam (antes eram 5 de 8 mortes no round 3), mas não resolvem sozinhos para a Lucia. Com 6 runs é indício.
+- **Ajuste mínimo (só dados), sugerido e não aplicado**: subir `ECONOMY.fish.start` de 10 para 12 ou 14 (uma 2ª arma já na loja do round 1 e uma sobra para reroll), ou dar à Lucia 1 ponto de HP base. Isso exige conferir a sim (#1 e #6) e uma nova rodada do bot; deixo para a decisão do desenvolvedor.

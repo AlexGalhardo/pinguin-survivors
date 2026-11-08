@@ -1,6 +1,6 @@
 # Balanço automático (2026-11-08)
 
-Gerado por `bun scripts/balance-report.ts` a partir de 5416 runs (C:/Users/aleex/AppData/Local/Temp/claude/7dd2f9fb88fe2e00/9865445d-d774-4286-b9ac-e8877d5bae2f/scratchpad/fin3.jsonl, C:/Users/aleex/AppData/Local/Temp/claude/7dd2f9fb88fe2e00/9865445d-d774-4286-b9ac-e8877d5bae2f/scratchpad/lu7.jsonl, C:/Users/aleex/AppData/Local/Temp/claude/7dd2f9fb88fe2e00/9865445d-d774-4286-b9ac-e8877d5bae2f/scratchpad/ja7.jsonl). Metas da Parte A4 de [balancing-and-simulation.md](../balancing-and-simulation.md); `n/d` = sem dados para decidir, não conta como aprovado.
+Gerado por `bun scripts/balance-report.ts` a partir de 5413 runs (C:/Users/aleex/AppData/Local/Temp/claude/7dd2f9fb88fe2e00/9865445d-d774-4286-b9ac-e8877d5bae2f/scratchpad/fin3.jsonl, C:/Users/aleex/AppData/Local/Temp/claude/7dd2f9fb88fe2e00/9865445d-d774-4286-b9ac-e8877d5bae2f/scratchpad/lu8.jsonl, C:/Users/aleex/AppData/Local/Temp/claude/7dd2f9fb88fe2e00/9865445d-d774-4286-b9ac-e8877d5bae2f/scratchpad/ja8.jsonl). Metas da Parte A4 de [balancing-and-simulation.md](../balancing-and-simulation.md); `n/d` = sem dados para decidir, não conta como aprovado.
 
 ## Metas
 
@@ -12,7 +12,7 @@ Gerado por `bun scripts/balance-report.ts` a partir de 5416 runs (C:/Users/aleex
 | 4 | L10, D0 / D1 / D5 | D0 chega ≥ 5 rounds além do D1; D5 morre até o round 15 | ✓ | medianas D0 61, D1 31, D5 10 |
 | 5 | L10, D1, por herói (armas da loja, sem a inicial) | toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói (limites de 35% por arma e 50% por set por herói: exceção justificada, valores medidos abaixo) | ✓ | jack: arma hammer 79.0%, set blunt 79.0%; bob: arma elementStaff 79.0%, set elemental 97.0%; lucia: arma flameRing 65.0%, set elemental 89.0%; abaixo de 3% em todos os heróis: nenhuma |
 | 6 | todas as runs com Fish | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ | gasto/ganho 0.885, reroll 12.7% do gasto |
-| 7 | L1, D1, bot do jogo real | run L1 mediana entre 10 e 18 min (tempo de jogo + 45 s por loja) | ✗ | mediana 18.8 min (tempo de jogo 9.4 min, 16 runs) |
+| 7 | L1, D1, bot do jogo real | run L1 mediana entre 10 e 18 min (tempo de jogo + 45 s por loja) | ✓ | mediana 13.1 min (tempo de jogo 6.3 min, 13 runs) |
 | 8 | build real, `bun scripts/perf.ts --round 40` | ≥ 58 FPS médios e p95 ≤ 18 ms com 300 inimigos e 2.000 decalques (1920×1080, round 40) | ✓ | 3 medições: FPS médio mínimo 58, p95 máximo 16.8 ms |
 
 ## Round de morte por herói, nível e Danger
@@ -38,7 +38,7 @@ Gerado por `bun scripts/balance-report.ts` a partir de 5416 runs (C:/Users/aleex
 | jack | 20 | 4 | 100 | 26 | 24 | 29 | 22.0% |
 | jack | 20 | 5 | 100 | 24 | 18 | 25 | 5.0% |
 | bob | 1 | 0 | 100 | 23 | 22 | 24 | 3.0% |
-| bob | 1 | 1 | 104 | 18 | 17 | 22 | 1.0% |
+| bob | 1 | 1 | 103 | 18 | 17 | 22 | 0.0% |
 | bob | 1 | 2 | 100 | 16 | 15 | 18 | 0.0% |
 | bob | 1 | 3 | 100 | 15 | 14 | 17 | 0.0% |
 | bob | 1 | 4 | 100 | 12 | 10 | 15 | 0.0% |
@@ -56,7 +56,7 @@ Gerado por `bun scripts/balance-report.ts` a partir de 5416 runs (C:/Users/aleex
 | bob | 20 | 4 | 100 | 27 | 24 | 31 | 29.0% |
 | bob | 20 | 5 | 100 | 24 | 18 | 24 | 8.0% |
 | lucia | 1 | 0 | 100 | 22 | 18 | 24 | 7.0% |
-| lucia | 1 | 1 | 108 | 16 | 10 | 18 | 1.9% |
+| lucia | 1 | 1 | 106 | 15 | 10 | 18 | 0.0% |
 | lucia | 1 | 2 | 100 | 10 | 10 | 15 | 0.0% |
 | lucia | 1 | 3 | 100 | 10 | 10 | 10 | 0.0% |
 | lucia | 1 | 4 | 100 | 10 | 10 | 10 | 0.0% |
