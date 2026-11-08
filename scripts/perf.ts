@@ -4,7 +4,7 @@
  * Opens a real (headed) Chrome so WebGL runs on the GPU — headless Chromium falls back to
  * software rendering and reports single-digit FPS. Needs `bun run dev` running.
  * Usage: bun scripts/perf.ts [--round 40] [--seconds 10] [--width 1920] [--height 1080]
- *        [--tier low|mid|high] [--enemies mix|one] [--base http://localhost:5173]
+ *        [--speed 1-4] [--tier low|mid|high] [--enemies mix|one] [--base http://localhost:5173]
  */
 import { chromium } from 'playwright';
 
@@ -20,6 +20,8 @@ const height = Number(flag('height', '1080'));
 /** Effects tier for QA (`low|mid|high`); empty = auto-detected. */
 const tier = flag('tier', '');
 /** `mix` spawns every enemy of the round's pool round-robin (all atlases in use); default clones one. */
+/** Game speed 1-4 (the world runs several fixed steps per frame above 2x). */
+const speed = Number(flag('speed', '1'));
 const mix = flag('enemies', 'mix') === 'mix';
 
 const browser = await chromium.launch({
@@ -59,7 +61,7 @@ async function measure(): Promise<Awaited<ReturnType<typeof sample>>> {
 
 const sample = () =>
 	page.evaluate(
-		async ({ secs, mix }) => {
+		async ({ secs, mix, speed }) => {
 			type AnyScene = import('phaser').Scene & Record<string, never>;
 			const g = (window as unknown as { __GAME__: import('phaser').Game }).__GAME__;
 			const s = g.scene.getScene('Game') as unknown as {
@@ -68,6 +70,7 @@ const sample = () =>
 				enemies: { active: unknown[]; spawnAt: (d: unknown, x: number, y: number) => void };
 				arena: { addDecal: (x: number, y: number, key: string, o?: object) => void };
 			} & AnyScene;
+			(s as unknown as { setSpeed: (n: number) => void }).setSpeed(speed);
 			const defs = s.enemies.active.map((e) => (e as { def: unknown }).def);
 			const { enemyPoolForRound } = (await import(
 				/* @vite-ignore */ '/src/logic/' + 'biome.ts'
@@ -115,7 +118,7 @@ const sample = () =>
 				frames: samples.length,
 			};
 		},
-		{ secs: seconds, mix },
+		{ secs: seconds, mix, speed },
 	);
 
 const result = await measure();

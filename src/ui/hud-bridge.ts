@@ -3,7 +3,9 @@ import { createStore } from './store';
 /** Everything the React HUD shows; plain data, translated by the components. */
 export interface HudWeapon {
 	id: string;
-	tier: 1 | 2 | 3 | 4;
+	tier: 1 | 2 | 3 | 4 | 5;
+	/** Rarity I to V of the slot (same number as `tier`; the game always sets it), for the slot border color. */
+	rarity?: 1 | 2 | 3 | 4 | 5;
 }
 
 export interface HudGambit {
@@ -56,7 +58,7 @@ export function publishHud(snapshot: HudSnapshot, now: number = performance.now(
 
 /** Run build to the 6 weapon slots: `weapons` (1.0) or, while T2.3 is pending, the old secondaries. */
 export function hudWeapons(build: {
-	weapons: readonly { id: string; tier: 1 | 2 | 3 | 4 }[];
+	weapons: readonly { id: string; tier: 1 | 2 | 3 | 4 | 5 }[];
 }): HudWeapon[] {
-	return build.weapons.slice(0, 6).map((w) => ({ id: w.id, tier: w.tier }));
+	return build.weapons.slice(0, 6).map((w) => ({ id: w.id, tier: w.tier, rarity: w.tier }));
 }

@@ -12,6 +12,10 @@
 - RF-06 **Fish**: `RunState.fish` começa a run com `ECONOMY.fish.start` (10, o bastante para uma arma tier I na 1ª loja; sem isso o bot real morria no round 3 sem ter comprado nada) e não passa de uma run para outra; drop 5% comuns, elite 3/6, fim de round `(2 + floor(N/2)) · (1 + harvesting)`, boss `25·(1+ciclo)`. Ao fim da run, `pearls += floor(fish / 10)`.
 - RF-07 **Pérolas**: `SaveData.pearls`; ganho por round concluído `1 + floor(N/5)`, boss `+25`, conquista `+5`; gasto em Oficina, gambits, desbloqueios de arma inicial. Migração: `pearls = fish` antigo (1:1).
 - RF-08 Stat `harvesting` (novo, base 0) nas cartas e itens.
+- RF-10 **Raridade e afixos na loja** (ADR-017): `Offer { kind, id, tier, price, affixes? }` com `tier` = raridade I a III (`SHOP.maxRarity` 3); IV e V não aparecem na loja (drops). Cada oferta de arma ou equipamento já traz os afixos sorteados (`AFFIX_COUNT`: I 0, II 1, III 2), para a UI mostrar o que se compra. A loja vende só **armas, equipamentos e poções de velocidade** (`SHOP.potions = ['haste']`).
+- RF-11 **`describeOffer(offer, { build, gear, stats })`** (`src/logic/shop-describe.ts`, pura) devolve o resultado exato da compra: arma → nova arma no slot X (e a fusão possível em seguida) ou, com a barra cheia, fusão `fromRarity → toRarity` com a quantidade de afixos novos, ou barra cheia; equipamento → equipa no slot ou vai à mochila (slot ocupado); poção → estoque; mais `statChanges` antes→depois (afixos e bônus de set).
+- RF-12 **Drops IV e V**: `rollItemDrops(rng, kind, { round, hero })` — só Elite dá IV e só Boss dá V, arma e equipamento com chances próprias (`DROPS.item`); drop no chão coletado como os itens atuais; arma exclusiva de outro herói não cai. A cena solta e coleta esses drops (`GameScene.onKill`): equipamento vai à mochila ou é vestido se o slot está livre, com a raridade e os afixos sorteados; arma entra num slot livre e, **com a barra cheia, é vendida na hora pelo valor de venda (Fish)** (regra mais simples, sem fusão porque IV e V não fundem). Comprar uma cópia igual com a barra cheia funde direto na arma que já se tem (`mergeInto`), mantendo os afixos e sorteando os que faltam; a fusão manual usa a mesma regra (`fuse` com sorteio). Todo Boss dá 1 equipamento V garantido e arma V com chance própria.
+- RF-13 **Contrato de dados para as telas** (`src/ui/shop-bridge.ts`, `hud-bridge.ts`, `player-bridge.ts`): por oferta `rarity`, `affixes`, `weapon`/`baseStats` e `description` (de `describeOffer`); painel do jogador (`PlayerPanelView`: stats, armas e equipamentos com raridade e afixos, mochila); `HudWeapon.rarity` por slot.
 - RF-09 Poções de run à venda na loja a partir do round 5 (consumidas pelo gambit "início do round").
 
 ## Especificação
@@ -34,6 +38,7 @@
 | A4 | Save v1 com `fish: 120` migra para `pearls: 120`, `fish` ausente | `tests/save.test.ts` |
 | A5 | Bot médio L1: morte mediana entre rounds 8 e 20 com a política de compra | `bun scripts/playtest-bot.ts --levels 1 --runs 2` |
 | A6 | Nenhuma carta de level-up contém `kind: 'weapon'\|'evolve'` | `tests/cards.test.ts` |
+| A7 | Raridade e loja: ofertas só I a III, afixos por raridade sem repetir stat, só `haste` entre as poções, `describeOffer` cobre nova arma, fusão, barra cheia, equipar, mochila e poção | `bun test tests/rarity.test.ts` |
 
 ## Fora de escopo
 

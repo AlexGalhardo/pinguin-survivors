@@ -14,6 +14,8 @@ export const LEGACY_BIOME_IDS = ['station', 'ruins'] as const;
 export const ENDLESS_BIOMES = [...BIOME_IDS, ...LEGACY_BIOME_IDS] as const;
 export type BiomeId = (typeof ENDLESS_BIOMES)[number];
 
-/** Game speed toggled with TAB (default 1x). */
-export const GAME_SPEEDS = [1, 2] as const;
+/** Game speed toggled with TAB (default 1x) and chosen in Settings. */
+export const GAME_SPEEDS = [1, 2, 3, 4] as const;
 export type GameSpeed = (typeof GAME_SPEEDS)[number];
+/** Longest world step in seconds: faster speeds run several of them per frame. */
+export const MAX_STEP = 1 / 30;

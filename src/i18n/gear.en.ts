@@ -67,6 +67,7 @@ export const gearEn = {
 	'gstat.pickupRange': 'pickup range',
 	'gstat.xpGain': 'XP gain',
 	'gstat.luck': 'luck',
+	'gstat.harvesting': 'Fish bonus',
 	'gstat.lifesteal': 'lifesteal',
 	'gstat.bleedChance': 'bleed chance',
 	'gstat.poisonChance': 'poison chance',
@@ -85,4 +86,9 @@ export const gearEn = {
 	'grarity.common': 'Common',
 	'grarity.rare': 'Rare',
 	'grarity.legendary': 'Legendary',
+	'rarity.1': 'Common',
+	'rarity.2': 'Uncommon',
+	'rarity.3': 'Rare',
+	'rarity.4': 'Epic',
+	'rarity.5': 'Legendary',
 } as const;

@@ -4,10 +4,11 @@
 
 ## Requisitos
 
-- RF-01 `Build.weapons: WeaponInstance[]` com até **6** entradas `{ id, tier: 1|2|3|4 }`; sem arma assinada nem evolução por carta.
+- RF-01 `Build.weapons: WeaponInstance[]` com até **6** entradas `{ id, tier: 1|2|3|4|5, affixes? }` (o `tier` é a **raridade I–V**, ADR-017); sem arma assinada nem evolução por carta.
 - RF-02 `WeaponDef { id, classTag: 'melee'|'firearm'|'magic', sets: SetId[] (1–2), tiers: [T1, T2, T3, T4] }`, cada tier com `damage, cooldown, range, extra`. Preço por tier em `economy.ts`.
 - RF-03 **Sets**: `blade, blunt, thrown, gun, explosive, elemental, support`. Bônus por contagem 2/4/6 em `src/data/sets.ts`, aplicado em `PlayerStats` como modificadores (ex.: `blade: +5/+12/+25% chance de sangramento`).
-- RF-04 **Fusão**: `fuse(build, slotA, slotB)` (índices de slot, pois a build pode ter duas instâncias da mesma arma) só se `id` e `tier` iguais e `tier < 4`; resultado tier+1 ocupa um slot; oferecida automaticamente na loja ao comprar a 2ª igual (confirmação).
+- RF-04 **Fusão**: `fuse(build, slotA, slotB)` (índices de slot, pois a build pode ter duas instâncias da mesma arma) só se `id` e `tier` iguais e `tier < 3` (**a arma só faz upgrade até o nível III**; IV e V só por drop); resultado tier+1 ocupa um slot, mantém os afixos e sorteia os que faltam; oferecida automaticamente na loja ao comprar a 2ª igual (confirmação).
+- RF-10 **Raridade ↔ tier visual**: I a IV usam as quatro linhas de stats e a arte `weapon.<id>.t1…t4` (`weaponVisualTier`); **V usa a arte e os stats do IV** (`WEAPON_V_DAMAGE_MUL` no dano, hoje 1,0) com brilho laranja (`rarityColor(5)`), sem exigir arte nova. Os afixos da arma entram nos modificadores da build (`setBonuses`) enquanto ela está nos slots.
 - RF-05 **Arma inicial**: `HeroDef.startingWeapons: WeaponId[]` (3 por herói); seleção na `HeroSelect`; desbloqueio de mais armas iniciais com Pérolas (`src/data/unlocks.ts`).
 - RF-06 As antigas secundárias com comportamento de arma viram `WeaponDef` (knives, molotov, iceShards, auxPistol, fishBoomerang, mine, flameRing, lightningTotem, poisonCloud, crossbow, bladeWhirl*, droneSentinel*, grenadeBelt*;* exclusivas do herói: só aparecem na loja/inicial daquele herói).
 - RF-07 Exclusivas passivas/ativas (bloodlust, counterAttack, ironSkin, butcher, hollowPoints, ricochet, runAndGun, reflex, elementalAttunement, arcaneChain, frostNova, meteorShower, arcaneBarrier, toxicBloom, seismicStomp) continuam como **cartas exclusivas** (SDD-003). Cada herói recebe 1 exclusiva nova para repor a que virou arma (propostas: Jack *Fôlego de Ferro* +regen por inimigo próximo; Bob *Recarga Rápida* +cadência após abate; Lucia *Eco Arcano* repete 1 projétil a cada N).

@@ -147,6 +147,8 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 - Orçamento: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 1920×1080 na arena 40×40 (`bun scripts/perf.ts --round 40`, SDD-001 RF-10); o `Platform.tier` (`detectTier`) escolhe o orçamento de efeitos.
 - Orçamento por tier (`src/data/performance.ts`, `tierBudget()` em `src/logic/performance.ts`, tier ativo em `src/core/tier.ts`; `?tier=low|mid|high` força para QA): `low` = 1.000 decalques, sem luzes dinâmicas, sem bloom, 50% das partículas e gibs; `mid` = 2.000 decalques, até 24 luzes, bloom opcional, 75% das partículas; `high` = o jogo completo (4.000, 64 luzes, 100%). O bloom continua opt-in nas Configurações; o tier só o proíbe.
 
+Velocidade de jogo (1×–4×): `GameScene.setSpeed` escala `time.timeScale`, tweens e o `dt` do mundo; acima de `MAX_STEP` (1/30 s) o quadro vira vários passos fixos (`step`), para nada atravessar colisões em 3×/4×. A velocidade escolhida fica em `settings.gameSpeed`. Feedback de combate (crítico, esquiva, aparo, drops) tem os números em `src/data/combat-fx.ts` e os tetos por tier em `data/performance.ts` (`critLabels`, `critSparks`); cada linha de arma tem a própria cor de dano (`PALETTE.w*`, `weaponColor`); `rarityColor` em `PickupSystem` é o ponto único de cor dos drops de equipamento.
+
 ## 9. Persistência e plataforma
 
 - `SaveData` v2 (SDD-005) via `Platform.save`; `src/core/storage.ts` delega para `platform()`. Web = `localStorage` + export/import de `.json`; Electron e Capacitor entram pela ponte `window.platform` (`createElectronPlatform`, `createCapacitorPlatform`); o campo `cloud` da ponte indica que a loja sincroniza o save sozinha (`Platform.cloud`).

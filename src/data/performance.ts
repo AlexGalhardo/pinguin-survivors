@@ -13,6 +13,10 @@ export interface TierBudget {
 	bloom: boolean;
 	/** Multiplier on blood spray particles and gibs per kill. */
 	particleScale: number;
+	/** Most "CRIT!" labels on screen at once (past it a crit is just a bigger number). */
+	critLabels: number;
+	/** Spark particles on a crit (scaled again by `particleScale`). */
+	critSparks: number;
 }
 
 /**
@@ -22,13 +26,31 @@ export interface TierBudget {
  * `low` is the SDD-007 RF-05 floor: 1.000 decals, no dynamic lights, no bloom, half the particles.
  */
 export const TIER_BUDGET: Readonly<Record<PlatformTier, TierBudget>> = {
-	low: { decalCap: 1000, dynamicLights: false, maxLights: 0, bloom: false, particleScale: 0.5 },
-	mid: { decalCap: 2000, dynamicLights: true, maxLights: 24, bloom: true, particleScale: 0.75 },
+	low: {
+		decalCap: 1000,
+		dynamicLights: false,
+		maxLights: 0,
+		bloom: false,
+		particleScale: 0.5,
+		critLabels: 4,
+		critSparks: 3,
+	},
+	mid: {
+		decalCap: 2000,
+		dynamicLights: true,
+		maxLights: 24,
+		bloom: true,
+		particleScale: 0.75,
+		critLabels: 8,
+		critSparks: 6,
+	},
 	high: {
 		decalCap: ARENA.decalCap,
 		dynamicLights: true,
 		maxLights: 64,
 		bloom: true,
 		particleScale: 1,
+		critLabels: 14,
+		critSparks: 8,
 	},
 };

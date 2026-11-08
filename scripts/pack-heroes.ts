@@ -13,9 +13,11 @@ import sharp from 'sharp';
 import { shelfPack } from './lib/shelf-pack';
 
 const IN = 'art-src/pixellab/anim';
-/** Heroes go to public/assets/heroes, enemies and bosses (enemy.<id>) to public/assets/enemies. */
+/** Heroes go to public/assets/heroes; enemies and bosses (enemy.<id>) and NPCs (npc.<id>) to public/assets/enemies. */
 const outDir = (key: string): string =>
-	key.startsWith('enemy.') ? 'public/assets/enemies' : 'public/assets/heroes';
+	key.startsWith('enemy.') || key.startsWith('npc.')
+		? 'public/assets/enemies'
+		: 'public/assets/heroes';
 const SHORT: Record<string, string> = {
 	south: 's',
 	'south-east': 'se',

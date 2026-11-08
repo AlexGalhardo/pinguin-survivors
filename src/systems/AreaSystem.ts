@@ -18,6 +18,7 @@ export type AreaHit = (
 	amount: number,
 	element: Element | undefined,
 	poison: boolean,
+	color: number | undefined,
 ) => void;
 
 interface Zone {
@@ -31,6 +32,7 @@ interface Zone {
 	damage: number;
 	element: Element | undefined;
 	poison: boolean;
+	color: number | undefined;
 	alive: boolean;
 }
 
@@ -45,6 +47,7 @@ interface Pending {
 	damage: number;
 	element: Element | undefined;
 	tint: number;
+	color: number | undefined;
 	alive: boolean;
 }
 
@@ -74,6 +77,8 @@ export class AreaSystem {
 	private readonly pending: Pending[] = [];
 	private readonly flashes: Flash[] = [];
 	private readonly scratch: Enemy[] = [];
+	/** Damage-number color of the weapon creating or resolving areas right now (see SecondarySystem). */
+	color: number | undefined;
 
 	constructor(
 		private readonly scene: Phaser.Scene,
@@ -101,6 +106,7 @@ export class AreaSystem {
 				damage: 0,
 				element: undefined,
 				poison: false,
+				color: undefined,
 				alive: false,
 			};
 			this.zones.push(z);
@@ -115,6 +121,7 @@ export class AreaSystem {
 			damage: damagePerTick,
 			element: opts.element,
 			poison: opts.poison ?? false,
+			color: this.color,
 			alive: true,
 		});
 		const s = worldToScreen(x, y);
@@ -150,6 +157,7 @@ export class AreaSystem {
 				damage: 0,
 				element: undefined,
 				tint: 0xffffff,
+				color: undefined,
 				alive: false,
 			};
 			this.pending.push(p);
@@ -164,6 +172,7 @@ export class AreaSystem {
 			damage,
 			element: opts.element,
 			tint: opts.tint,
+			color: this.color,
 			alive: true,
 		});
 		p.img.setTexture(texture).setVisible(true);
@@ -218,7 +227,7 @@ export class AreaSystem {
 			if (dx * dx + dy * dy > (radius + e.radius) ** 2) continue;
 			hit.push(e);
 		}
-		for (const e of hit) this.onHit(e, damage, element, poison);
+		for (const e of hit) this.onHit(e, damage, element, poison, this.color);
 		return hit;
 	}
 
@@ -229,6 +238,7 @@ export class AreaSystem {
 			z.tick -= dt;
 			if (z.tick <= 0) {
 				z.tick = z.interval;
+				this.color = z.color;
 				this.burst(grid, z.x, z.y, z.radius, z.damage, z.element, z.poison);
 			}
 			z.img.setAlpha(Math.min(0.7, z.life));
@@ -246,6 +256,7 @@ export class AreaSystem {
 			if (p.delay <= 0) {
 				p.alive = false;
 				p.img.setVisible(false);
+				this.color = p.color;
 				this.burst(grid, p.x, p.y, p.radius, p.damage, p.element);
 				this.flash(p.x, p.y, p.radius, p.tint);
 				if (p.radius > 0) sfx(this.scene, 'sfx.explosion', 0.8);

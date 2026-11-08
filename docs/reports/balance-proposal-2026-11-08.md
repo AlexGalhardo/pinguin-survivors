@@ -247,3 +247,61 @@ Com 10 Fish de partida, a primeira loja já permite uma arma tier I, e as runs d
 - **Meta #7 passa de 10,1 min para 18,0 min** (15 runs do bot real, tempo de jogo 9,0 min + 45 s por loja): o valor de 10,1 era artificialmente curto por causa das mortes no round 3. Agora está no limite superior da faixa de 10 a 18 min (`evaluateGoals` marca ✗ por 0,03 min). É decisão do desenvolvedor: aceitar 18 min ou mexer no tempo por loja.
 - Sim com `fish.start` = 10: #1 18 / 18 / 15 (máx. 26), #2 ✓ (jack 0%, bob 0%, lucia 1%), #3 33 / 35 / 33, #4 D0 42, D1 31, D5 10, #5 ✓ com a exceção (líderes 71 a 84%), #6 0,919.
 - Docs: SDD-003 RF-06 e GDD §17 agora dizem que a run começa com 10 Fish.
+
+## Raridade I–V, afixos e drops (ADR-017)
+
+A mudança de escopo (raridade única, loja só I a III, arma só até o III, IV de Elite e V de Boss) tirou a arma tier IV da loja e acrescentou afixos. Rodada com `SOUND_MUTED=true bun scripts/sim.ts 1 --jsonl … 100` + `bun scripts/balance-report.ts`, 100 seeds por célula, mesmas metas.
+
+### Ajustes e resultado
+
+| Passo | Mudança | Resultado na sim |
+|---|---|---|
+| 1 | Só a loja I–III com afixos (sem drops) | #1 ✓ 18 / 18 / 16; **#3 ✗ 42 / 61 / 39** (afixos de `power` 1 fortes demais no L20) |
+| 2 | `AFFIX_SCALE.power` 1 → 0,5 | #3 ✓ 36 / 43 / 33 |
+| 3 | Drops de arma V de Boss com 100% e 50% de arma | **quebra tudo**: #1 mediana 22 a 23 e máx. 48 a 61, #3 61 / 61 / 61, #6 reroll 27% |
+| 4 | Drop de arma V de Boss 2,5%, IV de Elite 0,02%; V sem bônus de dano (×1,0); `power` 0,3 | #1 ✓ máx. 27; #3 passa a depender do corte do Bob |
+| 5 | **`dmgPerLoop` 1,5 → 2,0** (endless): a bimodalidade do L20 vem de passar ou não o round 31 (a volta 2 do endless); com 1,5 o Bob ficava a ~50% de runs no teto de 60 e a mediana saltava entre 43 e 61 a cada mudança | #3 ✓ 33 / 33 / 33 com margem |
+
+Com a mudança de stream do sorteio dos drops (a sim sorteia drops com um gerador próprio, para não embaralhar as compras), as metas deixam de saltar por ruído.
+
+### Estado final (valores no código)
+
+| Campo | Valor |
+|---|---|
+| `AFFIX_SCALE` | `rarityStep` 0,25, `roundStep` 0,02, `power` 0,3 |
+| `WEAPON_V_DAMAGE_MUL` | 1,0 |
+| `SHOP.maxRarity`, `SHOP.potions` | 3, `['haste']` |
+| Preços de arma I a V | 8, 20, 45, 90, 160 |
+| Preços de equipamento I a V | 12, 30, 70, 140, 250 |
+| `DROPS.item.elite` | arma 0,0002, equipamento 0,01 |
+| `DROPS.item.boss` | arma 0,025, equipamento 1 |
+| `ROUNDS.scaling.dmgPerLoop` | 1,5 → 2 |
+
+| Meta | Sim (100 seeds) |
+|---|---|
+| #1 | ✓ 18 / 18 / 15, máx. 27 |
+| #2 | ✓ jack 0%, bob 0%, lucia 1% |
+| #3 | ✓ 33 / 33 / 33 |
+| #4 | ✓ D0 42, D1 31, D5 10 |
+| #5 | ✓ pelo critério da A4 (nenhuma arma abaixo de 3%); líderes por herói 70% a 79% (exceção justificada, igual antes) |
+| #6 | ✓ 0,895, reroll 8,5% |
+| #7 e #8 | #8 ✓ (medição anterior); **#7 e o bot real não foram refeitos** com a raridade (a UI da loja e os drops de equipamento com afixos ainda não estão na cena) |
+
+### Ressalvas
+
+- A sim modela só os drops de **arma** IV e V (não tem equipamento, como antes). Os drops de equipamento com afixos de Elite e Boss entram no jogo real sem passar pela sim; com `power` 0,3 o efeito deve ser pequeno, mas vale confirmar com o bot real.
+- As chances de drop de arma são muito baixas de propósito: com chances maiores o primeiro Boss entregava uma arma V que passava as metas #1 e #3. Se quiser que os Bosses entreguem V com mais frequência, é preciso compensar em outro lugar (dano dos inimigos, Oficina).
+- `dmgPerLoop` 2 torna o endless (round 31 em diante) mais duro; o GDD e a Parte B foram atualizados.
+
+### Drop V do Boss mais perceptível (2026-11-08)
+
+Pedido: o Boss deve dar V de forma perceptível. O equipamento V já é **garantido** em todo Boss (`gearChance` 1). Para a arma V testei `weaponChance` do Boss na sim (100 seeds, drops com gerador próprio):
+
+| `boss.weaponChance` | #1 | #3 (L20) | Resultado |
+|---|---|---|---|
+| 0,025 (antes) | ✓ 18 / 18 / 15, máx. 27 | ✓ 33 / 33 / 33 | ✓ |
+| 0,05 | ✓ máx. 27 | ✓ 33 / 33 / 33 | ✓ |
+| 0,12 | ✓ máx. 27 | ✓ 33 / 36 / 34 | ✓ |
+| 0,25 | ✗ máx. 31 | ✓ mas Bob 52 | ✗ |
+
+Escolhi **0,10** no Boss e **0,0008** na arma IV de Elite (antes 0,0002). Com os dois: #1 ✓ 18 / 18 / 16 (máx. 27), #2 ✓, #3 ✓ 34 / 41 / 36, #4 ✓ D0 61, D1 31, D5 10, #5 ✓ (critério da A4), #6 ✓ 0,885 (reroll 12,7%). A margem do #3 do Bob diminui (41); acima de 0,12 as metas quebram. Capturas: `docs/reports/boss-v-drop-2026-11-08.jpg` (drop V no chão logo depois de um Boss, round 10) e `docs/reports/shop-rarity-2026-11-08.jpg` (loja com itens I a III, afixos e o painel do jogador com um item V).

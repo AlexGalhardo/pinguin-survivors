@@ -1,5 +1,6 @@
 import { SHOP } from '../data/economy';
 import { POTION_PRICES, type PotionType } from '../data/potions';
+import { type Affix, rollAffixes } from './affixes';
 import type { Rng } from './rng';
 
 export type OfferKind = 'weapon' | 'item' | 'gear' | 'potion';
@@ -18,8 +19,11 @@ export interface ShopCandidate {
 export interface Offer {
 	kind: OfferKind;
 	id: string;
+	/** Rarity I–III on the shelf (ADR-017). */
 	tier: number;
 	price: number;
+	/** Random affixes already rolled, so the shop can show exactly what is bought. */
+	affixes?: Affix[];
 }
 
 export interface ShopState {
@@ -84,7 +88,7 @@ export function rollOffers(
 		locks[i] ? (prev[i] ?? null) : null,
 	);
 	const used = new Set(offers.flatMap((o) => (o ? [o.id] : [])));
-	const open = pool.filter((c) => !c.hero || c.hero === ctx.hero);
+	const open = pool.filter((c) => (!c.hero || c.hero === ctx.hero) && c.tier <= SHOP.maxRarity);
 	for (let i = 0; i < offers.length; i++) {
 		if (offers[i]) continue;
 		let avail = open.filter((c) => !used.has(c.id));
@@ -99,11 +103,15 @@ export function rollOffers(
 			rng.weightedIndex(avail.map((a) => weight(a, round, ctx)))
 		] as ShopCandidate;
 		used.add(c.id);
+		const rarity = c.tier as 1 | 2 | 3;
+		const affixes =
+			c.kind === 'weapon' || c.kind === 'gear' ? rollAffixes(rng, rarity, c.kind, round) : [];
 		offers[i] = {
 			kind: c.kind,
 			id: c.id,
 			tier: c.tier,
 			price: offerPrice(c.kind, c.tier, round, c.id),
+			...(affixes.length > 0 && { affixes }),
 		};
 	}
 	return offers as Offer[];

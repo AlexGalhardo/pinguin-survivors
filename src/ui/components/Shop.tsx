@@ -1,23 +1,49 @@
-import { type ReactElement, useState } from 'react';
-import { toCss } from '../../config/palette';
-import { WEAPON_TIER_TINT, type WeaponTier } from '../../data/weapons';
+import { type ReactElement, type ReactNode, useState } from 'react';
+import { GEAR_BY_ID } from '../../data/equipment';
+import { LEGACY_GEAR_RARITY, WEAPON_FUSE_MAX } from '../../data/rarity';
+import type { WeaponId } from '../../data/weapons';
+import { MAX_WEAPON_SLOTS } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
-import { toRoman } from '../../logic/achievements';
-import { useCompact } from '../compact';
+import { formatStat } from '../../logic/format';
+import type { PlayerPanelView } from '../../logic/item-view';
+import type { OfferDescription } from '../../logic/shop-describe';
+import { resolveWeapon } from '../../logic/weapons';
+import { useMedia } from '../compact';
 import { FocusScope } from '../focus';
 import { merchantLine } from '../merchant';
-import { AtlasIcon, weaponFrames } from './AtlasIcon';
+import { AtlasIcon } from './AtlasIcon';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
+import {
+	AffixLines,
+	type AffixView,
+	clampRarity,
+	gearBaseLines,
+	numeral,
+	rarityCss,
+	SlotIcon,
+	statLabel,
+	weaponFrames,
+} from './ItemViews';
+import { MerchantSprite } from './MerchantSprite';
+import { Filet, Hint, ItemCard, Panel, StatRow } from './Panel';
+import { PlayerPanel, type PlayerPanelData, panelFromView } from './PlayerPanel';
 
 /** What the shop screen shows; the game publishes it (offers, wallet and the 6 weapon slots). */
 export interface ShopOfferData {
 	kind: 'weapon' | 'item' | 'gear' | 'potion';
 	id: string;
-	/** Weapon/item tier 1..4, or gear rarity 1..3. */
+	/** Weapon/item rarity I..IV, or gear rarity 1..3 (the shop never sells IV or V). */
 	tier: number;
 	price: number;
 	sets: readonly string[];
+	/** Rarity I to III (same number as `tier`), random affixes, weapon numbers and gear base stats. */
+	rarity?: number;
+	affixes?: readonly AffixView[];
+	weapon?: { damage: number; cooldown: number; range: number };
+	baseStats?: Partial<Record<string, number>>;
+	/** What buying it does (`describeOffer`); drawn as the explanation card. */
+	description?: OfferDescription;
 }
 
 export interface ShopData {
@@ -27,9 +53,18 @@ export interface ShopData {
 	offers: readonly (ShopOfferData | null)[];
 	locks: readonly boolean[];
 	rerollPrice: number;
-	weapons: readonly { id: string; tier: WeaponTier; sellValue: number }[];
+	weapons: readonly {
+		id: string;
+		tier: number;
+		sellValue: number;
+		affixes?: readonly AffixView[];
+	}[];
 	/** Worn gear ids per slot (helmet, armor, legs, ring, amulet); null = empty. */
 	gear: readonly (string | null)[];
+	/** The player panel of the contract (stats, weapons and gear with rarity and affixes). */
+	player?: PlayerPanelView;
+	/** Extra waves of the next round (Danger 2+). */
+	nextWaves?: readonly ('elite' | 'horde')[];
 }
 
 export interface ShopActions {
@@ -41,9 +76,7 @@ export interface ShopActions {
 	next: () => void;
 }
 
-const MAX_WEAPONS = 6;
 const GEAR_SLOTS = ['helmet', 'armor', 'legs', 'ring', 'amulet'] as const;
-const GEAR_RARITY_TINT = ['text-rarity-common', 'text-rarity-rare', 'text-rarity-legendary'];
 
 const label = (key: string): string => (t(key as I18nKey) as string | undefined) ?? key;
 
@@ -64,134 +97,166 @@ const offerFrames = (o: Pick<ShopOfferData, 'kind' | 'id' | 'tier'>): string[] =
 				? [`icon.potion.${o.id}`]
 				: [`item.${o.id}`];
 
-const tierColor = (kind: ShopOfferData['kind'], tier: number): string =>
-	kind === 'gear' || kind === 'potion'
-		? ''
-		: toCss(WEAPON_TIER_TINT[Math.min(4, Math.max(1, tier)) as WeaponTier]);
+/** Neutral tint for potions (no rarity); weapons and gear use the rarity palette. */
+const offerColor = (o: ShopOfferData): string | undefined =>
+	o.kind === 'potion' ? undefined : rarityCss(o.tier);
 
-function Offer(props: {
+/** Index of another slot holding the same weapon at the same rarity (below the fusion cap), or -1. */
+export function fusePartner(weapons: ShopData['weapons'], slot: number): number {
+	const w = weapons[slot];
+	if (!w || w.tier >= WEAPON_FUSE_MAX) return -1;
+	return weapons.findIndex((o, i) => i !== slot && o.id === w.id && o.tier === w.tier);
+}
+
+/** The sentence that says what buying an offer does. */
+function outcomeText(d: OfferDescription): string {
+	const o = d.outcome;
+	switch (o.type) {
+		case 'newWeapon':
+			return o.fusableWith === null
+				? t('shop.outcome.newWeapon', { slot: o.slot + 1 })
+				: t('shop.outcome.newWeaponFuse', {
+						slot: o.slot + 1,
+						with: o.fusableWith + 1,
+						from: numeral(d.rarity),
+						to: numeral(d.rarity + 1),
+					});
+		case 'fuse':
+			return t('shop.outcome.fuse', {
+				slot: o.slot + 1,
+				from: numeral(o.fromRarity),
+				to: numeral(o.toRarity),
+				n: d.newAffixes,
+			});
+		case 'barFull':
+			return t('shop.outcome.barFull');
+		case 'equip':
+			return t('shop.outcome.equip', { slot: t(`shop.slot.${o.slot}` as I18nKey) });
+		case 'bag':
+			return t('shop.outcome.bag', { slot: t(`shop.slot.${o.slot}` as I18nKey) });
+		case 'potion':
+			return t('shop.outcome.potion');
+	}
+}
+
+/** Explanation card of the focused offer: the sentence and the stats before and after. */
+function OfferExplain({ offer }: { offer: ShopOfferData }): ReactElement {
+	const d = offer.description;
+	return (
+		<div className="flex flex-col gap-1 border border-snow-dark bg-night/60 p-3">
+			<div className="font-bold" style={{ color: offerColor(offer) }}>
+				{offerName(offer)}
+			</div>
+			{d ? (
+				<>
+					<p className="m-0">{outcomeText(d)}</p>
+					{d.statChanges.map((c) => {
+						const up = c.after > c.before;
+						return (
+							<div key={c.stat} className={up ? 'text-xp' : 'text-blood'}>
+								{t('shop.statChange', {
+									label: statLabel(c.stat),
+									before: formatStat(c.stat, c.before),
+									after: formatStat(c.stat, c.after),
+								})}
+							</div>
+						);
+					})}
+				</>
+			) : (
+				<Hint>{t(`shop.kind.${offer.kind}` as I18nKey)}</Hint>
+			)}
+		</div>
+	);
+}
+
+function OfferCard(props: {
 	offer: ShopOfferData | null;
+	index: number;
 	locked: boolean;
 	fish: number;
 	actions: ShopActions;
-	index: number;
 }): ReactElement {
 	const { offer, index, actions } = props;
-	const compact = useCompact();
 	if (!offer) {
 		return (
-			<div className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
+			<div
+				data-offer={index}
+				className="flex min-h-24 items-center justify-center border border-snow-dark bg-night/50 text-text-dim"
+			>
 				{t('shop.sold')}
 			</div>
 		);
 	}
-	const offerBox = compact ? 48 : offer.kind === 'weapon' ? 128 : 48;
-	const tint = tierColor(offer.kind, offer.tier);
-	const affordable = props.fish >= offer.price;
-	return (
-		<div
-			className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-stretch gap-2 rounded border-2 bg-night/80 p-2"
-			style={{ borderColor: tint || undefined }}
-		>
-			<span
-				className="flex shrink-0 items-center justify-center self-center"
-				style={{ width: offerBox, height: offerBox }}
-			>
-				<AtlasIcon frames={offerFrames(offer)} size={offerBox} title={offerName(offer)} />
-			</span>
-			<div className="flex min-w-0 flex-1 flex-col justify-center">
-				<div
-					className={`truncate font-title text-[1.15em] font-bold ${offer.kind === 'gear' ? (GEAR_RARITY_TINT[offer.tier - 1] ?? '') : ''}`}
-					style={tint ? { color: tint } : undefined}
-				>
-					{offerName(offer)}
-				</div>
-				<div className="text-[0.85em] text-text-dim">
-					{t(`shop.kind.${offer.kind}` as I18nKey)}
-					{(offer.kind === 'weapon' || offer.kind === 'item') &&
-						` · ${toRoman(offer.tier)}`}
-					{offer.sets.length > 0 &&
-						` · ${offer.sets.map((s) => label(`shop.set.${s}`)).join(' / ')}`}
-				</div>
-			</div>
-			<div className="flex items-center gap-2">
-				<Btn
-					onActivate={() => actions.buy(index)}
-					disabled={!affordable}
-					className="border-fish text-fish"
-				>
-					{t('shop.buy', { n: offer.price })}
-				</Btn>
-				<Btn
-					onActivate={() => actions.lock(index)}
-					className={props.locked ? 'border-crit text-crit' : 'border-snow text-text-dim'}
-				>
-					{t(props.locked ? 'shop.unlock' : 'shop.lock')}
-				</Btn>
-			</div>
-		</div>
-	);
-}
-
-function WeaponCard(props: {
-	weapon?: ShopData['weapons'][number];
-	partner: number;
-	slot: number;
-	actions: ShopActions;
-}): ReactElement {
-	const { weapon, slot, partner, actions } = props;
-	const compact = useCompact();
-	if (!weapon) {
-		return (
-			<div className="flex min-h-[clamp(3.5rem,7vh,6rem)] items-center justify-center rounded border border-snow-dark bg-night/50 text-text-dim">
-				{t('shop.empty')}
-			</div>
-		);
+	const affordable = props.fish >= offer.price && offer.description?.outcome.type !== 'barFull';
+	const rarity = offer.rarity ?? offer.tier;
+	const affixes = offer.affixes ?? offer.description?.affixes;
+	let lines: ReactNode[] = [];
+	if (offer.kind === 'weapon') {
+		const w =
+			offer.weapon ?? resolveWeapon({ id: offer.id as WeaponId, tier: clampRarity(rarity) });
+		lines = [
+			<StatRow key="d" label={t('weapon.stat.damage')} value={w.damage} />,
+			<StatRow key="r" label={t('weapon.stat.rate')} value={(1 / w.cooldown).toFixed(1)} />,
+			<AffixLines key="a" affixes={affixes} />,
+		];
+	} else if (offer.kind === 'gear') {
+		lines = [
+			...(offer.baseStats
+				? Object.entries(offer.baseStats).map(
+						([k, v]) => `${formatStat(k, v as number, true)} ${statLabel(k)}`,
+					)
+				: gearBaseLines(offer.id)
+			).map((l) => <span key={l}>{l}</span>),
+			<AffixLines key="a" affixes={affixes} />,
+		];
 	}
-	const weaponBox = compact ? 48 : 128;
-	const tint = toCss(WEAPON_TIER_TINT[weapon.tier]);
+	const sets = offer.sets.map((s) => label(`shop.set.${s}`)).join(' / ');
 	return (
-		<div
-			className="flex min-h-[clamp(3.5rem,7vh,6rem)] flex-col justify-between gap-1 rounded border-2 bg-night/80 p-2"
-			style={{ borderColor: tint }}
-		>
-			<div className="flex items-center gap-2 truncate font-bold" style={{ color: tint }}>
-				<span
-					className="flex shrink-0 items-center justify-center"
-					style={{ width: weaponBox, height: weaponBox }}
-				>
-					<AtlasIcon frames={weaponFrames(weapon.id, weapon.tier)} size={weaponBox} />
-				</span>
-				{weaponName(weapon.id)} · {toRoman(weapon.tier)}
-			</div>
-			<div className="flex gap-1">
-				<Btn
-					onActivate={() => actions.sell(slot)}
-					className="flex-1 border-snow text-[0.85em] text-text-dim"
-				>
-					{t('shop.sell', { n: weapon.sellValue })}
-				</Btn>
-				{partner >= 0 && (
-					<Btn
-						onActivate={() => actions.fuse(slot, partner)}
-						className="flex-1 border-crit text-[0.85em] text-crit"
-					>
-						{t('shop.fuse')}
-					</Btn>
-				)}
-			</div>
+		<div data-offer={index}>
+			<ItemCard
+				name={
+					<span className="flex items-center gap-2">
+						{offer.kind === 'potion' ? (
+							<AtlasIcon frames={offerFrames(offer)} size={40} />
+						) : (
+							<SlotIcon frames={offerFrames(offer)} rarity={offer.tier} size={40} />
+						)}
+						<span className="min-w-0 flex-1">{offerName(offer)}</span>
+					</span>
+				}
+				color={offerColor(offer)}
+				kind={`${t(`shop.kind.${offer.kind}` as I18nKey)}${
+					offer.kind === 'weapon' || offer.kind === 'item' || offer.kind === 'gear'
+						? ` · ${numeral(offer.tier)}`
+						: ''
+				}${sets ? ` · ${sets}` : ''}`}
+				lines={lines}
+				footer={
+					<div className="mt-1 flex gap-2">
+						<Btn
+							onActivate={() => actions.buy(index)}
+							disabled={!affordable}
+							className="flex-1 border-fish text-fish"
+						>
+							{t('shop.buy', { n: offer.price })}
+						</Btn>
+						<Btn
+							onActivate={() => actions.lock(index)}
+							className={
+								props.locked ? 'border-crit text-crit' : 'border-snow text-text-dim'
+							}
+						>
+							{t(props.locked ? 'shop.unlock' : 'shop.lock')}
+						</Btn>
+					</div>
+				}
+			/>
 		</div>
 	);
 }
 
-/** Index of another slot holding the same weapon at the same tier (< IV), or -1. */
-export function fusePartner(weapons: ShopData['weapons'], slot: number): number {
-	const w = weapons[slot];
-	if (!w || w.tier >= 4) return -1;
-	return weapons.findIndex((o, i) => i !== slot && o.id === w.id && o.tier === w.tier);
-}
-
-/** End-of-round shop (ARPG style): inventory and gear on the left, merchant and offers on the right. */
+/** End-of-round shop, vendor style: the merchant and the offers as item cards on the left, the player on the right. */
 export function Shop({
 	data,
 	actions: game,
@@ -200,6 +265,11 @@ export function Shop({
 	actions: ShopActions;
 }): ReactElement {
 	const [speech, setSpeech] = useState(() => merchantLine('open'));
+	const firstOffer = data.offers.findIndex((o) => o !== null);
+	const [picked, setPicked] = useState(0);
+	// Whole-number sprite scale (pixel art): 3x on tall screens, 2x otherwise.
+	const tall = useMedia('(min-height: 1200px)');
+	const shown = data.offers[picked] ?? data.offers[firstOffer] ?? null;
 	// The merchant comments on what the player just did; purely cosmetic.
 	const actions: ShopActions = {
 		...game,
@@ -226,83 +296,67 @@ export function Shop({
 			game.next();
 		},
 	};
-	const slots = Array.from({ length: MAX_WEAPONS }, (_, i) => data.weapons[i]);
+
+	const player: PlayerPanelData = data.player
+		? panelFromView(data.player, { maxWeapons: MAX_WEAPON_SLOTS })
+		: {
+				stats: [],
+				weapons: data.weapons,
+				maxWeapons: MAX_WEAPON_SLOTS,
+				gear: GEAR_SLOTS.map((slot, i) => {
+					const id = data.gear[i] ?? null;
+					const def = id ? GEAR_BY_ID[id] : undefined;
+					return {
+						slot,
+						item: id
+							? { id, rarity: def ? LEGACY_GEAR_RARITY[def.rarity] : 1, affixes: [] }
+							: null,
+					};
+				}),
+			};
+
 	return (
-		<FocusScope className="fixed inset-0 flex flex-col bg-night/95 font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light">
-			<header className="flex items-center justify-between border-b border-snow-dark px-[2vw] py-[1.2vh]">
-				<h1 className="font-title text-[1.8em] font-bold">
+		<FocusScope className="fixed inset-0 flex flex-col gap-[1.2vh] bg-night px-[2vw] py-[1.5vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light">
+			<header className="flex flex-wrap items-center justify-between gap-2">
+				<h1 className="m-0 font-title text-[1.8em] font-bold tracking-wide uppercase">
 					{t('shop.title', { n: data.round })}
 				</h1>
+				{data.nextWaves && data.nextWaves.length > 0 && (
+					<div className="border border-blood bg-blood/20 px-3 py-1 font-bold text-blood">
+						{data.nextWaves.map((k) => t(`shop.nextWave.${k}` as I18nKey)).join(' · ')}
+					</div>
+				)}
 				<div className="flex items-center gap-1 font-bold text-fish">
 					<AtlasIcon frames={['icon.currency.fish']} size={32} />
 					{t('shop.fish', { n: data.fish })}
 				</div>
 			</header>
+			<Filet />
 
-			<main className="grid min-h-0 flex-1 grid-cols-2 gap-[2vw] px-[2vw] py-[2vh] [@media(max-height:500px)]:py-1">
-				<section className="flex min-h-0 flex-col gap-[1.5vh] overflow-y-auto">
-					<h2 className="font-title text-[1.2em] text-text-dim">{t('shop.weapons')}</h2>
-					<div className="grid grid-cols-2 gap-2">
-						{slots.map((w, i) => (
-							<WeaponCard
-								key={w ? `${w.id}-${i}` : `empty-${i}`}
-								weapon={w}
-								slot={i}
-								partner={fusePartner(data.weapons, i)}
-								actions={actions}
-							/>
-						))}
+			<main className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-y-auto min-[1100px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] min-[1100px]:overflow-hidden">
+				<Panel title={t('shop.merchant')} className="min-h-0">
+					<div className="flex items-center gap-3 [@media(max-height:500px)]:hidden">
+						<MerchantSprite scale={tall ? 3 : 2} title={t('shop.merchant')} />
+						<div
+							role="status"
+							aria-live="polite"
+							className="min-w-0 flex-1 border border-snow-dark bg-night/80 px-3 py-1 text-[0.95em] italic"
+						>
+							{speech}
+						</div>
 					</div>
-					<h2 className="font-title text-[1.2em] text-text-dim">{t('shop.equipment')}</h2>
-					<div className="grid grid-cols-5 gap-2">
-						{GEAR_SLOTS.map((slot, i) => {
-							const id = data.gear[i];
-							return (
-								<div
-									key={slot}
-									className={`flex min-h-16 items-center justify-center rounded border px-1 text-center text-[0.85em] ${
-										id
-											? 'border-ice bg-night/80'
-											: 'border-snow-dark bg-night/50 text-text-dim'
-									}`}
-								>
-									{id ? (
-										<>
-											<AtlasIcon frames={[`item.${id}`]} size={48} />
-											{label(`gear.${id}`)}
-										</>
-									) : (
-										t('shop.empty')
-									)}
-								</div>
+					<div
+						className="grid grid-cols-1 gap-2 min-[1280px]:grid-cols-2"
+						onFocusCapture={(e) => {
+							const el = (e.target as HTMLElement).closest<HTMLElement>(
+								'[data-offer]',
 							);
-						})}
-					</div>
-				</section>
-
-				<section className="flex min-h-0 flex-col gap-[1.5vh] overflow-y-auto">
-					<div className="flex items-center gap-3 rounded border border-snow-dark bg-night/60 p-3 [@media(max-height:500px)]:hidden">
-						<div className="flex size-14 items-center justify-center rounded-full border-2 border-ice font-title text-[1.6em]">
-							?
-						</div>
-						<div className="flex min-w-0 flex-1 flex-col gap-1">
-							<div className="font-title text-[1.3em] font-bold">
-								{t('shop.merchant')}
-							</div>
-							<div
-								role="status"
-								aria-live="polite"
-								className="rounded border border-ice/50 bg-night/80 px-3 py-1 text-[0.95em] italic"
-							>
-								{speech}
-							</div>
-						</div>
-					</div>
-					<h2 className="font-title text-[1.2em] text-text-dim">{t('shop.offers')}</h2>
-					<div className="flex flex-col gap-2">
+							if (el) setPicked(Number(el.dataset.offer));
+						}}
+					>
 						{data.offers.map((o, i) => (
-							<Offer
-								key={o ? o.id : `sold-${i}`}
+							<OfferCard
+								key={o ? `${o.id}-${i}` : `sold-${i}`}
 								offer={o}
 								index={i}
 								locked={data.locks[i] ?? false}
@@ -311,21 +365,48 @@ export function Shop({
 							/>
 						))}
 					</div>
-					<Btn
-						onActivate={actions.reroll}
-						disabled={data.fish < data.rerollPrice}
-						className="self-start border-ice text-ice"
-					>
-						{t('shop.reroll', { n: data.rerollPrice })}
-					</Btn>
-				</section>
+					{shown && <OfferExplain offer={shown} />}
+				</Panel>
+
+				<Panel title={t('shop.you')} className="min-h-0">
+					<PlayerPanel
+						data={player}
+						weaponExtra={(slot) => {
+							const w = data.weapons[slot];
+							if (!w) return null;
+							const partner = fusePartner(data.weapons, slot);
+							return (
+								<div className="flex gap-1">
+									<Btn
+										onActivate={() => actions.sell(slot)}
+										className="flex-1 border-snow text-[0.85em] text-text-dim"
+									>
+										{t('shop.sell', { n: w.sellValue })}
+									</Btn>
+									{partner >= 0 && (
+										<Btn
+											onActivate={() => actions.fuse(slot, partner)}
+											className="flex-1 border-crit text-[0.85em] text-crit"
+										>
+											{t('shop.fuse')}
+										</Btn>
+									)}
+								</div>
+							);
+						}}
+					/>
+				</Panel>
 			</main>
 
-			<footer className="flex justify-end border-t border-snow-dark px-[2vw] py-[1.2vh]">
+			<footer className="flex flex-wrap items-center justify-between gap-2">
 				<Btn
-					onActivate={actions.next}
-					className="border-xp bg-xp/20 px-8 py-2 text-[1.2em] text-xp"
+					onActivate={actions.reroll}
+					disabled={data.fish < data.rerollPrice}
+					variant="secondary"
 				>
+					{t('shop.reroll', { n: data.rerollPrice })}
+				</Btn>
+				<Btn onActivate={actions.next} variant="primary" className="min-w-52 text-[1.15em]">
 					{t('shop.next')}
 				</Btn>
 			</footer>

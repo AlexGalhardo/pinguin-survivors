@@ -1,4 +1,5 @@
 import { type CardDef, RARITY_MUL, type Rarity } from '../data/cards';
+import { WEAPON_FUSE_MAX } from '../data/rarity';
 import {
 	MAX_LEVEL,
 	MAX_SECONDARY_SLOTS,
@@ -13,12 +14,17 @@ import {
 	type WeaponId,
 	type WeaponTier,
 } from '../data/weapons';
+import { type Affix, growAffixes } from './affixes';
+import type { Rng } from './rng';
 import { addStat, type PlayerStats } from './stats';
 
 /** One weapon slot (SDD-002 RF-01). */
 export interface WeaponInstance {
 	id: WeaponId;
+	/** Rarity I–V (ADR-017). */
 	tier: WeaponTier;
+	/** Random affixes rolled for this copy: stat bonuses while it is in the build. */
+	affixes?: Affix[];
 }
 
 /** What the hero picked this run (serialized in the run snapshot). */
@@ -89,26 +95,68 @@ export function applyCard(
 }
 
 /** Adds a weapon to a free slot; false (and no change) when all slots are taken. */
-export function addWeapon(build: Build, id: WeaponId, tier: WeaponTier = 1): boolean {
+export function addWeapon(
+	build: Build,
+	id: WeaponId,
+	tier: WeaponTier = 1,
+	affixes: readonly Affix[] = [],
+): boolean {
 	if (build.weapons.length >= MAX_WEAPON_SLOTS) return false;
-	build.weapons.push({ id, tier });
+	build.weapons.push(affixes.length > 0 ? { id, tier, affixes: [...affixes] } : { id, tier });
 	return true;
 }
 
-/** Slots `a` and `b` (indices into `build.weapons`) can fuse: same id and tier, tier < 4. */
+/** Slots `a` and `b` (indices into `build.weapons`) can fuse: same id and tier, tier < III (ADR-017). */
 export function canFuse(build: Build, a: number, b: number): boolean {
 	const wa = build.weapons[a];
 	const wb = build.weapons[b];
-	return !!wa && !!wb && a !== b && wa.id === wb.id && wa.tier === wb.tier && wa.tier < 4;
+	return (
+		!!wa &&
+		!!wb &&
+		a !== b &&
+		wa.id === wb.id &&
+		wa.tier === wb.tier &&
+		wa.tier < WEAPON_FUSE_MAX
+	);
 }
 
-/** Merges two slots into one weapon a tier higher (kept in the lower slot). */
-export function fuse(build: Build, a: number, b: number): boolean {
+/**
+ * Merges two slots into one weapon a rarity higher (kept in the lower slot). The result keeps the
+ * kept copy's affixes and, with `roll`, gains new ones up to the new rarity's count.
+ */
+export function fuse(
+	build: Build,
+	a: number,
+	b: number,
+	roll?: { rng: Rng; round: number },
+): boolean {
 	if (!canFuse(build, a, b)) return false;
 	const keep = Math.min(a, b);
 	const w = build.weapons[keep] as WeaponInstance;
-	build.weapons[keep] = { id: w.id, tier: (w.tier + 1) as WeaponTier };
+	const tier = (w.tier + 1) as WeaponTier;
+	const kept = w.affixes ?? [];
+	const affixes = roll ? growAffixes(roll.rng, kept, tier, 'weapon', roll.round) : kept;
+	build.weapons[keep] =
+		affixes.length > 0 ? { id: w.id, tier, affixes: [...affixes] } : { id: w.id, tier };
 	build.weapons.splice(Math.max(a, b), 1);
+	return true;
+}
+
+/**
+ * Merges a bought copy straight into the weapon owned in `slot` (bar full): one rarity higher, the
+ * owned affixes kept and the missing ones rolled, the same rule as `fuse`.
+ */
+export function mergeInto(
+	build: Build,
+	slot: number,
+	copy: { id: WeaponId; tier: WeaponTier },
+	roll: { rng: Rng; round: number },
+): boolean {
+	const w = build.weapons[slot];
+	if (!w || w.id !== copy.id || w.tier !== copy.tier || w.tier >= WEAPON_FUSE_MAX) return false;
+	const tier = (w.tier + 1) as WeaponTier;
+	const affixes = growAffixes(roll.rng, w.affixes ?? [], tier, 'weapon', roll.round);
+	build.weapons[slot] = affixes.length > 0 ? { id: w.id, tier, affixes } : { id: w.id, tier };
 	return true;
 }
 
@@ -119,10 +167,15 @@ export function setCounts(build: Build): Partial<Record<SetId, number>> {
 	return counts;
 }
 
-/** Modifiers from the highest step reached per set (none below 2 weapons). */
+/**
+ * Modifiers the build adds to the hero: the highest set step reached per set (none below 2
+ * weapons) plus the affixes of every weapon in the bar.
+ */
 export function setBonuses(build: Build): SetModifier[] {
 	const counts = setCounts(build);
 	const mods: SetModifier[] = [];
+	for (const w of build.weapons)
+		for (const a of w.affixes ?? []) mods.push({ stat: a.stat, value: a.value });
 	for (const set of SET_IDS) {
 		const n = counts[set] ?? 0;
 		const step = SET_THRESHOLDS.filter((t) => n >= t).length - 1;

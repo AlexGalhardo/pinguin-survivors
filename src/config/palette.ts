@@ -44,11 +44,36 @@ export const PALETTE = {
 	rarityRare: 0x4f9dff,
 	rarityEpic: 0xb347ff,
 	rarityLegendary: 0xff8a1f,
+	// Weapon and equipment rarity scale I–V (ADR-017): white, blue, green, purple, orange.
+	rarity1: 0xe8ecf2,
+	rarity2: 0x4f9dff,
+	rarity3: 0x4fd06a,
+	rarity4: 0xb347ff,
+	rarity5: 0xff8a1f,
 	// Weapon tier placeholder tints: I gray, II green, III blue, IV gold.
 	weaponTier1: 0x9aa3b5,
 	weaponTier2: 0x4fd06a,
 	weaponTier3: 0x4f9dff,
 	weaponTier4: 0xffc83a,
+	// One color per weapon line: its damage numbers, projectiles and area flashes. Mid-bright
+	// saturated hues so they read on snow, forest and city grounds (the number has a dark outline).
+	wMachete: 0xff3b3b,
+	wHammer: 0xcd853f,
+	wKnives: 0xffb38a,
+	wFishBoomerang: 0x1fd1c1,
+	wBladeWhirl: 0xff4fd8,
+	wDoubleBarrel: 0xffd60a,
+	wAuxPistol: 0xff7aa8,
+	wCrossbow: 0xd4a017,
+	wMolotov: 0xff6f59,
+	wMine: 0x2ecc71,
+	wGrenadeBelt: 0x7dffb2,
+	wDroneSentinel: 0x3ec6ff,
+	wElementStaff: 0xb44dff,
+	wIceShards: 0x4d7cff,
+	wFlameRing: 0xff8a1f,
+	wLightningTotem: 0x8a7dff,
+	wPoisonCloud: 0xb6e000,
 	dotBleed: 0xa3121a,
 	dotPoison: 0x6fdc4a,
 	dotBurn: 0xff8a3a,
@@ -57,5 +82,8 @@ export const PALETTE = {
 	elEarth: 0xb08a4f,
 	elEnergy: 0xfff27a,
 } as const;
+
+/** The single source of rarity colors for weapons and equipment (names, borders, drop glow). */
+export const rarityColor = (rarity: 1 | 2 | 3 | 4 | 5): number => PALETTE[`rarity${rarity}`];
 
 export const toCss = (c: number): string => `#${c.toString(16).padStart(6, '0')}`;

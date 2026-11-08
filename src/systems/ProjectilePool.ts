@@ -21,6 +21,8 @@ export interface ProjectileSpec {
 	crit: boolean;
 	texture: string;
 	tint?: number;
+	/** Damage-number color of the weapon that fired it. */
+	color?: number;
 	pierce?: number;
 	/** Bounces to another enemy after a hit (Bob's Ricochet). */
 	bounces?: number;
@@ -32,8 +34,9 @@ export interface ProjectileSpec {
 	orient?: boolean;
 }
 
-export interface Projectile extends Required<Omit<ProjectileSpec, 'tint' | 'element'>> {
+export interface Projectile extends Required<Omit<ProjectileSpec, 'tint' | 'element' | 'color'>> {
 	element: Element | undefined;
+	color: number | undefined;
 	sprite: Phaser.GameObjects.Image;
 	vx: number;
 	vy: number;
@@ -85,6 +88,7 @@ export class ProjectilePool {
 				bounceRange: 0,
 				bounceShare: 0,
 				element: undefined,
+				color: undefined,
 				bleedChance: 0,
 				orient: false,
 				vx: 0,
@@ -108,6 +112,7 @@ export class ProjectilePool {
 		p.bounceRange = spec.bounceRange ?? 120;
 		p.bounceShare = spec.bounceShare ?? 0.7;
 		p.element = spec.element;
+		p.color = spec.color;
 		p.bleedChance = spec.bleedChance ?? 0;
 		p.orient = spec.orient ?? false;
 		p.vx = Math.cos(spec.angle) * spec.speed;

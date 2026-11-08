@@ -1,7 +1,8 @@
 import type { ReactElement } from 'react';
 import { type I18nKey, t } from '../../i18n';
 import { Btn } from './Btn';
-import { AdjustRow, MenuScreen } from './MenuScreen';
+import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
+import { Filet, Hint } from './Panel';
 
 export interface SettingsData {
 	lang: string;
@@ -17,6 +18,7 @@ export interface SettingsData {
 	damageNumbers: boolean;
 	numberSize: string;
 	reducedFlashes: boolean;
+	gameSpeed: number;
 	/** Opt-in local run data (never sent anywhere). */
 	telemetry: boolean;
 }
@@ -34,6 +36,7 @@ export type SettingsRow =
 	| 'numbers'
 	| 'numberSize'
 	| 'flashes'
+	| 'speed'
 	| 'telemetry';
 
 export interface SettingsActions {
@@ -76,25 +79,24 @@ function rowLabel(row: SettingsRow, d: SettingsData): string {
 			return t('settings.numberSize', { v: t(`size.${d.numberSize}` as I18nKey) });
 		case 'flashes':
 			return t('settings.reducedFlashes', { v: onOff(d.reducedFlashes) });
+		case 'speed':
+			return t('settings.speed', { v: `${d.gameSpeed}x` });
 		case 'telemetry':
 			return t('settings.telemetry', { v: onOff(d.telemetry) });
 	}
 }
 
-const ROWS: readonly SettingsRow[] = [
-	'language',
-	'resolution',
-	'fullscreen',
-	'master',
-	'music',
-	'sfx',
-	'gore',
-	'shake',
-	'bloom',
-	'numbers',
-	'numberSize',
-	'flashes',
-	'telemetry',
+const GROUPS: readonly { title: I18nKey; rows: readonly SettingsRow[] }[] = [
+	{
+		title: 'settings.group.video',
+		rows: ['language', 'resolution', 'fullscreen', 'bloom', 'shake'],
+	},
+	{ title: 'settings.group.audio', rows: ['master', 'music', 'sfx'] },
+	{
+		title: 'settings.group.game',
+		rows: ['speed', 'gore', 'numbers', 'numberSize', 'flashes'],
+	},
+	{ title: 'settings.group.data', rows: ['telemetry'] },
 ];
 
 export function Settings({
@@ -105,32 +107,57 @@ export function Settings({
 	actions: SettingsActions;
 }): ReactElement {
 	return (
-		<MenuScreen title={t('settings.title')} onBack={actions.back}>
-			{ROWS.map((row) => (
-				<AdjustRow
-					key={row}
-					label={rowLabel(row, data)}
-					onPrev={() => actions.adjust(row, -1)}
-					onNext={() => actions.adjust(row, 1)}
-				/>
-			))}
-			<Btn onActivate={actions.controls} className="w-full border-ice text-ice">
-				{t('settings.controls')}
-			</Btn>
-			<div className="flex w-full gap-2">
-				<Btn onActivate={actions.exportSave} className="flex-1 border-snow">
-					{t('settings.export')}
-				</Btn>
-				<Btn onActivate={actions.importSave} className="flex-1 border-snow">
-					{t('settings.import')}
-				</Btn>
+		<MenuScreen
+			title={t('settings.title')}
+			onBack={actions.back}
+			wide
+			subtitle={t('settings.subtitle')}
+			footer={<BackBtn onBack={actions.back} label={t('menu.back')} />}
+		>
+			<div className="grid grid-cols-1 gap-x-8 gap-y-3 min-[1100px]:grid-cols-2">
+				{GROUPS.map((g) => (
+					<div key={g.title} className="flex flex-col gap-2">
+						<h3 className="m-0 font-title text-[0.95em] font-bold tracking-wider text-crit uppercase">
+							{t(g.title)}
+						</h3>
+						<Filet />
+						{g.rows.map((row) => (
+							<AdjustRow
+								key={row}
+								label={rowLabel(row, data)}
+								hint={t(`settings.hint.${row}` as I18nKey)}
+								onPrev={() => actions.adjust(row, -1)}
+								onNext={() => actions.adjust(row, 1)}
+							/>
+						))}
+						{g.title === 'settings.group.data' && (
+							<>
+								<div className="flex gap-2">
+									<Btn
+										onActivate={actions.exportSave}
+										className="flex-1 border-snow"
+									>
+										{t('settings.export')}
+									</Btn>
+									<Btn
+										onActivate={actions.importSave}
+										className="flex-1 border-snow"
+									>
+										{t('settings.import')}
+									</Btn>
+								</div>
+								<Btn onActivate={actions.exportTelemetry} className="border-snow">
+									{t('settings.exportTelemetry')}
+								</Btn>
+								<Btn onActivate={actions.controls} variant="primary">
+									{t('settings.controls')}
+								</Btn>
+								<Hint>{t('settings.hint.data')}</Hint>
+							</>
+						)}
+					</div>
+				))}
 			</div>
-			<Btn onActivate={actions.exportTelemetry} className="w-full border-snow">
-				{t('settings.exportTelemetry')}
-			</Btn>
-			<Btn onActivate={actions.back} className="w-full border-snow">
-				{t('menu.back')}
-			</Btn>
 		</MenuScreen>
 	);
 }

@@ -13,6 +13,7 @@ const PERCENT_STATS = new Set<string>([
 	'attackSpeed',
 	'area',
 	'luck',
+	'harvesting',
 	'xpGain',
 	'lifesteal',
 	'bleedChance',

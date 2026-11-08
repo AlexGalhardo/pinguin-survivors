@@ -1,4 +1,4 @@
-import { HERO_IDS, type HeroId } from '../config/constants';
+import { GAME_SPEEDS, HERO_IDS, type HeroId } from '../config/constants';
 import { setResolution } from '../core/display';
 import { platform } from '../core/platform';
 import { exportSave, exportTelemetry, importSave, writeSave } from '../core/storage';
@@ -310,6 +310,9 @@ function settings(save: SaveData): MenuView {
 			case 'flashes':
 				s.reducedFlashes = !s.reducedFlashes;
 				break;
+			case 'speed':
+				s.gameSpeed = cycle(GAME_SPEEDS, s.gameSpeed, dir);
+				break;
 			case 'telemetry':
 				s.telemetry = !s.telemetry;
 				break;
@@ -331,6 +334,7 @@ function settings(save: SaveData): MenuView {
 			damageNumbers: s.damageNumbers,
 			numberSize: s.numberSize,
 			reducedFlashes: s.reducedFlashes,
+			gameSpeed: s.gameSpeed,
 			telemetry: s.telemetry,
 		},
 		actions: {

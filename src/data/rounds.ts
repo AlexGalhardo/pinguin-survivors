@@ -28,7 +28,7 @@ export const ROUNDS = {
 		/** Endless: every full tour of the 3 biomes (30 rounds) multiplies HP/damage again. */
 		loopRounds: 30,
 		hpPerLoop: 1.6,
-		dmgPerLoop: 1.5,
+		dmgPerLoop: 2,
 		/** Enemy speed per endless loop (1 = off; hook for balancing). */
 		speedPerLoop: 1,
 	},

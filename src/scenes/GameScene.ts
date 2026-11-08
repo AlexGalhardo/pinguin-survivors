@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
-import type { GameSpeed, HeroId } from '../config/constants';
+import { type GameSpeed, type HeroId, MAX_STEP } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import {
 	getParams,
@@ -26,6 +26,7 @@ import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { GEAR_BY_ID, GEAR_SLOTS, type GearSlot } from '../data/equipment';
 import { HEROES } from '../data/heroes';
 import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
+import { WEAPON_FUSE_MAX } from '../data/rarity';
 import { ROUNDS } from '../data/rounds';
 import { levelScale, PERKS, SECONDARIES, type SecondaryId } from '../data/secondaries';
 import type { SetModifier } from '../data/sets';
@@ -51,6 +52,7 @@ import {
 	canFuse,
 	emptyBuild,
 	fuse,
+	mergeInto,
 	setBonuses,
 	setCounts,
 	type WeaponInstance,
@@ -68,13 +70,16 @@ import {
 import {
 	emptyGear,
 	equip,
+	type ItemDrop,
 	pickUpGear,
 	rollGearDrop,
 	rollHealDrop,
+	rollItemDrops,
 	unequip,
 } from '../logic/equipment';
 import { formatStat } from '../logic/format';
 import { inArc } from '../logic/geometry';
+import { buildPlayerPanel, weaponStatsView } from '../logic/item-view';
 import { ObstacleField, pushOut } from '../logic/obstacles';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
 import { addXp, type LevelState, orbXp } from '../logic/progression';
@@ -115,6 +120,7 @@ import {
 	reroll as rerollShop,
 	sellValue,
 } from '../logic/shop';
+import { describeOffer } from '../logic/shop-describe';
 import { nextSpeed } from '../logic/speed';
 import {
 	getStat,
@@ -142,6 +148,7 @@ import { cardDescription, cardName } from '../ui/card-text';
 import { bindCommands } from '../ui/commands';
 import { hudStore } from '../ui/hud-bridge';
 import { openSettingsFrom } from '../ui/menu-controller';
+import { publishPlayerPanel } from '../ui/player-bridge';
 import { publishDemoEnd, publishLevelUp, publishPause, publishRunOver } from '../ui/run-bridge';
 import { publishShop, type ShopView } from '../ui/shop-bridge';
 import { uiStore } from '../ui/store';
@@ -317,7 +324,9 @@ export class GameScene extends Phaser.Scene {
 		this.fishSpent = 0;
 		this.fishRerolled = 0;
 		this.ended = false;
-		this.speed = 1;
+		this.speed = save.settings.gameSpeed;
+		this.time.timeScale = this.speed;
+		this.tweens.timeScale = this.speed;
 		this.levelsGained = 0;
 		this.startedAt = Date.now();
 		this.achievementTimer = 0;
@@ -392,8 +401,8 @@ export class GameScene extends Phaser.Scene {
 		this.arena = new Arena(this, seed, biome, this.run.round, params.arena);
 		this.obstacles = new ObstacleField(this.arena.props);
 		this.fx = new FxSystem(this, save.settings, this.arena);
-		this.pickups = new PickupSystem(this, (kind, value, gearId) =>
-			this.collect(kind, value, gearId),
+		this.pickups = new PickupSystem(this, (kind, value, gearId, item) =>
+			this.collect(kind, value, gearId, item),
 		);
 		this.run.gear ??= emptyGear();
 		this.hero = new Hero(this, heroId, tier, this.stats);
@@ -449,19 +458,20 @@ export class GameScene extends Phaser.Scene {
 			this.combat.weaponHit(e, p.damage, p.crit, {
 				element: p.element,
 				bleedChance: p.bleedChance,
+				color: p.color,
 			});
 			if (p.element === 'fire') this.fireSplash(x, y, p.damage);
 		});
-		this.area = new AreaSystem(this, (e, amount, element, poison) =>
-			this.combat.weaponHit(e, amount, false, { element, poison, noChain: true }),
+		this.area = new AreaSystem(this, (e, amount, element, poison, color) =>
+			this.combat.weaponHit(e, amount, false, { element, poison, noChain: true, color }),
 		);
 		this.weapons = new WeaponSystem(
 			this.rng,
 			this.stats,
 			this.build,
 			this.pool,
-			(e, amount, crit, bleedChance) =>
-				this.combat.weaponHit(e, amount, crit, { bleedChance }),
+			(e, amount, crit, bleedChance, color) =>
+				this.combat.weaponHit(e, amount, crit, { bleedChance, color }),
 			(x, y, a, r) => this.fx.slash(x, y, a, r),
 			(element) => this.elementUsedAt.set(element, this.run.elapsed),
 			(slot, angle, cooldown) => {
@@ -482,7 +492,8 @@ export class GameScene extends Phaser.Scene {
 			this.build,
 			this.pool,
 			this.area,
-			(e, amount, crit, element) => this.combat.weaponHit(e, amount, crit, { element }),
+			(e, amount, crit, element, color) =>
+				this.combat.weaponHit(e, amount, crit, { element, color }),
 			this.weapons.bonus,
 			(slot, angle, cooldown) => {
 				this.weaponRing.fire(slot, angle, cooldown);
@@ -589,6 +600,14 @@ export class GameScene extends Phaser.Scene {
 			this.arena.update();
 			return;
 		}
+		// Fast-forward subdivides the fixed step so nothing tunnels through a collision at 3x/4x.
+		const steps = Math.ceil(dt / MAX_STEP);
+		for (let i = 0; i < steps && this.run.phase === 'round' && this.deadFor < 0; i++)
+			this.step(dt / steps);
+		this.arena.update();
+	}
+
+	private step(dt: number): void {
 		const run = this.run;
 		run.elapsed += dt;
 		run.timeLeft -= dt;
@@ -624,8 +643,6 @@ export class GameScene extends Phaser.Scene {
 		this.fx.update(dt);
 		this.checkAchievements(dt);
 		this.checkRoundEnd();
-
-		this.arena.update();
 	}
 
 	/** Set bonuses currently added to `stats`, so a build change can swap them (not idempotent). */
@@ -696,6 +713,11 @@ export class GameScene extends Phaser.Scene {
 
 	setSpeed(speed: GameSpeed): void {
 		this.speed = speed;
+		const save = getSave(this);
+		if (save.settings.gameSpeed !== speed) {
+			save.settings.gameSpeed = speed;
+			persist(this);
+		}
 		this.time.timeScale = speed;
 		this.tweens.timeScale = speed;
 	}
@@ -1044,8 +1066,15 @@ export class GameScene extends Phaser.Scene {
 		if (fish > 0) this.pickups.drop('fish', fish, e.x + 6, e.y + 6);
 		const heal = rollHealDrop(this.rng, kind);
 		if (heal > 0) this.pickups.drop('heal', heal, e.x - 8, e.y + 4);
-		const gear = rollGearDrop(this.rng, kind);
-		if (gear) this.pickups.drop('gear', 0, e.x + 4, e.y - 8, gear.id);
+		if (kind === 'common') {
+			const gear = rollGearDrop(this.rng, kind);
+			if (gear) this.pickups.drop('gear', 0, e.x + 4, e.y - 8, gear.id);
+		} else {
+			// Rarity IV from Elites and V from Bosses, with their rolled affixes (ADR-017).
+			const items = rollItemDrops(this.rng, kind, { round: run.round, hero: run.hero });
+			for (const [i, item] of items.entries())
+				this.pickups.drop('gear', 0, e.x + 4 + i * 14, e.y - 8, item.id, item);
+		}
 		const p = this.build.perks;
 		if (
 			p.butcher &&
@@ -1067,7 +1096,12 @@ export class GameScene extends Phaser.Scene {
 		}
 	}
 
-	private collect(kind: PickupKind, value: number, gearId: string | null): void {
+	private collect(
+		kind: PickupKind,
+		value: number,
+		gearId: string | null,
+		item: ItemDrop | null = null,
+	): void {
 		if (kind === 'heal') {
 			healHero(this.run, this.run.maxHp * value);
 			this.fx.play('sfx.potion');
@@ -1075,7 +1109,8 @@ export class GameScene extends Phaser.Scene {
 			return;
 		}
 		if (kind === 'gear') {
-			if (gearId) this.pickUpGear(gearId);
+			if (item?.kind === 'weapon') this.pickUpWeaponDrop(item);
+			else if (gearId) this.pickUpGear(gearId, item);
 			return;
 		}
 		if (kind === 'fish') {
@@ -1102,11 +1137,39 @@ export class GameScene extends Phaser.Scene {
 		}
 	}
 
+	/**
+	 * Stepped on a weapon drop (rarity IV or V): into a free slot; with the bar full it is sold on
+	 * the spot for its Fish value (the simplest rule, SDD-003 RF-12).
+	 */
+	private pickUpWeaponDrop(item: Extract<ItemDrop, { kind: 'weapon' }>): void {
+		const name = t(`weapon.${item.id}.name` as I18nKey);
+		const tier = item.rarity as WeaponTier;
+		if (addWeapon(this.build, item.id, tier, item.affixes)) {
+			this.refreshSetBonuses();
+			this.onBuildChanged();
+			this.fx.play('sfx.card');
+			this.fx.banner(this.hero.x, this.hero.y, 'fx.weaponTaken', {
+				name,
+				rarity: t(`rarity.${item.rarity}` as I18nKey),
+			});
+			return;
+		}
+		const fish = sellValue(offerPrice('weapon', tier, this.run.round));
+		this.run.fish += fish;
+		this.fx.play('sfx.pickupFish');
+		this.fx.banner(this.hero.x, this.hero.y, 'fx.weaponSold', { name, n: fish });
+	}
+
 	/** Stepped on a gear drop: into the bag, worn at once when its slot is free. */
-	private pickUpGear(id: string): void {
+	private pickUpGear(id: string, item: ItemDrop | null = null): void {
 		const gear = this.run.gear ?? emptyGear();
 		this.run.gear = gear;
-		const result = pickUpGear(gear, this.stats, id);
+		const result = pickUpGear(
+			gear,
+			this.stats,
+			id,
+			item ? { rarity: item.rarity, affixes: item.affixes } : undefined,
+		);
 		this.syncMaxHp();
 		this.fx.play('sfx.card');
 		this.fx.banner(
@@ -1348,6 +1411,9 @@ export class GameScene extends Phaser.Scene {
 	private publishPauseView(): void {
 		const gear = this.run.gear ?? emptyGear();
 		this.run.gear = gear;
+		publishPlayerPanel(
+			buildPlayerPanel({ build: this.build, gear, stats: this.stats, round: this.run.round }),
+		);
 		publishPause({
 			weapons: this.build.weapons.map((w, slot) => ({ slot, id: w.id, tier: w.tier })),
 			stats: PAUSE_STATS.map((key) => ({
@@ -1404,7 +1470,9 @@ export class GameScene extends Phaser.Scene {
 	// --- Shop (SDD-003): commands come from the React UI through `bindCommands` -----------------
 
 	private mergeSlot(id: string, tier: number): number {
-		return this.build.weapons.findIndex((w) => w.id === id && w.tier === tier && w.tier < 4);
+		return this.build.weapons.findIndex(
+			(w) => w.id === id && w.tier === tier && w.tier < WEAPON_FUSE_MAX,
+		);
 	}
 
 	private publishShopView(): void {
@@ -1442,6 +1510,17 @@ export class GameScene extends Phaser.Scene {
 							id: o.id,
 							tier: o.tier,
 							price: o.price,
+							rarity: o.tier as 1 | 2 | 3,
+							affixes: o.affixes ?? [],
+							...(o.kind === 'weapon' && {
+								weapon: weaponStatsView(o.id as WeaponId, o.tier as WeaponTier),
+							}),
+							baseStats: o.kind === 'gear' ? (GEAR_BY_ID[o.id]?.stats ?? {}) : {},
+							description: describeOffer(o, {
+								build: this.build,
+								gear: run.gear ?? emptyGear(),
+								stats: this.stats,
+							}),
 							sets:
 								o.kind === 'weapon'
 									? [...WEAPON_LINE_BY_ID[o.id as WeaponId].sets]
@@ -1464,6 +1543,12 @@ export class GameScene extends Phaser.Scene {
 			maxWeapons: MAX_WEAPON_SLOTS,
 			fusions,
 			gear: GEAR_SLOTS.map((slot) => run.gear?.equipped[slot] ?? null),
+			player: buildPlayerPanel({
+				build: this.build,
+				gear: run.gear ?? emptyGear(),
+				stats: this.stats,
+				round: run.round,
+			}),
 		});
 	}
 
@@ -1506,8 +1591,8 @@ export class GameScene extends Phaser.Scene {
 		const id = offer.id as WeaponId;
 		const tier = offer.tier as WeaponTier;
 		// With the bar full, the copy is merged straight into the one already owned.
-		if (!addWeapon(this.build, id, tier)) {
-			this.build.weapons[merge] = { id, tier: (tier + 1) as WeaponTier };
+		if (!addWeapon(this.build, id, tier, offer.affixes)) {
+			mergeInto(this.build, merge, { id, tier }, { rng: this.rng, round: run.round });
 			this.recordFusion(tier + 1);
 			this.fx.play('sfx.weaponFuse');
 		}
@@ -1551,7 +1636,11 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private shopFuse(a: number, b: number): void {
-		if (this.run.phase !== 'shop' || !fuse(this.build, a, b)) return;
+		if (
+			this.run.phase !== 'shop' ||
+			!fuse(this.build, a, b, { rng: this.rng, round: this.run.round })
+		)
+			return;
 		const merged = this.build.weapons[Math.min(a, b)] as WeaponInstance;
 		this.fx.play('sfx.weaponFuse');
 		this.recordFusion(merged.tier);

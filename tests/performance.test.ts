@@ -19,7 +19,13 @@ test('low follows SDD-007 RF-05; high is the full game', () => {
 
 test('mid sits between low and high on every knob', () => {
 	const [low, mid, high] = (['low', 'mid', 'high'] as const).map(tierBudget);
-	for (const k of ['decalCap', 'maxLights', 'particleScale'] as const) {
+	for (const k of [
+		'decalCap',
+		'maxLights',
+		'particleScale',
+		'critLabels',
+		'critSparks',
+	] as const) {
 		expect(mid?.[k]).toBeGreaterThan(low?.[k] ?? 0);
 		expect(mid?.[k]).toBeLessThan(high?.[k] ?? 0);
 	}

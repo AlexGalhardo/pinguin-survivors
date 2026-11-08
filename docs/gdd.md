@@ -87,7 +87,7 @@ Menu (Pérolas: Oficina · poções/gambits · pontos de stat · arma inicial)
 |---|---|---|---|
 | Mover (8 direções) | WASD / setas | Analógico esquerdo / D-pad | Joystick virtual flutuante (polegar esquerdo) |
 | Superpoder | Espaço | △ / Y | Botão na tela (direita) |
-| Velocidade 1×/2× | TAB | □ / X ou View | Botão na HUD |
+| Velocidade 1×/2×/3×/4× (também em Configurações) | TAB | □ / X ou View | Botão na HUD |
 | Confirmar / loja / cartas | Enter, mouse, 1–4 | ✕ / A, D-pad | Toque |
 | Pausa | Esc / P | Options / Start | Botão na HUD |
 
@@ -121,7 +121,8 @@ Elementos: **fogo** queima (DoT); **gelo** desacelera e congela ao acumular; **t
 
 - **6 slots iguais** (ADR-005). Armas orbitam o herói em anel e cada uma **ataca automaticamente** o alvo mais próximo no seu alcance (bosses e elites têm prioridade quando estão no alcance).
 - **Classes**: `melee`, `firearm`, `magic` (multiplicadores por herói) e **sets**: `blade`, `blunt`, `thrown`, `gun`, `explosive`, `elemental`, `support`. Uma arma pode ter 2 sets. **Bônus de set** por 2 / 4 / 6 armas do mesmo set (ex.: `blade` +sangramento, `gun` +crítico, `elemental` +dano elemental, `explosive` +área).
-- **Tiers I–IV**: cada arma existe em 4 tiers com stats escalados e visual crescente. **Fusão**: duas armas iguais do mesmo tier viram uma do tier seguinte (grátis, na loja ou no inventário).
+- **Raridade I–V** (ADR-017), a mesma escala dos equipamentos: I branco (0 afixos), II azul (1), III verde (2), IV roxo (3), V laranja (4). Os stats escalam de I a IV (visual crescente); o V reaproveita a arte do IV com brilho laranja. **Afixos** são bônus de stat sorteados que a arma dá ao herói enquanto está na build.
+- **Fusão**: duas armas iguais da mesma raridade viram a seguinte, **só até o III** (os afixos que já tinha são mantidos e os que faltam são sorteados). **IV só cai de inimigos Elite e V só de Bosses** (drop no chão, coletado como os itens).
 - Mira por tipo: melee = arco ao redor; fogo = inimigo mais próximo; magia = área/corrente/aleatório.
 
 | Arma (tier I → nome da linha) | Classe / set | Comportamento |
@@ -149,10 +150,11 @@ Lista final e números em `src/data/weapons.ts` e balancing-and-simulation.md Pa
 
 - Abre **ao fim de cada round** com o tempo pausado, em tela estilo **ARPG (Diablo)** (ADR-006):
   - **Esquerda**: paper doll do herói, stats da run com deltas, **5 slots de equipamento** (elmo, armadura, pernas, anel, amuleto) e mochila, 6 slots de arma com fusão.
-  - **Direita**: **NPC lojista** (pinguim velho mercador com carrinho de peixes, idle animado, falas curtas por texto) com **4 ofertas** (armas e itens), preço em Fish, **reroll** (preço cresce a cada uso na mesma loja; base cresce por round) e **lock** grátis por oferta (persiste entre lojas).
+  - **Direita**: **NPC lojista** (pinguim velho mercador com carrinho de peixes, idle animado, falas curtas por texto) com **4 ofertas** (só **armas, equipamentos e poções de velocidade**, raridades **I a III**, cada uma já com seus afixos), preço em Fish, **reroll** (preço cresce a cada uso na mesma loja; base cresce por round) e **lock** grátis por oferta (persiste entre lojas).
   - Rodapé: Fish da run, próximo round, avisos de elite/horda (Danger ≥ 2), botão "Próximo round".
 - Oferta ponderada por **sorte**, round e classes que o herói já tem (leve viés para sinergia).
-- Vende também **poções de run** (uso único, não confundir com os gambits do menu) a partir do round 5.
+- Vende também **poções de velocidade** de run (uso único, não confundir com os gambits do menu) a partir do round 5; as outras poções não são vendidas.
+- **Didático**: cada oferta explica o que acontece ao comprar (nova arma no slot X, fusão II→III, stats antes→depois, afixos), via `describeOffer` (SDD-003 RF-10).
 
 ## 10. Cartas de level-up
 
@@ -170,7 +172,7 @@ As três exclusivas marcadas "vira arma" passam a ser **armas iniciais/da loja e
 
 ## 11. Equipamentos, itens e packs
 
-- **Equipamento** (P-66): 5 slots × 10 itens (3 comuns, 4 raros, 3 lendários). Drop por tipo de inimigo (comum 0,4%, elite 30% raro, boss 100% lendário) e venda na loja. Pego pisando (sem ímã), some em 60 s.
+- **Equipamento** (P-66): 5 slots × 10 itens-base (3 comuns, 4 raros, 3 lendários) com a **raridade I–V** e os **afixos** da escala única (ADR-017): na loja, comum, raro e lendário são I, II e III; **IV só de Elite e V só de Boss** (bases lendárias com 3 e 4 afixos). Pego pisando (sem ímã), some em 60 s. Itens antigos sem sorteio leem-se como I, II e III.
 - **Itens passivos** da loja (novos, estilo Brotato): modificadores de stat e de regra (ex.: "+1 projétil", "Fish extra por elite"), tiers I–IV, sem limite de quantidade.
 - **Packs de vida**: +25% (50%), +50% (30%), +75% (20%); chance 1,2% comuns, 25% elites, 100% bosses.
 
@@ -234,7 +236,7 @@ Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool pró
 
 - **Danger 0–5 por herói** (ADR-008): vencer o boss do round 20 no Danger D libera D+1 para aquele herói.
 - Por danger: multiplicadores de HP/dano dos inimigos e de drops; **waves de elite/horda extras** (D0–1 nenhuma, D2–3 uma, D4–5 três), avisadas na loja a partir do D2.
-- **Endless** sem vitória; a cada volta de 30 rounds HP ×1,6 e dano ×1,5 (balancing-and-simulation.md Parte B §2).
+- **Endless** sem vitória; a cada volta de 30 rounds HP ×1,6 e dano ×2 (balancing-and-simulation.md Parte B §2).
 - **Visual e pool no endless** (round 31+): a cada 10 rounds, a seed da run sorteia o bioma entre Antártida, floresta, cidade destruída, estação de pesquisa e cidade em ruínas. O pool de inimigos e o boss usam todos os assets (ADR-016).
 - Conquistas e leaderboards por herói e danger.
 
@@ -273,6 +275,8 @@ MainMenu ─► HeroSelect (herói · danger · arma inicial) ─► Game (+ HUD
    ├─► History · Settings · Credits                          └ morte / timeout ─► GameOver ─► Menu / Retry
    └─► Continue (round N)                                   (demo: round 10 ─► DemoEnd ─► Wishlist)
 ```
+
+**Linguagem visual e fundos** (ADR-018): Conquistas, Configurações, Oficina, Histórico e Escolha seu Pinguim seguem a linguagem visual **Diablo 4** da loja (painéis escuros, moldura metálica, raridade por cor, Roboto). **Todos os menus, exceto o inicial, têm fundo preto ou neutro** (sem a arte do menu), responsivos, fáceis e didáticos. A **Pausa** usa o layout da loja (status do jogador e itens equipados), sem o NPC, com 3 botões: Continuar, Configurações e Sair.
 
 **HUD**: HP e XP grandes com número, Fish da run, round e timer, barra do boss + 3:00, aviso de elite, medidor do superpoder (a partir do level 5), 6 ícones de arma com tier, 5 slots de equipamento compactos, 3 gambits, 1×/2×, FPS (opcional), rodapé com versão.
 

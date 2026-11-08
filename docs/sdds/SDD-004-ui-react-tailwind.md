@@ -12,6 +12,8 @@
 - RF-06 Tipografia: **Roboto** em todo o jogo (corpo 500, títulos 700/900), sem fonte pixelada, por legibilidade (pedido do desenvolvedor, 2026-11-08); Noto Sans SC (ZH, carregada sob demanda).
 - RF-07 `Shop`: grid 2 colunas (paper doll + stats | lojista + 4 ofertas), rodapé fixo; no celular, colunas viram abas.
 - RF-08 Remover cenas Phaser de UI ao fim da migração; `HudScene` substituída; `installCrispText` removido.
+- RF-10 **Pausa** usa o layout da loja nova (status do jogador e itens equipados), sem o NPC, com 3 botões: Continuar, Configurações e Sair (ADR-018).
+- RF-11 **Linguagem visual Diablo 4** em Conquistas, Configurações, Oficina, Histórico e Escolha seu Pinguim; todos os menus, exceto o inicial, com fundo preto ou neutro, responsivos, fáceis e didáticos (ADR-018). A raridade usa `rarityColor` (ADR-017).
 - RF-09 Textos só via `t()` de `src/i18n/`; nenhuma string literal visível em componentes (lint custom).
 
 ## Especificação

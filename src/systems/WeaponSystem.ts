@@ -1,5 +1,6 @@
 import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
+import { weaponColor } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import type { Build } from '../logic/build';
 import { type Element, rollOutgoing } from '../logic/combat';
@@ -19,7 +20,13 @@ export const ELEMENT_TINT: Record<Element, number> = {
 	energy: PALETTE.elEnergy,
 };
 
-export type MeleeHit = (enemy: Enemy, amount: number, crit: boolean, bleedChance: number) => void;
+export type MeleeHit = (
+	enemy: Enemy,
+	amount: number,
+	crit: boolean,
+	bleedChance: number,
+	color: number | undefined,
+) => void;
 
 /** Per-frame modifiers from hero perks (docs/gdd.md §5.1). */
 export interface WeaponBonus {
@@ -111,7 +118,7 @@ export class WeaponSystem {
 			for (const e of this.scratch) {
 				if (!e.alive || !inArc(hx, hy, angle, arc, range, e.x, e.y, e.radius)) continue;
 				const out = rollOutgoing(attack, { crit: this.rng.next() });
-				this.onMelee(e, out.amount, out.crit, w.bleedChance);
+				this.onMelee(e, out.amount, out.crit, w.bleedChance, weaponColor(w.id));
 			}
 			this.onSlash(hx, hy, angle, range);
 			return;
@@ -136,7 +143,8 @@ export class WeaponSystem {
 				damage: out.amount,
 				crit: out.crit,
 				texture: KEYS.projectile(element ? 'orb' : 'pellet'),
-				tint: element ? ELEMENT_TINT[element] : PALETTE.crit,
+				tint: element ? ELEMENT_TINT[element] : weaponColor(w.id),
+				color: weaponColor(w.id),
 				pierce: w.pierce,
 				bounces: w.tag === 'firearm' ? this.bonus.bounces : 0,
 				element,

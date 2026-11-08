@@ -3,7 +3,7 @@ import {
 	type WeaponBehavior,
 	type WeaponId,
 	type WeaponTier,
-	type WeaponTierStats,
+	weaponTierStats,
 } from '../data/weapons';
 import type { DamageTag, Element } from './combat';
 
@@ -41,7 +41,7 @@ export function resolveWeapon(inst: { id: WeaponId; tier: WeaponTier }): ActiveW
 	const hit = cache.get(key);
 	if (hit) return hit;
 	const def = WEAPON_LINE_BY_ID[inst.id];
-	const t = def.tiers[inst.tier - 1] as WeaponTierStats;
+	const t = weaponTierStats(def, inst.tier);
 	const x = t.extra;
 	const w: ActiveWeapon = {
 		id: inst.id,

@@ -1,4 +1,42 @@
+import type { Rarity } from '../data/rarity';
+import type { AffixView, PlayerPanelView, WeaponStatsView } from '../logic/item-view';
+import type { OfferDescription } from '../logic/shop-describe';
+import type { StatKey } from '../logic/stats';
 import { createStore } from './store';
+
+export type {
+	AffixView,
+	GearItemView,
+	GearSlotView,
+	PlayerPanelView,
+	WeaponSlotView,
+	WeaponStatsView,
+} from '../logic/item-view';
+export type { OfferDescription, OfferOutcome, StatChange } from '../logic/shop-describe';
+
+/*
+ * CONTRACT for the shop screens (ADR-017, SDD-003 RF-10 and RF-11). All plain data, republished by
+ * the game after every change; the UI only reads it and sends `commands` back.
+ *
+ * Per offer (`ShopOfferView`):
+ * - `rarity` 1 to 3 (I white, II blue, III green; the shelf never sells IV or V), colored with
+ *   `rarityColor(rarity)` from `config/palette` and named with `t('rarity.<n>')`.
+ * - `affixes`: the random stat bonuses already rolled (I has none, II one, III two), as
+ *   `{ stat, value }`; label with `gstat.<stat>` and `formatStat(stat, value, true)`.
+ * - `weapon` (weapons): damage, seconds between hits, range and dps at that rarity.
+ * - `baseStats` (equipment): the catalog stats before the affixes.
+ * - `description`: what buying does, from `describeOffer`: `outcome.type` is `newWeapon` (slot,
+ *   `fusableWith` = slot of an identical copy you could fuse with next), `fuse` (slot,
+ *   fromRarity to toRarity, `newAffixes` extra affixes the result rolls), `barFull`, `equip`
+ *   (worn at once in `slot`), `bag` (`slot` is taken by `worn`) or `potion`; plus `statChanges`
+ *   (`{ stat, before, after }`, only stats that change).
+ *
+ * Player panel (`ShopView.player`, same shape for the pause screen via `PlayerPanelView`): current
+ * hero `stats`, `weapons` (slot, id, rarity I to V, affixes, stats, sets, sell value), the five
+ * `gear` slots (item with rarity, affixes and base stats, or null) and the `bag`.
+ *
+ * HUD: `HudWeapon.rarity` per weapon slot (1 to 5), for the slot border color.
+ */
 
 /**
  * End-of-round shop as the React `Shop` shows it (SDD-003 RF-01..RF-04). Plain data: the game
@@ -11,8 +49,18 @@ export interface ShopOfferView {
 	kind: 'weapon' | 'item' | 'gear' | 'potion';
 	/** Weapon line id (translate with `weapon.<id>.name`). */
 	id: string;
-	/** Tier I..IV (gear: rarity 1..3). */
+	/** Same number as `rarity` (kept for older screens). */
 	tier: number;
+	/** Rarity I to III on the shelf. */
+	rarity: Rarity;
+	/** Random affixes already rolled for this offer. */
+	affixes: AffixView[];
+	/** Weapon numbers at this rarity (weapons only). */
+	weapon?: WeaponStatsView;
+	/** Catalog stats of an equipment item, before the affixes. */
+	baseStats: Partial<Record<StatKey, number>>;
+	/** What buying does, in structured form (`describeOffer`). */
+	description: OfferDescription;
 	price: number;
 	/** Sets of the weapon (empty for gear), for the set-bonus hint. */
 	sets: string[];
@@ -25,7 +73,7 @@ export interface ShopWeaponView {
 	/** Index into the run's weapon slots, the argument of `sell` and `fuse`. */
 	slot: number;
 	id: string;
-	tier: 1 | 2 | 3 | 4;
+	tier: 1 | 2 | 3 | 4 | 5;
 	sellValue: number;
 }
 
@@ -54,6 +102,8 @@ export interface ShopView {
 	fusions: ShopFusionView[];
 	/** Worn gear ids per slot (helmet, armor, legs, ring, amulet); null = empty. */
 	gear: (string | null)[];
+	/** Stats, weapons and equipment of the hero with rarity and affixes (the player panel). */
+	player: PlayerPanelView;
 }
 
 export const shopStore = createStore<{ shop: ShopView | null }>({ shop: null });

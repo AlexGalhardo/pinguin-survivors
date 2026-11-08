@@ -1,8 +1,7 @@
 import { type ReactElement, type ReactNode, useSyncExternalStore } from 'react';
-import { toCss } from '../../config/palette';
+import { rarityColor, toCss } from '../../config/palette';
 import { platform } from '../../core/platform';
 import { touchControlsEnabled } from '../../core/touch-bridge';
-import { WEAPON_TIER_TINT } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
 import { toRoman } from '../../logic/achievements';
 import { formatTime } from '../../logic/format';
@@ -58,8 +57,8 @@ function WeaponSlot({ w }: { w?: HudSnapshot['weapons'][number] }): ReactElement
 			title={label}
 			className="relative flex size-[clamp(2.5rem,5.5vh,3.5rem)] items-center justify-center rounded border-2 bg-night/80"
 			style={{
-				borderColor: toCss(WEAPON_TIER_TINT[w.tier]),
-				color: toCss(WEAPON_TIER_TINT[w.tier]),
+				borderColor: toCss(rarityColor(w.rarity ?? w.tier)),
+				color: toCss(rarityColor(w.rarity ?? w.tier)),
 			}}
 		>
 			<AtlasIcon

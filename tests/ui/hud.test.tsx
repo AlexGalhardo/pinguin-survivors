@@ -77,7 +77,7 @@ describe('hud bridge', () => {
 	test('hudWeapons maps up to 6 weapon slots with their tier', () => {
 		const weapons = ['a', 'b', 'c', 'd', 'e', 'f', 'g'].map((id) => ({ id, tier: 3 as const }));
 		expect(hudWeapons({ weapons: [{ id: 'machete', tier: 3 }] })).toEqual([
-			{ id: 'machete', tier: 3 },
+			{ id: 'machete', tier: 3, rarity: 3 },
 		]);
 		expect(hudWeapons({ weapons })).toHaveLength(6);
 	});

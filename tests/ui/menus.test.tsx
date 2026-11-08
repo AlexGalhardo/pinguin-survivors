@@ -133,6 +133,24 @@ describe('HeroSelect', () => {
 		cleanup();
 	});
 
+	test('the sheet shows the hero stats, superpower, weapon and what Danger changes', () => {
+		const { container } = render(
+			<Router
+				view={{
+					screen: 'hero-select',
+					data: { heroes },
+					actions: actionsOf(['start', 'back']),
+				}}
+			/>,
+		);
+		const text = container.textContent ?? '';
+		expect(text).toContain('Red Harvest');
+		expect(text).toContain('140');
+		expect(text).toContain('Enemy HP');
+		expect(text).toContain('Sweeps an arc');
+		cleanup();
+	});
+
 	test('a locked hero cannot start', () => {
 		const { getByText } = render(
 			<Router
@@ -169,6 +187,7 @@ describe('Settings and Controls', () => {
 						damageNumbers: true,
 						numberSize: 'normal',
 						reducedFlashes: false,
+						gameSpeed: 1,
 						telemetry: false,
 					},
 					actions: actionsOf([
@@ -183,7 +202,7 @@ describe('Settings and Controls', () => {
 			/>,
 		);
 		expect(container.textContent).toContain('Master volume: 50%');
-		fireEvent.click(getAllByLabelText('+')[3] as HTMLElement);
+		fireEvent.click(getAllByLabelText('+')[5] as HTMLElement);
 		fireEvent.click(getAllByLabelText('-')[0] as HTMLElement);
 		key('Escape');
 		expect(log).toEqual(['adjust:master:1', 'adjust:language:-1', 'back']);

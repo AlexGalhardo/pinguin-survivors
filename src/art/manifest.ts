@@ -17,6 +17,8 @@ export const KEYS = {
 	heroFacing: (hero: HeroId, tier: number, dir: Dir) => `hero.${hero}.t${tier}.${dir}`,
 	shadow: 'fx.shadow',
 	enemy: (id: string) => `enemy.${id}`,
+	/** Non-hostile character atlas (public/assets/enemies/npc.<id>): `idle.<dir>.<nn>`. */
+	npc: (id: string) => `npc.${id}`,
 	aura: (tier: 'purple' | 'orange') => `fx.aura.${tier}`,
 	projectile: (id: string) => `proj.${id}`,
 	slash: 'fx.slash',

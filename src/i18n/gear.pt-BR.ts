@@ -69,6 +69,7 @@ export const gearPtBR: Record<keyof typeof gearEn, string> = {
 	'gstat.pickupRange': 'alcance de coleta',
 	'gstat.xpGain': 'ganho de XP',
 	'gstat.luck': 'sorte',
+	'gstat.harvesting': 'bônus de Fish',
 	'gstat.lifesteal': 'roubo de vida',
 	'gstat.bleedChance': 'chance de sangrar',
 	'gstat.poisonChance': 'chance de veneno',
@@ -87,4 +88,9 @@ export const gearPtBR: Record<keyof typeof gearEn, string> = {
 	'grarity.common': 'Comum',
 	'grarity.rare': 'Raro',
 	'grarity.legendary': 'Lendário',
+	'rarity.1': 'Comum',
+	'rarity.2': 'Incomum',
+	'rarity.3': 'Raro',
+	'rarity.4': 'Épico',
+	'rarity.5': 'Lendário',
 };

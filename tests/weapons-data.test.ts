@@ -53,7 +53,7 @@ describe('weapon lines (SDD-002 A3)', () => {
 			expect(TABLES_FOR_TEST['pt-BR'][`weapon.${w.id}.name` as never]).toBeDefined();
 		}
 		expect(WEAPON_TIER_TINT[1]).toBe(PALETTE.weaponTier1);
-		expect(new Set(Object.values(WEAPON_TIER_TINT)).size).toBe(4);
+		expect(new Set(Object.values(WEAPON_TIER_TINT)).size).toBe(5);
 	});
 
 	test('starting weapons: 3 per hero, valid, favorite class or neutral', () => {

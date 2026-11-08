@@ -1,7 +1,8 @@
 import type { ReactElement } from 'react';
 import { type I18nKey, t } from '../../i18n';
 import { Btn } from './Btn';
-import { MenuScreen } from './MenuScreen';
+import { BackBtn, MenuScreen } from './MenuScreen';
+import { Hint } from './Panel';
 
 export interface ControlsData {
 	rows: readonly { action: string; keyLabel: string }[];
@@ -29,31 +30,35 @@ export function Controls({
 			onBack={() => {
 				if (!data.waiting) actions.back();
 			}}
+			subtitle={t('controls.hint')}
+			footer={
+				<>
+					<Btn onActivate={actions.reset} variant="primary">
+						{t('controls.reset')}
+					</Btn>
+					<BackBtn
+						onBack={actions.back}
+						disabled={data.waiting !== null}
+						label={t('menu.back')}
+					/>
+				</>
+			}
 		>
-			{data.rows.map((r) => (
-				<Btn
-					key={r.action}
-					onActivate={() => actions.rebind(r.action)}
-					className="w-full border-snow text-left font-normal"
-				>
-					{t('controls.row', {
-						action: t(`action.${r.action}` as I18nKey),
-						key: data.waiting === r.action ? t('controls.press') : r.keyLabel,
-					})}
-				</Btn>
-			))}
-			<Btn onActivate={actions.reset} className="w-full border-ice text-ice">
-				{t('controls.reset')}
-			</Btn>
-			<Btn
-				onActivate={actions.back}
-				disabled={data.waiting !== null}
-				className="w-full border-snow"
-			>
-				{t('menu.back')}
-			</Btn>
-			<p className="text-center text-[0.8em] text-text-dim">{t('controls.hint')}</p>
-			<p className="text-center text-[0.8em] text-text-dim">{t('controls.pad')}</p>
+			<div className="grid grid-cols-1 gap-2 min-[1000px]:grid-cols-2">
+				{data.rows.map((r) => (
+					<Btn
+						key={r.action}
+						onActivate={() => actions.rebind(r.action)}
+						className={`w-full text-left font-normal ${data.waiting === r.action ? 'border-crit text-crit' : 'border-snow'}`}
+					>
+						{t('controls.row', {
+							action: t(`action.${r.action}` as I18nKey),
+							key: data.waiting === r.action ? t('controls.press') : r.keyLabel,
+						})}
+					</Btn>
+				))}
+			</div>
+			<Hint>{t('controls.pad')}</Hint>
 		</MenuScreen>
 	);
 }

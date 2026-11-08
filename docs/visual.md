@@ -304,3 +304,8 @@ Ferramentas novas: `scripts/pl-tiles.ts` agora aceita o tipo `square_topdown` e 
 - Entra como animação `attack` no mesmo atlas `enemy.<id>`; os frames `walk` continuam idênticos pixel a pixel (conferido nos 10). `Enemy.ts` já tocava `attack` durante o telegraph; em jogo o zombieWalrus (round 7) toca `attack.n`.
 - Fora: `kraken`, `abomination` (só 1 frame de `walk`, não regenerar), `mooseKing` (sem arte) e novos voadores (o GDD não pede).
 - Obstáculos grandes (`propbig`): cancelado pelo coordenador; nada gerado foi mantido.
+
+### 2026-11-08 — Lojista aprovado (seed 202): idle (5 gerações; teto 40)
+
+- Dev aprovou a seed 202. `pl-animate.ts --key npc.merchant --char b3b9fc60-757e-47e4-b4a7-2d180bbdf8a9 --anim idle --template breathing-idle`: 4 frames em 5 direções. Atlas `public/assets/enemies/npc.merchant.{png,json}` (frames `idle.<dir>.<nn>`, 96 px, `KEYS.npc('merchant')`, `pack-heroes.ts` manda chaves `npc.*` para essa pasta). Componente React `src/ui/components/MerchantSprite.tsx` (`scale` inteiro, loop sul a 4 fps).
+- `polarBear` com telegraph "sem attack": falso alarme do teste (o `telegraph` é reescrito a cada frame pela IA); com `ai.mode = 'windup'` real toca `enemy.polarBear.attack.e`. Nada a corrigir.

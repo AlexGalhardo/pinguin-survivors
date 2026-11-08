@@ -2,7 +2,8 @@ import { type ReactElement, useEffect, useRef } from 'react';
 import { getLang, type I18nKey, t } from '../../i18n';
 import { formatTime } from '../../logic/format';
 import { Btn } from './Btn';
-import { MenuScreen } from './MenuScreen';
+import { BackBtn, MenuScreen } from './MenuScreen';
+import { Bar, ItemCard } from './Panel';
 
 export interface AchievementsData {
 	done: number;
@@ -29,7 +30,7 @@ function useListKeys(): React.RefObject<HTMLDivElement | null> {
 	const ref = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		const onKey = (e: KeyboardEvent): void => {
-			const el = ref.current;
+			const el = ref.current?.closest<HTMLElement>('[data-panel-scroll]') ?? ref.current;
 			if (!el) return;
 			const step = { ArrowUp: -40, ArrowDown: 40, PageUp: -320, PageDown: 320 }[e.code];
 			if (step !== undefined) el.scrollBy({ top: step });
@@ -49,27 +50,44 @@ export function Achievements({
 }): ReactElement {
 	const list = useListKeys();
 	return (
-		<MenuScreen title={t('ach.title')} onBack={actions.back}>
+		<MenuScreen
+			title={t('ach.title')}
+			onBack={actions.back}
+			wide
+			subtitle={t('ach.hint')}
+			footer={
+				<>
+					<Btn onActivate={actions.extras} variant="primary">
+						{t('ach.shop')}
+					</Btn>
+					<BackBtn onBack={actions.back} label={t('menu.back')} />
+				</>
+			}
+		>
 			<div className="font-bold text-fish">
 				{t('ach.summary', { done: data.done, total: data.total, points: data.points })}
 			</div>
-			<div ref={list} className="min-h-0 w-full flex-1 space-y-1 overflow-y-auto">
+			<Bar percent={data.total > 0 ? (data.done / data.total) * 100 : 0} tone="bg-crit" />
+			<div
+				ref={list}
+				className="grid min-h-0 w-full grid-cols-1 gap-2 min-[1000px]:grid-cols-2 min-[1700px]:grid-cols-3"
+			>
 				{data.rows.map((r) => (
-					<div key={r.id} className={r.unlocked ? '' : 'opacity-70'}>
-						<div className={`font-bold ${r.unlocked ? 'text-crit' : ''}`}>{r.name}</div>
-						<div className="text-[0.85em] text-text-dim">
-							{r.description}
-							{!r.unlocked && `  ·  ${r.progress}%`}
-						</div>
-					</div>
+					<ItemCard
+						key={r.id}
+						name={r.name}
+						color={r.unlocked ? 'var(--color-crit)' : undefined}
+						className={r.unlocked ? '' : 'opacity-75'}
+						lines={[
+							<span key="d" className="text-text-dim">
+								{r.description}
+								{!r.unlocked && `  ·  ${r.progress}%`}
+							</span>,
+						]}
+						footer={r.unlocked ? undefined : <Bar percent={r.progress} />}
+					/>
 				))}
 			</div>
-			<Btn onActivate={actions.extras} className="w-full border-fish text-fish">
-				{t('ach.shop')}
-			</Btn>
-			<Btn onActivate={actions.back} className="w-full border-snow">
-				{t('menu.back')}
-			</Btn>
 		</MenuScreen>
 	);
 }
@@ -99,7 +117,12 @@ export function Extras({
 	actions: ExtrasActions;
 }): ReactElement {
 	return (
-		<MenuScreen title={t('extras.title')} onBack={actions.back}>
+		<MenuScreen
+			title={t('extras.title')}
+			onBack={actions.back}
+			subtitle={t('extras.desc')}
+			footer={<BackBtn onBack={actions.back} label={t('menu.back')} />}
+		>
 			<div className="text-center font-bold text-fish">
 				{t('extras.points', { n: data.points })}
 			</div>
@@ -122,9 +145,6 @@ export function Extras({
 					})}
 				</Btn>
 			))}
-			<Btn onActivate={actions.back} className="w-full border-snow">
-				{t('menu.back')}
-			</Btn>
 		</MenuScreen>
 	);
 }
@@ -152,13 +172,28 @@ export function History({
 }): ReactElement {
 	const list = useListKeys();
 	return (
-		<MenuScreen title={t('history.title')} onBack={actions.back} wide>
-			<div ref={list} className="min-h-0 w-full flex-1 space-y-1 overflow-y-auto text-center">
+		<MenuScreen
+			title={t('history.title')}
+			onBack={actions.back}
+			wide
+			subtitle={t('history.hint')}
+			footer={<BackBtn onBack={actions.back} label={t('menu.back')} />}
+		>
+			<div ref={list} className="flex min-h-0 w-full flex-col gap-1.5">
 				{data.rows.length === 0 && (
-					<div className="text-text-dim">{t('history.empty')}</div>
+					<div className="py-6 text-center text-text-dim">{t('history.empty')}</div>
 				)}
 				{data.rows.map((r) => (
-					<div key={r.id} className={r.outcome === 'quit' ? 'text-text-dim' : ''}>
+					<div
+						key={r.id}
+						className={`border-l-4 bg-snow-dark/20 px-3 py-1.5 ${
+							r.outcome === 'quit'
+								? 'border-snow text-text-dim'
+								: r.outcome === 'death'
+									? 'border-blood'
+									: 'border-crit'
+						}`}
+					>
 						{t('history.row', {
 							date: new Date(r.endedAt).toLocaleString(getLang(), {
 								dateStyle: 'short',
@@ -175,9 +210,6 @@ export function History({
 					</div>
 				))}
 			</div>
-			<Btn onActivate={actions.back} className="w-full max-w-[44rem] border-snow">
-				{t('menu.back')}
-			</Btn>
 		</MenuScreen>
 	);
 }

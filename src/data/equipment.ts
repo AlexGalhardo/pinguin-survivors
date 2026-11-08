@@ -101,6 +101,15 @@ export const DROPS = {
 			{ heal: 0.75, weight: 20 },
 		],
 	},
+	/**
+	 * Rarity IV and V drops (ADR-017): only Elites drop IV and only Bosses drop V, as weapons or as
+	 * equipment, each with its own chance per kill. The weapon chances were calibrated with the sim
+	 * (docs/reports/balance-proposal-2026-11-08.md): IV and V weapons are rare jackpots.
+	 */
+	item: {
+		elite: { weaponChance: 0.0008, gearChance: 0.01 },
+		boss: { weaponChance: 0.1, gearChance: 1 },
+	},
 	/** Seconds a dropped gear item blinks on the ground before it fades away. */
 	gearLifetime: 60,
 } as const;

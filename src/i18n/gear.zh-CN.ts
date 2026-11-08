@@ -67,6 +67,7 @@ export const gearZhCN = {
 	'gstat.pickupRange': '拾取范围',
 	'gstat.xpGain': '经验获取',
 	'gstat.luck': '幸运',
+	'gstat.harvesting': 'Fish 加成',
 	'gstat.lifesteal': '吸血',
 	'gstat.bleedChance': '流血几率',
 	'gstat.poisonChance': '中毒几率',
@@ -85,4 +86,9 @@ export const gearZhCN = {
 	'grarity.common': '普通',
 	'grarity.rare': '稀有',
 	'grarity.legendary': '传说',
+	'rarity.1': '普通',
+	'rarity.2': '优秀',
+	'rarity.3': '稀有',
+	'rarity.4': '史诗',
+	'rarity.5': '传说',
 } as const;

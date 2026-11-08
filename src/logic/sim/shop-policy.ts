@@ -1,5 +1,7 @@
+import { WEAPON_FUSE_MAX } from '../../data/rarity';
 import { WEAPON_LINE_BY_ID, type WeaponId, type WeaponTier } from '../../data/weapons';
 import { addWeapon, type Build, canFuse, fuse } from '../build';
+import { type ItemDrop, pickUpGear, type RunGear } from '../equipment';
 import { Rng } from '../rng';
 import type { RunState, ShopRoll } from '../run-state';
 import {
@@ -92,7 +94,7 @@ export function offerValue(
 	).length;
 	value *= 1 + SHOP_POLICY.setSynergy * shared;
 	const fuses = build.weapons.some(
-		(w) => w.id === offer.id && w.tier === offer.tier && w.tier < 4,
+		(w) => w.id === offer.id && w.tier === offer.tier && w.tier < WEAPON_FUSE_MAX,
 	);
 	if (fuses) return value * SHOP_POLICY.fuseBonus;
 	if (build.weapons.length < 6) return value;
@@ -173,7 +175,7 @@ export function playShop(args: {
 			if (!r) break;
 			shop = r.state;
 			run.fish = r.fish;
-			addWeapon(build, offer.id as never, offer.tier as WeaponTier);
+			addWeapon(build, offer.id as never, offer.tier as WeaponTier, offer.affixes);
 			fuseAll(build);
 			play.bought.push(offer);
 			continue;
@@ -210,7 +212,9 @@ export function playShop(args: {
 }
 
 function canJoin(offer: Offer, build: Build): boolean {
-	return build.weapons.some((w) => w.id === offer.id && w.tier === offer.tier && w.tier < 4);
+	return build.weapons.some(
+		(w) => w.id === offer.id && w.tier === offer.tier && w.tier < WEAPON_FUSE_MAX,
+	);
 }
 
 /** Fish a swap would refund, so a full bar can still afford a clearly better weapon. */
@@ -287,4 +291,33 @@ export function nextShopAction(v: ShopView): ShopAction {
 	)
 		return { type: 'reroll' };
 	return { type: 'done' };
+}
+
+/**
+ * What a player does with a rarity IV or V drop: a weapon takes a free slot or replaces the weakest
+ * weapon when it is clearly stronger; equipment is picked up (worn at once when its slot is free).
+ */
+export function takeDrop(
+	build: Build,
+	gear: RunGear,
+	stats: PlayerStats,
+	drop: ItemDrop,
+): 'weapon' | 'swap' | 'gear' | 'skipped' {
+	if (drop.kind === 'gear') {
+		pickUpGear(gear, stats, drop.id, { rarity: drop.rarity, affixes: drop.affixes });
+		return 'gear';
+	}
+	const tier = drop.rarity as WeaponTier;
+	if (addWeapon(build, drop.id, tier, drop.affixes)) return 'weapon';
+	const slot = weakestSlot(build, stats);
+	const weakest = build.weapons[slot];
+	if (!weakest) return 'skipped';
+	if (
+		weaponValue(drop.id, tier, stats) <=
+		weaponValue(weakest.id, weakest.tier, stats) * SHOP_POLICY.replaceFactor
+	)
+		return 'skipped';
+	build.weapons.splice(slot, 1);
+	addWeapon(build, drop.id, tier, drop.affixes);
+	return 'swap';
 }

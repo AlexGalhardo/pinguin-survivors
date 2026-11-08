@@ -33,3 +33,10 @@ describe('art coverage', () => {
 		expect(missing([0, 1, 2, 3, 4, 5].map((d) => `icon.danger.${d}`))).toEqual([]);
 	});
 });
+
+test('the shop merchant atlas has the south idle loop the UI plays', async () => {
+	const atlas = (await Bun.file('public/assets/enemies/npc.merchant.json').json()) as {
+		frames: Record<string, unknown>;
+	};
+	for (let i = 0; i < 4; i++) expect(atlas.frames[`idle.s.0${i}`]).toBeDefined();
+});

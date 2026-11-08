@@ -22,3 +22,5 @@ Decisões de produto anteriores à virada comercial (P-01…P-68) estão em [ADR
 | [ADR-014](ADR-014-site-github-pages.md) | Site e `/demo` no mesmo build Vite, GitHub Pages | Aceito |
 | [ADR-015](ADR-015-versionamento-vukem.md) | Versionamento padrão vukem e retag do histórico | Aceito |
 | [ADR-016](ADR-016-biomas-floresta-cidade-aliens.md) | Bioma 2 floresta, bioma 3 cidade destruída com aliens originais; endless sorteia biomas legados | Aceito (nomes propostos) |
+| [ADR-017](ADR-017-raridade-unica-afixos-e-loja.md) | Raridade única I–V, afixos aleatórios, loja só I–III e drops IV (Elite) e V (Boss) | Aceito |
+| [ADR-018](ADR-018-linguagem-visual-diablo-4-e-menus-neutros.md) | Linguagem visual Diablo 4, pausa com o layout da loja e menus neutros | Aceito |

@@ -67,6 +67,7 @@ export const gearEs = {
 	'gstat.pickupRange': 'alcance de recogida',
 	'gstat.xpGain': 'XP obtenido',
 	'gstat.luck': 'suerte',
+	'gstat.harvesting': 'bono de Fish',
 	'gstat.lifesteal': 'robo de vida',
 	'gstat.bleedChance': 'prob. de sangrado',
 	'gstat.poisonChance': 'prob. de veneno',
@@ -85,4 +86,9 @@ export const gearEs = {
 	'grarity.common': 'Común',
 	'grarity.rare': 'Rara',
 	'grarity.legendary': 'Legendaria',
+	'rarity.1': 'Común',
+	'rarity.2': 'Poco común',
+	'rarity.3': 'Raro',
+	'rarity.4': 'Épico',
+	'rarity.5': 'Legendario',
 } as const;

@@ -1,28 +1,60 @@
 import type { ReactElement, ReactNode } from 'react';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
+import { Filet, Hint, Panel } from './Panel';
 
-/** Shared frame of the menu screens: title, scrollable body, Esc/B goes back. Plain dark backdrop
- * (no main menu art) so the player focuses on the menu, as the developer asked. */
+/** Shared frame of the menu screens: title with a gold filet, a framed panel that scrolls inside
+ * itself (never the page), an optional footer with the actions, Esc/B goes back. Plain dark
+ * backdrop (no main menu art) so the player focuses on the menu, as the developer asked. */
 export function MenuScreen(props: {
 	title: string;
 	onBack: () => void;
 	children: ReactNode;
 	/** Narrow single column (settings, lists) or wide (hero select, hero screen). */
 	wide?: boolean;
+	/** One line under the title saying what the screen is for. */
+	subtitle?: ReactNode;
+	/** Pinned under the panel: the screen's actions (Back, Play...). */
+	footer?: ReactNode;
 }): ReactElement {
+	const width = props.wide ? 'max-w-[90rem]' : 'max-w-[56rem]';
 	return (
 		<FocusScope
 			onBack={props.onBack}
-			className="fixed inset-0 flex flex-col items-center gap-[2vh] overflow-hidden bg-night px-[3vw] py-[3vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light"
+			className="fixed inset-0 flex flex-col items-center gap-[1.6vh] overflow-hidden bg-night px-[3vw] py-[2.5vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:py-1"
 		>
-			<h1 className="relative font-title text-[2em] font-bold">{props.title}</h1>
-			<div
-				className={`relative flex min-h-0 w-full flex-1 flex-col items-center gap-2 overflow-y-auto ${props.wide ? 'max-w-[90rem]' : 'max-w-[44rem]'}`}
-			>
-				{props.children}
-			</div>
+			<header className={`flex w-full flex-col items-center gap-1 ${width}`}>
+				<h1 className="m-0 font-title text-[1.9em] leading-none font-bold tracking-wide uppercase">
+					{props.title}
+				</h1>
+				<Filet />
+				{props.subtitle && <Hint>{props.subtitle}</Hint>}
+			</header>
+			<Panel className={`w-full flex-1 ${width}`}>{props.children}</Panel>
+			{props.footer && (
+				<footer className={`flex w-full flex-wrap justify-center gap-2 ${width}`}>
+					{props.footer}
+				</footer>
+			)}
 		</FocusScope>
+	);
+}
+
+/** Back button for a screen footer. */
+export function BackBtn(props: {
+	onBack: () => void;
+	label: string;
+	disabled?: boolean;
+}): ReactElement {
+	return (
+		<Btn
+			onActivate={props.onBack}
+			disabled={props.disabled}
+			variant="secondary"
+			className="min-w-40"
+		>
+			{props.label}
+		</Btn>
 	);
 }
 
@@ -32,26 +64,35 @@ export function AdjustRow(props: {
 	onPrev: () => void;
 	onNext: () => void;
 	disabled?: boolean;
+	/** What the option does, in one dim line under the row. */
+	hint?: ReactNode;
 }): ReactElement {
 	return (
-		<div className="flex w-full items-center gap-2">
-			<Btn
-				onActivate={props.onPrev}
-				disabled={props.disabled}
-				className="border-snow"
-				label="-"
-			>
-				◀
-			</Btn>
-			<div className="flex-1 text-center">{props.label}</div>
-			<Btn
-				onActivate={props.onNext}
-				disabled={props.disabled}
-				className="border-snow"
-				label="+"
-			>
-				▶
-			</Btn>
+		<div className="flex w-full flex-col gap-0.5">
+			<div className="flex w-full items-center gap-2">
+				<Btn
+					onActivate={props.onPrev}
+					disabled={props.disabled}
+					className="border-snow"
+					label="-"
+				>
+					◀
+				</Btn>
+				<div className="flex-1 text-center font-bold">{props.label}</div>
+				<Btn
+					onActivate={props.onNext}
+					disabled={props.disabled}
+					className="border-snow"
+					label="+"
+				>
+					▶
+				</Btn>
+			</div>
+			{props.hint && (
+				<div className="text-center">
+					<Hint>{props.hint}</Hint>
+				</div>
+			)}
 		</div>
 	);
 }

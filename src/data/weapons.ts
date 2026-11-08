@@ -1,6 +1,7 @@
 import type { HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import type { DamageTag, Element } from '../logic/combat';
+import { WEAPON_V_DAMAGE_MUL } from './rarity';
 import type { SetId } from './sets';
 
 /**
@@ -10,7 +11,9 @@ import type { SetId } from './sets';
 /** Weapon slots per run (ADR-005). */
 export const MAX_WEAPON_SLOTS = 6;
 
-export type WeaponTier = 1 | 2 | 3 | 4;
+/** Weapon rarity I–V (ADR-017): stat tiers I–IV are in `tiers`, V reuses IV with a damage bonus. */
+export type WeaponTier = 1 | 2 | 3 | 4 | 5;
+/** Tiers with their own stat row and art; V is derived (see `weaponTierStats`). */
 export const WEAPON_TIERS = [1, 2, 3, 4] as const satisfies readonly WeaponTier[];
 
 export type WeaponBehavior =
@@ -307,10 +310,42 @@ export const WEAPON_LINE_BY_ID: Readonly<Record<WeaponId, WeaponDef>> = Object.f
 	LINES.map((w) => [w.id, w]),
 ) as Record<WeaponId, WeaponDef>;
 
+/** Damage/projectile color of each weapon line (palette `w*`); `undefined` for hero actives. */
+export function weaponColor(id: string): number | undefined {
+	return WEAPON_COLOR[id as WeaponId];
+}
+
+const WEAPON_COLOR: Readonly<Record<WeaponId, number>> = {
+	machete: PALETTE.wMachete,
+	hammer: PALETTE.wHammer,
+	knives: PALETTE.wKnives,
+	fishBoomerang: PALETTE.wFishBoomerang,
+	bladeWhirl: PALETTE.wBladeWhirl,
+	doubleBarrel: PALETTE.wDoubleBarrel,
+	auxPistol: PALETTE.wAuxPistol,
+	crossbow: PALETTE.wCrossbow,
+	molotov: PALETTE.wMolotov,
+	mine: PALETTE.wMine,
+	grenadeBelt: PALETTE.wGrenadeBelt,
+	droneSentinel: PALETTE.wDroneSentinel,
+	elementStaff: PALETTE.wElementStaff,
+	iceShards: PALETTE.wIceShards,
+	flameRing: PALETTE.wFlameRing,
+	lightningTotem: PALETTE.wLightningTotem,
+	poisonCloud: PALETTE.wPoisonCloud,
+};
+
 /** Placeholder tint by tier until the tier art lands: I gray, II green, III blue, IV gold. */
 export const WEAPON_TIER_TINT: Readonly<Record<WeaponTier, number>> = {
 	1: PALETTE.weaponTier1,
 	2: PALETTE.weaponTier2,
 	3: PALETTE.weaponTier3,
 	4: PALETTE.weaponTier4,
+	5: PALETTE.rarity5,
 };
+
+/** Stats of a weapon at rarity I–V: V is the tier IV row with `WEAPON_V_DAMAGE_MUL` on damage. */
+export function weaponTierStats(def: WeaponDef, tier: WeaponTier): WeaponTierStats {
+	const row = def.tiers[Math.min(4, tier) - 1] as WeaponTierStats;
+	return tier === 5 ? { ...row, damage: Math.round(row.damage * WEAPON_V_DAMAGE_MUL) } : row;
+}

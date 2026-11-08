@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.8 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.9 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -56,12 +56,12 @@ Medidas com **bot médio**, **Danger 1**, seeds 100 e 101, build DEV congelado.
 
 | # | Perfil | Meta | Status |
 |---|---|---|---|
-| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08): 18 / 18 / 15, máx. 26. Bot real (15 runs): jack 10, bob 20 (3 runs), lucia 15 (8 runs). Antes de dar 10 Fish de partida o bot real morria no round 3 em 5 de 8 runs da Lucia (mediana 4,5) |
+| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08, raridade I–V): 18 / 18 / 15, máx. 27. Bot real (rodada anterior à raridade, 15 runs): jack 10, bob 20 (3 runs), lucia 15 (8 runs); refazer com a raridade |
 | 2 | L10 + Oficina `all:2` + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 3%, bob 0%, lucia 1% |
-| 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08, comprador com preferência): 33 / 33 / 32 (margem pequena sobre o 30) |
-| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08): D0 39, D1 27, D5 10 |
+| 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08, raridade I–V): 33 / 33 / 33 |
+| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08, raridade I–V): D0 42, D1 31, D5 10 |
 | 5 | Diversidade de build (sim, 100 runs/herói, L10, D1) | **toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói.** Os limites de 35% por arma e 50% por set dentro de cada herói são **exceção justificada**: com ~15 armas candidatas para 5 vagas livres a média por arma já é ~33%, e o bônus de classe (`tagMul`) é intencional | ✓ (2026-11-08): nenhuma arma abaixo de 3%. Exceção medida: armas líderes de 63% a 69% por herói (jack `hammer`, bob `elementStaff`, lucia `flameRing`), sets de 74% a 93% |
-| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08): 0,887, reroll 0,8% |
+| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08, raridade I–V): 0,895, reroll 8,5% |
 | 7 | Duração | run L1 mediana 10–18 min (tempo de jogo + 45 s por loja/cartas); demo completa 12–25 min (mesmo critério, SDD-006 A5) | no limite superior com o bot real (2026-11-08, 15 runs L1 D1): mediana 18,0 min (tempo de jogo 9,0 min); antes dos 10 Fish de partida eram 10,1 min, mas por mortes precoces. Demo: `docs/reports/demo-time-2026-11-08.md` ✓ — **exceção justificada (orquestrador, 2026-11-08)**: 18,03 min fica 0,03 min acima do teto com 15 runs, dentro do ruído do bot; revalidar com jogadores no Next Fest (T6.4). |
 | 8 | Performance | ≥ 58 FPS médios, p95 ≤ 18 ms, 300 inimigos + 2.000 decalques, 1920×1080, round 40 | ✓ (2026-11-08, `bun scripts/perf.ts --round 40`, 3 medições mudas): 58 / 59 / 59 FPS, p95 16,8 ms (`docs/reports/perf-2026-11-08.jsonl`) |
 
@@ -124,7 +124,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 ### 2. Escala dos inimigos
 
 - `hpMul(N) = (1 + 0,15·(N−1)) · 1,12^ciclo · 1,6^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/30)` (endless: a cada volta completa pelos 3 biomas)
-- `dmgMul(N) = (1 + 0,26·(N−1)) · 1,08^ciclo · 1,5^volta` (`src/data/rounds.ts`: `dmgPerRound` 0,26, `dmgPerCycle` 1,08, `dmgPerLoop` 1,5; 2026-11-08, commit `2f822aa`)
+- `dmgMul(N) = (1 + 0,26·(N−1)) · 1,08^ciclo · 2^volta` (`src/data/rounds.ts`: `dmgPerRound` 0,26, `dmgPerCycle` 1,08, `dmgPerLoop` 2; 2026-11-08, commit `2f822aa`; `dmgPerLoop` 1,5 → 2 na mudança de raridade, ADR-017)
 - `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos** [1.0: revisar]
 - Bosses: HP base × `1,35^ciclo` (round 10 ×1, 20 ×1,35, 30 ×1,82…)
 - Biomas da campanha: rounds 1–10 Antártida, 11–20 floresta, 21–30 cidade destruída (ADR-016); no endless, a cada 10 rounds a seed sorteia entre os cinco biomas, incluindo estação e cidade em ruínas legados (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
@@ -439,6 +439,34 @@ A sim (`bun scripts/sim.ts`) é só apoio: serve para comparar mudanças antes d
 
 **Orçamento:** no máximo **3 passadas do bot** depois da b6 (cerca de 1 h de relógio cada, 2 Chromes). Se a meta não fechar dentro disso, a frente para, integra o que tiver no `dev` e registra aqui o que ficou fora da meta e por quê.
 
+### 8c. Raridade I–V, afixos e drops (ADR-017, `src/data/rarity.ts`, `affixes.ts`, `equipment.ts`)
+
+- Raridade: I branco (0 afixos), II azul (1), III verde (2), IV roxo (3), V laranja (4). A loja vende só I a III; IV só cai de Elite e V só de Boss. Arma: fusão até o III.
+- Valor de um afixo = `base × power × (1 + 0,25·(raridade−1)) × (1 + 0,02·round)`, com `power` = 0,3 (`AFFIX_SCALE`; calibrado com a sim, 0,5 empurrava o Bob L20 acima do round 60). Um item nunca repete o mesmo stat.
+- Arma V: stats e arte do IV, dano ×`WEAPON_V_DAMAGE_MUL` (1,0).
+
+| Afixo | Stat | Valor base (I, round 0, antes do `power`) | Escopo |
+|---|---|---|---|
+| damage | damage | 0,04 | arma, equipamento |
+| attackSpeed | attackSpeed | 0,03 | arma, equipamento |
+| crit | crit | 0,015 | arma, equipamento |
+| critDamage | critDamage | 0,08 | arma, equipamento |
+| area | area | 0,04 | arma |
+| lifesteal | lifesteal | 0,01 | arma |
+| bleedChance | bleedChance | 0,03 | arma |
+| maxHp | maxHp | 6 | equipamento |
+| regen | regen | 0,15 | equipamento |
+| armor | armor | 0,8 | equipamento |
+| moveSpeed | moveSpeed | 3 | equipamento |
+| dodge | dodge | 0,01 | equipamento |
+| luck | luck | 0,02 | equipamento |
+| harvesting | harvesting | 0,03 | equipamento |
+| xpGain | xpGain | 0,04 | equipamento |
+| resistFire | resist.fire | 0,03 | equipamento |
+| resistIce | resist.ice | 0,03 | equipamento |
+
+Preços (Fish, mais `2 × round`): arma I a V = 8, 20, 45, 90, 160; equipamento I a V = 12, 30, 70, 140, 250 (IV e V só valem na venda). Drops por abate: Elite dá arma IV com 0,08% e equipamento IV com 1%; Boss dá arma V com 10% e equipamento V com 100% (1 item V garantido por Boss). As chances de arma foram calibradas com a sim (drops de arma mais frequentes empurravam #1 e #3 para fora das metas); a sim modela só os drops de arma (a sim não tem equipamento).
+
 ## Parte C — Histórico de calibração
 
 ### C0. Calibração do design isométrico (2026-09-27)
@@ -473,7 +501,7 @@ Perfis: **bot médio** = reação 0,2 s e 5% de movimentos errados (proxy de um 
 
 | O quê | Antes | Depois |
 |---|---|---|
-| Escala por volta do endless (a cada 30 rounds) | — | **HP ×1,6, dano ×1,5** |
+| Escala por volta do endless (a cada 30 rounds) | — | **HP ×1,6, dano ×2** |
 | Spawn nos rounds de boss | 100% | **50%** |
 | HP / dano por ciclo | ×1,25 / ×1,15 | **×1,12 / ×1,08** |
 | HP do boss por ciclo | ×1,6 | **×1,35** |

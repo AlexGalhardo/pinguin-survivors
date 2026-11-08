@@ -25,10 +25,10 @@ export const SHOP = {
 	rerollStep: 1,
 	rerollStepEvery: 5,
 	/** Weapon price by tier I..IV, plus `pricePerRound × round`. Items cost `itemRatio` of the base. */
-	weaponPrices: [8, 20, 45, 90],
+	weaponPrices: [8, 20, 45, 90, 160],
 	itemRatio: 0.8,
 	/** Equipment price by rarity (common, rare, legendary). */
-	gearPrices: [12, 30, 70],
+	gearPrices: [12, 30, 70, 140, 250],
 	pricePerRound: 2,
 	sellRatio: 0.5,
 	/** Extra weight for offers that share a set with the build. */
@@ -40,6 +40,10 @@ export const SHOP = {
 	kindShare: { weapon: 0.6, item: 0.2, gear: 0.28, potion: 0.12 },
 	/** Run potions are sold from this round on (SDD-003 RF-09). */
 	potionsFromRound: 5,
+	/** The merchant sells weapons, equipment and only these potions (speed); the rest are not sold. */
+	potions: ['haste'],
+	/** Highest rarity on the shelf (ADR-017): I to III; IV and V are drops. */
+	maxRarity: 3,
 	fishToPearls: 10,
 } as const;
 

@@ -9,6 +9,7 @@ import {
 	type SecondaryDef,
 	type SecondaryId,
 } from '../data/secondaries';
+import { weaponColor } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import { boomerangDistance } from '../logic/boomerang';
 import type { Build } from '../logic/build';
@@ -28,6 +29,7 @@ export type SecondaryHit = (
 	amount: number,
 	crit: boolean,
 	element: Element | undefined,
+	color: number | undefined,
 ) => void;
 
 /** What an activation needs, whether it comes from a weapon slot or a hero active. */
@@ -86,6 +88,7 @@ interface Boomerang {
 	range: number;
 	amount: number;
 	crit: boolean;
+	color: number | undefined;
 	hit: Set<Enemy>;
 	returning: boolean;
 	alive: boolean;
@@ -208,6 +211,7 @@ export class SecondarySystem {
 		this.updateMines(dt, grid);
 		this.updateTotems(dt, grid);
 		this.syncAura(aura, hx, hy);
+		this.area.color = undefined;
 		if (this.lightningLife > 0) {
 			this.lightningLife -= dt;
 			if (this.lightningLife <= 0) this.lightning.clear();
@@ -271,7 +275,7 @@ export class SecondarySystem {
 				if (!e.alive || b.hit.has(e)) continue;
 				if ((e.x - x) ** 2 + (e.y - y) ** 2 > (BOOMERANG_HIT + e.radius) ** 2) continue;
 				b.hit.add(e);
-				this.onHit(e, b.amount, b.crit, undefined);
+				this.onHit(e, b.amount, b.crit, undefined, b.color);
 			}
 		}
 	}
@@ -290,6 +294,7 @@ export class SecondarySystem {
 			if (!grid.nearest(m.x, m.y, DEPLOYABLES.mineTrigger + 20, (e) => e.alive)) continue;
 			const radius = m.act.radius * this.stats.area;
 			const out = this.roll(m.act);
+			this.area.color = weaponColor(m.act.id);
 			this.area.burst(grid, m.x, m.y, radius, out.amount, undefined);
 			this.area.flash(m.x, m.y, radius, PALETTE.auraOrange, 0.3);
 			this.retire(m);
@@ -314,7 +319,7 @@ export class SecondarySystem {
 			this.lightning.lineStyle(2, PALETTE.elEnergy, 1);
 			this.drawBolt(t, target);
 			this.lightningLife = 0.1;
-			this.onHit(target, out.amount, out.crit, 'energy');
+			this.onHit(target, out.amount, out.crit, 'energy', weaponColor(t.act.id));
 		}
 	}
 
@@ -377,6 +382,7 @@ export class SecondarySystem {
 					range: 0,
 					amount: 0,
 					crit: false,
+					color: undefined,
 					hit: new Set(),
 					returning: false,
 					alive: false,
@@ -390,6 +396,7 @@ export class SecondarySystem {
 				range: def.range,
 				amount: out.amount,
 				crit: out.crit,
+				color: weaponColor(def.id),
 				returning: false,
 				alive: true,
 			});
@@ -414,6 +421,7 @@ export class SecondarySystem {
 
 	/** Returns false when there was no target (retry soon instead of waiting the cooldown). */
 	private activate(def: Act, hx: number, hy: number, grid: SpatialGrid<Enemy>): boolean {
+		this.area.color = weaponColor(def.id);
 		switch (def.behavior) {
 			case 'thrown': {
 				const count = def.count;
@@ -431,6 +439,7 @@ export class SecondarySystem {
 						damage: out.amount,
 						crit: out.crit,
 						texture: KEYS.projectile('knife'),
+						color: weaponColor(def.id),
 						orient: true,
 					});
 				}
@@ -492,6 +501,7 @@ export class SecondarySystem {
 							? PALETTE.blood
 							: PALETTE.crit,
 					pierce: def.pierce,
+					color: weaponColor(def.id),
 					orient: Boolean(def.pierce),
 				});
 				return true;
@@ -514,12 +524,15 @@ export class SecondarySystem {
 							fromZ: 60,
 						},
 					);
-					this.scene.time.delayedCall(LOB_TIME * 1000, () =>
+					const color = weaponColor(def.id);
+					this.scene.time.delayedCall(LOB_TIME * 1000, () => {
+						this.area.color = color;
 						this.area.zone(target.x, target.y, radius, 3, out.amount, {
 							element: 'fire',
 							tint: PALETTE.elFire,
-						}),
-					);
+						});
+						this.area.color = undefined;
+					});
 				} else {
 					this.area.impact(
 						target.x,
@@ -556,7 +569,7 @@ export class SecondarySystem {
 				for (let j = 0; j < (def.count || 5) && current; j++) {
 					this.drawBolt(from, current);
 					hit.add(current);
-					this.onHit(current, amount, out.crit && j === 0, 'energy');
+					this.onHit(current, amount, out.crit && j === 0, 'energy', weaponColor(def.id));
 					from = { x: current.x, y: current.y };
 					amount *= 0.8;
 					current = grid.nearest(
@@ -607,6 +620,7 @@ export class SecondarySystem {
 		const act = this.activeOf(def, level);
 		const radius = def.radius * this.stats.area;
 		const out = this.roll(act);
+		this.area.color = undefined;
 		const hit = this.area.burst(grid, hx, hy, radius, out.amount, 'ice');
 		for (const e of hit) e.status.frozen = Math.max(e.status.frozen, STATUS.ice.freeze);
 		this.area.flash(hx, hy, radius, PALETTE.elIce, 0.4);
@@ -682,7 +696,7 @@ export class SecondarySystem {
 				if (dx * dx + dy * dy > (ORBIT_HIT_RADIUS + e.radius) ** 2) continue;
 				state.cooldowns.set(e, def.cooldown);
 				const out = this.roll(def);
-				this.onHit(e, out.amount, out.crit, def.element);
+				this.onHit(e, out.amount, out.crit, def.element, weaponColor(def.id));
 			}
 		});
 	}

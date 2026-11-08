@@ -42,7 +42,9 @@ describe('rerollPrice / prices', () => {
 		expect(offerPrice('weapon', 4, 10)).toBe(110);
 		expect(offerPrice('item', 2, 5)).toBe(26);
 		expect(offerPrice('gear', 3, 10)).toBe(90);
-		expect(() => offerPrice('gear', 4, 1)).toThrow();
+		expect(offerPrice('gear', 4, 1)).toBe(142);
+		expect(offerPrice('weapon', 5, 0)).toBe(160);
+		expect(() => offerPrice('gear', 6, 1)).toThrow();
 	});
 
 	test('selling returns 50%', () => {

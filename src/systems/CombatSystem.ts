@@ -1,5 +1,6 @@
 import { PALETTE } from '../config/palette';
 import { COMBAT, STATUS } from '../data/combat';
+import { COMBAT_FX } from '../data/combat-fx';
 import type { Enemy } from '../entities/Enemy';
 import type { Hero } from '../entities/Hero';
 import { type Element, resolveIncoming } from '../logic/combat';
@@ -139,6 +140,7 @@ export class CombatSystem {
 		crit: boolean,
 		color: number | undefined,
 		knockback: boolean,
+		showNumber = true,
 	): void {
 		if (!e.alive) return;
 		const amount = raw * shredFactor(e.status);
@@ -147,7 +149,7 @@ export class CombatSystem {
 		if (knockback) e.flash();
 		if (knockback) e.lastDot = null;
 		this.run.damageDealt += amount;
-		this.fx.damage(e.x, e.y, amount, crit, color);
+		if (showNumber) this.fx.damage(e.x, e.y, amount, crit, color);
 		if (knockback) {
 			this.fx.spray(e.x, e.y, crit ? 10 : 4);
 			this.fx.play('sfx.hit', crit ? 1 : 0.7);
@@ -222,11 +224,23 @@ export class CombatSystem {
 		if (result.kind === 'dodged') {
 			countRun(this.run, 'dodges');
 			this.fx.label(this.hero.x, this.hero.y, 'dodge');
+			// The trail goes away from the attacker (or backwards when nothing is to blame).
+			const away = source
+				? { x: this.hero.x - source.x, y: this.hero.y - source.y }
+				: { x: 0, y: 1 };
+			this.fx.afterimage(this.hero.sprite, away.x, away.y * 0.5);
 			this.hooks.onDodge();
 		} else if (result.kind === 'parried') {
 			countRun(this.run, 'parries');
 			this.fx.label(this.hero.x, this.hero.y, 'parry');
-			if (source) this.damage(source, result.reflected, false, undefined, false);
+			this.fx.sparkAt(this.hero.x, this.hero.y, PALETTE.textLight, COMBAT_FX.parry.sparks);
+			this.fx.sparkAt(this.hero.x, this.hero.y, PALETTE.crit, COMBAT_FX.parry.sparks / 2);
+			this.hero.flash();
+			this.fx.play('sfx.hit', 1);
+			if (source) {
+				this.fx.reflect(this.hero.x, this.hero.y, source.x, source.y, result.reflected);
+				this.damage(source, result.reflected, false, undefined, false, false);
+			}
 			this.hooks.onParry(source);
 		} else if (this.hooks.absorb()) {
 			this.fx.label(this.hero.x, this.hero.y, 'block');

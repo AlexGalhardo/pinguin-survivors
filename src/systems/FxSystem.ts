@@ -4,6 +4,7 @@ import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
 import { activeBudget } from '../core/tier';
 import { ARENA } from '../data/arena';
+import { COMBAT_FX } from '../data/combat-fx';
 import type { SfxKey } from '../data/sfx';
 import { type I18nKey, t } from '../i18n';
 import { scaleParticles } from '../logic/performance';
@@ -37,6 +38,14 @@ interface Gib {
 interface FloatingNumber {
 	text: Phaser.GameObjects.Text;
 	life: number;
+	/** Seconds since it appeared (drives the crit pop and shake). */
+	age: number;
+	/** Screen position without the shake. */
+	x: number;
+	y: number;
+	crit: boolean;
+	/** Reflected damage flies from the hero to the attacker, then fades like any number. */
+	fly: { x0: number; y0: number; x1: number; y1: number } | null;
 }
 
 /**
@@ -47,6 +56,7 @@ export class FxSystem {
 	private readonly numbers: FloatingNumber[] = [];
 	private readonly gibs: Gib[] = [];
 	private readonly spurt: Phaser.GameObjects.Particles.ParticleEmitter;
+	private readonly sparks: Phaser.GameObjects.Particles.ParticleEmitter;
 	/** Gibs thrown this run (achievement counter). */
 	gibCount = 0;
 	private readonly marks: { img: Phaser.GameObjects.Image; life: number }[] = [];
@@ -64,6 +74,17 @@ export class FxSystem {
 				gravityY: 320,
 				lifespan: { min: 250, max: 520 },
 				scale: { start: 1.2, end: 0.4 },
+				emitting: false,
+			})
+			.setDepth(OVERLAY_DEPTH - 1);
+		// Hit and parry sparks: small, fast, additive.
+		this.sparks = scene.add
+			.particles(0, 0, KEYS.droplet, {
+				speed: { min: 90, max: 220 },
+				angle: { min: 0, max: 360 },
+				lifespan: { min: 140, max: 320 },
+				scale: { start: 3.5, end: 0 },
+				blendMode: Phaser.BlendModes.ADD,
 				emitting: false,
 			})
 			.setDepth(OVERLAY_DEPTH - 1);
@@ -129,14 +150,10 @@ export class FxSystem {
 		}
 	}
 
-	damage(x: number, y: number, amount: number, crit: boolean, color?: number): void {
-		// Labels/banners call this with amount 0 and must still show.
-		if (!this.settings.damageNumbers && amount > 0) return;
-		// Tiny DoT ticks (fractions of a point) used to show as a stream of "0".
-		if (amount > 0 && amount < 1) return;
+	private freeNumber(): FloatingNumber | null {
 		let n = this.numbers.find((f) => f.life <= 0);
 		if (!n) {
-			if (this.numbers.length >= MAX_NUMBERS) return;
+			if (this.numbers.length >= MAX_NUMBERS) return null;
 			const text = this.scene.add
 				.text(0, 0, '', {
 					fontFamily: UI_FONT,
@@ -144,28 +161,130 @@ export class FxSystem {
 					fontStyle: 'bold',
 					stroke: toCss(PALETTE.night),
 					strokeThickness: 2,
+					align: 'center',
 				})
 				.setOrigin(0.5)
 				.setDepth(OVERLAY_DEPTH);
-			n = { text, life: 0 };
+			n = { text, life: 0, age: 0, x: 0, y: 0, crit: false, fly: null };
 			this.numbers.push(n);
 		}
-		const s = worldToScreen(x, y, 24);
-		n.life = NUMBER_LIFE;
-		n.text
-			.setText(String(Math.round(amount)))
-			.setPosition(s.x + (Math.random() - 0.5) * 10, s.y)
-			.setColor(toCss(color ?? (crit ? PALETTE.crit : PALETTE.textLight)))
-			.setFontSize(Math.round((crit ? 18 : 13) * NUMBER_SCALE[this.settings.numberSize]))
-			.setAlpha(1)
-			.setVisible(true);
+		return n;
 	}
 
-	/** Short floating word over the hero (dodge/parry feedback). */
+	/** `color` is the weapon's color; a crit adds the "CRIT!" word, a pop, a shake and sparks (tier-capped). */
+	damage(x: number, y: number, amount: number, crit: boolean, color?: number): void {
+		// Labels/banners call this with amount 0 and must still show.
+		if (!this.settings.damageNumbers && amount > 0) return;
+		// Tiny DoT ticks (fractions of a point) used to show as a stream of "0".
+		if (amount > 0 && amount < 1) return;
+		const n = this.freeNumber();
+		if (!n) return;
+		const s = worldToScreen(x, y, 24);
+		const scale = NUMBER_SCALE[this.settings.numberSize];
+		// Past the tier's label cap a crit is still a bigger gold number, just without the word and pop.
+		const label = crit && amount > 0 && this.critLabelsShown() < activeBudget().critLabels;
+		n.life = NUMBER_LIFE;
+		n.age = 0;
+		n.fly = null;
+		n.crit = label;
+		n.x = s.x + (Math.random() - 0.5) * 10;
+		n.y = s.y;
+		const text = String(Math.round(amount));
+		if (label) {
+			const c = COMBAT_FX.crit;
+			n.text
+				.setText(`${t('fx.crit')}\n${text}`)
+				.setColor(toCss(PALETTE.crit))
+				.setStroke(toCss(color ?? PALETTE.crit), c.stroke)
+				.setFontSize(Math.round(c.fontSize * scale))
+				.setScale(c.popScale);
+			this.sparkAt(x, y, color ?? PALETTE.crit, activeBudget().critSparks);
+		} else {
+			n.text
+				.setText(text)
+				.setColor(toCss(color ?? (crit ? PALETTE.crit : PALETTE.textLight)))
+				.setStroke(toCss(PALETTE.night), 2)
+				.setFontSize(Math.round((crit ? 18 : 13) * scale))
+				.setScale(1);
+		}
+		n.text.setPosition(n.x, n.y).setAlpha(1).setVisible(true);
+	}
+
+	private critLabelsShown(): number {
+		let c = 0;
+		for (const n of this.numbers) if (n.life > 0 && n.crit) c++;
+		return c;
+	}
+
+	/** A burst of bright sparks at a ground point (crits, parries). */
+	sparkAt(x: number, y: number, tint: number, count: number): void {
+		const s = worldToScreen(x, y, 14);
+		this.sparks.setParticleTint(tint);
+		this.sparks.explode(scaleParticles(count, activeBudget().particleScale), s.x, s.y);
+	}
+
+	/** Short floating word over the hero (dodge/parry/block feedback). */
 	label(x: number, y: number, kind: 'dodge' | 'parry' | 'block'): void {
-		this.damage(x, y, 0, false, kind === 'parry' ? PALETTE.crit : PALETTE.textDim);
+		this.damage(x, y, 0, false);
 		const n = this.numbers.find((f) => f.life === NUMBER_LIFE);
-		n?.text.setText(t(`fx.${kind}`)).setFontSize(13);
+		if (!n) return;
+		const color =
+			kind === 'parry' ? PALETTE.crit : kind === 'dodge' ? PALETTE.elIce : PALETTE.textDim;
+		n.text
+			.setText(t(`fx.${kind}`))
+			.setFontSize(kind === 'block' ? 13 : 16)
+			.setColor(toCss(color))
+			.setStroke(toCss(PALETTE.night), 3);
+	}
+
+	/** Dodge: fading ice-blue copies of the hero trail off in the direction (dx, dy). */
+	afterimage(src: Phaser.GameObjects.Sprite, dx: number, dy: number): void {
+		const d = COMBAT_FX.dodge;
+		const len = Math.hypot(dx, dy) || 1;
+		for (let i = 1; i <= d.ghosts; i++) {
+			const ghost = this.scene.add
+				.sprite(src.x, src.y, src.texture.key, src.frame.name)
+				.setOrigin(src.originX, src.originY)
+				.setScale(src.scaleX, src.scaleY)
+				.setFlipX(src.flipX)
+				.setTint(PALETTE.elIce)
+				.setTintMode(Phaser.TintModes.FILL)
+				.setAlpha(d.alpha - (i - 1) * 0.12)
+				.setDepth(src.depth - 0.1 * i);
+			this.scene.tweens.add({
+				targets: ghost,
+				x: src.x + (dx / len) * d.spacing * i,
+				y: src.y + (dy / len) * d.spacing * i * 0.5,
+				alpha: 0,
+				duration: d.life * 1000,
+				ease: 'Quad.easeOut',
+				onComplete: () => ghost.destroy(),
+			});
+		}
+	}
+
+	/** Parry: the reflected damage number flies from the hero to the attacker. */
+	reflect(fromX: number, fromY: number, toX: number, toY: number, amount: number): void {
+		if (!this.settings.damageNumbers || amount < 1) return;
+		const n = this.freeNumber();
+		if (!n) return;
+		const a = worldToScreen(fromX, fromY, 24);
+		const b = worldToScreen(toX, toY, 24);
+		n.life = NUMBER_LIFE + COMBAT_FX.parry.travel;
+		n.age = 0;
+		n.crit = false;
+		n.fly = { x0: a.x, y0: a.y, x1: b.x, y1: b.y };
+		n.x = a.x;
+		n.y = a.y;
+		n.text
+			.setText(String(Math.round(amount)))
+			.setColor(toCss(PALETTE.crit))
+			.setStroke(toCss(PALETTE.night), 3)
+			.setFontSize(Math.round(16 * NUMBER_SCALE[this.settings.numberSize]))
+			.setScale(1)
+			.setPosition(a.x, a.y)
+			.setAlpha(1)
+			.setVisible(true);
 	}
 
 	/** Big floating message over the hero (level up, unlocks). */
@@ -228,7 +347,23 @@ export class FxSystem {
 		for (const n of this.numbers) {
 			if (n.life <= 0) continue;
 			n.life -= dt;
-			n.text.y -= 30 * dt;
+			n.age += dt;
+			let shakeX = 0;
+			if (n.fly) {
+				const k = Math.min(1, n.age / COMBAT_FX.parry.travel);
+				n.x = n.fly.x0 + (n.fly.x1 - n.fly.x0) * k;
+				n.y = n.fly.y0 + (n.fly.y1 - n.fly.y0) * k;
+				if (k >= 1) n.y -= 15 * (n.age - COMBAT_FX.parry.travel);
+			} else {
+				n.y -= 30 * dt;
+			}
+			if (n.crit) {
+				const c = COMBAT_FX.crit;
+				const pop = Math.max(0, 1 - n.age / c.popTime);
+				n.text.setScale(1 + (c.popScale - 1) * pop * pop);
+				shakeX = Math.sin(n.age * 90) * c.shake * Math.max(0, 1 - n.age / c.shakeTime);
+			}
+			n.text.setPosition(n.x + shakeX, n.y);
 			n.text.setAlpha(Math.min(1, Math.max(0, n.life / NUMBER_LIFE)));
 			if (n.life <= 0) n.text.setVisible(false);
 		}

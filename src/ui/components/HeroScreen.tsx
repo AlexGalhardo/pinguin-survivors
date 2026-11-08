@@ -4,7 +4,8 @@ import { type I18nKey, t } from '../../i18n';
 import { AtlasIcon } from './AtlasIcon';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
-import { AdjustRow, MenuScreen } from './MenuScreen';
+import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
+import { Bar, Filet, Hint } from './Panel';
 
 export interface HeroScreenData {
 	/** Unlocked heroes the player can switch between. */
@@ -66,24 +67,28 @@ export function HeroScreen({
 			title={t(tab === 'hero' ? 'hero.title' : 'workshop.title')}
 			onBack={actions.back}
 			wide
+			subtitle={t(tab === 'hero' ? 'hero.desc' : 'workshop.desc')}
+			footer={<BackBtn onBack={actions.back} label={t('menu.back')} />}
 		>
-			<div className="flex gap-2">
+			<div className="flex justify-center gap-2">
 				<Btn
 					onActivate={() => setTab('hero')}
-					className={tab === 'hero' ? 'border-crit text-crit' : 'border-snow'}
+					variant={tab === 'hero' ? 'primary' : 'secondary'}
+					className="min-w-40"
 				>
 					{t('menu.hero')}
 				</Btn>
 				<Btn
 					onActivate={() => setTab('workshop')}
-					className={tab === 'workshop' ? 'border-crit text-crit' : 'border-snow'}
+					variant={tab === 'workshop' ? 'primary' : 'secondary'}
+					className="min-w-40"
 				>
 					{t('menu.workshop')}
 				</Btn>
 			</div>
 
 			{tab === 'hero' ? (
-				<div className="grid w-full grid-cols-2 gap-[3vw]">
+				<div className="grid w-full grid-cols-1 gap-[2vw] min-[1000px]:grid-cols-2">
 					<section className="flex flex-col gap-2">
 						<AdjustRow
 							label={`${label(`hero.${data.hero}`)} · ${t('select.level', { n: data.level })} · ${t('hero.xp', { xp: Math.floor(data.xp), next: data.xpNext })}`}
@@ -91,6 +96,7 @@ export function HeroScreen({
 							onNext={() => actions.selectHero(other(1))}
 							disabled={data.heroes.length < 2}
 						/>
+						<Bar percent={data.xpNext > 0 ? (data.xp / data.xpNext) * 100 : 0} />
 						<div className="text-center font-bold text-crit">
 							{t('hero.points', { n: data.points })}
 						</div>
@@ -127,6 +133,7 @@ export function HeroScreen({
 								})}
 							</Btn>
 						))}
+						<Hint>{t('hero.gambitHint')}</Hint>
 						{data.gambits.map((g, slot) => (
 							// Slots are a fixed list of 3, so the position is the identity.
 							// biome-ignore lint/suspicious/noArrayIndexKey: fixed-size slot list
@@ -155,7 +162,7 @@ export function HeroScreen({
 					</section>
 				</div>
 			) : (
-				<div className="flex w-full max-w-[44rem] flex-col gap-2">
+				<div className="mx-auto flex w-full max-w-[44rem] flex-col gap-2">
 					<div className="flex items-center justify-center gap-2 font-bold text-fish">
 						<AtlasIcon frames={['icon.currency.pearl']} size={32} />
 						{t('workshop.fish', { pearls: data.pearls })}
@@ -179,28 +186,29 @@ export function HeroScreen({
 							})}
 						</Btn>
 					))}
+					{data.weaponUnlocks.length > 0 && (
+						<>
+							<Filet className="mt-2" />
+							<div className="text-center font-bold text-fish">
+								{t('workshop.weapons', { hero: t(`hero.${data.hero}` as I18nKey) })}
+							</div>
+							{data.weaponUnlocks.map((u) => (
+								<Btn
+									key={u.weapon}
+									onActivate={() => actions.buyWeapon(u.weapon)}
+									disabled={data.pearls < u.cost}
+									className="border-snow text-left font-normal"
+								>
+									{t('workshop.weaponRow', {
+										name: weaponName(u.weapon),
+										price: u.cost,
+									})}
+								</Btn>
+							))}
+						</>
+					)}
 				</div>
 			)}
-			{tab === 'workshop' && data.weaponUnlocks.length > 0 && (
-				<div className="flex w-full max-w-[44rem] flex-col gap-2">
-					<div className="text-center font-bold text-fish">
-						{t('workshop.weapons', { hero: t(`hero.${data.hero}` as I18nKey) })}
-					</div>
-					{data.weaponUnlocks.map((u) => (
-						<Btn
-							key={u.weapon}
-							onActivate={() => actions.buyWeapon(u.weapon)}
-							disabled={data.pearls < u.cost}
-							className="border-snow text-left font-normal"
-						>
-							{t('workshop.weaponRow', { name: weaponName(u.weapon), price: u.cost })}
-						</Btn>
-					))}
-				</div>
-			)}
-			<Btn onActivate={actions.back} className="border-snow">
-				{t('menu.back')}
-			</Btn>
 		</MenuScreen>
 	);
 }

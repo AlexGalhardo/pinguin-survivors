@@ -138,10 +138,10 @@ export function roundClearPearls(round: number): number {
 	return base + (isBossRound(round) ? PEARLS.boss : 0);
 }
 
-/** Shop candidates for a hero from the weapon lines: one entry per tier, same id (never both). */
+/** Shop candidates for a hero: one entry per rarity I–III, same id (IV and V are drops, ADR-017). */
 export function weaponCandidates(hero: HeroId): ShopCandidate[] {
 	return WEAPON_LINES.filter((w) => !w.hero || w.hero === hero).flatMap((w) =>
-		WEAPON_TIERS.map(
+		WEAPON_TIERS.filter((tier) => tier <= SHOP.maxRarity).map(
 			(tier): ShopCandidate => ({
 				kind: 'weapon',
 				id: w.id,
@@ -163,10 +163,12 @@ export function gearCandidates(): ShopCandidate[] {
 	}));
 }
 
-/** Run potions, sold from `SHOP.potionsFromRound` on (RF-09); empty before that. */
+/** Speed potions only, sold from `SHOP.potionsFromRound` on (RF-09); empty before that. */
 export function potionCandidates(round: number): ShopCandidate[] {
 	if (round < SHOP.potionsFromRound) return [];
-	return POTION_TYPES.map((id) => ({ kind: 'potion', id, tier: 1, sets: [] }));
+	return POTION_TYPES.filter((id) => (SHOP.potions as readonly string[]).includes(id)).map(
+		(id) => ({ kind: 'potion', id, tier: 1, sets: [] }),
+	);
 }
 
 /** Everything the shop of `round` can offer a hero (weapons, gear and, later, potions). */
@@ -193,10 +195,13 @@ export function purchase(
 	run.shop = bought.state;
 	run.fish = bought.fish;
 	if (offer.kind === 'weapon')
-		addWeapon(ctx.build, offer.id as WeaponId, offer.tier as WeaponTier);
+		addWeapon(ctx.build, offer.id as WeaponId, offer.tier as WeaponTier, offer.affixes);
 	else if (offer.kind === 'gear') {
 		run.gear = run.gear ?? emptyGear();
-		pickUpGear(run.gear, ctx.stats, offer.id);
+		pickUpGear(run.gear, ctx.stats, offer.id, {
+			rarity: offer.tier as 1 | 2 | 3,
+			affixes: offer.affixes ?? [],
+		});
 	} else if (offer.kind === 'potion') {
 		const id = offer.id as PotionType;
 		run.shopPotions[id] = (run.shopPotions[id] ?? 0) + 1;

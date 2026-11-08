@@ -140,7 +140,7 @@ describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
 		expect(gear.length).toBeGreaterThan(0);
 		expect(new Set(gear.map((g) => g.tier))).toEqual(new Set([1, 2, 3]));
 		expect(potionCandidates(4)).toEqual([]);
-		expect(potionCandidates(5).map((p) => p.id)).toContain('heal');
+		expect(potionCandidates(5).map((p) => p.id)).toEqual(['haste']);
 	});
 
 	test('mixed pool offers weapons, gear and potions over many seeds', () => {

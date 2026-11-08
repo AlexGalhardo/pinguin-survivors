@@ -40,3 +40,6 @@ apps/mobile/android/app/src/main/assets/capacitor.plugins.json
 apps/mobile/*.keystore
 apps/mobile/*.jks
 apps/desktop/build/
+
+# Referências visuais de terceiros (screenshots de Brotato e Diablo 4): uso interno, copyright dos autores
+references/

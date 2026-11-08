@@ -93,8 +93,11 @@ describe('Shop', () => {
 				null,
 			],
 		});
-		const { getByText, container } = render(<Shop data={d} actions={a} />);
-		expect(getByText('Emperor Crown').className).toContain('text-rarity-legendary');
+		const { getByText, getAllByText, container } = render(<Shop data={d} actions={a} />);
+		// Rarity III is green on the single I-V scale (palette.rarity3).
+		expect(
+			getAllByText('Emperor Crown')[0]?.closest('[style]')?.getAttribute('style') ?? '',
+		).toMatch(/4fd06a|79, 208, 106/i);
 		expect(getByText('Heal')).toBeTruthy();
 		expect(container.textContent).toContain('Potion');
 		fireEvent.click(getByText('BUY · 9'));
@@ -125,6 +128,40 @@ describe('Shop', () => {
 		fireEvent.click(getByText('BUY · 14'));
 		const noFish = [0, 0.4, 0.9].map((r) => merchantLine('noFish', () => r));
 		expect(noFish).toContain(getByRole('status').textContent ?? '');
+		cleanup();
+	});
+
+	test('the focused offer explains what buying does, with stats before and after in colour', () => {
+		const { a } = actions();
+		const d = data({
+			offers: [
+				{
+					kind: 'gear',
+					id: 'helmet.wool',
+					tier: 1,
+					price: 18,
+					sets: [],
+					description: {
+						kind: 'gear',
+						id: 'helmet.wool',
+						rarity: 1,
+						numeral: 'I',
+						price: 18,
+						outcome: { type: 'equip', slot: 'helmet' },
+						affixes: [],
+						baseStats: { maxHp: 6 },
+						newAffixes: 0,
+						statChanges: [{ stat: 'maxHp', before: 140, after: 146 }],
+					},
+				},
+				null,
+				null,
+				null,
+			],
+		});
+		const { container, getByText } = render(<Shop data={d} actions={a} />);
+		expect(container.textContent).toContain('Worn at once (helmet).');
+		expect(getByText('max HP 140 → 146').className).toContain('text-xp');
 		cleanup();
 	});
 });

@@ -1,4 +1,4 @@
-import { HERO_IDS, type HeroId } from '../config/constants';
+import { GAME_SPEEDS, type GameSpeed, HERO_IDS, type HeroId } from '../config/constants';
 import {
 	type AchievementDef,
 	FEATS,
@@ -51,6 +51,8 @@ export interface Settings {
 	/** Accessibility: damage number scale and softer flashes (PLAN 7.1). */
 	numberSize: NumberSize;
 	reducedFlashes: boolean;
+	/** Speed a round starts at; TAB changes it and it is remembered. */
+	gameSpeed: GameSpeed;
 	keys: KeyBinds;
 	damageNumbers: boolean;
 	resolution: ResolutionId;
@@ -138,6 +140,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			bloomOptIn: false,
 			numberSize: 'normal',
 			reducedFlashes: false,
+			gameSpeed: 1,
 			keys: { ...DEFAULT_BINDS },
 			damageNumbers: true,
 			resolution: 'auto',
@@ -241,6 +244,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		bloomOptIn: bool(s.bloomOptIn, base.settings.bloomOptIn),
 		numberSize: oneOf(s.numberSize, NUMBER_SIZES, base.settings.numberSize),
 		reducedFlashes: bool(s.reducedFlashes, base.settings.reducedFlashes),
+		gameSpeed: GAME_SPEEDS.find((v) => v === s.gameSpeed) ?? base.settings.gameSpeed,
 		keys: parseBinds(s.keys),
 		damageNumbers: bool(s.damageNumbers, base.settings.damageNumbers),
 		resolution: oneOf(s.resolution, RESOLUTION_IDS, base.settings.resolution),

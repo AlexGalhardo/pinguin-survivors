@@ -6,7 +6,7 @@ import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import { STARTING_WEAPONS } from '../../data/unlocks';
-import { WEAPON_LINE_BY_ID } from '../../data/weapons';
+import { WEAPON_LINE_BY_ID, weaponTierStats } from '../../data/weapons';
 import { bossForRound, enemyPoolForRound } from '../biome';
 import {
 	addWeapon,
@@ -20,6 +20,7 @@ import {
 import { drawCards } from '../cards';
 import { armorReduction } from '../combat';
 import { extraWaves } from '../difficulty';
+import { emptyGear, rollItemDrops } from '../equipment';
 import { orbXp } from '../progression';
 import { Rng } from '../rng';
 import {
@@ -28,6 +29,7 @@ import {
 	eliteTiers,
 	hpMul,
 	isBossRound,
+	isEliteRound,
 	roundDuration,
 	spawnRate,
 } from '../round';
@@ -36,7 +38,7 @@ import { defaultSave } from '../save';
 import { addStat, heroStats, type PlayerStats, type PointStat } from '../stats';
 import { applyUpgrades } from '../upgrades';
 import { pickBest } from './card-policy';
-import { makeTaste, playShop } from './shop-policy';
+import { makeTaste, playShop, takeDrop } from './shop-policy';
 
 /**
  * Headless balance model (PLAN 3.2): a per-step approximation of a run using the real data,
@@ -139,7 +141,7 @@ export function weaponDps(
 	single = false,
 ): number {
 	const def = WEAPON_LINE_BY_ID[w.id];
-	const t = def.tiers[w.tier - 1] as (typeof def.tiers)[number];
+	const t = weaponTierStats(def, w.tier);
 	const x = t.extra;
 	const hit = t.damage * stats.tagMul[def.classTag] * stats.damage * critAvg(stats);
 	const rate = stats.attackSpeed / t.cooldown;
@@ -258,6 +260,9 @@ export function simulateRun(config: SimConfig): SimResult {
 	const danger = config.danger ?? 1;
 	const mods = DANGER[danger];
 	const waves = extraWaves(config.seed, danger);
+	const gear = emptyGear();
+	// Drops use their own stream so adding or tuning them never reshuffles the shop and card draws.
+	const dropRng = new Rng((config.seed ^ 0x7f4a7c15) >>> 0);
 	const run = createRunState(hero, { seed: config.seed });
 	// A shopper with favourites and a noisy pick, not a pure DPS maximizer (docs A3/A4).
 	const preference = {
@@ -340,7 +345,7 @@ export function simulateRun(config: SimConfig): SimResult {
 				kills += cleared;
 				const main = build.weapons[0] as WeaponInstance;
 				const mainDef = WEAPON_LINE_BY_ID[main.id];
-				const mainTier = mainDef.tiers[main.tier - 1] as (typeof mainDef.tiers)[number];
+				const mainTier = weaponTierStats(mainDef, main.tier);
 				const burst =
 					mainTier.damage *
 					(mainTier.extra.count ?? 1) *
@@ -374,6 +379,21 @@ export function simulateRun(config: SimConfig): SimResult {
 		perRound.push(taken);
 		if (isBossRound(round) && bossHp > 0) return result(round, true);
 		hp = Math.min(eff.maxHp, hp + eff.maxHp * ROUNDS.roundEndHeal);
+		// Rarity IV drops from Elites and V from the Boss (ADR-017): expected kills of the round. Only
+		// weapon drops are modelled; equipment is not (as before: the sim has no gear).
+		const eliteShare = isEliteRound(round)
+			? ROUNDS.purpleShare + (round >= ROUNDS.orangeFrom ? ROUNDS.orangeShare : 0)
+			: 0;
+		const elites = Math.round(spawnRate(round) * duration * eliteShare);
+		for (let k = 0; k < elites; k++) {
+			for (const drop of rollItemDrops(dropRng, 'elite', { round, hero: config.hero }))
+				if (drop.kind === 'weapon') takeDrop(build, gear, stats, drop);
+		}
+		if (isBossRound(round)) {
+			for (const drop of rollItemDrops(dropRng, 'boss', { round, hero: config.hero }))
+				if (drop.kind === 'weapon') takeDrop(build, gear, stats, drop);
+		}
+		eff = effectiveStats(stats, build);
 		const offers = drawCards(
 			rng,
 			{ hero: config.hero, round: round + 1, luck: stats.luck, build },
