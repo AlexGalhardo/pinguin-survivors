@@ -8,6 +8,8 @@ export const ECONOMY = {
 		commonChance: 0.05,
 		elitePurple: 3,
 		eliteOrange: 6,
+		/** Fish a run starts with: enough for one tier I weapon in the first shop (price 8 + 2 per round). */
+		start: 10,
 		roundEndBase: 2,
 		bossPerCycle: 25,
 	},

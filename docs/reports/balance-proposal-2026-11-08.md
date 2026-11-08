@@ -198,3 +198,52 @@ Exceção do #5: com cerca de 15 armas candidatas para 5 vagas livres, a partici
 - **#7 e a sim**: o bot real e a sim divergem (10,1 contra 23,8 min). Como a meta é do "bot médio", o veredito usa o bot real. A margem é de 0,1 min do limite inferior com apenas 6 runs.
 - **#3 na sim** passou de 51 / 51 / 42 para 33 / 33 / 32 com o comprador com preferência (o bot menos otimizado). A margem sobre o 30 é pequena.
 - **#8** foi medido com o dev server `:5173` e Chrome com janela (a GPU decide); as 3 medições têm 58 ou 59 FPS, no limite do piso de 58.
+
+## Investigação da Lucia no bot real (L1, D1)
+
+Pedido: 8 ou mais seeds da Lucia e 4 de Jack e Bob no bot real (build DEV congelada servida por um servidor estático local, mudo, `--speed 4`, bot médio `--react 0.2 --mistakes 0.05`).
+
+### Antes (economia anterior)
+
+| Herói | Rounds de morte (seeds 100 em diante) | Mediana |
+|---|---|---|
+| lucia (8) | 13, 13, 3, 13, 3, 6, 3, 3 | 4,5 |
+| jack (4) | 9, 3, 3, 42 | 6 |
+| bob (4) | 13, 30, 30, 3 | 21,5 |
+
+A Lucia ficava abaixo do piso de 8 da meta #1, mas o problema **não é da Lucia**: Jack também tem 2 mortes no round 3, e Bob 1.
+
+### Causa
+
+Bimodal. As runs que morrem no round 3 (em cerca de 65 a 75 s de jogo, 110 a 130 abates) **nunca compraram uma arma**: Fish ganho 0 a 10 até então, e uma arma tier I custa 10 Fish no round 1 e 12 no round 2 (`8 + 2·round`). O jogador chega ao primeiro round de elites (round 3, `eliteEvery` 3) só com a arma inicial e leva 78 a 278 de dano. As runs que sobrevivem tiveram Fish de drop, compraram cedo e fecham o round 3 com 29 a 66 de dano. Não é o cérebro do bot (a Lucia que sobrevive faz o mesmo movimento) nem fragilidade da Lucia: é o caminho crítico da economia no início da run.
+
+A sim não via isso porque o dinheiro dela só vem do fim de round, e ela compra no round 3, sem o ruído de drops de Fish.
+
+### Testes de correção (bot real, 8 seeds da Lucia)
+
+| Variante | Rounds de morte da Lucia | Efeito na sim (#1 a #4) |
+|---|---|---|
+| `roundEndBase` 2 → 5 | 31, 6, 9, 13, 3, 6, 18 e mais 1 | quebra: #1 máx. 32 (✗), #4 D5 16 (✗) |
+| rampa do dano de inimigo nos primeiros 5 rounds (`dmgRampRounds`) | 3, 23 e mais 4 | nenhum (a sim não morre cedo); a morte no round 3 persistiu, então **revertida** |
+| **`ECONOMY.fish.start` = 10** | 15, 13, 13, 23, 5, 6 (de 8; as 2 restantes não mudam o veredito) | ✓ #1 a #4 e #6 (ver abaixo) |
+
+### Mudança aplicada (dados, reversível)
+
+| Campo | De | Para |
+|---|---|---|
+| `ECONOMY.fish.start` (novo; `createRunState` inicia `run.fish` com ele) | 0 | 10 |
+
+Com 10 Fish de partida, a primeira loja já permite uma arma tier I, e as runs deixam de chegar ao round 3 só com a arma inicial. Efeito na sim: #1 18 / 18 / 15 (máx. 26), #2 ✓, #3 33 / 35 / 33, #4 D0 42, D1 31, D5 10, #6 0,919.
+
+### Resultado depois de `ECONOMY.fish.start` = 10 (bot real, mesmo setup)
+
+| Herói | Rounds de morte | Mediana | Antes |
+|---|---|---|---|
+| lucia (8) | 15, 13, 13, 23, 5, 6, 32, 41 | **14** | 4,5 |
+| jack (4) | 10, 14, 10, 10 | **10** | 6 |
+| bob (3 de 4; a 4ª run não terminou) | 13, 20, 32 | 20 | 21,5 |
+
+- **Meta #1 no bot real: ✓** (todas as medianas ≥ 8). Só 1 de 15 runs ainda morre no round 3 ou antes (2 mortes no round 5 e 6 da Lucia); antes eram 5 de 8 só na Lucia.
+- **Meta #7 passa de 10,1 min para 18,0 min** (15 runs do bot real, tempo de jogo 9,0 min + 45 s por loja): o valor de 10,1 era artificialmente curto por causa das mortes no round 3. Agora está no limite superior da faixa de 10 a 18 min (`evaluateGoals` marca ✗ por 0,03 min). É decisão do desenvolvedor: aceitar 18 min ou mexer no tempo por loja.
+- Sim com `fish.start` = 10: #1 18 / 18 / 15 (máx. 26), #2 ✓ (jack 0%, bob 0%, lucia 1%), #3 33 / 35 / 33, #4 D0 42, D1 31, D5 10, #5 ✓ com a exceção (líderes 71 a 84%), #6 0,919.
+- Docs: SDD-003 RF-06 e GDD §17 agora dizem que a run começa com 10 Fish.

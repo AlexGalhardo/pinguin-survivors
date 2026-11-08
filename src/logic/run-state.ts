@@ -90,7 +90,7 @@ export function createRunState(
 		maxHp: hero.hp,
 		kills: 0,
 		xp: 0,
-		fish: 0,
+		fish: ECONOMY.fish.start,
 		superCharge: 0,
 		elapsed: 0,
 		damageDealt: 0,

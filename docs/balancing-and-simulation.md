@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.7 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.8 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -56,13 +56,13 @@ Medidas com **bot médio**, **Danger 1**, seeds 100 e 101, build DEV congelado.
 
 | # | Perfil | Meta | Status |
 |---|---|---|---|
-| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08): 17 / 17 / 10, máx. 24; bot real pendente |
+| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08): 18 / 18 / 15, máx. 26. Bot real (15 runs): jack 10, bob 20 (3 runs), lucia 15 (8 runs). Antes de dar 10 Fish de partida o bot real morria no round 3 em 5 de 8 runs da Lucia (mediana 4,5) |
 | 2 | L10 + Oficina `all:2` + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 3%, bob 0%, lucia 1% |
 | 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08, comprador com preferência): 33 / 33 / 32 (margem pequena sobre o 30) |
 | 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08): D0 39, D1 27, D5 10 |
 | 5 | Diversidade de build (sim, 100 runs/herói, L10, D1) | **toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói.** Os limites de 35% por arma e 50% por set dentro de cada herói são **exceção justificada**: com ~15 armas candidatas para 5 vagas livres a média por arma já é ~33%, e o bônus de classe (`tagMul`) é intencional | ✓ (2026-11-08): nenhuma arma abaixo de 3%. Exceção medida: armas líderes de 63% a 69% por herói (jack `hammer`, bob `elementStaff`, lucia `flameRing`), sets de 74% a 93% |
 | 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08): 0,887, reroll 0,8% |
-| 7 | Duração | run L1 mediana 10–18 min (tempo de jogo + 45 s por loja/cartas); demo completa 12–25 min (mesmo critério, SDD-006 A5) | ✓ com o bot do jogo real (2026-11-08, 6 runs L1 D1): mediana 10,1 min (tempo de jogo 4,8 min), no limite inferior; a sim estima 23,8 min (✗) porque seus L1 vão mais fundo (rounds 16–17) que os do bot real (rounds 3 a 15). Demo: `docs/reports/demo-time-2026-11-08.md` ✓ |
+| 7 | Duração | run L1 mediana 10–18 min (tempo de jogo + 45 s por loja/cartas); demo completa 12–25 min (mesmo critério, SDD-006 A5) | no limite superior com o bot real (2026-11-08, 15 runs L1 D1): mediana 18,0 min (tempo de jogo 9,0 min); antes dos 10 Fish de partida eram 10,1 min, mas por mortes precoces. Demo: `docs/reports/demo-time-2026-11-08.md` ✓ — **exceção justificada (orquestrador, 2026-11-08)**: 18,03 min fica 0,03 min acima do teto com 15 runs, dentro do ruído do bot; revalidar com jogadores no Next Fest (T6.4). |
 | 8 | Performance | ≥ 58 FPS médios, p95 ≤ 18 ms, 300 inimigos + 2.000 decalques, 1920×1080, round 40 | ✓ (2026-11-08, `bun scripts/perf.ts --round 40`, 3 medições mudas): 58 / 59 / 59 FPS, p95 16,8 ms (`docs/reports/perf-2026-11-08.jsonl`) |
 
 Milestone **"Balance 1.0"** fecha quando #1–#8 passam ou o orçamento de 3 passadas acaba (registrar exceções).

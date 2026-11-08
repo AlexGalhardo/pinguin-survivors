@@ -242,7 +242,7 @@ Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool pró
 
 | Moeda | Escopo | Ganho | Gasto |
 |---|---|---|---|
-| **Fish 🐟** | run (zera) | drop de inimigos (5% comuns, garantido em elites), fim de round `2 + floor(N/2)` × harvesting, boss | loja, reroll, poções de run |
+| **Fish 🐟** | run (começa com 10; não passa para a próxima run) | drop de inimigos (5% comuns, garantido em elites), fim de round `2 + floor(N/2)` × harvesting, boss | loja, reroll, poções de run |
 | **Pérolas** | persistente | round concluído, boss, conquistas, conversão do Fish restante (10:1) | Oficina (9 upgrades), gambits, armas iniciais |
 
 Preços de loja e reroll em `src/data/economy.ts` (SDD-003); Oficina em balancing-and-simulation.md Parte B §8b.

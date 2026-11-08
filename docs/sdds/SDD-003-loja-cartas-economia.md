@@ -9,7 +9,7 @@
 - RF-03 Preço de arma por tier: `price(tier, round) = [8, 20, 45, 90][tier-1] + 2·round`; item por tier idem ×0,8; equipamento por raridade `[12, 30, 70]` + 2·round. Venda de arma devolve 50%.
 - RF-04 Sorteio de ofertas ponderado por tier (probabilidade por round como as raridades de carta), sorte e +15% de peso para sets já presentes na build.
 - RF-05 **Level-up**: fila `pendingLevelUps`; cada um abre 4 cartas (stats e exclusivas, nunca armas/itens); 1 reroll de carta por run comprado com Pérolas na Oficina (upgrade novo `insight`). Cartas se resolvem antes da loja se o level subiu no fim do round.
-- RF-06 **Fish**: `RunState.fish` zera ao começar a run; drop 5% comuns, elite 3/6, fim de round `(2 + floor(N/2)) · (1 + harvesting)`, boss `25·(1+ciclo)`. Ao fim da run, `pearls += floor(fish / 10)`.
+- RF-06 **Fish**: `RunState.fish` começa a run com `ECONOMY.fish.start` (10, o bastante para uma arma tier I na 1ª loja; sem isso o bot real morria no round 3 sem ter comprado nada) e não passa de uma run para outra; drop 5% comuns, elite 3/6, fim de round `(2 + floor(N/2)) · (1 + harvesting)`, boss `25·(1+ciclo)`. Ao fim da run, `pearls += floor(fish / 10)`.
 - RF-07 **Pérolas**: `SaveData.pearls`; ganho por round concluído `1 + floor(N/5)`, boss `+25`, conquista `+5`; gasto em Oficina, gambits, desbloqueios de arma inicial. Migração: `pearls = fish` antigo (1:1).
 - RF-08 Stat `harvesting` (novo, base 0) nas cartas e itens.
 - RF-09 Poções de run à venda na loja a partir do round 5 (consumidas pelo gambit "início do round").

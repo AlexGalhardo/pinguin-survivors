@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { ECONOMY } from '../src/data/economy';
 import { HEROES } from '../src/data/heroes';
 import { WEAPON_LINES } from '../src/data/weapons';
 import { addWeapon, emptyBuild } from '../src/logic/build';
@@ -70,13 +71,13 @@ describe('shop flow, Fish and Pearls', () => {
 		expect(ids('jack').has(exclusive?.id as string)).toBe(false);
 	});
 
-	test('end of round opens the shop with 4 offers; fish starts at 0', () => {
+	test('end of round opens the shop with 4 offers; fish starts at the grant', () => {
 		const s = createRunState(HEROES.jack, { seed: 1 });
-		expect(s.fish).toBe(0);
+		expect(s.fish).toBe(ECONOMY.fish.start);
 		endRound(s, roll());
 		expect(s.phase).toBe('shop');
 		expect(s.shop?.offers).toHaveLength(4);
-		expect(s.fish).toBe(2);
+		expect(s.fish).toBe(ECONOMY.fish.start + 2);
 	});
 
 	test('pending level-ups resolve before the shop opens', () => {
