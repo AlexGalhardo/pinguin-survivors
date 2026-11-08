@@ -3,7 +3,7 @@ import type { HeroId } from '../../config/constants';
 import type { TreeNode } from '../../data/skill-tree';
 import { type I18nKey, t } from '../../i18n';
 import { formatStat } from '../../logic/format';
-import { canRefund, heroTree, pathTo, treeStats } from '../../logic/skill-tree';
+import { canRefund, heroTree, pathTo, rankOf, treeStats } from '../../logic/skill-tree';
 import type { StatKey } from '../../logic/stats';
 import { useFocusable } from '../focus';
 import { Btn } from './Btn';
@@ -58,6 +58,14 @@ function statLines(stats: TreeNode['stats']): string[] {
 	);
 }
 
+/** Stats of `rank` ranks of a node (ranked nodes add their stats again per rank). */
+function scaleStats(stats: TreeNode['stats'], rank: number): TreeNode['stats'] {
+	const out: TreeNode['stats'] = {};
+	for (const [key, value] of Object.entries(stats) as [StatKey, number][])
+		out[key] = value * rank;
+	return out;
+}
+
 function nodeTitle(node: TreeNode): string {
 	if (node.name) return t(`tree.n.${node.name}` as I18nKey);
 	if (node.kind === 'start') return t('tree.start');
@@ -69,6 +77,8 @@ function NodeBtn(props: {
 	x: number;
 	y: number;
 	allocated: boolean;
+	/** Ranks taken (ranked nodes show `rank/max`). */
+	rank: number;
 	onPath: boolean;
 	match: boolean;
 	onActivate: () => void;
@@ -111,7 +121,13 @@ function NodeBtn(props: {
 							? `0 0 8px ${color}`
 							: undefined,
 			}}
-		/>
+		>
+			{node.maxRank > 1 && (
+				<span className="pointer-events-none absolute -right-3 -bottom-3 rounded bg-night px-0.5 text-[0.65rem] leading-none font-bold text-gold-bright tabular-nums">
+					{props.rank}/{node.maxRank}
+				</span>
+			)}
+		</button>
 	);
 }
 
@@ -197,10 +213,21 @@ export function SkillTree({
 	const isAllocated = node ? allocated.has(node.id) : false;
 	const refundable = node ? canRefund(tree, data.allocated, node.id) : false;
 
+	// Touch: the first tap on a node selects it (details and path preview), a second tap on the
+	// same node allocates or refunds it. Mouse and keyboard keep the one-step behavior.
+	const pointerType = useRef('mouse');
 	const activate = (n: TreeNode): void => {
+		// A drag that ended on a node is not a tap.
+		if (moved.current) return;
+		if (pointerType.current === 'touch' && selected !== n.id) {
+			setSelected(n.id);
+			return;
+		}
 		setSelected(n.id);
-		if (allocated.has(n.id)) actions.refund(n.id);
-		else actions.allocate(n.id);
+		const r = rankOf(data.allocated, n.id);
+		// Enter adds a rank while the node can take one; on a full or single-rank node it refunds.
+		if (r === 0 || r < n.maxRank) actions.allocate(n.id);
+		else actions.refund(n.id);
 	};
 
 	// Drag to pan (mouse, pen and touch, also when the finger starts on a node); two fingers pinch to
@@ -225,6 +252,19 @@ export function SkillTree({
 		drag.current = { x: e.clientX, y: e.clientY, camX: cam.x, camY: cam.y };
 	};
 	const onPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
+		if (pointers.current.has(e.pointerId))
+			pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+		if (pointers.current.size === 2) {
+			moved.current = true;
+			const ratio = spread() / (pinchBase.current || 1);
+			if (ratio > 1.25 || ratio < 0.8) {
+				setZoomIndex((z) =>
+					Math.max(0, Math.min(ZOOMS.length - 1, z + (ratio > 1 ? 1 : -1))),
+				);
+				pinchBase.current = spread();
+			}
+			return;
+		}
 		const d = drag.current;
 		if (!d) return;
 		if (!moved.current && Math.hypot(e.clientX - d.x, e.clientY - d.y) > 8) {
@@ -234,16 +274,7 @@ export function SkillTree({
 		}
 		if (moved.current)
 			setCam({ x: d.camX + e.clientX - d.x, y: d.camY + e.clientY - d.y, smooth: false });
-	// Touch: the first tap on a node selects it (details and path preview), a second tap on the
-	// same node allocates or refunds it. Mouse and keyboard keep the one-step behavior.
-	const pointerType = useRef('mouse');
 	};
-		// A drag that ended on a node is not a tap.
-		if (moved.current) return;
-		if (pointerType.current === 'touch' && selected !== n.id) {
-			setSelected(n.id);
-			return;
-		}
 	const stopDrag = (e: React.PointerEvent<HTMLDivElement>): void => {
 		pointers.current.delete(e.pointerId);
 		if (pointers.current.size < 2) pinchBase.current = 0;
@@ -260,25 +291,16 @@ export function SkillTree({
 	};
 
 	const i = data.heroes.indexOf(data.hero);
-		if (pointers.current.has(e.pointerId))
-			pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-		if (pointers.current.size === 2) {
-			moved.current = true;
-			const ratio = spread() / (pinchBase.current || 1);
-			if (ratio > 1.25 || ratio < 0.8) {
-				setZoomIndex((z) =>
-					Math.max(0, Math.min(ZOOMS.length - 1, z + (ratio > 1 ? 1 : -1))),
-				);
-				pinchBase.current = spread();
-			}
-			return;
-		}
 	const other = (d: number): HeroId =>
 		data.heroes[(i + d + data.heroes.length) % data.heroes.length] ?? data.hero;
 
+	const rank = node ? rankOf(data.allocated, node.id) : 0;
+	const canRankUp = !!node && rank > 0 && rank < node.maxRank;
 	let action = t('tree.action.start');
 	if (node && node.id !== tree.start) {
-		if (isAllocated)
+		if (canRankUp)
+			action = data.points > 0 ? t('tree.action.rankUp') : t('tree.action.short', { n: 1 });
+		else if (isAllocated)
 			action = refundable
 				? t('tree.action.refund', { n: data.refundCost })
 				: t('tree.action.locked');
@@ -351,6 +373,13 @@ export function SkillTree({
 						onPointerDown={onPointerDown}
 						onPointerMove={onPointerMove}
 						onPointerUp={stopDrag}
+						onClickCapture={(e) => {
+							// A drag or a pinch ending over a node must not allocate it.
+							if (moved.current) {
+								e.stopPropagation();
+								moved.current = false;
+							}
+						}}
 						onPointerCancel={stopDrag}
 						onWheel={onWheel}
 						// Focusing a node must not scroll the clipped viewport: the camera moves instead.
@@ -373,13 +402,6 @@ export function SkillTree({
 								aria-hidden="true"
 								className="pointer-events-none absolute inset-0"
 								width={bounds.w * scale}
-						onClickCapture={(e) => {
-							// A drag or a pinch ending over a node must not allocate it.
-							if (moved.current) {
-								e.stopPropagation();
-								moved.current = false;
-							}
-						}}
 								height={bounds.h * scale}
 							>
 								{nodes.flatMap((a) =>
@@ -431,6 +453,7 @@ export function SkillTree({
 										x={p.x}
 										y={p.y}
 										allocated={allocated.has(n.id) || n.id === tree.start}
+										rank={rankOf(data.allocated, n.id)}
 										onPath={onPath.has(n.id)}
 										match={matches.has(n.id)}
 										onActivate={() => activate(n)}
@@ -462,8 +485,24 @@ export function SkillTree({
 									{line}
 								</div>
 							))}
+							{node.maxRank > 1 && (
+								<div className="text-gold-bright">
+									{t('tree.rank', { n: rank, max: node.maxRank })}
+									{rank > 1 &&
+										` · ${t('tree.rankTotal')} ${statLines(scaleStats(node.stats, rank)).join(', ')}`}
+								</div>
+							)}
 							{node.kind === 'keystone' && <Hint>{t('tree.keystoneHint')}</Hint>}
 							<div className="mt-1 font-bold text-crit">{action}</div>
+							{canRankUp && refundable && (
+								<Btn
+									onActivate={() => actions.refund(node.id)}
+									disabled={data.pearls < data.refundCost}
+									variant="danger"
+								>
+									{t('tree.refundOne', { n: data.refundCost })}
+								</Btn>
+							)}
 						</>
 					)}
 					<div className="mt-3 font-bold tracking-[0.14em] text-gold-bright uppercase">
