@@ -103,7 +103,7 @@ function saveFor(hero: HeroId, level: number): string {
 		version: 1,
 		settings: {
 			lang: 'en',
-			volume: { master: 0, music: 0, sfx: 0, voice: 0 },
+			volume: { master: 0, music: 0, sfx: 0 },
 			gore: 'reduced',
 			screenShake: false,
 			damageNumbers: false,

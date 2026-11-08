@@ -65,7 +65,7 @@ export class FxSystem {
 			.setDepth(OVERLAY_DEPTH - 1);
 	}
 
-	/** Sound effect with the Settings volumes and voice limits. */
+	/** Sound effect with the Settings volumes and polyphony limits. */
 	play(key: SfxKey, volume = 1): void {
 		sfx(this.scene, key, volume);
 	}

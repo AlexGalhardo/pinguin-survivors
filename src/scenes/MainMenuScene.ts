@@ -66,7 +66,7 @@ export class MainMenuScene extends Phaser.Scene {
 			],
 			{ x: 0, y: 0, fontSize: 14 },
 		);
-		// The title sits top-left, right above the menu panel (user request); no subtitle.
+		// The title sits top-left, right above the menu panel (user request); no tagline.
 		const titleAt = { x: 0, y: 0 };
 		let heading: Phaser.GameObjects.Text | undefined;
 		const placeTitle = () => heading?.setOrigin(0.5, 1).setPosition(titleAt.x, titleAt.y);

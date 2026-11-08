@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'bun:test';
-import { pitchRate, VoiceLimiter } from '../src/logic/voice-limiter';
+import { pitchRate, SfxLimiter } from '../src/logic/sfx-limiter';
 
-describe('VoiceLimiter', () => {
+describe('SfxLimiter', () => {
 	it('enforces the minimum interval between starts', () => {
-		const v = new VoiceLimiter(40);
+		const v = new SfxLimiter(40);
 		expect(v.tryStart('hit', 0, 100, 4)).toBe(true);
 		expect(v.tryStart('hit', 20, 100, 4)).toBe(false);
 		expect(v.tryStart('hit', 40, 100, 4)).toBe(true);
 	});
 
-	it('limits simultaneous voices per key', () => {
-		const v = new VoiceLimiter(0);
+	it('limits simultaneous instances per key', () => {
+		const v = new SfxLimiter(0);
 		expect(v.tryStart('a', 0, 1000, 2)).toBe(true);
 		expect(v.tryStart('a', 1, 1000, 2)).toBe(true);
 		expect(v.tryStart('a', 2, 1000, 2)).toBe(false);

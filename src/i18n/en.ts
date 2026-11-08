@@ -1,12 +1,10 @@
 import { achEn } from './achievements.en';
 import { cardsEn } from './cards.en';
 import { gearEn } from './gear.en';
-import { voiceEn } from './voice.en';
 
 export const en = {
 	...achEn,
 	...cardsEn,
-	...voiceEn,
 	...gearEn,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Loading…',
@@ -21,7 +19,7 @@ export const en = {
 	'menu.settings': 'SETTINGS',
 	'menu.back': 'BACK',
 	'menu.wallet': '{fish} fish · {points} achievement points',
-	'menu.subtitle': 'The last three penguins of the zombie apocalypse',
+	'menu.tagline': 'The last three penguins of the zombie apocalypse',
 	'select.title': 'CHOOSE YOUR PENGUIN',
 	'select.locked': 'LOCKED',
 	'select.unlockBob': 'Beat the round 10 boss',
@@ -47,7 +45,6 @@ export const en = {
 	'settings.fullscreen': 'Fullscreen: {v}',
 	'lang.en': 'English',
 	'lang.pt-BR': 'Português (BR)',
-	'settings.subtitles': 'Voice subtitles: {v}',
 	'settings.bloom': 'Bloom (glow): {v}',
 	'settings.numberSize': 'Damage number size: {v}',
 	'settings.reducedFlashes': 'Reduced flashes: {v}',
@@ -72,7 +69,6 @@ export const en = {
 	'settings.master': 'Master volume: {v}',
 	'settings.music': 'Music: {v}',
 	'settings.sfx': 'Sound effects: {v}',
-	'settings.voice': 'Voices: {v}',
 	'settings.gore': 'Gore: {v}',
 	'settings.shake': 'Screen shake: {v}',
 	'settings.numbers': 'Damage numbers: {v}',

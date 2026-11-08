@@ -74,7 +74,7 @@ Capacidade assumida: ~20 h de agente por semana úteis para implementação (hip
 
 Specs: [SDD-001](docs/sdds/SDD-001-arena-topdown.md), [SDD-010](docs/sdds/SDD-010-remocao-de-vozes.md), [SDD-005](docs/sdds/SDD-005-danger-e-save-v2.md) (parte save).
 
-- [ ] **T1.1** Remover vozes e legendas (SDD-010 RF-01…05) · Resp.: senior · Dep.: — · Est.: 4 h · DoD: SDD-010 A1–A5 · Assert: `rg -n "voice|subtitle|vo\." src tests scripts --glob '!**/voice-limiter*'` vazio; `bun run build` OK
+- [x] **T1.1** Remover vozes e legendas (SDD-010 RF-01…05) · Resp.: orquestrador · Dep.: — · Est.: 4 h · DoD: SDD-010 A1–A5 · Assert: `rg -n "voice|subtitle|vo\." src tests scripts --glob '!**/sfx-limiter*'` vazio; `bun run build` OK · Evidência (2026-11-08): grep vazio; `public/assets` 11M → 6.2M sem `audio/vo`; lint/typecheck/171 testes/build verdes; `bun run e2e` 11/11 ok; `voice-limiter` renomeado `sfx-limiter` (RF-03).
   - [ ] Auditoria: `du -sh public/assets` ≥ 3 MB menor que `6980b99`.
 - [ ] **T1.2** `src/logic/arena.ts` + `src/data/arena.ts` + testes (SDD-001 RF-01, RF-04) · Resp.: senior · Est.: 4 h · Assert: `bun test tests/arena.test.ts` (A1, A2 verdes)
   - [ ] Auditoria: ler o teste de propriedade com 1.000 pontos.

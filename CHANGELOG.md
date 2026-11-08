@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Hero voices and subtitles (ADR-009, SDD-010): `vo.*` audio, `src/core/voice.ts`, `src/data/voice.ts`, `src/logic/voice.ts`, the voice i18n tables, `scripts/el-voice.ts`, the ElevenLabs voice designs, the voice volume and subtitle settings and the HUD subtitle. The voiced build lives on the `legacy-voices` branch.
+
+### Changed
+
+- `VoiceLimiter` renamed to `SfxLimiter` (`src/logic/sfx-limiter.ts`) and the per-key `voices` field of `src/data/sfx.ts` to `polyphony`; `menu.subtitle` renamed to `menu.tagline`.
+
 ## [0.0.11] - 2026-11-08
 
 ### Added

@@ -28,7 +28,7 @@ export async function postAudio(path: string, body: unknown): Promise<ArrayBuffe
 	}
 }
 
-/** POST returning JSON (voice design endpoints); same retry policy as postAudio. */
+/** POST returning JSON (JSON endpoints); same retry policy as postAudio. */
 export async function postJson(path: string, body: unknown): Promise<unknown> {
 	const bytes = await postAudio(path, body);
 	return JSON.parse(new TextDecoder().decode(bytes));

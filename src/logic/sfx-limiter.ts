@@ -1,19 +1,19 @@
 /**
- * Decides whether a sound may start now: at most `maxVoices` overlapping instances
+ * Decides whether a sound may start now: at most `maxPolyphony` overlapping instances
  * of the same key and a minimum interval between two starts.
  */
-export class VoiceLimiter {
+export class SfxLimiter {
 	private readonly active = new Map<string, number[]>();
 	private readonly lastStart = new Map<string, number>();
 
 	constructor(private readonly minIntervalMs: number) {}
 
-	/** Returns true (and records the voice) if the sound can play at `nowMs`. */
-	tryStart(key: string, nowMs: number, durationMs: number, maxVoices: number): boolean {
+	/** Returns true (and records the instance) if the sound can play at `nowMs`. */
+	tryStart(key: string, nowMs: number, durationMs: number, maxPolyphony: number): boolean {
 		const last = this.lastStart.get(key);
 		if (last !== undefined && nowMs - last < this.minIntervalMs) return false;
 		const ends = (this.active.get(key) ?? []).filter((end) => end > nowMs);
-		if (ends.length >= maxVoices) {
+		if (ends.length >= maxPolyphony) {
 			this.active.set(key, ends);
 			return false;
 		}

@@ -40,10 +40,9 @@ export type NumberSize = (typeof NUMBER_SIZES)[number];
 
 export interface Settings {
 	lang: Lang;
-	volume: { master: number; music: number; sfx: number; voice: number };
+	volume: { master: number; music: number; sfx: number };
 	gore: GoreMode;
 	screenShake: boolean;
-	subtitles: boolean;
 	/** Opt-in bloom (renamed from `bloom`, which defaulted to on). */
 	bloomOptIn: boolean;
 	/** Accessibility: damage number scale and softer flashes (PLAN 7.1). */
@@ -122,10 +121,9 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 		version: SAVE_VERSION,
 		settings: {
 			lang,
-			volume: { master: 0.8, music: 0.6, sfx: 0.8, voice: 0.8 },
+			volume: { master: 0.8, music: 0.6, sfx: 0.8 },
 			gore: 'max',
 			screenShake: true,
-			subtitles: true,
 			bloomOptIn: false,
 			numberSize: 'normal',
 			reducedFlashes: false,
@@ -196,11 +194,9 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 			master: num(vol.master, base.settings.volume.master, 0, 1),
 			music: num(vol.music, base.settings.volume.music, 0, 1),
 			sfx: num(vol.sfx, base.settings.volume.sfx, 0, 1),
-			voice: num(vol.voice, base.settings.volume.voice, 0, 1),
 		},
 		gore: oneOf(s.gore, ['max', 'reduced', 'goo'] as const, base.settings.gore),
 		screenShake: bool(s.screenShake, base.settings.screenShake),
-		subtitles: bool(s.subtitles, base.settings.subtitles),
 		// Read from `bloomOptIn`: the old `bloom` key defaulted to on, and bloom washes large bright
 		// sprites (bosses) into white silhouettes and costs a lot of FPS, so everyone starts off.
 		bloomOptIn: bool(s.bloomOptIn, base.settings.bloomOptIn),

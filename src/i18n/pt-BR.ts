@@ -2,12 +2,10 @@ import { achPtBR } from './achievements.pt-BR';
 import { cardsPtBR } from './cards.pt-BR';
 import type { I18nKey } from './en';
 import { gearPtBR } from './gear.pt-BR';
-import { voicePtBR } from './voice.pt-BR';
 
 export const ptBR: Record<I18nKey, string> = {
 	...achPtBR,
 	...cardsPtBR,
-	...voicePtBR,
 	...gearPtBR,
 	'game.title': 'Pinguin Survivors',
 	'boot.loading': 'Carregando…',
@@ -22,7 +20,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'menu.settings': 'CONFIGURAÇÕES',
 	'menu.back': 'VOLTAR',
 	'menu.wallet': '{fish} peixes · {points} pontos de conquista',
-	'menu.subtitle': 'Os três últimos pinguins do apocalipse zumbi',
+	'menu.tagline': 'Os três últimos pinguins do apocalipse zumbi',
 	'select.title': 'ESCOLHA SEU PINGUIM',
 	'select.locked': 'BLOQUEADO',
 	'select.unlockBob': 'Vença o chefe do round 10',
@@ -48,7 +46,6 @@ export const ptBR: Record<I18nKey, string> = {
 	'settings.fullscreen': 'Tela cheia: {v}',
 	'lang.en': 'English',
 	'lang.pt-BR': 'Português (BR)',
-	'settings.subtitles': 'Legendas das falas: {v}',
 	'settings.bloom': 'Bloom (brilho): {v}',
 	'settings.numberSize': 'Tamanho dos números de dano: {v}',
 	'settings.reducedFlashes': 'Flashes reduzidos: {v}',
@@ -73,7 +70,6 @@ export const ptBR: Record<I18nKey, string> = {
 	'settings.master': 'Volume geral: {v}',
 	'settings.music': 'Música: {v}',
 	'settings.sfx': 'Efeitos sonoros: {v}',
-	'settings.voice': 'Vozes: {v}',
 	'settings.gore': 'Gore: {v}',
 	'settings.shake': 'Tremor de tela: {v}',
 	'settings.numbers': 'Números de dano: {v}',

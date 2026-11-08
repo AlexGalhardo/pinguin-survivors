@@ -1,7 +1,6 @@
-import { type BiomeId, HERO_IDS, type HeroId } from '../config/constants';
+import type { BiomeId, HeroId } from '../config/constants';
 import { MUSIC_KEYS } from '../core/music';
 import { SFX, SFX_VARIANTS } from '../data/sfx';
-import { VO_EVENTS, VOICE } from '../data/voice';
 import type { Dir } from '../logic/iso';
 
 /**
@@ -79,15 +78,3 @@ export const FILES = {
 		...MUSIC_KEYS.map((k) => [k, `assets/audio/music/${k}.mp3`]),
 	]) as Record<string, string>,
 } as const;
-
-/** Recorded hero lines of one language: vo.<hero>.<event>.<lang>.<n> (scripts/el-voice.ts). */
-export function voiceFiles(lang: string): Record<string, string> {
-	const out: Record<string, string> = {};
-	for (const hero of HERO_IDS)
-		for (const event of VO_EVENTS)
-			for (let n = 1; n <= VOICE.variants; n++) {
-				const key = `vo.${hero}.${event}.${lang}.${n}`;
-				out[key] = `assets/audio/vo/${key}.mp3`;
-			}
-	return out;
-}
