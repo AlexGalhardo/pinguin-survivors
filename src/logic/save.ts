@@ -173,7 +173,8 @@ const MIGRATIONS: Record<number, (raw: Json) => Json> = {
 		const hero = isObj(progress.hero) ? progress.hero : {};
 		return {
 			...raw,
-			pearls: raw.pearls ?? 0,
+			// SDD-003 RF-07: old Fish carry over 1:1 as Pearls.
+			pearls: raw.pearls ?? raw.fish ?? 0,
 			activeRun: null,
 			progress: {
 				...progress,

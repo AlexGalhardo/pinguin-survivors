@@ -96,10 +96,10 @@ describe('save v1 → v2 migration', () => {
 		expect(s.settings).not.toHaveProperty('subtitles');
 	});
 
-	test('discards activeRun and sets pearls = 0, dangerUnlocked = 1 for every hero', () => {
+	test('discards activeRun and carries fish over as pearls, dangerUnlocked = 1 for every hero', () => {
 		const s = parseSave(v1);
 		expect(s.activeRun).toBeNull();
-		expect(s.pearls).toBe(0);
+		expect(s.pearls).toBe(412);
 		for (const h of HERO_IDS) expect(s.progress.hero[h].dangerUnlocked).toBe(1);
 	});
 

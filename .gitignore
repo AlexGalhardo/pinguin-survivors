@@ -16,3 +16,5 @@ art-src/processed/
 STATUS.md
 PLAN.md
 TODO.md
+# Developer questions written by agents (local only)
+questions-to-dev.md

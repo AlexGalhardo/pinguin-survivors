@@ -122,8 +122,8 @@ Specs: [SDD-002](docs/sdds/SDD-002-armas-slots-classes-tiers.md), [SDD-003](docs
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T2.5** Exclusivas: 3 viram armas exclusivas; 3 passivas novas (Fôlego de Ferro, Recarga Rápida, Eco Arcano) com números iniciais · Resp.: senior · Dep.: T2.2 · Est.: 5 h · Assert: `tests/cards.test.ts` sem `kind: 'weapon'|'evolve'` (SDD-003 A6)
   - [ ] Auditoria: i18n das 3 cartas nos idiomas existentes.
-- [ ] **T2.6** `logic/shop.ts` + `data/economy.ts` (ofertas, reroll, lock, preços, venda) · Resp.: senior · Est.: 8 h · Assert: `bun test tests/shop.test.ts` propriedade 1.000 seeds (SDD-003 A1, A2).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T2.6** `logic/shop.ts` + `data/economy.ts` (ofertas, reroll, lock, preços, venda) · Resp.: senior · Est.: 8 h · Assert: `bun test tests/shop.test.ts` propriedade 1.000 seeds (SDD-003 A1, A2). · Evidência (2026-11-08): `bun test tests/shop.test.ts` 9 pass (A1 em 1.000 seeds com herói/round variando; A2 `rerollPrice` 4/5/19); `src/logic/shop.ts` puro + `SHOP` em `src/data/economy.ts`. Poções na loja (RF-09) e locks entre lojas ficam com T2.7.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado 9 pass; fórmulas conferidas com SDD-003 RF-02/RF-03 ((10,2)=13+3·2=19).
 - [ ] **T2.7** `RunState`: Fish da run, loja, fila de level-ups; fim de round → loja → autosave; conversão Fish→Pérolas · Resp.: senior · Dep.: T2.6, T1.8 · Est.: 8 h · Assert: E2E cenário `shop` (A3); `tests/run-state.test.ts`.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T2.8** Cartas de level-up: 4 opções, só stats/exclusivas; fila de level-ups · Resp.: senior · Dep.: T2.5 · Est.: 4 h · Assert: `tests/cards.test.ts` (A6).
