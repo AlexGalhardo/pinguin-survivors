@@ -18,12 +18,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Documentation consolidated into a few files under `docs/`; `CLAUDE.md`, `AGENTS.md` and the art/audio skills now describe the top-down, React and Steam/Android direction. `PLAN.md` is frozen as history.
 - Git remote renamed to `AlexGalhardo/pinguin-survivors`.
+- Versioning now follows the vukem scheme (`0.0.x` alpha, `0.1.x` beta, `1.0.0` launch, no pre-release suffixes). The eleven historical tags were re-tagged on the same commits and published as GitHub pre-releases; the sections below were renamed accordingly:
+
+  | Old tag | New tag | Commit |
+  |---|---|---|
+  | `v0.1.0-alpha.1` | `v0.0.1` | `c959037` |
+  | `v0.1.0-alpha.2` | `v0.0.2` | `f9a61e1` |
+  | `v0.1.0-beta.1` | `v0.0.3` | `5ebbc69` |
+  | `v0.1.0-beta.2` | `v0.0.4` | `1d8395c` |
+  | `v0.1.0-beta.3` | `v0.0.5` | `9bd73b2` |
+  | `v0.1.0-beta.4` | `v0.0.6` | `25da38b` |
+  | `v0.1.0-beta.5` | `v0.0.7` | `f452e90` |
+  | `v0.1.0-beta.6` | `v0.0.8` | `ba28401` |
+  | `v0.1.0-beta.7` | `v0.0.9` | `3e1de88` |
+  | `v0.1.0-beta.8` | `v0.0.10` | `3cd5c15` |
 
 ### Removed
 
 - Legacy docs merged elsewhere: `game-design.md`, `ui-hud.md`, `art-and-assets.md`, `art-prompts.md`, `game-market.md`, `tooling.md`, `agent-workflow.md`, `git-and-versioning.md`, `balancing.md`, `decisions.md` (now `docs/adrs/ADR-000-decisoes-anteriores.md`).
 
-## [0.1.0-beta.8] - 2026-09-27
+## [0.0.10] - 2026-09-27
 
 Playtest build **playdev-7** (end of the day's session).
 
@@ -31,7 +45,7 @@ Playtest build **playdev-7** (end of the day's session).
 
 - Balance: softer station biome (enemies 1–2 less damage, 5–10% less HP), sturdier Bob (120 HP, 6 armor, +1 damage per shotgun pellet) and a gentler kraken (less damage, slower swipes, 5-shot ink volley).
 
-## [0.1.0-beta.7] - 2026-09-27
+## [0.0.9] - 2026-09-27
 
 Playtest build **playdev-6**.
 
@@ -49,7 +63,7 @@ Playtest build **playdev-6**.
 - The main menu title sits top-left above the menu; the subtitle is gone.
 - Ring of Fire hits harder and more often (8 damage every 0.4 s); damage ticks under 1 no longer spam "0" numbers.
 
-## [0.1.0-beta.6] - 2026-09-27
+## [0.0.8] - 2026-09-27
 
 Playtest build **playdev-5**.
 
@@ -57,7 +71,7 @@ Playtest build **playdev-5**.
 
 - Bosses and big zombies no longer turn into white silhouettes: bloom is now opt-in (off by default; it also cost a lot of FPS), hit flashes are rate-limited and attack warnings tint the art red instead of hiding it.
 
-## [0.1.0-beta.5] - 2026-09-27
+## [0.0.7] - 2026-09-27
 
 Playtest build **playdev-4**.
 
@@ -72,7 +86,7 @@ Playtest build **playdev-4**.
 - Sprites for every secondary weapon (shown around the hero like the signature weapon), the first card icons, and walking rats, brutes and acid bloaters.
 - First equipment icons (seven helmets). Still pending: kraken and abomination walks, flying zombies, enemy attacks, superpower animations and effects, the remaining card, potion and gear icons, health packs and UI frames.
 
-## [0.1.0-beta.4] - 2026-09-27
+## [0.0.6] - 2026-09-27
 
 Playtest build **playdev-3**.
 
@@ -94,7 +108,7 @@ Playtest build **playdev-3**.
 - The signature weapon now aims at bosses and elites in range before the rest of the horde.
 - The hero recovers 25% of max HP at the end of every round.
 
-## [0.1.0-beta.3] - 2026-09-27
+## [0.0.5] - 2026-09-27
 
 Playtest build **playdev-2**.
 
@@ -109,7 +123,7 @@ Playtest build **playdev-2**.
 - Late-game music track from round 21 onwards.
 - Headless run sim with secondaries, superpowers, elites, biomes, rotating bosses and workshop upgrades, calibrated against the playtest bot; the bot now plays with a per-frame dodging brain, fights bosses at weapon range, picks cards like the sim and takes level, stat points, potions and upgrades through the save.
 
-## [0.1.0-beta.2] - 2026-09-27
+## [0.0.4] - 2026-09-27
 
 Playtest build **playdev-1** (the nickname is shown next to the version in the footer).
 
@@ -122,7 +136,7 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 - Final art for the heroes without weapons (Jack, Bob, Lucia; Bob breathing idle) and for seven zombies and the polar bear boss, facing their movement direction in 8 directions (5 drawn + 3 mirrored); animations fill in as they are generated.
 - Seamless PixelLab ground and props for the three biomes (snow, steel deck, cracked asphalt; ice crystals, barrels, wrecked cars…), plus walking animations for Bob and three zombies.
 
-## [0.1.0-beta.1] - 2026-09-27
+## [0.0.3] - 2026-09-27
 
 ### Added
 
@@ -161,7 +175,7 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 - First balance pass: longer invulnerability after a hit, lower contact damage, slower early spawns, more health for Bob and Lucia, faster shotgun and a piercing staff.
 - Menu, round and boss music now come from the ElevenLabs music model.
 
-## [0.1.0-alpha.2] - 2026-09-27
+## [0.0.2] - 2026-09-27
 
 ### Added
 
@@ -183,7 +197,7 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - Jack's melee reach is 50% larger on every weapon tier.
 
-## [0.1.0-alpha.1] - 2026-09-27
+## [0.0.1] - 2026-09-27
 
 ### Added
 
@@ -209,14 +223,14 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.8...HEAD
-[0.1.0-beta.8]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.7...v0.1.0-beta.8
-[0.1.0-beta.7]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.6...v0.1.0-beta.7
-[0.1.0-beta.6]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.5...v0.1.0-beta.6
-[0.1.0-beta.5]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.4...v0.1.0-beta.5
-[0.1.0-beta.4]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.3...v0.1.0-beta.4
-[0.1.0-beta.3]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.2...v0.1.0-beta.3
-[0.1.0-beta.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-beta.1...v0.1.0-beta.2
-[0.1.0-beta.1]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-alpha.2...v0.1.0-beta.1
-[0.1.0-alpha.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
-[0.1.0-alpha.1]: https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.1.0-alpha.1
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.10...HEAD
+[0.0.10]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.9...v0.0.10
+[0.0.9]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.8...v0.0.9
+[0.0.8]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.7...v0.0.8
+[0.0.7]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.6...v0.0.7
+[0.0.6]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.0.1
