@@ -36,14 +36,13 @@ export const median = (events: readonly RunEndEvent[]): number =>
 
 const pick = (
 	events: readonly RunEndEvent[],
-	where: Partial<Pick<RunEndEvent, 'hero' | 'level' | 'danger'>> & { workshopMin?: number },
+	where: Partial<Pick<RunEndEvent, 'hero' | 'level' | 'danger'>>,
 ): RunEndEvent[] =>
 	events.filter(
 		(e) =>
 			(where.hero === undefined || e.hero === where.hero) &&
 			(where.level === undefined || e.level === where.level) &&
-			(where.danger === undefined || e.danger === where.danger) &&
-			(where.workshopMin === undefined || (e.workshop ?? 0) >= where.workshopMin),
+			(where.danger === undefined || e.danger === where.danger),
 	);
 
 const pct = (n: number): string => `${(n * 100).toFixed(1)}%`;
@@ -101,10 +100,10 @@ export function evaluateGoals(
 	const events = allEvents.filter((e) => e.source !== 'bot');
 	const botRuns = allEvents.filter((e) => e.source === 'bot');
 
-	// #1 new player: L1, Danger 1, no Workshop.
+	// #1 new player: L1, Danger 1, empty tree.
 	{
 		const goal = 'mediana de morte entre os rounds 8 e 20; nenhum herói passa do 30';
-		const profile = 'L1, D1, sem Oficina';
+		const profile = 'L1, D1, árvore vazia';
 		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 1, danger: 1 })).filter(
 			(r) => r.length > 0,
 		);
@@ -124,14 +123,12 @@ export function evaluateGoals(
 		}
 	}
 
-	// #2 L10 + Workshop all:2 (docs A4: at most 5% of the runs die before round 12).
+	// #2 L10 with the auto-allocated tree (docs A4: at most 5% of the runs die before round 12).
 	{
 		const goal =
 			'cada herói passa do boss 20 em ≥ 1 run; ≤ 5% das runs morrem antes do round 12';
-		const profile = 'L10, D1, Oficina all:2';
-		const rows = HERO_IDS.map((hero) =>
-			pick(events, { hero, level: 10, danger: 1, workshopMin: 2 }),
-		);
+		const profile = 'L10, D1, árvore automática';
+		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 10, danger: 1 }));
 		if (rows.some((r) => r.length === 0))
 			out.push(nd(2, profile, goal, 'falta herói sem runs'));
 		else {
@@ -149,13 +146,11 @@ export function evaluateGoals(
 		}
 	}
 
-	// #3 L20 + Workshop all:4.
+	// #3 L20 with the auto-allocated tree.
 	{
 		const goal = 'os 3 heróis passam do round 30 (mediana) e morrem antes do 60';
-		const profile = 'L20, D1, Oficina all:4';
-		const rows = HERO_IDS.map((hero) =>
-			pick(events, { hero, level: 20, danger: 1, workshopMin: 4 }),
-		);
+		const profile = 'L20, D1, árvore automática';
+		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 20, danger: 1 }));
 		if (rows.some((r) => r.length === 0))
 			out.push(nd(3, profile, goal, 'falta herói sem runs'));
 		else {

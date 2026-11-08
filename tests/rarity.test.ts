@@ -24,6 +24,7 @@ import {
 	rollItemDrops,
 	unequip,
 } from '../src/logic/equipment';
+import { emptyHealPotion } from '../src/logic/heal-potion';
 import { buildPlayerPanel } from '../src/logic/item-view';
 import { Rng } from '../src/logic/rng';
 import { createRunState, gearCandidates, purchase, shopPool } from '../src/logic/run-state';
@@ -328,7 +329,14 @@ describe('scene hooks: merge on buy, player panel, HUD rarity', () => {
 			affixes: [{ stat: 'luck', value: 0.04 }],
 		});
 		pickUpGear(gear, stats, 'helmet.wool');
-		const panel = buildPlayerPanel({ build, gear, stats, round: 12 });
+		const panel = buildPlayerPanel({
+			build,
+			gear,
+			stats,
+			round: 12,
+			support: {},
+			healPotion: emptyHealPotion(),
+		});
 		expect(panel.weapons[0]).toMatchObject({ id: 'hammer', rarity: 4, sets: ['blunt'] });
 		expect(panel.weapons[0]?.stats.dps).toBeGreaterThan(0);
 		expect(panel.weapons[0]?.sellValue).toBeGreaterThan(0);

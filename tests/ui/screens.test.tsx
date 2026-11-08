@@ -102,8 +102,10 @@ describe('Pause', () => {
 			unequip: () => calls.push('unequip'),
 			quit: () => calls.push('quit'),
 		};
-		const { getByText, queryByText } = render(<Pause data={data} actions={actions} />);
-		expect(getByText('140')).toBeTruthy();
+		const { getAllByText, getByText, queryByText } = render(
+			<Pause data={data} actions={actions} />,
+		);
+		expect(getAllByText('140').length).toBeGreaterThan(0);
 		fireEvent.click(getByText('QUIT RUN'));
 		expect(calls).toEqual([]);
 		expect(queryByText('YES, QUIT')).not.toBeNull();

@@ -20,9 +20,12 @@ Antes de gerar, monte o prompt por [prompts.md](prompts.md) (base fixa, blocos p
 7. **Budget**: `GET /balance` before any batch; pilot 1 direction/1 tile first; batches > 200 generations or any character regeneration need the developer's OK. Record the balance after each batch in `docs/visual.md` §10.
 8. **Token**: API v2 with `PIXELLAB_API_TOKEN` from `.env` (`scripts/lib/pixellab.ts`). The user-scoped `pixellab` MCP uses an expired token: do not rely on it for generation. Never commit or print tokens.
 
+9. **Never delete or replace existing art** (permanent developer rule): redesigns and alternatives go to `art-src/pixellab/anim-v2/` unlinked from the game; new animations (`fly` for flyers, `attack` for ranged, charger and boss enemies, `idle` for NPCs such as `npc.merchant`) are added as extra animations in the same atlas (`enemy.<id>`, `npc.<id>`) without touching `walk`. Characters made by another token cannot be re-animated through the API (404): use `/animate-with-text-v3` with the existing rotation as first frame (`scripts/pl-fly.ts <id> --anim fly|attack`). Before closing a batch run `git status --short | grep '^ D'` (must be empty) and `bun scripts/pack-atlas.ts --check`; `bun scripts/pack-heroes.ts` rewrites a whole atlas, so compare the old frames pixel by pixel when repacking a legacy one.
+10. Weapon art has 4 lines per weapon (`weapon.<id>.t1…t4`, used by rarity I–IV; V reuses IV, ADR-017); a weapon or icon used by the game is never a placeholder (`tests/art-coverage.test.ts`).
+
 ## How to call PixelLab
 
-- Scripts (reproducible): `scripts/lib/pixellab.ts` (`api`, `waitJob`, `getCharacter`, `download`, `logGeneration`, `getBalance`); generators `scripts/pl-*.ts` are idempotent (skip when output exists).
+- Scripts (reproducible): `scripts/lib/pixellab.ts` (`api`, `waitJob`, `getCharacter`, `download`, `logGeneration`, `getBalance`); generators `scripts/pl-*.ts` are idempotent (skip when output exists): `pl-batch.ts` (pixflux image batches from JSON with `--max` cap), `pl-fx.ts` (192 px VFX loops), `pl-fly.ts` (`fly`/`attack` from a still rotation), `pl-merchant.ts` (NPC concept), `pl-tiles.ts`, `pl-aliens.ts`, `pl-animate.ts`.
 - Async: POST → `background_job_id` → poll `GET /background-jobs/{id}` every 5 s → fetch result (`/characters/{id}`, `/characters/{id}/zip`, image URL).
 - Endpoints: `/create-character-v3` (~3 gen at 96 px, 5 at 160), `/create-character-state` (~30), `/characters/animations` (`mode: template`, 1 gen/direction), `/create-image-pixflux` (~1), `/create-topdown-tileset` or `/create-tiles-pro` with `view: top-down` (25–40 per batch), `/create-1-direction-object` + `/objects/{id}/animations` (VFX), `/generate-image-v2` (key art, 30). Schema: `https://api.pixellab.ai/v2/openapi.json`.
 

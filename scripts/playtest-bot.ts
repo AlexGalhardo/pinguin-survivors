@@ -17,12 +17,11 @@ import { chromium, type Page } from 'playwright';
 import { HERO_IDS, type HeroId } from '../src/config/constants';
 import { ALL_CARDS, type CardDef, type Rarity } from '../src/data/cards';
 import { SUPER } from '../src/data/superpowers';
-import { UPGRADES } from '../src/data/upgrades';
 import { WEAPON_LINES } from '../src/data/weapons';
 import type { Build } from '../src/logic/build';
-import { SAVE_KEY } from '../src/logic/save';
+import { defaultSaveFile, newSlot, SAVE_KEY, serializeSaveFile } from '../src/logic/save';
 import { pickBest } from '../src/logic/sim/card-policy';
-import { POINT_PLANS, spendPoints } from '../src/logic/sim/run-sim';
+import { simTree } from '../src/logic/sim/run-sim';
 import { nextShopAction } from '../src/logic/sim/shop-policy';
 import type { PlayerStats } from '../src/logic/stats';
 
@@ -48,19 +47,6 @@ const mistakes = Number(arg('mistakes', '0'));
 /** Start round (debug `?round=`): cards are not granted, so use it for boss checks only. */
 const startRound = arg('round', '');
 const danger = arg('danger', '1');
-/** Workshop levels: `all:3` or `vitality:5,might:3`. */
-const upgrades = parseUpgrades(arg('upgrades', ''));
-
-function parseUpgrades(spec: string): Record<string, number> {
-	const out: Record<string, number> = {};
-	for (const part of spec.split(',').filter(Boolean)) {
-		const [id, n] = part.split(':');
-		const level = Number(n ?? 1);
-		if (id === 'all') for (const u of UPGRADES) out[u.id] = Math.min(u.maxLevel, level);
-		else if (id) out[id] = level;
-	}
-	return out;
-}
 
 export interface RoundLog {
 	round: number;
@@ -97,7 +83,6 @@ export interface RunLog {
 
 /** The run-end event of src/logic/telemetry.ts, so `balance-report.ts` reads bot logs too. */
 function runEndEvent(log: RunLog): Record<string, unknown> {
-	const workshop = Object.values(upgrades);
 	return {
 		...log,
 		version: 'bot',
@@ -106,7 +91,6 @@ function runEndEvent(log: RunLog): Record<string, unknown> {
 		durationS: log.gameSeconds,
 		platform: 'web',
 		source: 'bot',
-		workshop: workshop.length ? Math.max(...workshop) : 0,
 		wallS: log.wallSeconds,
 	};
 }
@@ -119,32 +103,27 @@ function saveFor(hero: HeroId, level: number): string {
 				unlocked: true,
 				level: h === hero ? level : 1,
 				xp: 0,
-				points: h === hero ? spendPoints(level, POINT_PLANS[h]) : {},
+				tree: h === hero ? simTree(h, level) : [],
 			},
 		]),
 	);
-	const none = { heal: 0, megaHeal: 0, shield: 0, rage: 0, antidote: 0, haste: 0 };
-	return JSON.stringify({
-		version: 1,
+	const base = defaultSaveFile();
+	const slot = newSlot();
+	slot.heroes = heroes as typeof slot.heroes;
+	if (potions) {
+		slot.potions = { ...slot.potions, shield: 1 };
+		slot.gambits = [{ potion: 'shield', condition: 'bossVisible' }, ...slot.gambits.slice(1)];
+	}
+	return serializeSaveFile({
+		...base,
 		settings: {
-			lang: 'en',
+			...base.settings,
 			volume: { master: 0, music: 0, sfx: 0 },
 			gore: 'reduced',
 			screenShake: false,
 			damageNumbers: false,
-			resolution: 'auto',
 		},
-		heroes,
-		upgrades,
-		fish: 0,
-		potions: potions ? { ...none, heal: 1, megaHeal: 1, shield: 1 } : none,
-		gambits: potions
-			? [
-					{ potion: 'megaHeal', condition: 'hpBelow25' },
-					{ potion: 'heal', condition: 'hpBelow50' },
-					{ potion: 'shield', condition: 'bossVisible' },
-				]
-			: [],
+		slots: [slot, null, null],
 	});
 }
 

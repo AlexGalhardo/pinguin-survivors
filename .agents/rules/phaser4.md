@@ -6,6 +6,7 @@
 - **Câmera top-down 2D** (ADR-003): `screenX = x`, `screenY = y`, depth por `y`. Arena quadrada `min(10 + (N−1), 40)` tiles de 64 px, centrada, com bordas sólidas. Nada de projeção isométrica.
 - Tela: `scale.mode = NONE`, zoom inteiro pela altura 540 (`src/core/display.ts`), `pixelArt: true`, `roundPixels`. Spawn fora da área visível real quando a arena for maior que a tela.
 - **Object pooling** para inimigos (máx. 300), projéteis, pickups, gibs, números e decalques. Nada de `new` por frame. Meta: 60 FPS com 300 inimigos + 2.000 decalques (`bun scripts/perf.ts`).
+- Animação por código das armas (`src/logic/weapon-anim.ts`, números em `src/data/weapon-anim.ts`) e dos inimigos (`fly`, `attack`, `walk` escolhidos pelo comportamento em `Enemy.ts`): ajustes de feel vão em `src/data`, nunca como número solto na entidade.
 - Eventos tipados entre mundo e UI (`src/core/events.ts`); `RunState` serializável. O `GameScene` orquestra os systems em ordem fixa por frame.
 - Texturas, animações e sons só pelas chaves de `src/art/manifest.ts`; placeholders por código e arte final usam a mesma chave.
 - Detalhes: `docs/architecture.md` §3, §7, §8.

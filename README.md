@@ -40,10 +40,10 @@ The game is built with [Phaser 4](https://phaser.io), TypeScript, Vite, React an
 ## Features
 
 - Timed rounds (20 s → 60 s), elites every third round, a boss every tenth round, endless mode.
-- Six weapon slots, weapon classes and set bonuses, four tiers with fusion, a starting weapon per hero.
-- Shop after every round (four offers, reroll, lock, equipment) with an in-run currency (Fish) and a persistent one (Pearls).
+- Six weapon slots, weapon classes and set bonuses, one I–V rarity scale (white to orange) with random affixes and fusion, a starting weapon per hero. Weapons visibly strike their target (lunge, recoil, throw, plant, cast).
+- Shop after every round in a Diablo 4 style (merchant NPC, four offers that say exactly what each purchase changes, reroll, lock, weapons, equipment and speed potions) with an in-run currency (Fish) and a persistent one (Pearls).
 - Stat cards on level-up, six exclusive cards per hero, a superpower unlocked at level 5.
-- Danger 0–5 per hero, 131 achievements, workshop upgrades, FFXII-style potion gambits.
+- Danger 0–5 per hero, 131 achievements, a passive skill tree per hero (Path of Exile 2 style, replaces the old workshop and stat points), FFXII-style potion gambits, game speed 1× to 4×.
 - DOOM-grade gore with a toggle, dynamic lights, hit-stop and screen shake.
 - English, Brazilian Portuguese, Spanish and Simplified Chinese.
 
@@ -79,7 +79,7 @@ Everything lives in [docs/](docs/README.md): the [Game Design Document](docs/gdd
 
 ## Stability
 
-Pinguin Survivors follows [Semantic Versioning](https://semver.org) and tags releases as `vX.Y.Z` on `main`: `0.0.x` while the game is in alpha, `0.1.x` from the public demo until launch, and `1.0.0` for the commercial release ([ADR-015](docs/adrs/ADR-015-versionamento-vukem.md)). Changes are listed in [CHANGELOG.md](CHANGELOG.md), which follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Each milestone ships as one release; from `0.2.0` on, releases are marked as Latest. Every release carries the Windows builds (full and demo, as zip files) and the Android debug APK.
+Pinguin Survivors follows [Semantic Versioning](https://semver.org) and tags releases as `vX.Y.Z` on `main`: `0.0.x` while the game is in alpha, `0.1.x` from the public demo until launch, and `1.0.0` for the commercial release ([ADR-015](docs/adrs/ADR-015-versionamento-vukem.md)). Changes are listed in [CHANGELOG.md](CHANGELOG.md), which follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Each milestone ships as one release; from `0.2.0` on, releases are marked as Latest (`bun scripts/release.ts X.Y.Z --stable`). Every release carries the Windows builds (full and demo, as zip files) and the Android debug APK.
 
 ## Contributing
 

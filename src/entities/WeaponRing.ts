@@ -41,7 +41,11 @@ export class WeaponRing {
 			const x = hx + Math.cos(a) * RING_RADIUS;
 			const y = hy + Math.sin(a) * RING_RADIUS;
 			const target = pickTarget(grid, hx, hy, w.range);
-			view.turn(target ? Math.atan2(target.y - y, target.x - x) : a, dt);
+			view.turn(
+				target ? Math.atan2(target.y - y, target.x - x) : a,
+				dt,
+				target ? Math.hypot(target.x - x, target.y - y) : 0,
+			);
 			view.update(dt, x, y);
 		});
 	}

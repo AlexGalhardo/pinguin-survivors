@@ -2,6 +2,8 @@
 
 **Versão** 1.1 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [005](../adrs/ADR-005-seis-slots-de-arma.md) · **GDD** §6, §8
 
+> **Nota (2026-11-08)**: superada em parte pelo [ADR-017](../adrs/ADR-017-raridade-unica-afixos-e-loja.md): os tiers I–IV viram a **raridade I–V** com afixos aleatórios; compra e fusão vão só até o III, o IV cai de Elite e o V de Boss (o V reaproveita a arte e os stats do IV). A arte `weapon.<id>.t1…t4` e as 17 linhas seguem valendo.
+
 ## Requisitos
 
 - RF-01 `Build.weapons: WeaponInstance[]` com até **6** entradas `{ id, tier: 1|2|3|4|5, affixes? }` (o `tier` é a **raridade I–V**, ADR-017); sem arma assinada nem evolução por carta.

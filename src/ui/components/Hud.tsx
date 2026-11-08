@@ -3,10 +3,10 @@ import { rarityColor, toCss } from '../../config/palette';
 import { platform } from '../../core/platform';
 import { touchControlsEnabled } from '../../core/touch-bridge';
 import { type I18nKey, t } from '../../i18n';
-import { toRoman } from '../../logic/achievements';
 import { formatTime } from '../../logic/format';
 import { type HudSnapshot, hudStore } from '../hud-bridge';
-import { AtlasIcon, weaponFrames } from './AtlasIcon';
+import { useOverlayOpen } from '../overlay';
+import { AtlasIcon } from './AtlasIcon';
 
 const name = (key: string): string => (t(key as I18nKey) as string | undefined) ?? key;
 
@@ -14,6 +14,51 @@ export const weaponName = (id: string): string => {
 	const own = t(`weapon.${id}.name` as I18nKey) as string | undefined;
 	return own ?? name(`card.weapon.${id}.name`);
 };
+
+/** Flask drawn as SVG (no atlas art needed): filled with the rarity color when a potion is ready, hollow when empty. */
+function Flask({ color, full }: { color: string; full: boolean }): ReactElement {
+	return (
+		<svg viewBox="0 0 16 20" width="26" height="32" aria-hidden="true">
+			<path
+				d="M6 1h4v1.5H9V6l4.5 8.5A3 3 0 0 1 10.9 19H5.1a3 3 0 0 1-2.6-4.5L7 6V2.5H6z"
+				fill={full ? color : 'none'}
+				fillOpacity={0.85}
+				stroke={color}
+				strokeWidth="1.2"
+				strokeLinejoin="round"
+				opacity={full ? 1 : 0.45}
+			/>
+		</svg>
+	);
+}
+
+/** Healing potion state under the HP bar: ready or empty flask, `cargas/máx.` and kills to the next refill. */
+function PotionStatus({
+	potion,
+}: {
+	potion: NonNullable<HudSnapshot['healPotion']>;
+}): ReactElement {
+	const color = toCss(rarityColor(potion.rarity));
+	const ready = potion.charges > 0;
+	const full = potion.charges >= potion.level;
+	return (
+		<div
+			className="flex items-center gap-1.5 font-bold tabular-nums"
+			style={{ color: ready ? color : undefined }}
+			title={t('hud.healPotion')}
+		>
+			<Flask color={ready ? color : 'var(--color-text-dim)'} full={ready} />
+			<span className={ready ? '' : 'text-text-dim'}>
+				{potion.charges}/{potion.level}
+			</span>
+			{!full && (
+				<span className="text-[0.8em] font-medium text-text-dim">
+					{t('hud.potionKills', { n: potion.kills, max: potion.killsPerPotion })}
+				</span>
+			)}
+		</div>
+	);
+}
 
 const pct = (value: number, max: number): string =>
 	`${Math.round(Math.max(0, Math.min(1, max > 0 ? value / max : 0)) * 100)}%`;
@@ -45,40 +90,6 @@ function Bar(props: {
 	);
 }
 
-function WeaponSlot({ w }: { w?: HudSnapshot['weapons'][number] }): ReactElement {
-	if (!w) {
-		return (
-			<div className="size-[clamp(2.5rem,5.5vh,3.5rem)] rounded border border-snow-dark bg-night/60" />
-		);
-	}
-	const label = weaponName(w.id);
-	return (
-		<div
-			title={label}
-			className="relative flex size-[clamp(2.5rem,5.5vh,3.5rem)] items-center justify-center rounded border-2 bg-night/80"
-			style={{
-				borderColor: toCss(rarityColor(w.rarity ?? w.tier)),
-				color: toCss(rarityColor(w.rarity ?? w.tier)),
-			}}
-		>
-			<AtlasIcon
-				frames={weaponFrames(w.id, w.tier)}
-				size={56}
-				title={label}
-				fallback={
-					<span className="font-title text-[clamp(0.75rem,1.6vh,1rem)] font-bold">
-						{label.slice(0, 2).toUpperCase()}
-					</span>
-				}
-			/>
-			<span className="absolute right-0.5 bottom-0 text-[clamp(0.625rem,1.2vh,0.8125rem)] leading-none">
-				{toRoman(w.tier)}
-			</span>
-		</div>
-	);
-}
-
-/** Full-screen gameplay HUD (React). Reads the snapshot published by the game at ~10 Hz. */
 export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }): ReactElement {
 	// Touch screens have the 1x/2x button instead of the TAB hint, and the pause button sits there.
 	const touch = touchControlsEnabled(platform().kind, window.location.search);
@@ -106,6 +117,7 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 					{t('hud.fish', { n: hud.fish })}
 				</div>
 				<div className="text-text-dim">{t('hud.kills', { n: hud.kills })}</div>
+				{hud.healPotion && <PotionStatus potion={hud.healPotion} />}
 			</div>
 
 			<div className="absolute top-[1vh] left-1/2 flex -translate-x-1/2 flex-col items-center">
@@ -144,16 +156,15 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 				)}
 			</div>
 
-			<div className="absolute bottom-[1.2vh] left-1/2 flex -translate-x-1/2 flex-col items-center gap-2">
+			{/* Super Magic bottom left (developer, 2026-11-08); the weapons are seen on the hero, not here. */}
+			<div className="absolute bottom-[1.2vh] left-[1vw]">
 				{hud.superpower &&
 					(() => {
 						const { charge, cost } = hud.superpower;
 						const ready = charge >= cost;
 						return (
 							<div className="w-[clamp(12rem,16vw,20rem)]">
-								<div
-									className={`text-center font-bold ${ready ? 'text-crit' : ''}`}
-								>
+								<div className={`font-bold ${ready ? 'text-crit' : ''}`}>
 									{ready
 										? t('hud.superReady')
 										: t('hud.super', { n: charge, max: cost })}
@@ -168,14 +179,13 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 							</div>
 						);
 					})()}
-				<div className="flex gap-1">
-					{hud.weapons.slice(0, 6).map((w, i) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: slots are positional and the same weapon can fill two of them
-						<WeaponSlot key={`${w.id}-${i}`} w={w} />
-					))}
-				</div>
-				{version && <div className="text-[0.7em] text-text-dim">{version}</div>}
 			</div>
+
+			{version && (
+				<div className="absolute bottom-[0.6vh] left-1/2 -translate-x-1/2 text-[0.7em] text-text-dim">
+					{version}
+				</div>
+			)}
 
 			<div className="absolute right-[1vw] bottom-[1.2vh] flex flex-col items-end gap-0.5 text-dot-poison">
 				{!touch && (
@@ -196,5 +206,7 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 
 export function Hud({ version }: { version?: string }): ReactElement | null {
 	const hud = useSyncExternalStore(hudStore.subscribe, () => hudStore.get().hud);
-	return hud ? <HudView hud={hud} version={version} /> : null;
+	// Any full-screen menu or overlay (pause, settings, controls, shop, cards, summary) hides the HUD.
+	const covered = useOverlayOpen();
+	return hud && !covered ? <HudView hud={hud} version={version} /> : null;
 }

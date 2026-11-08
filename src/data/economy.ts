@@ -37,7 +37,7 @@ export const SHOP = {
 	tierWeights: { base: [60, 28, 10, 2], perRound: [-1.5, 0.6, 0.7, 0.2] },
 	luckPerPoint: 0.01,
 	/** Chance of each kind taking a slot when the pool mixes kinds (renormalized over what is left). */
-	kindShare: { weapon: 0.6, item: 0.2, gear: 0.28, potion: 0.12 },
+	kindShare: { weapon: 0.6, item: 0.2, gear: 0.28, potion: 0.12, support: 0.12, healPotion: 0.1 },
 	/** Run potions are sold from this round on (SDD-003 RF-09). */
 	potionsFromRound: 5,
 	/** The merchant sells weapons, equipment and only these potions (speed); the rest are not sold. */

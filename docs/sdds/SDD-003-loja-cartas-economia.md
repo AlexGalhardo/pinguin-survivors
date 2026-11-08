@@ -2,6 +2,8 @@
 
 **Versão** 1.0 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [006](../adrs/ADR-006-loja-fim-de-round-e-cartas-no-level-up.md), [007](../adrs/ADR-007-fish-na-run-perolas-meta.md) · **GDD** §9, §10, §17
 
+> **Nota (2026-11-08)**: superada em parte pelo [ADR-017](../adrs/ADR-017-raridade-unica-afixos-e-loja.md) (a loja vende só armas, equipamentos e poções de velocidade nas raridades I a III, com afixos já sorteados e a compra descrita por `describeOffer`) e pelo [ADR-018](../adrs/ADR-018-linguagem-visual-diablo-4-e-menus-neutros.md) (Loja e Pausa estilo Diablo 4). Os pontos de stat e a Oficina citados aqui foram substituídos pela árvore ([ADR-019](../adrs/ADR-019-arvore-de-habilidades.md)).
+
 ## Requisitos
 
 - RF-01 Fim do round (timer ou boss morto) → coleta total de pickups → cura 25% → **estado `shop`** (tempo pausado) → "Próximo round" → autosave → round N+1.

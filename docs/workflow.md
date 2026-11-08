@@ -72,7 +72,7 @@ Tipos: `feat` (MINOR), `fix` (PATCH), `docs`, `style`, `refactor`, `perf`, `test
 Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 
 - **SemVer sem pré-release**: `0.0.x` = alpha (refatoração top-down até a demo jogável), `0.1.x` = beta (demo pública, Next Fest, polimento), **`1.0.0`** = lançamento comercial; depois MAJOR (save incompatível ou remoção de conteúdo), MINOR (conteúdo/feature), PATCH (correções e balanceamento).
-- `package.json.version` = tag sem `v`. Versão de trabalho após o retag: **0.0.11**.
+- `package.json.version` = tag sem `v`. Versão atual: **0.3.0** publicada (Latest); a **0.4.0** está em preparação (conteúdo desde a 0.2.0: árvore de habilidades, raridade I–V, Loja e Pausa estilo Diablo 4, armas atacando, obstáculos grandes, voadores com `fly`, lojista).
 - **Release GitHub** por tag: título `vX.Y.Z`; corpo em grupos Keep a Changelog (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`, só os não vazios), linhas `- **escopo:** Descrição ([abc1234](…/commit/sha))`; `0.x` marcados **pre-release**.
 - **Fluxo ao fechar um marco**: micro-commits → `docs(roadmap): close <marco>` → `bun scripts/release.ts X.Y.Z` (gates, bump, CHANGELOG, commit `chore(release): X.Y.Z`, tag anotada, `git push --follow-tags`, `gh release create`). Detalhes em [sdds/SDD-011](sdds/SDD-011-releases-vukem.md).
 - **Uma release por marco** (decisão do desenvolvedor, 2026-11-08): o marco inteiro vai numa release só (M1 → `0.0.12`, M2 → `0.0.13`). Nunca uma release por tarefa.
@@ -93,10 +93,14 @@ Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 |---|---|
 | Antes de commitar | `bun run lint` → `bun run typecheck` → `bun test` |
 | Antes de pushar | `bun run lint` → `bun run typecheck` → `bun test` → `bun run build` |
-| Antes de release | tudo acima + `bun run e2e` (com `bun run dev`) + `bun scripts/qa-browsers.ts` (com `vite preview --port 4173`) |
+| Antes de release | tudo acima + `bun run e2e` e `bun run e2e -- --demo` + `bun scripts/qa-browsers.ts` (com `vite preview --port 4173`) + `bun scripts/perf.ts --round 40` (≥ 58 FPS) + `bun scripts/pack-atlas.ts --check` se a arte mudou |
 | Site (`site/`) | `cd site && bun run build` + Lighthouse ≥ 95 |
 
 Nunca `--no-verify`. Gate falhou → corrigir a causa.
+
+**Testes, E2E, sim, perf e bot rodam sem som** (`SOUND_MUTED=true bun run dev`; navegadores com `--mute-audio`, já nos scripts). `bun test tests/ui` roda isolado quando a suíte inteira mistura ambientes. `bun run e2e -- --demo` sobe o próprio servidor com `VITE_DEMO=1` (porta 5199).
+
+**Arte (regra permanente do desenvolvedor)**: nunca apague nem substitua frames ou atlas de heróis e inimigos existentes. Variantes e refações ficam em `art-src/pixellab/anim-v2/` sem ligação ao jogo; animação nova (`fly`, `attack`) entra como animação adicional no mesmo atlas `enemy.<id>`, e `bun scripts/pack-heroes.ts` só reempacota quando os frames antigos continuam idênticos (confira antes de commitar; `git status --short | grep '^ D'` deve ficar vazio). Detalhes em [visual.md](visual.md) e na skill `pinguin-art-assets`.
 
 ## 8. Ferramentas, skills e APIs
 

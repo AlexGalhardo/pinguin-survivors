@@ -6,7 +6,7 @@ export const menusEs = {
 	'select.play': 'EMPEZAR PARTIDA',
 	'hero.condition': 'Cambiar condición',
 	'touch.stick': 'Joystick de movimiento',
-	'touch.super': 'Superpoder',
+	'touch.super': 'Súper magia',
 	'touch.speed': 'Velocidad de juego',
 	'touch.pause': 'Pausa',
 	'workshop.weapons': 'Armas iniciales de {hero}',

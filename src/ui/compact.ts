@@ -22,3 +22,21 @@ export function useMedia(query: string): boolean {
 export function useCompact(): boolean {
 	return useMedia('(max-height: 500px)');
 }
+
+function subscribeResize(fn: () => void): () => void {
+	if (typeof window === 'undefined') return () => {};
+	window.addEventListener('resize', fn);
+	return () => window.removeEventListener('resize', fn);
+}
+
+/**
+ * Screen height over the 1080 px reference (1 at 1080p, 0.67 at 720p, 2 at 4K). Screens that must
+ * never scroll size their icons with it; their text already follows the height through `vh`.
+ */
+export function useUiScale(): number {
+	return useSyncExternalStore(
+		subscribeResize,
+		() => (typeof window === 'undefined' ? 1 : window.innerHeight / 1080),
+		() => 1,
+	);
+}

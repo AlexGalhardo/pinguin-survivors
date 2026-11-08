@@ -75,9 +75,12 @@ describe('Shop', () => {
 		const d = data();
 		expect(fusePartner(d.weapons, 0)).toBe(1);
 		expect(fusePartner(d.weapons, 2)).toBe(-1);
-		const { getAllByText, getByText } = render(<Shop data={d} actions={a} />);
-		expect(getAllByText('FUSE').length).toBe(2);
-		fireEvent.click(getAllByText('FUSE')[0] as HTMLElement);
+		const { getByLabelText, getByText, queryByText } = render(<Shop data={d} actions={a} />);
+		// The fixed action bar belongs to the picked weapon (slot 1 by default): it can fuse with its twin.
+		fireEvent.click(getByText('FUSE'));
+		// Picking the tier IV knives: only selling is offered.
+		fireEvent.click(getByLabelText('Throwing Knives'));
+		expect(queryByText('FUSE')).toBeNull();
 		fireEvent.click(getByText('SELL · 40'));
 		expect(calls).toEqual(['fuse:0,1', 'sell:2']);
 		cleanup();
@@ -88,7 +91,7 @@ describe('Shop', () => {
 		const d = data({
 			offers: [
 				{ kind: 'gear', id: 'helmet.crown', tier: 3, price: 40, sets: [] },
-				{ kind: 'potion', id: 'heal', tier: 1, price: 9, sets: [] },
+				{ kind: 'potion', id: 'haste', tier: 1, price: 9, sets: [] },
 				null,
 				null,
 			],
@@ -98,7 +101,7 @@ describe('Shop', () => {
 		expect(
 			getAllByText('Emperor Crown')[0]?.closest('[style]')?.getAttribute('style') ?? '',
 		).toMatch(/4fd06a|79, 208, 106/i);
-		expect(getByText('Heal')).toBeTruthy();
+		expect(getByText('Haste')).toBeTruthy();
 		expect(container.textContent).toContain('Potion');
 		fireEvent.click(getByText('BUY · 9'));
 		expect(calls).toEqual(['buy:1']);

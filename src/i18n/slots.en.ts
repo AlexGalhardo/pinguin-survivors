@@ -1,0 +1,23 @@
+/** Save slots (SDD-014 RF-01..RF-06). */
+export const slotsEn = {
+	'menu.newGame': 'NEW GAME',
+	'menu.load': 'LOAD GAME',
+	'slots.loadTitle': 'LOAD GAME',
+	'slots.newTitle': 'NEW GAME',
+	'slots.loadHint': 'Pick a save slot to continue playing.',
+	'slots.newHint': 'Pick the slot for the new game. Each slot keeps its own progress.',
+	'slots.slot': 'SLOT {n}',
+	'slots.empty': 'Empty slot',
+	'slots.info': '{hero} · level {level} · best round {round}',
+	'slots.played': 'Played {time}',
+	'slots.saved': 'Saved {date}',
+	'slots.inRun': 'Run in progress',
+	'slots.active': 'ACTIVE',
+	'slots.load': 'LOAD',
+	'slots.start': 'START HERE',
+	'slots.delete': 'DELETE',
+	'slots.confirmDelete': 'Delete slot {n}? All its progress is lost.',
+	'slots.confirmOverwrite': 'Slot {n} already has a game. A new game erases it.',
+	'slots.confirm': 'CONFIRM',
+	'slots.cancel': 'CANCEL',
+} as const;

@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
-import { Filet, Hint, Panel } from './Panel';
+import { Heading, Hint, Panel } from './Panel';
 
 /** Shared frame of the menu screens: title with a gold filet, a framed panel that scrolls inside
  * itself (never the page), an optional footer with the actions, Esc/B goes back. Plain dark
@@ -24,10 +24,7 @@ export function MenuScreen(props: {
 			className="fixed inset-0 flex flex-col items-center gap-[1.6vh] overflow-hidden bg-night px-[3vw] py-[2.5vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:py-1"
 		>
 			<header className={`flex w-full flex-col items-center gap-1 ${width}`}>
-				<h1 className="m-0 font-title text-[1.9em] leading-none font-bold tracking-wide uppercase">
-					{props.title}
-				</h1>
-				<Filet />
+				<Heading>{props.title}</Heading>
 				{props.subtitle && <Hint>{props.subtitle}</Hint>}
 			</header>
 			<Panel className={`w-full flex-1 ${width}`}>{props.children}</Panel>

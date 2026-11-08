@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { HEROES } from '../src/data/heroes';
+import { heroTree, pathTo } from '../src/logic/skill-tree';
 import { addStat, baseStats, getStat, heroStats } from '../src/logic/stats';
 
 describe('stats', () => {
@@ -20,11 +21,14 @@ describe('stats', () => {
 		expect(getStat(s, 'tagMul.firearm')).toBeCloseTo(1.5);
 	});
 
-	test('level growth and spent points', () => {
-		const lucia = heroStats(HEROES.lucia, 11, { crit: 4, maxHp: 2, bogus: 9 });
-		expect(lucia.maxHp).toBeCloseTo(HEROES.lucia.hp + 1.5 * 10 + 10);
-		expect(lucia.tagMul.magic).toBeCloseTo(1.5 + 0.06);
-		expect(lucia.crit).toBeCloseTo(0.05 + 0.02);
-		expect(heroStats(HEROES.jack, 1, {}).armor).toBe(12);
+	test('level growth and allocated tree nodes', () => {
+		const plain = heroStats(HEROES.lucia, 11, []);
+		expect(plain.maxHp).toBeCloseTo(HEROES.lucia.hp + 1.5 * 10);
+		expect(plain.tagMul.magic).toBeCloseTo(HEROES.lucia.tagMul.magic + 0.06);
+		const tree = heroTree('lucia');
+		const path = pathTo(tree, [], 'lucia.ice.n0');
+		const withTree = heroStats(HEROES.lucia, 11, path);
+		expect(withTree.chillChance).toBeGreaterThan(plain.chillChance);
+		expect(heroStats(HEROES.jack, 1, []).armor).toBe(HEROES.jack.armor);
 	});
 });

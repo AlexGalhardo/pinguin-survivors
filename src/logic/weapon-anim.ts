@@ -1,3 +1,4 @@
+import { WEAPON_ANIM } from '../data/weapon-anim';
 import type { WeaponBehavior } from '../data/weapons';
 
 /**
@@ -12,19 +13,11 @@ export interface WeaponPose {
 	scale: number;
 	/** 0..1 muzzle flash / staff glow intensity. */
 	glow: number;
+	/** Sprite opacity (a thrown weapon is out of the hand for a moment). */
+	alpha: number;
 }
 
-export const WEAPON_ANIM = {
-	/** Swing length as a fraction of the cooldown, clamped. */
-	swingShare: 0.45,
-	swingMin: 0.1,
-	swingMax: 0.28,
-	recoilTime: 0.12,
-	recoil: 5,
-	kick: 0.35,
-	castTime: 0.2,
-	idleReach: 12,
-} as const;
+export { WEAPON_ANIM };
 
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
@@ -42,26 +35,74 @@ export function weaponPose(
 	t: number,
 	cooldown: number,
 	arc: number,
+	lunge: number = WEAPON_ANIM.lunge,
 ): WeaponPose {
 	const w = WEAPON_ANIM;
+	const idle: WeaponPose = { angle: -0.15, reach: w.idleReach, scale: 1, glow: 0, alpha: 1 };
 	if (kind === 'arc') {
 		const d = swingDuration(cooldown);
-		if (t >= d) return { angle: arc / 2, reach: w.idleReach, scale: 1, glow: 0 };
+		if (t >= d) return { ...idle, angle: arc / 2 };
 		const k = easeOutCubic(Math.max(0, t) / d);
-		// Wind-up on one side, slash through the arc, stretched out at mid-swing.
+		// Wind-up on one side, then a lunge towards the target while the blade slashes through the arc.
 		return {
 			angle: -arc / 2 + arc * k,
-			reach: w.idleReach + 6 * Math.sin(k * Math.PI),
+			reach: w.idleReach + lunge * Math.sin(k * Math.PI),
 			scale: 1.1,
 			glow: 1 - k,
+			alpha: 1,
 		};
 	}
-	if (kind === 'spread') {
-		if (t >= w.recoilTime) return { angle: 0, reach: w.idleReach, scale: 1, glow: 0 };
+	if (kind === 'spread' || kind === 'shooter') {
+		if (t >= w.recoilTime) return { ...idle, angle: 0, scale: w.gunBase };
 		const k = 1 - Math.max(0, t) / w.recoilTime;
-		return { angle: -w.kick * k, reach: w.idleReach - w.recoil * k, scale: 1, glow: k };
+		return {
+			...idle,
+			angle: -w.kick * k,
+			reach: w.idleReach - w.recoil * k,
+			scale: w.gunBase + w.gunScale * k,
+			glow: k,
+		};
 	}
-	if (t >= w.castTime) return { angle: -0.15, reach: w.idleReach, scale: 1, glow: 0 };
+	if (kind === 'thrown' || kind === 'boomerang' || kind === 'lob') {
+		if (t >= w.throwGone) return idle;
+		if (t < w.throwTime) {
+			// The hand pushes the weapon out towards the target and it leaves.
+			const k = easeOutCubic(Math.max(0, t) / w.throwTime);
+			return { ...idle, angle: 0, reach: w.idleReach + w.throwReach * k, alpha: 1 - 0.7 * k };
+		}
+		const k = (t - w.throwTime) / (w.throwGone - w.throwTime);
+		return { ...idle, reach: w.idleReach, alpha: 0.3 + 0.7 * k };
+	}
+	if (kind === 'mine' || kind === 'totem' || kind === 'cloud') {
+		if (t >= w.plantTime) return idle;
+		const k = 1 - Math.max(0, t) / w.plantTime;
+		return {
+			angle: -0.15 + w.plantDip * k,
+			reach: w.idleReach - 6 * k,
+			scale: 1 - w.plantSquash * k * 0.5,
+			glow: k,
+			alpha: 1,
+		};
+	}
+	if (kind === 'orbit' || kind === 'aura' || kind === 'follower') {
+		if (t >= w.pulseTime) return idle;
+		const k = 1 - Math.max(0, t) / w.pulseTime;
+		return {
+			angle: -0.15 + (kind === 'aura' ? 0 : w.spin * (1 - k)),
+			reach: w.idleReach + (kind === 'orbit' ? lunge * Math.sin((1 - k) * Math.PI) : 0),
+			scale: 1 + w.pulseScale * k,
+			glow: k,
+			alpha: 1,
+		};
+	}
+	// Staff: lifts, pushes towards the target and pulses at the tip.
+	if (t >= w.castTime) return idle;
 	const k = 1 - Math.max(0, t) / w.castTime;
-	return { angle: -0.15 - 0.5 * k, reach: w.idleReach + 4 * k, scale: 1 + 0.15 * k, glow: k };
+	return {
+		angle: -0.15 - w.castLift * k,
+		reach: w.idleReach + w.castPush * Math.sin((1 - k) * Math.PI),
+		scale: 1 + w.castScale * k,
+		glow: k,
+		alpha: 1,
+	};
 }

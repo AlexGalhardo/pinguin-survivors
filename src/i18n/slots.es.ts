@@ -1,0 +1,23 @@
+/** Save slots (SDD-014 RF-01..RF-06). */
+export const slotsEs = {
+	'menu.newGame': 'NUEVA PARTIDA',
+	'menu.load': 'CARGAR PARTIDA',
+	'slots.loadTitle': 'CARGAR PARTIDA',
+	'slots.newTitle': 'NUEVA PARTIDA',
+	'slots.loadHint': 'Elige una ranura para seguir jugando.',
+	'slots.newHint': 'Elige la ranura de la nueva partida. Cada ranura guarda su propio progreso.',
+	'slots.slot': 'RANURA {n}',
+	'slots.empty': 'Ranura vacía',
+	'slots.info': '{hero} · nivel {level} · mejor ronda {round}',
+	'slots.played': 'Jugado {time}',
+	'slots.saved': 'Guardado {date}',
+	'slots.inRun': 'Partida en curso',
+	'slots.active': 'ACTIVA',
+	'slots.load': 'CARGAR',
+	'slots.start': 'EMPEZAR AQUÍ',
+	'slots.delete': 'BORRAR',
+	'slots.confirmDelete': '¿Borrar la ranura {n}? Se pierde todo su progreso.',
+	'slots.confirmOverwrite': 'La ranura {n} ya tiene una partida. Una nueva la borra.',
+	'slots.confirm': 'CONFIRMAR',
+	'slots.cancel': 'CANCELAR',
+} as const;

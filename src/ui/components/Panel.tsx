@@ -5,8 +5,37 @@ export function Filet(props: { className?: string }): ReactElement {
 	return (
 		<div
 			aria-hidden="true"
-			className={`h-px w-full bg-gradient-to-r from-transparent via-crit/70 to-transparent ${props.className ?? ''}`}
+			className={`h-px w-full bg-gradient-to-r from-transparent via-gold-aged to-transparent ${props.className ?? ''}`}
 		/>
+	);
+}
+
+/** Separator with a small diamond in the middle. */
+export function Divider(props: { className?: string }): ReactElement {
+	return (
+		<div
+			aria-hidden="true"
+			className={`flex w-full items-center gap-2 ${props.className ?? ''}`}
+		>
+			<span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold-aged" />
+			<span className="diamond" />
+			<span className="h-px flex-1 bg-gradient-to-l from-transparent to-gold-aged" />
+		</div>
+	);
+}
+
+/** Screen title: wide-spaced capitals between two gold ornaments. */
+export function Heading(props: { children: ReactNode; className?: string }): ReactElement {
+	return (
+		<div className={`flex w-full items-center gap-3 ${props.className ?? ''}`}>
+			<span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold-aged" />
+			<span className="diamond" />
+			<h1 className="m-0 font-title text-[1.9em] leading-tight font-black tracking-[0.18em] text-text-light uppercase [text-shadow:0_2px_8px_var(--color-shadow)]">
+				{props.children}
+			</h1>
+			<span className="diamond" />
+			<span className="h-px flex-1 bg-gradient-to-l from-transparent to-gold-aged" />
+		</div>
 	);
 }
 
@@ -18,22 +47,25 @@ export function Panel(props: {
 	children: ReactNode;
 	title?: ReactNode;
 	className?: string;
+	/** Game screens (shop, pause) never scroll: the body clips instead and the layout must fit. */
+	fit?: boolean;
 }): ReactElement {
 	return (
 		<section
-			className={`relative flex min-h-0 flex-col border border-snow bg-night/90 shadow-[inset_0_0_0_3px_var(--color-night),inset_0_0_0_4px_var(--color-snow-dark)] ${props.className ?? ''}`}
+			className={`ornate relative flex min-h-0 flex-col border border-snow-dark shadow-[inset_0_0_0_3px_var(--color-night),inset_0_0_0_4px_var(--color-snow-dark),0_4px_24px_var(--color-shadow)] ${props.className ?? ''}`}
 		>
 			{props.title !== undefined && (
 				<header className="px-4 pt-3">
-					<h2 className="font-title text-[1.05em] font-bold tracking-wider text-text-dim uppercase">
+					<h2 className="m-0 flex items-center gap-2 font-title text-[1.05em] font-bold tracking-[0.14em] text-gold-bright uppercase">
+						<span className="diamond" />
 						{props.title}
 					</h2>
 					<Filet className="mt-1" />
 				</header>
 			)}
 			<div
-				data-panel-scroll="true"
-				className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4"
+				data-panel-scroll={props.fit ? undefined : 'true'}
+				className={`flex min-h-0 flex-1 flex-col gap-2 ${props.fit ? 'p-3' : 'p-4'} ${props.fit ? 'overflow-hidden' : 'no-scrollbar overflow-y-auto'}`}
 			>
 				{props.children}
 			</div>
@@ -78,26 +110,43 @@ export function ItemCard(props: {
 	const style: CSSProperties | undefined = props.color ? { borderColor: props.color } : undefined;
 	return (
 		<div
-			className={`flex flex-col gap-1 border-2 border-snow-dark bg-night/80 p-3 ${props.className ?? ''}`}
+			className={`flex flex-col border-2 border-snow-dark bg-night/80 ${props.className ?? ''}`}
 			style={style}
 		>
 			<div
-				className="font-title text-[1.1em] font-bold"
-				style={props.color ? { color: props.color } : undefined}
+				className="flex flex-col gap-0.5 px-3 pt-2 pb-1.5"
+				style={
+					props.color
+						? {
+								backgroundImage: `linear-gradient(90deg, color-mix(in srgb, ${props.color} 38%, transparent), transparent 85%)`,
+							}
+						: undefined
+				}
 			>
-				{props.name}
+				<div
+					className="font-title text-[1.1em] font-bold tracking-[0.06em] uppercase"
+					style={props.color ? { color: props.color } : undefined}
+				>
+					{props.name}
+				</div>
+				{props.kind && (
+					<div className="text-[0.8em] tracking-wider text-text-dim uppercase">
+						{props.kind}
+					</div>
+				)}
 			</div>
-			{props.kind && <div className="text-[0.8em] text-text-dim uppercase">{props.kind}</div>}
-			{props.lines && props.lines.length > 0 && (
-				<ul className="m-0 list-none space-y-0.5 p-0 text-[0.9em]">
-					{props.lines.map((line, i) => (
-						// Static text lines, never reordered.
-						// biome-ignore lint/suspicious/noArrayIndexKey: fixed list of lines
-						<li key={i}>{line}</li>
-					))}
-				</ul>
-			)}
-			{props.footer}
+			<div className="flex flex-col gap-1 px-3 pt-1.5 pb-2">
+				{props.lines && props.lines.length > 0 && (
+					<ul className="m-0 list-none space-y-0.5 p-0 text-[0.9em]">
+						{props.lines.map((line, i) => (
+							// Static text lines, never reordered.
+							// biome-ignore lint/suspicious/noArrayIndexKey: fixed list of lines
+							<li key={i}>{line}</li>
+						))}
+					</ul>
+				)}
+				{props.footer}
+			</div>
 		</div>
 	);
 }

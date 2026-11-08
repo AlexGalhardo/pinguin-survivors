@@ -4,6 +4,7 @@ import { COMBAT } from '../../data/combat';
 import { DANGER, type Danger, EXTRA_WAVES } from '../../data/difficulty';
 import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
+import { SIM_BRANCH_ORDER } from '../../data/skill-tree';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import { STARTING_WEAPONS } from '../../data/unlocks';
 import { WEAPON_LINE_BY_ID, weaponTierStats } from '../../data/weapons';
@@ -35,8 +36,8 @@ import {
 } from '../round';
 import { createRunState, endRound, finishRun, leaveShop, weaponCandidates } from '../run-state';
 import { defaultSave } from '../save';
-import { addStat, heroStats, type PlayerStats, type PointStat } from '../stats';
-import { applyUpgrades } from '../upgrades';
+import { autoAllocate, heroTree } from '../skill-tree';
+import { addStat, heroStats, type PlayerStats } from '../stats';
 import { pickBest } from './card-policy';
 import { makeTaste, playShop, takeDrop } from './shop-policy';
 
@@ -73,14 +74,12 @@ export interface SimConfig {
 	hero: HeroId;
 	level: number;
 	seed: number;
-	/** Stat points spread evenly over these stats (level − 1 points). */
-	pointPlan?: PointStat[];
+	/** Allocated tree nodes (default: `autoAllocate` in `SIM_BRANCH_ORDER`). */
+	tree?: readonly string[];
 	/** Danger 0–5 (default 1, the baseline). */
 	danger?: Danger;
 	/** Tier of the starting weapon (debug). */
 	tier?: 1 | 2 | 3;
-	/** Workshop upgrade levels by id (applied to the starting stats like the game). */
-	upgrades?: Record<string, number>;
 }
 
 export interface SimResult {
@@ -107,20 +106,9 @@ export interface SimResult {
 	perRound: number[];
 }
 
-/** Stat-point plans used by the sim and the playtest bot (points spread in this order). */
-export const POINT_PLANS: Record<HeroId, PointStat[]> = {
-	jack: ['maxHp', 'armor', 'attackSpeed', 'parry'],
-	bob: ['crit', 'attackSpeed', 'dodge', 'maxHp'],
-	lucia: ['attackSpeed', 'maxHp', 'regen', 'dodge'],
-};
-
-export function spendPoints(level: number, plan: readonly PointStat[]): Record<string, number> {
-	const points: Record<string, number> = {};
-	for (let i = 0; i < level - 1; i++) {
-		const stat = plan[i % plan.length] as PointStat;
-		points[stat] = (points[stat] ?? 0) + 1;
-	}
-	return points;
+/** Tree the sim and the playtest bot use for a hero at `level` (greedy, `SIM_BRANCH_ORDER`). */
+export function simTree(hero: HeroId, level: number): string[] {
+	return autoAllocate(heroTree(hero), level, SIM_BRANCH_ORDER[hero]);
 }
 
 const critAvg = (s: PlayerStats) => 1 + Math.min(1, s.crit) * (s.critDamage - 1);
@@ -246,12 +234,7 @@ export function contactRate(alive: number, heroSpeed: number, enemySpeed: number
 export function simulateRun(config: SimConfig): SimResult {
 	const rng = new Rng(config.seed);
 	const hero = HEROES[config.hero];
-	const stats = heroStats(
-		hero,
-		config.level,
-		spendPoints(config.level, config.pointPlan ?? POINT_PLANS[config.hero]),
-	);
-	applyUpgrades(stats, config.upgrades ?? {});
+	const stats = heroStats(hero, config.level, config.tree ?? simTree(config.hero, config.level));
 	const build = emptyBuild();
 	addWeapon(build, STARTING_WEAPONS[config.hero][0], config.tier ?? 1);
 	let eff = effectiveStats(stats, build);
@@ -444,11 +427,10 @@ export function simulateMany(
 	level: number,
 	runs: number,
 	seed = 1,
-	upgrades: Record<string, number> = {},
 	danger: Danger = 1,
 ): SimSummary {
 	const results = Array.from({ length: runs }, (_, i) =>
-		simulateRun({ hero, level, seed: seed + i, upgrades, danger }),
+		simulateRun({ hero, level, seed: seed + i, danger }),
 	);
 	const rounds = results.map((r) => r.round).sort((a, b) => a - b);
 	const avg = (f: (r: SimResult) => number) => results.reduce((a, r) => a + f(r), 0) / runs;

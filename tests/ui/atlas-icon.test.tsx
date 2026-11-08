@@ -5,7 +5,6 @@ const { act, cleanup, render } = await import('@testing-library/react');
 const { AtlasIcon, cardIconFrames, weaponFrames } = await import(
 	'../../src/ui/components/AtlasIcon'
 );
-const { HudView } = await import('../../src/ui/components/Hud');
 const { clearAtlases, registerAtlas } = await import('../../src/ui/atlas');
 
 afterAll(uninstall);
@@ -68,35 +67,5 @@ describe('AtlasIcon', () => {
 		expect(cardIconFrames('maxHp')).toEqual(['icon.maxHp']);
 		expect(cardIconFrames('perk.ironBreath')).toEqual(['icon.perk.ironBreath']);
 		expect(cardIconFrames('active.seismicStomp')).toEqual(['icon.weapon.seismicStomp']);
-	});
-});
-
-describe('HUD weapon slot', () => {
-	const hud = {
-		hp: 10,
-		maxHp: 10,
-		level: 1,
-		xp: 0,
-		xpToNext: 10,
-		fish: 0,
-		kills: 0,
-		round: 1,
-		timeLeft: 30,
-		bossRound: false,
-		boss: null,
-		superpower: null,
-		elite: 'none' as const,
-		weapons: [{ id: 'machete', tier: 2 as const }],
-		gear: [null],
-		gambits: [],
-		speed: 1,
-		fps: 60,
-	};
-
-	test('keeps the two-letter fallback until the weapon art arrives, then draws it', () => {
-		const view = render(<HudView hud={hud} />);
-		expect(view.queryByText('MA')).not.toBeNull();
-		act(() => registerAtlas(atlas, 'a/'));
-		expect(view.queryByText('MA')).toBeNull();
 	});
 });

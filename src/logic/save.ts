@@ -27,13 +27,16 @@ import {
 	evaluateAchievements,
 } from './achievements';
 import { DEFAULT_BINDS, type KeyBinds, parseBinds } from './keybinds';
+import { heroTree, sanitizeAllocation } from './skill-tree';
 import { parseRunEndEvents, type RunEndEvent } from './telemetry';
 
 /**
- * Local save (localStorage, one JSON document). SemVer public API: bump SAVE_VERSION and add a
- * migration whenever the shape changes incompatibly.
+ * Local save: one JSON document (`SaveFile`) with three player slots plus the global settings
+ * (ADR-020). No migrations: an older or invalid file starts empty. Bump SAVE_VERSION whenever the
+ * shape changes incompatibly.
  */
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
+export const SLOT_COUNT = 3;
 export const SAVE_KEY = 'pinguin-survivors.save';
 export const HISTORY_SIZE = 20;
 
@@ -65,8 +68,8 @@ export interface HeroSave {
 	level: number;
 	/** XP inside the current level. */
 	xp: number;
-	/** Stat points spent, by stat id (level-up points; P-25). */
-	points: Record<string, number>;
+	/** Allocated passive tree nodes (ADR-019); one tree point per level above 1. */
+	tree: string[];
 }
 
 export interface Gambit {
@@ -109,6 +112,8 @@ export interface RunSnapshot {
 
 export interface SaveData {
 	version: number;
+	/** Last write (ms since epoch); 0 until the first save. Shown in the slot list. */
+	savedAt: number;
 	settings: Settings;
 	heroes: Record<HeroId, HeroSave>;
 	fish: number;
@@ -118,7 +123,6 @@ export interface SaveData {
 	pearls: number;
 	potions: Record<PotionType, number>;
 	gambits: Gambit[];
-	upgrades: Record<string, number>;
 	progress: AchievementProgress;
 	achievements: AchievementState;
 	history: RunRecord[];
@@ -132,6 +136,7 @@ export interface SaveData {
 export function defaultSave(lang: Lang = 'en'): SaveData {
 	return {
 		version: SAVE_VERSION,
+		savedAt: 0,
 		settings: {
 			lang,
 			volume: { master: 0.8, music: 0.6, sfx: 0.8 },
@@ -147,7 +152,10 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 			telemetry: false,
 		},
 		heroes: Object.fromEntries(
-			HERO_IDS.map((h) => [h, { unlocked: h === 'jack', level: 1, xp: 0, points: {} }]),
+			HERO_IDS.map((h) => [
+				h,
+				{ unlocked: h === 'jack', level: 1, xp: 0, tree: [] as string[] },
+			]),
 		) as Record<HeroId, HeroSave>,
 		fish: 0,
 		pearls: 0,
@@ -156,7 +164,6 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 		) as Record<HeroId, number[]>,
 		potions: Object.fromEntries(POTION_TYPES.map((p) => [p, 0])) as Record<PotionType, number>,
 		gambits: Array.from({ length: GAMBIT_SLOTS }, () => ({ potion: null, condition: null })),
-		upgrades: {},
 		progress: emptyProgress(),
 		achievements: emptyAchievementState(),
 		history: [],
@@ -181,31 +188,6 @@ function numRecord<K extends string>(v: unknown, keys: readonly K[], base: Recor
 	return Object.fromEntries(keys.map((k) => [k, num(src[k], base[k])])) as Record<K, number>;
 }
 
-/** Past versions → current. Each step receives the raw object of version N and returns N+1. */
-const MIGRATIONS: Record<number, (raw: Json) => Json> = {
-	// v1 → v2: the in-progress run is incompatible with the new run model, so it is dropped; the old
-	// `difficulty` setting maps to Danger 1 unlocked for every hero. Voice settings are simply not read.
-	1: (raw) => {
-		const progress = isObj(raw.progress) ? raw.progress : {};
-		const hero = isObj(progress.hero) ? progress.hero : {};
-		return {
-			...raw,
-			// SDD-003 RF-07: old Fish carry over 1:1 as Pearls.
-			pearls: raw.pearls ?? raw.fish ?? 0,
-			activeRun: null,
-			progress: {
-				...progress,
-				hero: Object.fromEntries(
-					HERO_IDS.map((h) => [
-						h,
-						{ dangerUnlocked: 1, ...(isObj(hero[h]) ? hero[h] : {}) },
-					]),
-				),
-			},
-		};
-	},
-};
-
 /**
  * Parses a stored/imported save. Never throws: corrupt or missing data falls back to defaults
  * field by field, so one bad value does not wipe the player's progress.
@@ -213,20 +195,18 @@ const MIGRATIONS: Record<number, (raw: Json) => Json> = {
 export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 	const base = defaultSave(lang);
 	if (!json) return base;
-	let raw: unknown;
 	try {
-		raw = JSON.parse(json);
+		return parseSaveObject(JSON.parse(json), lang);
 	} catch {
 		return base;
 	}
-	if (!isObj(raw)) return base;
-	let version = num(raw.version, 0);
-	if (version > SAVE_VERSION) return base;
-	while (version < SAVE_VERSION && MIGRATIONS[version]) {
-		raw = (MIGRATIONS[version] as (r: Json) => Json)(raw as Json);
-		version++;
-	}
-	const r = raw as Json;
+}
+
+/** `parseSave` for an already parsed value; anything but the current version starts empty. */
+function parseSaveObject(raw: unknown, lang: Lang): SaveData {
+	const base = defaultSave(lang);
+	if (!isObj(raw) || raw.version !== SAVE_VERSION) return base;
+	const r = raw;
 
 	const s = isObj(r.settings) ? r.settings : {};
 	const vol = isObj(s.volume) ? s.volume : {};
@@ -256,18 +236,13 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		HERO_IDS.map((h) => {
 			const src = isObj(rh[h]) ? rh[h] : {};
 			const d = base.heroes[h];
-			const points = isObj(src.points)
-				? Object.fromEntries(
-						Object.entries(src.points).map(([k, v]) => [k, num(v, 0)] as const),
-					)
-				: {};
 			return [
 				h,
 				{
 					unlocked: bool(src.unlocked, d.unlocked),
 					level: num(src.level, d.level, 1, 100),
 					xp: num(src.xp, 0),
-					points,
+					tree: sanitizeAllocation(heroTree(h), Array.isArray(src.tree) ? src.tree : []),
 				},
 			];
 		}),
@@ -321,6 +296,7 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 
 	return {
 		version: SAVE_VERSION,
+		savedAt: num(r.savedAt, 0),
 		settings,
 		heroes,
 		fish: num(r.fish, 0),
@@ -328,11 +304,6 @@ export function parseSave(json: string | null, lang: Lang = 'en'): SaveData {
 		bestRoundByDanger: parseBestByDanger(r.bestRoundByDanger),
 		potions: numRecord(r.potions, POTION_TYPES, base.potions),
 		gambits,
-		upgrades: isObj(r.upgrades)
-			? Object.fromEntries(
-					Object.entries(r.upgrades).map(([k, v]) => [k, num(v, 0)] as const),
-				)
-			: {},
 		progress,
 		achievements,
 		history: (Array.isArray(r.history) ? r.history : [])
@@ -484,4 +455,99 @@ export function recordTierIVSlots(save: SaveData, n: number): void {
 
 export function addFeat(save: SaveData, feat: (typeof FEATS)[number]): void {
 	if (!save.progress.feats.includes(feat)) save.progress.feats.push(feat);
+}
+
+/** A player slot: the whole `SaveData` except the global settings, which live beside the slots. */
+export type SlotData = Omit<SaveData, 'settings'>;
+
+/** The one stored document: global settings plus three independent player slots (ADR-020). */
+export interface SaveFile {
+	version: number;
+	settings: Settings;
+	slots: (SlotData | null)[];
+	/** Slot the game plays and autosaves into. */
+	active: number;
+}
+
+export function defaultSaveFile(lang: Lang = 'en'): SaveFile {
+	return {
+		version: SAVE_VERSION,
+		settings: defaultSave(lang).settings,
+		slots: Array.from({ length: SLOT_COUNT }, () => null),
+		active: 0,
+	};
+}
+
+export function toSlot(save: SaveData): SlotData {
+	const { settings: _settings, ...slot } = save;
+	return slot;
+}
+
+/** Fresh slot content for "New game". */
+export const newSlot = (lang: Lang = 'en'): SlotData => toSlot(defaultSave(lang));
+
+/** The in-memory save the game plays: the active slot (or an empty one) plus the global settings. */
+export function composeSave(file: SaveFile, lang: Lang = 'en'): SaveData {
+	return { ...(file.slots[file.active] ?? newSlot(lang)), settings: file.settings };
+}
+
+/** Never throws; anything unreadable or from another version becomes an empty file. */
+export function parseSaveFile(json: string | null, lang: Lang = 'en'): SaveFile {
+	const base = defaultSaveFile(lang);
+	if (!json) return base;
+	let raw: unknown;
+	try {
+		raw = JSON.parse(json);
+	} catch {
+		return base;
+	}
+	if (!isObj(raw) || raw.version !== SAVE_VERSION) return base;
+	const rows = Array.isArray(raw.slots) ? raw.slots : [];
+	const slots = base.slots.map((_, i) =>
+		isObj(rows[i])
+			? toSlot(parseSaveObject({ ...rows[i], version: SAVE_VERSION }, lang))
+			: null,
+	);
+	const settings = parseSaveObject(
+		{ version: SAVE_VERSION, settings: raw.settings },
+		lang,
+	).settings;
+	const wanted = num(raw.active, 0, 0, SLOT_COUNT - 1);
+	const active = slots[wanted]
+		? wanted
+		: Math.max(
+				0,
+				slots.findIndex((s) => s !== null),
+			);
+	return { version: SAVE_VERSION, settings, slots, active: Math.floor(active) };
+}
+
+export function serializeSaveFile(file: SaveFile): string {
+	return JSON.stringify(file);
+}
+
+/** What the slot list shows for one used slot. */
+export interface SlotSummary {
+	hero: HeroId;
+	level: number;
+	bestRound: number;
+	playedSec: number;
+	savedAt: number;
+	/** A run is waiting to be continued. */
+	inRun: boolean;
+}
+
+/** The hero of the run in progress, else of the last finished run, else the highest level. */
+export function summarizeSlot(slot: SlotData | null): SlotSummary | null {
+	if (!slot) return null;
+	const byLevel = [...HERO_IDS].sort((a, b) => slot.heroes[b].level - slot.heroes[a].level)[0];
+	const hero = slot.activeRun?.hero ?? slot.history[0]?.hero ?? byLevel ?? 'jack';
+	return {
+		hero,
+		level: slot.heroes[hero].level,
+		bestRound: slot.progress.runBests.maxRound,
+		playedSec: Math.round(slot.progress.lifetime.secondsPlayed),
+		savedAt: slot.savedAt,
+		inRun: slot.activeRun !== null,
+	};
 }

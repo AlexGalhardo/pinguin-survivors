@@ -1,8 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { maxSelectableDanger, recordBestRound, unlockDanger } from '../src/logic/difficulty';
 import { addXp, freePoints, orbXp, roundEndFish, xpToNext } from '../src/logic/progression';
-import { defaultSave, parseSave, serializeSave } from '../src/logic/save';
-import v1Fixture from './fixtures/save-v1.json';
+import { defaultSave, parseSave, SAVE_VERSION, serializeSave } from '../src/logic/save';
 
 describe('progression (P-24/P-25)', () => {
 	test('xp curve grows', () => {
@@ -63,8 +62,8 @@ describe('Danger unlock (SDD-005 A4)', () => {
 		expect(back.bestRoundByDanger.jack).toEqual([0, 0, 0, 0, 0, 0]);
 	});
 
-	test('v1 migration adds empty bests and stays idempotent', () => {
-		const once = parseSave(JSON.stringify(v1Fixture));
+	test('a save without bests reads as empty bests and stays idempotent', () => {
+		const once = parseSave(JSON.stringify({ version: SAVE_VERSION }));
 		expect(once.bestRoundByDanger.jack).toEqual([0, 0, 0, 0, 0, 0]);
 		expect(parseSave(serializeSave(once))).toEqual(once);
 	});

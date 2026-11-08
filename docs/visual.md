@@ -53,14 +53,14 @@
 
 ## 4. Armas e projéteis
 
-- Armas: imagem única `create-image-pixflux`, vista lateral apontando para a direita, empunhadura à esquerda (origem 0,15), 48×24 a 80×32. **Tiers I–IV** = 4 imagens por linha de arma (tamanho/detalhe crescentes; I simples, IV com brilho/partes extras).
+- Armas: imagem única `create-image-pixflux`, vista lateral apontando para a direita, empunhadura à esquerda (origem 0,15), 48×24 a 80×32. **4 linhas de arte** (`weapon.<id>.t1…t4`, tamanho/detalhe crescentes; I simples, IV com brilho/partes extras) servem à **raridade I–V** (ADR-017: I a IV usam as linhas 1 a 4; a V reaproveita a IV com brilho laranja). Os afixos e a cor da raridade vêm de dados (`rarityColor`), não de arte nova. Armas são animadas por código ao atacar o alvo (`src/logic/weapon-anim.ts`).
 - Até **6 armas** orbitam o herói; animação por código: corte em arco com rastro (melee), recuo + clarão (fogo), pulso/brilho (magia).
 - Projéteis 16–32 px apontando para a direita; pickups 16 px (XP cristal ciano, Fish, carne, packs de vida com cruz).
 
 ## 5. Arena: chão, bordas e props
 
 - **Tileset top-down 64×64 por bioma** (`create_topdown_tileset` / `create-tiles-pro`, `view: top-down`): 4–6 variantes de chão sem costura + **borda** (parede/gelo/contêiner/entulho) com cantos. Antártida: neve pisoteada cinza-azulada; estação: placas de aço com gelo (legado, endless); ruínas: asfalto rachado (legado, endless). Campanha 2–3: floresta e cidade destruída (proposta, ADR-016).
-- **Props** `high top-down` 32–64 px, 3–5 por bioma (cristais, rochas, caixotes, barris, contêineres, carros queimados, entulho); sólidos leves.
+- **Props** `high top-down` 32–64 px, 3–5 por bioma (cristais, rochas, caixotes, barris, contêineres, carros queimados, entulho); **obstáculos sólidos** desenhados 2–3× (largura final de 3 a 5 vezes a do herói, `src/data/obstacles.ts`). Decisão do desenvolvedor (2026-11-08): manter a arte `deco.*` atual ampliada, sem arte nativa grande.
 - Decalques de sangue carimbados numa `DynamicTexture` do tamanho da arena (recriada quando cresce).
 
 ## 6. VFX, gore e luz
@@ -92,8 +92,8 @@ Chamadas: API v2 (`scripts/lib/pixellab.ts`, token `PIXELLAB_API_TOKEN` do `.env
 
 ## 9. Contrato de chaves
 
-- Personagem `hero.<id>` · `enemy.<id>` · `boss.<id>` · `npc.<id>`; animação `<chave>.<anim>`; frame `<chave>.<anim>.<dir>.<nn>` com `dir` ∈ `s, se, e, ne, n, nw, w, sw`.
-- `tile.<biome>.<n>` · `border.<biome>.<n>` · `deco.<biome>.<n>` · `weapon.<id>.t<1-4>` · `proj.<id>` · `pickup.<kind>` · `item.<slot>.<id>` · `icon.<id>` · `fx.<nome>` · `ui.<nome>` · `portrait.<hero>` · `keyart.<hero>`.
+- Personagem `hero.<id>` · `enemy.<id>` · `boss.<id>` · `npc.<id>` (hoje `npc.merchant`, idle em `public/assets/enemies/`); animação `<chave>.<anim>` (`walk`, `fly` dos voadores, `attack` de ranged, charger e chefes, `idle`); **nunca substituir frames existentes**, só somar animações ao atlas ou criar variantes em `art-src/pixellab/anim-v2/`; frame `<chave>.<anim>.<dir>.<nn>` com `dir` ∈ `s, se, e, ne, n, nw, w, sw`.
+- `tile.<biome>.<n>` · `border.<biome>.<n>` · `deco.<biome>.<n>` · `weapon.<id>.t<1-4>` · `proj.<id>` · `pickup.<kind>` · `item.<slot>.<id>` · `icon.<id>` · `fx.<nome>` (`fx.super.<hero>.<nn>`, 12–13 frames por herói) · `ui.<nome>` · `portrait.<hero>` · `keyart.<hero>`.
 - Áudio: `sfx.*`, `music.*` (ver [audio.md](audio.md)).
 
 ## 10. Orçamento e custos medidos
@@ -121,9 +121,9 @@ Saldo em 2026-11-08: **2.320 gerações até 14/11**, depois 5.000/mês. Plano d
 
 ## 11. Inventário de assets e pendências
 
-**Prontos**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), 19 inimigos com walk, 3 bosses (urso com walk; kraken e abominação estáticos), 17 armas (1 tier), projéteis, pickups, 12+7 ícones, tiles iso removidos (frames `tile.*` iso, 129ad1b; tiles top-down em SDD-012), decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
+**Prontos (0.3.0)**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), inimigos com walk (legados e 6 aliens), voadores com `fly`, atiradores, chargers e chefes (urso e Colosso) com `attack`, bosses kraken e abominação estáticos, 17 armas × 4 linhas de arte, VFX dos 3 superpoderes, lojista `npc.merchant` (idle), tiles top-down das 5 biomas, ícones de cartas, itens e poções (`tests/art-coverage.test.ts`), projéteis, pickups, 12+7 ícones, tiles iso removidos (frames `tile.*` iso, 129ad1b; tiles top-down em SDD-012), decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
 
-**Pendentes para a 1.0** (ordem de impacto): tileset top-down + bordas da Antártida, floresta e cidade destruída (ADR-016; estação e cidade em ruínas ficam como legado do endless) → props top-down da floresta e da cidade destruída → concepts dos 6 aliens e do Colosso biomecânico, com aprovação do desenvolvedor antes de qualquer animação (SDD-012 RF-12) → concept e walk do Alce-rei zumbi e dos 6 inimigos da floresta → lojista → QA dos personagens no top-down → tiers II–IV das armas (~48 imagens) → ícones de cartas/itens/poções (~90) → VFX dos 3 superpoderes → walks do kraken/abominação e voadores → ataques de inimigos e bosses → key art de capa Steam e capsules.
+**Pendentes para a 1.0**: concept e walk do Alce-rei zumbi (hoje placeholder) e arte própria dos inimigos da floresta (reaproveitam atlas existentes) → walk e `attack` do kraken e da abominação → animações de lojista além do idle (compra, fala) → QA final dos personagens no top-down → key art de capa Steam e capsules.
 
 ## 12. Referências
 
@@ -294,7 +294,7 @@ Ferramentas novas: `scripts/pl-tiles.ts` agora aceita o tipo `square_topdown` e 
 - **Correção** (`scripts/pl-fly.ts`): os personagens legados não podem ser reanimados com este token (404), então cada direção usa a rotação existente (`walk/<dir>/00.png`) como primeiro quadro de `/animate-with-text-v3` (`action` `flying: the creature beats its wings hard, wings sweeping from raised high to lowered low and back again, body bobbing up and down, hovering in place, seamless loop`, 8 frames mais o inicial, seed 22, ~1 geração por direção). 4 voadores × 5 direções (+ espelho) = 20 gerações (+ 2 de piloto).
 - **Integração sem tocar o walk**: os 9 frames de cada direção entram numa pasta nova `anim/enemy.<id>/fly/` e o atlas `enemy.<id>` é empacotado de novo; conferi pixel a pixel que todos os frames `walk` antigos continuam idênticos (5 por legado, 30 no alienFlyer). `Enemy.ts` escolhe `fly` para `behavior: 'flyer'` quando o atlas tem os frames (loop a 12 fps, âncora própria), senão `walk`; a sombra no chão já era um sprite separado (`z` de 18). Prancha: `qa/flyers-fly-sheet.png`.
 
-### 2026-11-08 — T4.4: conceito do lojista (6 gerações; só prancha, gate do desenvolvedor)
+### 2026-11-08 — T4.4: conceito do lojista (6 gerações; seed 202 aprovada pelo desenvolvedor)
 
 - Pinguim lojista estilo vendedor de ARPG (mochila enorme com espadas e peças de armadura, cinto de poções de velocidade, bolsa de moedas, capuz), `scripts/pl-merchant.ts`, 2 seeds (101 e 202), 8 rotações cada. Prancha com sul, leste, norte e oeste: `art-src/pixellab/qa/merchant-concept.png`. **Sem animação e sem integração** até o desenvolvedor aprovar uma das seeds.
 
@@ -309,3 +309,8 @@ Ferramentas novas: `scripts/pl-tiles.ts` agora aceita o tipo `square_topdown` e 
 
 - Dev aprovou a seed 202. `pl-animate.ts --key npc.merchant --char b3b9fc60-757e-47e4-b4a7-2d180bbdf8a9 --anim idle --template breathing-idle`: 4 frames em 5 direções. Atlas `public/assets/enemies/npc.merchant.{png,json}` (frames `idle.<dir>.<nn>`, 96 px, `KEYS.npc('merchant')`, `pack-heroes.ts` manda chaves `npc.*` para essa pasta). Componente React `src/ui/components/MerchantSprite.tsx` (`scale` inteiro, loop sul a 4 fps).
 - `polarBear` com telegraph "sem attack": falso alarme do teste (o `telegraph` é reescrito a cada frame pela IA); com `ai.mode = 'windup'` real toca `enemy.polarBear.attack.e`. Nada a corrigir.
+
+### 2026-11-08 — Animação de ataque das armas equipadas (0 gerações)
+
+- Só código, com a arte `weapon.<id>.t1..t4` atual: `src/logic/weapon-anim.ts` ganhou uma pose por comportamento (números em `src/data/weapon-anim.ts`). Melee (`arc`): lunge até o alvo durante o arco; `spread` e `shooter`: recuo e flash de cano; arremessáveis (`thrown`, `boomerang`, `lob`): a arma sai da mão em direção ao alvo e volta com fade; plantáveis (`mine`, `totem`, `cloud`): mergulho para o chão com achatamento; `orbit`, `aura`, `follower`: giro e pulso ao golpear; `bolt` (cajado): aponta, brilha e flasha na ponta. `WeaponView` aplica `alpha` da pose e o flash também em `shooter` e `bolt`.
+- Iteração: o lunge de `arc` e `orbit` vai até a distância real do alvo (`WeaponRing` passa a distância ao `WeaponView`; limite `lunge` e `lungeGap` em `src/data/weapon-anim.ts`); armas de fogo ficam maiores (`gunBase`), com recuo e coice maiores e flash ampliado; o cajado (`bolt`) ergue, avança em direção ao alvo e pulsa.

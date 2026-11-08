@@ -6,7 +6,7 @@ import { t } from '../../i18n';
 import type { PlayerPanelView } from '../../logic/item-view';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
-import { Filet, Panel } from './Panel';
+import { Heading, Panel } from './Panel';
 import { PlayerPanel, type PlayerPanelData, panelFromView } from './PlayerPanel';
 
 export interface PauseData {
@@ -70,15 +70,12 @@ export function Pause({
 		<FocusScope
 			key={confirming ? 'confirm' : 'menu'}
 			onBack={confirming ? () => setConfirming(false) : actions.resume}
-			className="fixed inset-0 flex flex-col items-center gap-[1.4vh] bg-night px-[3vw] py-[2.5vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light"
+			className="fixed inset-0 flex flex-col items-center gap-[1.4vh] overflow-hidden bg-night px-[3vw] py-[2vh] font-body text-[clamp(0.55rem,1.55vh,2.4rem)] text-text-light"
 		>
 			<header className="flex w-full max-w-[90rem] flex-col items-center gap-1">
-				<h1 className="m-0 font-title text-[1.9em] leading-none font-bold tracking-wide uppercase">
-					{t('pause.title')}
-				</h1>
-				<Filet />
+				<Heading>{t('pause.title')}</Heading>
 			</header>
-			<Panel className="w-full max-w-[90rem] flex-1">
+			<Panel fit className="w-full max-w-[90rem] flex-1">
 				<PlayerPanel
 					wide
 					data={

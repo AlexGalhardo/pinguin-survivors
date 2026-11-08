@@ -2,6 +2,8 @@
 
 **Versão** 1.0 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [008](../adrs/ADR-008-danger-0-5-e-endless.md), [007](../adrs/ADR-007-fish-na-run-perolas-meta.md) · **GDD** §16, §18
 
+> **Nota (2026-11-08)**: o save v2 e a migração v1 → v2 foram superados: o save é versionado (`SAVE_VERSION`, hoje 3) e **não migra** antes da 1.0 (decisão do desenvolvedor); por herói guarda `tree` no lugar de `points` e `upgrades` ([ADR-019](../adrs/ADR-019-arvore-de-habilidades.md)). O Danger 0–5 segue como especificado. TODO (sênior de slots de save): documentar os slots de save quando o ADR-020 for fechado.
+
 ## Requisitos
 
 - RF-01 `DANGER[0..5]`: `{ hp, dmg, speed, drops, extraWaves }` = D0 `{0.8, 0.8, 0.95, 0.9, 0}`, D1 `{1, 1, 1, 1, 0}`, D2 `{1.15, 1.1, 1.02, 1.1, 1}`, D3 `{1.3, 1.2, 1.05, 1.2, 1}`, D4 `{1.5, 1.35, 1.08, 1.35, 3}`, D5 `{1.75, 1.5, 1.12, 1.5, 3}` (valores iniciais a calibrar; espelho em balancing).
@@ -9,7 +11,7 @@
 - RF-03 Desbloqueio: vencer o boss do round 20 no danger D marca `progress.hero[h].dangerUnlocked = max(atual, D+1)`.
 - RF-04 `HeroSelect` mostra danger selecionável até o desbloqueado e melhor round por danger.
 - RF-05 **Save v2**: `SAVE_VERSION = 2`; campos novos `pearls`, `progress.hero[h].dangerUnlocked`, `progress.hero[h].bestRoundByDanger[6]`, `unlocks.startingWeapons`, `settings.lang ∈ en|pt-BR|es|zh-CN` (o campo `lang` já existente faz o papel de `locale`); removidos `fish`, `difficulty`, `settings.voice*`, `activeRun` (incompatível: descartado com aviso).
-- RF-06 Migração v1→v2 idempotente; `activeRun` v1 descartado; `difficulty` → `dangerUnlocked = 1` para todos.
+- RF-06 *(revogado pelo [ADR-020](../adrs/ADR-020-save-em-tres-slots.md): sem migração, arquivo antigo começa vazio)* Migração v1→v2 idempotente; `activeRun` v1 descartado; `difficulty` → `dangerUnlocked = 1` para todos.
 - RF-07 Export/import `.json` continua; Electron grava também em arquivo para Steam Cloud (SDD-007).
 
 ## Especificação

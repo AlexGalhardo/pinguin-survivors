@@ -4,6 +4,7 @@ import { ECONOMY, PEARLS, SHOP } from '../data/economy';
 import { GEAR } from '../data/equipment';
 import type { HeroDef } from '../data/heroes';
 import { POTION_TYPES, type PotionType } from '../data/potions';
+import { SUPPORT_IDS } from '../data/support';
 import {
 	MAX_WEAPON_SLOTS,
 	WEAPON_LINES,
@@ -14,6 +15,12 @@ import {
 import { addWeapon, type Build } from './build';
 import { type CardOffer, drawCards } from './cards';
 import { emptyGear, pickUpGear, type RunGear } from './equipment';
+import {
+	buyHealPotion,
+	canBuyHealPotion,
+	emptyHealPotion,
+	type HealPotionState,
+} from './heal-potion';
 import { roundEndFish } from './progression';
 import type { Rng } from './rng';
 import { cycle, isBossRound, roundDuration } from './round';
@@ -27,6 +34,7 @@ import {
 	type ShopState,
 } from './shop';
 import type { PlayerStats } from './stats';
+import { buySupport, canBuySupport, isSupportId, type SupportLevels } from './support';
 
 export type RunPhase = 'round' | 'cards' | 'shop';
 
@@ -66,6 +74,10 @@ export interface RunState {
 	cardRerollsLeft: number;
 	/** Potions bought in the shop this run, waiting for the "round start" gambit. */
 	shopPotions: Partial<Record<PotionType, number>>;
+	/** Support item levels bought this run (SDD-014). */
+	support: SupportLevels;
+	/** The healing potion: level = potions carried, refilled by kills. */
+	healPotion: HealPotionState;
 }
 
 export function createRunState(
@@ -101,6 +113,8 @@ export function createRunState(
 		lockedOffers: [],
 		pearlsEarned: 0,
 		shopPotions: {},
+		support: {},
+		healPotion: emptyHealPotion(),
 		cardRerollsLeft: opts.cardRerolls ?? 0,
 	};
 }
@@ -171,15 +185,35 @@ export function potionCandidates(round: number): ShopCandidate[] {
 	);
 }
 
-/** Everything the shop of `round` can offer a hero (weapons, gear and, later, potions). */
-export function shopPool(hero: HeroId, round: number): ShopCandidate[] {
-	return [...weaponCandidates(hero), ...gearCandidates(), ...potionCandidates(round)];
+/** Support items and the healing potion that can still be bought or leveled (rarity I, tier 1). */
+export function supportCandidates(run: Pick<RunState, 'support' | 'healPotion'>): ShopCandidate[] {
+	const support = SUPPORT_IDS.filter((id) => canBuySupport(run.support, id)).map(
+		(id): ShopCandidate => ({ kind: 'support', id, tier: 1, sets: [] }),
+	);
+	const potion: ShopCandidate[] = canBuyHealPotion(run.healPotion)
+		? [{ kind: 'healPotion', id: 'healPotion', tier: 1, sets: [] }]
+		: [];
+	return [...support, ...potion];
+}
+
+/** Everything the shop of `round` can offer a hero (weapons, gear, support, potions). */
+export function shopPool(
+	hero: HeroId,
+	round: number,
+	run?: Pick<RunState, 'support' | 'healPotion'>,
+): ShopCandidate[] {
+	return [
+		...weaponCandidates(hero),
+		...gearCandidates(),
+		...potionCandidates(round),
+		...(run ? supportCandidates(run) : []),
+	];
 }
 
 /**
  * Buys the offer in slot `index` and applies it to the run: weapons go to a free slot (no free
  * slot → refused, nothing debited; fuse or sell first), gear to the bag (worn at once if the slot
- * is free), potions to `run.shopPotions`. Returns the offer, or null when refused.
+ * is free), potions to `run.shopPotions`, support items and the healing potion level up. Returns the offer, or null when refused.
  */
 export function purchase(
 	run: RunState,
@@ -190,6 +224,8 @@ export function purchase(
 	const offer = shop?.offers[index];
 	if (!shop || !offer) return null;
 	if (offer.kind === 'weapon' && ctx.build.weapons.length >= MAX_WEAPON_SLOTS) return null;
+	if (offer.kind === 'support' && !canBuySupport(run.support, offer.id as never)) return null;
+	if (offer.kind === 'healPotion' && !canBuyHealPotion(run.healPotion)) return null;
 	const bought = buy(shop, run.fish, index);
 	if (!bought) return null;
 	run.shop = bought.state;
@@ -202,6 +238,10 @@ export function purchase(
 			rarity: offer.tier as 1 | 2 | 3,
 			affixes: offer.affixes ?? [],
 		});
+	} else if (offer.kind === 'support' && isSupportId(offer.id)) {
+		buySupport(run.support, offer.id, ctx.stats);
+	} else if (offer.kind === 'healPotion') {
+		buyHealPotion(run.healPotion);
 	} else if (offer.kind === 'potion') {
 		const id = offer.id as PotionType;
 		run.shopPotions[id] = (run.shopPotions[id] ?? 0) + 1;

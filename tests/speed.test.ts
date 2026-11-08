@@ -8,9 +8,9 @@ test('TAB cycles 1x, 2x, 3x, 4x and back', () => {
 });
 
 test('the saved game speed survives a reload and bad values fall back to 1x', async () => {
-	const { parseSave } = await import('../src/logic/save');
+	const { parseSave, SAVE_VERSION } = await import('../src/logic/save');
 	const make = (gameSpeed: unknown): string =>
-		JSON.stringify({ version: 2, settings: { gameSpeed } });
+		JSON.stringify({ version: SAVE_VERSION, settings: { gameSpeed } });
 	expect(parseSave(make(4)).settings.gameSpeed).toBe(4);
 	expect(parseSave(make(7)).settings.gameSpeed).toBe(1);
 	expect(parseSave(make('2')).settings.gameSpeed).toBe(1);

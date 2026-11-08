@@ -56,8 +56,8 @@ describe('drops', () => {
 
 describe('equip / unequip', () => {
 	test('stats follow what is worn; swapping returns the old item to the bag', () => {
-		const base = heroStats(HEROES.jack, 1, {});
-		const stats = heroStats(HEROES.jack, 1, {});
+		const base = heroStats(HEROES.jack, 1, []);
+		const stats = heroStats(HEROES.jack, 1, []);
 		const gear = emptyGear();
 		expect(pickUpGear(gear, stats, 'armor.kevlar')).toBe('equipped');
 		expect(stats.armor).toBeCloseTo(base.armor + 4);

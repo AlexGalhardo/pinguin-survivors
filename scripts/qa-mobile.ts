@@ -3,6 +3,7 @@
 // Usage: bun scripts/qa-mobile.ts <outDir> [baseUrl=http://localhost:5173]
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { seedSaveScript } from './lib/seed-save';
 
 const out = process.argv[2];
 if (!out) throw new Error('usage: bun scripts/qa-mobile.ts <outDir> [baseUrl]');
@@ -25,6 +26,7 @@ for (const v of VIEWPORTS) {
 		deviceScaleFactor: 1,
 	});
 	const page = await ctx.newPage();
+	await page.addInitScript(seedSaveScript);
 	const errors: string[] = [];
 	page.on('pageerror', (e) => errors.push(e.message));
 	await page.goto(`${base}/?touch=1`, { waitUntil: 'load' });

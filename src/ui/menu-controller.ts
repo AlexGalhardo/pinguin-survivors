@@ -1,23 +1,38 @@
 import { GAME_SPEEDS, HERO_IDS, type HeroId } from '../config/constants';
 import { setResolution } from '../core/display';
 import { platform } from '../core/platform';
-import { exportSave, exportTelemetry, importSave, writeSave } from '../core/storage';
+import {
+	activeSlot,
+	deleteSlot,
+	exportSave,
+	exportTelemetry,
+	hasActiveSlot,
+	importSave,
+	loadSlot,
+	slotSummaries,
+	startNewSlot,
+	writeSave,
+} from '../core/storage';
 import { ACHIEVEMENT_SHOP, ACHIEVEMENTS } from '../data/achievements';
 import { isDemoBuild } from '../data/demo';
 import { RESOLUTION_IDS } from '../data/display';
-import { HEROES } from '../data/heroes';
 import { GAMBIT_CONDITIONS, POTION_PRICES, POTION_TYPES } from '../data/potions';
-import { UPGRADES } from '../data/upgrades';
 import { LANGS, setLang } from '../i18n';
 import { achievementProgress, availablePoints, buyExtra, extraLevel } from '../logic/achievements';
 import { demoAllowsHero, demoDanger, demoHidesAchievement } from '../logic/demo';
 import { maxSelectableDanger } from '../logic/difficulty';
 import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/keybinds';
-import { freePoints, xpToNext } from '../logic/progression';
+import { xpToNext } from '../logic/progression';
 import { type GoreMode, NUMBER_SIZES, type SaveData } from '../logic/save';
-import { getStat, heroStats, POINT_VALUES, type PointStat } from '../logic/stats';
+import {
+	allocate,
+	canRefund,
+	heroTree,
+	refundCost,
+	resetCost,
+	treePoints,
+} from '../logic/skill-tree';
 import { availableStartingWeapons, buyStartingWeapon, unlockableWeapons } from '../logic/unlocks';
-import { buyUpgrade, upgradeCost, upgradeLevel } from '../logic/upgrades';
 import { achievementDescription, achievementName } from './achievement-text';
 import { menuCommands } from './commands';
 import type { SettingsRow } from './components/Settings';
@@ -41,7 +56,9 @@ const state: {
 	waiting: Action | null;
 	/** Set when settings were opened from the pause menu: Back runs this instead of going to the main menu. */
 	settingsBack: (() => void) | null;
-} = { hero: null, waiting: null, settingsBack: null };
+	/** What the save slot screen is for: pick the slot of a new game or load an existing one. */
+	slotsMode: 'load' | 'new';
+} = { hero: null, waiting: null, settingsBack: null, slotsMode: 'load' };
 
 /** Opens the settings screen over a running game; `back` restores the caller (pause menu). */
 export function openSettingsFrom(back: () => void): void {
@@ -55,22 +72,6 @@ const toMenu = (): void => go('main-menu');
 function persist(save: SaveData): void {
 	writeSave(save);
 	touchSave();
-}
-
-const PERCENT_STATS = new Set<string>(['attackSpeed', 'dodge', 'parry', 'crit']);
-
-function formatStat(stat: string, value: number): string {
-	if (PERCENT_STATS.has(stat) || stat.startsWith('resist.'))
-		return `${Math.round(value * 1000) / 10}%`;
-	return (Math.round(value * 10) / 10).toLocaleString();
-}
-
-const UPGRADE_PERCENT = new Set<string>(['damage', 'attackSpeed', 'xpGain', 'luck']);
-
-function upgradeBonus(stat: string, value: number): string {
-	return UPGRADE_PERCENT.has(stat)
-		? `+${Math.round(value * 100)}%`
-		: `+${Math.round(value * 10) / 10}`;
 }
 
 const EXTRA_PERCENT = new Set<string>([
@@ -105,7 +106,9 @@ function mainMenu(save: SaveData): MenuView {
 		data: {
 			pearls: save.pearls,
 			points: availablePoints(save.achievements),
-			continueRound: save.activeRun ? save.activeRun.nextRound : null,
+			hasSlot: hasActiveSlot(),
+			hasSaves: slotSummaries().some((s) => s !== null),
+			continueRound: hasActiveSlot() && save.activeRun ? save.activeRun.nextRound : null,
 			canQuit: platform().kind !== 'web',
 		},
 		actions: {
@@ -114,13 +117,49 @@ function mainMenu(save: SaveData): MenuView {
 				menuCommands.continueRun();
 			},
 			play: () => go('hero-select'),
+			newGame: () => {
+				state.slotsMode = 'new';
+				go('save-slots');
+			},
+			load: () => {
+				state.slotsMode = 'load';
+				go('save-slots');
+			},
 			heroes: () => go('hero'),
-			// The Workshop is a tab of the hero screen.
-			workshop: () => go('hero'),
+			workshop: () => go('skill-tree'),
 			achievements: () => go('achievements'),
 			history: () => go('history'),
 			settings: () => go('settings'),
 			quit: () => platform().quit(),
+		},
+	};
+}
+
+/** The three save slots: load one, start a new game in one (overwriting) or delete one. */
+function saveSlots(save: SaveData): MenuView {
+	return {
+		screen: 'save-slots',
+		data: { mode: state.slotsMode, slots: slotSummaries(), active: activeSlot() },
+		actions: {
+			pick: (slot) => {
+				if (state.slotsMode === 'new') {
+					startNewSlot(save, slot);
+					state.hero = null;
+					touchSave();
+					go('hero-select');
+				} else if (loadSlot(save, slot)) {
+					state.hero = null;
+					touchSave();
+					toMenu();
+				}
+			},
+			remove: (slot) => {
+				deleteSlot(save, slot);
+				touchSave();
+				if (!slotSummaries().some((s) => s !== null) && state.slotsMode === 'load')
+					toMenu();
+			},
+			back: toMenu,
 		},
 	};
 }
@@ -150,11 +189,15 @@ function heroSelect(save: SaveData): MenuView {
 	};
 }
 
+function heroOf(save: SaveData): HeroId {
+	const unlocked = HERO_IDS.filter((h) => save.heroes[h].unlocked);
+	return state.hero && unlocked.includes(state.hero) ? state.hero : (unlocked[0] ?? 'jack');
+}
+
 function heroScreen(save: SaveData): MenuView {
 	const unlocked = HERO_IDS.filter((h) => save.heroes[h].unlocked);
-	const hero = state.hero && unlocked.includes(state.hero) ? state.hero : (unlocked[0] ?? 'jack');
+	const hero = heroOf(save);
 	const h = save.heroes[hero];
-	const stats = heroStats(HEROES[hero], h.level, h.points);
 	const potionChoices = [null, ...POTION_TYPES] as const;
 	const conditionChoices = [null, ...GAMBIT_CONDITIONS] as const;
 	return {
@@ -165,12 +208,7 @@ function heroScreen(save: SaveData): MenuView {
 			level: h.level,
 			xp: h.xp,
 			xpNext: xpToNext(h.level),
-			points: freePoints(h.level, h.points),
-			stats: (Object.keys(POINT_VALUES) as PointStat[]).map((key) => ({
-				key,
-				value: formatStat(key, getStat(stats, key)),
-				step: formatStat(key, POINT_VALUES[key]),
-			})),
+			treePoints: treePoints(h.level, h.tree),
 			pearls: save.pearls,
 			potions: POTION_TYPES.map((type) => ({
 				type,
@@ -179,27 +217,13 @@ function heroScreen(save: SaveData): MenuView {
 			})),
 			gambits: save.gambits.map((g) => ({ potion: g.potion, condition: g.condition })),
 			weaponUnlocks: isDemoBuild() ? [] : unlockableWeapons(save, hero),
-			upgrades: UPGRADES.map((def) => {
-				const level = upgradeLevel(save.upgrades, def.id);
-				return {
-					id: def.id,
-					level,
-					max: def.maxLevel,
-					bonus: upgradeBonus(def.stat, def.perLevel * level),
-					cost: upgradeCost(def, level),
-				};
-			}),
 		},
 		actions: {
 			selectHero: (next) => {
 				state.hero = next;
 				touchSave();
 			},
-			spendPoint: (key) => {
-				if (!(key in POINT_VALUES) || freePoints(h.level, h.points) <= 0) return;
-				h.points[key] = (h.points[key] ?? 0) + 1;
-				persist(save);
-			},
+			openTree: () => go('skill-tree'),
 			buyPotion: (type) => {
 				const p = POTION_TYPES.find((x) => x === type);
 				if (!p || save.pearls < POTION_PRICES[p]) return;
@@ -227,15 +251,54 @@ function heroScreen(save: SaveData): MenuView {
 				persist(save);
 				publishUnlock({ kind: 'weapon', id });
 			},
-			buyUpgrade: (id) => {
-				const def = UPGRADES.find((u) => u.id === id);
-				if (!def) return;
-				const left = buyUpgrade(def, save.upgrades, save.pearls);
-				if (left === null) return;
-				save.pearls = left;
+			back: toMenu,
+		},
+	};
+}
+
+/** Passive skill tree of the selected hero (ADR-019): allocate paths, refund or reset for Pearls. */
+function skillTree(save: SaveData): MenuView {
+	const unlocked = HERO_IDS.filter((h) => save.heroes[h].unlocked);
+	const hero = heroOf(save);
+	const h = save.heroes[hero];
+	const tree = heroTree(hero);
+	return {
+		screen: 'skill-tree',
+		data: {
+			heroes: unlocked,
+			hero,
+			level: h.level,
+			allocated: h.tree,
+			points: treePoints(h.level, h.tree),
+			pearls: save.pearls,
+			refundCost: refundCost(),
+			resetCost: resetCost(h.tree),
+		},
+		actions: {
+			selectHero: (next) => {
+				state.hero = next;
+				touchSave();
+			},
+			allocate: (id) => {
+				const next = allocate(tree, h.level, h.tree, id);
+				if (!next) return;
+				h.tree = next;
 				persist(save);
 			},
-			back: toMenu,
+			refund: (id) => {
+				if (!canRefund(tree, h.tree, id) || save.pearls < refundCost()) return;
+				save.pearls -= refundCost();
+				h.tree = h.tree.filter((n) => n !== id);
+				persist(save);
+			},
+			reset: () => {
+				const cost = resetCost(h.tree);
+				if (h.tree.length === 0 || save.pearls < cost) return;
+				save.pearls -= cost;
+				h.tree = [];
+				persist(save);
+			},
+			back: () => go('hero'),
 		},
 	};
 }
@@ -248,6 +311,8 @@ function pickImport(save: SaveData): void {
 		const file = input.files?.[0];
 		if (!file) return;
 		const imported = await importSave(file, save.settings.lang);
+		// With no slot loaded the file becomes a new game in the first free slot.
+		if (!hasActiveSlot()) startNewSlot(save, Math.max(0, slotSummaries().indexOf(null)));
 		// In place: the game holds the same object.
 		Object.assign(save, imported);
 		setLang(save.settings.lang);
@@ -477,6 +542,10 @@ export function menuView(screen: MenuScreenId, save: SaveData): MenuView {
 			return heroSelect(save);
 		case 'hero':
 			return heroScreen(save);
+		case 'skill-tree':
+			return skillTree(save);
+		case 'save-slots':
+			return saveSlots(save);
 		case 'settings':
 			return settings(save);
 		case 'controls':

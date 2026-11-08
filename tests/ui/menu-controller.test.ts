@@ -1,7 +1,32 @@
 import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
 
 const writes: unknown[] = [];
+/** In-memory stand-in for the three slots of `core/storage`. */
+const slotFake = { bound: false, active: 0, used: [false, false, false] };
 mock.module('../../src/core/storage', () => ({
+	hasActiveSlot: () => slotFake.bound,
+	activeSlot: () => (slotFake.bound ? slotFake.active : null),
+	slotSummaries: () =>
+		slotFake.used.map((u) =>
+			u
+				? { hero: 'jack', level: 1, bestRound: 0, playedSec: 0, savedAt: 0, inRun: false }
+				: null,
+		),
+	startNewSlot: (_save: unknown, i: number) => {
+		slotFake.bound = true;
+		slotFake.active = i;
+		slotFake.used[i] = true;
+	},
+	loadSlot: (_save: unknown, i: number) => {
+		if (!slotFake.used[i]) return false;
+		slotFake.bound = true;
+		slotFake.active = i;
+		return true;
+	},
+	deleteSlot: (_save: unknown, i: number) => {
+		slotFake.used[i] = false;
+		if (slotFake.active === i) slotFake.bound = false;
+	},
 	writeSave: (s: unknown) => {
 		writes.push(s);
 		return true;
@@ -39,6 +64,7 @@ beforeEach(() => {
 	save = defaultSave('en');
 	writes.length = 0;
 	calls.length = 0;
+	Object.assign(slotFake, { bound: false, active: 0, used: [false, false, false] });
 	uiStore.set({ screen: 'main-menu' });
 	bindMenuCommands({
 		startRun: (r) => calls.push(`start:${r.hero}:${r.danger}:${r.weapon}`),
@@ -68,28 +94,54 @@ describe('main menu and hero select', () => {
 	});
 });
 
+describe('save slots', () => {
+	test('without a loaded slot the menu offers a new game only; hero entries need a slot', () => {
+		expect(view('main-menu').data).toMatchObject({ hasSlot: false, hasSaves: false });
+		view('main-menu').actions.newGame();
+		expect(uiStore.get().screen).toBe('save-slots');
+		const d = view('save-slots').data;
+		expect(d).toMatchObject({ mode: 'new', active: null });
+		expect(d.slots).toEqual([null, null, null]);
+	});
+
+	test('new game in a slot binds it and opens hero select; load switches; delete empties', () => {
+		view('main-menu').actions.newGame();
+		view('save-slots').actions.pick(1);
+		expect(uiStore.get().screen).toBe('hero-select');
+		expect(view('main-menu').data).toMatchObject({ hasSlot: true, hasSaves: true });
+		view('main-menu').actions.load();
+		expect(view('save-slots').data).toMatchObject({ mode: 'load', active: 1 });
+		view('save-slots').actions.pick(1);
+		expect(uiStore.get().screen).toBe('main-menu');
+		view('main-menu').actions.load();
+		view('save-slots').actions.remove(1);
+		expect(view('main-menu').data).toMatchObject({ hasSlot: false, hasSaves: false });
+		// Nothing left to load: back to the main menu.
+		expect(uiStore.get().screen).toBe('main-menu');
+	});
+});
+
 describe('hero screen', () => {
-	test('spending a point, buying a potion and an upgrade mutate and persist the save', () => {
-		save.heroes.jack.level = 3;
+	test('the skill tree allocates paths, refunds leaves and resets for pearls', () => {
+		save.heroes.jack.level = 10;
 		save.pearls = 100;
-		const before = view('hero').data;
-		expect(before.points).toBeGreaterThan(0);
-		view('hero').actions.spendPoint('maxHp');
-		expect(save.heroes.jack.points.maxHp).toBe(1);
-		expect(view('hero').data.points).toBe(before.points - 1);
-		view('hero').actions.buyPotion('heal');
-		expect(save.potions.heal).toBe(1);
-		expect(save.pearls).toBeLessThan(100);
-		const up = view('hero').data.upgrades[0];
-		if (!up || up.cost === null) throw new Error('upgrade');
-		view('hero').actions.buyUpgrade(up.id);
-		expect(save.upgrades[up.id]).toBe(1);
+		expect(view('hero').data.treePoints).toBe(9);
+		view('skill-tree').actions.allocate('jack.blade.n0');
+		const taken = save.heroes.jack.tree.length;
+		expect(taken).toBeGreaterThan(0);
+		expect(view('skill-tree').data.points).toBe(9 - taken);
+		view('skill-tree').actions.refund('jack.blade.n0');
+		expect(save.heroes.jack.tree).toHaveLength(taken - 1);
+		expect(save.pearls).toBe(98);
+		view('skill-tree').actions.reset();
+		expect(save.heroes.jack.tree).toHaveLength(0);
+		expect(save.pearls).toBe(98 - (taken - 1));
 		expect(writes.length).toBe(3);
 	});
 
-	test('cannot spend points or pearls that are not there', () => {
-		view('hero').actions.spendPoint('maxHp');
-		view('hero').actions.buyPotion('heal');
+	test('cannot allocate without points or refund without pearls', () => {
+		view('skill-tree').actions.allocate('jack.blade.n0');
+		view('hero').actions.buyPotion('shield');
 		expect(writes.length).toBe(0);
 	});
 

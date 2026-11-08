@@ -3,7 +3,6 @@
 import { HERO_IDS } from '../src/config/constants';
 import { DANGER_LEVELS, type Danger } from '../src/data/difficulty';
 import { STARTING_WEAPONS } from '../src/data/unlocks';
-import { UPGRADES } from '../src/data/upgrades';
 import { WEAPON_LINE_BY_ID, type WeaponId } from '../src/data/weapons';
 import { simulateMany, simulateRun } from '../src/logic/sim/run-sim';
 
@@ -16,7 +15,7 @@ const LEVELS = [1, 5, 10, 20, 30];
 console.log('hero   lvl  avgRound  median  past30  bossDeaths  avgKills  avgXp  pearls  fishSpent');
 for (const hero of HERO_IDS) {
 	for (const level of LEVELS) {
-		const s = simulateMany(hero, level, runs, 1, {}, danger);
+		const s = simulateMany(hero, level, runs, 1, danger);
 		console.log(
 			`${hero.padEnd(6)} ${String(level).padStart(3)}  ${s.avgRound.toFixed(1).padStart(8)}  ${String(s.medianRound).padStart(6)}  ${`${Math.round(s.past30 * 100)}%`.padStart(6)}  ${String(s.bossDeaths).padStart(10)}  ${Math.round(s.avgKills).toString().padStart(8)}  ${Math.round(s.avgXp).toString().padStart(5)}  ${Math.round(s.avgPearls).toString().padStart(6)}  ${Math.round(s.avgFishSpent).toString().padStart(9)}`,
 		);
@@ -80,7 +79,7 @@ if (process.argv.includes('--report')) {
 }
 
 // --jsonl file [runs=30]: run-end events for scripts/balance-report.ts over hero × level × Danger.
-// Workshop profile follows the goals: L10 → all:2, L20+ → all:4 (SDD-013, A4 #2/#3).
+// The tree is auto-allocated per level (simTree), as the bot does (ADR-019).
 if (process.argv.includes('--jsonl')) {
 	const file = process.argv[process.argv.indexOf('--jsonl') + 1] as string;
 	const n = Number(process.argv[process.argv.indexOf('--jsonl') + 2]) || 30;
@@ -88,12 +87,8 @@ if (process.argv.includes('--jsonl')) {
 	for (const hero of HERO_IDS)
 		for (const level of [1, 10, 20])
 			for (const d of DANGER_LEVELS) {
-				const workshop = level >= 20 ? 4 : level >= 10 ? 2 : 0;
-				const upgrades = Object.fromEntries(
-					UPGRADES.map((u) => [u.id, Math.min(u.maxLevel, workshop)]),
-				);
 				for (let i = 0; i < n; i++) {
-					const r = simulateRun({ hero, level, seed: 100 + i, danger: d, upgrades });
+					const r = simulateRun({ hero, level, seed: 100 + i, danger: d });
 					lines.push(
 						JSON.stringify({
 							version: 'sim',
@@ -106,7 +101,6 @@ if (process.argv.includes('--jsonl')) {
 							durationS: Math.round(r.seconds),
 							platform: 'web',
 							source: 'sim',
-							workshop,
 							fishEarned: r.fish,
 							fishSpent: r.fishSpent,
 							fishRerolled: r.fishRerolled,

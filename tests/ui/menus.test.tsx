@@ -50,10 +50,12 @@ describe('MainMenu', () => {
 		log.length = 0;
 		const view = (continueRound: number | null, canQuit = false): View => ({
 			screen: 'main-menu',
-			data: { pearls: 12, points: 3, continueRound, canQuit },
+			data: { pearls: 12, points: 3, continueRound, canQuit, hasSlot: true, hasSaves: true },
 			actions: actionsOf([
 				'continueRun',
 				'play',
+				'newGame',
+				'load',
 				'heroes',
 				'workshop',
 				'achievements',
@@ -76,6 +78,84 @@ describe('MainMenu', () => {
 		cleanup();
 		fireEvent.click(render(<Router view={view(null, true)} />).getByText('QUIT'));
 		expect(log.at(-1)).toBe('quit');
+		cleanup();
+	});
+});
+
+describe('MainMenu without a loaded slot', () => {
+	test('shows new game and load, hides the entries that need a slot', () => {
+		log.length = 0;
+		const view = (hasSaves: boolean): View => ({
+			screen: 'main-menu',
+			data: {
+				pearls: 0,
+				points: 0,
+				continueRound: null,
+				canQuit: false,
+				hasSlot: false,
+				hasSaves,
+			},
+			actions: actionsOf(['newGame', 'load', 'settings']),
+		});
+		const a = render(<Router view={view(false)} />);
+		expect(a.queryByText('PLAY')).toBeNull();
+		expect(a.queryByText('LOAD GAME')).toBeNull();
+		expect(a.queryByText('MATCH HISTORY')).toBeNull();
+		fireEvent.click(a.getByText('NEW GAME'));
+		cleanup();
+		fireEvent.click(render(<Router view={view(true)} />).getByText('LOAD GAME'));
+		expect(log).toEqual(['newGame', 'load']);
+		cleanup();
+	});
+});
+
+describe('SaveSlots', () => {
+	const row = (hero: 'jack' | 'bob', level: number) => ({
+		hero,
+		level,
+		bestRound: 12,
+		playedSec: 3725,
+		savedAt: 0,
+		inRun: false,
+	});
+	const view = (mode: 'load' | 'new'): View => ({
+		screen: 'save-slots',
+		data: { mode, slots: [row('jack', 7), null, row('bob', 3)], active: 0 },
+		actions: actionsOf(['pick', 'remove', 'back']),
+	});
+
+	test('load lists the slots with their summary and loads the picked one', () => {
+		log.length = 0;
+		const r = render(<Router view={view('load')} />);
+		expect(r.container.textContent).toContain('Jack · level 7 · best round 12');
+		expect(r.container.textContent).toContain('Empty slot');
+		expect(r.container.textContent).toContain('1h 02m');
+		fireEvent.click(r.getAllByText('LOAD')[2] as HTMLElement);
+		expect(log).toEqual(['pick:2']);
+		cleanup();
+	});
+
+	test('delete and overwrite ask for confirmation first', () => {
+		log.length = 0;
+		const del = render(<Router view={view('load')} />);
+		fireEvent.click(del.getAllByText('DELETE')[0] as HTMLElement);
+		expect(log).toEqual([]);
+		expect(del.container.textContent).toContain('Delete slot 1?');
+		fireEvent.click(del.getByText('CONFIRM'));
+		expect(log).toEqual(['remove:0']);
+		cleanup();
+		log.length = 0;
+		const fresh = render(<Router view={view('new')} />);
+		// The empty slot starts at once; a used one asks.
+		fireEvent.click(fresh.getAllByText('START HERE')[1] as HTMLElement);
+		expect(log).toEqual(['pick:1']);
+		fireEvent.click(fresh.getAllByText('START HERE')[0] as HTMLElement);
+		expect(fresh.container.textContent).toContain('Slot 1 already has a game');
+		fireEvent.click(fresh.getByText('CANCEL'));
+		expect(log).toEqual(['pick:1']);
+		fireEvent.click(fresh.getAllByText('START HERE')[0] as HTMLElement);
+		fireEvent.click(fresh.getByText('CONFIRM'));
+		expect(log).toEqual(['pick:1', 'pick:0']);
 		cleanup();
 	});
 });
@@ -236,7 +316,7 @@ describe('Settings and Controls', () => {
 });
 
 describe('HeroScreen and lists', () => {
-	test('hero screen spends points, buys potions and switches to the workshop', () => {
+	test('hero screen opens the skill tree and buys potions', () => {
 		log.length = 0;
 		const { getByText, container } = render(
 			<Router
@@ -248,33 +328,28 @@ describe('HeroScreen and lists', () => {
 						level: 3,
 						xp: 10,
 						xpNext: 100,
-						points: 2,
-						stats: [{ key: 'maxHp', value: '150', step: '5' }],
+						treePoints: 2,
 						pearls: 20,
-						potions: [{ type: 'heal', owned: 1, price: 10 }],
+						potions: [{ type: 'shield', owned: 1, price: 10 }],
 						gambits: [{ potion: null, condition: null }],
 						weaponUnlocks: [],
-						upgrades: [{ id: 'recovery', level: 1, max: 5, bonus: '+1', cost: 8 }],
 					},
 					actions: actionsOf([
 						'selectHero',
-						'spendPoint',
+						'openTree',
 						'buyPotion',
 						'cycleGambitPotion',
 						'cycleGambitCondition',
-						'buyUpgrade',
 						'buyWeapon',
 						'back',
 					]),
 				}}
 			/>,
 		);
-		fireEvent.click(getByText(/Max HP: 150/));
-		fireEvent.click(getByText('Heal: 1 owned · buy 10'));
-		fireEvent.click(getByText('WORKSHOP'));
-		expect(container.textContent).toContain('Recovery (HP regen)');
-		fireEvent.click(getByText(/Recovery .HP regen.*buy 8/));
-		expect(log).toEqual(['spendPoint:maxHp', 'buyPotion:heal', 'buyUpgrade:recovery']);
+		fireEvent.click(getByText('SKILL TREE · 2 points'));
+		fireEvent.click(getByText('Shield: 1 owned · buy 10'));
+		expect(container.textContent).toContain('SKILL TREE');
+		expect(log).toEqual(['openTree', 'buyPotion:shield']);
 		cleanup();
 	});
 

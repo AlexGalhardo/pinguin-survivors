@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { ALL_CARDS } from '../src/data/cards';
 import { emptyBuild } from '../src/logic/build';
 import { pickBest, scoreCard } from '../src/logic/sim/card-policy';
-import { POINT_PLANS, simulateMany, simulateRun, spendPoints } from '../src/logic/sim/run-sim';
+import { simTree, simulateMany, simulateRun } from '../src/logic/sim/run-sim';
 
 const card = (id: string) => ALL_CARDS.find((c) => c.id === id) as (typeof ALL_CARDS)[number];
 
@@ -36,10 +36,9 @@ describe('headless run sim', () => {
 		}
 	});
 
-	test('spends level − 1 points following the plan', () => {
-		const points = spendPoints(9, POINT_PLANS.jack);
-		expect(Object.values(points).reduce((a, b) => a + b, 0)).toBe(8);
-		expect(points.maxHp).toBe(2);
+	test('the sim tree spends level − 1 points', () => {
+		expect(simTree('jack', 9)).toHaveLength(8);
+		expect(simTree('jack', 1)).toHaveLength(0);
 	});
 });
 

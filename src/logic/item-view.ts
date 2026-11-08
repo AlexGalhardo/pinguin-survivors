@@ -1,5 +1,7 @@
 import { GEAR_BY_ID, GEAR_SLOTS, type GearSlot } from '../data/equipment';
+import { HEAL_POTION } from '../data/potions';
 import type { Rarity } from '../data/rarity';
+import { SUPPORT_IDS, SUPPORT_MAX_LEVEL, SUPPORT_SLOTS, type SupportId } from '../data/support';
 import {
 	WEAPON_LINE_BY_ID,
 	type WeaponId,
@@ -9,8 +11,10 @@ import {
 import type { Affix } from './affixes';
 import type { Build } from './build';
 import { itemRoll, type RunGear } from './equipment';
+import { type HealPotionState, healShare } from './heal-potion';
 import { offerPrice, sellValue } from './shop';
 import { getStat, type PlayerStats, type StatKey } from './stats';
+import { type SupportLevels, supportValue } from './support';
 
 /**
  * Plain data for the item screens (shop, pause, HUD): everything a screen needs to show weapons and
@@ -51,6 +55,25 @@ export interface GearSlotView {
 	item: GearItemView | null;
 }
 
+/** One owned support item (4 slots of their own, apart from the weapons). */
+export interface SupportSlotView {
+	id: SupportId;
+	level: number;
+	max: number;
+	/** Pull range (Magnetic) or stat bonus at this level. */
+	value: number;
+}
+
+/** The run's healing potion: `null` in the panel until the first one is bought. */
+export interface HealPotionView {
+	level: number;
+	maxLevel: number;
+	charges: number;
+	rarity: Rarity;
+	/** Share of max HP one potion heals (0.25 = 25%). */
+	healShare: number;
+}
+
 export interface PlayerPanelView {
 	/** Current hero stats (after cards, gear, affixes and set bonuses), in display order. */
 	stats: { key: StatKey; value: number }[];
@@ -59,6 +82,10 @@ export interface PlayerPanelView {
 	gear: GearSlotView[];
 	/** Equipment in the bag (not worn). */
 	bag: GearItemView[];
+	/** Support items owned, at most `SUPPORT_SLOTS`. */
+	support: SupportSlotView[];
+	supportSlots: number;
+	healPotion: HealPotionView | null;
 }
 
 export const PLAYER_PANEL_STATS: readonly StatKey[] = [
@@ -97,6 +124,8 @@ export function buildPlayerPanel(ctx: {
 	gear: RunGear;
 	stats: PlayerStats;
 	round: number;
+	support: SupportLevels;
+	healPotion: HealPotionState;
 }): PlayerPanelView {
 	const { build, gear, stats, round } = ctx;
 	return {
@@ -115,5 +144,25 @@ export function buildPlayerPanel(ctx: {
 			return { slot, item: id ? gearItemView(gear, id) : null };
 		}),
 		bag: gear.bag.map((id) => gearItemView(gear, id)),
+		support: SUPPORT_IDS.filter((id) => (ctx.support[id] ?? 0) > 0).map((id) => ({
+			id,
+			level: ctx.support[id] ?? 0,
+			max: SUPPORT_MAX_LEVEL,
+			value: supportValue(id, ctx.support[id] ?? 0),
+		})),
+		supportSlots: SUPPORT_SLOTS,
+		healPotion: healPotionView(ctx.healPotion),
 	};
+}
+
+export function healPotionView(p: HealPotionState): HealPotionView | null {
+	return p.level === 0
+		? null
+		: {
+				level: p.level,
+				maxLevel: HEAL_POTION.maxLevel,
+				charges: p.charges,
+				rarity: p.rarity,
+				healShare: healShare(p.rarity),
+			};
 }

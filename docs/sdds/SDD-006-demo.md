@@ -2,6 +2,8 @@
 
 **Versão** 1.0 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [013](../adrs/ADR-013-demo-rounds-1-10-jack.md) · **GDD** §22
 
+> **Nota (2026-11-08)**: RF-04 cita a Oficina, que a [árvore de habilidades](../adrs/ADR-019-arvore-de-habilidades.md) substituiu; na demo a árvore de Jack funciona e o save da demo não migra de outras versões.
+
 ## Requisitos
 
 - RF-01 Build com `VITE_DEMO=1` define `DEMO = { enabled: true, maxRound: 10, heroes: ['jack'], maxDanger: 1 }` (`src/data/demo.ts`); no build completo `enabled: false`.

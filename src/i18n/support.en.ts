@@ -1,0 +1,26 @@
+/** Support items and the healing potion (SDD-014 RF-10..RF-23). */
+export const supportEn = {
+	'shop.kind.support': 'Support',
+	'shop.kind.healPotion': 'Healing potion',
+	'shop.outcome.supportNew': 'New support item, level 1: {stat}.',
+	'shop.outcome.supportUp': 'Support item level {from} to {to}: {stat}.',
+	'shop.outcome.healPotion':
+		'Carry {from} to {to} healing potions. Each heals {pct}% of max HP, drinks itself at 50% HP and refills one potion every 100 kills.',
+	'support.magnetic.name': 'Magnetic',
+	'support.magnetic.desc': 'Pulls XP orbs and Fish toward you.',
+	'support.magnetic.stat': 'pull range +{v}',
+	'support.swift.name': 'Swift Boots',
+	'support.swift.desc': 'Run faster.',
+	'support.swift.stat': 'move speed +{v}',
+	'support.lucky.name': 'Lucky Charm',
+	'support.lucky.desc': 'Better odds on shop rarities and drops.',
+	'support.lucky.stat': 'luck +{v}',
+	'support.level': 'Lv {n}/{max}',
+	'hpotion.name': 'Healing Potion',
+	'hpotion.desc': 'Drinks itself at 50% HP. Refills one potion every 100 kills.',
+	'panel.support': 'SUPPORT',
+	'panel.healPotion': '{charges}/{level} potions · heals {pct}% · rarity {rarity}',
+	'hud.potionKills': '{n}/{max} kills',
+	'hud.healPotion': 'Healing potions',
+	'fx.potionUp': 'Potion rarity {r}',
+} as const;

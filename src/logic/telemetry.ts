@@ -26,7 +26,7 @@ export interface RunEndEvent {
 	durationS: number;
 	platform: PlatformKind;
 	source?: TelemetrySource;
-	/** Workshop upgrade level the profile was played with (0 = none); sim and bot only. */
+	/** Legacy: Workshop level of old sim/bot logs (the Workshop was replaced by the tree, ADR-019). */
 	workshop?: number;
 	/** Real wall-clock seconds (bot only). */
 	wallS?: number;

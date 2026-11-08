@@ -30,9 +30,41 @@ const snapshot = (over: Partial<Snapshot> = {}): Snapshot => ({
 	],
 	gear: [null, null, null, null, null],
 	gambits: [],
+	healPotion: null,
 	speed: 1,
 	fps: 60,
 	...over,
+});
+
+describe('HudView healing potion', () => {
+	test('shows charges over level in the rarity color, and nothing before the first potion', () => {
+		const none = render(<HudView hud={snapshot()} />);
+		expect(none.queryByTitle('Healing potions')).toBeNull();
+		none.unmount();
+		const { getByTitle } = render(
+			<HudView
+				hud={snapshot({
+					healPotion: { charges: 2, level: 3, rarity: 4, kills: 37, killsPerPotion: 100 },
+				})}
+			/>,
+		);
+		const el = getByTitle('Healing potions');
+		expect(el.textContent).toContain('2/3');
+		expect(el.textContent).toContain('37/100 kills');
+		// Empty: dimmed, no rarity color, still counting.
+		const empty = render(
+			<HudView
+				hud={snapshot({
+					healPotion: { charges: 0, level: 3, rarity: 4, kills: 5, killsPerPotion: 100 },
+				})}
+			/>,
+		);
+		expect(
+			empty.getAllByTitle('Healing potions').at(-1)?.getAttribute('style') ?? '',
+		).not.toContain('#b347ff');
+
+		expect(el.getAttribute('style')).toContain('#b347ff');
+	});
 });
 
 describe('HudView', () => {
@@ -48,7 +80,7 @@ describe('HudView', () => {
 		cleanup();
 	});
 
-	test('shows 6 weapon slots with tier numerals, boss bar and superpower', () => {
+	test('shows no weapon icons (developer request), the boss bar and the super magic bar', () => {
 		const { container } = render(
 			<HudView
 				hud={snapshot({
@@ -58,8 +90,7 @@ describe('HudView', () => {
 				})}
 			/>,
 		);
-		expect(container.querySelectorAll('[title]').length).toBe(2);
-		expect(container.textContent).toContain('IV');
+		expect(container.querySelectorAll('[title]').length).toBe(0);
 		expect(container.textContent).toContain('SPACE');
 		expect(container.textContent).toContain('2x');
 		cleanup();
@@ -80,5 +111,30 @@ describe('hud bridge', () => {
 			{ id: 'machete', tier: 3, rarity: 3 },
 		]);
 		expect(hudWeapons({ weapons })).toHaveLength(6);
+	});
+});
+
+describe('Hud over menus', () => {
+	test('the whole HUD hides while any menu or overlay covers the game', async () => {
+		const { Hud } = await import('../../src/ui/components/Hud');
+		const { runUiStore } = await import('../../src/ui/run-bridge');
+		const { uiStore } = await import('../../src/ui/store');
+		const { act } = await import('@testing-library/react');
+		publishHud(snapshot());
+		const view = render(<Hud />);
+		expect(view.container.textContent).toContain('ROUND');
+		act(() =>
+			runUiStore.set({
+				pause: { weapons: [], stats: [], cards: [], gear: { slots: [], bag: [] } },
+			}),
+		);
+		expect(view.container.textContent).toBe('');
+		act(() => runUiStore.set({ pause: null }));
+		expect(view.container.textContent).toContain('ROUND');
+		// Settings opened from the pause screen use the menu store.
+		act(() => uiStore.set({ screen: 'settings' }));
+		expect(view.container.textContent).toBe('');
+		act(() => uiStore.set({ screen: 'none' }));
+		cleanup();
 	});
 });

@@ -8,7 +8,9 @@ export type {
 	AffixView,
 	GearItemView,
 	GearSlotView,
+	HealPotionView,
 	PlayerPanelView,
+	SupportSlotView,
 	WeaponSlotView,
 	WeaponStatsView,
 } from '../logic/item-view';
@@ -35,7 +37,12 @@ export type { OfferDescription, OfferOutcome, StatChange } from '../logic/shop-d
  * hero `stats`, `weapons` (slot, id, rarity I to V, affixes, stats, sets, sell value), the five
  * `gear` slots (item with rarity, affixes and base stats, or null) and the `bag`.
  *
- * HUD: `HudWeapon.rarity` per weapon slot (1 to 5), for the slot border color.
+ * Support items and the healing potion (SDD-014): offers of `kind` `support` and `healPotion`
+ * (rarity I, `description.outcome` `support` or `healPotion` with level before/after), and
+ * `PlayerPanelView.support` (owned items with level) and `PlayerPanelView.healPotion` (level,
+ * charges, rarity, heal share; null until bought).
+ *
+ * HUD: `HudSnapshot.healPotion` (charges, level, rarity) beside `HudWeapon.rarity` per weapon slot (1 to 5), for the slot border color.
  */
 
 /**
@@ -46,7 +53,7 @@ export type { OfferDescription, OfferOutcome, StatChange } from '../logic/shop-d
 export interface ShopOfferView {
 	/** Shop slot 0..3, the argument of `buy` and `lock`. */
 	index: number;
-	kind: 'weapon' | 'item' | 'gear' | 'potion';
+	kind: 'weapon' | 'item' | 'gear' | 'potion' | 'support' | 'healPotion';
 	/** Weapon line id (translate with `weapon.<id>.name`). */
 	id: string;
 	/** Same number as `rarity` (kept for older screens). */

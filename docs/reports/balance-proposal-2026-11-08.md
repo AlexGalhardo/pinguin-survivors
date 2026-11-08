@@ -319,3 +319,9 @@ Rodada do `playtest-bot` (L1, D1, build DEV congelada servida por um servidor es
 - **#7 ✓: mediana 13,1 min** (tempo de jogo 6,3 min mais 45 s por loja, 13 runs), dentro da faixa de 10 a 18 min. O balanço automático (`balance-auto-2026-11-08.md`) agora inclui essas runs.
 - **#1 no bot real, por herói**: Jack 10 e Bob 24 passam; **a Lucia fica em 6**, abaixo do piso de 8 (2 de 6 runs morrem no round 3, o mesmo modo de falha do início da run). Os 10 Fish de partida ajudam (antes eram 5 de 8 mortes no round 3), mas não resolvem sozinhos para a Lucia. Com 6 runs é indício.
 - **Ajuste mínimo (só dados), sugerido e não aplicado**: subir `ECONOMY.fish.start` de 10 para 12 ou 14 (uma 2ª arma já na loja do round 1 e uma sobra para reroll), ou dar à Lucia 1 ponto de HP base. Isso exige conferir a sim (#1 e #6) e uma nova rodada do bot; deixo para a decisão do desenvolvedor.
+
+## Ajuste da Lucia aplicado (2026-11-08)
+
+- **Mudança (só dados da Lucia, `src/data/heroes.ts`)**: HP base 85 para 100 e armadura 1 para 3. `ECONOMY` global não foi tocada.
+- **Sim 100 seeds**: #1 18 / 18 / 17 (máx. 27), #2 a #6 ✓ sem regressão; Jack e Bob inalterados.
+- **Bot real (L1, Danger 1, mudo, 6 runs, seeds 100 a 105)**: rounds 17, 13, 15, 13, 34 e 3; mediana 14 (antes 6), acima do piso de 8. Ainda há uma morte precoce no round 3 em 6 runs; com amostra pequena, é indício e não garantia.

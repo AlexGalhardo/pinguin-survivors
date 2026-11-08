@@ -16,8 +16,8 @@ describe('gambits (P-28)', () => {
 	test('slots are checked in order and only once', () => {
 		const slots = [
 			{ potion: 'rage' as const, condition: 'bossVisible' as const, used: false },
-			{ potion: 'heal' as const, condition: 'hpBelow50' as const, used: false },
-			{ potion: 'megaHeal' as const, condition: 'hpBelow25' as const, used: false },
+			{ potion: 'shield' as const, condition: 'hpBelow50' as const, used: false },
+			{ potion: 'antidote' as const, condition: 'hpBelow25' as const, used: false },
 		];
 		expect(pickGambit(slots, ctx())).toBe(-1);
 		expect(pickGambit(slots, ctx({ hpRatio: 0.2 }))).toBe(1);
@@ -34,16 +34,16 @@ describe('gambits (P-28)', () => {
 
 	test('potions come from the stock and unused ones go back', () => {
 		const save = defaultSave();
-		save.potions.heal = 1;
+		save.potions.shield = 1;
 		save.gambits = [
-			{ potion: 'heal', condition: 'hpBelow50' },
-			{ potion: 'heal', condition: 'hpBelow25' },
+			{ potion: 'shield', condition: 'hpBelow50' },
+			{ potion: 'shield', condition: 'hpBelow25' },
 			{ potion: null, condition: null },
 		];
 		const slots = loadGambits(save.gambits, save.potions);
 		expect(slots.map((s) => s.used)).toEqual([false, true, true]);
-		expect(save.potions.heal).toBe(0);
+		expect(save.potions.shield).toBe(0);
 		returnUnused(slots, save.potions);
-		expect(save.potions.heal).toBe(1);
+		expect(save.potions.shield).toBe(1);
 	});
 });

@@ -1,0 +1,23 @@
+/** Save slots (SDD-014 RF-01..RF-06). */
+export const slotsPtBR = {
+	'menu.newGame': 'NOVO JOGO',
+	'menu.load': 'CARREGAR',
+	'slots.loadTitle': 'CARREGAR JOGO',
+	'slots.newTitle': 'NOVO JOGO',
+	'slots.loadHint': 'Escolha um slot de save para continuar jogando.',
+	'slots.newHint': 'Escolha o slot do novo jogo. Cada slot guarda o próprio progresso.',
+	'slots.slot': 'SLOT {n}',
+	'slots.empty': 'Slot vazio',
+	'slots.info': '{hero} · nível {level} · melhor round {round}',
+	'slots.played': 'Jogado {time}',
+	'slots.saved': 'Salvo em {date}',
+	'slots.inRun': 'Run em andamento',
+	'slots.active': 'ATIVO',
+	'slots.load': 'CARREGAR',
+	'slots.start': 'COMEÇAR AQUI',
+	'slots.delete': 'APAGAR',
+	'slots.confirmDelete': 'Apagar o slot {n}? Todo o progresso dele será perdido.',
+	'slots.confirmOverwrite': 'O slot {n} já tem um jogo. Um novo jogo apaga o que há nele.',
+	'slots.confirm': 'CONFIRMAR',
+	'slots.cancel': 'CANCELAR',
+} as const;

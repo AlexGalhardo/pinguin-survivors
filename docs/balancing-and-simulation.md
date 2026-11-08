@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.9 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.10 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -22,7 +22,7 @@
 ### A1. Filosofia
 
 1. **Curva de poder, não parede**: o jogador deve sentir que fica forte; a morte vem de decisões ruins de build ou de posicionamento, não de um pico de dificuldade arbitrário.
-2. **Jogador novo morre entre os rounds 8 e 20** no Danger 1 sem meta-progressão; **jogador com level 10 e Oficina** passa do boss 20; **jogador level 20+** só morre na volta do endless (round 31+). Esses três perfis definem tudo (§A4).
+2. **Jogador novo morre entre os rounds 8 e 20** no Danger 1 sem meta-progressão; **jogador com level 10 e a árvore de habilidades** (alocação automática) passa do boss 20; **jogador level 20+** só morre na volta do endless (round 31+). Esses três perfis definem tudo (§A4).
 3. **Nenhuma arma/classe dominante**: em 100 runs simuladas, nenhuma arma pode aparecer em mais de 35% das builds finais nem menos de 3%.
 4. **Economia fechada por run**: Fish ganho ≈ Fish gasto; reroll é luxo (≤ 15% do gasto médio).
 5. **Medir antes de mexer**: toda mudança de número vem com relatório antes/depois (sim ou bot).
@@ -56,9 +56,9 @@ Medidas com **bot médio**, **Danger 1**, seeds 100 e 101, build DEV congelado.
 
 | # | Perfil | Meta | Status |
 |---|---|---|---|
-| 1 | L1, sem Oficina/poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08, raridade I–V): 18 / 18 / 16, máx. 27. Bot real com a raridade e os drops (13 runs): jack 10 (4 runs), bob 24 (3 runs), **lucia 6 (6 runs, 2 mortes no round 3)**: a Lucia fica abaixo do piso de 8 no bot real |
-| 2 | L10 + Oficina `all:2` + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 3%, bob 0%, lucia 1% |
-| 3 | L20 + Oficina `all:4` + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08, raridade I–V): 33 / 33 / 33 |
+| 1 | L1, árvore vazia, sem poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08, raridade I–V): 18 / 18 / 16, máx. 27. Bot real com a raridade e os drops (13 runs): jack 10 (4 runs), bob 24 (3 runs), **lucia 6 (6 runs, 2 mortes no round 3)** antes do ajuste; com Lucia HP base 85→100 e armadura 1→3: sim 18 / 18 / 17 e bot real **lucia 14 (6 runs: 3, 13, 13, 15, 17, 34)**, acima do piso |
+| 2 | L10 + árvore automática + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 3%, bob 0%, lucia 1% |
+| 3 | L20 + árvore automática + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08, raridade I–V): 33 / 33 / 33 |
 | 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08, raridade I–V): D0 42, D1 31, D5 10 |
 | 5 | Diversidade de build (sim, 100 runs/herói, L10, D1) | **toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói.** Os limites de 35% por arma e 50% por set dentro de cada herói são **exceção justificada**: com ~15 armas candidatas para 5 vagas livres a média por arma já é ~33%, e o bônus de classe (`tagMul`) é intencional | ✓ (2026-11-08): nenhuma arma abaixo de 3%. Exceção medida: armas líderes de 63% a 69% por herói (jack `hammer`, bob `elementStaff`, lucia `flameRing`), sets de 74% a 93% |
 | 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08, raridade I–V): 0,895, reroll 8,5% |
@@ -390,13 +390,25 @@ Só o maior patamar atingido vale. Valores são totais por patamar (`SET_BONUSES
 | Fim de round | `2 + floor(N/2)` |
 | Boss | `25 · (1 + ciclo)` |
 
-| Poção | Preço |
+| Poção de gambit (Pérolas) | Preço |
 |---|---|
-| Cura / Antídoto | 15 |
+| Antídoto | 15 |
 | Escudo / Pressa / Fúria | 25 |
-| Mega Cura | 40 |
 
-### 8b. Oficina (upgrades permanentes com Fish, `src/data/upgrades.ts`)
+Cura e Mega Cura saíram: a cura é a **poção de cura da run** e os **itens de suporte** (SDD-014), vendidos na loja em Fish.
+
+| Loja (Fish, mais `2 × round`) | Preço | Efeito |
+|---|---|---|
+| Poção de cura (nível 1 a 10) | 16 por nível | carrega `nível` poções, bebe a ≤ 50% de vida, 2 s entre poções, uma poção volta a cada 100 abates; cura 25 / 30 / 35 / 40 / 50% por raridade I a V |
+| Item de suporte (nível 1 a 5) | 14 por nível | Magnético: raio 40 a 200 u, puxada ×1,25 a ×2,8; Botas: +4 a +20 de velocidade; Sorte: +3% a +15% |
+
+Drops de melhoria da poção: Elite 12% por abate (II ou III), Boss 100% (IV ou V). Fatia da loja por tipo (`kindShare`): suporte 12% e poção de cura 10%, renormalizadas com o que a prateleira tem.
+
+> A sim (`scripts/sim.ts`) não modela loja, poções nem suporte; a entrega da frente (2026-11-08) não mexe nela: `--report` com 100 runs deu #1 18 / 18 / 17 e #6 0,885, sem regressão (metas #1 a #6 inalteradas). Cura, preços e drops novos só têm teste unitário e playtest; calibrar com o bot (`bun scripts/playtest-bot.ts`) quando houver tempo.
+
+### 8b. Oficina (removida — substituída pela árvore de habilidades, ADR-019)
+
+> Histórico: a Oficina e os pontos de stat saíram em 2026-11-08. A meta-progressão agora é a árvore por herói (`src/data/skill-tree.ts`): passiva menor = 1,5× um antigo ponto de stat, notáveis 2–4 stats, pedras-chave com custo. A sim e o bot usam `autoAllocate` (ordem `SIM_BRANCH_ORDER`). Resultado da sim com a árvore (2026-11-08): #1 18/18/17, #2 ✓, #3 33/33/32, #4 D0 58 / D1 31 / D5 10, #5 ✓, #6 0,888. O texto abaixo descreve o modelo antigo.
 
 Compartilhados pelos heróis; aplicados aos stats iniciais de toda run. Preço do nível L+1 = `base · crescimento^L`.
 
@@ -429,9 +441,9 @@ O trabalho de balanceamento da frente `wt/balance` **termina** quando o lote aba
 
 | # | Perfil | Meta |
 |---|---|---|
-| 1 | L10 + Oficina `all:2` + poções | cada herói passa do round 30 (vence o boss 30) em **≥ 1 de 2 seeds**, e nenhum herói morre antes do round 20 em ambas |
-| 2 | L20 + Oficina `all:4` + poções | os 3 heróis passam do round 30 |
-| 3 | L1 sem Oficina/poções (jogador novo) | mediana de morte entre os rounds **8 e 20** (nenhum herói passa do 30) |
+| 1 | L10 + árvore automática + poções | cada herói passa do round 30 (vence o boss 30) em **≥ 1 de 2 seeds**, e nenhum herói morre antes do round 20 em ambas |
+| 2 | L20 + árvore automática + poções | os 3 heróis passam do round 30 |
+| 3 | L1 sem árvore/poções (jogador novo) | mediana de morte entre os rounds **8 e 20** (nenhum herói passa do 30) |
 | 4 | Endless (L20) | a run termina antes do round 60 (a volta do endless mata) [1.0: revisar] |
 | 5 | EASY / HARD (L10, 1 seed) | EASY chega pelo menos tão longe quanto NORMAL; HARD morre antes do NORMAL |
 

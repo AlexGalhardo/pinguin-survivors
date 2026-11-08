@@ -6,7 +6,7 @@ export const menusPtBR = {
 	'select.play': 'INICIAR RUN',
 	'hero.condition': 'Trocar condição',
 	'touch.stick': 'Direcional de movimento',
-	'touch.super': 'Superpoder',
+	'touch.super': 'Super magia',
 	'touch.speed': 'Velocidade do jogo',
 	'touch.pause': 'Pausar',
 	'workshop.weapons': 'Armas iniciais de {hero}',

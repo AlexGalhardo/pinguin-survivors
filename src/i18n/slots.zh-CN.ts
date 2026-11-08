@@ -1,0 +1,23 @@
+/** Save slots (SDD-014 RF-01..RF-06). */
+export const slotsZhCN = {
+	'menu.newGame': '新游戏',
+	'menu.load': '读取存档',
+	'slots.loadTitle': '读取存档',
+	'slots.newTitle': '新游戏',
+	'slots.loadHint': '选择一个存档位继续游戏。',
+	'slots.newHint': '选择新游戏的存档位。每个存档位各自保存进度。',
+	'slots.slot': '存档位 {n}',
+	'slots.empty': '空存档位',
+	'slots.info': '{hero} · 等级 {level} · 最佳回合 {round}',
+	'slots.played': '已游玩 {time}',
+	'slots.saved': '保存于 {date}',
+	'slots.inRun': '进行中的对局',
+	'slots.active': '当前',
+	'slots.load': '读取',
+	'slots.start': '在此开始',
+	'slots.delete': '删除',
+	'slots.confirmDelete': '删除存档位 {n}？其中的全部进度将丢失。',
+	'slots.confirmOverwrite': '存档位 {n} 已有存档。开始新游戏将覆盖它。',
+	'slots.confirm': '确认',
+	'slots.cancel': '取消',
+} as const;

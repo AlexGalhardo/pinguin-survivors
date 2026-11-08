@@ -15,6 +15,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { type Browser, chromium, firefox, type Page } from 'playwright';
+import { seedSaveScript } from './lib/seed-save';
 
 const args = process.argv.slice(2);
 const option = (name: string): string | undefined => {
@@ -89,6 +90,7 @@ async function dismissUnlocks(page: Page): Promise<void> {
 async function runFlow(name: string, launch: () => Promise<Browser>): Promise<Result> {
 	const browser = await launch();
 	const page = await browser.newPage({ viewport: { width: 1366, height: 768 }, locale: 'en-US' });
+	await page.addInitScript(seedSaveScript);
 	const result: Result = {
 		browser: name,
 		version: browser.version(),

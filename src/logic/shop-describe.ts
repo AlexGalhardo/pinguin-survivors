@@ -9,8 +9,10 @@ import {
 import type { Affix } from './affixes';
 import { type Build, setBonuses } from './build';
 import { itemRoll, type RunGear } from './equipment';
+import { type HealPotionState, healShare } from './heal-potion';
 import type { Offer } from './shop';
 import { addStat, getStat, type PlayerStats, type StatKey } from './stats';
+import { isSupportId, type SupportLevels, supportLevel, supportValue } from './support';
 
 /** One stat line of the "before → after" table the shop shows. */
 export interface StatChange {
@@ -31,7 +33,11 @@ export type OfferOutcome =
 	| { type: 'barFull' }
 	| { type: 'equip'; slot: GearSlot }
 	| { type: 'bag'; slot: GearSlot; worn: string }
-	| { type: 'potion'; potion: string };
+	| { type: 'potion'; potion: string }
+	/** Support item: level `from` (0 = new) to `to`; `value` is the item number at `to`. */
+	| { type: 'support'; id: string; from: number; to: number; value: number }
+	/** Healing potion: carried `from` to `to`, healing `healShare` of max HP. */
+	| { type: 'healPotion'; from: number; to: number; healShare: number };
 
 export interface OfferDescription {
 	kind: Offer['kind'];
@@ -82,7 +88,13 @@ function changesFrom(stats: PlayerStats, delta: Map<StatKey, number>): StatChang
  */
 export function describeOffer(
 	offer: Offer,
-	ctx: { build: Build; gear: RunGear; stats: PlayerStats },
+	ctx: {
+		build: Build;
+		gear: RunGear;
+		stats: PlayerStats;
+		support?: SupportLevels;
+		healPotion?: HealPotionState;
+	},
 ): OfferDescription {
 	const rarity = offer.tier as Rarity;
 	const affixes = offer.affixes ?? [];
@@ -166,6 +178,28 @@ export function describeOffer(
 			...result,
 			outcome: { type: 'equip', slot },
 			statChanges: changesFrom(ctx.stats, delta),
+		};
+	}
+
+	if (offer.kind === 'support' && isSupportId(offer.id)) {
+		const from = supportLevel(ctx.support ?? {}, offer.id);
+		const to = from + 1;
+		return {
+			...base,
+			outcome: { type: 'support', id: offer.id, from, to, value: supportValue(offer.id, to) },
+		};
+	}
+
+	if (offer.kind === 'healPotion') {
+		const p = ctx.healPotion;
+		return {
+			...base,
+			outcome: {
+				type: 'healPotion',
+				from: p?.level ?? 0,
+				to: (p?.level ?? 0) + 1,
+				healShare: healShare(p?.rarity ?? 1),
+			},
 		};
 	}
 

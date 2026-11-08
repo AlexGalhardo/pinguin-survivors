@@ -1,6 +1,11 @@
 /** Every color used by the game. Dark polar night + saturated heroes, blood and magic (P-08). */
 export const PALETTE = {
 	night: 0x0b0e14,
+	// UI surfaces and ornaments (docs/design-system.md): panel gradient and the aged-gold frame.
+	panelTop: 0x161c29,
+	panelBottom: 0x0a0d13,
+	goldAged: 0xa8843a,
+	goldBright: 0xe0bb62,
 	snowDark: 0x3a4152,
 	snow: 0x5a6378,
 	snowLight: 0x7d88a0,

@@ -1,9 +1,10 @@
 import { SHOP } from '../data/economy';
-import { POTION_PRICES, type PotionType } from '../data/potions';
+import { HEAL_POTION, POTION_PRICES, type PotionType } from '../data/potions';
+import { SUPPORT_PRICE } from '../data/support';
 import { type Affix, rollAffixes } from './affixes';
 import type { Rng } from './rng';
 
-export type OfferKind = 'weapon' | 'item' | 'gear' | 'potion';
+export type OfferKind = 'weapon' | 'item' | 'gear' | 'potion' | 'support' | 'healPotion';
 
 /** Minimal shape the shop needs from the weapon/item/gear catalogs (keeps it decoupled from them). */
 export interface ShopCandidate {
@@ -53,6 +54,10 @@ export function offerPrice(kind: OfferKind, tier: number, round: number, id?: st
 		if (price === undefined) throw new Error(`shop: unknown potion ${id}`);
 		return price;
 	}
+	if (kind === 'support' || kind === 'healPotion')
+		return (
+			(kind === 'support' ? SUPPORT_PRICE : HEAL_POTION.price) + SHOP.pricePerRound * round
+		);
 	const table = kind === 'gear' ? SHOP.gearPrices : SHOP.weaponPrices;
 	const base = table[tier - 1];
 	if (base === undefined) throw new Error(`shop: invalid ${kind} tier ${tier}`);

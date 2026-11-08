@@ -6,7 +6,7 @@ export const menusEn = {
 	'select.play': 'START RUN',
 	'hero.condition': 'Change condition',
 	'touch.stick': 'Move stick',
-	'touch.super': 'Superpower',
+	'touch.super': 'Super Magic',
 	'touch.speed': 'Game speed',
 	'touch.pause': 'Pause',
 	'workshop.weapons': 'Starting weapons for {hero}',

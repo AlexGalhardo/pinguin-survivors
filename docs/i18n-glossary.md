@@ -57,11 +57,16 @@
 | Explosive set | Explosivo | Explosivo | 爆炸 | |
 | Elemental set | Elemental | Elemental | 元素 | |
 | Support set | Suporte | Apoyo | 辅助 | |
-| Tier I–IV | I–IV | I–IV | I–IV | numerais romanos, sem tradução |
-| Common | Comum | Común | 普通 | |
-| Rare | Rara | Rara | 稀有 | |
-| Epic | Épica | Épica | 史诗 | |
-| Legendary | Lendária | Legendaria | 传说 | |
+| Tier / raridade I–V | I–V | I–V | I–V | numerais romanos, sem tradução (ADR-017; armas e equipamentos usam a mesma escala) |
+| Common (I) | Comum | Común | 普通 | `rarity.1` |
+| Uncommon (II) | Incomum | Poco común | 优秀 | `rarity.2` |
+| Rare (III) | Raro | Raro | 稀有 | `rarity.3` |
+| Epic (IV) | Épico | Épico | 史诗 | `rarity.4` |
+| Legendary (V) | Lendário | Legendario | 传说 | `rarity.5` |
+| Affix | Afixo | Afijo | 词缀 | bônus de stat sorteado em armas e equipamentos |
+| Skill tree | Árvore de habilidades | Árbol de habilidades | 技能树 | ADR-019; substitui a Oficina |
+| Notable | Notável | Notable | 重要天赋 | nó forte da árvore |
+| Keystone | Pedra-chave | Piedra angular | 基石 | nó com custo real |
 
 ## 5. Stats
 

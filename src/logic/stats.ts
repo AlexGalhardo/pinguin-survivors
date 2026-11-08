@@ -1,6 +1,7 @@
 import type { HeroId } from '../config/constants';
 import type { HeroDef } from '../data/heroes';
 import type { DamageTag, Element } from './combat';
+import { heroTree, treeStats } from './skill-tree';
 
 /**
  * Effective hero stats for a run: hero profile + persistent level growth + spent points +
@@ -44,22 +45,6 @@ export const LEVEL_GROWTH: Record<HeroId, Partial<Record<StatKey, number>>> = {
 	bob: { maxHp: 2.5, crit: 0.003, dodge: 0.001 },
 	lucia: { maxHp: 1.5, 'tagMul.magic': 0.006 },
 };
-
-/** Spendable level-up points (1 per level) and what each point gives. */
-export const POINT_VALUES = {
-	attackSpeed: 0.01,
-	regen: 0.1,
-	armor: 1,
-	'resist.fire': 0.01,
-	'resist.earth': 0.01,
-	'resist.ice': 0.01,
-	'resist.energy': 0.01,
-	dodge: 0.005,
-	parry: 0.005,
-	crit: 0.005,
-	maxHp: 5,
-} as const satisfies Partial<Record<StatKey, number>>;
-export type PointStat = keyof typeof POINT_VALUES;
 
 /** Flat keys for modifiers: plain stats plus `resist.<element>` and `tagMul.<tag>`. */
 export type StatKey =
@@ -136,18 +121,12 @@ export function getStat(stats: PlayerStats, key: StatKey): number {
 	return (stats as unknown as Record<string, number>)[key] as number;
 }
 
-/** Stats at the start of a run for a hero at `level` with spent `points`. */
-export function heroStats(
-	hero: HeroDef,
-	level: number,
-	points: Partial<Record<string, number>>,
-): PlayerStats {
+/** Stats at the start of a run for a hero at `level` with the `tree` nodes allocated (ADR-019). */
+export function heroStats(hero: HeroDef, level: number, tree: readonly string[] = []): PlayerStats {
 	const s = baseStats(hero);
 	for (const [key, perLevel] of Object.entries(LEVEL_GROWTH[hero.id]))
 		addStat(s, key as StatKey, (perLevel as number) * (level - 1));
-	for (const [key, count] of Object.entries(points)) {
-		if (key in POINT_VALUES && count)
-			addStat(s, key as StatKey, POINT_VALUES[key as PointStat] * count);
-	}
+	for (const [key, value] of Object.entries(treeStats(heroTree(hero.id), tree)))
+		addStat(s, key as StatKey, value as number);
 	return s;
 }

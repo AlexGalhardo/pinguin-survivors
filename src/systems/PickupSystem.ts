@@ -9,8 +9,11 @@ import { LEGACY_GEAR_RARITY, type Rarity, weaponVisualTier } from '../data/rarit
 import type { ItemDrop } from '../logic/equipment';
 import { depthOf, worldToScreen } from '../logic/projection';
 
-/** heal: value = share of max HP; gear: value unused, `gearId` names the item. */
-export type PickupKind = 'xp' | 'fish' | 'meat' | 'heal' | 'gear';
+/** heal: value = share of max HP; gear: value unused, `gearId` names the item; potion: value = rarity. */
+export type PickupKind = 'xp' | 'fish' | 'meat' | 'heal' | 'gear' | 'potion';
+
+/** Drops that blink on the ground until walked over (equipment and potion upgrades, `value` = rarity). */
+const isWalkOn = (kind: PickupKind): boolean => kind === 'gear' || kind === 'potion';
 
 interface Pickup {
 	sprite: Phaser.GameObjects.Image;
@@ -119,7 +122,7 @@ export class PickupSystem {
 				// Full: merge XP into the oldest orb instead of losing it.
 				const orb = this.items.find((i) => i.alive && i.kind === kind && kind === 'xp');
 				if (orb) orb.value += value;
-				if (kind !== 'gear') return;
+				if (!isWalkOn(kind)) return;
 				// Gear is never lost: recycle the oldest XP orb slot.
 				p = this.items.find((i) => i.alive && i.kind === 'xp');
 				if (!p) return;
@@ -152,13 +155,14 @@ export class PickupSystem {
 		p.magnet = false;
 		p.alive = true;
 		p.bob = Math.random() * Math.PI * 2;
-		p.life = kind === 'gear' ? DROPS.gearLifetime : Number.POSITIVE_INFINITY;
+		p.life = isWalkOn(kind) ? DROPS.gearLifetime : Number.POSITIVE_INFINITY;
 		p.sprite
 			.setTexture(this.textureOf(kind, value, gearId, item))
 			.setVisible(true)
 			.setAlpha(1);
-		if (kind === 'gear') {
-			const color = dropColor(gearId, item?.rarity);
+		if (isWalkOn(kind)) {
+			const color =
+				kind === 'potion' ? rarityColor(value as Rarity) : dropColor(gearId, item?.rarity);
 			if (!p.glow) p.glow = this.scene.add.image(0, 0, KEYS.gearGlow);
 			p.glow.setTint(color).setVisible(true);
 			if (!p.beam)
@@ -179,6 +183,7 @@ export class PickupSystem {
 		item: ItemDrop | null,
 	): string {
 		if (kind === 'heal') return KEYS.healPack(Math.round(value * 100));
+		if (kind === 'potion') return KEYS.healPack(50);
 		if (kind === 'gear' && item?.kind === 'weapon')
 			return weaponArt(this.scene.textures, item.id, weaponVisualTier(item.rarity)).key;
 		if (kind === 'gear' && gearId) return KEYS.gear(gearId);
@@ -202,7 +207,13 @@ export class PickupSystem {
 		this.vacuum = true;
 	}
 
-	update(dt: number, hx: number, hy: number, pickupRange: number): void {
+	update(
+		dt: number,
+		hx: number,
+		hy: number,
+		pickupRange: number,
+		magnet: { radius: number; pull: number } = { radius: 0, pull: 1 },
+	): void {
 		this.time += dt;
 		let any = false;
 		for (const p of this.items) {
@@ -211,7 +222,7 @@ export class PickupSystem {
 			const dx = hx - p.x;
 			const dy = hy - p.y;
 			const d = Math.hypot(dx, dy);
-			if (p.kind === 'gear') {
+			if (isWalkOn(p.kind)) {
 				this.updateGear(p, dt, d, hx, hy);
 				continue;
 			}
@@ -219,9 +230,12 @@ export class PickupSystem {
 				this.collect(p);
 				continue;
 			}
-			if (this.vacuum || d < pickupRange) p.magnet = true;
+			// Magnetic support item: only XP orbs and Fish reach farther and are pulled faster.
+			const pulled = p.kind === 'xp' || p.kind === 'fish';
+			if (this.vacuum || d < pickupRange + (pulled ? magnet.radius : 0)) p.magnet = true;
 			if (p.magnet) {
-				const speed = ECONOMY.magnetSpeed * (this.vacuum ? 3 : 1);
+				const speed =
+					ECONOMY.magnetSpeed * (this.vacuum ? 3 : 1) * (pulled ? magnet.pull : 1);
 				p.x += (dx / d) * Math.min(d, speed * dt);
 				p.y += (dy / d) * Math.min(d, speed * dt);
 			}

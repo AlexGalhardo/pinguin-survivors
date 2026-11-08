@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test';
-import { HERO_IDS } from '../src/config/constants';
 import {
 	defaultSave,
 	HISTORY_SIZE,
@@ -55,8 +54,8 @@ describe('parseSave', () => {
 	test('round-trips a full save', () => {
 		const s = defaultSave();
 		s.fish = 99;
-		s.heroes.bob = { unlocked: true, level: 12, xp: 30, points: { crit: 3 } };
-		s.gambits[0] = { potion: 'heal', condition: 'hpBelow25' };
+		s.heroes.bob = { unlocked: true, level: 12, xp: 30, tree: [] };
+		s.gambits[0] = { potion: 'shield', condition: 'hpBelow25' };
 		s.achievements.unlocked['kills.1'] = 5;
 		pushHistory(s, run());
 		s.activeRun = { savedAt: 1, seed: 7, hero: 'jack', nextRound: 4, state: { hp: 50 } };
@@ -85,32 +84,10 @@ describe('parseSave', () => {
 	});
 });
 
-describe('save v1 → v2 migration', () => {
-	const v1 = JSON.stringify(v1Fixture);
-
-	test('A2: real v1 save migrates keeping heroes, XP and achievements', () => {
-		const s = parseSave(v1);
-		expect(s.version).toBe(2);
-		expect(s.heroes.jack).toMatchObject({ level: 23, xp: 140, unlocked: true });
-		expect(s.heroes.bob.level).toBe(9);
-		expect(s.fish).toBe(412);
-		expect(s.achievements.unlocked['kills.1']).toBe(1700000000000);
-		expect(s.progress.hero.jack.bestRound).toBe(17);
-		expect(s.settings.lang).toBe('pt-BR');
-		expect(s.settings.volume).toEqual({ master: 0.7, music: 0.5, sfx: 0.9 });
-		expect(s.settings).not.toHaveProperty('subtitles');
-	});
-
-	test('discards activeRun and carries fish over as pearls, dangerUnlocked = 1 for every hero', () => {
-		const s = parseSave(v1);
-		expect(s.activeRun).toBeNull();
-		expect(s.pearls).toBe(412);
-		for (const h of HERO_IDS) expect(s.progress.hero[h].dangerUnlocked).toBe(1);
-	});
-
-	test('A3: migrating twice gives the same object', () => {
-		const once = parseSave(v1);
-		expect(parseSave(serializeSave(once))).toEqual(once);
+describe('older saves (ADR-020: no compatibility)', () => {
+	test('a v1 or v2 file starts empty, without throwing', () => {
+		expect(parseSave(JSON.stringify(v1Fixture))).toEqual(defaultSave());
+		expect(parseSave(JSON.stringify({ ...v1Fixture, version: 2 }))).toEqual(defaultSave());
 	});
 
 	test('dangerUnlocked and pearls survive a round-trip and are clamped', () => {
@@ -185,10 +162,9 @@ describe('demo save → full game (SDD-006 A4)', () => {
 		const s = parseSave(raw);
 		expect(s.version).toBe(SAVE_VERSION);
 		expect(s.heroes.jack).toMatchObject({ unlocked: true, level: 14, xp: 220 });
-		expect(s.heroes.jack.points).toEqual({ crit: 3, maxHp: 4, armor: 2 });
+		expect(s.heroes.jack.tree).toEqual([]);
 		expect(s.heroes.bob.unlocked).toBe(false);
 		expect(s.pearls).toBe(96);
-		expect(s.upgrades.insight).toBe(1);
 		expect(s.achievements.unlocked['kills.1']).toBe(1769000000000);
 		expect(s.progress.hero.jack.bestRound).toBe(10);
 		expect(s.bestRoundByDanger.jack).toEqual([10, 10, 0, 0, 0, 0]);
@@ -219,7 +195,7 @@ describe('telemetry in the save (SDD-013 A5)', () => {
 		const s = defaultSave();
 		expect(s.settings.telemetry).toBe(false);
 		expect(s.telemetry).toEqual([]);
-		const old = parseSave(JSON.stringify(v1Fixture));
+		const old = parseSave(JSON.stringify({ version: SAVE_VERSION }));
 		expect(old.settings.telemetry).toBe(false);
 		expect(old.telemetry).toEqual([]);
 	});
@@ -252,7 +228,7 @@ describe('set and tier IV records (T7.8)', () => {
 		expect(s.progress.runBests.tierIVSlots).toBe(2);
 		const back = parseSave(serializeSave(s));
 		expect(back.progress.setBest).toEqual(s.progress.setBest);
-		const old = parseSave(JSON.stringify(v1Fixture));
+		const old = parseSave(JSON.stringify({ version: SAVE_VERSION }));
 		expect(old.progress.setBest.blade).toBe(0);
 		expect(old.progress.runBests.tierIVSlots).toBe(0);
 	});

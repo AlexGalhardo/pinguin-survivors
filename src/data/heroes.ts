@@ -56,9 +56,9 @@ export const HEROES: Record<HeroId, HeroDef> = {
 	lucia: {
 		id: 'lucia',
 		pixellabId: '68a38f74-4a05-4de5-a38b-d990780b7414',
-		hp: 85,
+		hp: 100,
 		regen: 0.3,
-		armor: 1,
+		armor: 3,
 		moveSpeed: 115,
 		dodge: 0.06,
 		parry: 0,

@@ -24,7 +24,7 @@ import {
 } from '../src/logic/sim/shop-policy';
 import { heroStats } from '../src/logic/stats';
 
-const stats = heroStats(HEROES.jack, 1, {});
+const stats = heroStats(HEROES.jack, 1, []);
 const roll = (seed = 1): ShopRoll => ({
 	rng: new Rng(seed),
 	pool: weaponCandidates('jack'),

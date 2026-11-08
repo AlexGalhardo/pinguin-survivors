@@ -7,6 +7,7 @@ import { activeBudget } from '../core/tier';
 import { trackZoom } from '../core/viewport';
 import type { AchievementDef } from '../data/achievements';
 import { GEAR_SLOTS } from '../data/equipment';
+import { HEAL_POTION } from '../data/potions';
 import { t } from '../i18n';
 import { xpToNext } from '../logic/progression';
 import { worldToScreen } from '../logic/projection';
@@ -115,6 +116,15 @@ export class HudScene extends Phaser.Scene {
 						]
 					: [],
 			),
+			healPotion: run.healPotion.level
+				? {
+						charges: run.healPotion.charges,
+						level: run.healPotion.level,
+						rarity: run.healPotion.rarity,
+						kills: run.healPotion.kills,
+						killsPerPotion: HEAL_POTION.killsPerPotion,
+					}
+				: null,
 			speed: game.speed,
 			fps: Math.round(this.game.loop.actualFps),
 		});

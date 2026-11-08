@@ -1,6 +1,6 @@
 # Arquitetura técnica — Pinguin Survivors
 
-> **Versão** 2.3 · **Data** 2026-11-08 · Estado atual do código (pós-T3.7: UI só React). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.4 · **Data** 2026-11-08 · Estado atual do código (0.4.0 em preparação: UI só React, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 
@@ -66,11 +66,14 @@
 - **Coordenadas**: mundo cartesiano em unidades (1 u = 1 px lógico); `screenX = x`, `screenY = y`; depth por `y`. `z` só para arcos de gibs/projéteis (offset visual).
 - **Arena** (ADR-003, SDD-001): quadrado `side(N) = min(10 + (N−1), 40)` tiles de 64 u, centrado na origem; `arenaBounds(N)`; crescimento centrado a cada round; bordas sólidas; spawn em anel interno; câmera com lerp clampada (centrada quando a arena cabe na tela).
 - **Entidades** pooled: inimigos (máx. 300), projéteis, pickups, gibs, números, decalques. Nada de `new` por frame.
-- **Colisão**: círculos em espaço de mundo via `SpatialGrid` recentralizado no herói; props sólidos como círculos; voadores ignoram props mas respeitam a borda.
+- **Colisão**: círculos em espaço de mundo via `SpatialGrid` recentralizado no herói; props sólidos como círculos (`OBSTACLES`, `src/data/obstacles.ts`: arte `deco.*` ampliada 2–3× por variante, colisão circular, faixas livres entre eles); andarilhos contornam os props por *steering* (`src/logic/steering.ts`) e voadores os ignoram mas respeitam a borda.
 - **Direções**: 8 (5 geradas + 3 espelhadas) pelo vetor de movimento; sem rotação de input.
 - **Systems** (orquestrados pelo `GameScene`, ordem fixa por frame): input → movimento/steering → armas (6 slots, `WeaponSystem`; secundárias em `SecondarySystem`; alvo em `systems/targeting.ts`) → projéteis/áreas/hostis → combate/status → pickups → round/loja/level-up → FX → save.
 - **Fim de round** (`src/logic/run-state.ts`): `endRound` paga Fish e Pérolas do round e vai para `cards` (se houver level-up pendente) ou direto para `shop`; `resolveLevelUp` abre a loja quando as cartas acabam; `leaveShop` devolve à fase `round` e a `GameScene` cresce a arena, inicia o round N+1 e salva (autosave). `finishRun` converte Fish em Pérolas (`floor(fish / SHOP.fishToPearls)`) e soma no save.
 - **Danger 0–5** (`src/logic/difficulty.ts`): modificadores por nível (`dangerMods`), ondas extras (`extraWaves`), desbloqueio por herói (`unlockDanger`) e melhor round por dificuldade (`recordBestRound`).
+- **Animação das armas** (P-56): `WeaponView` anima cada arma em código a partir de `weaponPose` (`src/logic/weapon-anim.ts`, números em `src/data/weapon-anim.ts`): lunge até a distância real do alvo (melee), recuo e flash (fogo), arremesso (`thrown`, `boomerang`, `lob`), plantio (`mine`, `totem`, `cloud`), giro e pulso (`orbit`, `aura`, `follower`) e conjuração (`bolt`). `WeaponRing` passa a distância do alvo.
+- **Animação dos inimigos**: `Enemy` toca `fly` (voadores), `attack` (durante o telegraph de ranged, charger e chefes) ou `walk` por comportamento, lendo `meta.anims` do atlas `enemy.<id>`; escala por `src/data/sprite-scale.ts`.
+- **Feedback de combate** (`src/data/combat-fx.ts`): crítico, esquiva e aparo com número, cor, *pop* e tremor próprios; cor do tiro e do número por arma.
 - **Eventos tipados** (`src/core/events.ts`): `GameEvents` (mundo → UI) e `GameCommands` (UI → mundo); `RunState` serializável.
 
 ## 4. UI: React sobre o canvas
@@ -82,6 +85,9 @@
 - Componentes em `src/ui/components/`: `MenuHost` (menus) e `RunHost` (partida) montam as telas; `Router.tsx` escolhe a tela de menu; `Hud`, `Shop`, `ShopHost`, `LevelUpCards`, `Pause`, `GameOver`, `Unlock`, `DemoEnd`, `Toast`, `Btn`, `MenuBackground` (key art do menu), `TouchControls` (controles de toque) e as telas `MainMenu`, `HeroSelect`, `HeroScreen`, `Settings`, `Controls`, `Lists`, `MenuScreen`. `src/ui/App.tsx` monta `Hud`, `ShopHost` e os hosts.
 - Toque: `TouchControls` escreve o vetor do analógico e as ações em `src/core/touch-bridge.ts`; o `GameInput` lê esses valores junto com teclado e gamepad (`src/core/input.ts`).
 - Foco e input de menus no React (`src/ui/focus.tsx`, `focus-nav.ts`): teclado, gamepad (via `GameInput` em modo menu), toque; o `GameInput` do mundo é desligado enquanto um painel modal está aberto.
+- **Overlay e pausa** (`src/ui/overlay.ts`): a HUD some sob qualquer tela cheia (loja, cartas, pausa, resumo, menus). `src/ui/player-bridge.ts` publica o `PlayerPanelView` (stats, armas e equipamentos com raridade e afixos, mochila; `src/logic/item-view.ts`) para a Pausa e a Loja, que usam o mesmo painel (`PlayerPanel`, `ItemViews`, `Panel`; linguagem visual em [design-system.md](design-system.md), ADR-018). `MerchantSprite` toca o idle do lojista (`npc.merchant`).
+- **Árvore de habilidades** (ADR-019): `src/data/skill-tree.ts` gera uma árvore por herói; lógica pura em `src/logic/skill-tree.ts` (`pathTo`, `allocate`, `canRefund`, `treeStats`, `autoAllocate`); tela `SkillTree.tsx` (nós como botões sobre SVG, câmera própria sem barra de rolagem). Substituiu a Oficina e os pontos de stat.
+- **Raridade e afixos** (ADR-017): `src/data/rarity.ts` e `src/data/affixes.ts` (+ `src/logic/affixes.ts`) definem a escala I–V; `src/logic/shop-describe.ts` (`describeOffer`) explica cada oferta; a cor vem só de `rarityColor` em `palette.ts`.
 - Não há mais telas Phaser de UI: menus, HUD, loja, cartas, pausa e fim de partida são React (T3.7). Restam em Phaser: `BootScene`, `GameScene` e `HudScene` (luz e overlay de debug). `installCrispText` e `src/scenes/ui-phaser/` foram removidos.
 - Tailwind v4 com `@theme` gerado de `palette.ts` (`bun scripts/export-palette-css.ts`); tipografia Roboto (+ Noto Sans SC sob demanda para ZH); sem zoom inteiro no overlay.
 
@@ -95,17 +101,19 @@ src/
                             # synthetic-keys, viewport, touch-bridge · platform/ (bridge, web,
                             # electron, capacitor, types)
   data/                     # heroes enemies bosses weapons sets secondaries superpowers unlocks
-                            # cards economy rounds difficulty(danger) potions upgrades achievements
-                            # steam-achievements arena obstacles combat display equipment sfx demo
+                            # cards economy rounds difficulty(danger) potions achievements
+                            # steam-achievements arena obstacles combat combat-fx display equipment
+                            # sfx demo rarity affixes skill-tree weapon-anim sprite-scale
   i18n/                     # ui/cards/achievements/gear/shop/weapons × en, pt-BR, es, zh-CN
-  logic/                    # puro + testado (ver §2) · sim/ (run-sim, card-policy, shop-policy,
+  logic/                    # puro + testado (ver §2; skill-tree, affixes, item-view, shop-describe,
+                            # steering, obstacles, speed, weapon-anim) · sim/ (run-sim, card-policy, shop-policy,
                             # balance-report) · telemetry (opt-in) · demo
   world/                    # Arena, GoreLayer, Lighting
   entities/                 # Hero, Enemy, WeaponRing, WeaponView
   systems/                  # Enemy, Weapon, Secondary, Combat, Area, Hostile, Superpower, Pickup, Fx,
                             # ProjectilePool, targeting
   scenes/                   # BootScene, GameScene, HudScene (luz e overlay de debug)
-  ui/                       # App, Router, store, commands, *-bridge (hud, shop, run, save),
+  ui/                       # App, Router, store, commands, overlay, *-bridge (hud, shop, run, save, player),
                             # menu-controller, merchant, lang-font, focus(.tsx, -nav), font, toast,
                             # components/ (MenuHost, RunHost, Hud, Shop, ShopHost, TouchControls, …),
                             # palette.css, theme.css
@@ -130,7 +138,7 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 3. Contrato de assets: chave estável no `manifest.ts`; placeholders por código e arte final usam a mesma chave.
 4. Pooling de tudo que nasce e morre em massa.
 5. RNG com seed em todo sorteio e na geração da arena (`?seed=` reproduz a run).
-6. Eventos tipados entre mundo e UI; `RunState` serializável; `SaveData` versionado com migração.
+6. Eventos tipados entre mundo e UI; `RunState` serializável; `SaveData` versionado e **sem migração antes da 1.0**: arquivo de versão diferente começa vazio (decisão do desenvolvedor, 2026-11-08).
 7. Nenhum import de plataforma (`electron`, `@capacitor/*`, `steamworks.js`) em `src/`; só `window.platform`.
 
 ## 7. Tela, resolução e zoom
@@ -151,7 +159,7 @@ Velocidade de jogo (1×–4×): `GameScene.setSpeed` escala `time.timeScale`, tw
 
 ## 9. Persistência e plataforma
 
-- `SaveData` v2 (SDD-005) via `Platform.save`; `src/core/storage.ts` delega para `platform()`. Web = `localStorage` + export/import de `.json`; Electron e Capacitor entram pela ponte `window.platform` (`createElectronPlatform`, `createCapacitorPlatform`); o campo `cloud` da ponte indica que a loja sincroniza o save sozinha (`Platform.cloud`).
+- `SaveData` (`SAVE_VERSION` em `src/logic/save.ts`, hoje 3; o v2 do SDD-005 foi superado, sem migração) via `Platform.save`; por herói guarda `tree` (ids alocados da árvore, ADR-019) no lugar de `points` e `upgrades`; `src/core/storage.ts` delega para `platform()`. Web = `localStorage` + export/import de `.json`; Electron e Capacitor entram pela ponte `window.platform` (`createElectronPlatform`, `createCapacitorPlatform`); o campo `cloud` da ponte indica que a loja sincroniza o save sozinha (`Platform.cloud`).
 - Autosave no início de cada round (`GameScene`, P-43) e ao sair da loja; `Continue` no menu.
 - Conquistas e leaderboards pela `Platform`; na web são no-op (`achievements.unlock() {}`).
 - **Telemetria local opt-in** (`save.telemetry`, padrão `false`; `src/logic/telemetry.ts`): eventos de fim de partida num buffer limitado, exportáveis em `.jsonl` pelo menu. Nada é enviado.

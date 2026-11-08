@@ -2,12 +2,12 @@ import { type ReactElement, type ReactNode, useState } from 'react';
 import { type I18nKey, t } from '../../i18n';
 import { formatStat } from '../../logic/format';
 import type { PlayerPanelView } from '../../logic/item-view';
+import { useUiScale } from '../compact';
 import { Btn } from './Btn';
 import { weaponName } from './Hud';
 import {
 	GearCardView,
 	type GearItem,
-	gearName,
 	numeral,
 	rarityCss,
 	SlotIcon,
@@ -15,7 +15,7 @@ import {
 	type WeaponItem,
 	weaponFrames,
 } from './ItemViews';
-import { Filet, Hint, StatRow } from './Panel';
+import { Hint, StatRow } from './Panel';
 
 export interface PlayerPanelData {
 	/** Main stats already formatted (`gstat.<key>` is the label). */
@@ -29,6 +29,10 @@ export interface PlayerPanelData {
 	bag?: readonly { key: string; item: GearItem }[];
 	/** Passive cards and hero actives (pause only). */
 	cards?: readonly { name: string; level: number }[];
+	/** Support items owned (own 4 slots) and the healing potion (SDD-014). */
+	support?: PlayerPanelView['support'];
+	supportSlots?: number;
+	healPotion?: PlayerPanelView['healPotion'];
 }
 
 type Detail =
@@ -56,42 +60,60 @@ export function panelFromView(
 			})),
 		}),
 		cards: extra.cards,
+		support: view.support,
+		supportSlots: view.supportSlots,
+		healPotion: view.healPotion,
 	};
 }
 
 const slotLabel = (slot: string): string => t(`gslot.${slot}` as I18nKey);
 
-function Block(props: { title: string; children: ReactNode }): ReactElement {
+/** Bag tiles per page: the pause screen paginates the bag instead of scrolling it. */
+const BAG_PAGE = 8;
+
+function Block(props: { title: string; children: ReactNode; aside?: ReactNode }): ReactElement {
 	return (
-		<section className="flex min-w-0 flex-col gap-1.5">
-			<h3 className="m-0 font-title text-[0.95em] font-bold tracking-wider text-crit uppercase">
-				{props.title}
+		<section className="flex min-w-0 flex-col gap-1">
+			<h3 className="m-0 flex items-center gap-2 font-title text-[0.9em] font-bold tracking-[0.14em] text-gold-bright uppercase">
+				<span className="diamond" />
+				<span className="flex-1">{props.title}</span>
+				{props.aside}
 			</h3>
-			<Filet />
 			{props.children}
 		</section>
 	);
 }
 
 /**
- * The player's side of the shop and the whole pause screen: current stats, the 6 weapon slots
- * and the equipment, each with its rarity color. Focusing (keyboard, pad, mouse) an item opens its
- * card with the base numbers and affixes.
+ * The player's side of the shop and the pause screen, built to never scroll: three headline
+ * numbers, the stats in columns, the weapon and equipment slots as icon tiles (the bag paginated)
+ * and, in the space that is left, the card of the focused item. Focus (keyboard, pad, mouse) on a
+ * tile picks the item; `weaponBar` is the fixed bar of actions for the picked weapon.
  */
 export function PlayerPanel(props: {
 	data: PlayerPanelData;
-	/** Buttons under a weapon slot (sell, fuse). */
-	weaponExtra?: (slot: number) => ReactNode;
+	/** Actions for the picked weapon slot (sell, fuse), in a fixed bar under the weapon tiles. */
+	weaponBar?: (slot: number) => ReactNode;
 	/** Activating a worn item (take it off). */
 	onGear?: (slot: string) => void;
 	/** Activating a bag item (wear it). */
 	onBag?: (key: string, id: string) => void;
-	/** Pause layout: stats and cards beside the items from 1100 px on. */
+	/** Pause layout: one more column for the focused item card. */
 	wide?: boolean;
 }): ReactElement {
 	const { data } = props;
+	const scale = useUiScale();
+	// Icon box of the tiles follows the screen height; the atlas icons snap to whole-number scales.
+	const icon = Math.max(24, Math.round((props.wide ? 76 : 44) * scale));
 	const [detail, setDetail] = useState<Detail | null>(null);
+	const [page, setPage] = useState(0);
+	const [pickedWeapon, setPickedWeapon] = useState(0);
 	const slots = Array.from({ length: data.maxWeapons }, (_, i) => data.weapons[i]);
+
+	const headline = ['maxHp', 'armor', 'damage']
+		.map((k) => data.stats.find((s) => s.key === k))
+		.filter((s): s is { key: string; value: string } => Boolean(s));
+	const rest = data.stats.filter((s) => !headline.includes(s));
 
 	let card: ReactElement | null = null;
 	if (detail?.kind === 'weapon' && data.weapons[detail.slot])
@@ -104,10 +126,42 @@ export function PlayerPanel(props: {
 		if (item) card = <GearCardView item={item} />;
 	}
 
+	const bag = data.bag ?? [];
+	const pages = Math.max(1, Math.ceil(bag.length / BAG_PAGE));
+	const shownPage = Math.min(page, pages - 1);
+	const bagTiles = bag.slice(shownPage * BAG_PAGE, (shownPage + 1) * BAG_PAGE);
+
+	// Focus bubbles from the tiles: the nearest wrapper decides which card to show.
+	const track = (e: React.FocusEvent<HTMLElement>): void => {
+		const el = (e.target as HTMLElement).closest<HTMLElement>('[data-detail]');
+		const v = el?.dataset.detail;
+		if (!v) return;
+		const [kind, id] = v.split(':');
+		if (kind === 'weapon') {
+			setDetail({ kind: 'weapon', slot: Number(id) });
+			setPickedWeapon(Number(id));
+		} else if (kind === 'gear') setDetail({ kind: 'gear', slot: id as string });
+		else if (kind === 'bag') setDetail({ kind: 'bag', key: id as string });
+	};
+
 	const stats = (
 		<Block title={t('pause.stats')}>
-			<div className="grid grid-cols-1 gap-x-6 gap-y-0.5 min-[1500px]:grid-cols-2">
-				{data.stats.map((s) => (
+			{headline.length > 0 && (
+				<div className="grid grid-cols-3 gap-1.5 text-center">
+					{headline.map((s) => (
+						<div key={s.key} className="border border-snow-dark bg-night/60 px-1 py-1">
+							<div className="font-title text-[1.5em] leading-tight font-black tabular-nums">
+								{s.value}
+							</div>
+							<div className="mt-0.5 text-[0.7em] tracking-wider text-text-dim uppercase">
+								{t(`gstat.${s.key}` as I18nKey)}
+							</div>
+						</div>
+					))}
+				</div>
+			)}
+			<div className="grid grid-cols-2 gap-x-4 gap-y-0">
+				{rest.map((s) => (
 					<StatRow
 						key={s.key}
 						label={<span className="capitalize">{t(`gstat.${s.key}` as I18nKey)}</span>}
@@ -116,113 +170,173 @@ export function PlayerPanel(props: {
 				))}
 			</div>
 			{data.cards && data.cards.length > 0 && (
-				<>
-					<h4 className="m-0 mt-1 text-[0.85em] font-bold tracking-wider text-text-dim uppercase">
-						{t('pause.cards')}
-					</h4>
-					<ul className="m-0 list-none space-y-0.5 p-0 text-[0.9em]">
-						{data.cards.map((c) => (
-							<li key={c.name}>
-								{c.name} · {t('hud.level', { n: c.level })}
-							</li>
-						))}
-					</ul>
-				</>
+				<Hint>
+					{data.cards
+						.map((c) => `${c.name} ${t('hud.level', { n: c.level })}`)
+						.join(' · ')}
+				</Hint>
 			)}
 		</Block>
 	);
 
-	const items = (
-		<div className="flex min-w-0 flex-col gap-3">
+	const tiles = (
+		<div className="flex min-w-0 flex-col gap-2">
 			<Block title={`${t('shop.weapons')} ${data.weapons.length}/${data.maxWeapons}`}>
-				<div className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-2">
+				<div className="grid grid-cols-6 gap-1.5">
 					{slots.map((w, i) => (
 						// Fixed slots: the position is the identity.
 						// biome-ignore lint/suspicious/noArrayIndexKey: fixed-size slot list
-						<div key={i} data-detail={`weapon:${i}`} className="flex flex-col gap-1">
+						<div key={i} data-detail={w ? `weapon:${i}` : undefined} className="flex">
 							{w ? (
 								<Btn
-									onActivate={() => setDetail({ kind: 'weapon', slot: i })}
-									className="flex items-center gap-2 border-2 text-left font-normal"
+									onActivate={() => setPickedWeapon(i)}
+									className={`flex w-full flex-col items-center justify-center gap-0 border-0 bg-transparent p-0 ${
+										pickedWeapon === i ? 'outline outline-1 outline-crit' : ''
+									}`}
 									label={weaponName(w.id)}
 								>
 									<SlotIcon
 										frames={weaponFrames(w.id, w.tier)}
 										rarity={w.tier}
-										size={40}
+										size={icon}
 									/>
 									<span
-										className="min-w-0 flex-1 truncate font-bold"
+										className="text-[0.7em] leading-none font-bold"
 										style={{ color: rarityCss(w.tier) }}
 									>
-										{weaponName(w.id)} · {numeral(w.tier)}
+										{numeral(w.tier)}
 									</span>
 								</Btn>
 							) : (
-								<div className="flex min-h-11 items-center justify-center border border-snow-dark bg-night/50 text-text-dim">
-									{t('shop.empty')}
-								</div>
+								<div className="flex min-h-11 w-full items-center justify-center border border-dashed border-snow-dark bg-night/40" />
 							)}
-							{w && props.weaponExtra?.(i)}
 						</div>
 					))}
 				</div>
+				{props.weaponBar && data.weapons[pickedWeapon] && (
+					<div className="flex items-center gap-2">
+						<span
+							className="min-w-0 flex-1 truncate font-bold"
+							style={{ color: rarityCss(data.weapons[pickedWeapon]?.tier ?? 1) }}
+						>
+							{weaponName(data.weapons[pickedWeapon]?.id ?? '')}
+						</span>
+						{props.weaponBar(pickedWeapon)}
+					</div>
+				)}
 			</Block>
 			<Block title={t('shop.equipment')}>
-				<div className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-2">
-					{data.gear.map((g) =>
-						g.item ? (
-							<div key={g.slot} data-detail={`gear:${g.slot}`}>
+				<div className="grid grid-cols-5 gap-1.5">
+					{data.gear.map((g) => (
+						<div
+							key={g.slot}
+							data-detail={g.item ? `gear:${g.slot}` : undefined}
+							className="flex"
+						>
+							{g.item ? (
 								<Btn
 									onActivate={() => props.onGear?.(g.slot)}
-									className="flex w-full items-center gap-2 border-2 text-left font-normal"
+									className="flex w-full flex-col items-center justify-center gap-0 border-0 bg-transparent p-0"
+									label={slotLabel(g.slot)}
 								>
 									<SlotIcon
 										frames={[`item.${g.item.id}`]}
 										rarity={g.item.rarity}
-										size={32}
+										size={icon}
 									/>
 									<span
-										className="min-w-0 flex-1 truncate font-bold"
+										className="text-[0.7em] leading-none font-bold"
 										style={{ color: rarityCss(g.item.rarity) }}
 									>
-										{gearName(g.item.id)} · {numeral(g.item.rarity)}
+										{numeral(g.item.rarity)}
 									</span>
 								</Btn>
-							</div>
-						) : (
-							<div
-								key={g.slot}
-								className="flex min-h-11 items-center justify-center border border-dashed border-snow-dark bg-night/50 text-text-dim"
-							>
-								{slotLabel(g.slot)}
-							</div>
-						),
-					)}
+							) : (
+								<div className="flex min-h-11 w-full items-center justify-center border border-dashed border-snow-dark bg-night/40 px-0.5 text-center text-[0.65em] text-text-dim">
+									{slotLabel(g.slot)}
+								</div>
+							)}
+						</div>
+					))}
 				</div>
 			</Block>
+			{(data.support?.length || data.healPotion) && (
+				<Block
+					title={`${t('panel.support')} ${data.support?.length ?? 0}/${data.supportSlots ?? 0}`}
+				>
+					{data.support?.map((s) => (
+						<StatRow
+							key={s.id}
+							label={t(`support.${s.id}.name` as I18nKey)}
+							value={t('support.level', { n: s.level, max: s.max })}
+						/>
+					))}
+					{data.healPotion && (
+						<StatRow
+							label={t('hpotion.name')}
+							accent=""
+							value={
+								<span style={{ color: rarityCss(data.healPotion.rarity) }}>
+									{t('panel.healPotion', {
+										charges: data.healPotion.charges,
+										level: data.healPotion.level,
+										pct: Math.round(data.healPotion.healShare * 100),
+										rarity: numeral(data.healPotion.rarity),
+									})}
+								</span>
+							}
+						/>
+					)}
+				</Block>
+			)}
 			{data.bag && (
-				<Block title={t('pause.bag')}>
-					{data.bag.length === 0 ? (
+				<Block
+					title={t('pause.bag')}
+					aside={
+						pages > 1 ? (
+							<span className="flex items-center gap-1 font-normal tracking-normal">
+								<Btn
+									onActivate={() => setPage((shownPage - 1 + pages) % pages)}
+									className="min-h-8 border-snow px-2 py-0"
+									label="-"
+								>
+									◀
+								</Btn>
+								<span className="tabular-nums">
+									{shownPage + 1}/{pages}
+								</span>
+								<Btn
+									onActivate={() => setPage((shownPage + 1) % pages)}
+									className="min-h-8 border-snow px-2 py-0"
+									label="+"
+								>
+									▶
+								</Btn>
+							</span>
+						) : undefined
+					}
+				>
+					{bag.length === 0 ? (
 						<Hint>{t('pause.bagEmpty')}</Hint>
 					) : (
-						<div className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-2">
-							{data.bag.map((b) => (
-								<div key={b.key} data-detail={`bag:${b.key}`}>
+						<div className="grid grid-cols-8 gap-1.5">
+							{bagTiles.map((b) => (
+								<div key={b.key} data-detail={`bag:${b.key}`} className="flex">
 									<Btn
 										onActivate={() => props.onBag?.(b.key, b.item.id)}
-										className="flex w-full items-center gap-2 border-2 text-left font-normal"
+										className="flex w-full flex-col items-center justify-center gap-0 border-0 bg-transparent p-0"
+										label={t(`gear.${b.item.id}` as I18nKey)}
 									>
 										<SlotIcon
 											frames={[`item.${b.item.id}`]}
 											rarity={b.item.rarity}
-											size={32}
+											size={icon}
 										/>
 										<span
-											className="min-w-0 flex-1 truncate font-bold"
+											className="text-[0.7em] leading-none font-bold"
 											style={{ color: rarityCss(b.item.rarity) }}
 										>
-											{gearName(b.item.id)} · {numeral(b.item.rarity)}
+											{numeral(b.item.rarity)}
 										</span>
 									</Btn>
 								</div>
@@ -234,27 +348,20 @@ export function PlayerPanel(props: {
 		</div>
 	);
 
-	// Focus bubbles from the buttons: the nearest slot decides which card to show.
-	const track = (e: React.FocusEvent<HTMLElement>): void => {
-		const el = (e.target as HTMLElement).closest<HTMLElement>('[data-detail]');
-		const v = el?.dataset.detail;
-		if (!v) return;
-		const [kind, id] = v.split(':');
-		if (kind === 'weapon') setDetail({ kind: 'weapon', slot: Number(id) });
-		else if (kind === 'gear') setDetail({ kind: 'gear', slot: id as string });
-		else if (kind === 'bag') setDetail({ kind: 'bag', key: id as string });
-	};
+	const cardZone = (
+		<div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+			{card ?? <Hint>{t('shop.pickItem')}</Hint>}
+		</div>
+	);
 
 	return (
 		<div
 			onFocusCapture={track}
-			className={`grid min-w-0 gap-4 ${props.wide ? 'min-[1100px]:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]' : ''}`}
+			className={`grid min-h-0 min-w-0 flex-1 gap-3 ${props.wide ? 'grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)] items-start text-[1.15em]' : 'grid-cols-1 grid-rows-[auto_auto_minmax(0,1fr)]'}`}
 		>
-			<div className="flex min-w-0 flex-col gap-3">
-				{stats}
-				{card && <div className="flex flex-col gap-1">{card}</div>}
-			</div>
-			{items}
+			<div className="flex min-h-0 min-w-0 flex-col gap-2">{stats}</div>
+			{tiles}
+			{props.wide ? cardZone : <div className="flex min-h-0 flex-col">{cardZone}</div>}
 		</div>
 	);
 }

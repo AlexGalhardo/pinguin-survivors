@@ -21,3 +21,75 @@
 		color: inherit;
 	}
 }
+
+/* Ornate frames of the Diablo-style UI (docs/design-system.md). Colors come from palette.css. */
+@layer components {
+	/* Item button: border, text and a translucent fill in the item's rarity color (`--rc`), stronger on
+	   hover and focus. Disabled keeps readable text (AA) and loses the fill and the glow. */
+	.rarity-btn {
+		border-color: var(--rc);
+		color: var(--rc);
+		background-color: color-mix(in srgb, var(--rc) 14%, var(--color-night));
+	}
+
+	.rarity-btn:enabled:hover,
+	.rarity-btn[data-focused="true"]:enabled {
+		background-color: color-mix(in srgb, var(--rc) 32%, var(--color-night));
+		box-shadow: 0 0 10px color-mix(in srgb, var(--rc) 55%, transparent);
+	}
+
+	.rarity-btn:disabled {
+		opacity: 1;
+		border-style: dashed;
+		color: color-mix(in srgb, var(--rc) 70%, var(--color-text-dim));
+		background-color: var(--color-night);
+	}
+
+	/* A panel that may still scroll (menus) hides its scrollbar: wheel, keys and touch keep working. */
+	.no-scrollbar {
+		scrollbar-width: none;
+	}
+
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Dark panel: vertical gradient, soft glow at the top and gold corner brackets. */
+	.ornate {
+		background:
+			radial-gradient(
+				ellipse at 50% 0%,
+				color-mix(in srgb, var(--color-snow-dark) 45%, transparent),
+				transparent 62%
+			),
+			linear-gradient(180deg, var(--color-panel-top), var(--color-panel-bottom));
+	}
+
+	.ornate::before {
+		content: "";
+		position: absolute;
+		inset: -1px;
+		pointer-events: none;
+		--c: var(--color-gold-aged);
+		background:
+			linear-gradient(var(--c), var(--c)) top left / 18px 2px no-repeat,
+			linear-gradient(var(--c), var(--c)) top left / 2px 18px no-repeat,
+			linear-gradient(var(--c), var(--c)) top right / 18px 2px no-repeat,
+			linear-gradient(var(--c), var(--c)) top right / 2px 18px no-repeat,
+			linear-gradient(var(--c), var(--c)) bottom left / 18px 2px no-repeat,
+			linear-gradient(var(--c), var(--c)) bottom left / 2px 18px no-repeat,
+			linear-gradient(var(--c), var(--c)) bottom right / 18px 2px no-repeat,
+			linear-gradient(var(--c), var(--c)) bottom right / 2px 18px no-repeat;
+	}
+
+	/* Small gold diamond used by headings and dividers. */
+	.diamond {
+		display: inline-block;
+		width: 0.5em;
+		height: 0.5em;
+		flex-shrink: 0;
+		transform: rotate(45deg);
+		background: var(--color-gold-bright);
+		box-shadow: 0 0 6px color-mix(in srgb, var(--color-gold-aged) 80%, transparent);
+	}
+}

@@ -2,8 +2,17 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import { detectPlatform, setPlatform } from '../src/core/platform';
 import { createBridgePlatform } from '../src/core/platform/bridge';
 import { createWebPlatform, detectTier } from '../src/core/platform/web';
-import { loadSave, writeSave } from '../src/core/storage';
-import { defaultSave, SAVE_KEY, serializeSave } from '../src/logic/save';
+import {
+	activeSlot,
+	deleteSlot,
+	hasActiveSlot,
+	loadSave,
+	loadSlot,
+	slotSummaries,
+	startNewSlot,
+	writeSave,
+} from '../src/core/storage';
+import { defaultSave, parseSaveFile, SAVE_KEY } from '../src/logic/save';
 
 class MemoryStorage {
 	data = new Map<string, string>();
@@ -27,7 +36,7 @@ describe('web platform', () => {
 		setPlatform(web);
 		const save = defaultSave();
 		save.pearls = 42;
-		save.heroes.bob = { unlocked: true, level: 12, xp: 30, points: { crit: 3 } };
+		save.heroes.bob = { unlocked: true, level: 12, xp: 30, tree: [] };
 		const { exportSave, importSave } = await import('../src/core/storage');
 		exportSave(save);
 		expect(files[0]?.name).toMatch(/^pinguin-survivors-save-\d{4}-\d{2}-\d{2}\.json$/);
@@ -39,10 +48,58 @@ describe('web platform', () => {
 		const storage = new MemoryStorage();
 		setPlatform(createWebPlatform({ storage }));
 		expect(writeSave(defaultSave())).toBe(true);
-		expect(storage.getItem(SAVE_KEY)).toBe(serializeSave(defaultSave()));
+		expect(parseSaveFile(storage.getItem(SAVE_KEY)).slots).toEqual([null, null, null]);
 		storage.setItem(SAVE_KEY, '{"version":2,"fish":"junk"}');
 		loadSave('en');
 		expect(storage.getItem(`${SAVE_KEY}.backup`)).toBe('{"version":2,"fish":"junk"}');
+		expect(hasActiveSlot()).toBe(false);
+	});
+
+	test('slots: progress is written only into the loaded slot, settings are shared', () => {
+		const storage = new MemoryStorage();
+		setPlatform(createWebPlatform({ storage }));
+		const save = loadSave('en');
+		save.pearls = 5;
+		writeSave(save);
+		// No slot yet: progress goes nowhere, nothing is created.
+		expect(parseSaveFile(storage.getItem(SAVE_KEY)).slots).toEqual([null, null, null]);
+
+		startNewSlot(save, 1);
+		expect(activeSlot()).toBe(1);
+		expect(save.pearls).toBe(0);
+		save.pearls = 9;
+		save.settings.gore = 'goo';
+		writeSave(save);
+		startNewSlot(save, 2);
+		save.pearls = 3;
+		writeSave(save);
+		expect(slotSummaries().map((s) => s !== null)).toEqual([false, true, true]);
+
+		const file = parseSaveFile(storage.getItem(SAVE_KEY));
+		expect(file.slots[1]?.pearls).toBe(9);
+		expect(file.slots[2]?.pearls).toBe(3);
+		expect(file.slots[1]?.savedAt).toBeGreaterThan(0);
+		expect(file.active).toBe(2);
+
+		// Loading swaps the live object in place and keeps the global settings.
+		expect(loadSlot(save, 1)).toBe(true);
+		expect(save.pearls).toBe(9);
+		expect(save.settings.gore).toBe('goo');
+		expect(loadSlot(save, 0)).toBe(false);
+
+		// A fresh boot opens the active slot again.
+		expect(loadSave('en').pearls).toBe(9);
+		expect(hasActiveSlot()).toBe(true);
+
+		// Deleting the active slot unbinds it and leaves the other one alone.
+		deleteSlot(save, 1);
+		expect(hasActiveSlot()).toBe(false);
+		expect(save.pearls).toBe(0);
+		expect(parseSaveFile(storage.getItem(SAVE_KEY)).slots.map((s) => s !== null)).toEqual([
+			false,
+			false,
+			true,
+		]);
 	});
 
 	test('blocked storage never throws', () => {
@@ -55,7 +112,7 @@ describe('web platform', () => {
 			},
 		};
 		setPlatform(createWebPlatform({ storage: blocked }));
-		expect(loadSave('en').version).toBe(2);
+		expect(loadSave('en').version).toBe(3);
 		expect(writeSave(defaultSave())).toBe(false);
 	});
 

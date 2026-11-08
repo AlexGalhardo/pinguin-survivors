@@ -8,7 +8,7 @@ import { formatStat } from '../../logic/format';
 import { resolveWeapon } from '../../logic/weapons';
 import { AtlasIcon, weaponFrames } from './AtlasIcon';
 import { weaponName } from './Hud';
-import { Hint, ItemCard, StatRow } from './Panel';
+import { Divider, Hint, ItemCard, StatRow } from './Panel';
 
 /** A rolled stat bonus of an item, as the bridges carry it. */
 export interface AffixView {
@@ -64,7 +64,8 @@ export function AffixLines(props: { affixes?: readonly AffixView[] }): ReactElem
 	return (
 		<ul className="m-0 list-none space-y-0.5 p-0 text-[0.9em]">
 			{list.map((a) => (
-				<li key={a.stat} className="text-xp">
+				<li key={a.stat} className="flex items-baseline gap-2 text-xp">
+					<span className="text-[0.7em]">✦</span>
 					{affixText(a)}
 				</li>
 			))}
@@ -91,6 +92,7 @@ export function WeaponCardView(props: { item: WeaponItem; footer?: ReactElement 
 					value={(1 / w.cooldown).toFixed(1)}
 				/>,
 				<StatRow key="g" label={t('weapon.stat.range')} value={w.range} />,
+				<Divider key="div" className="my-1" />,
 				<AffixLines key="a" affixes={props.item.affixes} />,
 			]}
 			footer={props.footer}
@@ -107,7 +109,13 @@ export function GearCardView(props: { item: GearItem; footer?: ReactElement }): 
 			color={rarityCss(props.item.rarity)}
 			kind={`${def ? label(`gslot.${def.slot}`) : t('shop.kind.gear')} · ${numeral(props.item.rarity)}`}
 			lines={[
-				...gearBaseLines(props.item.id).map((l) => <span key={l}>{l}</span>),
+				...gearBaseLines(props.item.id).map((l) => (
+					<span key={l} className="flex items-baseline gap-2">
+						<span className="text-[0.6em] text-text-dim">◆</span>
+						{l}
+					</span>
+				)),
+				<Divider key="div" className="my-1" />,
 				<AffixLines key="a" affixes={props.item.affixes} />,
 			]}
 			footer={props.footer}
@@ -124,9 +132,10 @@ export function SlotIcon(props: {
 }): ReactElement {
 	return (
 		<span
-			className="flex shrink-0 items-center justify-center border-2 bg-night/80"
+			className="flex shrink-0 items-center justify-center border-2"
 			style={{
 				borderColor: rarityCss(props.rarity),
+				backgroundColor: `color-mix(in srgb, ${rarityCss(props.rarity)} 20%, var(--color-night))`,
 				width: (props.size ?? 48) + 8,
 				height: (props.size ?? 48) + 8,
 			}}

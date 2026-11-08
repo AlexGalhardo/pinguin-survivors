@@ -79,6 +79,12 @@ import {
 } from '../logic/equipment';
 import { formatStat } from '../logic/format';
 import { inArc } from '../logic/geometry';
+import {
+	addPotionKills,
+	rollPotionDrop,
+	tickHealPotion,
+	upgradeRarity,
+} from '../logic/heal-potion';
 import { buildPlayerPanel, weaponStatsView } from '../logic/item-view';
 import { ObstacleField, pushOut } from '../logic/obstacles';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
@@ -130,9 +136,9 @@ import {
 	type StatKey,
 } from '../logic/stats';
 import { addCharge, chargeFor, superCost, superReady, superUnlocked } from '../logic/superpower';
+import { magnetBonus } from '../logic/support';
 import { recordRunEnd as recordTelemetry } from '../logic/telemetry';
 import { availableStartingWeapons } from '../logic/unlocks';
-import { applyUpgrades } from '../logic/upgrades';
 import { leadWeapon, resolveWeapon } from '../logic/weapons';
 import { AreaSystem, type WorldLight } from '../systems/AreaSystem';
 import { CombatSystem, HERO_RADIUS } from '../systems/CombatSystem';
@@ -359,7 +365,7 @@ export class GameScene extends Phaser.Scene {
 			startRound(this.run, this.run.round);
 		} else {
 			this.stats = applyExtras(
-				applyUpgrades(heroStats(heroDef, heroSave.level, heroSave.points), save.upgrades),
+				heroStats(heroDef, heroSave.level, heroSave.tree),
 				save.achievements,
 			);
 			this.build = emptyBuild(tier);
@@ -639,7 +645,13 @@ export class GameScene extends Phaser.Scene {
 		this.hostile.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
 		this.area.update(dt, grid);
 		this.combat.contact(dt);
-		this.pickups.update(dt, this.hero.x, this.hero.y, this.stats.pickupRange);
+		this.pickups.update(
+			dt,
+			this.hero.x,
+			this.hero.y,
+			this.stats.pickupRange,
+			magnetBonus(run.support),
+		);
 		this.fx.update(dt);
 		this.checkAchievements(dt);
 		this.checkRoundEnd();
@@ -883,6 +895,15 @@ export class GameScene extends Phaser.Scene {
 			else if (!this.combat.god && damageHero(run, this.heroPoisonDps * dt))
 				this.die('death');
 		}
+		const heal = tickHealPotion(run.healPotion, dt, run.hp, run.maxHp);
+		if (heal > 0) {
+			healHero(run, heal);
+			countRun(run, 'potionsUsed');
+			this.fx.play('sfx.potion');
+			this.fx.banner(this.hero.x, this.hero.y, 'fx.heal', {
+				n: Math.round((heal / run.maxHp) * 100),
+			});
+		}
 		this.gambitTimer -= dt;
 		if (this.gambitTimer > 0) return;
 		this.gambitTimer = GAMBIT_INTERVAL;
@@ -912,12 +933,6 @@ export class GameScene extends Phaser.Scene {
 		if (this.potionsThisRound >= 3) addFeat(getSave(this), 'gambitTriple');
 		const e = POTION_EFFECTS;
 		switch (potion) {
-			case 'heal':
-				healHero(run, run.maxHp * e.heal.heal);
-				break;
-			case 'megaHeal':
-				healHero(run, run.maxHp * e.megaHeal.heal);
-				break;
 			case 'shield':
 				this.shieldHp = run.maxHp * e.shield.shield;
 				this.shieldTime = e.shield.duration;
@@ -933,7 +948,7 @@ export class GameScene extends Phaser.Scene {
 				this.immuneTime = e.antidote.immune;
 				break;
 		}
-		this.fx.banner(this.hero.x, this.hero.y, `potion.${potion}` as 'potion.heal');
+		this.fx.banner(this.hero.x, this.hero.y, `potion.${potion}` as 'potion.shield');
 		this.area.flash(this.hero.x, this.hero.y, 40, PALETTE.dotPoison, 0.3);
 	}
 
@@ -1064,6 +1079,9 @@ export class GameScene extends Phaser.Scene {
 		if (fish > 0 && this.mods.drops !== 1)
 			fish = scaleDrops(fish, this.mods.drops, this.rng.next());
 		if (fish > 0) this.pickups.drop('fish', fish, e.x + 6, e.y + 6);
+		addPotionKills(run.healPotion);
+		const potionUp = rollPotionDrop(this.rng, kind, run.healPotion);
+		if (potionUp) this.pickups.drop('potion', potionUp, e.x + 10, e.y - 4);
 		const heal = rollHealDrop(this.rng, kind);
 		if (heal > 0) this.pickups.drop('heal', heal, e.x - 8, e.y + 4);
 		if (kind === 'common') {
@@ -1102,6 +1120,13 @@ export class GameScene extends Phaser.Scene {
 		gearId: string | null,
 		item: ItemDrop | null = null,
 	): void {
+		if (kind === 'potion') {
+			const p = this.run.healPotion;
+			p.rarity = upgradeRarity(p.rarity, value as 1 | 2 | 3 | 4 | 5);
+			this.fx.play('sfx.potion');
+			this.fx.banner(this.hero.x, this.hero.y, 'fx.potionUp', { r: p.rarity });
+			return;
+		}
 		if (kind === 'heal') {
 			healHero(this.run, this.run.maxHp * value);
 			this.fx.play('sfx.potion');
@@ -1309,7 +1334,7 @@ export class GameScene extends Phaser.Scene {
 		const hero = this.run.hero;
 		return {
 			rng: this.rng,
-			pool: shopPool(hero, this.run.round),
+			pool: shopPool(hero, this.run.round, this.run),
 			ctx: {
 				hero,
 				buildSets: Object.keys(setCounts(this.build)),
@@ -1412,7 +1437,14 @@ export class GameScene extends Phaser.Scene {
 		const gear = this.run.gear ?? emptyGear();
 		this.run.gear = gear;
 		publishPlayerPanel(
-			buildPlayerPanel({ build: this.build, gear, stats: this.stats, round: this.run.round }),
+			buildPlayerPanel({
+				build: this.build,
+				gear,
+				stats: this.stats,
+				round: this.run.round,
+				support: this.run.support,
+				healPotion: this.run.healPotion,
+			}),
 		);
 		publishPause({
 			weapons: this.build.weapons.map((w, slot) => ({ slot, id: w.id, tier: w.tier })),
@@ -1520,6 +1552,8 @@ export class GameScene extends Phaser.Scene {
 								build: this.build,
 								gear: run.gear ?? emptyGear(),
 								stats: this.stats,
+								support: run.support,
+								healPotion: run.healPotion,
 							}),
 							sets:
 								o.kind === 'weapon'
@@ -1548,6 +1582,8 @@ export class GameScene extends Phaser.Scene {
 				gear: run.gear ?? emptyGear(),
 				stats: this.stats,
 				round: run.round,
+				support: run.support,
+				healPotion: run.healPotion,
 			}),
 		});
 	}

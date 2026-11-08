@@ -9,6 +9,10 @@ export interface MainMenuData {
 	points: number;
 	/** Next round of the saved run, or null when there is nothing to continue. */
 	continueRound: number | null;
+	/** A save slot is loaded: the hero, workshop, history and play entries need one. */
+	hasSlot: boolean;
+	/** At least one slot has a game: shows "Load game". */
+	hasSaves: boolean;
 	/** Desktop and mobile shells: shows "Quit" (the web build has nothing to close). */
 	canQuit: boolean;
 }
@@ -16,6 +20,8 @@ export interface MainMenuData {
 export interface MainMenuActions {
 	continueRun: () => void;
 	play: () => void;
+	newGame: () => void;
+	load: () => void;
 	heroes: () => void;
 	workshop: () => void;
 	achievements: () => void;
@@ -41,11 +47,21 @@ export function MainMenu({
 						run: actions.continueRun,
 					},
 				]),
-		{ id: 'play', label: t('menu.play'), run: actions.play },
-		{ id: 'hero', label: t('menu.hero'), run: actions.heroes },
-		{ id: 'workshop', label: t('menu.workshop'), run: actions.workshop },
-		{ id: 'achievements', label: t('menu.achievements'), run: actions.achievements },
-		{ id: 'history', label: t('menu.history'), run: actions.history },
+		...(data.hasSlot ? [{ id: 'play', label: t('menu.play'), run: actions.play }] : []),
+		{ id: 'newGame', label: t('menu.newGame'), run: actions.newGame },
+		...(data.hasSaves ? [{ id: 'load', label: t('menu.load'), run: actions.load }] : []),
+		...(data.hasSlot
+			? [
+					{ id: 'hero', label: t('menu.hero'), run: actions.heroes },
+					{ id: 'workshop', label: t('menu.workshop'), run: actions.workshop },
+					{
+						id: 'achievements',
+						label: t('menu.achievements'),
+						run: actions.achievements,
+					},
+					{ id: 'history', label: t('menu.history'), run: actions.history },
+				]
+			: []),
 		{ id: 'settings', label: t('menu.settings'), run: actions.settings },
 		...(data.canQuit ? [{ id: 'quit', label: t('menu.quit'), run: actions.quit }] : []),
 	];

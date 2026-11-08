@@ -178,7 +178,7 @@ describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
 			offers: [
 				{ kind: 'weapon', id: 'machete', tier: 1, price: 20 },
 				{ kind: 'gear', id: 'helmet.wool', tier: 1, price: 24 },
-				{ kind: 'potion', id: 'heal', tier: 1, price: 15 },
+				{ kind: 'potion', id: 'haste', tier: 1, price: 25 },
 				{ kind: 'weapon', id: 'hammer', tier: 1, price: 20 },
 			],
 			locks: [false, false, false, false],
@@ -191,8 +191,8 @@ describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
 		expect(s.gear?.equipped.helmet).toBe('helmet.wool');
 		expect(stats.maxHp).toBeGreaterThan(hp);
 		purchase(s, 2, { build, stats });
-		expect(s.shopPotions.heal).toBe(1);
-		expect(s.fish).toBe(1000 - 20 - 24 - 15);
+		expect(s.shopPotions.haste).toBe(1);
+		expect(s.fish).toBe(1000 - 20 - 24 - 25);
 		for (let i = 0; i < 5; i++) addWeapon(build, 'knives', 1);
 		const before = s.fish;
 		expect(purchase(s, 3, { build, stats })).toBeNull();

@@ -83,8 +83,8 @@ describe('achievement points', () => {
 		expect(buyExtra(state, crit)).toBe('owned');
 		expect(extraLevel(state, 'crit')).toBe(10);
 		expect(availablePoints(state)).toBe(2);
-		const base = heroStats(HEROES.bob, 1, {});
-		const boosted = applyExtras(heroStats(HEROES.bob, 1, {}), state);
+		const base = heroStats(HEROES.bob, 1, []);
+		const boosted = applyExtras(heroStats(HEROES.bob, 1, []), state);
 		expect(boosted.crit - base.crit).toBeCloseTo(0.01);
 	});
 

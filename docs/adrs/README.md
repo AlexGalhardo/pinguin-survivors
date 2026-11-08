@@ -24,3 +24,5 @@ Decisões de produto anteriores à virada comercial (P-01…P-68) estão em [ADR
 | [ADR-016](ADR-016-biomas-floresta-cidade-aliens.md) | Bioma 2 floresta, bioma 3 cidade destruída com aliens originais; endless sorteia biomas legados | Aceito (nomes propostos) |
 | [ADR-017](ADR-017-raridade-unica-afixos-e-loja.md) | Raridade única I–V, afixos aleatórios, loja só I–III e drops IV (Elite) e V (Boss) | Aceito |
 | [ADR-018](ADR-018-linguagem-visual-diablo-4-e-menus-neutros.md) | Linguagem visual Diablo 4, pausa com o layout da loja e menus neutros | Aceito |
+| [ADR-019](ADR-019-arvore-de-habilidades.md) | Árvore de habilidades por herói (estilo PoE2) substitui a Oficina e os pontos de stat | Aceito |
+| [ADR-020](ADR-020-save-em-tres-slots.md) | Save em três slots (documento único, `SaveData` no lugar), sem compatibilidade com saves antigos | Aceito |

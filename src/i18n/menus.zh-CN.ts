@@ -6,7 +6,7 @@ export const menusZhCN = {
 	'select.play': '开始对局',
 	'hero.condition': '更改条件',
 	'touch.stick': '移动摇杆',
-	'touch.super': '超能力',
+	'touch.super': '超级魔法',
 	'touch.speed': '游戏速度',
 	'touch.pause': '暂停',
 	'workshop.weapons': '{hero} 的初始武器',

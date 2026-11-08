@@ -38,7 +38,7 @@ Jack, Bob e Lucia são os **três últimos pinguins sobreviventes de um apocalip
 
 1. **Frenético e sangrento**: hordas densas, hit-stop, shake, gibs e poças de sangue que ficam a run inteira.
 2. **Build crafting de verdade**: 6 slots, classes de arma com bônus de set, fusão de armas, loja com reroll e lock, cartas de stat no level-up.
-3. **Progressão que nunca é perdida**: level 1–100 por herói, Pérolas, Oficina, Danger desbloqueável.
+3. **Progressão que nunca é perdida**: level 1–100 por herói, árvore de habilidades por herói, Pérolas, Danger desbloqueável.
 4. **Identidade por herói**: perfil de stats, multiplicadores por classe de arma, 6 cartas exclusivas e um superpoder.
 5. **Contraste visual**: pinguins fofos e marcados pela guerra num mundo escuro iluminado por tiros e magias.
 
@@ -57,7 +57,7 @@ Jack, Bob e Lucia são os **três últimos pinguins sobreviventes de um apocalip
 ## 3. Core loop
 
 ```
-Menu (Pérolas: Oficina · poções/gambits · pontos de stat · arma inicial)
+Menu (árvore de habilidades · Pérolas: poções/gambits · arma inicial)
   → Herói + Danger + arma inicial → Run:
       Round N (timer) → mata hordas, coleta XP e Fish
         → level-up: 4 cartas (stats/exclusivas) [tempo pausado]
@@ -78,7 +78,7 @@ Menu (Pérolas: Oficina · poções/gambits · pontos de stat · arma inicial)
 - **Arena quadrada fechada**: `side(N) = min(10 + (N−1), 40)` tiles de **64 px**. Round 1 = 10×10 (640×640), round 2 = 11×11 … round 31+ = 40×40 (2.560×2.560). Parede visível nas bordas; nada sai da arena (voadores inclusos).
 - **Spawn**: anel interno de 1 tile junto à borda; fora da área visível quando a arena for maior que a tela; com telegraph de 0,5 s quando a borda estiver visível.
 - **Câmera** segue o herói com lerp, clampada à arena; arena menor que a tela fica centrada.
-- **Props**: decorações sólidas leves por bioma (herói e inimigos terrestres deslizam em volta; voadores e bosses ignoram), densidade por bioma.
+- **Obstáculos**: props sólidos por bioma, grandes de propósito (a arte `deco.*` é desenhada 2–3× e ocupa de 3 a 5 vezes a largura do herói), com colisão circular, faixas livres entre eles e no máximo 8% do chão (`src/data/obstacles.ts`); herói e inimigos terrestres deslizam em volta e os andarilhos contornam; voadores e bosses ignoram.
 - **Sangue persiste** na textura da arena durante a run inteira (teto de decalques; os mais antigos fundem numa mancha base).
 
 ## 5. Controles
@@ -154,6 +154,7 @@ Lista final e números em `src/data/weapons.ts` e balancing-and-simulation.md Pa
   - Rodapé: Fish da run, próximo round, avisos de elite/horda (Danger ≥ 2), botão "Próximo round".
 - Oferta ponderada por **sorte**, round e classes que o herói já tem (leve viés para sinergia).
 - Vende também **poções de velocidade** de run (uso único, não confundir com os gambits do menu) a partir do round 5; as outras poções não são vendidas.
+- Vende **itens de suporte** (§12b) e a **poção de cura** da run (§12), sempre raridade I; comprar de novo o mesmo item sobe o nível.
 - **Didático**: cada oferta explica o que acontece ao comprar (nova arma no slot X, fusão II→III, stats antes→depois, afixos), via `describeOffer` (SDD-003 RF-10).
 
 ## 10. Cartas de level-up
@@ -178,8 +179,14 @@ As três exclusivas marcadas "vira arma" passam a ser **armas iniciais/da loja e
 
 ## 12. Poções e gambits
 
-- **3 slots de gambit** configurados no menu (tipo + condição), comprados com **Pérolas**, consumidos uma vez por run: Cura 40%, Mega Cura 70%, Escudo 30% do HP máx. por 8 s, Fúria +50% dano 8 s, Antídoto (limpa e imuniza 5 s), Pressa +40% vel. de ataque 8 s.
+- **Poção de cura da run** (substitui as antigas Cura e Mega Cura): comprada no lojista, nível 1 = carrega 1 poção, até o nível 10 = 10 poções; cada poção vazia volta a encher a cada **100 inimigos mortos** na run (uma por vez, até o máximo do nível). Bebe **sozinha** quando a vida chega a 50% ou menos, uma por vez, com 2 s de recarga. Cura por raridade: I 25%, II 30%, III 35%, IV 40%, V 50% da vida máx. O lojista vende só a I; Elites dropam melhoria II ou III (12% por abate) e Bosses IV ou V; a raridade vira a do drop se maior, senão sobe um degrau. HUD: sob a barra de vida, frasco cheio na cor da raridade (apagado sem carga), `cargas/máx.` e `abates/100` até a próxima recarga (SDD-014).
+- **3 slots de gambit** configurados no menu (tipo + condição), comprados com **Pérolas**, consumidos uma vez por run: Escudo 30% do HP máx. por 8 s, Fúria +50% dano 8 s, Antídoto (limpa e imuniza 5 s), Pressa +40% vel. de ataque 8 s.
 - Condições: HP < 25/50/75%, envenenado, sangrando, boss na tela, ≥ N inimigos perto, início do round. Avaliadas em ordem a cada 0,25 s.
+
+### 12b. Itens de suporte
+
+- Categoria da loja com **4 slots próprios** (separados dos 6 de arma). Comprar de novo o mesmo item sobe o nível (1 a 5); stats por nível em `src/data/support.ts`.
+- **Magnético**: puxa as bolinhas de XP e os Fish de mais longe e mais rápido (raio extra 40/75/110/150/200 u). **Botas Ligeiras**: velocidade de movimento +4 por nível. **Amuleto da Sorte**: sorte +3% por nível.
 
 ## 13. Superpoderes
 
@@ -245,15 +252,15 @@ Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool pró
 | Moeda | Escopo | Ganho | Gasto |
 |---|---|---|---|
 | **Fish 🐟** | run (começa com 10; não passa para a próxima run) | drop de inimigos (5% comuns, garantido em elites), fim de round `2 + floor(N/2)` × harvesting, boss | loja, reroll, poções de run |
-| **Pérolas** | persistente | round concluído, boss, conquistas, conversão do Fish restante (10:1) | Oficina (9 upgrades), gambits, armas iniciais |
+| **Pérolas** | persistente | round concluído, boss, conquistas, conversão do Fish restante (10:1) | gambits, armas iniciais, devolver nós da árvore |
 
-Preços de loja e reroll em `src/data/economy.ts` (SDD-003); Oficina em balancing-and-simulation.md Parte B §8b.
+Preços de loja e reroll em `src/data/economy.ts` (SDD-003); Árvore de habilidades em [ADR-019](adrs/ADR-019-arvore-de-habilidades.md).
 
 ## 18. Progressão persistente
 
-- XP coletado na run vai para o **herói** (level 1–100, `xpToNext(L) = floor(30·L^1,55 + 50)`). Cada level: crescimento automático da classe + **1 ponto de stat** para gastar no menu.
+- XP coletado na run vai para o **herói** (level 1–100, `xpToNext(L) = floor(30·L^1,55 + 50)`). Cada level: crescimento automático da classe + **1 ponto da árvore de habilidades** do herói (do level 2 ao 99; [ADR-019](adrs/ADR-019-arvore-de-habilidades.md)): passivas, notáveis e uma pedra-chave por ramo, alocadas pelo caminho mais curto; devolver um nó custa 2 Pérolas e reiniciar custa 1 por nó. Não há mais Oficina nem pontos de stat.
 - Morrer mantém XP, Pérolas, conquistas e equipamento lendário desbloqueado no catálogo.
-- **Save local** com schema versionado e migração; Steam Cloud no Electron; export/import `.json` na web.
+- **Save local em 3 slots** (estilo Hades 2; ADR-020): Novo jogo escolhe o slot (avisa ao sobrescrever), Carregar lista os slots (herói, nível, melhor round, tempo, data) com Carregar e Apagar (confirmação); autosave no slot ativo; configurações globais fora dos slots. Schema versionado e **sem migração antes da 1.0** (arquivo de outra versão começa vazio); Steam Cloud no Electron; export/import `.json` na web.
 
 ## 19. Conquistas e extras
 
@@ -261,7 +268,7 @@ Preços de loja e reroll em `src/data/economy.ts` (SDD-003); Oficina em balancin
 
 ## 20. Game feel e gore
 
-Hit-stop em crítico/elite/boss, screen shake, flash de acerto limitado, números de dano coloridos por tipo, knockback, jorros e gibs com arco e sombra, poças persistentes, luz dos tiros e magias, zoom-punch em boss, bloom opcional (desligado por padrão). **Gore** máximo por padrão; opções "reduzido" e "gosma verde".
+As armas equipadas **atacam o alvo** de forma visível: golpe com lunge até o inimigo (melee), recuo e flash de cano (fogo), arremesso (facas, bumerangue, molotov, granadas), plantio (mina, totem, nuvem), giro e pulso (lâminas, anel, drone) e conjuração (cajado); cor do tiro e do número por arma. Crítico, esquiva e aparo têm número, cor e *pop* próprios. Hit-stop em crítico/elite/boss, screen shake, flash de acerto limitado, números de dano coloridos por tipo, knockback, jorros e gibs com arco e sombra, poças persistentes, luz dos tiros e magias, zoom-punch em boss, bloom opcional (desligado por padrão). **Gore** máximo por padrão; opções "reduzido" e "gosma verde".
 
 ## 21. UI e telas
 
@@ -270,15 +277,15 @@ Toda a UI é React + Tailwind v4 sobre o canvas (ADR-002); textos em `src/i18n/`
 ```
 MainMenu ─► HeroSelect (herói · danger · arma inicial) ─► Game (+ HUD)
    │            │                                            │ level-up ─► LevelUpCards ─► Game
-   │            └─► Hero (pontos · gambits · Oficina)        │ fim do round ─► Shop ─► Game
+   │            └─► Hero (árvore · gambits · armas)        │ fim do round ─► Shop ─► Game
    ├─► Achievements / Extras                                 │ Esc ─► Pause (stats, armas, equipamento) ─► Settings
    ├─► History · Settings · Credits                          └ morte / timeout ─► GameOver ─► Menu / Retry
    └─► Continue (round N)                                   (demo: round 10 ─► DemoEnd ─► Wishlist)
 ```
 
-**Linguagem visual e fundos** (ADR-018): Conquistas, Configurações, Oficina, Histórico e Escolha seu Pinguim seguem a linguagem visual **Diablo 4** da loja (painéis escuros, moldura metálica, raridade por cor, Roboto). **Todos os menus, exceto o inicial, têm fundo preto ou neutro** (sem a arte do menu), responsivos, fáceis e didáticos. A **Pausa** usa o layout da loja (status do jogador e itens equipados), sem o NPC, com 3 botões: Continuar, Configurações e Sair.
+**Linguagem visual e fundos** (ADR-018): Conquistas, Configurações, Árvore de habilidades, Histórico e Escolha seu Pinguim seguem a linguagem visual **Diablo 4** da loja (painéis escuros, moldura metálica, raridade por cor, Roboto). **Todos os menus, exceto o inicial, têm fundo preto ou neutro** (sem a arte do menu), responsivos, fáceis e didáticos. A **Pausa** usa o layout da loja (status do jogador e itens equipados), sem o NPC, com 3 botões: Continuar, Configurações e Sair.
 
-**HUD**: HP e XP grandes com número, Fish da run, round e timer, barra do boss + 3:00, aviso de elite, medidor do superpoder (a partir do level 5), 6 ícones de arma com tier, 5 slots de equipamento compactos, 3 gambits, 1×/2×, FPS (opcional), rodapé com versão.
+**HUD**: HP e XP grandes com número, Fish da run, round e timer, barra do boss + 3:00, aviso de elite, **SUPER MAGIA** no canto inferior esquerdo (a partir do level 5; as armas são vistas no herói, sem ícones na HUD), 3 gambits, velocidade 1×–4× (TAB), FPS (opcional), rodapé com versão. A HUD some sob qualquer tela cheia (loja, cartas, pausa, resumo, menus).
 
 ## 22. Demo
 

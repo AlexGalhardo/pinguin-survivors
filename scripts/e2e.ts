@@ -13,6 +13,7 @@
  * Exits with code 1 on the first failed step.
  */
 import { chromium } from 'playwright';
+import { seedSaveScript } from './lib/seed-save';
 
 const args = process.argv.slice(2);
 const demo = args.includes('--demo');
@@ -52,6 +53,7 @@ type SceneProbe = { active: string[]; round: number | null };
 
 const browser = await chromium.launch({ args: ['--mute-audio'] });
 const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+await page.addInitScript(seedSaveScript);
 const errors: string[] = [];
 page.on('pageerror', (e) => errors.push(e.message));
 /** Last step logged, so a page error says where it happened. */
@@ -139,6 +141,19 @@ async function gone(text: string): Promise<void> {
 	);
 }
 
+/** Save slots (SDD-014): the seeded slot 1 loads, a new game goes to the empty slot 2. */
+async function checkSlots(): Promise<void> {
+	await click('LOAD GAME');
+	await see('load screen lists the slots', 'SLOT 3');
+	await see('slot 1 is a used slot', /Jack · level 1/);
+	await click('BACK');
+	await see('back from the load screen', 'NEW GAME');
+	await click('NEW GAME');
+	await see('new game slot picker', 'START HERE');
+	await page.waitForTimeout(500);
+	await ui.getByRole('button', { name: 'START HERE' }).nth(1).click();
+}
+
 /** Main menu → hero select → START RUN (the menu can still be booting under the first click). */
 async function startRunFromMenu(): Promise<void> {
 	if (!(await ui.getByText('START RUN').first().isVisible()))
@@ -186,6 +201,9 @@ async function fullFlow(): Promise<void> {
 	await page.goto(base, { waitUntil: 'load' });
 	await page.waitForFunction(() => '__GAME__' in window);
 	await gamepadMenu();
+	await click('BACK');
+	await see('back on the main menu', 'PLAY');
+	await checkSlots();
 	await startRunFromMenu();
 	// The run idles for a while behind the screens: the hero must not die in the middle of them.
 	await game((g) => {

@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { weaponArt } from '../art/weapon-art';
+import { WEAPON_ANIM } from '../data/weapon-anim';
 import { depthOf, worldToScreen } from '../logic/projection';
 import { weaponPose } from '../logic/weapon-anim';
 import type { ActiveWeapon } from '../logic/weapons';
@@ -10,6 +11,8 @@ const HAND_Z = 18;
 const TURN_SPEED = 10;
 /** Ring sprites float around the hero; a bit bigger reads better than the raw art. */
 const SCALE = 1.2;
+/** Behaviors whose weapon shows a flash at the tip when it fires. */
+const FLASH: ReadonlySet<string> = new Set(['spread', 'shooter', 'bolt']);
 
 /**
  * One weapon slot as a sprite next to the hero, animated in code like Brotato (P-56): it turns
@@ -22,6 +25,8 @@ export class WeaponView {
 	private aim = 0;
 	private since = Number.POSITIVE_INFINITY;
 	private cooldown = 1;
+	/** Distance to the current target from the mount point; sets how far a melee lunge reaches. */
+	private targetDist = 0;
 
 	constructor(private readonly scene: Phaser.Scene) {
 		this.sprite = scene.add.image(0, 0, KEYS.shadow).setOrigin(0.15, 0.5).setScale(SCALE);
@@ -52,7 +57,8 @@ export class WeaponView {
 	}
 
 	/** Turns towards `want` unless an attack animation is still playing. */
-	turn(want: number, dt: number): void {
+	turn(want: number, dt: number, dist = 0): void {
+		if (this.since > this.cooldown) this.targetDist = dist;
 		if (this.since <= this.cooldown) return;
 		let d = want - this.aim;
 		d = Math.atan2(Math.sin(d), Math.cos(d));
@@ -65,7 +71,12 @@ export class WeaponView {
 		if (!w) return;
 		this.since += dt;
 		const arc = (w.angle * Math.PI) / 180;
-		const pose = weaponPose(w.behavior, this.since, this.cooldown, arc);
+		// Lunge up to the target (never farther than the weapon reaches), then back.
+		const lunge = Math.min(
+			WEAPON_ANIM.lunge,
+			2 * Math.max(0, this.targetDist - WEAPON_ANIM.lungeGap),
+		);
+		const pose = weaponPose(w.behavior, this.since, this.cooldown, arc, lunge);
 		const base = this.aim;
 		const left = Math.cos(base) < 0;
 		// Mirror the swing on the left side so the blade always sweeps "forward".
@@ -80,8 +91,10 @@ export class WeaponView {
 			.setRotation(angle)
 			.setFlipY(left)
 			.setScale(SCALE * pose.scale)
+			.setAlpha(pose.alpha)
 			.setDepth(depth);
-		const flash = w.behavior === 'spread' && pose.glow > 0.3;
+		// Guns flash at the barrel; staves flash at the tip when they cast.
+		const flash = FLASH.has(w.behavior) && pose.glow > 0.3;
 		this.muzzle.setVisible(flash);
 		if (flash) {
 			const tip = this.sprite.width * 0.85 * SCALE * pose.scale;
@@ -89,6 +102,7 @@ export class WeaponView {
 				.setPosition(px + Math.cos(angle) * tip, py + Math.sin(angle) * tip)
 				.setRotation(angle)
 				.setAlpha(pose.glow)
+				.setScale(WEAPON_ANIM.flashScale)
 				.setDepth(depth + 0.1);
 		}
 	}

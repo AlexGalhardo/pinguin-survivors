@@ -13,13 +13,17 @@ import {
 	type HistoryData,
 } from './components/Lists';
 import { MainMenu, type MainMenuActions, type MainMenuData } from './components/MainMenu';
+import { SaveSlots, type SaveSlotsActions, type SaveSlotsData } from './components/SaveSlots';
 import { Settings, type SettingsActions, type SettingsData } from './components/Settings';
+import { SkillTree, type SkillTreeActions, type SkillTreeData } from './components/SkillTree';
 
 /** One menu screen with the data and actions the game provides for it. */
 export type MenuView =
 	| { screen: 'main-menu'; data: MainMenuData; actions: MainMenuActions }
 	| { screen: 'hero-select'; data: HeroSelectData; actions: HeroSelectActions }
 	| { screen: 'hero'; data: HeroScreenData; actions: HeroScreenActions }
+	| { screen: 'skill-tree'; data: SkillTreeData; actions: SkillTreeActions }
+	| { screen: 'save-slots'; data: SaveSlotsData; actions: SaveSlotsActions }
 	| { screen: 'settings'; data: SettingsData; actions: SettingsActions }
 	| { screen: 'controls'; data: ControlsData; actions: ControlsActions }
 	| { screen: 'achievements'; data: AchievementsData; actions: AchievementsActions }
@@ -34,6 +38,10 @@ export function Router({ view }: { view: MenuView }): ReactElement {
 			return <HeroSelect data={view.data} actions={view.actions} />;
 		case 'hero':
 			return <HeroScreen data={view.data} actions={view.actions} />;
+		case 'skill-tree':
+			return <SkillTree data={view.data} actions={view.actions} />;
+		case 'save-slots':
+			return <SaveSlots data={view.data} actions={view.actions} />;
 		case 'settings':
 			return <Settings data={view.data} actions={view.actions} />;
 		case 'controls':
