@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.13] - 2026-11-08
+
 ### Added
 
 - Android shell (`apps/mobile/`, Capacitor 8.6.0, SDD-007 RF-04): landscape immersive WebView, `window.platform` bridge over Preferences, safe areas, on-screen joystick and buttons (`TouchControls`, `?touch=1` to preview), and a manual `android.yml` workflow that builds the AAB.
@@ -321,7 +323,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.12...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.13...HEAD
+[0.0.13]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.12...v0.0.13
 [0.0.12]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.0.11
 [0.0.10]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.0.9...v0.0.10
