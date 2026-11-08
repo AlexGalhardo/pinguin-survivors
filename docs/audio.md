@@ -1,28 +1,90 @@
-# Áudio
+# Direção de Som — Pinguin Survivors
 
-> Ferramenta: **ElevenLabs** (chave `ELEVENLABS_API_KEY` no `.env`, nunca no git). Scripts `scripts/el-*.ts` (a criar) geram os arquivos em `public/assets/audio/` e registram prompt + parâmetros em `art-src/elevenlabs/log.jsonl`. Siga a skill **`pinguin-audio-assets`**.
-> Confirme os endpoints na documentação oficial antes de implementar (https://elevenlabs.io/docs): Sound Effects (`POST /v1/sound-generation`), Music (`POST /v1/music`), Text to Speech (`POST /v1/text-to-speech/{voice_id}`), Voice Design (`/v1/text-to-voice/...`).
+> **Versão** 2.0 · **Data** 2026-11-08 · Ferramenta única: **ElevenLabs** (`ELEVENLABS_API_KEY` só no `.env`). Pipeline na skill `.claude/skills/pinguin-audio-assets`; log bruto em `art-src/elevenlabs/log.jsonl`; decisão de remover vozes em [adrs/ADR-009](adrs/ADR-009-remover-vozes.md).
 
-## Direção
+## Índice
 
-- **Música**: metal/industrial estilo DOOM (djent, riffs graves, bateria agressiva). Faixas: menu (sombria, lenta), round (loop 90–120 s, intensidade média), round tardio (≥ 20, mais pesada), boss (máxima), game over (curta).
-- **SFX**: pesados e "carnudos": golpe de machete, katana, motosserra, tiro de escopeta (com eco), foguete, 4 elementos (fogo, terra, gelo, energia), impacto em carne, jorro de sangue, gib, explosão, coleta de XP/Fish, level up, carta, poção, UI.
-- **Vozes** (EN + PT-BR, seguem o idioma): frases curtas por herói — início de run, level up, HP baixo, poção usada, boss aparece, vitória no boss, morte. Timbre: Jack (jovem, marrento), Bob (grave, veterano), Lucia (calma, mística).
+1. [Direção](#1-direção)
+2. [Engenharia de som](#2-engenharia-de-som)
+3. [Catálogo e prompts (SFX)](#3-catálogo-e-prompts-sfx)
+4. [Música](#4-música)
+5. [Vozes (removidas na 1.0)](#5-vozes-removidas-na-10)
+6. [Pendências para a 1.0](#6-pendências-para-a-10)
+7. [Orçamento](#7-orçamento)
 
-## Estado (2026-09-27)
+## 1. Direção
 
-- Plano **free** do ElevenLabs (P-55): 10 mil créditos/mês, uso não comercial. Custo medido: **17 SFX curtos ≈ 72 créditos** (~4 cada).
-- Catálogo gerado (1 variação cada, `scripts/el-sfx.ts`): achievement, hit, swing, shotgun, cast, explosion, splat, zombieDeath, heroHurt, pickupXp, pickupFish, levelUp, card, potion, bossRoar, super, uiSelect, gameOver → `public/assets/audio/sfx/*.mp3`.
-- Mixagem por chave em `src/data/sfx.ts` (volume, vozes simultâneas, variação de pitch); tocar sempre via `sfx(scene, key)` (`src/core/audio.ts`), que aplica volume geral × efeitos e o limitador.
-- **Plano Starter** (a partir de 2026-09-27, 35 mil créditos/mês). Música pela **Music API** (`/v1/music`, `force_instrumental`): `music.menu` (40 s), `music.round` (45 s), `music.boss` (45 s) em `public/assets/audio/music/`, tocadas por `src/core/music.ts` (crossfade 800 ms). Custo medido: **~560 créditos por 45 s** (~750/min). **Não citar jogos/bandas no prompt** (a API recusa por direitos autorais, sem cobrar). Os loops gratuitos feitos pelo endpoint de SFX ficam em `art-src/elevenlabs/music/*-loop.mp3` como reserva.
-- **Vozes** (`bun --env-file=.env scripts/el-voice.ts`): 1 voz por herói criada por Voice Design (Jack jovem e convencido, Bob veterano grave, Lucia mística calma; ids em `art-src/elevenlabs/voices.json`, prévias em `art-src/elevenlabs/voices/<hero>/`), a **mesma voz para EN e PT-BR** (`eleven_multilingual_v2`). 7 eventos × 2 variações × 3 heróis × 2 idiomas = 84 falas em `public/assets/audio/vo/vo.<hero>.<evento>.<lang>.<n>.mp3`; textos em `src/i18n/voice.*.ts` (roteiro e legenda). O Boot carrega só o idioma atual; trocar o idioma em Configurações carrega o outro em segundo plano.
-- **Variações de SFX** (`scripts/el-sfx.ts --variants`): takes extras de hit, shotgun, splat, zombieDeath (3) e swing (2) em `<key>.<n>.mp3`, sorteados por `sfx()` (`SFX_VARIANTS` em `src/data/sfx.ts`).
-- **Música do round tardio** (`scripts/el-music.ts`): `music.late` (45 s) toca do round 21 em diante (`musicForRound`).
+- **Música**: metal/industrial pesado estilo DOOM (riffs graves, bateria agressiva, sintetizadores sujos). Faixas: menu (lenta, sombria), round (loop 45–60 s, intensidade média), round tardio (≥ 21, mais pesada), boss (máxima), loja (ambiente curto, calmo, com vento polar), game over (sting).
+- **SFX** "carnudos": impacto em carne, corte, escopeta com eco, 4 elementos, explosão, jorro, gib, coleta, level up, carta, loja (compra, reroll, lock, fusão), poção, UI.
+- **Sem vozes** na 1.0 (ADR-009). O lojista fala por texto.
 
-## Regras técnicas
+## 2. Engenharia de som
 
-- Formato: **MP3** 44,1 kHz 128 kbps (saída do ElevenLabs); SFX normalizados em −14 LUFS, música em −18 LUFS.
-- Chaves no `src/art/manifest.ts` (`sfx.*`, `music.*`, `vo.<hero>.<evento>.<lang>.<n>`).
-- `VoiceLimiter` (herdado) limita vozes simultâneas por chave; variação de pitch ±5% em SFX repetidos.
-- Volumes separados (master, música, SFX, voz) em Settings. `SOUND_MUTED=true` no `.env` silencia tudo no dev.
-- Música com crossfade entre faixas (round → boss).
+- Formato: **MP3 44,1 kHz 128 kbps** (saída da API). Música em loop com crossfade de 800 ms (`src/core/music.ts`); SFX via `sfx(scene, key)` (`src/core/audio.ts`) com volume por chave, limite de vozes simultâneas e variação de pitch ±5% (`src/data/sfx.ts`).
+- Loudness alvo: SFX −14 LUFS, música −18 LUFS (normalização offline ao gerar).
+- Mixagem: canais master, música, SFX (voz removido). Ducking de −6 dB na música durante o superpoder e o rugido do boss.
+- Variações: hit, shotgun, splat, zombieDeath (3 takes), swing (2) sorteados por `SFX_VARIANTS`.
+- Mobile/WebView: destravar o `AudioContext` no 1º toque; pausar ao perder o foco.
+
+## 3. Catálogo e prompts (SFX)
+
+Endpoint `POST /v1/sound-generation` (`text`, `duration_seconds`, `prompt_influence`), 1 take cada salvo o indicado. Custo medido ~4 créditos por SFX curto.
+
+| Chave | Prompt (resumo) |
+|---|---|
+| `sfx.achievement` | triumphant achievement unlocked sting for a brutal heavy metal video game: short distorted guitar power chord with a bright metallic chime |
+| `sfx.hit` (3 takes) | wet meaty flesh impact of a blade hitting a zombie, short and punchy |
+| `sfx.swing` (2) | fast machete whoosh swing through the air, sharp |
+| `sfx.shotgun` (3) | powerful double barrel shotgun blast with punchy low end and short echo |
+| `sfx.cast` | magic staff casting an elemental bolt, crackling energy whoosh |
+| `sfx.explosion` | brutal explosion with debris and fire, heavy boom |
+| `sfx.splat` (3) | gory splatter of blood and guts hitting snow, wet squelch |
+| `sfx.zombieDeath` (3) | zombie animal dying groan cut short with a gurgle, creepy, short |
+| `sfx.heroHurt` | small penguin grunting in pain, cartoonish but gritty, short |
+| `sfx.pickupXp` | tiny bright crystal chime pickup, sparkly, very short |
+| `sfx.pickupFish` | wet fish slap pickup with a coin clink, short, cartoonish |
+| `sfx.levelUp` | epic level up fanfare with distorted guitar riff and choir hit, short |
+| `sfx.card` | card selection whoosh with a heavy metallic stamp |
+| `sfx.potion` | drinking a potion gulp followed by a magical healing shimmer |
+| `sfx.bossRoar` | huge zombie polar bear roar, monstrous, rotten and terrifying |
+| `sfx.super` | massive superpower activation: bass drop, distorted guitar chug and a whooshing blast wave |
+| `sfx.uiSelect` | short crisp menu select click with a metallic tick |
+| `sfx.gameOver` | dark game over sting: slow heavy distorted guitar chord fading with a low drone, doom metal |
+
+Prompts completos e parâmetros em `art-src/elevenlabs/log.jsonl`.
+
+## 4. Música
+
+Endpoint `POST /v1/music` (`force_instrumental: true`), ~560 créditos por 45 s (~750/min). **Nunca citar jogos, bandas ou artistas** no prompt (a API recusa). Faixas existentes em `public/assets/audio/music/`:
+
+| Chave | Duração | Uso |
+|---|---|---|
+| `music.menu` | 40 s | menu principal |
+| `music.round` | 45 s | rounds 1–20 |
+| `music.late` | 45 s | rounds ≥ 21 |
+| `music.boss` | 45 s | rounds de boss |
+
+Loops de reserva feitos pelo endpoint de SFX em `art-src/elevenlabs/music/*-loop.mp3`.
+
+## 5. Vozes (removidas na 1.0)
+
+Histórico, mantido para referência (arquivos e código na branch `legacy-voices`): 1 voz por herói via Voice Design (`/v1/text-to-voice`, 3 prévias, 1 escolhida), mesma voz para EN e PT-BR com `eleven_multilingual_v2`; 7 eventos × 2 takes × 3 heróis × 2 idiomas = 84 falas. Prompts de voz: Jack "young adult male, cocky and brash action-hero energy, slightly raspy"; Bob "middle-aged male war veteran, deep gravelly baritone, dry humor"; Lucia "adult female mystic sorceress, calm and low, mysterious and elegant". Removidas por custo de i18n (4 idiomas) e peso no build.
+
+## 6. Pendências para a 1.0
+
+| Item | Chaves | Estimativa |
+|---|---|---|
+| SFX da loja | `sfx.shopBuy`, `sfx.shopReroll`, `sfx.shopLock`, `sfx.weaponFuse`, `sfx.shopOpen` | ~20 créditos |
+| SFX de armas novas | `sfx.knife`, `sfx.boomerang`, `sfx.pistol`, `sfx.crossbow`, `sfx.molotov`, `sfx.mine`, `sfx.totem`, `sfx.flameRing` | ~35 |
+| SFX de elementos | `sfx.fire`, `sfx.ice`, `sfx.earth`, `sfx.lightning`, `sfx.freeze` | ~20 |
+| SFX de bosses | `sfx.krakenInk`, `sfx.abominationAcid`, `sfx.bossDeath` | ~12 |
+| SFX de UI/meta | `sfx.pearls`, `sfx.dangerUnlock`, `sfx.equip`, `sfx.demoEnd` | ~16 |
+| Música da loja | `music.shop` (30 s) | ~380 |
+| Música dos biomas 2–3 | `music.station`, `music.ruins` (45 s cada) | ~1.120 |
+| Sting de boss derrotado | `sfx.bossDown` | ~4 |
+
+Total estimado **~1.600 créditos** de 58.198 disponíveis (renova em 14/11/2026). Sobra para 2–3 takes de cada música.
+
+## 7. Orçamento
+
+Plano **Creator** (ativo), 124.333 créditos no ciclo atual, 66.135 usados em 2026-11-08. Regra: gerar 1 take, ouvir, só então variações; registrar tudo no `log.jsonl`.

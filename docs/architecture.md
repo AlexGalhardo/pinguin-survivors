@@ -1,118 +1,146 @@
-# Arquitetura técnica
+# Arquitetura técnica — Pinguin Survivors
 
-## Stack
+> **Versão** 2.0 · **Data** 2026-11-08 · Alvo da 1.0 (top-down, React, ports). Onde o código atual (iso, cenas Phaser de UI) diverge, as SDDs em [sdds/](sdds/README.md) descrevem a migração e o [ROADMAP.md](../ROADMAP.md) a agenda. Decisões: [adrs/](adrs/README.md).
 
-| Camada | Escolha | Por quê |
+## Índice
+
+1. [Stack](#1-stack)
+2. [Visão geral em camadas](#2-visão-geral-em-camadas)
+3. [Mundo: simulação, arena e render](#3-mundo-simulação-arena-e-render)
+4. [UI: React sobre o canvas](#4-ui-react-sobre-o-canvas)
+5. [Estrutura de pastas](#5-estrutura-de-pastas)
+6. [Princípios](#6-princípios)
+7. [Tela, resolução e zoom](#7-tela-resolução-e-zoom)
+8. [Gore, luz e performance](#8-gore-luz-e-performance)
+9. [Persistência e plataforma](#9-persistência-e-plataforma)
+10. [Builds: jogo, demo, desktop, mobile, site](#10-builds-jogo-demo-desktop-mobile-site)
+11. [Debug](#11-debug)
+
+## 1. Stack
+
+| Camada | Escolha | Nota |
 |---|---|---|
-| Linguagem | **TypeScript** strict | Dados tipados; agentes erram menos |
-| Bundler / dev | **Vite 8** | HMR, build estático |
-| Engine | **Phaser 4.2.x** (WebGL) | Cenas, input, áudio, tweens, partículas, filtros (bloom/glow), DynamicTexture. **É Phaser 4, não 3** — consulte `.claude/skills/` |
-| Física | **Nenhuma engine**: simulação própria em espaço de mundo + `SpatialGrid` | Iso + 300 corpos; tudo testável em TS puro (P-35) |
-| Runtime / pacotes | **Bun 1.4.2** | Test runner, scripts TS nativos |
-| Testes | **`bun:test`** (lógica pura) + **agent-browser** / Playwright (visual) | |
-| Arte | **PixelLab API v2** (`scripts/lib/pixellab.ts`) → `art-src/pixellab/` → atlas | Ver [art-and-assets.md](art-and-assets.md) |
-| Áudio | **ElevenLabs** (SFX, música, vozes) → `public/assets/audio/` | Ver [audio.md](audio.md) |
-| Persistência | `localStorage` (try/catch + versão de schema + migração) | |
-| Lint/format | **Biome v2** (TAB, largura 4) | |
+| Linguagem | **TypeScript** strict | |
+| Bundler | **Vite 8** | multi-target por env (`VITE_DEMO`) |
+| Engine do mundo | **Phaser 4.2.x** (WebGL) | só mundo, entidades, VFX, câmera, áudio. **Phaser 4 ≠ 3**: skills em `.claude/skills/` |
+| UI | **React 19 + Tailwind CSS v4** | overlay DOM; todas as telas (ADR-002) |
+| Física | nenhuma engine: simulação própria + `SpatialGrid` | testável em TS puro |
+| Runtime/testes | **Bun 1.4.x**, `bun:test`, Playwright (E2E, bot, QA) | |
+| Desktop | **Electron** (estável fixo) + `steamworks.js` | Windows primeiro (ADR-012) |
+| Mobile | **Capacitor** (estável fixo), Android | landscape only |
+| Site | **Astro 7.4.x** estático em `site/` | GitHub Pages (ADR-014) |
+| Arte / áudio | PixelLab API v2 · ElevenLabs | [visual.md](visual.md) · [audio.md](audio.md) |
+| Lint/format | Biome v2 (TAB 4) | |
 
-## Projeção isométrica (o coração do jogo)
-
-Toda a simulação acontece num **plano cartesiano de mundo** (x, y, e um `z` de altura para gibs/projéteis). A tela é só uma projeção 2:1:
+## 2. Visão geral em camadas
 
 ```
-screenX = (x − y)            // 1 u de mundo = 1 px lateral
-screenY = (x + y) / 2 − z    // metade no eixo vertical (dimétrico 2:1)
-depth   = x + y              // ordenação: mais "abaixo" na tela = na frente
+┌──────────────────────── React (src/ui) ────────────────────────┐
+│ Hud · MainMenu · HeroSelect · Shop · LevelUpCards · Pause · …  │  lê store ← GameEvents
+│                 store (useSyncExternalStore) · commands        │  envia GameCommands →
+├──────────────────────── Phaser (src/scenes, world, …) ─────────┤
+│ BootScene (assets) · GameScene (orquestra os systems)          │
+│ systems: Enemy · Weapon · Combat · Area · Hostile · Superpower │
+│          Pickup · Fx · Round · Shop(state) · Save              │
+│ world: Arena (chão, borda, props, GoreLayer) · Lighting        │
+│ entities: Hero · Enemy · WeaponRing/WeaponView · pools         │
+├──────────────────────── Lógica pura (src/logic) ───────────────┤
+│ arena · spawn · steering · stats · combat · status · build     │
+│ shop · cards · economy · round · difficulty(danger) · save     │
+│ progression · potions · superpower · achievements · sim/       │
+├──────────────────────── Dados / i18n / arte ───────────────────┤
+│ src/data/*.ts (números) · src/i18n (4 idiomas) · art/manifest  │
+├──────────────────────── Plataforma (src/core/platform) ────────┤
+│ web · electron (Steam) · capacitor (Android): save, achievements,│
+│ leaderboards, fullscreen, openUrl, tier                        │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-- Tile iso 64×32 px ⇔ quadrado de **32×32 u** no mundo.
-- Input WASD é rotacionado 45° (`W` = norte da tela = −x −y no mundo) em `src/logic/iso.ts`.
-- A direção do sprite (8 dir) sai do vetor de movimento/mira **em espaço de tela**.
-- Distâncias, raios, colisões e alcance são sempre em unidades de mundo (círculos). Um círculo de mundo aparece como elipse 2:1 na tela (sombras e auras são desenhadas assim).
+## 3. Mundo: simulação, arena e render
 
-## Estrutura de pastas (alvo)
+- **Coordenadas**: mundo cartesiano em unidades (1 u = 1 px lógico); `screenX = x`, `screenY = y`; depth por `y`. `z` só para arcos de gibs/projéteis (offset visual).
+- **Arena** (ADR-003, SDD-001): quadrado `side(N) = min(10 + (N−1), 40)` tiles de 64 u, centrado na origem; `arenaBounds(N)`; crescimento centrado a cada round; bordas sólidas; spawn em anel interno; câmera com lerp clampada (centrada quando a arena cabe na tela).
+- **Entidades** pooled: inimigos (máx. 300), projéteis, pickups, gibs, números, decalques. Nada de `new` por frame.
+- **Colisão**: círculos em espaço de mundo via `SpatialGrid` recentralizado no herói; props sólidos como círculos; voadores ignoram props mas respeitam a borda.
+- **Direções**: 8 (5 geradas + 3 espelhadas) pelo vetor de movimento; sem rotação de input.
+- **Systems** (orquestrados pelo `GameScene`, ordem fixa por frame): input → movimento/steering → armas (6 slots) → projéteis/áreas/hostis → combate/status → pickups → round/loja/level-up → FX → save.
+- **Eventos tipados** (`src/core/events.ts`): `GameEvents` (mundo → UI) e `GameCommands` (UI → mundo); `RunState` serializável.
+
+## 4. UI: React sobre o canvas
+
+- `index.html`: `<canvas>` + `<div id="ui">` (`position: fixed; inset: 0; pointer-events: none`); painéis abertos ativam `pointer-events`.
+- `src/ui/store.ts`: snapshot imutável do que a UI precisa (HP, XP, Fish, round, timer, boss, build, loja, cartas pendentes, settings); `GameScene` publica por evento.
+- Foco e input de menus no React (`src/ui/focus.ts`): teclado, gamepad (via `GameInput` em modo menu), toque; o `GameInput` do mundo é desligado enquanto um painel modal está aberto.
+- Tailwind v4 com `@theme` gerado de `palette.ts` (`bun scripts/export-palette-css.ts`); tipografia Rubik/Pixelify Sans/Noto Sans SC; sem zoom inteiro no overlay.
+
+## 5. Estrutura de pastas
 
 ```
 src/
-  main.ts                 # new Phaser.Game(config)
-  config/                 # game-config, constants (LOGICAL_H=540, TILE_W=64, TILE_H=32…), palette
-  i18n/                   # en.ts, pt-BR.ts, t(key, vars) — nenhum texto de UI fora daqui
-  logic/                  # TS PURO, sem Phaser, 100% testado
-    rng.ts spatial-grid.ts geometry.ts gamepad.ts key-claim.ts voice-limiter.ts  (herdados)
-    iso.ts                # projeção, direção 8-way, rotação do input
-    chunks.ts             # coordenadas de chunk, geração procedural por seed
-    round.ts              # duração, boss, elites, estados do round
-    scaling.ts            # hpMul/dmgMul/spawnRate por round e ciclo
-    stats.ts combat.ts    # modelo de stats, fórmulas (crit, armadura, dodge, parry, DoTs, elementos)
-    progression.ts        # XP, level 1–100, pontos, crescimento por classe
-    cards.ts              # sorteio das 3 cartas (raridade, slots, evolução)
-    potions.ts            # gambits: avaliação de condições
-    save.ts               # schema, migração, defaults
-    sim/                  # simulação headless de runs para balanceamento
-  data/                   # números e definições (espelhados em docs/balancing.md)
-    heroes.ts enemies.ts bosses.ts weapons.ts cards.ts potions.ts biomes.ts rounds.ts
-  world/                  # render do mundo (Phaser)
-    IsoWorld.ts           # câmera, projeção, camadas, depth
-    ChunkManager.ts       # chunks visíveis, pool de chunks, decoração
-    GoreLayer.ts          # decalques de sangue persistentes por chunk (DynamicTexture)
-    Lighting.ts           # escuridão + luzes (máscara aditiva), vinheta
-  entities/               # Hero, Enemy, Projectile, Pickup, Gib — views pooled sobre estado de mundo
-  systems/                # orquestrados pelo GameScene
-    InputSystem MovementSystem SpawnSystem EnemyAiSystem WeaponSystem CombatSystem
-    StatusSystem (DoTs) PickupSystem RoundSystem PotionSystem FxSystem AudioSystem SaveSystem
-  scenes/                 # Boot, Preload, MainMenu, HeroSelect, Hero (pontos/poções), Game, Hud, CardPick, Pause, GameOver, Settings
-  ui/                     # componentes (painel, botão, carta, barra) + fonte
-  art/manifest.ts         # CONTRATO de chaves de textura/animação/som
-  debug/                  # query params, window.__GAME__ (dev), overlay
-scripts/
-  lib/pixellab.ts         # cliente PixelLab (token em .env)
-  pl-concepts.ts          # concepts dos heróis (8 rotações) + contact sheet
-  pl-*.ts                 # (futuro) animações, inimigos, tiles, objetos
-  el-*.ts                 # (futuro) ElevenLabs: sfx, música, vozes
-  pack-atlas.ts lib/shelf-pack.ts  # empacota art-src/processed → public/assets/atlas*
-  qa-browsers.ts          # QA do build em Chrome/Edge/Firefox (Playwright)
-art-src/pixellab/         # saídas brutas do PixelLab + log.jsonl (versionado, exceto raw/)
-tests/                    # *.test.ts (bun:test), espelha src/logic
+  main.ts                   # Phaser.Game + createRoot(App)
+  config/                   # constants (LOGICAL_H=540, TILE=64…), game-config, palette
+  core/                     # audio, music, display, events, input, gamepad, storage, platform/
+  data/                     # heroes enemies bosses weapons sets items equipment cards economy
+                            # rounds difficulty(danger) potions upgrades achievements arena demo sfx
+  i18n/                     # ui/cards/achievements/gear/shop/weapons × en, pt-BR, es, zh-CN
+  logic/                    # puro + testado (ver §2) · sim/ (run-sim, card-policy, shop-policy)
+  world/                    # Arena, GoreLayer, Lighting
+  entities/                 # Hero, Enemy, WeaponRing, WeaponView, pools
+  systems/                  # Enemy, Weapon, Combat, Area, Hostile, Superpower, Pickup, Fx
+  scenes/                   # BootScene, GameScene (só)
+  ui/                       # App, store, commands, focus, components/, theme.css
+  art/                      # manifest (contrato), atlas loader, placeholders
+  debug/                    # params, overlay
+apps/
+  desktop/                  # Electron (main, preload, electron-builder)
+  mobile/                   # Capacitor (android/)
+site/                       # Astro 7.4 (landing) + public/demo (gerado)
+scripts/                    # pl-*, el-*, pack-*, sim, playtest-bot, balance-report, perf, e2e,
+                            # qa-browsers, release, release-backfill, build-demo, build-site
+tests/                      # *.test.ts espelhando src/logic; ui/*.test.tsx
+docs/                       # gdd, visual, audio, architecture, workflow, balancing-and-simulation,
+                            # web-research, brainstorming, site, adrs/, sdds/, reports/
 ```
 
-## Princípios
+## 6. Princípios
 
-1. **Lógica pura separada de Phaser** (`src/logic`), testada com `bun:test`. Entidades Phaser só leem o estado de mundo e desenham.
-2. **Data-driven**: números em `src/data`, espelhados em `docs/balancing.md`.
-3. **Contrato de assets** (`art/manifest.ts`): chave estável por textura/animação/som. Placeholders gerados por código e arte final usam a mesma chave. Formato das chaves de animação: `hero.jack.t1.walk` (+ direção como sufixo de frame `.se.07`).
-4. **Pooling** de tudo que nasce e morre em massa: inimigos, projéteis, pickups, números de dano, gibs, partículas. Nada de `new` por frame.
-5. **RNG com seed** em tudo que é sorteio de gameplay e na geração de chunks (`?seed=123` reproduz a run e o mapa).
-6. **Eventos tipados** entre cenas (Game ↔ Hud ↔ CardPick) via event bus com enum.
-7. **Estado da run** num objeto serializável (`RunState`); **progresso persistente** (`SaveData`: heróis, levels, pontos, Fish, poções, desbloqueios, settings).
+1. Lógica pura separada de Phaser e React, testada com `bun:test`.
+2. Data-driven: números em `src/data`, espelhados em `balancing-and-simulation.md` Parte B.
+3. Contrato de assets: chave estável no `manifest.ts`; placeholders por código e arte final usam a mesma chave.
+4. Pooling de tudo que nasce e morre em massa.
+5. RNG com seed em todo sorteio e na geração da arena (`?seed=` reproduz a run).
+6. Eventos tipados entre mundo e UI; `RunState` serializável; `SaveData` versionado com migração.
+7. Nenhum import de plataforma (`electron`, `@capacitor/*`, `steamworks.js`) em `src/`; só `window.platform`.
 
-## Tela cheia + pixel perfect
+## 7. Tela, resolução e zoom
 
-- CSS: sem margem, `overflow: hidden`, `image-rendering: pixelated`.
-- Phaser: `scale.mode = NONE` + `scale.resize()`/`setZoom()` controlados por `src/core/display.ts`: o canvas renderiza na **resolução de render** (Settings → Resolução: Automática = pixels nativos do dispositivo, ou SD/HD/FHD/2K/3K/4K fixando a altura com o aspecto da janela) e o zoom de exibição estica para a janela (`src/logic/display.ts`, testado).
-- **Zoom inteiro pela altura de render**: `zoom = max(1, floor(renderHeight / 540))` (MacBook M1 em Automática: 2880×1800 → zoom 3); a largura lógica é `innerWidth / zoom` (ultrawide vê mais mapa nas laterais). 2560×1080 → zoom 2 (1280×540 lógicos) · 1920×1080 → 2 (960×540) · 3840×2160 → 4 · 2560×1440 → 2 (1280×720) · 1366×768 → 1.
-- Spawns acontecem fora da área visível **real** (largura variável), para ultrawide não ver inimigos surgindo.
+- Canvas com `scale.mode = NONE` controlado por `src/core/display.ts`: renderiza na resolução escolhida (Auto = pixels nativos, ou SD/HD/FHD/2K/3K/4K) e estica para a janela.
+- **Zoom inteiro pela altura 540**: 1920×1080 → ×2 (960×540 lógicos); 2560×1440 → ×2 (1280×720); 2400×1080 landscape → ×2 (1200×540); 3840×2160 → ×4; 1366×768 → ×1.
+- Spawn fora da área visível real quando a arena for maior que a tela.
+- Overlay React independente do zoom do canvas (texto nítido em qualquer resolução).
 
-## Mundo infinito e gore
+## 8. Gore, luz e performance
 
-- Chunk = 16×16 tiles (512×512 u; 1024×512 px na tela). Mantém ativos os chunks que tocam a câmera + margem de 1; o resto volta ao pool.
-- Chão desenhado por chunk; decoração posicionada por RNG(seed, cx, cy).
-- **Sangue persistente**: cada chunk guarda a lista de decalques (posição, frame, rotação). Chunk visível = DynamicTexture própria onde os decalques são carimbados. Ao sair e voltar, os decalques são recarimbados. Teto por chunk (os mais antigos se fundem numa "mancha base").
+- Decalques carimbados na `DynamicTexture` da arena (teto 4.000, fusão dos antigos), recarimbados ao crescer; gore reduzido/gosma por settings.
+- Luz: `DynamicTexture` de escuridão do tamanho da tela com luzes em ERASE (herói, tiros, fogo, elites, boss, superpoder); vinheta; bloom opcional (desligado por padrão, P-65).
+- Orçamento: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 1920×1080 (`scripts/perf.ts`); `Platform.tier = low` reduz decalques (1.000), desliga luzes e bloom, corta partículas 50%.
 
-## Iluminação (clima Diablo 4)
+## 9. Persistência e plataforma
 
-- Camada de escuridão (DynamicTexture do tamanho da tela) preenchida com a cor da noite; luzes são sprites radiais **apagados/somados** na máscara a cada frame (tiros, magias, auras de elite, tochas).
-- Vinheta + bloom (filtros do Phaser 4) nos projéteis/magias.
-- Validar custo no spike (fase 1). Alternativa: Lighting component do Phaser 4 (sem normal maps).
+- `SaveData` v2 (SDD-005) via `Platform.save`: web = `localStorage` + export/import; Electron = arquivo na pasta do usuário + Steam Cloud; Capacitor = `Preferences`.
+- Autosave ao sair da loja (início do round); `Continue` no menu.
+- Conquistas e leaderboards pela `Platform` (no-op na web).
 
-## Debug (query params)
+## 10. Builds: jogo, demo, desktop, mobile, site
 
-`?skipMenu=1&hero=jack&round=5&seed=1&debug=1&god=1&tier=2`. `window.__GAME__` só no dev.
+| Build | Comando | Saída | Usa |
+|---|---|---|---|
+| Jogo completo (web interno) | `bun run build` | `dist/` | Electron e Capacitor |
+| Demo web | `bun run build:demo` (`VITE_DEMO=1`, `base /demo/`) | `dist-demo/` | copiado para `site/public/demo/` |
+| Desktop | `bun run build:desktop` | `apps/desktop/dist/*.exe` (completo e demo) | Steam |
+| Android | `bun run build:android` | AAB | Google Play |
+| Site | `bun scripts/build-site.ts` | `site/dist/` | GitHub Pages |
 
-## Cenas e menus
+## 11. Debug
 
-`Boot` → `MainMenu` (key art animada `ui/MenuBackground.ts`, Continuar/Jogar/Heróis e Poções/Conquistas/Histórico/Configurações) → `HeroSelect` → `Game` (+ `Hud`, `CardPick`, `Pause`) → `GameOver`. Menus usam `ui/MenuList.ts` (teclado + mouse, colunas com `active`) e `ui/screen.ts`.
-Estado da run: `RunState` + `Build` + `PlayerStats` + slots de poção; snapshot salvo no início de cada round em `save.activeRun` (Continuar). `?skipMenu=1` pula direto para o jogo.
-
-## Sistemas do GameScene
-
-`EnemySystem` (spawn, IA de `logic/enemy-ai.ts`, status), `CombatSystem` (dano, DoTs, crítico, dodge/parry, hooks de perks/escudo), `WeaponSystem` (arma assinada), `SecondarySystem` (secundárias e exclusivas), `ProjectilePool`, `AreaSystem` (zonas, impactos, anéis), `HostileSystem` (projéteis inimigos), `SuperpowerSystem`, `PickupSystem`, `FxSystem` (números, sangue, cortes; respeita gore/números), `ChunkManager`.
+`?skipMenu=1&hero=jack&round=5&seed=1&level=10&danger=2&weapons=machete,knives&arena=12&god=1&debug=1&lang=zh-CN`. `window.__GAME__` só no dev. Overlay com FPS, contagem de entidades, placeholders em uso.

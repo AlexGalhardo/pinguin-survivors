@@ -1,0 +1,259 @@
+# Game Design Document — Pinguin Survivors
+
+> **Versão** 2.0 · **Data** 2026-11-08 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
+> Substitui `game-design.md` e `ui-hud.md`. Números em [balancing-and-simulation.md](balancing-and-simulation.md) (Parte B); decisões em [brainstorming.md](brainstorming.md) (B-xx) e [adrs/](adrs/README.md); histórico anterior em [decisions.md](decisions.md) (P-xx). Arte em [visual.md](visual.md); som em [audio.md](audio.md); técnica em [architecture.md](architecture.md); especificações de implementação em [sdds/](sdds/README.md).
+> Onde este documento e o código atual divergem, **este documento é o alvo** e o [ROADMAP.md](../ROADMAP.md) lista o trabalho para alinhar o código.
+
+## Índice
+
+1. [Pitch e pilares](#1-pitch-e-pilares)
+2. [Plataformas, público e classificação](#2-plataformas-público-e-classificação)
+3. [Core loop](#3-core-loop)
+4. [Arena e câmera](#4-arena-e-câmera)
+5. [Controles](#5-controles)
+6. [Heróis](#6-heróis)
+7. [Atributos](#7-atributos)
+8. [Armas](#8-armas)
+9. [Loja do fim de round](#9-loja-do-fim-de-round)
+10. [Cartas de level-up](#10-cartas-de-level-up)
+11. [Equipamentos, itens e packs](#11-equipamentos-itens-e-packs)
+12. [Poções e gambits](#12-poções-e-gambits)
+13. [Superpoderes](#13-superpoderes)
+14. [Inimigos, elites e bosses](#14-inimigos-elites-e-bosses)
+15. [Biomas](#15-biomas)
+16. [Dificuldade (Danger) e endless](#16-dificuldade-danger-e-endless)
+17. [Economia](#17-economia)
+18. [Progressão persistente](#18-progressão-persistente)
+19. [Conquistas e extras](#19-conquistas-e-extras)
+20. [Game feel e gore](#20-game-feel-e-gore)
+21. [UI e telas](#21-ui-e-telas)
+22. [Demo](#22-demo)
+23. [Fora do escopo da 1.0](#23-fora-do-escopo-da-10)
+
+## 1. Pitch e pilares
+
+Jack, Bob e Lucia são os **três últimos pinguins sobreviventes de um apocalipse zumbi** na Antártida. Arena survivor top-down estilo Brotato em pixel art: rounds cronometrados contra hordas de até 300 inimigos, loja entre rounds, até 6 armas atacando sozinhas, boss a cada 10 rounds, gore nível DOOM e progressão RPG que nunca se perde.
+
+**Pilares**
+
+1. **Frenético e sangrento**: hordas densas, hit-stop, shake, gibs e poças de sangue que ficam a run inteira.
+2. **Build crafting de verdade**: 6 slots, classes de arma com bônus de set, fusão de armas, loja com reroll e lock, cartas de stat no level-up.
+3. **Progressão que nunca é perdida**: level 1–100 por herói, Pérolas, Oficina, Danger desbloqueável.
+4. **Identidade por herói**: perfil de stats, multiplicadores por classe de arma, 6 cartas exclusivas e um superpoder.
+5. **Contraste visual**: pinguins fofos e marcados pela guerra num mundo escuro iluminado por tiros e magias.
+
+## 2. Plataformas, público e classificação
+
+| Item | Decisão |
+|---|---|
+| Plataformas 1.0 | Steam (Windows, Electron) e Google Play (Android, Capacitor, landscape). Demo web em `/demo`. |
+| Preço | US$ 4,99 na Steam (regional), Android premium. Sem DLC na 1.0. (ADR-011) |
+| Idiomas | EN, PT-BR, ES, ZH simplificado. (ADR-010) |
+| Classificação | 16+/Mature pela IARC (gore explícito); gore com toggle nas opções. |
+| Telas-alvo | 1920×1080 e 2560×1440 (desktop); 6,7" e 6,8" em landscape (mobile). Altura lógica 540 com zoom inteiro. |
+| Público | Jogadores de Brotato/Vampire Survivors; sessões de 10–25 min. |
+| Marcos | Demo no Steam Next Fest 22/02–01/03/2027; 1.0 depois. |
+
+## 3. Core loop
+
+```
+Menu (Pérolas: Oficina · poções/gambits · pontos de stat · arma inicial)
+  → Herói + Danger + arma inicial → Run:
+      Round N (timer) → mata hordas, coleta XP e Fish
+        → level-up: 4 cartas (stats/exclusivas) [tempo pausado]
+      → fim do timer (ou boss morto) → LOJA (4 ofertas, reroll, lock, equipamento) → Round N+1
+      → round 10k: BOSS (3 min; timeout = game over)
+  → Morte / desistência → resumo → XP, Pérolas e conquistas ficam → Menu
+```
+
+- **Duração do round N** (não boss): `min(20 + 5·(N−1), 60)` s.
+- **Boss**: rounds 10, 20, 30…; barra de boss e timer de 3:00; matar encerra o round; zerar o timer é game over.
+- **Elites** nos rounds múltiplos de 3 (roxo 2×; laranja 3× a partir do round 11). Waves de elite/horda extras por Danger (§16).
+- **Endless**: sem fim e sem tela de vitória (ADR-008).
+- Cura de 25% do HP máximo ao fim de cada round; o HP restante passa para o próximo.
+
+## 4. Arena e câmera
+
+- **Câmera top-down 2D** (vista 3/4 nos sprites, como Brotato). (ADR-003)
+- **Arena quadrada fechada**: `side(N) = min(10 + (N−1), 40)` tiles de **64 px**. Round 1 = 10×10 (640×640), round 2 = 11×11 … round 31+ = 40×40 (2.560×2.560). Parede visível nas bordas; nada sai da arena (voadores inclusos).
+- **Spawn**: anel interno de 1 tile junto à borda; fora da área visível quando a arena for maior que a tela; com telegraph de 0,5 s quando a borda estiver visível.
+- **Câmera** segue o herói com lerp, clampada à arena; arena menor que a tela fica centrada.
+- **Props**: decorações sólidas leves por bioma (herói e inimigos terrestres deslizam em volta; voadores e bosses ignoram), densidade por bioma.
+- **Sangue persiste** na textura da arena durante a run inteira (teto de decalques; os mais antigos fundem numa mancha base).
+
+## 5. Controles
+
+| Ação | Teclado | Gamepad | Toque |
+|---|---|---|---|
+| Mover (8 direções) | WASD / setas | Analógico esquerdo / D-pad | Joystick virtual flutuante (polegar esquerdo) |
+| Superpoder | Espaço | △ / Y | Botão na tela (direita) |
+| Velocidade 1×/2× | TAB | □ / X ou View | Botão na HUD |
+| Confirmar / loja / cartas | Enter, mouse, 1–4 | ✕ / A, D-pad | Toque |
+| Pausa | Esc / P | Options / Start | Botão na HUD |
+
+Ataques 100% automáticos; sem dash (esquiva é stat). Teclas rebindáveis.
+
+## 6. Heróis
+
+| Herói | Espécie / visual | Classe favorita | Perfil | Desbloqueio |
+|---|---|---|---|---|
+| **Jack** | Pinguim-saltador-da-rocha, crista amarela, bandana vermelha, ombreira, curativos | **Melee** (+30%) | Muita vida e armadura, parry alto, lento, magia fraca (−35%) | Inicial |
+| **Bob** | Pinguim-imperador gordinho, colete tático, cinto de cartuchos, gorro, tapa-olho | **Fogo** (+30%) | Mais rápido, crítico e dodge altos, vida mediana, melee fraco (−30%) | Vencer o boss do round 10 |
+| **Lucia** | Pinguim-gentoo pequena, capa roxa rasgada com runas | **Magia** (+50%) | Velocidade mediana, pouca vida, fogo e melee fracos | Vencer o boss do round 20 |
+
+- Cada herói tem **perfil de stats**, **multiplicadores por classe**, **6 cartas exclusivas** (§10) e **1 superpoder** (§13). Números em balancing-and-simulation.md Parte B §4.
+- **Arma inicial** escolhida na seleção (ADR-005): Jack machete / facas / bumerangue de peixe; Bob escopeta cano duplo / pistola / besta; Lucia cajado elemental / estilhaços de gelo / anel de chamas. Outras armas iniciais desbloqueiam com Pérolas.
+- **Danger** por herói (§16) e **melhor round por herói e danger** aparecem na seleção.
+
+## 7. Atributos
+
+| Grupo | Stats |
+|---|---|
+| Vida | HP máx., regen/s, roubo de vida % |
+| Ataque | dano %, dano por classe (melee/fogo/magia), velocidade de ataque %, crítico %, dano crítico %, alcance %, área % |
+| Status on-hit | chance de sangramento, chance de veneno, dano elemental % (fogo/terra/gelo/energia) |
+| Defesa | armadura, resistências elementais, dodge %, parry % |
+| Utilidade | velocidade, alcance de coleta, sorte (raridade de cartas e ofertas), ganho de XP %, **harvesting** (Fish no fim do round) |
+
+Elementos: **fogo** queima (DoT); **gelo** desacelera e congela ao acumular; **terra** empurra, atordoa e quebra armadura; **energia** salta em corrente. Fórmulas em balancing-and-simulation.md Parte B §3.
+
+## 8. Armas
+
+- **6 slots iguais** (ADR-005). Armas orbitam o herói em anel e cada uma **ataca automaticamente** o alvo mais próximo no seu alcance (bosses e elites têm prioridade quando estão no alcance).
+- **Classes**: `melee`, `firearm`, `magic` (multiplicadores por herói) e **sets**: `blade`, `blunt`, `thrown`, `gun`, `explosive`, `elemental`, `support`. Uma arma pode ter 2 sets. **Bônus de set** por 2 / 4 / 6 armas do mesmo set (ex.: `blade` +sangramento, `gun` +crítico, `elemental` +dano elemental, `explosive` +área).
+- **Tiers I–IV**: cada arma existe em 4 tiers com stats escalados e visual crescente. **Fusão**: duas armas iguais do mesmo tier viram uma do tier seguinte (grátis, na loja ou no inventário).
+- Mira por tipo: melee = arco ao redor; fogo = inimigo mais próximo; magia = área/corrente/aleatório.
+
+| Arma (tier I → nome da linha) | Classe / set | Comportamento |
+|---|---|---|
+| Machete → Katana → Chainsword | melee / blade | arco largo, sangramento |
+| Facas arremessáveis | melee / thrown | projétil rápido, perfura |
+| Bumerangue de peixe | melee / thrown | vai e volta |
+| Escopeta cano duplo → automática → foguete | firearm / gun | leque de bagos, knockback, explosão no IV |
+| Pistola | firearm / gun | cadência alta, 1 alvo |
+| Besta perfurante | firearm / gun | perfura em linha |
+| Molotov | firearm / explosive | área de fogo |
+| Mina | firearm / explosive | armadilha |
+| Cinto de granadas (Bob) | firearm / explosive | granada periódica |
+| Cajado elemental → arcano → das Quatro Tempestades | magic / elemental | alterna 4 elementos, área |
+| Estilhaços de gelo | magic / elemental | orbitam o herói |
+| Anel de chamas | magic / elemental | aura de fogo |
+| Totem de raios | magic / elemental | torre de corrente |
+| Nuvem de veneno | magic / support | veneno em área |
+| Drone-sentinela (Bob) | firearm / support | torreta aérea |
+| Redemoinho de lâminas (Jack) | melee / blade | lâminas orbitando |
+
+Lista final e números em `src/data/weapons.ts` e balancing-and-simulation.md Parte B §6 (a reescrever na SDD-002).
+
+## 9. Loja do fim de round
+
+- Abre **ao fim de cada round** com o tempo pausado, em tela estilo **ARPG (Diablo)** (ADR-006):
+  - **Esquerda**: paper doll do herói, stats da run com deltas, **5 slots de equipamento** (elmo, armadura, pernas, anel, amuleto) e mochila, 6 slots de arma com fusão.
+  - **Direita**: **NPC lojista** (pinguim velho mercador com carrinho de peixes, idle animado, falas curtas por texto) com **4 ofertas** (armas e itens), preço em Fish, **reroll** (preço cresce a cada uso na mesma loja; base cresce por round) e **lock** grátis por oferta (persiste entre lojas).
+  - Rodapé: Fish da run, próximo round, avisos de elite/horda (Danger ≥ 2), botão "Próximo round".
+- Oferta ponderada por **sorte**, round e classes que o herói já tem (leve viés para sinergia).
+- Vende também **poções de run** (uso único, não confundir com os gambits do menu) a partir do round 5.
+
+## 10. Cartas de level-up
+
+- Cada level-up durante o round abre **4 cartas** com o tempo pausado; vários level-ups no mesmo round enfileiram as escolhas (ADR-006).
+- Tipos: **stat** (comum/rara/épica/lendária, com multiplicador por raridade) e **exclusiva do herói** (6 por herói, níveis 1–5). Armas e itens **não** aparecem em cartas.
+- Raridade cresce com round e sorte (balancing-and-simulation.md Parte B §7).
+
+**Exclusivas**
+
+| Jack | Bob | Lucia |
+|---|---|---|
+| Sede de Sangue · Contra-Ataque · Redemoinho de Lâminas (vira arma, §8) · Pele de Ferro · Açougueiro · Pisão Sísmico | Pontas Ocas · Ricochete · Drone-Sentinela (vira arma) · Atirar Correndo · Reflexo · Cinto de Granadas (vira arma) | Sintonia Elemental · Corrente Arcana · Nova Glacial · Chuva de Meteoros · Barreira Arcana · Florescer Tóxico |
+
+As três exclusivas marcadas "vira arma" passam a ser **armas iniciais/da loja exclusivas do herói**; cada herói recebe uma exclusiva passiva nova no lugar (definir na SDD-002: Jack "Fôlego de Ferro", Bob "Recarga Rápida", Lucia "Eco Arcano" são propostas, números a balancear).
+
+## 11. Equipamentos, itens e packs
+
+- **Equipamento** (P-66): 5 slots × 10 itens (3 comuns, 4 raros, 3 lendários). Drop por tipo de inimigo (comum 0,4%, elite 30% raro, boss 100% lendário) e venda na loja. Pego pisando (sem ímã), some em 60 s.
+- **Itens passivos** da loja (novos, estilo Brotato): modificadores de stat e de regra (ex.: "+1 projétil", "Fish extra por elite"), tiers I–IV, sem limite de quantidade.
+- **Packs de vida**: +25% (50%), +50% (30%), +75% (20%); chance 1,2% comuns, 25% elites, 100% bosses.
+
+## 12. Poções e gambits
+
+- **3 slots de gambit** configurados no menu (tipo + condição), comprados com **Pérolas**, consumidos uma vez por run: Cura 40%, Mega Cura 70%, Escudo 30% do HP máx. por 8 s, Fúria +50% dano 8 s, Antídoto (limpa e imuniza 5 s), Pressa +40% vel. de ataque 8 s.
+- Condições: HP < 25/50/75%, envenenado, sangrando, boss na tela, ≥ N inimigos perto, início do round. Avaliadas em ordem a cada 0,25 s.
+
+## 13. Superpoderes
+
+- Liberam no **level 5** do herói; carga por abates (100 no 1º uso, +5 a cada uso na run; elite conta 3, boss não conta); carga persiste entre rounds; **Espaço** usa e zera; invulnerável durante a animação.
+
+| Herói | Superpoder | Efeito | VFX |
+|---|---|---|---|
+| Jack | **Colheita Rubra** | tornado de lâminas 3 s, puxa inimigos, 800% do dano/s em 180 u, sangramento máximo | tornado de sangue e aço |
+| Bob | **Bombardeio** | 16 explosões em 2,5 s na área visível, 600% cada, queimadura | sinalizador, bombas, crateras |
+| Lucia | **Cataclismo Elemental** | vórtice dos 4 elementos 4 s em 260 u, 1000% do dano mágico | vórtice de 4 cores, meteoro, pilares, raios |
+
+## 14. Inimigos, elites e bosses
+
+Papéis por bioma: **enxame** (rápido e frágil), **voador** (ignora props), **tanque**, **à distância** (cospe), **explosivo** (nuvem de veneno), **investida**. Elites usam o mesmo sprite ×1,25 (roxo) / ×1,4 (laranja) com aura e barra de HP, drop garantido de Fish.
+
+| Bioma | Inimigos | Boss |
+|---|---|---|
+| Antártida | pinguim zumbi, skua, foca, cientista, pinguim inchado, morsa | **Urso polar zumbi** (patada, investida, rugido que invoca pinguins) |
+| Estação / porto | marinheiro, gaivota, leão-marinho, médico, bloater de combustível, narval | **Kraken do Porto** (tentáculo, rajada de tinta, invoca marinheiros) |
+| Cidade em ruínas | cidadão, rato, pombo, policial de choque, soldado, bloater ácido, brutamontes | **Abominação** (investidas, poças de ácido, invoca ratos) |
+
+Números em balancing-and-simulation.md Parte B §2.
+
+## 15. Biomas
+
+Rounds 1–10 Antártida → 11–20 estação de pesquisa/porto → 21–30 cidade em ruínas → repete (escala por volta). Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool próprio de inimigos. Banner de chegada e troca de música no round 11/21.
+
+## 16. Dificuldade (Danger) e endless
+
+- **Danger 0–5 por herói** (ADR-008): vencer o boss do round 20 no Danger D libera D+1 para aquele herói.
+- Por danger: multiplicadores de HP/dano dos inimigos e de drops; **waves de elite/horda extras** (D0–1 nenhuma, D2–3 uma, D4–5 três), avisadas na loja a partir do D2.
+- **Endless** sem vitória; a cada volta de 30 rounds HP ×1,6 e dano ×1,5 (balancing-and-simulation.md Parte B §2).
+- Conquistas e leaderboards por herói e danger.
+
+## 17. Economia
+
+| Moeda | Escopo | Ganho | Gasto |
+|---|---|---|---|
+| **Fish 🐟** | run (zera) | drop de inimigos (5% comuns, garantido em elites), fim de round `2 + floor(N/2)` × harvesting, boss | loja, reroll, poções de run |
+| **Pérolas** | persistente | round concluído, boss, conquistas, conversão do Fish restante (10:1) | Oficina (9 upgrades), gambits, armas iniciais |
+
+Preços de loja e reroll em `src/data/economy.ts` (SDD-003); Oficina em balancing-and-simulation.md Parte B §8b.
+
+## 18. Progressão persistente
+
+- XP coletado na run vai para o **herói** (level 1–100, `xpToNext(L) = floor(30·L^1,55 + 50)`). Cada level: crescimento automático da classe + **1 ponto de stat** para gastar no menu.
+- Morrer mantém XP, Pérolas, conquistas e equipamento lendário desbloqueado no catálogo.
+- **Save local** com schema versionado e migração; Steam Cloud no Electron; export/import `.json` na web.
+
+## 19. Conquistas e extras
+
+131 conquistas globais (1 ponto cada) → **loja de extras** (10 bônus permanentes pequenos, até nível 10). Conquistas viram conquistas Steam. Novas: por danger, por set completo, por fusão IV, por round 20/30/50 por herói.
+
+## 20. Game feel e gore
+
+Hit-stop em crítico/elite/boss, screen shake, flash de acerto limitado, números de dano coloridos por tipo, knockback, jorros e gibs com arco e sombra, poças persistentes, luz dos tiros e magias, zoom-punch em boss, bloom opcional (desligado por padrão). **Gore** máximo por padrão; opções "reduzido" e "gosma verde".
+
+## 21. UI e telas
+
+Toda a UI é React + Tailwind v4 sobre o canvas (ADR-002); textos em `src/i18n/`; navegável por teclado, mouse, gamepad e toque; layouts validados em 1920×1080, 2560×1440 e 2400×1080 (celular landscape) nos 4 idiomas.
+
+```
+MainMenu ─► HeroSelect (herói · danger · arma inicial) ─► Game (+ HUD)
+   │            │                                            │ level-up ─► LevelUpCards ─► Game
+   │            └─► Hero (pontos · gambits · Oficina)        │ fim do round ─► Shop ─► Game
+   ├─► Achievements / Extras                                 │ Esc ─► Pause (stats, armas, equipamento) ─► Settings
+   ├─► History · Settings · Credits                          └ morte / timeout ─► GameOver ─► Menu / Retry
+   └─► Continue (round N)                                   (demo: round 10 ─► DemoEnd ─► Wishlist)
+```
+
+**HUD**: HP e XP grandes com número, Fish da run, round e timer, barra do boss + 3:00, aviso de elite, medidor do superpoder (a partir do level 5), 6 ícones de arma com tier, 5 slots de equipamento compactos, 3 gambits, 1×/2×, FPS (opcional), rodapé com versão.
+
+## 22. Demo
+
+Rounds 1–10 (termina no urso polar), só Jack, Danger 0–1; Bob e Lucia bloqueados com aviso; tela final com resumo, "Bob desbloqueado no jogo completo", botão **Wishlist** e "Jogar de novo"; save migra para o jogo completo. Mesma demo em `/demo` (web) e na Steam (ADR-013).
+
+## 23. Fora do escopo da 1.0
+
+Multiplayer/co-op, iOS, Linux/macOS, portrait, F2P/ads, DLC, vitória/final, vozes, rotação de câmera, 3D.

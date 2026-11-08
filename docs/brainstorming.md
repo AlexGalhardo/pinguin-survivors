@@ -48,7 +48,7 @@
 | B-24 | Electron | **Windows primeiro**; Linux/macOS depois da 1.0. | Windows + Linux na demo | ADR-012 |
 | B-25 | Mobile | **Landscape only** com joystick virtual flutuante. | Portrait | ADR-012 |
 | B-26 | Demo | **Rounds 1–10 (até o 1º boss), só Jack**; Bob e Lucia aparecem bloqueados. **Save da demo migra** para o jogo completo. Mesma demo na web (`/demo`) e na Steam. | 3 heróis na demo; demo isolada | ADR-013 |
-| B-27 | Site | Landing page + `/demo` no **mesmo build Vite**, hospedados no **GitHub Pages** (grátis). DNS próprio depois. | Vercel; site separado | ADR-014 |
+| B-27 | Site | Site **100% estático em Astro 7.4.x** (`site/`), hospedado no **GitHub Pages** (grátis); a demo (build Vite com `VITE_DEMO=1`) é copiada para `/demo/` dentro do site. DNS próprio depois. (Atualizado em 2026-11-08: antes era "mesmo build Vite".) | Vercel; landing dentro do Vite do jogo | ADR-014 |
 | B-28 | Versionamento | **Padrão vukem**: tags `vX.Y.Z` sem sufixo `-alpha`/`-beta`; **0.0.x = alpha**, **0.1.x = beta**, **1.0.0 = lançamento comercial**. Release = tag, corpo em grupos Keep a Changelog com escopo em negrito e link do commit. | Manter `0.2.0-alpha.N` | ADR-015 |
 | B-29 | Tags antigas | **Retag** das 11 tags `v0.1.0-alpha.1…v0.1.0-beta.8` como `v0.0.1…v0.0.11` (mesmos commits), apagar as antigas e criar releases retroativos como pre-release. Tags do Starfall (`v1.0.0-*`, `pinguin-survivors-final`) não geram release. | Manter nomes antigos | ADR-015 |
 | B-30 | Prioridade | **Jogo completo em paridade**; a demo é um recorte do jogo completo, não um produto à parte. Se o tempo apertar, nada do jogo completo é cortado em favor da demo. | Demo polida acima de tudo | — |
