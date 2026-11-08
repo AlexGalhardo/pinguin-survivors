@@ -112,10 +112,10 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 
 Specs: [SDD-002](docs/sdds/SDD-002-armas-slots-classes-tiers.md), [SDD-003](docs/sdds/SDD-003-loja-cartas-economia.md). UI ainda em Phaser provisória ou React mínimo (ver T3.x); o que importa aqui é a lógica.
 
-- [ ] **T2.1** `src/data/weapons.ts` por classe e tier I–IV (17 linhas), `sets.ts`, `unlocks.ts`; placeholder tingido por tier · Resp.: senior · Est.: 8 h · Assert: `bun test tests/weapons-data.test.ts` (A3)
-  - [ ] Auditoria: toda linha tem 4 tiers com `damage` crescente.
-- [ ] **T2.2** `build.ts`: 6 slots, `addWeapon`, `fuse`, `setBonuses`; `stats.ts` aplica sets · Resp.: senior · Dep.: T2.1 · Est.: 6 h · Assert: `tests/build.test.ts`, `tests/sets.test.ts` (A1, A2).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T2.1** `src/data/weapons.ts` por classe e tier I–IV (17 linhas), `sets.ts`, `unlocks.ts`; placeholder tingido por tier · Resp.: senior · Est.: 8 h · Assert: `bun test tests/weapons-data.test.ts` (A3) · Evidência (2026-11-08): `bun test tests/weapons-data.test.ts` 5 pass (A3); 17 linhas em `src/data/weapon-lines.ts` (vira `weapons.ts` no T2.3, quando o `SIGNATURE` antigo sai), `src/data/sets.ts`, `src/data/unlocks.ts`, tokens `weaponTier1..4`.
+  - [x] Auditoria: toda linha tem 4 tiers com `damage` crescente. · Conferido (2026-11-08, orquestrador): re-executado; lido `weapon-lines.ts` (tier I = números atuais, II–IV por `TIER_SCALE`, dano crescente).
+- [x] **T2.2** `build.ts`: 6 slots, `addWeapon`, `fuse`, `setBonuses`; `stats.ts` aplica sets · Resp.: senior · Dep.: T2.1 · Est.: 6 h · Assert: `tests/build.test.ts`, `tests/sets.test.ts` (A1, A2). · Evidência (2026-11-08): `bun test tests/build.test.ts tests/sets.test.ts tests/stats.test.ts tests/weapons-data.test.ts tests/cards.test.ts tests/sim.test.ts` 28 pass (A1, A2); `fuse` por índice de slot (SDD-002 v1.1); `applyModifiers(stats, setBonuses(build))` pronto, chamado pelo jogo no T2.3.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado 28 pass; diff de `stats.ts` só adiciona `applyModifiers`; API antiga de `build.ts` intacta.
 - [ ] **T2.3** `WeaponRing`/`WeaponSystem` com 6 slots e prioridade boss/elite; remover arma assinada e evolução · Resp.: senior · Dep.: T2.2 · Est.: 8 h · Assert: `rg "signature|evolve|tierUp" src` vazio (A7); `?weapons=machete,knives,molotov,auxPistol,iceShards,flameRing` mostra 6 armas (A6).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T2.4** Arma inicial por herói na seleção (3 cada) · Resp.: senior · Dep.: T2.1 · Est.: 3 h · Assert: `tests/heroes.test.ts` (A4).

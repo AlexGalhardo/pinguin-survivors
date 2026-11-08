@@ -103,6 +103,14 @@ export function addStat(stats: PlayerStats, key: StatKey, value: number): void {
 	}
 }
 
+/** Applies modifiers (e.g. `setBonuses(build)`) on top of freshly built stats; not idempotent. */
+export function applyModifiers(
+	stats: PlayerStats,
+	mods: readonly { stat: StatKey; value: number }[],
+): void {
+	for (const m of mods) addStat(stats, m.stat, m.value);
+}
+
 export function getStat(stats: PlayerStats, key: StatKey): number {
 	if (key.startsWith('resist.')) return stats.resist[key.slice(7) as Element];
 	if (key.startsWith('tagMul.')) return stats.tagMul[key.slice(7) as DamageTag];

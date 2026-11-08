@@ -6,7 +6,20 @@ import {
 	type PerkId,
 	type SecondaryId,
 } from '../data/secondaries';
+import { SET_BONUSES, SET_IDS, SET_THRESHOLDS, type SetId, type SetModifier } from '../data/sets';
+import {
+	MAX_WEAPON_SLOTS,
+	WEAPON_LINE_BY_ID,
+	type WeaponId,
+	type WeaponTier,
+} from '../data/weapon-lines';
 import { addStat, type PlayerStats } from './stats';
+
+/** One weapon slot (SDD-002 RF-01). */
+export interface WeaponInstance {
+	id: WeaponId;
+	tier: WeaponTier;
+}
 
 /** What the hero picked this run (serialized in the run snapshot). */
 export interface Build {
@@ -14,10 +27,12 @@ export interface Build {
 	secondaries: Partial<Record<SecondaryId, number>>;
 	perks: Partial<Record<PerkId, number>>;
 	cards: string[];
+	/** 1.0 weapon slots; coexists with `secondaries` until T2.3 removes them. */
+	weapons: WeaponInstance[];
 }
 
 export function emptyBuild(tier: 1 | 2 | 3 = 1): Build {
-	return { tier, secondaries: {}, perks: {}, cards: [] };
+	return { tier, secondaries: {}, perks: {}, cards: [], weapons: [] };
 }
 
 export function slotsUsed(build: Build): number {
@@ -78,4 +93,47 @@ export function applyCard(
 			break;
 	}
 	return result;
+}
+
+/** Adds a weapon to a free slot; false (and no change) when all slots are taken. */
+export function addWeapon(build: Build, id: WeaponId, tier: WeaponTier = 1): boolean {
+	if (build.weapons.length >= MAX_WEAPON_SLOTS) return false;
+	build.weapons.push({ id, tier });
+	return true;
+}
+
+/** Slots `a` and `b` (indices into `build.weapons`) can fuse: same id and tier, tier < 4. */
+export function canFuse(build: Build, a: number, b: number): boolean {
+	const wa = build.weapons[a];
+	const wb = build.weapons[b];
+	return !!wa && !!wb && a !== b && wa.id === wb.id && wa.tier === wb.tier && wa.tier < 4;
+}
+
+/** Merges two slots into one weapon a tier higher (kept in the lower slot). */
+export function fuse(build: Build, a: number, b: number): boolean {
+	if (!canFuse(build, a, b)) return false;
+	const keep = Math.min(a, b);
+	const w = build.weapons[keep] as WeaponInstance;
+	build.weapons[keep] = { id: w.id, tier: (w.tier + 1) as WeaponTier };
+	build.weapons.splice(Math.max(a, b), 1);
+	return true;
+}
+
+export function setCounts(build: Build): Partial<Record<SetId, number>> {
+	const counts: Partial<Record<SetId, number>> = {};
+	for (const w of build.weapons)
+		for (const set of WEAPON_LINE_BY_ID[w.id].sets) counts[set] = (counts[set] ?? 0) + 1;
+	return counts;
+}
+
+/** Modifiers from the highest step reached per set (none below 2 weapons). */
+export function setBonuses(build: Build): SetModifier[] {
+	const counts = setCounts(build);
+	const mods: SetModifier[] = [];
+	for (const set of SET_IDS) {
+		const n = counts[set] ?? 0;
+		const step = SET_THRESHOLDS.filter((t) => n >= t).length - 1;
+		if (step >= 0) mods.push(...SET_BONUSES[set][step as 0 | 1 | 2]);
+	}
+	return mods;
 }

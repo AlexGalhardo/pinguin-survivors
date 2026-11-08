@@ -2,9 +2,9 @@ import { describe, expect, test } from 'bun:test';
 import { KEYS } from '../src/art/manifest';
 import { HERO_IDS } from '../src/config/constants';
 import { PALETTE } from '../src/config/palette';
+import { SET_IDS } from '../src/data/sets';
 import { STARTING_WEAPON_UNLOCKS, STARTING_WEAPONS } from '../src/data/unlocks';
 import {
-	SET_IDS,
 	WEAPON_LINE_BY_ID,
 	WEAPON_LINES,
 	WEAPON_TIER_TINT,

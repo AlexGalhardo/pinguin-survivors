@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 1.0 weapon lines (`src/data/weapon-lines.ts`): 17 weapons in four tiers, including the new `hammer` (melee/blunt), starting weapons per hero and Pearl unlocks (`src/data/unlocks.ts`), tier tint tokens.
 - Pure end-of-round shop (`src/logic/shop.ts`, `SHOP` in `src/data/economy.ts`): weighted offers, locks, growing reroll price, tier prices and sell value (SDD-003).
 - `bun run lint:i18n` (`scripts/lint-i18n.ts`): fails on visible text literals in `src/ui/**/*.tsx` JSX (SDD-004 A5).
+- Six weapon slots in `src/logic/build.ts` (`addWeapon`, `canFuse`, `fuse`, `setCounts`, `setBonuses`), set bonuses at 2/4/6 in `src/data/sets.ts` and `applyModifiers` in `src/logic/stats.ts` (SDD-002).
 
 ### Fixed
 

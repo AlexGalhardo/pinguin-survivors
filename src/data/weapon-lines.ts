@@ -1,6 +1,7 @@
 import type { HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import type { DamageTag, Element } from '../logic/combat';
+import type { SetId } from './sets';
 
 /**
  * 1.0 weapon lines (SDD-002): one entry per weapon, 4 tiers each. Tier I = the old
@@ -8,19 +9,11 @@ import type { DamageTag, Element } from '../logic/combat';
  * `TIER_SCALE`. Not wired into the game yet: `weapons.ts` (SIGNATURE) and `secondaries.ts`
  * keep running until T2.3 swaps WeaponSystem to these lines.
  */
+/** Weapon slots per run (ADR-005). */
+export const MAX_WEAPON_SLOTS = 6;
+
 export type WeaponTier = 1 | 2 | 3 | 4;
 export const WEAPON_TIERS = [1, 2, 3, 4] as const satisfies readonly WeaponTier[];
-
-export const SET_IDS = [
-	'blade',
-	'blunt',
-	'thrown',
-	'gun',
-	'explosive',
-	'elemental',
-	'support',
-] as const;
-export type SetId = (typeof SET_IDS)[number];
 
 export type WeaponBehavior =
 	| 'arc'
