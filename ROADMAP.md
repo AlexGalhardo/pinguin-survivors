@@ -208,8 +208,8 @@ Specs: [SDD-012](docs/sdds/SDD-012-arte-topdown-e-vfx.md), [docs/audio.md](docs/
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T4.7** Refações aprovadas em T4.1 (até 3 personagens) · Est.: 6 h · Assets: ≤ 300 · Assert: prancha pós-refação aprovada.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T4.8** SFX da loja (5) e de elementos (5); música da loja (30 s) · Resp.: orquestrador (skill `pinguin-audio-assets`) · Est.: 3 h · Assets: ~420 créditos · Assert: chaves `sfx.shop*`, `music.shop` no manifest e tocando no E2E.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T4.8** SFX da loja (5) e de elementos (5); música da loja (30 s) · Resp.: orquestrador (skill `pinguin-audio-assets`) · Est.: 3 h · Assets: ~420 créditos · Assert: chaves `sfx.shop*`, `music.shop` no manifest e tocando no E2E. · Evidência (2026-11-08): 6 SFX da loja (`shopOpen`, `shopBuy`, `shopReroll`, `shopLock`, `weaponFuse`, `shopNoFish`), 5 de elementos (`fire`, `ice`, `earth`, `lightning`, `freeze`) e `music.shop` (30 s, 70 bpm), normalizados por ffmpeg; chaves no manifest e tocando na loja/hits; `tests/audio-assets.test.ts` e o E2E `--demo` conferem as 12 chaves no cache do Phaser (sem som). Gasto 519 créditos (estimativa 420; saldo 58.198 → 57.679), registrado em `docs/audio.md` §6–§7.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): teste re-executado; durações por ffprobe batem; gasto acima do teto interno de 450 que dei, mas abaixo do gate de 2.000 — anotado.
 - [ ] **T4.9** VFX do superpoder do Jack (Colheita Rubra) · Est.: 4 h · Assets: ~50 · Assert: `fx.super.jack` ≥ 12 frames no atlas.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T4.10** Registro: `docs/visual.md` §10–§13 e `docs/audio.md` §6–§7 com saldos · Resp.: estagiario · Assert: saldo PixelLab após M4 ≥ 3.500 (mês de janeiro).

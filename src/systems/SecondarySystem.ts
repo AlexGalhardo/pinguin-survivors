@@ -598,10 +598,10 @@ export class SecondarySystem {
 		}
 	}
 
-	/** Frost Nova (Lucia): freezes everything around her when she gets hit. */
-	onHeroHit(hx: number, hy: number, grid: SpatialGrid<Enemy>): void {
+	/** Frost Nova (Lucia): freezes everything around her when she gets hit; true when it fired. */
+	onHeroHit(hx: number, hy: number, grid: SpatialGrid<Enemy>): boolean {
 		const level = this.build.secondaries.frostNova;
-		if (!level || this.novaCooldown > 0) return;
+		if (!level || this.novaCooldown > 0) return false;
 		const def = SECONDARIES.frostNova;
 		this.novaCooldown = def.cooldown / levelScale(level);
 		const act = this.activeOf(def, level);
@@ -610,6 +610,7 @@ export class SecondarySystem {
 		const hit = this.area.burst(grid, hx, hy, radius, out.amount, 'ice');
 		for (const e of hit) e.status.frozen = Math.max(e.status.frozen, STATUS.ice.freeze);
 		this.area.flash(hx, hy, radius, PALETTE.elIce, 0.4);
+		return true;
 	}
 
 	/** An enemy near others: a few random samples, keep the most crowded one. */

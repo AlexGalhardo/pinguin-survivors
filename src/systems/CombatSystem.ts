@@ -49,6 +49,14 @@ export interface CombatHooks {
 }
 
 /** All damage rules applied inside the scene: on-hit effects, DoTs, kills and hero contact. */
+/** Sound of an elemental hit (the sfx limiter keeps hordes from stacking them). */
+const ELEMENT_SFX = {
+	fire: 'sfx.fire',
+	ice: 'sfx.ice',
+	earth: 'sfx.earth',
+	energy: 'sfx.lightning',
+} as const;
+
 export class CombatSystem {
 	iFrames = 0;
 	god = false;
@@ -80,6 +88,7 @@ export class CombatSystem {
 		if (crit) countRun(this.run, 'crits');
 		if (this.stats.lifesteal > 0) healHero(this.run, amount * this.stats.lifesteal);
 		e.lastElement = opts.element ?? null;
+		if (opts.element) this.fx.play(ELEMENT_SFX[opts.element]);
 		this.damage(e, amount, crit, opts.color, true);
 		const shock = !opts.noChain && this.rng.next() < this.stats.shockChance;
 		if ((opts.element === 'energy' && !opts.noChain) || shock) this.chain(e, amount);

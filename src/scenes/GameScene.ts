@@ -800,7 +800,8 @@ export class GameScene extends Phaser.Scene {
 			const thorns = this.stats.armor * PERKS.ironSkin.thorns * levelScale(iron);
 			this.combat.damage(source, thorns, false, undefined, false);
 		}
-		this.secondaries.onHeroHit(this.hero.x, this.hero.y, this.enemies.grid);
+		if (this.secondaries.onHeroHit(this.hero.x, this.hero.y, this.enemies.grid))
+			this.fx.play('sfx.freeze');
 	}
 
 	// --- Potions and gambits (P-28) --------------------------------------------------------
@@ -1213,7 +1214,11 @@ export class GameScene extends Phaser.Scene {
 			this.publishLevelUpView();
 			return;
 		}
-		if (this.run.phase === 'shop') this.publishShopView();
+		if (this.run.phase === 'shop') {
+			this.fx.play('sfx.shopOpen');
+			playMusic(this, 'music.shop');
+			this.publishShopView();
+		}
 	}
 
 	private pickCard(offer: CardOffer | undefined): void {
@@ -1411,10 +1416,18 @@ export class GameScene extends Phaser.Scene {
 		const shop = run.shop;
 		const offer = shop?.offers[index];
 		if (!shop || !offer || run.phase !== 'shop') return;
+		if (run.fish < offer.price) {
+			this.fx.play('sfx.shopNoFish');
+			return;
+		}
 		if (offer.kind !== 'weapon') {
 			// Gear goes to the bag/worn slots and potions to the run stock (`purchase`).
 			const before = run.fish;
-			if (!purchase(run, index, { build: this.build, stats: this.stats })) return;
+			if (!purchase(run, index, { build: this.build, stats: this.stats })) {
+				this.fx.play('sfx.shopNoFish');
+				return;
+			}
+			this.fx.play('sfx.shopBuy');
 			this.fishSpent += before - run.fish;
 			if (offer.kind === 'gear') {
 				this.syncMaxHp();
@@ -1424,9 +1437,13 @@ export class GameScene extends Phaser.Scene {
 			return;
 		}
 		const merge = this.mergeSlot(offer.id, offer.tier);
-		if (this.build.weapons.length >= MAX_WEAPON_SLOTS && merge < 0) return;
+		if (this.build.weapons.length >= MAX_WEAPON_SLOTS && merge < 0) {
+			this.fx.play('sfx.shopNoFish');
+			return;
+		}
 		const bought = buyOffer(shop, run.fish, index);
 		if (!bought) return;
+		this.fx.play('sfx.shopBuy');
 		this.fishSpent += offer.price;
 		run.shop = bought.state;
 		run.fish = bought.fish;
@@ -1436,6 +1453,7 @@ export class GameScene extends Phaser.Scene {
 		if (!addWeapon(this.build, id, tier)) {
 			this.build.weapons[merge] = { id, tier: (tier + 1) as WeaponTier };
 			this.recordFusion(tier + 1);
+			this.fx.play('sfx.weaponFuse');
 		}
 		this.refreshSetBonuses();
 		this.onBuildChanged();
@@ -1447,7 +1465,11 @@ export class GameScene extends Phaser.Scene {
 		if (!run.shop || run.phase !== 'shop') return;
 		const roll = this.shopRoll();
 		const r = rerollShop(run.shop, run.fish, roll.rng, run.round, roll.ctx, roll.pool);
-		if (!r) return;
+		if (!r) {
+			this.fx.play('sfx.shopNoFish');
+			return;
+		}
+		this.fx.play('sfx.shopReroll');
 		this.fishSpent += run.fish - r.fish;
 		this.fishRerolled += run.fish - r.fish;
 		run.shop = r.state;
@@ -1458,6 +1480,7 @@ export class GameScene extends Phaser.Scene {
 	private shopLock(index: number): void {
 		if (!this.run.shop || this.run.phase !== 'shop') return;
 		this.run.shop = lockOffer(this.run.shop, index);
+		this.fx.play('sfx.shopLock');
 		this.publishShopView();
 	}
 
@@ -1474,6 +1497,7 @@ export class GameScene extends Phaser.Scene {
 	private shopFuse(a: number, b: number): void {
 		if (this.run.phase !== 'shop' || !fuse(this.build, a, b)) return;
 		const merged = this.build.weapons[Math.min(a, b)] as WeaponInstance;
+		this.fx.play('sfx.weaponFuse');
 		this.recordFusion(merged.tier);
 		this.refreshSetBonuses();
 		this.onBuildChanged();

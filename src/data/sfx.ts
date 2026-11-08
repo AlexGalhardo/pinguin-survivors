@@ -40,6 +40,17 @@ export const SFX = {
 	'sfx.super': { volume: 0.9, polyphony: 1, pitch: 0, ms: 2000 },
 	'sfx.uiSelect': { volume: 0.5, polyphony: 2, pitch: 0.05, ms: 500 },
 	'sfx.gameOver': { volume: 0.8, polyphony: 1, pitch: 0, ms: 2500 },
+	'sfx.shopOpen': { volume: 0.7, polyphony: 1, pitch: 0, ms: 800 },
+	'sfx.shopBuy': { volume: 0.8, polyphony: 1, pitch: 0.03, ms: 800 },
+	'sfx.shopReroll': { volume: 0.8, polyphony: 1, pitch: 0.05, ms: 800 },
+	'sfx.shopLock': { volume: 0.9, polyphony: 1, pitch: 0.03, ms: 480 },
+	'sfx.weaponFuse': { volume: 0.8, polyphony: 1, pitch: 0, ms: 1200 },
+	'sfx.shopNoFish': { volume: 0.7, polyphony: 1, pitch: 0, ms: 480 },
+	'sfx.fire': { volume: 0.4, polyphony: 2, pitch: 0.1, ms: 1000 },
+	'sfx.ice': { volume: 0.45, polyphony: 2, pitch: 0.1, ms: 1000 },
+	'sfx.earth': { volume: 0.35, polyphony: 2, pitch: 0.1, ms: 1000 },
+	'sfx.lightning': { volume: 0.35, polyphony: 2, pitch: 0.1, ms: 1000 },
+	'sfx.freeze': { volume: 0.55, polyphony: 1, pitch: 0.05, ms: 1000 },
 } as const satisfies Record<string, SfxDef>;
 
 export type SfxKey = keyof typeof SFX;

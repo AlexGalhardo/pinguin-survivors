@@ -125,6 +125,72 @@ const SFX: SfxDef[] = [
 		durationSeconds: 2.5,
 		variants: 1,
 	},
+	{
+		key: 'sfx.shopOpen',
+		text: 'old wooden shop door bell chime with a short metallic latch click, arctic merchant stall opening, short and clean, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.shopBuy',
+		text: 'metal coins dropping into a cash box and a short register bell, ka-ching, short and clean, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.shopReroll',
+		text: 'cards shuffling fast with a metallic rattle and a short whoosh, dice roll, short, cartoon gritty',
+		durationSeconds: 0.8,
+		variants: 1,
+	},
+	{
+		key: 'sfx.shopLock',
+		text: 'heavy iron padlock clicking shut, short metallic clack, cartoon gritty',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.weaponFuse',
+		text: 'two metal weapons forging together: hammer clang on an anvil with a sparks sizzle and a short power-up shimmer, cartoon gritty',
+		durationSeconds: 1.2,
+		variants: 1,
+	},
+	{
+		key: 'sfx.shopNoFish',
+		text: 'empty cash drawer denied buzzer, dull wooden thud with a short negative error tone, cartoon gritty',
+		durationSeconds: 0.5,
+		variants: 1,
+	},
+	{
+		key: 'sfx.fire',
+		text: 'magic staff casting a fire bolt, crackling flame burst with a short roaring whoosh, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.ice',
+		text: 'magic staff casting an ice bolt, crystalline freezing crack with a short icy whoosh, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.earth',
+		text: 'magic staff casting an earth spell, heavy rock slam with rumbling stone crack, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.lightning',
+		text: 'magic staff casting a lightning bolt, sharp electric zap crackle with a thunder snap, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
+	{
+		key: 'sfx.freeze',
+		text: 'enemies freezing solid, sudden ice shatter crystallizing burst with a short frosty chime, cartoon gritty',
+		durationSeconds: 1.0,
+		variants: 1,
+	},
 ];
 
 const OUT = 'public/assets/audio/sfx';

@@ -254,6 +254,13 @@ async function demoFlow(): Promise<void> {
 	await page.goto(`${base}/?skipMenu=1&hero=bob&round=10&seed=1&god=1`, { waitUntil: 'load' });
 	await page.waitForFunction(() => '__GAME__' in window);
 	await waitFor('demo run started', (p) => p.active.includes('Game') && p.round === 10);
+	// The demo server starts fresh, so every audio file on disk must have been loaded (no 404).
+	const missing = await page.evaluate(
+		`['sfx.shopOpen','sfx.shopBuy','sfx.shopReroll','sfx.shopLock','sfx.weaponFuse','sfx.shopNoFish','sfx.fire','sfx.ice','sfx.earth','sfx.lightning','sfx.freeze','music.shop'].filter((k) => !window.__GAME__.cache.audio.exists(k))`,
+	);
+	if ((missing as string[]).length > 0)
+		fail(`audio not loaded: ${(missing as string[]).join(', ')}`);
+	console.log('ok   new shop and element audio loaded');
 	const hero = await game((g) => g.run.hero);
 	if (hero !== 'jack') fail(`?hero=bob in the demo should fall back to jack, got ${hero}`);
 	await see('toast: available in the full game', 'Available in the full game', 5000);

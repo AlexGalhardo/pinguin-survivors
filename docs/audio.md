@@ -52,6 +52,13 @@ Endpoint `POST /v1/sound-generation` (`text`, `duration_seconds`, `prompt_influe
 | `sfx.super` | massive superpower activation: bass drop, distorted guitar chug and a whooshing blast wave |
 | `sfx.uiSelect` | short crisp menu select click with a metallic tick |
 | `sfx.gameOver` | dark game over sting: slow heavy distorted guitar chord fading with a low drone, doom metal |
+| `sfx.shopOpen` | old wooden shop door bell chime with a short metallic latch click, arctic merchant stall opening |
+| `sfx.shopBuy` | metal coins dropping into a cash box and a short register bell, ka-ching |
+| `sfx.shopReroll` | cards shuffling fast with a metallic rattle and a short whoosh, dice roll |
+| `sfx.shopLock` | heavy iron padlock clicking shut, short metallic clack |
+| `sfx.weaponFuse` | two metal weapons forging together: hammer clang on an anvil with a sparks sizzle and a short power-up shimmer |
+| `sfx.shopNoFish` | empty cash drawer denied buzzer, dull wooden thud with a short negative error tone |
+| `sfx.fire` / `sfx.ice` / `sfx.earth` / `sfx.lightning` / `sfx.freeze` | magic staff casting a fire bolt / an ice bolt / an earth spell / a lightning bolt; enemies freezing solid (1 s each, "cartoon gritty") |
 
 Prompts completos e parâmetros em `art-src/elevenlabs/log.jsonl`.
 
@@ -65,6 +72,7 @@ Endpoint `POST /v1/music` (`force_instrumental: true`), ~560 créditos por 45 s 
 | `music.round` | 45 s | rounds 1–20 |
 | `music.late` | 45 s | rounds ≥ 21 |
 | `music.boss` | 45 s | rounds de boss |
+| `music.shop` | 30 s | loja (toca ao abrir, volta à música do round ao fechar) |
 
 Loops de reserva feitos pelo endpoint de SFX em `art-src/elevenlabs/music/*-loop.mp3`.
 
@@ -76,12 +84,12 @@ Histórico, mantido para referência (arquivos e código na branch `legacy-voice
 
 | Item | Chaves | Estimativa |
 |---|---|---|
-| SFX da loja | `sfx.shopBuy`, `sfx.shopReroll`, `sfx.shopLock`, `sfx.weaponFuse`, `sfx.shopOpen` | ~20 créditos |
+| ~~SFX da loja~~ (feito, 2026-11-08, + `sfx.shopNoFish`) | `sfx.shopBuy`, `sfx.shopReroll`, `sfx.shopLock`, `sfx.weaponFuse`, `sfx.shopOpen`, `sfx.shopNoFish` | ~20 créditos |
 | SFX de armas novas | `sfx.knife`, `sfx.boomerang`, `sfx.pistol`, `sfx.crossbow`, `sfx.molotov`, `sfx.mine`, `sfx.totem`, `sfx.flameRing` | ~35 |
-| SFX de elementos | `sfx.fire`, `sfx.ice`, `sfx.earth`, `sfx.lightning`, `sfx.freeze` | ~20 |
+| ~~SFX de elementos~~ (feito, 2026-11-08) | `sfx.fire`, `sfx.ice`, `sfx.earth`, `sfx.lightning`, `sfx.freeze` | ~20 |
 | SFX de bosses | `sfx.krakenInk`, `sfx.abominationAcid`, `sfx.bossDeath` | ~12 |
 | SFX de UI/meta | `sfx.pearls`, `sfx.dangerUnlock`, `sfx.equip`, `sfx.demoEnd` | ~16 |
-| Música da loja | `music.shop` (30 s) | ~380 |
+| ~~Música da loja~~ (feito, 2026-11-08) | `music.shop` (30 s) | ~380 |
 | Música dos biomas 2–3 | `music.station`, `music.ruins` (45 s cada) | ~1.120 |
 | Sting de boss derrotado | `sfx.bossDown` | ~4 |
 
@@ -90,3 +98,9 @@ Total estimado **~1.600 créditos** de 58.198 disponíveis (renova em 14/11/2026
 ## 7. Orçamento
 
 Plano **Creator** (ativo), 124.333 créditos no ciclo atual, 66.135 usados em 2026-11-08. Regra: gerar 1 take, ouvir, só então variações; registrar tudo no `log.jsonl`.
+
+### Registro de 2026-11-08 (T4.8)
+
+- Saldo antes: 58.198 créditos; depois: 57.679. **Gasto total: 519** (11 SFX de 0,5 a 1,2 s, 1 take cada, + `music.shop` de 30 s, 1 take). Isso passou do teto duro de 450 do lote em 69 créditos: a estimativa de ~20 para os SFX e ~380 para a música estava abaixo do real; o custo por faixa não foi medido separadamente. Nada mais foi gerado depois de notar.
+- Loudness: os takes saíram fora do alvo (`music.shop` a −33 LUFS, `sfx.shopLock` a −39). Normalizados offline, sem créditos, por `bun scripts/el-normalize.ts <chaves>` (SFX −14, música −18 LUFS; originais em `art-src/elevenlabs/`). Em clipes de 0,5–1 s o `loudnorm` de um passe não acerta o alvo (ficaram entre −14 e −21 LUFS); o ajuste fino fica no volume por chave de `src/data/sfx.ts`. `music.shop` ficou a −17,7 LUFS.
+- Saldo: `bun --env-file=.env scripts/el-quota.ts`.

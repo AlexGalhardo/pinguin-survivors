@@ -17,6 +17,11 @@ const TRACKS: Track[] = [
 		prompt: 'Relentless instrumental industrial death metal track for the late, desperate rounds of a brutal zombie horde survival video game set in a ruined burning city: crushing low-tuned guitar chugs, frantic double kick drums, sirens-like dissonant synth leads, dark pounding industrial percussion, urgent and apocalyptic, 155 bpm, loopable, no vocals',
 		lengthMs: 45000,
 	},
+	{
+		key: 'music.shop',
+		prompt: 'Instrumental ambient track for a shop screen in a brutal zombie horde game: low wind over arctic silence, soft distant metal clank, slow minor drone, melancholic and calm, 70 bpm, loopable, no vocals',
+		lengthMs: 30000,
+	},
 ];
 
 const wanted = process.argv.slice(2);

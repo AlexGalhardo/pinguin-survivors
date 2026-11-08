@@ -1,12 +1,13 @@
 import type Phaser from 'phaser';
 import { getSave } from './context';
 
-export type MusicKey = 'music.menu' | 'music.round' | 'music.boss' | 'music.late';
+export type MusicKey = 'music.menu' | 'music.round' | 'music.boss' | 'music.late' | 'music.shop';
 export const MUSIC_KEYS: readonly MusicKey[] = [
 	'music.menu',
 	'music.round',
 	'music.boss',
 	'music.late',
+	'music.shop',
 ];
 
 /** First round of the late-game track (the ruined city onwards). */
