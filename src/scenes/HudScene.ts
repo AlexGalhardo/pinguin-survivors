@@ -7,8 +7,8 @@ import { trackZoom } from '../core/viewport';
 import type { AchievementDef } from '../data/achievements';
 import { type I18nKey, t } from '../i18n';
 import { formatTime } from '../logic/format';
-import { worldToScreen } from '../logic/iso';
 import { xpToNext } from '../logic/progression';
+import { worldToScreen } from '../logic/projection';
 import { eliteTiers, isBossRound } from '../logic/round';
 import { AchievementToast } from '../ui/AchievementToast';
 import { TITLE_FONT, UI_FONT, UI_WEIGHT } from '../ui/font';
@@ -227,7 +227,7 @@ export class HudScene extends Phaser.Scene {
 		this.debugText?.setText(
 			t('debug.stats', {
 				fps: Math.round(this.game.loop.actualFps),
-				chunks: game.chunks.count,
+				arena: `${game.arena.sideTiles}x${game.arena.sideTiles}`,
 				enemies: game.enemies.active.length,
 				x: Math.round(game.hero.x),
 				y: Math.round(game.hero.y),

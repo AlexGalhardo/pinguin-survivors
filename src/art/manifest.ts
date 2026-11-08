@@ -1,14 +1,17 @@
 import type { BiomeId, HeroId } from '../config/constants';
 import { MUSIC_KEYS } from '../core/music';
 import { SFX, SFX_VARIANTS } from '../data/sfx';
-import type { Dir } from '../logic/iso';
+import type { Dir } from '../logic/projection';
 
 /**
  * Asset key contract (docs/visual.md). Code placeholders and final PixelLab art share
  * these keys, so swapping art never touches scenes or systems.
  */
 export const KEYS = {
+	/** Top-down ground tile, 64×64. */
 	tile: (biome: string, variant: number) => `tile.${biome}.${variant}`,
+	/** Arena wall tile: 0 = straight edge (wall on top), 1 = outer corner (top-left). */
+	border: (biome: string, n: 0 | 1) => `border.${biome}.${n}`,
 	deco: (biome: string, variant: number) => `deco.${biome}.${variant}`,
 	/** Single-frame facing texture (placeholder stage; animations replace it in phase 3). */
 	heroFacing: (hero: HeroId, tier: number, dir: Dir) => `hero.${hero}.t${tier}.${dir}`,

@@ -26,7 +26,7 @@ const result = await page.evaluate(async (secs) => {
 	const s = g.scene.getScene('Game') as unknown as {
 		hero: { x: number; y: number };
 		enemies: { active: unknown[]; spawnAt: (d: unknown, x: number, y: number) => void };
-		chunks: { addDecal: (x: number, y: number, key: string, o?: object) => void };
+		arena: { addDecal: (x: number, y: number, key: string, o?: object) => void };
 	} & AnyScene;
 	const defs = s.enemies.active.map((e) => (e as { def: unknown }).def);
 	const def = defs[0];
@@ -39,7 +39,7 @@ const result = await page.evaluate(async (secs) => {
 	for (let i = 0; i < 2000; i++) {
 		const a = Math.random() * Math.PI * 2;
 		const r = Math.random() * 700;
-		s.chunks.addDecal(
+		s.arena.addDecal(
 			s.hero.x + Math.cos(a) * r,
 			s.hero.y + Math.sin(a) * r,
 			`fx.splat.blood.${i % 4}`,

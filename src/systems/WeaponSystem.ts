@@ -47,12 +47,7 @@ export class WeaponSystem {
 		public weapon: SignatureWeapon,
 		private readonly pool: ProjectilePool,
 		private readonly onMelee: MeleeHit,
-		private readonly onSlash: (
-			x: number,
-			y: number,
-			screenAngle: number,
-			range: number,
-		) => void,
+		private readonly onSlash: (x: number, y: number, angle: number, range: number) => void,
 		private readonly onElement: (element: Element) => void,
 		private readonly onFire: (angle: number, cooldown: number) => void = () => {},
 	) {}
@@ -97,9 +92,7 @@ export class WeaponSystem {
 				const out = rollOutgoing(attack, { crit: this.rng.next() });
 				this.onMelee(e, out.amount, out.crit, w.bleedChance ?? 0);
 			}
-			const c = Math.cos(angle);
-			const s = Math.sin(angle);
-			this.onSlash(hx, hy, Math.atan2((c + s) / 2, c - s), range);
+			this.onSlash(hx, hy, angle, range);
 			return;
 		}
 		const count = w.kind === 'spread' ? (w.count ?? 1) : 1;

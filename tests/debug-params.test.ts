@@ -16,6 +16,13 @@ describe('parseDebugParams', () => {
 		});
 	});
 
+	test('arena forces the side, clamped to the maximum', () => {
+		expect(parseDebugParams('?arena=12').arena).toBe(12);
+		expect(parseDebugParams('?arena=99').arena).toBe(40);
+		expect(parseDebugParams('?arena=0').arena).toBeUndefined();
+		expect(parseDebugParams('?arena=x').arena).toBeUndefined();
+	});
+
 	test('ignores invalid values', () => {
 		const p = parseDebugParams('?hero=mage&round=0&seed=-3&tier=4&god=yes');
 		expect(p.hero).toBeUndefined();

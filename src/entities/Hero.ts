@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import type { HeroId } from '../config/constants';
 import { canInterrupt, fpsToFit, type HeroAnim, locomotion, spriteDir } from '../logic/hero-anim';
-import { type Dir, dirFromWorld, isoDepth, type Vec2, worldToScreen } from '../logic/iso';
+import { type Dir, depthOf, dirFromWorld, type Vec2, worldToScreen } from '../logic/projection';
 
 interface AnimMeta {
 	frames: number;
@@ -163,7 +163,7 @@ export class Hero {
 
 	private sync(): void {
 		const s = worldToScreen(this.x, this.y);
-		const depth = isoDepth(this.x, this.y);
+		const depth = depthOf(this.x, this.y);
 		this.shadow.setPosition(s.x, s.y).setDepth(depth - 0.5);
 		this.sprite.setPosition(Math.round(s.x), Math.round(s.y)).setDepth(depth);
 	}

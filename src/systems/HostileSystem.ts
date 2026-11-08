@@ -1,7 +1,8 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
-import { isoDepth, worldToScreen } from '../logic/iso';
-import { GROUND_DEPTH } from '../world/ChunkManager';
+import { type Bounds, insideBounds } from '../logic/arena';
+import { depthOf, worldToScreen } from '../logic/projection';
+import { GROUND_DEPTH } from '../world/Arena';
 
 /** spit poisons, ink only hits, acid is a pool's damage over time. */
 export type HostileKind = 'spit' | 'ink' | 'acid';
@@ -39,6 +40,8 @@ const SHOT_RADIUS = 6;
 export class HostileSystem {
 	private readonly shots: Shot[] = [];
 	private readonly pools: Pool[] = [];
+	/** Arena walls: shots vanish when they cross them (RF-03). */
+	bounds: Bounds | null = null;
 
 	constructor(
 		private readonly scene: Phaser.Scene,
@@ -77,7 +80,7 @@ export class HostileSystem {
 		const s = worldToScreen(x, y);
 		p.img
 			.setPosition(Math.round(s.x), Math.round(s.y))
-			.setDisplaySize(radius * 2.8, radius * 1.4)
+			.setDisplaySize(radius * 2, radius * 2)
 			.setTint(tint)
 			.setAlpha(0.2)
 			.setDepth(GROUND_DEPTH + 2)
@@ -136,7 +139,7 @@ export class HostileSystem {
 				this.onHitHero(s.damage, s.kind);
 				s.life = 0;
 			}
-			if (s.life <= 0) {
+			if (s.life <= 0 || (this.bounds && !insideBounds(s, this.bounds))) {
 				s.alive = false;
 				s.sprite.setVisible(false);
 				continue;
@@ -144,7 +147,7 @@ export class HostileSystem {
 			const p = worldToScreen(s.x, s.y, 14);
 			s.sprite
 				.setPosition(Math.round(p.x), Math.round(p.y))
-				.setDepth(isoDepth(s.x, s.y) + 0.5);
+				.setDepth(depthOf(s.x, s.y) + 0.5);
 		}
 		for (const p of this.pools) {
 			if (!p.alive) continue;

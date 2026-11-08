@@ -3,7 +3,7 @@ import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 import { ECONOMY } from '../data/economy';
 import { DROPS, GEAR_BY_ID, type GearRarity } from '../data/equipment';
-import { isoDepth, worldToScreen } from '../logic/iso';
+import { depthOf, worldToScreen } from '../logic/projection';
 
 /** heal: value = share of max HP; gear: value unused, `gearId` names the item. */
 export type PickupKind = 'xp' | 'fish' | 'meat' | 'heal' | 'gear';
@@ -152,7 +152,7 @@ export class PickupSystem {
 			}
 			p.bob += dt * 4;
 			const s = worldToScreen(p.x, p.y, 4 + Math.sin(p.bob) * 2);
-			p.sprite.setPosition(Math.round(s.x), Math.round(s.y)).setDepth(isoDepth(p.x, p.y) - 1);
+			p.sprite.setPosition(Math.round(s.x), Math.round(s.y)).setDepth(depthOf(p.x, p.y) - 1);
 		}
 		if (!any) this.vacuum = false;
 	}
@@ -173,7 +173,7 @@ export class PickupSystem {
 		const blink = 0.55 + 0.45 * Math.abs(Math.sin(this.time * 4 + p.bob));
 		const fade = Math.min(1, p.life / 3);
 		const ground = worldToScreen(p.x, p.y);
-		const depth = isoDepth(p.x, p.y);
+		const depth = depthOf(p.x, p.y);
 		p.glow
 			?.setPosition(Math.round(ground.x), Math.round(ground.y))
 			.setAlpha(blink * fade * 0.9)

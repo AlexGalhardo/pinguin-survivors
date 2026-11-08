@@ -1,6 +1,6 @@
 import type { EnemyDef } from '../data/enemies';
 import { biomeForRound } from './biome';
-import { screenToWorld, type Vec2 } from './iso';
+import { screenToWorld, type Vec2 } from './projection';
 import type { Rng } from './rng';
 
 /** Screen px beyond the visible edge where enemies appear. */

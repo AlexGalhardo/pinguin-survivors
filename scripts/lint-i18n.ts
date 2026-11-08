@@ -16,7 +16,5 @@ for (const file of files) {
 	}
 }
 
-console.log(
-	`lint-i18n: ${files.length} .tsx file(s), ${total} visible literal(s) outside t()`,
-);
+console.log(`lint-i18n: ${files.length} .tsx file(s), ${total} visible literal(s) outside t()`);
 process.exit(total > 0 ? 1 : 0);

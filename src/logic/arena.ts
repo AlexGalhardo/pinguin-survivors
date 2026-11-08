@@ -83,6 +83,20 @@ export function spawnRing(b: Bounds, visible: Bounds, rng: Rng, n: number): Spaw
 	return out;
 }
 
+/** Stable per-tile seed: the same (seed, tx, ty) always paints the same ground variant. */
+export function tileSeed(seed: number, tx: number, ty: number): number {
+	let h = seed ^ Math.imul(tx, 0x27d4eb2d) ^ Math.imul(ty, 0x165667b1);
+	h = Math.imul(h ^ (h >>> 15), 0x85ebca6b);
+	h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+	return (h ^ (h >>> 16)) >>> 0;
+}
+
+/** Ground variant of a tile (RF-07). Variant 0 is the plain ground; the others are rarer details. */
+export function tileVariant(seed: number, tx: number, ty: number, variants: number): number {
+	const weights = Array.from({ length: variants }, (_, i) => (i === 0 ? 6 : 1));
+	return new Rng(tileSeed(seed, tx, ty)).weightedIndex(weights);
+}
+
 export interface PropLayout {
 	decoVariants: number;
 	/** Probability of a prop per tile. */

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { screenAngle, swingDuration, WEAPON_ANIM, weaponPose } from '../src/logic/weapon-anim';
+import { swingDuration, WEAPON_ANIM, weaponPose } from '../src/logic/weapon-anim';
 
 describe('weapon animation (P-56)', () => {
 	test('melee swings through the whole arc within the swing time', () => {
@@ -31,10 +31,5 @@ describe('weapon animation (P-56)', () => {
 	test('staff lifts and glows on cast', () => {
 		expect(weaponPose('bolt', 0, 1, 0).glow).toBe(1);
 		expect(weaponPose('bolt', 5, 1, 0).glow).toBe(0);
-	});
-
-	test('world axes map to 2:1 screen angles', () => {
-		expect(screenAngle(0)).toBeCloseTo(Math.atan2(0.5, 1));
-		expect(screenAngle(Math.PI / 4)).toBeCloseTo(Math.PI / 2);
 	});
 });

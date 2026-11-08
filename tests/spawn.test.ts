@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { ENEMY_LIST } from '../src/data/enemies';
-import { worldToScreen } from '../src/logic/iso';
+import { worldToScreen } from '../src/logic/projection';
 import { Rng } from '../src/logic/rng';
 import { pickEnemy, SPAWN_MARGIN, spawnPosition } from '../src/logic/spawn';
 

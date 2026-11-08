@@ -4,10 +4,10 @@ import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
 import type { SfxKey } from '../data/sfx';
 import { type I18nKey, t } from '../i18n';
-import { isoDepth, worldToScreen } from '../logic/iso';
+import { depthOf, worldToScreen } from '../logic/projection';
 import type { NumberSize, Settings } from '../logic/save';
 import { UI_FONT } from '../ui/font';
-import type { ChunkManager } from '../world/ChunkManager';
+import type { Arena } from '../world/Arena';
 
 const MAX_NUMBERS = 80;
 const NUMBER_SCALE: Record<NumberSize, number> = { small: 0.8, normal: 1, large: 1.5 };
@@ -38,7 +38,7 @@ interface FloatingNumber {
 
 /**
  * Juice and gore (P-10): damage numbers, blood that stays on the ground for the whole run
- * (stamped into the chunk textures), blood spurts, gibs flying in an arc, melee slashes.
+ * (stamped into the arena texture), blood spurts, gibs flying in an arc, melee slashes.
  */
 export class FxSystem {
 	private readonly numbers: FloatingNumber[] = [];
@@ -51,7 +51,7 @@ export class FxSystem {
 	constructor(
 		private readonly scene: Phaser.Scene,
 		private readonly settings: Settings,
-		private readonly chunks: ChunkManager,
+		private readonly arena: Arena,
 	) {
 		this.spurt = scene.add
 			.particles(0, 0, KEYS.droplet, {
@@ -176,14 +176,14 @@ export class FxSystem {
 	bloodAt(x: number, y: number, size: number): void {
 		const gore = this.settings.gore;
 		if (gore === 'reduced' && Math.random() < 0.5) return;
-		this.chunks.addDecal(x, y, KEYS.splat(this.splatKind, Math.floor(Math.random() * 4)), {
+		this.arena.addDecal(x, y, KEYS.splat(this.splatKind, Math.floor(Math.random() * 4)), {
 			scale: size * (gore === 'reduced' ? 0.5 : 0.8) * (0.7 + Math.random() * 0.6),
 			flip: Math.random() < 0.5,
 			alpha: 0.85 + Math.random() * 0.15,
 		});
 	}
 
-	/** `angle` is the attack direction in screen space (radians). */
+	/** `angle` is the attack direction in world space (radians). */
 	slash(x: number, y: number, angle: number, range: number): void {
 		let s = this.slashes.find((sl) => sl.life <= 0);
 		if (!s) {
@@ -196,7 +196,7 @@ export class FxSystem {
 			.setPosition(p.x, p.y)
 			.setRotation(angle + Math.PI / 2)
 			.setScale(range / 36)
-			.setDepth(isoDepth(x, y) + 1)
+			.setDepth(depthOf(x, y) + 1)
 			.setAlpha(1)
 			.setVisible(true);
 	}
@@ -220,12 +220,12 @@ export class FxSystem {
 				g.img.setVisible(false);
 				g.shadow.setVisible(false);
 				this.bloodAt(g.x, g.y, 0.35);
-				this.chunks.addDecal(g.x, g.y, g.img.texture.key, { angle: Math.random() * 360 });
+				this.arena.addDecal(g.x, g.y, g.img.texture.key, { angle: Math.random() * 360 });
 				continue;
 			}
 			const s = worldToScreen(g.x, g.y, g.z);
 			const ground = worldToScreen(g.x, g.y);
-			const depth = isoDepth(g.x, g.y);
+			const depth = depthOf(g.x, g.y);
 			g.img.setPosition(Math.round(s.x), Math.round(s.y)).setDepth(depth + 1).rotation +=
 				g.spin * dt;
 			g.shadow.setPosition(ground.x, ground.y).setDepth(depth - 1);

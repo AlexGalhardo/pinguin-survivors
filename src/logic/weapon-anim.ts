@@ -60,10 +60,3 @@ export function weaponPose(kind: WeaponKind, t: number, cooldown: number, arc: n
 	const k = 1 - Math.max(0, t) / w.castTime;
 	return { angle: -0.15 - 0.5 * k, reach: w.idleReach + 4 * k, scale: 1 + 0.15 * k, glow: k };
 }
-
-/** World aim angle → screen angle on the 2:1 projection. */
-export function screenAngle(worldAngle: number): number {
-	const c = Math.cos(worldAngle);
-	const s = Math.sin(worldAngle);
-	return Math.atan2((c + s) / 2, c - s);
-}

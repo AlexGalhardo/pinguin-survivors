@@ -4,9 +4,9 @@ import { sfx } from '../core/audio';
 import { getSave } from '../core/context';
 import type { Enemy } from '../entities/Enemy';
 import type { Element } from '../logic/combat';
-import { isoDepth, worldToScreen } from '../logic/iso';
+import { depthOf, worldToScreen } from '../logic/projection';
 import type { SpatialGrid } from '../logic/spatial-grid';
-import { GROUND_DEPTH } from '../world/ChunkManager';
+import { GROUND_DEPTH } from '../world/Arena';
 
 /** Radius in world units → scale of the 128×64 ring/zone textures (their radius is 62 px). */
 /** Explosion rings stay visible but dim with Settings → Reduced flashes. */
@@ -194,7 +194,7 @@ export class AreaSystem {
 			.setScale(scaleFor(radius) * 0.3)
 			.setData('target', scaleFor(radius))
 			.setAlpha(getSave(this.scene).settings.reducedFlashes ? REDUCED_FLASH_ALPHA : 1)
-			.setDepth(isoDepth(x, y) + 2)
+			.setDepth(depthOf(x, y) + 2)
 			.setVisible(true);
 	}
 
@@ -242,7 +242,7 @@ export class AreaSystem {
 			p.delay -= dt;
 			const t = Math.max(0, p.delay / p.total);
 			const s = worldToScreen(p.x, p.y, p.z0 * t);
-			p.img.setPosition(Math.round(s.x), Math.round(s.y)).setDepth(isoDepth(p.x, p.y) + 3);
+			p.img.setPosition(Math.round(s.x), Math.round(s.y)).setDepth(depthOf(p.x, p.y) + 3);
 			if (p.delay <= 0) {
 				p.alive = false;
 				p.img.setVisible(false);

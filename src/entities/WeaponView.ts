@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import type { SignatureWeapon } from '../data/weapons';
-import { isoDepth, worldToScreen } from '../logic/iso';
-import { screenAngle, weaponPose } from '../logic/weapon-anim';
+import { depthOf, worldToScreen } from '../logic/projection';
+import { weaponPose } from '../logic/weapon-anim';
 
 /** Hand height above the feet, in screen px. */
 const HAND_Z = 18;
@@ -47,7 +47,7 @@ export class WeaponView {
 		this.since += dt;
 		const arc = ((this.weapon.angle ?? 90) * Math.PI) / 180;
 		const pose = weaponPose(this.weapon.kind, this.since, this.cooldown, arc);
-		const base = screenAngle(this.aim);
+		const base = this.aim;
 		const left = Math.cos(base) < 0;
 		// Mirror the swing on the left side so the blade always sweeps "forward".
 		const angle = base + (left ? -pose.angle : pose.angle);
@@ -55,7 +55,7 @@ export class WeaponView {
 		const x = hand.x + Math.cos(angle) * pose.reach * 0.5;
 		const y = hand.y + Math.sin(angle) * pose.reach * 0.5;
 		// Aiming up: weapon behind the hero; aiming down: in front.
-		const depth = isoDepth(heroX, heroY) + (Math.sin(base) < 0 ? -0.2 : 0.2);
+		const depth = depthOf(heroX, heroY) + (Math.sin(base) < 0 ? -0.2 : 0.2);
 		this.sprite
 			.setPosition(Math.round(x), Math.round(y))
 			.setRotation(angle)

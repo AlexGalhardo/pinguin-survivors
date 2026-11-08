@@ -1,9 +1,8 @@
 import type Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { SECONDARIES, type SecondaryId } from '../data/secondaries';
-import { isoDepth, worldToScreen } from '../logic/iso';
+import { depthOf, worldToScreen } from '../logic/projection';
 import type { SpatialGrid } from '../logic/spatial-grid';
-import { screenAngle } from '../logic/weapon-anim';
 import type { Enemy } from './Enemy';
 
 /** Hand height above the feet, in screen px (same as the signature WeaponView). */
@@ -47,13 +46,13 @@ export class WeaponRing {
 		this.sync(owned.slice(0, SLOTS.length));
 		this.bob += dt * 3;
 		const hand = worldToScreen(hx, hy, HAND_Z);
-		const depth = isoDepth(hx, hy);
+		const depth = depthOf(hx, hy);
 		this.slots.forEach((s, i) => {
 			const off = SLOTS[i] as (typeof SLOTS)[number];
 			const def = SECONDARIES[s.id];
 			const target = grid.nearest(hx, hy, def.range, (e) => e.alive);
 			const want = target
-				? screenAngle(Math.atan2(target.y - hy, target.x - hx))
+				? Math.atan2(target.y - hy, target.x - hx)
 				: off.x < 0
 					? Math.PI
 					: 0;

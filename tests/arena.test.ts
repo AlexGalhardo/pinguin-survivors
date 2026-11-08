@@ -8,6 +8,7 @@ import {
 	insideBounds,
 	propLayout,
 	spawnRing,
+	tileVariant,
 } from '../src/logic/arena';
 import { Rng } from '../src/logic/rng';
 
@@ -91,5 +92,22 @@ describe('propLayout', () => {
 			expect(Math.hypot(p.x, p.y)).toBeGreaterThanOrEqual(ARENA.propClearTiles * ARENA.tile);
 			expect(edgeDistance(p, b)).toBeGreaterThan(ARENA.tile);
 		}
+	});
+});
+
+describe('tileVariant (RF-07)', () => {
+	it('is stable per (seed, tx, ty), in range, and mostly the plain variant', () => {
+		let plain = 0;
+		for (let ty = 0; ty < 20; ty++) {
+			for (let tx = 0; tx < 20; tx++) {
+				const v = tileVariant(1, tx, ty, 4);
+				expect(tileVariant(1, tx, ty, 4)).toBe(v);
+				expect(v).toBeGreaterThanOrEqual(0);
+				expect(v).toBeLessThan(4);
+				if (v === 0) plain++;
+			}
+		}
+		expect(plain).toBeGreaterThan(150);
+		expect(plain).toBeLessThan(400);
 	});
 });

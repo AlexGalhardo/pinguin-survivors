@@ -73,6 +73,16 @@ await waitFor(page, 'card pick after the round', (p) => p.active.includes('CardP
 await page.keyboard.up('KeyD');
 await page.keyboard.press('Digit1');
 await waitFor(page, 'round 2 after the card', (p) => p.active.includes('Game') && p.round === 2);
+const side = await page.evaluate(() => {
+	const g = (window as unknown as { __GAME__: import('phaser').Game }).__GAME__;
+	return (g.scene.getScene('Game') as unknown as { arena: { sideTiles: number } }).arena
+		.sideTiles;
+});
+if (side !== 11) {
+	console.error(`FAIL arena did not grow to 11x11 in round 2 (side ${side})`);
+	process.exit(1);
+}
+console.log('ok   arena grew 10x10 to 11x11');
 const stillMoving = await page.evaluate(() => {
 	const g = (window as unknown as { __GAME__: import('phaser').Game }).__GAME__;
 	const game = g.scene.getScene('Game') as unknown as {

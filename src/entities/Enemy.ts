@@ -7,7 +7,7 @@ import { ROUNDS } from '../data/rounds';
 import type { Element } from '../logic/combat';
 import { type AiState, newAi } from '../logic/enemy-ai';
 import { spriteDir } from '../logic/hero-anim';
-import { type Dir, dirFromWorld, isoDepth, worldToScreen } from '../logic/iso';
+import { type Dir, depthOf, dirFromWorld, worldToScreen } from '../logic/projection';
 import type { EliteTier } from '../logic/round';
 import { emptyStatus, resetStatus, type StatusState } from '../logic/status';
 import type { Mover } from '../logic/steering';
@@ -149,7 +149,7 @@ export class Enemy implements Mover {
 
 	sync(dt: number, facingLeft: boolean): void {
 		const ground = worldToScreen(this.x, this.y);
-		const depth = isoDepth(this.x, this.y);
+		const depth = depthOf(this.x, this.y);
 		this.shadow.setPosition(ground.x, ground.y).setDepth(depth - 0.6);
 		this.aura.setPosition(ground.x, ground.y).setDepth(depth - 0.5);
 		this.sprite

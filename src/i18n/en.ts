@@ -233,7 +233,7 @@ export const en = {
 	'hero.jack': 'Jack',
 	'hero.bob': 'Bob',
 	'hero.lucia': 'Lucia',
-	'debug.stats': '{fps} FPS · chunks {chunks} · enemies {enemies} · x {x} y {y}',
+	'debug.stats': '{fps} FPS · arena {arena} · enemies {enemies} · x {x} y {y}',
 } as const;
 
 export type I18nKey = keyof typeof en;

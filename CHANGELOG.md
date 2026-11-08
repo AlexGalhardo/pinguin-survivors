@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Save v2 (SDD-005): `SAVE_VERSION = 2`, `pearls` and per-hero `dangerUnlocked`; v1 saves migrate idempotently and drop the in-progress run.
 - Pure arena logic (`src/logic/arena.ts`, `src/data/arena.ts`): side per round, centered bounds, clamp, inner spawn ring and prop layout (SDD-001).
-
 - 1.0 weapon lines (`src/data/weapon-lines.ts`): 17 weapons in four tiers, including the new `hammer` (melee/blunt), starting weapons per hero and Pearl unlocks (`src/data/unlocks.ts`), tier tint tokens.
 - Pure end-of-round shop (`src/logic/shop.ts`, `SHOP` in `src/data/economy.ts`): weighted offers, locks, growing reroll price, tier prices and sell value (SDD-003).
 - `bun run lint:i18n` (`scripts/lint-i18n.ts`): fails on visible text literals in `src/ui/**/*.tsx` JSX (SDD-004 A5).
@@ -21,14 +20,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The v1→v2 save migration carries the old Fish over as Pearls 1:1 (SDD-003 RF-07) instead of resetting them.
 
-### Removed
-
-- Hero voices and subtitles (ADR-009, SDD-010): `vo.*` audio, `src/core/voice.ts`, `src/data/voice.ts`, `src/logic/voice.ts`, the voice i18n tables, `scripts/el-voice.ts`, the ElevenLabs voice designs, the voice volume and subtitle settings and the HUD subtitle. The voiced build lives on the `legacy-voices` branch.
-
 ### Changed
 
+- The world is top-down in a square arena (ADR-003, SDD-001): `src/logic/projection.ts` replaces the isometric projection (depth by `y`, input without rotation), `src/world/Arena.ts` replaces the chunk streamer with a 64-px tile floor, walls, solid props and centered growth per round, and heroes, enemies and projectiles stay inside the walls. `?arena=NN` forces the arena side for QA.
 - `VoiceLimiter` renamed to `SfxLimiter` (`src/logic/sfx-limiter.ts`) and the per-key `voices` field of `src/data/sfx.ts` to `polyphony`; `menu.subtitle` renamed to `menu.tagline`.
 - `docs/balancing-and-simulation.md` Part B tags the numbers the square arena affects with `[1.0: revisar]`; SDD-001 A6 now matches the 540-unit logical height.
+
+### Removed
+
+- Isometric projection and infinite chunks: `src/logic/iso.ts`, `src/logic/chunks.ts`, `src/world/ChunkManager.ts`, `scripts/pack-iso-tile.ts` and the isometric `tile.*` atlas frames.
+- Hero voices and subtitles (ADR-009, SDD-010): `vo.*` audio, `src/core/voice.ts`, `src/data/voice.ts`, `src/logic/voice.ts`, the voice i18n tables, `scripts/el-voice.ts`, the ElevenLabs voice designs, the voice volume and subtitle settings and the HUD subtitle. The voiced build lives on the `legacy-voices` branch.
 
 ## [0.0.11] - 2026-11-08
 

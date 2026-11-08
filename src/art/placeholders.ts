@@ -1,22 +1,30 @@
 import type Phaser from 'phaser';
-import { HERO_IDS, TILE_H, TILE_W } from '../config/constants';
+import { HERO_IDS } from '../config/constants';
 import { PALETTE, toCss } from '../config/palette';
+import { ARENA } from '../data/arena';
 import { ENEMY_LIST } from '../data/enemies';
 import { GEAR } from '../data/equipment';
-import { DIRS, type Dir } from '../logic/iso';
+import { DIRS, type Dir } from '../logic/projection';
 import { BIOMES, KEYS } from './manifest';
+
+const T = ARENA.tile;
+/** Wall thickness drawn on the outermost tile ring, in px. */
+const WALL = 12;
 
 /** Code-drawn stand-ins for every key until the PixelLab art lands (phase 3). */
 export function installPlaceholders(scene: Phaser.Scene): void {
 	biomePlaceholders(scene);
+	borderPlaceholders(scene);
 	gearPlaceholders(scene);
 	const biome = BIOMES.antarctica;
 	const tileColors = [PALETTE.snow, PALETTE.snowDark, PALETTE.snowLight, PALETTE.ice];
 	for (let v = 0; v < biome.tileVariants; v++) {
-		canvas(scene, KEYS.tile(biome.id, v), TILE_W, TILE_H, (ctx) => {
-			diamond(ctx, TILE_W, TILE_H, tileColors[v] ?? PALETTE.snow);
+		canvas(scene, KEYS.tile(biome.id, v), T, T, (ctx) => {
+			ctx.fillStyle = toCss(tileColors[v] ?? PALETTE.snow);
+			ctx.fillRect(0, 0, T, T);
 			ctx.fillStyle = 'rgba(0,0,0,0.12)';
-			ctx.fillRect(TILE_W / 2 - 1, TILE_H - 2, 2, 1);
+			ctx.fillRect(T / 2 - 1, T - 6, 2, 1);
+			ctx.fillRect(12 + v * 9, 14, 3, 1);
 		});
 	}
 	for (let v = 0; v < biome.decoVariants; v++) {
@@ -184,24 +192,21 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 		ctx.fillStyle = '#ff3b3b';
 		ctx.fillRect(7, 5, 2, 2);
 	});
-	canvas(scene, KEYS.ring, 128, 64, (ctx) => {
+	canvas(scene, KEYS.ring, 128, 128, (ctx) => {
 		ctx.strokeStyle = '#ffffff';
 		ctx.lineWidth = 3;
 		ctx.beginPath();
-		ctx.ellipse(64, 32, 62, 30, 0, 0, Math.PI * 2);
+		ctx.arc(64, 64, 62, 0, Math.PI * 2);
 		ctx.stroke();
 	});
-	canvas(scene, KEYS.zone, 128, 64, (ctx) => {
-		const g = ctx.createRadialGradient(64, 32, 4, 64, 32, 62);
+	canvas(scene, KEYS.zone, 128, 128, (ctx) => {
+		const g = ctx.createRadialGradient(64, 64, 4, 64, 64, 62);
 		g.addColorStop(0, 'rgba(255,255,255,0.7)');
 		g.addColorStop(1, 'rgba(255,255,255,0)');
 		ctx.fillStyle = g;
-		ctx.save();
-		ctx.scale(1, 0.5);
 		ctx.beginPath();
 		ctx.arc(64, 64, 62, 0, Math.PI * 2);
 		ctx.fill();
-		ctx.restore();
 	});
 	canvas(scene, KEYS.barrier, 48, 56, (ctx) => {
 		ctx.strokeStyle = 'rgba(179,71,255,0.9)';
@@ -349,15 +354,29 @@ function canvas(
 	tex.refresh();
 }
 
-function diamond(ctx: CanvasRenderingContext2D, w: number, h: number, color: number): void {
-	ctx.fillStyle = toCss(color);
-	ctx.beginPath();
-	ctx.moveTo(w / 2, 0);
-	ctx.lineTo(w, h / 2);
-	ctx.lineTo(w / 2, h);
-	ctx.lineTo(0, h / 2);
-	ctx.closePath();
-	ctx.fill();
+/** Arena wall: 0 = straight edge (wall on the top), 1 = outer corner (top and left). */
+function borderPlaceholders(scene: Phaser.Scene): void {
+	const walls = {
+		antarctica: PALETTE.rock,
+		station: PALETTE.metalDark,
+		ruins: PALETTE.brick,
+	} as const;
+	for (const id of Object.keys(walls) as (keyof typeof walls)[]) {
+		const wall = toCss(walls[id]);
+		const band = (ctx: CanvasRenderingContext2D, vertical: boolean) => {
+			ctx.fillStyle = wall;
+			if (vertical) ctx.fillRect(0, 0, WALL, T);
+			else ctx.fillRect(0, 0, T, WALL);
+			ctx.fillStyle = 'rgba(255,255,255,0.22)';
+			if (vertical) ctx.fillRect(WALL - 2, 0, 2, T);
+			else ctx.fillRect(0, WALL - 2, T, 2);
+		};
+		canvas(scene, KEYS.border(id, 0), T, T, (ctx) => band(ctx, false));
+		canvas(scene, KEYS.border(id, 1), T, T, (ctx) => {
+			band(ctx, false);
+			band(ctx, true);
+		});
+	}
 }
 
 const DIR_VEC: Record<Dir, [number, number]> = {
@@ -460,12 +479,13 @@ function biomePlaceholders(scene: Phaser.Scene): void {
 		const biome = BIOMES[id];
 		const look = looks[id];
 		for (let v = 0; v < biome.tileVariants; v++) {
-			canvas(scene, KEYS.tile(id, v), TILE_W, TILE_H, (ctx) => {
-				diamond(ctx, TILE_W, TILE_H, look.tiles[v] ?? PALETTE.metal);
+			canvas(scene, KEYS.tile(id, v), T, T, (ctx) => {
+				ctx.fillStyle = toCss(look.tiles[v] ?? PALETTE.metal);
+				ctx.fillRect(0, 0, T, T);
 				// Plate seams / cracks so the ground reads as man-made.
 				ctx.fillStyle = 'rgba(0,0,0,0.18)';
-				ctx.fillRect(TILE_W / 2 - 8, TILE_H / 2, 16, 1);
-				ctx.fillRect(TILE_W / 2, TILE_H / 2 - 4, 1, 8);
+				ctx.fillRect(T / 2 - 12, T / 2, 24, 1);
+				ctx.fillRect(T / 2, T / 2 - 8, 1, 16);
 			});
 		}
 		for (let v = 0; v < biome.decoVariants; v++) {

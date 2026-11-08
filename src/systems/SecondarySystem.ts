@@ -13,7 +13,7 @@ import type { Enemy } from '../entities/Enemy';
 import { boomerangDistance, scaledCount } from '../logic/boomerang';
 import type { Build } from '../logic/build';
 import { type Element, rollOutgoing } from '../logic/combat';
-import { isoDepth, worldToScreen } from '../logic/iso';
+import { depthOf, worldToScreen } from '../logic/projection';
 import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
 import type { PlayerStats } from '../logic/stats';
@@ -167,7 +167,7 @@ export class SecondarySystem {
 			const s = worldToScreen(x, y, 14);
 			b.sprite
 				.setPosition(Math.round(s.x), Math.round(s.y))
-				.setDepth(isoDepth(x, y) + 0.5)
+				.setDepth(depthOf(x, y) + 0.5)
 				.setRotation(b.t * 18);
 			this.scratch.length = 0;
 			grid.queryRadius(x, y, BOOMERANG_HIT + 20, this.scratch);
@@ -235,8 +235,8 @@ export class SecondarySystem {
 		const s = worldToScreen(hx, hy);
 		this.auraRing
 			.setPosition(Math.round(s.x), Math.round(s.y))
-			.setDisplaySize(radius * 2.8, radius * 1.4)
-			.setDepth(isoDepth(hx, hy) - 1);
+			.setDisplaySize(radius * 2, radius * 2)
+			.setDepth(depthOf(hx, hy) - 1);
 	}
 
 	private place(
@@ -264,7 +264,7 @@ export class SecondarySystem {
 		const s = worldToScreen(at.x, at.y);
 		d.sprite
 			.setPosition(Math.round(s.x), Math.round(s.y))
-			.setDepth(isoDepth(at.x, at.y))
+			.setDepth(depthOf(at.x, at.y))
 			.setAlpha(1)
 			.setVisible(true);
 	}
@@ -587,7 +587,7 @@ export class SecondarySystem {
 			const y = hy + Math.sin(a) * radius;
 			const s = worldToScreen(x, y, 12);
 			img.setPosition(Math.round(s.x), Math.round(s.y))
-				.setDepth(isoDepth(x, y) + 0.5)
+				.setDepth(depthOf(x, y) + 0.5)
 				.setRotation(a);
 			this.scratch.length = 0;
 			grid.queryRadius(x, y, ORBIT_HIT_RADIUS + 20, this.scratch);
@@ -616,7 +616,7 @@ export class SecondarySystem {
 		const s = worldToScreen(this.droneAt.x, this.droneAt.y, 40);
 		this.drone
 			.setPosition(Math.round(s.x), Math.round(s.y))
-			.setDepth(isoDepth(this.droneAt.x, this.droneAt.y) + 50);
+			.setDepth(depthOf(this.droneAt.x, this.droneAt.y) + 50);
 	}
 
 	private drawBolt(from: { x: number; y: number }, to: Enemy): void {

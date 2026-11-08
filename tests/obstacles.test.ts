@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { BIOMES } from '../src/art/manifest';
-import { generateChunk } from '../src/logic/chunks';
+import { arenaBounds, propLayout } from '../src/logic/arena';
 import { ObstacleField, pushOut } from '../src/logic/obstacles';
 
 describe('obstacles', () => {
@@ -16,29 +16,23 @@ describe('obstacles', () => {
 		expect(center).toEqual({ x: 10, y: 0 });
 	});
 
-	test('field matches the decorations drawn by the chunk manager', () => {
-		const b = BIOMES.antarctica;
-		const field = new ObstacleField(7, b);
-		const decos = generateChunk(
-			7,
-			0,
-			0,
-			b.tileVariants,
-			b.decoVariants,
-			b.decoDensity,
-		).decorations;
-		expect(decos.length).toBeGreaterThan(0);
-		for (const d of decos) {
-			const near = field.near(d.x, d.y, 1);
-			expect(near.some((o) => o.x === d.x && o.y === d.y)).toBe(true);
+	test('field returns the arena props within reach', () => {
+		const b = arenaBounds(5);
+		const props = propLayout(7, BIOMES.antarctica, b);
+		expect(props.length).toBeGreaterThan(0);
+		const field = new ObstacleField(props);
+		for (const p of props) {
+			expect(field.near(p.x, p.y, 1).some((o) => o.x === p.x && o.y === p.y)).toBe(true);
 		}
 	});
 
-	test('queries only return obstacles within reach', () => {
-		const field = new ObstacleField(3, BIOMES.ruins);
+	test('queries only return obstacles within reach and follow setProps', () => {
+		const field = new ObstacleField(propLayout(3, BIOMES.ruins, arenaBounds(5)));
 		for (const o of field.near(100, 100, 10)) {
 			expect(Math.abs(o.x - 100)).toBeLessThanOrEqual(23);
 			expect(Math.abs(o.y - 100)).toBeLessThanOrEqual(23);
 		}
+		field.setProps([]);
+		expect(field.near(0, 0, 1000)).toHaveLength(0);
 	});
 });

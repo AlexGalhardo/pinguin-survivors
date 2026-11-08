@@ -20,35 +20,7 @@
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 38 },
 			"sourceSize": { "w": 38, "h": 38 }
-		},
-		"tile.station.0": {
-			"frame": { "x": 120, "y": 0, "w": 64, "h": 32 },
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
-			"sourceSize": { "w": 64, "h": 32 }
-		},
-		"tile.station.1": {
-			"frame": { "x": 185, "y": 0, "w": 64, "h": 32 },
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
-			"sourceSize": { "w": 64, "h": 32 }
-		},
-		"tile.station.2": {
-			"frame": { "x": 250, "y": 0, "w": 64, "h": 32 },
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
-			"sourceSize": { "w": 64, "h": 32 }
-		},
-		"tile.station.3": {
-			"frame": { "x": 315, "y": 0, "w": 64, "h": 32 },
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
-			"sourceSize": { "w": 64, "h": 32 }
 		}
 	},
-	"meta": { "image": "station.png", "size": { "w": 512, "h": 64 }, "scale": "1" }
+	"meta": { "image": "station.png", "size": { "w": 128, "h": 64 }, "scale": "1" }
 }

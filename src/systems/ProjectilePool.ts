@@ -1,7 +1,9 @@
 import type Phaser from 'phaser';
 import type { Enemy } from '../entities/Enemy';
+import type { Bounds } from '../logic/arena';
+import { insideBounds } from '../logic/arena';
 import type { Element } from '../logic/combat';
-import { isoDepth, worldToScreen } from '../logic/iso';
+import { depthOf, worldToScreen } from '../logic/projection';
 import type { SpatialGrid } from '../logic/spatial-grid';
 
 const MAX_PROJECTILES = 600;
@@ -46,6 +48,8 @@ export type ProjectileHit = (enemy: Enemy, p: Projectile) => void;
 export class ProjectilePool {
 	private readonly items: Projectile[] = [];
 	private readonly scratch: Enemy[] = [];
+	/** Arena walls: projectiles vanish when they cross them (RF-03). */
+	bounds: Bounds | null = null;
 
 	constructor(
 		private readonly scene: Phaser.Scene,
@@ -123,14 +127,14 @@ export class ProjectilePool {
 			p.x += p.vx * dt;
 			p.y += p.vy * dt;
 			p.life -= dt;
-			if (p.life <= 0) {
+			if (p.life <= 0 || (this.bounds && !insideBounds(p, this.bounds))) {
 				this.kill(p);
 				continue;
 			}
 			const s = worldToScreen(p.x, p.y, FLIGHT_Z);
 			p.sprite
 				.setPosition(Math.round(s.x), Math.round(s.y))
-				.setDepth(isoDepth(p.x, p.y) + 0.5);
+				.setDepth(depthOf(p.x, p.y) + 0.5);
 			this.scratch.length = 0;
 			grid.queryRadius(p.x, p.y, 48, this.scratch);
 			for (const e of this.scratch) {
@@ -175,8 +179,7 @@ export class ProjectilePool {
 			p.sprite.setRotation(0);
 			return;
 		}
-		// World direction → screen direction for the 2:1 projection.
-		p.sprite.setRotation(Math.atan2((p.vx + p.vy) / 2, p.vx - p.vy));
+		p.sprite.setRotation(Math.atan2(p.vy, p.vx));
 	}
 
 	private kill(p: Projectile): void {

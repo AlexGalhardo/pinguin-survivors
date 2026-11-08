@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BIOMES, KEYS } from '../art/manifest';
+import { KEYS } from '../art/manifest';
 import type { GameSpeed, HeroId } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import { getParams, getRunHero, getSave, persist } from '../core/context';
@@ -23,6 +23,7 @@ import { WeaponRing } from '../entities/WeaponRing';
 import { WeaponView } from '../entities/WeaponView';
 import { type I18nKey, t } from '../i18n';
 import { applyExtras, evaluateAchievements } from '../logic/achievements';
+import { clampToArena } from '../logic/arena';
 import { biomeForRound, isBiomeStart } from '../logic/biome';
 import { applyCard, type Build, emptyBuild } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
@@ -30,10 +31,10 @@ import type { Element } from '../logic/combat';
 import { difficultyMods, scaleFish } from '../logic/difficulty';
 import { emptyGear, pickUpGear, rollGearDrop, rollHealDrop } from '../logic/equipment';
 import { inArc } from '../logic/geometry';
-import { inputToWorld, isoDepth, worldToScreen } from '../logic/iso';
 import { ObstacleField, pushOut } from '../logic/obstacles';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
 import { addXp, type LevelState, orbXp, roundEndFish } from '../logic/progression';
+import { depthOf, inputToWorld, worldToScreen } from '../logic/projection';
 import { Rng, randomSeed } from '../logic/rng';
 import { cycle, isBossRound } from '../logic/round';
 import {
@@ -65,7 +66,7 @@ import { ProjectilePool } from '../systems/ProjectilePool';
 import { SecondarySystem } from '../systems/SecondarySystem';
 import { SuperpowerSystem } from '../systems/SuperpowerSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
-import { ChunkManager } from '../world/ChunkManager';
+import { Arena } from '../world/Arena';
 import type { CardPickData } from './CardPickScene';
 import type { UnlockData } from './UnlockScene';
 
@@ -90,8 +91,6 @@ function takeResume(scene: Phaser.Scene): RunResume | undefined {
 	return state;
 }
 
-/** Padding (screen px) around the camera view where chunks are already built. */
-const VIEW_PAD = 96;
 const DEATH_DELAY = 1.2;
 /** Seconds between live achievement checks. */
 const ACHIEVEMENT_CHECK = 1;
@@ -101,7 +100,7 @@ const BLOODLUST_RADIUS = 150;
 
 export class GameScene extends Phaser.Scene {
 	hero!: Hero;
-	chunks!: ChunkManager;
+	arena!: Arena;
 	run!: RunState;
 	stats!: PlayerStats;
 	build!: Build;
@@ -116,6 +115,7 @@ export class GameScene extends Phaser.Scene {
 	private mods: DifficultyMods = DIFFICULTY.normal;
 	private readonly collideHero = (hero: Hero): void => {
 		pushOut(hero, HERO_RADIUS, this.obstacles.near(hero.x, hero.y, HERO_RADIUS));
+		clampToArena(hero, HERO_RADIUS, this.arena.bounds);
 	};
 	private weapons!: WeaponSystem;
 	private weaponView!: WeaponView;
@@ -245,9 +245,9 @@ export class GameScene extends Phaser.Scene {
 		this.input.keyboard?.on('keydown-ESC', () => this.pause());
 
 		const biome = biomeForRound(this.run.round);
-		this.chunks = new ChunkManager(this, seed, biome);
-		this.obstacles = new ObstacleField(seed, BIOMES[biome]);
-		this.fx = new FxSystem(this, save.settings, this.chunks);
+		this.arena = new Arena(this, seed, biome, this.run.round, params.arena);
+		this.obstacles = new ObstacleField(this.arena.props);
+		this.fx = new FxSystem(this, save.settings, this.arena);
 		this.pickups = new PickupSystem(this, (kind, value, gearId) =>
 			this.collect(kind, value, gearId),
 		);
@@ -355,13 +355,14 @@ export class GameScene extends Phaser.Scene {
 		cam.startFollow(this.hero.sprite, true, 0.12, 0.12);
 		cam.centerOn(this.hero.sprite.x, this.hero.sprite.y);
 		this.enemies.obstacles = this.obstacles;
+		this.syncArena();
 		this.mods = difficultyMods(this.run.difficulty);
 		this.enemies.mods = this.mods;
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 		playMusic(this, musicForRound(this.run.round, isBossRound(this.run.round)));
 
 		this.scene.launch('Hud');
-		this.events.once('shutdown', () => this.chunks.destroy());
+		this.events.once('shutdown', () => this.arena.destroy());
 	}
 
 	override update(_time: number, deltaMs: number): void {
@@ -413,13 +414,7 @@ export class GameScene extends Phaser.Scene {
 		this.checkAchievements(dt);
 		this.checkRoundEnd();
 
-		const v = this.cameras.main.worldView;
-		this.chunks.update({
-			x: v.x - VIEW_PAD,
-			y: v.y - VIEW_PAD,
-			width: v.width + VIEW_PAD * 2,
-			height: v.height + VIEW_PAD * 2,
-		});
+		this.arena.update();
 	}
 
 	private readonly worldLights: WorldLight[] = [];
@@ -495,9 +490,7 @@ export class GameScene extends Phaser.Scene {
 		this.barrier.setVisible(this.barrierReady);
 		if (this.barrierReady) {
 			const s = worldToScreen(this.hero.x, this.hero.y);
-			this.barrier
-				.setPosition(s.x, s.y - 26)
-				.setDepth(isoDepth(this.hero.x, this.hero.y) + 1);
+			this.barrier.setPosition(s.x, s.y - 26).setDepth(depthOf(this.hero.x, this.hero.y) + 1);
 		}
 	}
 
@@ -641,9 +634,7 @@ export class GameScene extends Phaser.Scene {
 	private swipe(e: Enemy): void {
 		const reach = (e.def.range ?? 90) * (e.def.boss?.swipeReach ?? 1.3);
 		const angle = Math.atan2(this.hero.y - e.y, this.hero.x - e.x);
-		const c = Math.cos(angle);
-		const s = Math.sin(angle);
-		this.fx.slash(e.x, e.y, Math.atan2((c + s) / 2, c - s), reach * 1.4);
+		this.fx.slash(e.x, e.y, angle, reach * 1.4);
 		shake(this, 120, 0.004);
 		if (inArc(e.x, e.y, angle, Math.PI * 0.8, reach, this.hero.x, this.hero.y, HERO_RADIUS))
 			this.combat.heroHit(e.damage * 1.5, true, undefined, e);
@@ -924,7 +915,9 @@ export class GameScene extends Phaser.Scene {
 			if (result.evolvedTo) this.evolve(result.evolvedTo);
 		}
 		startRound(this.run, this.run.round + 1);
+		this.arena.grow(this.run.round);
 		if (isBiomeStart(this.run.round)) this.enterBiome();
+		this.syncArena();
 		this.enemies.startRound(this.run.round, this.hero, this.viewSize());
 		if (this.enemies.boss) {
 			this.fx.play('sfx.bossRoar');
@@ -961,11 +954,19 @@ export class GameScene extends Phaser.Scene {
 		persist(this);
 	}
 
+	/** Hands the current walls and props to every system that collides with them. */
+	private syncArena(): void {
+		const bounds = this.arena.bounds;
+		this.obstacles.setProps(this.arena.props);
+		this.enemies.bounds = bounds;
+		this.pool.bounds = bounds;
+		this.hostile.bounds = bounds;
+	}
+
 	/** New biome every 10 rounds: rebuild the ground and announce it (P-18). */
 	private enterBiome(): void {
 		const biome = biomeForRound(this.run.round);
-		this.chunks.setBiome(biome);
-		this.obstacles.setLayout(BIOMES[biome]);
+		this.arena.setBiome(biome);
 		this.fx.banner(this.hero.x, this.hero.y, `biome.${biome}` as I18nKey);
 	}
 

@@ -3,10 +3,11 @@ import { MAX_ENEMIES } from '../config/constants';
 import { DIFFICULTY, type DifficultyMods } from '../data/difficulty';
 import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { Enemy } from '../entities/Enemy';
+import { type Bounds, clampToArena } from '../logic/arena';
 import { bossForRound } from '../logic/biome';
 import { AI, stepAi } from '../logic/enemy-ai';
-import type { Vec2 } from '../logic/iso';
 import { type ObstacleField, pushOut } from '../logic/obstacles';
+import type { Vec2 } from '../logic/projection';
 import type { Rng } from '../logic/rng';
 import {
 	bossHpMul,
@@ -47,6 +48,8 @@ export class EnemySystem {
 	mods: DifficultyMods = DIFFICULTY.normal;
 	/** Solid decorations walkers slide around (flyers and bosses ignore them). */
 	obstacles: ObstacleField | null = null;
+	/** Arena walls: every enemy, flyers and boss included, stays inside (RF-03). */
+	bounds: Bounds | null = null;
 	private readonly tick: Tick = { bleed: 0, poison: 0, burn: 0 };
 
 	constructor(
@@ -158,8 +161,8 @@ export class EnemySystem {
 			e.y += v.vy * slow * dt;
 			if (this.obstacles && e.def.behavior !== 'flyer' && e !== this.boss)
 				pushOut(e, e.radius, this.obstacles.near(e.x, e.y, e.radius));
-			// Screen-space x of the velocity decides the horizontal flip.
-			e.sync(dt, v.vx - v.vy < 0);
+			if (this.bounds) clampToArena(e, e.radius, this.bounds);
+			e.sync(dt, v.vx < 0);
 		}
 	}
 

@@ -171,7 +171,7 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 			};
 			if (w.__BOT__) return true;
 			if (!s?.run || !s.hero) return false;
-			// Screen key combos (D/A = ±x, S/W = ±y) and their world directions (inverse iso).
+			// Key combos (D/A = ±x, S/W = ±y) are world directions (top-down, no rotation).
 			const combos: [number, number][] = [
 				[1, 0],
 				[1, 1],
@@ -183,10 +183,8 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				[1, -1],
 			];
 			const dirs = combos.map(([ix, iy]) => {
-				const x = iy + ix / 2;
-				const y = iy - ix / 2;
-				const l = Math.hypot(x, y) || 1;
-				return { x: x / l, y: y / l };
+				const l = Math.hypot(ix, iy) || 1;
+				return { x: ix / l, y: iy / l };
 			});
 			let last = -1;
 			let nextDecision = 0;

@@ -6,7 +6,7 @@ import { SUPER, SUPERPOWERS, type SuperpowerDef } from '../data/superpowers';
 import type { SignatureWeapon } from '../data/weapons';
 import type { Enemy } from '../entities/Enemy';
 import type { Element } from '../logic/combat';
-import { screenToWorld } from '../logic/iso';
+import { screenToWorld } from '../logic/projection';
 import type { Rng } from '../logic/rng';
 import type { SpatialGrid } from '../logic/spatial-grid';
 import type { PlayerStats } from '../logic/stats';
