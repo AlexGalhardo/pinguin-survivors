@@ -63,8 +63,8 @@ Capacidade assumida: ~20 h de agente por semana úteis para implementação (hip
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [x] **T0.8** Scripts `release.ts`, `release-backfill.ts`, `lib/release-notes.ts` · Evidência: `bun scripts/release.ts --dry-run 0.0.11`.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T0.9** Release `0.0.11` · Resp.: orquestrador · Assert: `gh release view v0.0.11` existe, `package.json.version === '0.0.11'`.
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T0.9** Release `0.0.11` · Resp.: orquestrador · Evidência: `gh release view v0.0.11` → pre-release; `package.json.version === '0.0.11'`; 11 tags = 11 releases.
+  - [x] Auditoria (2026-11-08, orquestrador): `gh release view v0.0.11 --json isPrerelease` = true; corpo com `### Added/Changed/Fixed` e links de commit; CHANGELOG `[0.0.11] - 2026-11-08` presente.
 - [x] **T0.10** README raiz no padrão open source (vukem-hexascore), `LICENSE.md` (MIT no código, assets reservados), `CONTRIBUTING.md`, `.github/SECURITY.md`, `.github/CODE_OF_CONDUCT.md`, `ci.yml`, `dependabot.yml` · Evidência: arquivos no repo; badge do CI verde após o 1º push.
   - [ ] Auditoria: `gh run list --workflow ci.yml` verde; links do README respondem (sem 404 interno).
 - [x] **T0.11** `PLAN.md` deixa de ser versionado (pedido do desenvolvedor via `.gitignore`); histórico no git · Evidência: `git ls-files PLAN.md` vazio.
