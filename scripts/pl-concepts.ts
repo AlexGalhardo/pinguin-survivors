@@ -4,7 +4,7 @@
 // (heroes stay in the root folder for history).
 
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
-import sharp from 'sharp';
+import sharp, { type OverlayOptions } from 'sharp';
 import {
 	api,
 	DIRECTIONS_8,
@@ -170,7 +170,7 @@ async function contactSheet(ids: string[]): Promise<void> {
 	const SCALE = 3;
 	const cell = 96 * SCALE;
 	const rows = ids.filter((id) => existsSync(`${OUT}/${id}/meta.json`));
-	const composites: sharp.OverlayOptions[] = [];
+	const composites: OverlayOptions[] = [];
 	for (const [r, id] of rows.entries()) {
 		const meta = JSON.parse(readFileSync(`${OUT}/${id}/meta.json`, 'utf8')) as {
 			size: { width: number };

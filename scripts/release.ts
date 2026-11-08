@@ -28,7 +28,7 @@ if (dryRun) {
 	process.exit(0);
 }
 
-for (const gate of ['check', 'typecheck', 'test', 'build']) {
+for (const gate of ['lint', 'typecheck', 'test', 'build']) {
 	console.log(`gate: bun run ${gate}`);
 	await $`bun run ${gate}`.quiet();
 }

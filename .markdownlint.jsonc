@@ -5,5 +5,7 @@
 	"MD024": { "siblings_only": true }, // repeated headings allowed across sections (Keep a Changelog)
 	"MD033": { "allowed_elements": ["div", "h1", "h3", "strong", "a", "img", "br"] }, // README header
 	"MD041": false, // first line may be a blockquote or <div>
-	"MD060": false // table pipe spacing: tables use the compact `|---|` separator row
+	"MD060": false, // table pipe spacing: tables use the compact `|---|` separator row
+	"MD036": false, // bold lead-ins ("**Pilares**") are intentional in the GDD
+	"MD040": false // ASCII layout diagrams use bare fences
 }

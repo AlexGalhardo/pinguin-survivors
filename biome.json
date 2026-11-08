@@ -7,7 +7,14 @@
 		"defaultBranch": "main"
 	},
 	"files": {
-		"includes": ["**", "!**/.claude", "!**/dist", "!**/skills-lock.json"]
+		"includes": [
+			"**",
+			"!**/.agents",
+			"!**/dist",
+			"!**/dist-demo",
+			"!**/skills-lock.json",
+			"!**/*.md"
+		]
 	},
 	"formatter": {
 		"enabled": true,
