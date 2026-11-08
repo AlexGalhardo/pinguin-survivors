@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `Platform` layer (SDD-007): web implementation (localStorage, `.json` export/import, performance tier) and a `window.platform` bridge for the Electron and Capacitor shells; `src/core/storage.ts` delegates to it.
+
 - End-of-round flow in game (SDD-003): round end → queued level-up cards → React shop (buy by slot, reroll, lock, sell, fuse) → next round with autosave; Fish turn into Pearls at the end of the run, and the Workshop, potions and menu wallet spend Pearls.
 
 - Level-up offers 4 cards (stats, exclusive actives and passives only), a new `harvesting` stat that multiplies end-of-round Fish, and the Workshop upgrade Insight (one card reroll per run) (SDD-003 RF-05, RF-08).

@@ -3,6 +3,8 @@
 interface ImportMetaEnv {
 	/** "true" mutes every sound (set in .env). */
 	readonly SOUND_MUTED?: string;
+	/** "true" builds the Steam demo (SDD-007). */
+	readonly VITE_DEMO?: string;
 }
 
 interface ImportMeta {

@@ -238,8 +238,8 @@ Specs: [SDD-006](docs/sdds/SDD-006-demo.md), [SDD-007](docs/sdds/SDD-007-ports-e
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T5.2** Migração do save da demo → completo (web import; Electron arquivo) · Resp.: senior · Est.: 3 h · Assert: `tests/save.test.ts` fixture `save-demo.json` (A4).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T5.3** `Platform` (web/electron/capacitor) e `storage.ts` delegando · Resp.: senior · Est.: 6 h · Assert: `tests/platform-web.test.ts`; `rg -n "from 'electron'|steamworks|@capacitor" src` vazio (SDD-007 A1, A5).
-  - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
+- [x] **T5.3** `Platform` (web/electron/capacitor) e `storage.ts` delegando · Resp.: senior · Est.: 6 h · Assert: `tests/platform-web.test.ts`; `rg -n "from 'electron'|steamworks|@capacitor" src` vazio (SDD-007 A1, A5). · Evidência (2026-11-08): `bun test tests/platform-web.test.ts` 6 pass (A5 export/import roundtrip, storage bloqueado não lança, ponte nativa com fallback web); `rg -n "from 'electron'|steamworks|@capacitor" src` vazio (A1); `src/core/platform/` (web, ponte `window.platform` para electron/capacitor), `storage.ts` delega.
+  - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): re-executado; ponte renomeada para `window.platform` conforme SDD-007 RF-03/RF-07.
 - [ ] **T5.4** `apps/desktop/`: Electron + `steamworks.js` (init, conquista de teste, overlay), `electron-builder` Windows, builds demo e completo · Resp.: senior · Dep.: T5.3, T15.1 (App ID) · Est.: 12 h · Assert: `bun run build:desktop` gera os `.exe` (A2); QA manual A3 registrado.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T5.5** Workflow `desktop.yml` (Windows) com artefato · Resp.: estagiario · Dep.: T5.4 · Est.: 3 h · Assert: `gh run list --workflow desktop.yml` verde.
