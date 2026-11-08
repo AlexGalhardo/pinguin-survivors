@@ -1,0 +1,38 @@
+---
+import { COPY, LOCALE_NAMES, LOCALE_TAGS, LOCALES, type Locale, localePath } from '../i18n';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<details class="relative">
+	<summary
+		aria-label={COPY[locale].nav.language}
+		class="flex min-h-11 cursor-pointer list-none items-center gap-1 rounded border border-snow px-3 text-sm font-bold hover:bg-snow-dark/60 focus-visible:outline-2 focus-visible:outline-crit"
+	>
+		{LOCALE_NAMES[locale]} ▾
+	</summary>
+	<ul
+		class="absolute right-0 z-10 mt-1 min-w-full rounded border border-snow bg-night p-1 shadow-lg"
+	>
+		{
+			LOCALES.map((l) => (
+				<li>
+					<a
+						href={`${base}${localePath(l)}`}
+						hreflang={LOCALE_TAGS[l]}
+						lang={LOCALE_TAGS[l]}
+						aria-current={l === locale ? 'page' : undefined}
+						class="block min-h-11 rounded px-3 py-2.5 text-sm whitespace-nowrap hover:bg-snow-dark/60 focus-visible:outline-2 focus-visible:outline-crit aria-[current=page]:text-crit"
+					>
+						{LOCALE_NAMES[l]}
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</details>

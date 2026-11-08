@@ -1,0 +1,14 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { LOCALES, type Locale } from '../../i18n';
+import Landing from '../../layouts/Landing.astro';
+
+export const getStaticPaths = (() =>
+	LOCALES.filter((l) => l !== 'en').map((lang) => ({
+		params: { lang },
+	}))) satisfies GetStaticPaths;
+
+const { lang } = Astro.params;
+---
+
+<Landing locale={lang as Locale} />

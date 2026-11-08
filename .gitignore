@@ -20,3 +20,6 @@ PLAN.md
 TODO.md
 # Developer questions written by agents (local only)
 questions-to-dev.md
+# Site (SDD-008): the demo build is copied here by scripts/build-site.ts
+site/public/demo/
+site/.astro/

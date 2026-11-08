@@ -16,7 +16,7 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"lint:i18n": "bun scripts/lint-i18n.ts",
-		"lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.agents/skills\" \"#TODO.md\" \"#PLAN.md\"",
+		"lint:md": "markdownlint-cli2 \"**/*.md\" \"#**/node_modules\" \"#site/dist\" \"#.agents/skills\" \"#TODO.md\" \"#PLAN.md\"",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"release": "bun scripts/release.ts",

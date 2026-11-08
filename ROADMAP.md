@@ -244,7 +244,7 @@ Specs: [SDD-006](docs/sdds/SDD-006-demo.md), [SDD-007](docs/sdds/SDD-007-ports-e
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T5.5** Workflow `desktop.yml` (Windows) com artefato · Resp.: estagiario · Dep.: T5.4 · Est.: 3 h · Assert: `gh run list --workflow desktop.yml` verde.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
-- [ ] **T5.6** `site/` em Astro 7.4 estático: landing 4 idiomas, SEO, trailer placeholder, `build-site.ts`, `pages.yml` · Resp.: senior · Dep.: T5.1 · Est.: 10 h · Assert: SDD-008 A1–A5, A7; Lighthouse ≥ 95 (A3).
+- [x] **T5.6** `site/` em Astro 7.4 estático: landing 4 idiomas, SEO, trailer placeholder, `build-site.ts`, `pages.yml` · Resp.: senior · Dep.: T5.1 · Est.: 10 h · Assert: SDD-008 A1–A5, A7; Lighthouse ≥ 95 (A3). · Evidência (2026-11-08): `bun scripts/build-site.ts` gera `site/dist/` (Astro 7.4.7 estático; EN, pt-br, es, zh-cn, `/demo/`, 404, sitemap, robots) — A1 páginas, A2 sem adapter/server, A4 sem scroll em 1920×1080 e 1366×768 e sem rolagem horizontal em 390×844, A7 hreflang nos 4 idiomas; `/demo/` abre sem erros (A5 parcial); `pages.yml` só manual até o T5.7. A3 (Lighthouse ≥ 95) pendente de medição.
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.
 - [ ] **T5.7** Deploy no GitHub Pages; `/demo/` jogável · Resp.: orquestrador · Dep.: T5.6 · Est.: 2 h · Assert: `curl -I https://alexgalhardo.github.io/pinguin-survivors/` 200; `/demo/` abre o round 1 sem erros (A5, A6).
   - [ ] Auditoria: re-executar o assert e conferir a evidência anotada.

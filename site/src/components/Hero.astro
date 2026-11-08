@@ -1,0 +1,47 @@
+---
+import { WISHLIST_URL } from '../links';
+import type { Copy, Locale } from '../i18n';
+
+interface Props {
+	locale: Locale;
+	copy: Copy;
+}
+
+const { copy } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const bullets = [copy.hero.bullet1, copy.hero.bullet2, copy.hero.bullet3];
+---
+
+<section class="flex flex-col gap-4">
+	<h1 class="font-title text-[clamp(2.25rem,6vh,4.5rem)] leading-none font-bold">
+		{copy.hero.title}
+	</h1>
+	<p class="max-w-[48ch] text-[clamp(1rem,2.2vh,1.375rem)] text-text-light">{copy.hero.pitch}</p>
+	<ul
+		class="max-w-[52ch] list-disc space-y-1 pl-5 text-[clamp(0.9rem,1.9vh,1.125rem)] text-text-dim"
+	>
+		{bullets.map((b) => <li>{b}</li>)}
+	</ul>
+	<div class="flex flex-wrap gap-3 pt-2">
+		<a
+			href={`${base}demo/`}
+			class="hidden min-h-12 items-center rounded border-2 border-blood bg-blood px-6 text-lg font-bold text-text-light hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crit min-[1024px]:flex"
+		>
+			▶ {copy.cta.demo}
+		</a>
+		<span
+			aria-disabled="true"
+			class="flex min-h-12 items-center rounded border-2 border-snow px-6 text-lg font-bold text-text-dim min-[1024px]:hidden"
+		>
+			{copy.cta.demoUnavailable}
+		</span>
+		<a
+			href={WISHLIST_URL}
+			rel="noopener"
+			class="flex min-h-12 items-center rounded border-2 border-crit px-6 text-lg font-bold text-crit hover:bg-crit/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crit"
+		>
+			♥ {copy.cta.wishlist}
+		</a>
+	</div>
+	<p class="text-sm text-text-dim">{copy.demo.note}</p>
+</section>

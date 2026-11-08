@@ -1,0 +1,20 @@
+---
+import type { Copy } from '../i18n';
+import pkg from '../../package.json';
+
+interface Props {
+	copy: Copy;
+}
+
+const { copy } = Astro.props;
+---
+
+<footer
+	class="flex min-h-12 flex-wrap items-center justify-center gap-x-4 gap-y-1 px-[4vw] py-2 text-xs text-text-dim"
+>
+	<span>{copy.footer.legal}</span>
+	<span>{copy.footer.privacy}</span>
+	<span>{copy.footer.press}</span>
+	<span>{copy.footer.made}</span>
+	<span>{copy.footer.version.replace('{v}', pkg.version)}</span>
+</footer>

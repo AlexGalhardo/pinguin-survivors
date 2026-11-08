@@ -13,7 +13,12 @@
 			"!**/dist",
 			"!**/dist-demo",
 			"!**/skills-lock.json",
-			"!**/*.md"
+			"!**/*.md",
+			"!**/*.astro",
+			"!site/node_modules",
+			"!site/dist",
+			"!site/.astro",
+			"!site/public/demo"
 		]
 	},
 	"formatter": {

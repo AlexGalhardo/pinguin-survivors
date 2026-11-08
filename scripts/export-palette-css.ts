@@ -11,7 +11,10 @@ export function paletteCss(): string {
 }
 
 if (import.meta.main) {
-	const out = new URL('../src/ui/palette.css', import.meta.url);
-	await Bun.write(out, paletteCss());
-	console.log(`wrote ${out.pathname}`);
+	// The game UI and the site (SDD-008) share the same tokens.
+	for (const path of ['../src/ui/palette.css', '../site/src/styles/palette.css']) {
+		const out = new URL(path, import.meta.url);
+		await Bun.write(out, paletteCss());
+		console.log(`wrote ${out.pathname}`);
+	}
 }

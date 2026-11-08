@@ -1,0 +1,35 @@
+---
+import { GITHUB_URL, GOOGLE_PLAY_URL, WISHLIST_URL } from '../links';
+import type { Copy, Locale } from '../i18n';
+import LangSwitch from './LangSwitch.astro';
+
+interface Props {
+	locale: Locale;
+	copy: Copy;
+}
+
+const { locale, copy } = Astro.props;
+const links = [
+	{ label: copy.nav.steam, href: WISHLIST_URL },
+	{ label: copy.nav.googlePlay, href: GOOGLE_PLAY_URL },
+	{ label: copy.nav.github, href: GITHUB_URL },
+];
+---
+
+<header class="flex min-h-14 flex-wrap items-center justify-between gap-2 px-[4vw] py-2">
+	<a href={import.meta.env.BASE_URL} class="font-title text-xl font-bold">{copy.hero.title}</a>
+	<nav class="flex flex-wrap items-center gap-2 text-sm">
+		<LangSwitch locale={locale} />
+		{
+			links.map((l) => (
+				<a
+					href={l.href}
+					rel="noopener"
+					class="flex min-h-11 items-center rounded px-3 font-bold hover:bg-snow-dark/60 focus-visible:outline-2 focus-visible:outline-crit"
+				>
+					{l.label}
+				</a>
+			))
+		}
+	</nav>
+</header>
