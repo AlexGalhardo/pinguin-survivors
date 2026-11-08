@@ -84,7 +84,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 - **6 slots iguais e tiers I–IV** (ADR-005): o DPS do herói passa a crescer pela loja, não por cartas de evolução. A Parte B §6 precisa de uma tabela por arma × tier; ponto de partida: tier I = valores atuais das secundárias; tier IV ≈ 3,5× o tier I em DPS (Brotato escala ~1,6×/tier, aqui 4 tiers em 20 rounds).
 - **Loja e Fish da run** (ADR-006/007): a renda de Fish por round define o ritmo de compra. Alvo: 1 compra de arma a cada ~2 rounds até o round 12, 1 fusão a cada ~4 rounds depois.
 - **Arena quadrada** (ADR-003): densidade de inimigos por área cai conforme a arena cresce; `spawnRate(N)` precisa ser reavaliado com a área (`side²`). Hipótese inicial: manter `spawnRate` e aceitar menor densidade no round 31+ como alívio antes da volta do endless.
-- **Danger 0–5** (ADR-008): substitui EASY/NORMAL/HARD; multiplicadores iniciais em SDD-005 RF-01.
+- **Danger 0–5** (ADR-008): substitui EASY/NORMAL/HARD; multiplicadores iniciais em SDD-005 RF-01. **Danger 0 = 0,5×** de vida e dano dos inimigos (2026-11-08, pedido do desenvolvedor; antes 0,8×); velocidade 0,95× e drops 0,9× seguem.
 - **Cartas só de stat** (4 opções): a curva de stats por round sobe (mais cartas de stat por run). Compensar reduzindo o multiplicador de raridade em ~10% se o #1 estourar.
 - **Sem arma assinada**: multiplicadores por classe do herói continuam; o Jack com 6 armas melee tem +30% em tudo: observar meta #5.
 

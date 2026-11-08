@@ -242,7 +242,7 @@ Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool pró
 ## 16. Dificuldade (Danger) e endless
 
 - **Danger 0–5 por herói** (ADR-008): vencer o boss do round 20 no Danger D libera D+1 para aquele herói.
-- Por danger: multiplicadores de HP/dano dos inimigos e de drops; **waves de elite/horda extras** (D0–1 nenhuma, D2–3 uma, D4–5 três), avisadas na loja a partir do D2.
+- Por danger: multiplicadores de HP/dano dos inimigos e de drops (o **Danger 0** é o modo fácil: inimigos com **0,5×** de vida e de dano, decisão do desenvolvedor 2026-11-08); **waves de elite/horda extras** (D0–1 nenhuma, D2–3 uma, D4–5 três), avisadas na loja a partir do D2.
 - **Endless** sem vitória; a cada volta de 30 rounds HP ×1,6 e dano ×2 (balancing-and-simulation.md Parte B §2).
 - **Visual e pool no endless** (round 31+): a cada 10 rounds, a seed da run sorteia o bioma entre Antártida, floresta, cidade destruída, estação de pesquisa e cidade em ruínas. O pool de inimigos e o boss usam todos os assets (ADR-016).
 - Conquistas e leaderboards por herói e danger.

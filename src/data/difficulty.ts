@@ -18,7 +18,7 @@ export interface DangerMods {
 
 /** Initial values, to calibrate with the sim (docs/balancing-and-simulation.md). */
 export const DANGER: Readonly<Record<Danger, DangerMods>> = {
-	0: { hp: 0.8, dmg: 0.8, speed: 0.95, drops: 0.9, extraWaves: 0 },
+	0: { hp: 0.5, dmg: 0.5, speed: 0.95, drops: 0.9, extraWaves: 0 },
 	1: { hp: 1, dmg: 1, speed: 1, drops: 1, extraWaves: 0 },
 	2: { hp: 1.15, dmg: 1.1, speed: 1.02, drops: 1.1, extraWaves: 1 },
 	3: { hp: 1.3, dmg: 1.2, speed: 1.05, drops: 1.2, extraWaves: 1 },
