@@ -19,6 +19,7 @@ import { ALL_CARDS, type CardDef, type Rarity } from '../src/data/cards';
 import { SUPER } from '../src/data/superpowers';
 import { WEAPON_LINES } from '../src/data/weapons';
 import type { Build } from '../src/logic/build';
+import { extraHealPotionPrice } from '../src/logic/run-state';
 import { defaultSaveFile, newSlot, SAVE_KEY, serializeSaveFile } from '../src/logic/save';
 import { pickBest } from '../src/logic/sim/card-policy';
 import { simTree } from '../src/logic/sim/run-sim';
@@ -376,7 +377,6 @@ interface ShopTick {
 	support: Record<string, number>;
 	healPotion: { level: number; rarity: number; charges: number; cooldown: number; kills: number };
 	materials: { elite: number; boss: number };
-	extraPotionPrice: number | null;
 	shop: {
 		offers: ({ kind: string; id: string; tier: number; price: number } | null)[];
 		locks: boolean[];
@@ -405,7 +405,10 @@ async function playShopStep(
 		support: s.support,
 		healPotion: s.healPotion as never,
 		materials: s.materials,
-		extraPotionPrice: s.extraPotionPrice,
+		extraPotionPrice: extraHealPotionPrice({
+			healPotion: s.healPotion as never,
+			round: s.round,
+		}),
 		skipExtras: noExtras,
 	});
 	const fishAfter = await page.evaluate(
@@ -492,7 +495,6 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 					healPotion: ShopTick['healPotion'];
 					materials: ShopTick['materials'];
 				};
-				extraPotionView(): { price: number } | null;
 				build: Build;
 				stats: unknown;
 				outcome: string;
@@ -512,7 +514,6 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 				support: game.run.support,
 				healPotion: game.run.healPotion,
 				materials: game.run.materials,
-				extraPotionPrice: game.extraPotionView()?.price ?? null,
 				fish: game.run.fish,
 				shop: game.run.shop
 					? {
