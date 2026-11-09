@@ -25,6 +25,9 @@ export default defineConfig({
 	envPrefix: ['VITE_', 'SOUND_'],
 	define: {
 		__APP_VERSION__: JSON.stringify(pkg.version),
+		// Changes on every build: appended to asset URLs so a deploy never mixes cached atlases
+		// (GitHub Pages sends max-age=600 for unhashed files) with new code.
+		__BUILD_ID__: JSON.stringify(Date.now().toString(36)),
 		// Playtest build nickname shown next to the version (package.json "buildName").
 		__BUILD_NAME__: JSON.stringify(pkg.buildName ?? ''),
 		// Final art atlas (1.0): loaded only when it exists; placeholders cover the rest.

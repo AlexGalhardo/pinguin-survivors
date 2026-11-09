@@ -1,3 +1,4 @@
+import { assetUrl } from '../core/asset-url';
 import { createStore } from './store';
 
 /** Where a sprite lives inside a Phaser atlas PNG (read from the atlas JSON, `ui` and `core`). */
@@ -26,7 +27,7 @@ export const atlasStore = createStore<{ rev: number }>({ rev: 0 });
 
 /** Registers every frame of a Phaser hash atlas; `baseUrl` is the folder of its PNG. */
 export function registerAtlas(json: HashAtlas, baseUrl: string): void {
-	const url = `${baseUrl}${json.meta.image}`;
+	const url = assetUrl(`${baseUrl}${json.meta.image}`);
 	for (const [name, f] of Object.entries(json.frames))
 		frames.set(name, {
 			url,
@@ -66,7 +67,7 @@ export async function loadUiAtlases(
 	await Promise.all(
 		UI_ATLASES.map(async (name) => {
 			try {
-				const res = await fetch(`${base}${name}.json`);
+				const res = await fetch(assetUrl(`${base}${name}.json`));
 				if (res.ok) registerAtlas((await res.json()) as HashAtlas, base);
 			} catch {
 				// Offline or missing file: the text fallback stays.

@@ -1,4 +1,5 @@
 import { type ReactElement, useEffect, useRef, useState } from 'react';
+import { assetUrl } from '../../core/asset-url';
 
 const ARTS = ['jack', 'bob'] as const;
 const ART_BASE = `${import.meta.env?.BASE_URL ?? './'}assets/menu/`;
@@ -9,7 +10,7 @@ const ART_BASE = `${import.meta.env?.BASE_URL ?? './'}assets/menu/`;
  */
 export function MenuBackground(): ReactElement {
 	const [art] = useState(() => ARTS[Math.floor(Math.random() * ARTS.length)] as string);
-	const url = `${ART_BASE}keyart.${art}.png`;
+	const url = assetUrl(`${ART_BASE}keyart.${art}.png`);
 	const box = useRef<HTMLDivElement>(null);
 	const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
 	const [view, setView] = useState({ w: 0, h: 0 });

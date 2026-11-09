@@ -1,5 +1,6 @@
 import { type ReactElement, useEffect, useState } from 'react';
 import type { HeroId } from '../../config/constants';
+import { assetUrl } from '../../core/asset-url';
 
 interface Sheet {
 	url: string;
@@ -22,7 +23,7 @@ function loadSheet(hero: HeroId): Promise<Sheet | null> {
 			if (typeof fetch !== 'function') return null;
 			try {
 				const dir = `${base()}assets/heroes/`;
-				const res = await fetch(`${dir}hero.${hero}.json`);
+				const res = await fetch(assetUrl(`${dir}hero.${hero}.json`));
 				if (!res.ok) return null;
 				const json = (await res.json()) as {
 					frames: Record<string, { frame: { x: number; y: number } }>;
@@ -34,7 +35,7 @@ function loadSheet(hero: HeroId): Promise<Sheet | null> {
 				);
 				if (frames.some((f) => !f)) return null;
 				return {
-					url: `${dir}${json.meta.image}`,
+					url: assetUrl(`${dir}${json.meta.image}`),
 					atlasW: json.meta.size.w,
 					atlasH: json.meta.size.h,
 					frames: frames as { x: number; y: number }[],
@@ -95,7 +96,7 @@ export function HeroSprite(props: {
 								backgroundPosition: `${-f.x * props.scale}px ${-f.y * props.scale}px`,
 							}
 						: {
-								backgroundImage: `url(${base()}assets/heroes/portrait.${props.hero}.png)`,
+								backgroundImage: `url(${assetUrl(`${base()}assets/heroes/portrait.${props.hero}.png`)})`,
 								backgroundSize: '100% 100%',
 							}),
 				}}

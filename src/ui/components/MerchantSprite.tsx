@@ -1,4 +1,5 @@
 import { type ReactElement, useEffect, useState } from 'react';
+import { assetUrl } from '../../core/asset-url';
 
 interface Sheet {
 	url: string;
@@ -20,7 +21,7 @@ function loadSheet(): Promise<Sheet | null> {
 		if (typeof fetch !== 'function') return null;
 		try {
 			const dir = `${base()}assets/enemies/`;
-			const res = await fetch(`${dir}npc.merchant.json`);
+			const res = await fetch(assetUrl(`${dir}npc.merchant.json`));
 			if (!res.ok) return null;
 			const json = (await res.json()) as {
 				frames: Record<string, { frame: { x: number; y: number } }>;
@@ -32,7 +33,7 @@ function loadSheet(): Promise<Sheet | null> {
 			);
 			if (frames.some((f) => !f)) return null;
 			return {
-				url: `${dir}${json.meta.image}`,
+				url: assetUrl(`${dir}${json.meta.image}`),
 				atlasW: json.meta.size.w,
 				atlasH: json.meta.size.h,
 				frames: frames as { x: number; y: number }[],
