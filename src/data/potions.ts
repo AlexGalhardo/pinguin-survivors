@@ -39,7 +39,7 @@ export const GAMBIT_INTERVAL = 0.25;
 
 /**
  * Healing potion of the run (SDD-014 RF-20): bought in the shop (level 1 to 10 = potions carried),
- * refilled by kills and drunk automatically. Rarity only changes how much it
+ * empty at every round start, refilled by kills and drunk automatically. Rarity only changes how much it
  * heals; the shop sells rarity I, better ones are upgrade drops.
  */
 export const HEAL_POTION = {
@@ -50,7 +50,7 @@ export const HEAL_POTION = {
 	heal: [0.25, 0.3, 0.35, 0.4, 0.5],
 	/** Drinks when HP is at or below this share of max HP. */
 	drinkBelow: 0.5,
-	/** Each empty potion refills after this many kills in the run (one at a time, up to the level). */
+	/** Each empty potion refills after this many kills in the round (one at a time, up to the level). */
 	killsPerPotion: 100,
 	/** Seconds between two potions. */
 	cooldown: 2,
