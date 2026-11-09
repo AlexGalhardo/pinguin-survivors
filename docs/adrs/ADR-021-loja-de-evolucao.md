@@ -15,6 +15,7 @@ A loja sorteava armas e equipamentos ao acaso entre as raridades I a III, então
   - Itens de suporte e poção de velocidade seguem como antes; nada pior do que o que se tem aparece.
   - Sem candidatos, a oferta fica vazia em vez de repetir item inútil.
 - **IV e V à venda**: IV custa Fish + 1 **Marca de Elite**; V custa Fish + 1 **Núcleo de Boss**. Toda Elite morta dá 1 Marca e todo Boss dá 1 Núcleo (100%, um por inimigo), creditados na hora com texto flutuante, sem arte nova. Valem pela run (`RunState.materials`). A oferta sem o material aparece bloqueada dizendo o que falta.
+- **Calendário das raridades altas** (balanceamento, 2026-11-08): a loja oferece IV só a partir do round 11 e V só a partir do round 21 (`SHOP.rarityFromRound`), depois do 1º e do 2º boss. Sem isso o bot real com L1 comprava IV já no round 4 com as Marcas das primeiras Elites e passava do round 30 (runs de 31 e 42).
 - **Poção de cura**: o card de compra só aparece até a primeira compra. Depois, um botão fixo "+1 poção" no rodapé da loja soma uma à capacidade até 10, sem ocupar oferta.
 - Os drops IV e V de Elites e Bosses (ADR-017) continuam; a fusão continua.
 

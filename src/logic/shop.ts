@@ -116,7 +116,12 @@ export function rollOffers(
 		locks[i] ? (prev[i] ?? null) : null,
 	);
 	const used = new Set(offers.flatMap((o) => (o ? [o.id] : [])));
-	const open = pool.filter((c) => (!c.hero || c.hero === ctx.hero) && c.tier <= SHOP.maxRarity);
+	const open = pool.filter(
+		(c) =>
+			(!c.hero || c.hero === ctx.hero) &&
+			c.tier <= SHOP.maxRarity &&
+			round >= (SHOP.rarityFromRound[c.tier] ?? 0),
+	);
 	for (let i = 0; i < offers.length; i++) {
 		if (offers[i]) continue;
 		let avail = open.filter((c) => !used.has(c.id));

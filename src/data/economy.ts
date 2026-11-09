@@ -46,6 +46,8 @@ export const SHOP = {
 	maxRarity: 5,
 	/** Material each rarity asks for besides the Fish (ADR-021): one Elite Mark for IV, one Boss Core for V. */
 	materialCost: { 4: 'elite', 5: 'boss' } as Partial<Record<number, 'elite' | 'boss'>>,
+	/** First round whose shop offers each rarity: IV after the first boss, V after the second. */
+	rarityFromRound: { 4: 11, 5: 21 } as Partial<Record<number, number>>,
 	fishToPearls: 10,
 } as const;
 

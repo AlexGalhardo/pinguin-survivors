@@ -125,9 +125,9 @@ describe('shop shelf: I to V, weapons, equipment and speed potions (ADR-021)', (
 		for (let seed = 0; seed < 300; seed++) {
 			const offers = rollOffers(
 				new Rng(seed),
-				9,
+				25,
 				{ hero: 'jack', buildSets: [], luck: 5 },
-				shopPool('jack', 9),
+				shopPool('jack', 25),
 				[],
 			);
 			for (const o of offers) {
@@ -141,6 +141,25 @@ describe('shop shelf: I to V, weapons, equipment and speed potions (ADR-021)', (
 		}
 		expect(kinds).toEqual(new Set(['weapon', 'gear', 'potion']));
 		expect(tiers).toEqual(new Set([1, 2, 3, 4, 5]));
+	});
+
+	test('IV only from round 11 and V only from round 21 (after the first and second boss)', () => {
+		const maxTier = (round: number): number => {
+			let max = 0;
+			for (let seed = 0; seed < 200; seed++)
+				for (const o of rollOffers(
+					new Rng(seed),
+					round,
+					{ hero: 'jack', buildSets: [], luck: 5 },
+					shopPool('jack', round),
+					[],
+				))
+					max = Math.max(max, o?.tier ?? 0);
+			return max;
+		};
+		expect(maxTier(10)).toBe(3);
+		expect(maxTier(11)).toBe(4);
+		expect(maxTier(21)).toBe(5);
 	});
 
 	test('buying carries the rolled affixes to the weapon and the equipment roll', () => {
