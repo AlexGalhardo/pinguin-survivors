@@ -9,11 +9,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.2] - 2026-11-09
 
+### Changed
+
+- **boss:** Boss HP doubles with every boss ([37a35c2](https://github.com/AlexGalhardo/pinguin-survivors/commit/37a35c2))
+
+### Maintenance
+
+- **rounds:** Boss HP doubles with every boss ([7b0cb02](https://github.com/AlexGalhardo/pinguin-survivors/commit/7b0cb02))
+
 ## [0.7.1] - 2026-11-09
+
+### Added
+
+- **rounds:** Boss every 5 rounds and longer rounds with no cap ([0fd87d4](https://github.com/AlexGalhardo/pinguin-survivors/commit/0fd87d4))
+
+### Maintenance
+
+- **rounds:** Specify longer rounds and a boss every 5 rounds ([5ff5caa](https://github.com/AlexGalhardo/pinguin-survivors/commit/5ff5caa))
 
 ## [0.7.0] - 2026-11-09
 
+### Added
+
+- **sim:** Balance-goals takes --seed, patches LEVEL_GROWTH and reads tails as 1% ([470832e](https://github.com/AlexGalhardo/pinguin-survivors/commit/470832e))
+- **sim:** Balance-goals script measures goals 1-6 with in-memory patches ([2f228b9](https://github.com/AlexGalhardo/pinguin-survivors/commit/2f228b9))
+- **sim:** Model the evolution shop, Elite Marks and Boss Cores ([c223f4d](https://github.com/AlexGalhardo/pinguin-survivors/commit/c223f4d))
+
+### Changed
+
+- **rounds:** Steeper enemy scaling per 10-round cycle ([6699904](https://github.com/AlexGalhardo/pinguin-survivors/commit/6699904))
+- **shop:** Rarity IV from round 11 and V from round 21 ([7292aba](https://github.com/AlexGalhardo/pinguin-survivors/commit/7292aba))
+- **danger:** Danger 5 enemies hit a little harder ([0374392](https://github.com/AlexGalhardo/pinguin-survivors/commit/0374392))
+- **lucia:** Sturdier base and faster level growth ([c79c713](https://github.com/AlexGalhardo/pinguin-survivors/commit/c79c713))
+- **endless:** Steeper endless loops so L20 builds stop before round 60 ([35e9df1](https://github.com/AlexGalhardo/pinguin-survivors/commit/35e9df1))
+
+### Fixed
+
+- **assets:** Bust the HTTP cache of game assets on every build ([2743c82](https://github.com/AlexGalhardo/pinguin-survivors/commit/2743c82))
+- **bot:** Price the +1 potion button with the pure helper ([e26a67c](https://github.com/AlexGalhardo/pinguin-survivors/commit/e26a67c))
+
+### Maintenance
+
+- **balance:** Record the evolution-shop balance pass and the sim/bot gap ([3c36716](https://github.com/AlexGalhardo/pinguin-survivors/commit/3c36716))
+
 ## [0.6.0] - 2026-11-09
+
+### Added
+
+- **shop:** Evolution shop with rarities I-V, Elite Marks and Boss Cores ([6da3574](https://github.com/AlexGalhardo/pinguin-survivors/commit/6da3574))
+- **potion:** Rounds start with empty potions, refilled by kills ([a6b1b64](https://github.com/AlexGalhardo/pinguin-survivors/commit/a6b1b64))
+
+### Fixed
+
+- **release:** List every micro-commit in the release notes ([ebbe998](https://github.com/AlexGalhardo/pinguin-survivors/commit/ebbe998))
+
+### Maintenance
+
+- **potion:** Say potions refill by kills within the round ([f9360ee](https://github.com/AlexGalhardo/pinguin-survivors/commit/f9360ee))
+- **shop:** Specify the evolution shop with rarities I-V and materials (ADR-021) ([46e08ae](https://github.com/AlexGalhardo/pinguin-survivors/commit/46e08ae))
+- **roadmap:** Close T5.7 with the GitHub Pages deploy ([fb9b8a7](https://github.com/AlexGalhardo/pinguin-survivors/commit/fb9b8a7))
+- **changelog:** List every 0.5.0 micro-commit ([c40d919](https://github.com/AlexGalhardo/pinguin-survivors/commit/c40d919))
 
 ## [0.5.0] - 2026-11-08
 
