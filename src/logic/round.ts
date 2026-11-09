@@ -18,11 +18,6 @@ export function cycle(round: number): number {
 	return Math.floor((round - 1) / ROUNDS.biomeRounds);
 }
 
-/** The boss met halfway through a biome block (rounds 5, 15, 25…). */
-export function isMidBoss(round: number): boolean {
-	return isBossRound(round) && round % ROUNDS.biomeRounds !== 0;
-}
-
 export function isEliteRound(round: number): boolean {
 	return round % ROUNDS.eliteEvery === 0 && !isBossRound(round);
 }
@@ -67,11 +62,9 @@ export function speedMul(round: number): number {
 	return ROUNDS.scaling.speedPerLoop ** loop(round);
 }
 
-/** Boss HP grows per cycle as the rotating pool comes back stronger (round 10 → ×1, 20 → ×1.6). */
+/** Boss HP doubles with every boss: round 5 → ×1, 10 → ×2, 15 → ×4, 20 → ×8… */
 export function bossHpMul(round: number): number {
-	return (
-		ROUNDS.scaling.bossHpPerCycle ** cycle(round) * (isMidBoss(round) ? ROUNDS.midBossHp : 1)
-	);
+	return ROUNDS.scaling.bossHpPerBoss ** (Math.max(1, Math.floor(round / ROUNDS.bossEvery)) - 1);
 }
 
 /** Enemies per second. */

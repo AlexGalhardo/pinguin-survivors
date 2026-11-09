@@ -9,8 +9,6 @@ export const ROUNDS = {
 	/** Seconds to kill the boss of round 5; each later boss gets `bossTimeStep` more (10: 3 min, 15: 4 min…). */
 	bossTimeLimit: 120,
 	bossTimeStep: 60,
-	/** HP share of the mid-biome boss (rounds 5, 15, 25…): the biome's boss, met earlier and weaker. */
-	midBossHp: 0.6,
 	eliteEvery: 3,
 	/** Orange elites start after the first boss. */
 	orangeFrom: 11,
@@ -25,7 +23,8 @@ export const ROUNDS = {
 		hpPerCycle: 1.3,
 		dmgPerRound: 0.26,
 		dmgPerCycle: 1.15,
-		bossHpPerCycle: 1.35,
+		/** Boss HP doubles with every boss: round 5 ×1, 10 ×2, 15 ×4… (developer rule, 2026-11-08). */
+		bossHpPerBoss: 2,
 		spawnBase: 1.5,
 		spawnPerRound: 0.5,
 		spawnMax: 25,
