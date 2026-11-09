@@ -1,6 +1,6 @@
 import { WEAPON_FUSE_MAX } from '../../data/rarity';
 import { WEAPON_LINE_BY_ID, type WeaponId, type WeaponTier } from '../../data/weapons';
-import { addWeapon, type Build, canFuse, fuse } from '../build';
+import { addWeapon, type Build, canFuse, fuse, upgradeSlot } from '../build';
 import { type ItemDrop, pickUpGear, type RunGear } from '../equipment';
 import type { HealPotionState } from '../heal-potion';
 import { Rng } from '../rng';
@@ -99,6 +99,12 @@ export function offerValue(
 	const def = WEAPON_LINE_BY_ID[offer.id as keyof typeof WEAPON_LINE_BY_ID];
 	if (!def) return 0;
 	const base = weaponValue(offer.id, offer.tier, stats) * (taste[offer.id] ?? 1);
+	// A better copy replaces the weakest one of that weapon (ADR-021): worth only the gain.
+	const up = upgradeSlot(build, offer.id, offer.tier);
+	if (up >= 0) {
+		const old = build.weapons[up] as { id: string; tier: number };
+		return Math.max(0, base - weaponValue(old.id, old.tier, stats));
+	}
 	let value = base;
 	const shared = build.weapons.filter((w) =>
 		WEAPON_LINE_BY_ID[w.id].sets.some((s) => (def.sets as readonly string[]).includes(s)),
@@ -160,7 +166,8 @@ export function playShop(args: {
 	for (;;) {
 		const options: { i: number; eff: number }[] = [];
 		shop.offers.forEach((o, i) => {
-			if (!o || o.price > run.fish + sellGain(o, build, stats, run.round)) return;
+			if (!o || !hasMaterial(o, run.materials)) return;
+			if (o.price > run.fish + sellGain(o, build, stats, run.round)) return;
 			const eff = offerValue(o, build, stats, taste) / o.price;
 			if (eff > 0) options.push({ i, eff });
 		});
@@ -174,7 +181,11 @@ export function playShop(args: {
 		}
 		if (bestIdx >= 0) {
 			const offer = shop.offers[bestIdx] as Offer;
-			if (build.weapons.length >= 6 && !canJoin(offer, build)) {
+			if (
+				build.weapons.length >= 6 &&
+				!canJoin(offer, build) &&
+				upgradeSlot(build, offer.id, offer.tier) < 0
+			) {
 				const slot = weakestSlot(build, stats);
 				const out = build.weapons[slot];
 				if (out) {
@@ -182,11 +193,20 @@ export function playShop(args: {
 					build.weapons.splice(slot, 1);
 				}
 			}
-			const r = buy(shop, run.fish, bestIdx);
+			const up = upgradeSlot(build, offer.id, offer.tier);
+			const r = buy(shop, run.fish, bestIdx, run.materials);
 			if (!r) break;
 			shop = r.state;
 			run.fish = r.fish;
-			addWeapon(build, offer.id as never, offer.tier as WeaponTier, offer.affixes);
+			if (up >= 0) {
+				const old = build.weapons[up] as { tier: number };
+				run.fish += sellValue(offerPrice('weapon', old.tier, run.round));
+				build.weapons[up] = {
+					id: offer.id as WeaponId,
+					tier: offer.tier as WeaponTier,
+					...(offer.affixes?.length && { affixes: [...offer.affixes] }),
+				};
+			} else addWeapon(build, offer.id as never, offer.tier as WeaponTier, offer.affixes);
 			fuseAll(build);
 			play.bought.push(offer);
 			continue;
@@ -231,6 +251,7 @@ function canJoin(offer: Offer, build: Build): boolean {
 /** Fish a swap would refund, so a full bar can still afford a clearly better weapon. */
 function sellGain(offer: Offer, build: Build, stats: PlayerStats, round: number): number {
 	if (build.weapons.length < 6 || canJoin(offer, build)) return 0;
+	if (upgradeSlot(build, offer.id, offer.tier) >= 0) return 0;
 	const out = build.weapons[weakestSlot(build, stats)];
 	return out ? sellValue(offerPrice('weapon', out.tier, round)) : 0;
 }

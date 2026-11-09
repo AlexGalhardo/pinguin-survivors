@@ -34,7 +34,14 @@ import {
 	roundDuration,
 	spawnRate,
 } from '../round';
-import { createRunState, endRound, finishRun, leaveShop, weaponCandidates } from '../run-state';
+import {
+	createRunState,
+	endRound,
+	finishRun,
+	isUpgrade,
+	leaveShop,
+	weaponCandidates,
+} from '../run-state';
 import { defaultSave } from '../save';
 import { autoAllocate, heroTree } from '../skill-tree';
 import { addStat, heroStats, type PlayerStats } from '../stats';
@@ -254,8 +261,7 @@ export function simulateRun(config: SimConfig): SimResult {
 	};
 	const save = defaultSave();
 	const cardPool = ALL_CARDS.filter((c) => c.effect.type === 'stat' || c.effect.type === 'perk');
-	// shortcut: the headless sim has no Elite Marks or Boss Cores, so it keeps the shelf at I–III (ADR-021); model materials when the sim tracks elite kills.
-	const weaponPool = weaponCandidates(config.hero).filter((c) => c.tier <= 3);
+	const weaponPool = weaponCandidates(config.hero);
 	let hp = stats.maxHp;
 	let kills = 0;
 	let seconds = 0;
@@ -369,6 +375,9 @@ export function simulateRun(config: SimConfig): SimResult {
 			? ROUNDS.purpleShare + (round >= ROUNDS.orangeFrom ? ROUNDS.orangeShare : 0)
 			: 0;
 		const elites = Math.round(spawnRate(round) * duration * eliteShare);
+		// One Elite Mark per Elite and one Boss Core per Boss pay for shop rarities IV and V (ADR-021).
+		run.materials.elite += elites;
+		if (isBossRound(round)) run.materials.boss++;
 		for (let k = 0; k < elites; k++) {
 			for (const drop of rollItemDrops(dropRng, 'elite', { round, hero: config.hero }))
 				if (drop.kind === 'weapon') takeDrop(build, gear, stats, drop);
@@ -393,7 +402,8 @@ export function simulateRun(config: SimConfig): SimResult {
 		const before = run.fish;
 		const roll = {
 			rng,
-			pool: weaponPool,
+			// The evolution pool (ADR-021): weapons not owned while a slot is free, or above the best copy.
+			pool: weaponPool.filter((c) => isUpgrade(c, build, gear)),
 			ctx: { hero: config.hero, buildSets: Object.keys(setCounts(build)), luck: eff.luck },
 		};
 		run.round = round;
