@@ -6,15 +6,21 @@ export function isBossRound(round: number): boolean {
 	return round % ROUNDS.bossEvery === 0;
 }
 
-/** Seconds of a round; boss rounds use the boss time limit instead. */
+/** Seconds of a round (no cap); a boss round gives one more minute per boss: 5 → 2 min, 10 → 3 min… */
 export function roundDuration(round: number): number {
-	if (isBossRound(round)) return ROUNDS.bossTimeLimit;
-	return Math.min(ROUNDS.firstDuration + ROUNDS.durationStep * (round - 1), ROUNDS.maxDuration);
+	if (isBossRound(round))
+		return ROUNDS.bossTimeLimit + ROUNDS.bossTimeStep * (round / ROUNDS.bossEvery - 1);
+	return ROUNDS.firstDuration + ROUNDS.durationStep * (round - 1);
 }
 
-/** 0-based boss cycle: rounds 1–10 → 0, 11–20 → 1… */
+/** 0-based biome block: rounds 1–10 → 0, 11–20 → 1… (biome, scaling per cycle). */
 export function cycle(round: number): number {
-	return Math.floor((round - 1) / ROUNDS.bossEvery);
+	return Math.floor((round - 1) / ROUNDS.biomeRounds);
+}
+
+/** The boss met halfway through a biome block (rounds 5, 15, 25…). */
+export function isMidBoss(round: number): boolean {
+	return isBossRound(round) && round % ROUNDS.biomeRounds !== 0;
 }
 
 export function isEliteRound(round: number): boolean {
@@ -63,7 +69,9 @@ export function speedMul(round: number): number {
 
 /** Boss HP grows per cycle as the rotating pool comes back stronger (round 10 → ×1, 20 → ×1.6). */
 export function bossHpMul(round: number): number {
-	return ROUNDS.scaling.bossHpPerCycle ** cycle(round);
+	return (
+		ROUNDS.scaling.bossHpPerCycle ** cycle(round) * (isMidBoss(round) ? ROUNDS.midBossHp : 1)
+	);
 }
 
 /** Enemies per second. */

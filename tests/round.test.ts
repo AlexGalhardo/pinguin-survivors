@@ -7,6 +7,7 @@ import {
 	eliteTiers,
 	hpMul,
 	isBossRound,
+	isMidBoss,
 	loop,
 	rollElite,
 	roundDuration,
@@ -15,15 +16,23 @@ import {
 } from '../src/logic/round';
 
 describe('round timing (P-14)', () => {
-	test('20s, +5s per round, capped at 60s', () => {
-		expect([1, 2, 3, 8, 9, 15].map(roundDuration)).toEqual([20, 25, 30, 55, 60, 60]);
+	test('20s, +5s per round, no cap', () => {
+		expect([1, 2, 3, 8, 9, 14, 21, 41].map(roundDuration)).toEqual([
+			20, 25, 30, 55, 60, 85, 120, 220,
+		]);
 	});
 
-	test('boss every 10 rounds with 3 minutes', () => {
-		expect(isBossRound(10)).toBe(true);
-		expect(isBossRound(20)).toBe(true);
+	test('boss every 5 rounds: 2 minutes at round 5, one more minute per boss', () => {
+		expect([5, 10, 15, 20].every(isBossRound)).toBe(true);
 		expect(isBossRound(11)).toBe(false);
-		expect(roundDuration(10)).toBe(180);
+		expect([5, 10, 15, 20].map(roundDuration)).toEqual([120, 180, 240, 300]);
+	});
+
+	test('mid-biome bosses (5, 15, 25) are weaker; biomes stay in blocks of 10', () => {
+		expect(isMidBoss(5)).toBe(true);
+		expect(isMidBoss(10)).toBe(false);
+		expect(bossHpMul(5)).toBeCloseTo(bossHpMul(10) * ROUNDS.midBossHp);
+		expect([10, 11, 20].map(cycle)).toEqual([0, 1, 1]);
 	});
 });
 

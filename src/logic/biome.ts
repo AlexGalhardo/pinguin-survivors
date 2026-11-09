@@ -5,7 +5,7 @@ import { Rng } from './rng';
 import { cycle } from './round';
 
 /** Last round of the campaign (3 biomes); round 31+ is the endless mode. */
-export const CAMPAIGN_ROUNDS = BIOME_IDS.length * ROUNDS.bossEvery;
+export const CAMPAIGN_ROUNDS = BIOME_IDS.length * ROUNDS.biomeRounds;
 
 export const isEndless = (round: number): boolean => round > CAMPAIGN_ROUNDS;
 
@@ -48,5 +48,5 @@ export function bossForRound(round: number, seed = 0): EnemyDef {
 
 /** First round of a biome visit (a new biome banner and ground swap happen here). */
 export function isBiomeStart(round: number): boolean {
-	return round > 1 && (round - 1) % ROUNDS.bossEvery === 0;
+	return round > 1 && (round - 1) % ROUNDS.biomeRounds === 0;
 }

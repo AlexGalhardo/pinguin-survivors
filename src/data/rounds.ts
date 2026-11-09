@@ -2,9 +2,15 @@
 export const ROUNDS = {
 	firstDuration: 20,
 	durationStep: 5,
-	maxDuration: 60,
-	bossEvery: 10,
-	bossTimeLimit: 180,
+	/** Biome and scaling block: Antarctica 1–10, forest 11–20, city 21–30, then endless blocks of 10. */
+	biomeRounds: 10,
+	/** Boss rounds: 5, 10, 15… (developer rule, 2026-11-08). */
+	bossEvery: 5,
+	/** Seconds to kill the boss of round 5; each later boss gets `bossTimeStep` more (10: 3 min, 15: 4 min…). */
+	bossTimeLimit: 120,
+	bossTimeStep: 60,
+	/** HP share of the mid-biome boss (rounds 5, 15, 25…): the biome's boss, met earlier and weaker. */
+	midBossHp: 0.6,
 	eliteEvery: 3,
 	/** Orange elites start after the first boss. */
 	orangeFrom: 11,
