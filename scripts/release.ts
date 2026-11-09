@@ -1,7 +1,7 @@
 // Release in the vukem scheme (ADR-015, SDD-011 RF-05): gates → bump → CHANGELOG → commit → tag →
 // push → GitHub release. Usage: bun scripts/release.ts 0.0.12 [--dry-run] [--stable]
 import { $ } from 'bun';
-import { REPO_URL, releaseNotes } from './lib/release-notes';
+import { insertRelease, REPO_URL, releaseNotes } from './lib/release-notes';
 
 const version = process.argv[2];
 const dryRun = process.argv.includes('--dry-run');
@@ -47,10 +47,7 @@ let changelog = await Bun.file(changelogPath).text();
 const compare = previousTag
 	? `${REPO_URL}/compare/${previousTag}...${tag}`
 	: `${REPO_URL}/releases/tag/${tag}`;
-changelog = changelog.replace(
-	'## [Unreleased]\n',
-	`## [Unreleased]\n\n## [${version}] - ${today}\n`,
-);
+changelog = insertRelease(changelog, version, today, notes);
 changelog = changelog.replace(
 	/^\[Unreleased\]: .*$/m,
 	`[Unreleased]: ${REPO_URL}/compare/${tag}...HEAD\n[${version}]: ${compare}`,

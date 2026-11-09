@@ -96,6 +96,26 @@ export function changelogSection(changelog: string, version: string): string | n
 	return body.replace(/^\[.*$/gm, '').trim() || null;
 }
 
+/** Moves what sits under [Unreleased] into a new version section and appends the generated notes. */
+export function insertRelease(
+	changelog: string,
+	version: string,
+	date: string,
+	notes: string,
+): string {
+	const heading = '## [Unreleased]\n';
+	const start = changelog.indexOf(heading);
+	if (start < 0) throw new Error('CHANGELOG.md has no "## [Unreleased]" section');
+	const bodyStart = start + heading.length;
+	const next = changelog.slice(bodyStart).search(/^## \[/m);
+	const bodyEnd = next < 0 ? changelog.length : bodyStart + next;
+	const section = [changelog.slice(bodyStart, bodyEnd).trim(), notes.trim()]
+		.filter(Boolean)
+		.join('\n\n');
+	const tail = changelog.slice(bodyEnd);
+	return `${changelog.slice(0, bodyStart)}\n## [${version}] - ${date}\n\n${section}\n${tail ? `\n${tail}` : ''}`;
+}
+
 /** Notes for the commits in (from, to]; falls back to the CHANGELOG section when no commit qualifies. */
 export async function releaseNotes(
 	from: string | null,
