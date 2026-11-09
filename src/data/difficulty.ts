@@ -23,7 +23,7 @@ export const DANGER: Readonly<Record<Danger, DangerMods>> = {
 	2: { hp: 1.15, dmg: 1.1, speed: 1.02, drops: 1.1, extraWaves: 1 },
 	3: { hp: 1.3, dmg: 1.2, speed: 1.05, drops: 1.2, extraWaves: 1 },
 	4: { hp: 1.5, dmg: 1.35, speed: 1.08, drops: 1.35, extraWaves: 3 },
-	5: { hp: 1.75, dmg: 1.5, speed: 1.12, drops: 1.5, extraWaves: 3 },
+	5: { hp: 1.75, dmg: 1.6, speed: 1.12, drops: 1.5, extraWaves: 3 },
 };
 
 export const EXTRA_WAVES = {
