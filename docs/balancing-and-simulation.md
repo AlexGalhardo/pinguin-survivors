@@ -33,6 +33,7 @@
 |---|---|---|---|
 | **Sim headless** (`src/logic/sim/run-sim.ts`) | Modelo analítico da run com as fórmulas reais; determinística por seed; roda centenas de runs em segundos | `bun scripts/sim.ts [runs] [--rounds] [--danger d] [--hero h] [--level L]` | Comparar variantes de números rapidamente; gate de CI (`tests/sim.test.ts`) |
 | **Bot de playtest** (`scripts/playtest-bot.ts`) | Joga o jogo real no Chrome (Playwright): foge do perigo, mantém alcance, usa superpoder, compra na loja pela política, escolhe cartas | `bun scripts/playtest-bot.ts --url http://localhost:4173 --heroes jack,bob,lucia --levels 1,10,20 --danger 1 --runs 2 --react 0.2 --mistakes 0.05 --json out.jsonl` | Aprovar milestones; validar o que a sim não modela (posicionamento, projéteis, poças) |
+| **Metas** (`scripts/balance-goals.ts`) | Metas #1–#6 da sim numa tabela ok/BAD; `--patch v.json` aplica overrides em memória (sem editar `src/`), `--seed` troca o conjunto | `bun scripts/balance-goals.ts 100 --seed 300 --patch v.json` | Comparar variantes em paralelo |
 | **Relatório** (`scripts/balance-report.ts`) | Tabelas herói × level × danger, DPS por arma, compra por item, metas ✓/✗ | `bun scripts/balance-report.ts out.jsonl` → `docs/reports/balance-<data>.md` | Fim de cada passada |
 | **Perf** (`scripts/perf.ts`) | 300 inimigos + 2.000 decalques, FPS médio e p95 | `bun scripts/perf.ts --round 40` | Depois de mudanças em spawn/arena/efeitos |
 | **Debug no browser** | `?skipMenu=1&hero=jack&round=12&seed=7&level=10&danger=3&weapons=…&god=1&debug=1` | — | Reproduzir uma situação específica |
@@ -56,12 +57,12 @@ Medidas com **bot médio**, **Danger 1**, seeds 100 e 101, build DEV congelado.
 
 | # | Perfil | Meta | Status |
 |---|---|---|---|
-| 1 | L1, árvore vazia, sem poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim (2026-11-08, raridade I–V): 18 / 18 / 16, máx. 27. Bot real com a raridade e os drops (13 runs): jack 10 (4 runs), bob 24 (3 runs), **lucia 6 (6 runs, 2 mortes no round 3)** antes do ajuste; com Lucia HP base 85→100 e armadura 1→3: sim 18 / 18 / 17 e bot real **lucia 14 (6 runs: 3, 13, 13, 15, 17, 34)**, acima do piso |
-| 2 | L10 + árvore automática + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim (2026-11-08): jack 3%, bob 0%, lucia 1% |
-| 3 | L20 + árvore automática + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim (2026-11-08, raridade I–V): 33 / 33 / 33 |
-| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim (2026-11-08, raridade I–V): D0 42, D1 31, D5 10 |
+| 1 | L1, árvore vazia, sem poções, arma inicial padrão | mediana de morte entre os rounds **8 e 20**; nenhum herói passa do 30 | ✓ na sim com a loja de evolução (2026-11-08, ADR-021, 400 seeds em 4 conjuntos): medianas 18–19 / 18 / 16–17, ≤ 1% das runs passa do 30 (`bun scripts/balance-goals.ts`; com 100 seeds, "nenhuma run" é lido como ≤ 1%). Antes: 18 / 18 / 16, máx. 27. Bot real com a raridade e os drops (13 runs): jack 10 (4 runs), bob 24 (3 runs), **lucia 6 (6 runs, 2 mortes no round 3)** antes do ajuste; com Lucia HP base 85→100 e armadura 1→3: sim 18 / 18 / 17 e bot real **lucia 14 (6 runs: 3, 13, 13, 15, 17, 34)**, acima do piso |
+| 2 | L10 + árvore automática + gambits | cada herói passa do boss 20 em ≥ 1 de 2 seeds; **≤ 5% das runs morrem antes do round 12** (o boss do 10 faz 2–3% de mortes por variância de seed) | ✓ na sim com a loja de evolução (2026-11-08): morte antes do 12 em 0–1%; medianas L10 31 / 31 / 26–27 |
+| 3 | L20 + árvore automática + gambits | os 3 heróis passam do round 30; morrem antes do 60 | ✓ na sim com a loja de evolução (2026-11-08, 400 seeds): medianas L20 32 / 31 / 31; passam do 60 em 0–1% (antes do `hpPerLoop` 4,5: 18–44%) |
+| 4 | Danger 0 vs 5 (L10) | D0 chega ≥ 5 rounds além de D1; D5 morre ≤ round 15 | ✓ na sim com a loja de evolução (2026-11-08): D0 33–61, D1 26–31, D5 10–15 (D5 dano ×1,6); curva D0→D5 monótona em todo herói e level |
 | 5 | Diversidade de build (sim, 100 runs/herói, L10, D1) | **toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói.** Os limites de 35% por arma e 50% por set dentro de cada herói são **exceção justificada**: com ~15 armas candidatas para 5 vagas livres a média por arma já é ~33%, e o bônus de classe (`tagMul`) é intencional | ✓ (2026-11-08): nenhuma arma abaixo de 3%. Exceção medida: armas líderes de 63% a 69% por herói (jack `hammer`, bob `elementStaff`, lucia `flameRing`), sets de 74% a 93% |
-| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim (2026-11-08, raridade I–V): 0,895, reroll 8,5% |
+| 6 | Economia (sim) | Fish gasto / ganho entre 0,85 e 1,0; reroll ≤ 15% do gasto | ✓ na sim com a loja de evolução (2026-11-08): 0,851–0,859, reroll 0–0,2%. Ressalva: a sim só compra armas; equipamento, suporte e poção (o resto do gasto no jogo real) não entram |
 | 7 | Duração | run L1 mediana 10–18 min (tempo de jogo + 45 s por loja/cartas); demo completa 12–25 min (mesmo critério, SDD-006 A5) | ✓ com o bot real (2026-11-08, raridade I–V, 13 runs L1 D1): mediana 13,1 min (tempo de jogo 6,3 min + 45 s por loja). Demo: `docs/reports/demo-time-2026-11-08.md` ✓ |
 | 8 | Performance | ≥ 58 FPS médios, p95 ≤ 18 ms, 300 inimigos + 2.000 decalques, 1920×1080, round 40 | ✓ (2026-11-08, `bun scripts/perf.ts --round 40`, 3 medições mudas): 58 / 59 / 59 FPS, p95 16,8 ms (`docs/reports/perf-2026-11-08.jsonl`) |
 
@@ -123,8 +124,8 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 
 ### 2. Escala dos inimigos
 
-- `hpMul(N) = (1 + 0,15·(N−1)) · 1,12^ciclo · 1,6^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/30)` (endless: a cada volta completa pelos 3 biomas)
-- `dmgMul(N) = (1 + 0,26·(N−1)) · 1,08^ciclo · 2^volta` (`src/data/rounds.ts`: `dmgPerRound` 0,26, `dmgPerCycle` 1,08, `dmgPerLoop` 2; 2026-11-08, commit `2f822aa`; `dmgPerLoop` 1,5 → 2 na mudança de raridade, ADR-017)
+- `hpMul(N) = (1 + 0,15·(N−1)) · 1,3^ciclo · 4,5^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/30)` (endless: a cada volta completa pelos 3 biomas)
+- `dmgMul(N) = (1 + 0,26·(N−1)) · 1,15^ciclo · 1,6^volta` (`src/data/rounds.ts`: `dmgPerRound` 0,26, `dmgPerCycle` 1,15 (era 1,08; `hpPerCycle` era 1,12), `dmgPerLoop` 1,6, `hpPerLoop` 4,5; 2026-11-08, loja de evolução, ADR-021: o endless passou a escalar pela vida para segurar builds com IV e V)
 - `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos** [1.0: revisar]
 - Bosses: HP base × `1,35^ciclo` (round 10 ×1, 20 ×1,35, 30 ×1,82…)
 - Biomas da campanha: rounds 1–10 Antártida, 11–20 floresta, 21–30 cidade destruída (ADR-016); no endless, a cada 10 rounds a seed sorteia entre os cinco biomas, incluindo estação e cidade em ruínas legados (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
@@ -226,9 +227,9 @@ Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultraw
 
 | Stat | Jack | Bob | Lucia |
 |---|---|---|---|
-| HP | **140** | 110 | **85** |
-| Regen/s | 0,8 | 0,4 | 0,3 |
-| Armadura | **12** | 4 | 1 |
+| HP | **140** | 110 | 100 |
+| Regen/s | 0,8 | 0,4 | 0,5 |
+| Armadura | **12** | 4 | 5 |
 | Vel. movimento (u/s) | **95** (lento) [1.0: revisar] | **135** (rápido) | 115 |
 | Dodge | 3% | **12%** | 6% |
 | Parry | **15%** | 0% | 0% |
@@ -237,11 +238,11 @@ Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultraw
 | Resist. (fogo/terra/gelo/energia) | 0/10/5/0 | 5/0/5/0 | 10/10/10/10 |
 | Mult. dano **melee** | **×1,30** | ×0,70 | ×0,80 |
 | Mult. dano **fogo** | ×1,00 | **×1,30** | ×0,85 |
-| Mult. dano **magia** | ×0,65 | ×1,00 | **×1,50** |
+| Mult. dano **magia** | ×0,65 | ×1,00 | **×1,45** |
 
 Os multiplicadores por tag valem para a arma assinada, secundárias e cartas de magia (incluindo as de outras tags que o herói pegar).
 
-**Crescimento automático por level** (somado ao valor base): Jack +4 HP, +0,4 armadura, +0,1% parry · Bob +2,5 HP, +0,3% crítico, +0,1% dodge · Lucia +1,5 HP, +0,6% dano mágico.
+**Crescimento automático por level** (somado ao valor base): Jack +4 HP, +0,4 armadura, +0,1% parry · Bob +2,5 HP, +0,3% crítico, +0,1% dodge · Lucia +3 HP, +0,8% dano mágico (2026-11-08, loja de evolução: antes +1,5 e +0,6%).
 **Ponto de stat** (1 por level): +1% vel. de ataque · +0,1 regen/s · +1 armadura · +1% resist. elemental (escolhe o elemento) · +0,5% dodge · +0,5% parry · +0,5% crítico · +5 HP.
 
 #### 4.1 Cartas exclusivas (valores de nível 1; +50% por nível até 5)
@@ -480,6 +481,23 @@ A sim (`bun scripts/sim.ts`) é só apoio: serve para comparar mudanças antes d
 Preços (Fish, mais `2 × round`): arma I a V = 8, 20, 45, 90, 160; equipamento I a V = 12, 30, 70, 140, 250 (IV e V só valem na venda). Drops por abate: Elite dá arma IV com 0,08% e equipamento IV com 1%; Boss dá arma V com 10% e equipamento V com 100% (1 item V garantido por Boss). As chances de arma foram calibradas com a sim (drops de arma mais frequentes empurravam #1 e #3 para fora das metas); a sim modela só os drops de arma (a sim não tem equipamento).
 
 ## Parte C — Histórico de calibração
+
+### C-2026-11-08b. Loja de evolução (ADR-021)
+
+A sim passou a modelar a loja de evolução: Marcas de Elite e Núcleos de Boss, pool só de upgrades e compra que substitui a cópia mais fraca. Três estagiários testaram variantes em paralelo com `bun scripts/balance-goals.ts --patch` (overrides em memória), e o resultado foi validado em 4 conjuntos de 100 seeds (100, 300, 500, 700).
+
+| Mudança | Antes | Depois | Meta |
+|---|---|---|---|
+| `ROUNDS.scaling.hpPerLoop` / `dmgPerLoop` | 1,6 / 2 | 4,5 / 1,6 | #3: L20 passando do 60 caiu de 18–44% para 0–1% |
+| Lucia armadura / regen / magia | 3 / 0,3 / ×1,5 | 5 / 0,5 / ×1,45 | #1: máx. L1 31 → 25–31 (≤ 1%) |
+| Lucia crescimento por level | +1,5 HP, +0,6% magia | +3 HP, +0,8% magia | #3: mediana L20 27–29 → 31 |
+| Danger 5 dano | ×1,5 | ×1,6 | #4: Jack D5 16 → 10 no conjunto 500 |
+| `SHOP.rarityFromRound` | IV e V desde o round 1 | IV do round 11, V do 21 | bot real L1: quem comprava IV no round 4 passava do 30 (31, 42) |
+| `hpPerCycle` / `dmgPerCycle` | 1,12 / 1,08 | 1,3 / 1,15 | bot real L1: builds que passavam do boss 10 não tomavam dano nenhum nos rounds 11–29 e chegavam a 30–33 |
+
+**Sim × bot.** O bot real (L1, Danger 1, seeds 100 e 101) deu runs bimodais: morte no boss 10 ou disparo até 30–42, com 2.200+ Fish e 6 armas IV/V. A sim não reproduz isso porque não modela equipamento, poção, suporte nem a mira real; ela subestima a força do jogador do meio do jogo. Com a escala por ciclo nova, a sim mostra L20 com mediana 24–31 (abaixo da meta #3 para Bob e Lucia), mas a meta vale no jogo real: confirmar com o bot em L10/L20 antes de mexer de novo (passada em andamento na 0.7.0).
+
+Rejeitado: tirar a raridade V da loja (`maxRarity` 4) fechava #6, mas contraria o pedido do desenvolvedor (loja I–V). O gasto/ganho da sim é pouco sensível a preço e ganho, porque o comprador da sim só compra armas e a loja de evolução fica com menos ofertas úteis no fim da run.
 
 ### C0. Calibração do design isométrico (2026-09-27)
 
