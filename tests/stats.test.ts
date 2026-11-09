@@ -23,8 +23,8 @@ describe('stats', () => {
 
 	test('level growth and allocated tree nodes', () => {
 		const plain = heroStats(HEROES.lucia, 11, []);
-		expect(plain.maxHp).toBeCloseTo(HEROES.lucia.hp + 1.5 * 10);
-		expect(plain.tagMul.magic).toBeCloseTo(HEROES.lucia.tagMul.magic + 0.06);
+		expect(plain.maxHp).toBeCloseTo(HEROES.lucia.hp + 3 * 10);
+		expect(plain.tagMul.magic).toBeCloseTo(HEROES.lucia.tagMul.magic + 0.08);
 		const tree = heroTree('lucia');
 		const path = pathTo(tree, [], 'lucia.ice.n0');
 		const withTree = heroStats(HEROES.lucia, 11, path);

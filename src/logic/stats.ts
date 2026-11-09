@@ -43,7 +43,7 @@ export interface PlayerStats {
 export const LEVEL_GROWTH: Record<HeroId, Partial<Record<StatKey, number>>> = {
 	jack: { maxHp: 4, armor: 0.4, parry: 0.001 },
 	bob: { maxHp: 2.5, crit: 0.003, dodge: 0.001 },
-	lucia: { maxHp: 1.5, 'tagMul.magic': 0.006 },
+	lucia: { maxHp: 3, 'tagMul.magic': 0.008 },
 };
 
 /** Flat keys for modifiers: plain stats plus `resist.<element>` and `tagMul.<tag>`. */
