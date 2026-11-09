@@ -22,5 +22,12 @@ export const supportEn = {
 	'panel.healPotion': '{charges}/{level} potions · heals {pct}% · rarity {rarity}',
 	'hud.potionKills': '{n}/{max} kills',
 	'hud.healPotion': 'Healing potions',
+	'fx.material.elite': '+1 Elite Mark',
+	'fx.material.boss': '+1 Boss Core',
+	'shop.material.elite': 'Elite Mark',
+	'shop.material.boss': 'Boss Core',
+	'shop.materials': 'Marks {elite} · Cores {boss}',
+	'shop.needsMaterial': 'Needs 1 {m}',
+	'shop.extraPotion': '+1 POTION {level}/{max} · {n}',
 	'fx.potionUp': 'Potion rarity {r}',
 } as const;

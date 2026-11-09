@@ -25,7 +25,13 @@ import { ECONOMY } from '../data/economy';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { GEAR_BY_ID, GEAR_SLOTS } from '../data/equipment';
 import { HEROES } from '../data/heroes';
-import { CROWD_RADIUS, GAMBIT_INTERVAL, POTION_EFFECTS, type PotionType } from '../data/potions';
+import {
+	CROWD_RADIUS,
+	GAMBIT_INTERVAL,
+	HEAL_POTION,
+	POTION_EFFECTS,
+	type PotionType,
+} from '../data/potions';
 import { WEAPON_FUSE_MAX } from '../data/rarity';
 import { ROUNDS } from '../data/rounds';
 import { levelScale, PERKS, SECONDARIES, type SecondaryId } from '../data/secondaries';
@@ -55,6 +61,7 @@ import {
 	mergeInto,
 	setBonuses,
 	setCounts,
+	upgradeSlot,
 	type WeaponInstance,
 } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
@@ -91,10 +98,12 @@ import { depthOf, inputToWorld, worldToScreen } from '../logic/projection';
 import { Rng, randomSeed } from '../logic/rng';
 import { isBossRound } from '../logic/round';
 import {
+	buyExtraHealPotion,
 	countRun,
 	createRunState,
 	damageHero,
 	endRound,
+	extraHealPotionPrice,
 	finishRun,
 	healHero,
 	leaveShop,
@@ -119,6 +128,7 @@ import {
 import {
 	buy as buyOffer,
 	gearSellValue,
+	hasMaterial,
 	lock as lockOffer,
 	offerPrice,
 	rerollPrice,
@@ -545,6 +555,7 @@ export class GameScene extends Phaser.Scene {
 		bindCommands({
 			buy: (i) => this.shopBuy(i),
 			reroll: () => this.shopReroll(),
+			buyHealPotion: () => this.shopBuyPotion(),
 			lock: (i) => this.shopLock(i),
 			sell: (slot) => this.shopSell(slot),
 			fuse: (a, b) => this.shopFuse(a, b),
@@ -1079,6 +1090,12 @@ export class GameScene extends Phaser.Scene {
 			fish = scaleDrops(fish, this.mods.drops, this.rng.next());
 		if (fish > 0) this.pickups.drop('fish', fish, e.x + 6, e.y + 6);
 		addPotionKills(run.healPotion);
+		if (kind !== 'common') {
+			// One Elite Mark per Elite and one Boss Core per Boss, credited at once (ADR-021).
+			const material = kind === 'boss' ? 'boss' : 'elite';
+			run.materials[material]++;
+			this.fx.banner(e.x, e.y - 12, `fx.material.${material}`);
+		}
 		const potionUp = rollPotionDrop(this.rng, kind, run.healPotion);
 		if (potionUp) this.pickups.drop('potion', potionUp, e.x + 10, e.y - 4);
 		const heal = rollHealDrop(this.rng, kind);
@@ -1363,7 +1380,7 @@ export class GameScene extends Phaser.Scene {
 		const hero = this.run.hero;
 		return {
 			rng: this.rng,
-			pool: shopPool(hero, this.run.round, this.run),
+			pool: shopPool(hero, this.run.round, this.run, this.build),
 			ctx: {
 				hero,
 				buildSets: Object.keys(setCounts(this.build)),
@@ -1569,14 +1586,21 @@ export class GameScene extends Phaser.Scene {
 									? [...WEAPON_LINE_BY_ID[o.id as WeaponId].sets]
 									: [],
 							locked: shop.locks[index] ?? false,
+							...(o.material && { material: o.material }),
 							affordable:
 								run.fish >= o.price &&
-								(o.kind !== 'weapon' || !full || this.mergeSlot(o.id, o.tier) >= 0),
+								hasMaterial(o, run.materials) &&
+								(o.kind !== 'weapon' ||
+									!full ||
+									this.mergeSlot(o.id, o.tier) >= 0 ||
+									upgradeSlot(this.build, o.id, o.tier) >= 0),
 						}
 					: null,
 			),
 			rerollPrice: price,
 			canReroll: run.fish >= price,
+			materials: { ...run.materials },
+			extraPotion: this.extraPotionView(),
 			weapons: w.map((x, slot) => ({
 				slot,
 				id: x.id,
@@ -1606,8 +1630,14 @@ export class GameScene extends Phaser.Scene {
 			this.fx.play('sfx.shopNoFish');
 			return;
 		}
-		if (offer.kind !== 'weapon') {
-			// Gear goes to the bag/worn slots and potions to the run stock (`purchase`).
+		if (!hasMaterial(offer, run.materials)) {
+			this.fx.play('sfx.shopNoFish');
+			return;
+		}
+		const upgrade =
+			offer.kind === 'weapon' && upgradeSlot(this.build, offer.id, offer.tier) >= 0;
+		if (offer.kind !== 'weapon' || upgrade) {
+			// Gear is worn at once, potions go to the run stock and weapon upgrades replace the weakest copy (`purchase`).
 			const before = run.fish;
 			if (!purchase(run, index, { build: this.build, stats: this.stats })) {
 				this.fx.play('sfx.shopNoFish');
@@ -1619,6 +1649,10 @@ export class GameScene extends Phaser.Scene {
 				this.syncMaxHp();
 				this.fx.play('sfx.equip');
 			}
+			if (upgrade) {
+				this.refreshSetBonuses();
+				this.onBuildChanged();
+			}
 			this.publishShopView();
 			return;
 		}
@@ -1627,7 +1661,7 @@ export class GameScene extends Phaser.Scene {
 			this.fx.play('sfx.shopNoFish');
 			return;
 		}
-		const bought = buyOffer(shop, run.fish, index);
+		const bought = buyOffer(shop, run.fish, index, run.materials);
 		if (!bought) return;
 		this.fx.play('sfx.shopBuy');
 		this.fishSpent += offer.price;
@@ -1643,6 +1677,36 @@ export class GameScene extends Phaser.Scene {
 		}
 		this.refreshSetBonuses();
 		this.onBuildChanged();
+		this.publishShopView();
+	}
+
+	/** The fixed "+1 potion" button once the first potion was bought (ADR-021). */
+	private extraPotionView(): {
+		price: number;
+		level: number;
+		max: number;
+		affordable: boolean;
+	} | null {
+		const price = extraHealPotionPrice(this.run);
+		if (price === null) return null;
+		return {
+			price,
+			level: this.run.healPotion.level,
+			max: HEAL_POTION.maxLevel,
+			affordable: this.run.fish >= price,
+		};
+	}
+
+	private shopBuyPotion(): void {
+		const run = this.run;
+		if (run.phase !== 'shop') return;
+		const before = run.fish;
+		if (!buyExtraHealPotion(run)) {
+			this.fx.play('sfx.shopNoFish');
+			return;
+		}
+		this.fx.play('sfx.shopBuy');
+		this.fishSpent += before - run.fish;
 		this.publishShopView();
 	}
 

@@ -21,7 +21,7 @@ export type { OfferDescription, OfferOutcome, StatChange } from '../logic/shop-d
  * the game after every change; the UI only reads it and sends `commands` back.
  *
  * Per offer (`ShopOfferView`):
- * - `rarity` 1 to 3 (I white, II blue, III green; the shelf never sells IV or V), colored with
+ * - `rarity` 1 to 5 (I white, II blue, III green, IV purple, V orange; IV and V ask for a `material`), colored with
  *   `rarityColor(rarity)` from `config/palette` and named with `t('rarity.<n>')`.
  * - `affixes`: the random stat bonuses already rolled (I has none, II one, III two), as
  *   `{ stat, value }`; label with `gstat.<stat>` and `formatStat(stat, value, true)`.
@@ -72,7 +72,9 @@ export interface ShopOfferView {
 	/** Sets of the weapon (empty for gear), for the set-bonus hint. */
 	sets: string[];
 	locked: boolean;
-	/** Enough Fish and (weapons) a free slot or an identical weapon to merge into. */
+	/** Rarity IV asks for one Elite Mark and V for one Boss Core besides the Fish (ADR-021). */
+	material?: 'elite' | 'boss';
+	/** Enough Fish, the material and (weapons) a free slot, an upgrade or an identical weapon to merge into. */
 	affordable: boolean;
 }
 
@@ -103,6 +105,10 @@ export interface ShopView {
 	offers: (ShopOfferView | null)[];
 	rerollPrice: number;
 	canReroll: boolean;
+	/** Elite Marks and Boss Cores of the run (ADR-021). */
+	materials: { elite: number; boss: number };
+	/** Fixed "+1 potion" button after the first potion was bought; null before that or at the cap. */
+	extraPotion: { price: number; level: number; max: number; affordable: boolean } | null;
 	/** Weapon slots in the build (max 6). */
 	weapons: ShopWeaponView[];
 	maxWeapons: number;

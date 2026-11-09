@@ -34,6 +34,8 @@ export const shopPtBR = {
 	'shop.outcome.newWeaponFuse':
 		'Nova arma no slot {slot}. Dá para fundir com o slot {with} ({from} → {to}).',
 	'shop.outcome.fuse': 'Funde com a arma do slot {slot}: {from} → {to}, +{n} afixos novos.',
+	'shop.outcome.upgradeWeapon':
+		'Evolui a arma do slot {slot}: {from} → {to}; a antiga é vendida por {n} Fish.',
 	'shop.outcome.barFull': 'Os 6 slots de arma estão cheios: venda ou funda uma antes.',
 	'shop.outcome.equip': 'Vestido na hora ({slot}).',
 	'shop.outcome.replace':

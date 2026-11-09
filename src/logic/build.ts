@@ -106,6 +106,16 @@ export function addWeapon(
 	return true;
 }
 
+/** Slot of the weakest copy of `id` below `tier` (what an upgrade replaces), or -1. */
+export function upgradeSlot(build: Build, id: string, tier: number): number {
+	let slot = -1;
+	build.weapons.forEach((w, i) => {
+		if (w.id === id && w.tier < tier && (slot < 0 || w.tier < (build.weapons[slot]?.tier ?? 9)))
+			slot = i;
+	});
+	return slot;
+}
+
 /** Slots `a` and `b` (indices into `build.weapons`) can fuse: same id and tier, tier < III (ADR-017). */
 export function canFuse(build: Build, a: number, b: number): boolean {
 	const wa = build.weapons[a];

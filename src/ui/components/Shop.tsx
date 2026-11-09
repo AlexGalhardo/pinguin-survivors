@@ -37,11 +37,13 @@ import { PlayerPanel, type PlayerPanelData, panelFromView } from './PlayerPanel'
 export interface ShopOfferData {
 	kind: 'weapon' | 'item' | 'gear' | 'potion' | 'support' | 'healPotion';
 	id: string;
-	/** Weapon/item rarity I..IV, or gear rarity 1..3 (the shop never sells IV or V). */
+	/** Rarity I to V (ADR-021). */
 	tier: number;
 	price: number;
+	/** IV asks for one Elite Mark and V for one Boss Core besides the Fish. */
+	material?: 'elite' | 'boss';
 	sets: readonly string[];
-	/** Rarity I to III (same number as `tier`), random affixes, weapon numbers and gear base stats. */
+	/** Rarity I to V (same number as `tier`), random affixes, weapon numbers and gear base stats. */
 	rarity?: number;
 	affixes?: readonly AffixView[];
 	weapon?: { damage: number; cooldown: number; range: number };
@@ -69,11 +71,17 @@ export interface ShopData {
 	player?: PlayerPanelView;
 	/** Extra waves of the next round (Danger 2+). */
 	nextWaves?: readonly ('elite' | 'horde')[];
+	/** Elite Marks and Boss Cores of the run (ADR-021). */
+	materials?: { elite: number; boss: number };
+	/** Fixed "+1 potion" button once the first potion was bought; null/absent hides it. */
+	extraPotion?: { price: number; level: number; max: number; affordable: boolean } | null;
 }
 
 export interface ShopActions {
 	buy: (index: number) => void;
 	reroll: () => void;
+	/** The fixed "+1 potion" button. */
+	buyPotion: () => void;
 	/** Opens the skill tree of the run's hero. */
 	tree: () => void;
 	lock: (index: number) => void;
@@ -83,6 +91,7 @@ export interface ShopActions {
 }
 
 const GEAR_SLOTS = ['helmet', 'armor', 'legs', 'ring', 'amulet'] as const;
+const NO_MATERIALS = { elite: 0, boss: 0 } as const;
 
 const label = (key: string): string => (t(key as I18nKey) as string | undefined) ?? key;
 
@@ -152,6 +161,13 @@ function outcomeText(d: OfferDescription): string {
 				from: numeral(o.fromRarity),
 				to: numeral(o.toRarity),
 				n: d.newAffixes,
+			});
+		case 'upgradeWeapon':
+			return t('shop.outcome.upgradeWeapon', {
+				slot: o.slot + 1,
+				from: numeral(o.fromRarity),
+				to: numeral(d.rarity),
+				n: o.sellFish,
 			});
 		case 'barFull':
 			return t('shop.outcome.barFull');
@@ -257,6 +273,7 @@ function OfferCard(props: {
 	index: number;
 	locked: boolean;
 	fish: number;
+	materials: { elite: number; boss: number };
 	actions: ShopActions;
 	icon: number;
 }): ReactElement {
@@ -271,7 +288,9 @@ function OfferCard(props: {
 			</div>
 		);
 	}
-	const affordable = props.fish >= offer.price && offer.description?.outcome.type !== 'barFull';
+	const missing = !!offer.material && props.materials[offer.material] <= 0;
+	const affordable =
+		props.fish >= offer.price && !missing && offer.description?.outcome.type !== 'barFull';
 	const rarity = offer.rarity ?? offer.tier;
 	const affixes = offer.affixes ?? offer.description?.affixes ?? [];
 	let summary = '';
@@ -331,6 +350,14 @@ function OfferCard(props: {
 					) : (
 						<Hint key="n">{t('shop.noAffixes')}</Hint>
 					),
+					offer.material ? (
+						<span
+							key="m"
+							className={`block truncate font-bold ${missing ? 'text-blood' : 'text-gold-bright'}`}
+						>
+							{t('shop.needsMaterial', { m: t(`shop.material.${offer.material}`) })}
+						</span>
+					) : null,
 				].filter(Boolean)}
 				footer={
 					<div className="mt-1 flex gap-1.5">
@@ -454,6 +481,11 @@ export function Shop({
 					/>
 					{t('shop.fish', { n: data.fish })}
 				</div>
+				{data.materials && (
+					<div className="font-bold text-gold-bright tabular-nums">
+						{t('shop.materials', data.materials)}
+					</div>
+				)}
 			</header>
 
 			<main className="grid min-h-0 flex-1 grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-3">
@@ -525,6 +557,7 @@ export function Shop({
 									index={i}
 									locked={data.locks[i] ?? false}
 									fish={data.fish}
+									materials={data.materials ?? NO_MATERIALS}
 									actions={actions}
 									icon={icon}
 								/>
@@ -581,6 +614,19 @@ export function Shop({
 				>
 					{t('shop.reroll', { n: data.rerollPrice })}
 				</Btn>
+				{data.extraPotion && (
+					<Btn
+						onActivate={actions.buyPotion}
+						disabled={!data.extraPotion.affordable}
+						variant="secondary"
+					>
+						{t('shop.extraPotion', {
+							level: data.extraPotion.level,
+							max: data.extraPotion.max,
+							n: data.extraPotion.price,
+						})}
+					</Btn>
+				)}
 				<Btn onActivate={actions.tree} variant="secondary">
 					{t('menu.workshop')}
 				</Btn>

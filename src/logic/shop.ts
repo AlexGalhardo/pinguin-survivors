@@ -1,5 +1,6 @@
 import { SHOP } from '../data/economy';
 import { HEAL_POTION, POTION_PRICES, type PotionType } from '../data/potions';
+import type { Rarity } from '../data/rarity';
 import { SUPPORT_PRICE } from '../data/support';
 import { type Affix, rollAffixes } from './affixes';
 import type { Rng } from './rng';
@@ -17,12 +18,24 @@ export interface ShopCandidate {
 	hero?: string;
 }
 
+/** Elite Marks and Boss Cores of the run (ADR-021): one per Elite and per Boss killed. */
+export interface Materials {
+	elite: number;
+	boss: number;
+}
+
+export type Material = keyof Materials;
+
+export const emptyMaterials = (): Materials => ({ elite: 0, boss: 0 });
+
 export interface Offer {
 	kind: OfferKind;
 	id: string;
-	/** Rarity I–III on the shelf (ADR-017). */
+	/** Rarity I–V on the shelf (ADR-021). */
 	tier: number;
 	price: number;
+	/** One of this material is paid besides the Fish (rarity IV: Elite Mark, V: Boss Core). */
+	material?: Material;
 	/** Random affixes already rolled, so the shop can show exactly what is bought. */
 	affixes?: Affix[];
 }
@@ -82,9 +95,14 @@ function weight(c: ShopCandidate, round: number, ctx: ShopContext): number {
 	return w;
 }
 
+/** True when the run holds the material the offer asks for (or it asks for none). */
+export const hasMaterial = (offer: Offer, materials: Materials): boolean =>
+	!offer.material || materials[offer.material] > 0;
+
 /**
  * Rolls the shop: locked slots keep their previous offer, the rest are drawn without repeating an id
- * (weighted by tier, luck and build sets). Throws if the pool cannot fill the slots.
+ * (weighted by tier, luck and build sets). A slot the pool cannot fill stays empty (`null`): the
+ * evolution pool only holds what improves the build, so it shrinks late in the run (ADR-021).
  */
 export function rollOffers(
 	rng: Rng,
@@ -93,7 +111,7 @@ export function rollOffers(
 	pool: readonly ShopCandidate[],
 	locks: readonly boolean[],
 	prev: readonly (Offer | null)[] = [],
-): Offer[] {
+): (Offer | null)[] {
 	const offers: (Offer | null)[] = Array.from({ length: SHOP.offers }, (_, i) =>
 		locks[i] ? (prev[i] ?? null) : null,
 	);
@@ -102,7 +120,7 @@ export function rollOffers(
 	for (let i = 0; i < offers.length; i++) {
 		if (offers[i]) continue;
 		let avail = open.filter((c) => !used.has(c.id));
-		if (avail.length === 0) throw new Error('shop: candidate pool too small');
+		if (avail.length === 0) continue;
 		// Mixed pools pick the kind first so a big weapon catalog cannot crowd out gear and potions.
 		const kinds = [...new Set(avail.map((c) => c.kind))];
 		if (kinds.length > 1) {
@@ -113,7 +131,9 @@ export function rollOffers(
 			rng.weightedIndex(avail.map((a) => weight(a, round, ctx)))
 		] as ShopCandidate;
 		used.add(c.id);
-		const rarity = c.tier as 1 | 2 | 3;
+		const rarity = c.tier as Rarity;
+		const material =
+			c.kind === 'weapon' || c.kind === 'gear' ? SHOP.materialCost[c.tier] : undefined;
 		const affixes =
 			c.kind === 'weapon' || c.kind === 'gear' ? rollAffixes(rng, rarity, c.kind, round) : [];
 		offers[i] = {
@@ -122,9 +142,10 @@ export function rollOffers(
 			tier: c.tier,
 			price: offerPrice(c.kind, c.tier, round, c.id),
 			...(affixes.length > 0 && { affixes }),
+			...(material && { material }),
 		};
 	}
-	return offers as Offer[];
+	return offers;
 }
 
 /** Toggles the lock of a filled slot (free). */
@@ -135,14 +156,19 @@ export function lock(state: ShopState, index: number): ShopState {
 	return { ...state, locks };
 }
 
-/** Buys a slot; `null` if empty or unaffordable. The slot is cleared and unlocked. */
+/**
+ * Buys a slot; `null` if empty, unaffordable or missing its material (which is then spent from
+ * `materials`, in place). The slot is cleared and unlocked.
+ */
 export function buy(
 	state: ShopState,
 	fish: number,
 	index: number,
+	materials: Materials = emptyMaterials(),
 ): { state: ShopState; fish: number; offer: Offer } | null {
 	const offer = state.offers[index];
-	if (!offer || fish < offer.price) return null;
+	if (!offer || fish < offer.price || !hasMaterial(offer, materials)) return null;
+	if (offer.material) materials[offer.material]--;
 	const offers = [...state.offers];
 	offers[index] = null;
 	const locks = [...state.locks];

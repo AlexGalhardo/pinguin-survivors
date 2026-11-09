@@ -1,20 +1,15 @@
 import type { HeroId } from '../config/constants';
 import type { Danger } from '../data/difficulty';
 import { ECONOMY, PEARLS, SHOP } from '../data/economy';
-import { GEAR } from '../data/equipment';
+import { GEAR, GEAR_BY_ID } from '../data/equipment';
 import type { HeroDef } from '../data/heroes';
 import { POTION_TYPES, type PotionType } from '../data/potions';
+import { LEGACY_GEAR_RARITY, RARITIES, type Rarity } from '../data/rarity';
 import { SUPPORT_IDS } from '../data/support';
-import {
-	MAX_WEAPON_SLOTS,
-	WEAPON_LINES,
-	WEAPON_TIERS,
-	type WeaponId,
-	type WeaponTier,
-} from '../data/weapons';
-import { addWeapon, type Build } from './build';
+import { MAX_WEAPON_SLOTS, WEAPON_LINES, type WeaponId, type WeaponTier } from '../data/weapons';
+import { addWeapon, type Build, upgradeSlot } from './build';
 import { type CardOffer, drawCards } from './cards';
-import { emptyGear, pickUpGear, type RunGear } from './equipment';
+import { emptyGear, itemRoll, pickUpGear, type RunGear } from './equipment';
 import {
 	buyHealPotion,
 	canBuyHealPotion,
@@ -28,12 +23,16 @@ import { cycle, isBossRound, roundDuration } from './round';
 import type { RunCounters, SaveData } from './save';
 import {
 	buy,
+	emptyMaterials,
 	gearSellValue,
+	type Materials,
 	type Offer,
+	offerPrice,
 	rollOffers,
 	type ShopCandidate,
 	type ShopContext,
 	type ShopState,
+	sellValue,
 } from './shop';
 import type { PlayerStats } from './stats';
 import { buySupport, canBuySupport, isSupportId, type SupportLevels } from './support';
@@ -80,6 +79,8 @@ export interface RunState {
 	support: SupportLevels;
 	/** The healing potion: level = potions carried, refilled by kills. */
 	healPotion: HealPotionState;
+	/** Elite Marks and Boss Cores (ADR-021): pay for rarity IV and V in the shop. */
+	materials: Materials;
 }
 
 export function createRunState(
@@ -117,6 +118,7 @@ export function createRunState(
 		shopPotions: {},
 		support: {},
 		healPotion: emptyHealPotion(),
+		materials: emptyMaterials(),
 		cardRerollsLeft: opts.cardRerolls ?? 0,
 	};
 }
@@ -155,10 +157,10 @@ export function roundClearPearls(round: number): number {
 	return base + (isBossRound(round) ? PEARLS.boss : 0);
 }
 
-/** Shop candidates for a hero: one entry per rarity I–III, same id (IV and V are drops, ADR-017). */
+/** Shop candidates for a hero: one entry per rarity I–V, same id (ADR-021). */
 export function weaponCandidates(hero: HeroId): ShopCandidate[] {
 	return WEAPON_LINES.filter((w) => !w.hero || w.hero === hero).flatMap((w) =>
-		WEAPON_TIERS.filter((tier) => tier <= SHOP.maxRarity).map(
+		RARITIES.filter((tier) => tier <= SHOP.maxRarity).map(
 			(tier): ShopCandidate => ({
 				kind: 'weapon',
 				id: w.id,
@@ -170,14 +172,16 @@ export function weaponCandidates(hero: HeroId): ShopCandidate[] {
 	);
 }
 
-/** Equipment for sale: rarity (common, rare, legendary) is the tier, so prices follow `gearPrices`. */
+/**
+ * Equipment for sale: each catalog item from its catalog rarity (common I, rare II, legendary III)
+ * up to V, so a strong base is never sold as a weak rarity. Prices follow `gearPrices`.
+ */
 export function gearCandidates(): ShopCandidate[] {
-	return GEAR.map((g) => ({
-		kind: 'gear',
-		id: g.id,
-		tier: ['common', 'rare', 'legendary'].indexOf(g.rarity) + 1,
-		sets: [],
-	}));
+	return GEAR.flatMap((g) =>
+		RARITIES.filter((r) => r >= LEGACY_GEAR_RARITY[g.rarity] && r <= SHOP.maxRarity).map(
+			(tier): ShopCandidate => ({ kind: 'gear', id: g.id, tier, sets: [] }),
+		),
+	);
 }
 
 /** Speed potions only, sold from `SHOP.potionsFromRound` on (RF-09); empty before that. */
@@ -193,24 +197,52 @@ export function supportCandidates(run: Pick<RunState, 'support' | 'healPotion'>)
 	const support = SUPPORT_IDS.filter((id) => canBuySupport(run.support, id)).map(
 		(id): ShopCandidate => ({ kind: 'support', id, tier: 1, sets: [] }),
 	);
-	const potion: ShopCandidate[] = canBuyHealPotion(run.healPotion)
-		? [{ kind: 'healPotion', id: 'healPotion', tier: 1, sets: [] }]
-		: [];
+	// After the first purchase the potion leaves the shelf for the fixed "+1 potion" button (ADR-021).
+	const potion: ShopCandidate[] =
+		run.healPotion.level === 0
+			? [{ kind: 'healPotion', id: 'healPotion', tier: 1, sets: [] }]
+			: [];
 	return [...support, ...potion];
 }
 
-/** Everything the shop of `round` can offer a hero (weapons, gear, support, potions). */
+/**
+ * Keeps only what improves the build (ADR-021): a weapon not owned while a slot is free, an owned
+ * weapon above its best copy, gear for an empty slot or above the rarity worn in that slot.
+ */
+export function isUpgrade(c: ShopCandidate, build: Build, gear: RunGear): boolean {
+	if (c.kind === 'weapon') {
+		const owned = build.weapons.filter((w) => w.id === c.id);
+		if (owned.length === 0) return build.weapons.length < MAX_WEAPON_SLOTS;
+		return c.tier > Math.max(...owned.map((w) => w.tier));
+	}
+	if (c.kind === 'gear') {
+		const def = GEAR_BY_ID[c.id];
+		if (!def) return false;
+		const worn = gear.equipped[def.slot];
+		return !worn || c.tier > itemRoll(gear, worn).rarity;
+	}
+	return true;
+}
+
+/**
+ * Everything the shop of `round` can offer a hero (weapons, gear, support, potions). With the
+ * build, only the evolution pool: what the hero does not have yet or better than what is owned.
+ */
 export function shopPool(
 	hero: HeroId,
 	round: number,
-	run?: Pick<RunState, 'support' | 'healPotion'>,
+	run?: Pick<RunState, 'support' | 'healPotion' | 'gear'>,
+	build?: Build,
 ): ShopCandidate[] {
-	return [
+	const all = [
 		...weaponCandidates(hero),
 		...gearCandidates(),
 		...potionCandidates(round),
 		...(run ? supportCandidates(run) : []),
 	];
+	if (!build) return all;
+	const gear = run?.gear ?? emptyGear();
+	return all.filter((c) => isUpgrade(c, build, gear));
 }
 
 /**
@@ -225,20 +257,30 @@ export function purchase(
 	const shop = run.shop;
 	const offer = shop?.offers[index];
 	if (!shop || !offer) return null;
-	if (offer.kind === 'weapon' && ctx.build.weapons.length >= MAX_WEAPON_SLOTS) return null;
+	const upgrade = offer.kind === 'weapon' ? upgradeSlot(ctx.build, offer.id, offer.tier) : -1;
+	if (offer.kind === 'weapon' && upgrade < 0 && ctx.build.weapons.length >= MAX_WEAPON_SLOTS)
+		return null;
 	if (offer.kind === 'support' && !canBuySupport(run.support, offer.id as never)) return null;
 	if (offer.kind === 'healPotion' && !canBuyHealPotion(run.healPotion)) return null;
-	const bought = buy(shop, run.fish, index);
+	const bought = buy(shop, run.fish, index, run.materials);
 	if (!bought) return null;
 	run.shop = bought.state;
 	run.fish = bought.fish;
-	if (offer.kind === 'weapon')
+	if (offer.kind === 'weapon' && upgrade >= 0) {
+		// An upgrade replaces the weakest copy in its slot; the old copy is sold (ADR-021).
+		const old = ctx.build.weapons[upgrade] as { tier: number };
+		run.fish += sellValue(offerPrice('weapon', old.tier, run.round));
+		const tier = offer.tier as WeaponTier;
+		ctx.build.weapons[upgrade] = offer.affixes?.length
+			? { id: offer.id as WeaponId, tier, affixes: [...offer.affixes] }
+			: { id: offer.id as WeaponId, tier };
+	} else if (offer.kind === 'weapon')
 		addWeapon(ctx.build, offer.id as WeaponId, offer.tier as WeaponTier, offer.affixes);
 	else if (offer.kind === 'gear') {
 		run.gear = run.gear ?? emptyGear();
 		// The worn item of that slot is sold for Fish (no bag, SDD-014 RF-30).
 		const { sold } = pickUpGear(run.gear, ctx.stats, offer.id, {
-			rarity: offer.tier as 1 | 2 | 3,
+			rarity: offer.tier as Rarity,
 			affixes: offer.affixes ?? [],
 		});
 		if (sold) run.fish += gearSellValue(sold.rarity, run.round);
@@ -251,6 +293,20 @@ export function purchase(
 		run.shopPotions[id] = (run.shopPotions[id] ?? 0) + 1;
 	}
 	return offer;
+}
+
+/** Price of the fixed "+1 potion" button, or null when it is not offered (not bought yet, or at 10). */
+export function extraHealPotionPrice(run: Pick<RunState, 'healPotion' | 'round'>): number | null {
+	if (run.healPotion.level === 0 || !canBuyHealPotion(run.healPotion)) return null;
+	return offerPrice('healPotion', 1, run.round);
+}
+
+/** The fixed "+1 potion" button (ADR-021): one more potion carried; false when refused. */
+export function buyExtraHealPotion(run: RunState): boolean {
+	const price = extraHealPotionPrice(run);
+	if (price === null || run.fish < price) return false;
+	run.fish -= price;
+	return buyHealPotion(run.healPotion);
 }
 
 export interface ShopRoll {

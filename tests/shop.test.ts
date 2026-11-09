@@ -64,8 +64,9 @@ describe('rollOffers', () => {
 			const second = rollOffers(rng, round + 1, ctx(hero), POOL, locks, first);
 			for (const offers of [first, second]) {
 				expect(offers).toHaveLength(4);
-				expect(new Set(offers.map((o) => o.id)).size).toBe(4);
+				expect(new Set(offers.map((o) => o?.id)).size).toBe(4);
 				for (const o of offers) {
+					if (!o) continue;
 					if (o.id === 'jackOnly') expect(hero).toBe('jack');
 					if (o.id === 'bobOnly') expect(hero).toBe('bob');
 				}
@@ -83,14 +84,16 @@ describe('rollOffers', () => {
 		const avgTier = (round: number) => {
 			let sum = 0;
 			for (let s = 0; s < 300; s++)
-				for (const o of rollOffers(new Rng(s), round, ctx(), POOL, [])) sum += o.tier;
+				for (const o of rollOffers(new Rng(s), round, ctx(), POOL, [])) sum += o?.tier ?? 0;
 			return sum / 1200;
 		};
 		expect(avgTier(30)).toBeGreaterThan(avgTier(1));
 	});
 
-	test('throws when the pool cannot fill the slots', () => {
-		expect(() => rollOffers(new Rng(1), 1, ctx(), POOL.slice(0, 3), [])).toThrow();
+	test('leaves a slot empty when the pool cannot fill it (ADR-021)', () => {
+		const offers = rollOffers(new Rng(1), 1, ctx(), POOL.slice(0, 3), []);
+		expect(offers.filter(Boolean)).toHaveLength(3);
+		expect(offers[3]).toBeNull();
 	});
 });
 

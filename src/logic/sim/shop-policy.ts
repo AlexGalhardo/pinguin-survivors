@@ -7,7 +7,10 @@ import { Rng } from '../rng';
 import type { RunState, ShopRoll } from '../run-state';
 import {
 	buy,
+	emptyMaterials,
+	hasMaterial,
 	lock,
+	type Materials,
 	type Offer,
 	offerPrice,
 	reroll,
@@ -238,6 +241,8 @@ export type ShopAction =
 	| { type: 'buy'; index: number }
 	| { type: 'lock'; index: number }
 	| { type: 'reroll' }
+	/** The fixed "+1 potion" button (ADR-021). */
+	| { type: 'buyPotion' }
 	| { type: 'done' };
 
 export interface ShopView {
@@ -253,6 +258,19 @@ export interface ShopView {
 	healPotion?: HealPotionState;
 	/** Skip `extraBuy` (to measure the game without the healing potion and support items). */
 	skipExtras?: boolean;
+	/** Elite Marks and Boss Cores: offers of rarity IV and V need one (ADR-021). */
+	materials?: Materials;
+	/** Price of the fixed "+1 potion" button, or null when it is not shown. */
+	extraPotionPrice?: number | null;
+}
+
+/** The offer can be paid now: its material is in hand (Fish are checked by the caller). */
+const payable = (o: Offer, v: ShopView): boolean => hasMaterial(o, v.materials ?? emptyMaterials());
+
+/** The real-game bot wants one more healing potion (the same pace as `extraBuy`). */
+function wantsPotion(v: ShopView): boolean {
+	const level = v.healPotion?.level ?? 0;
+	return level < Math.min(10, 1 + Math.floor(v.round / SHOP_POLICY.potionEveryRounds));
 }
 
 /**
@@ -260,10 +278,8 @@ export interface ShopView {
  * healing potion level every few rounds, Magnetic up to level 3 (it saves chasing orbs). Index or -1.
  */
 export function extraBuy(v: ShopView): number {
-	const potionLevel = v.healPotion?.level ?? 0;
 	const magnetic = v.support?.magnetic ?? 0;
-	const wantPotion =
-		potionLevel < Math.min(10, 1 + Math.floor(v.round / SHOP_POLICY.potionEveryRounds));
+	const wantPotion = wantsPotion(v);
 	const wantMagnetic =
 		v.round >= SHOP_POLICY.magneticFromRound &&
 		magnetic <
@@ -297,7 +313,7 @@ export function nextShopAction(v: ShopView): ShopAction {
 	let best = -1;
 	let bestEff = 0;
 	v.offers.forEach((o, i) => {
-		if (!o || o.price > v.fish + sellGain(o, build, stats, v.round)) return;
+		if (!o || !payable(o, v) || o.price > v.fish + sellGain(o, build, stats, v.round)) return;
 		const eff = offerValue(o, build, stats) / o.price;
 		if (eff > bestEff) {
 			bestEff = eff;
@@ -313,6 +329,9 @@ export function nextShopAction(v: ShopView): ShopAction {
 
 	const extra = v.skipExtras ? -1 : extraBuy(v);
 	if (extra >= 0) return { type: 'buy', index: extra };
+	const potionPrice = v.extraPotionPrice ?? null;
+	if (!v.skipExtras && potionPrice !== null && potionPrice <= v.fish && wantsPotion(v))
+		return { type: 'buyPotion' };
 
 	if (!v.locks.some(Boolean)) {
 		let lockIdx = -1;

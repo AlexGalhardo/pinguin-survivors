@@ -138,7 +138,7 @@ describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
 	test('gear candidates carry rarity as tier; potions only from round 5', () => {
 		const gear = gearCandidates();
 		expect(gear.length).toBeGreaterThan(0);
-		expect(new Set(gear.map((g) => g.tier))).toEqual(new Set([1, 2, 3]));
+		expect(new Set(gear.map((g) => g.tier))).toEqual(new Set([1, 2, 3, 4, 5]));
 		expect(potionCandidates(4)).toEqual([]);
 		expect(potionCandidates(5).map((p) => p.id)).toEqual(['haste']);
 	});
@@ -153,8 +153,8 @@ describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
 				shopPool('jack', 8),
 				[],
 			);
-			expect(new Set(offers.map((o) => o.id)).size).toBe(4);
-			for (const o of offers) kinds.add(o.kind);
+			expect(new Set(offers.map((o) => o?.id)).size).toBe(4);
+			for (const o of offers) if (o) kinds.add(o.kind);
 		}
 		expect(kinds).toEqual(new Set(['weapon', 'gear', 'potion']));
 		for (let seed = 0; seed < 50; seed++)
@@ -165,7 +165,7 @@ describe('gear and potion offers (SDD-003 RF-03, RF-09)', () => {
 				shopPool('jack', 2),
 				[],
 			))
-				expect(o.kind).not.toBe('potion');
+				expect(o?.kind).not.toBe('potion');
 	});
 
 	test('purchase debits Fish and applies weapon, gear and potion; refuses a full bar', () => {

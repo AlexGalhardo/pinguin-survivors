@@ -22,5 +22,12 @@ export const supportZhCN = {
 	'panel.healPotion': '{charges}/{level} 瓶 · 恢复 {pct}% · 稀有度 {rarity}',
 	'hud.potionKills': '{n}/{max} 击杀',
 	'hud.healPotion': '治疗药水',
+	'fx.material.elite': '+1 精英印记',
+	'fx.material.boss': '+1 首领核心',
+	'shop.material.elite': '精英印记',
+	'shop.material.boss': '首领核心',
+	'shop.materials': '印记 {elite} · 核心 {boss}',
+	'shop.needsMaterial': '需要 1 个{m}',
+	'shop.extraPotion': '+1 药水 {level}/{max} · {n}',
 	'fx.potionUp': '药水稀有度 {r}',
 } as const;

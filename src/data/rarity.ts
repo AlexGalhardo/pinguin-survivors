@@ -17,8 +17,8 @@ export const RARITY_NUMERALS: Readonly<Record<Rarity, string>> = {
 /** Random affixes by rarity: I has none, each step adds one. */
 export const AFFIX_COUNT: Readonly<Record<Rarity, number>> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 };
 
-/** The shop only sells rarities I to III (higher ones are drops). */
-export const SHOP_MAX_RARITY: Rarity = 3;
+/** The shop sells rarities I to V; IV and V also ask for a material (ADR-021). */
+export const SHOP_MAX_RARITY: Rarity = 5;
 
 /** Weapon fusion (and so the shop) stops at III; IV and V only come from drops. */
 export const WEAPON_FUSE_MAX: Rarity = 3;

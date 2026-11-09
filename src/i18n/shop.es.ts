@@ -35,6 +35,8 @@ export const shopEs = {
 		'Arma nueva en la ranura {slot}. Puedes fusionarla con la ranura {with} ({from} → {to}).',
 	'shop.outcome.fuse':
 		'Se fusiona con el arma de la ranura {slot}: {from} → {to}, +{n} afijos nuevos.',
+	'shop.outcome.upgradeWeapon':
+		'Mejora el arma del espacio {slot}: {from} → {to}; la antigua se vende por {n} Fish.',
 	'shop.outcome.barFull': 'Las 6 ranuras de arma están llenas: vende o fusiona una antes.',
 	'shop.outcome.equip': 'Se equipa al instante ({slot}).',
 	'shop.outcome.replace':

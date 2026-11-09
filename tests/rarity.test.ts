@@ -37,7 +37,7 @@ describe('rarity scale', () => {
 		expect(new Set(colors).size).toBe(5);
 		expect(rarityColor(5)).toBe(PALETTE.rarity5);
 		expect(AFFIX_COUNT).toEqual({ 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 });
-		expect(SHOP_MAX_RARITY).toBe(3);
+		expect(SHOP_MAX_RARITY).toBe(5);
 		expect(WEAPON_FUSE_MAX).toBe(3);
 	});
 
@@ -118,8 +118,9 @@ describe('weapons: upgrade only to III, affixes in the build', () => {
 	});
 });
 
-describe('shop shelf: only I to III, weapons, equipment and speed potions', () => {
-	test('offers never pass III, carry the affixes of their rarity and sell only haste potions', () => {
+describe('shop shelf: I to V, weapons, equipment and speed potions (ADR-021)', () => {
+	test('offers reach IV and V with their material, carry the affixes of their rarity and sell only haste potions', () => {
+		const tiers = new Set<number>();
 		const kinds = new Set<string>();
 		for (let seed = 0; seed < 300; seed++) {
 			const offers = rollOffers(
@@ -130,13 +131,16 @@ describe('shop shelf: only I to III, weapons, equipment and speed potions', () =
 				[],
 			);
 			for (const o of offers) {
+				if (!o) continue;
 				kinds.add(o.kind);
-				expect(o.tier).toBeLessThanOrEqual(3);
+				tiers.add(o.tier);
+				expect(o.material).toBe(o.tier === 4 ? 'elite' : o.tier === 5 ? 'boss' : undefined);
 				if (o.kind === 'potion') expect(o.id).toBe('haste');
 				else expect(o.affixes?.length ?? 0).toBe(AFFIX_COUNT[o.tier as Rarity]);
 			}
 		}
 		expect(kinds).toEqual(new Set(['weapon', 'gear', 'potion']));
+		expect(tiers).toEqual(new Set([1, 2, 3, 4, 5]));
 	});
 
 	test('buying carries the rolled affixes to the weapon and the equipment roll', () => {
@@ -300,8 +304,12 @@ describe('save migration of equipment', () => {
 		expect(normalizeGear(null)).toEqual(emptyGear());
 	});
 
-	test('the shop catalog of gear still maps one-to-one to I to III', () => {
-		expect(new Set(gearCandidates().map((g) => g.tier))).toEqual(new Set([1, 2, 3]));
+	test('gear is sold from its catalog rarity up to V, never a strong base at a low rarity', () => {
+		expect(new Set(gearCandidates().map((g) => g.tier))).toEqual(new Set([1, 2, 3, 4, 5]));
+		for (const c of gearCandidates())
+			expect(c.tier).toBeGreaterThanOrEqual(
+				LEGACY_GEAR_RARITY[GEAR_BY_ID[c.id]?.rarity ?? 'common'],
+			);
 	});
 });
 

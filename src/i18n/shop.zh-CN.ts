@@ -33,6 +33,7 @@ export const shopZhCN = {
 	'shop.outcome.newWeapon': '新武器放入第 {slot} 格。',
 	'shop.outcome.newWeaponFuse': '新武器放入第 {slot} 格。可与第 {with} 格融合（{from} → {to}）。',
 	'shop.outcome.fuse': '与第 {slot} 格的武器融合：{from} → {to}，新增 {n} 个词缀。',
+	'shop.outcome.upgradeWeapon': '升级第 {slot} 格的武器：{from} → {to}，旧武器以 {n} 鱼出售。',
 	'shop.outcome.barFull': '6 个武器槽已满：请先出售或融合一把。',
 	'shop.outcome.equip': '立即装备（{slot}）。',
 	'shop.outcome.replace': '替换 {name} {rarity}：立即装备，旧装备以 {n} 鱼出售。',

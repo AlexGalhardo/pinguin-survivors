@@ -375,6 +375,8 @@ interface ShopTick {
 	stats: unknown;
 	support: Record<string, number>;
 	healPotion: { level: number; rarity: number; charges: number; cooldown: number; kills: number };
+	materials: { elite: number; boss: number };
+	extraPotionPrice: number | null;
 	shop: {
 		offers: ({ kind: string; id: string; tier: number; price: number } | null)[];
 		locks: boolean[];
@@ -402,6 +404,8 @@ async function playShopStep(
 		stats: s.stats as PlayerStats,
 		support: s.support,
 		healPotion: s.healPotion as never,
+		materials: s.materials,
+		extraPotionPrice: s.extraPotionPrice,
 		skipExtras: noExtras,
 	});
 	const fishAfter = await page.evaluate(
@@ -414,6 +418,7 @@ async function playShopStep(
 				shopFuse(a: number, b: number): void;
 				shopLock(i: number): void;
 				shopReroll(): void;
+				shopBuyPotion(): void;
 				closeShop(): void;
 			};
 			if (a.type === 'buy') game.shopBuy(a.index);
@@ -421,13 +426,14 @@ async function playShopStep(
 			else if (a.type === 'fuse') game.shopFuse(a.a, a.b);
 			else if (a.type === 'lock') game.shopLock(a.index);
 			else if (a.type === 'reroll') game.shopReroll();
+			else if (a.type === 'buyPotion') game.shopBuyPotion();
 			else game.closeShop();
 			return game.run.fish;
 		},
 		[action] as const,
 	);
 	const delta = s.fish - fishAfter;
-	if (action.type === 'buy') eco.spent += delta;
+	if (action.type === 'buy' || action.type === 'buyPotion') eco.spent += delta;
 	else if (action.type === 'reroll') {
 		eco.spent += delta;
 		eco.rerolled += delta;
@@ -484,7 +490,9 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 					phase: string;
 					support: Record<string, number>;
 					healPotion: ShopTick['healPotion'];
+					materials: ShopTick['materials'];
 				};
+				extraPotionView(): { price: number } | null;
 				build: Build;
 				stats: unknown;
 				outcome: string;
@@ -503,6 +511,8 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 				build: game.build,
 				support: game.run.support,
 				healPotion: game.run.healPotion,
+				materials: game.run.materials,
+				extraPotionPrice: game.extraPotionView()?.price ?? null,
 				fish: game.run.fish,
 				shop: game.run.shop
 					? {

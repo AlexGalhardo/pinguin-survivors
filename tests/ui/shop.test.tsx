@@ -39,6 +39,7 @@ const actions = () => {
 			fuse: (x: number, y: number) => calls.push(`fuse:${x},${y}`),
 			next: () => calls.push('next'),
 			tree: () => calls.push('tree'),
+			buyPotion: () => calls.push('buyPotion'),
 		},
 	};
 };

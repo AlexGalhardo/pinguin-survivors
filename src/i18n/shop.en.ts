@@ -34,6 +34,8 @@ export const shopEn = {
 	'shop.outcome.newWeaponFuse':
 		'New weapon in slot {slot}. You can fuse it with slot {with} ({from} → {to}).',
 	'shop.outcome.fuse': 'Fuses with the weapon in slot {slot}: {from} → {to}, +{n} new affixes.',
+	'shop.outcome.upgradeWeapon':
+		'Upgrades the weapon in slot {slot}: {from} → {to}; the old one sells for {n} Fish.',
 	'shop.outcome.barFull': 'All 6 weapon slots are full: sell or fuse one first.',
 	'shop.outcome.equip': 'Worn at once ({slot}).',
 	'shop.outcome.replace':

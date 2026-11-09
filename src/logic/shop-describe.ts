@@ -7,10 +7,10 @@ import {
 	weaponTierStats,
 } from '../data/weapons';
 import type { Affix } from './affixes';
-import { type Build, setBonuses } from './build';
+import { type Build, setBonuses, upgradeSlot } from './build';
 import { itemRoll, type RunGear } from './equipment';
 import { type HealPotionState, healShare } from './heal-potion';
-import { gearSellValue, type Offer } from './shop';
+import { gearSellValue, type Offer, offerPrice, sellValue } from './shop';
 import { addStat, getStat, type PlayerStats, type StatKey } from './stats';
 import { isSupportId, type SupportLevels, supportLevel, supportValue } from './support';
 
@@ -30,6 +30,8 @@ export type OfferOutcome =
 			fusableWith: number | null;
 	  }
 	| { type: 'fuse'; slot: number; fromRarity: Rarity; toRarity: Rarity }
+	/** A better copy of an owned weapon: replaces the one in `slot` (rarity `fromRarity`), sold for `sellFish`. */
+	| { type: 'upgradeWeapon'; slot: number; fromRarity: Rarity; sellFish: number }
 	| { type: 'barFull' }
 	| { type: 'equip'; slot: GearSlot }
 	/** The new item is worn at once; the one in the slot is sold for `sellFish`. */
@@ -122,6 +124,20 @@ export function describeOffer(
 		const partner = build.weapons.findIndex(
 			(w) => w.id === offer.id && w.tier === rarity && w.tier < WEAPON_FUSE_MAX,
 		);
+		const up = upgradeSlot(build, offer.id, rarity);
+		if (up >= 0) {
+			const old = build.weapons[up] as { tier: Rarity };
+			return {
+				...base,
+				...(weapon && { weapon }),
+				outcome: {
+					type: 'upgradeWeapon',
+					slot: up,
+					fromRarity: old.tier,
+					sellFish: sellValue(offerPrice('weapon', old.tier, ctx.round ?? 0)),
+				},
+			};
+		}
 		if (build.weapons.length < MAX_WEAPON_SLOTS) {
 			const after = {
 				...build,

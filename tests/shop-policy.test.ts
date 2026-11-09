@@ -39,7 +39,7 @@ const offer = (id: string, tier: number, price: number): Offer => ({
 	tier,
 	price,
 });
-const open = (offers: Offer[]): ShopState => ({
+const open = (offers: (Offer | null)[]): ShopState => ({
 	offers,
 	locks: offers.map(() => false),
 	rerolls: 0,

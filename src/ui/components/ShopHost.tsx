@@ -7,6 +7,7 @@ import { Shop, type ShopActions, type ShopData } from './Shop';
 const ACTIONS: ShopActions = {
 	buy: commands.buy,
 	reroll: commands.reroll,
+	buyPotion: commands.buyHealPotion,
 	tree: commands.openTree,
 	lock: commands.lock,
 	sell: commands.sell,
@@ -26,6 +27,7 @@ export function toShopData(v: ShopView): ShopData {
 						id: o.id,
 						tier: o.tier,
 						price: o.price,
+						...(o.material && { material: o.material }),
 						sets: o.sets,
 						rarity: o.rarity,
 						affixes: o.affixes,
@@ -41,6 +43,8 @@ export function toShopData(v: ShopView): ShopData {
 		gear: v.gear,
 		player: v.player,
 		nextWaves: v.nextWaves,
+		materials: v.materials,
+		extraPotion: v.extraPotion,
 	};
 }
 

@@ -10,6 +10,8 @@ export interface GameCommands {
 	buy: (index: number) => void;
 	/** Shop: pay the reroll price and redraw the unlocked offers. */
 	reroll: () => void;
+	/** Shop: the fixed "+1 potion" button (ADR-021). */
+	buyHealPotion: () => void;
 	/** Shop: toggle the lock of the offer in shop slot `index` (free). */
 	lock: (index: number) => void;
 	/** Shop: sell the weapon in build slot `slot` for `ShopWeaponView.sellValue` Fish. */
@@ -44,6 +46,7 @@ export const commands: GameCommands = {
 	rerollCards: () => impl.rerollCards?.(),
 	buy: (index) => impl.buy?.(index),
 	reroll: () => impl.reroll?.(),
+	buyHealPotion: () => impl.buyHealPotion?.(),
 	lock: (index) => impl.lock?.(index),
 	sell: (slot) => impl.sell?.(slot),
 	fuse: (a, b) => impl.fuse?.(a, b),

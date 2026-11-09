@@ -254,7 +254,8 @@ export function simulateRun(config: SimConfig): SimResult {
 	};
 	const save = defaultSave();
 	const cardPool = ALL_CARDS.filter((c) => c.effect.type === 'stat' || c.effect.type === 'perk');
-	const weaponPool = weaponCandidates(config.hero);
+	// shortcut: the headless sim has no Elite Marks or Boss Cores, so it keeps the shelf at I–III (ADR-021); model materials when the sim tracks elite kills.
+	const weaponPool = weaponCandidates(config.hero).filter((c) => c.tier <= 3);
 	let hp = stats.maxHp;
 	let kills = 0;
 	let seconds = 0;

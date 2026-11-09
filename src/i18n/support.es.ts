@@ -23,5 +23,12 @@ export const supportEs = {
 	'panel.healPotion': '{charges}/{level} pociones · cura {pct}% · rareza {rarity}',
 	'hud.potionKills': '{n}/{max} bajas',
 	'hud.healPotion': 'Pociones de curación',
+	'fx.material.elite': '+1 Marca de Élite',
+	'fx.material.boss': '+1 Núcleo de Jefe',
+	'shop.material.elite': 'Marca de Élite',
+	'shop.material.boss': 'Núcleo de Jefe',
+	'shop.materials': 'Marcas {elite} · Núcleos {boss}',
+	'shop.needsMaterial': 'Requiere 1 {m}',
+	'shop.extraPotion': '+1 POCIÓN {level}/{max} · {n}',
 	'fx.potionUp': 'Poción rareza {r}',
 } as const;

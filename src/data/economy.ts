@@ -34,7 +34,7 @@ export const SHOP = {
 	/** Extra weight for offers that share a set with the build. */
 	setBias: 0.15,
 	/** Tier weight = max(1, base + perRound × round); tiers II+ also scale by 1 + luck × luckPerPoint. */
-	tierWeights: { base: [60, 28, 10, 2], perRound: [-1.5, 0.6, 0.7, 0.2] },
+	tierWeights: { base: [60, 28, 10, 5, 2], perRound: [-1.5, 0.6, 0.7, 0.3, 0.15] },
 	luckPerPoint: 0.01,
 	/** Chance of each kind taking a slot when the pool mixes kinds (renormalized over what is left). */
 	kindShare: { weapon: 0.6, item: 0.2, gear: 0.28, potion: 0.12, support: 0.12, healPotion: 0.1 },
@@ -42,8 +42,10 @@ export const SHOP = {
 	potionsFromRound: 5,
 	/** The merchant sells weapons, equipment and only these potions (speed); the rest are not sold. */
 	potions: ['haste'],
-	/** Highest rarity on the shelf (ADR-017): I to III; IV and V are drops. */
-	maxRarity: 3,
+	/** Highest rarity on the shelf (ADR-021): I to V; IV and V also ask for a material. */
+	maxRarity: 5,
+	/** Material each rarity asks for besides the Fish (ADR-021): one Elite Mark for IV, one Boss Core for V. */
+	materialCost: { 4: 'elite', 5: 'boss' } as Partial<Record<number, 'elite' | 'boss'>>,
 	fishToPearls: 10,
 } as const;
 

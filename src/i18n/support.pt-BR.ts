@@ -23,5 +23,12 @@ export const supportPtBR = {
 	'panel.healPotion': '{charges}/{level} poções · cura {pct}% · raridade {rarity}',
 	'hud.potionKills': '{n}/{max} abates',
 	'hud.healPotion': 'Poções de cura',
+	'fx.material.elite': '+1 Marca de Elite',
+	'fx.material.boss': '+1 Núcleo de Boss',
+	'shop.material.elite': 'Marca de Elite',
+	'shop.material.boss': 'Núcleo de Boss',
+	'shop.materials': 'Marcas {elite} · Núcleos {boss}',
+	'shop.needsMaterial': 'Pede 1 {m}',
+	'shop.extraPotion': '+1 POÇÃO {level}/{max} · {n}',
 	'fx.potionUp': 'Poção raridade {r}',
 } as const;
