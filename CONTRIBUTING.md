@@ -50,4 +50,4 @@ CI runs `lint`, `typecheck`, `test` and `build` on every pull request ([ci.yml](
 
 ## Code of conduct and security
 
-By participating you agree to the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report vulnerabilities through the [security policy](.github/SECURITY.md), never in a public issue.
+By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities through the [security policy](SECURITY.md), never in a public issue.

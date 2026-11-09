@@ -104,11 +104,11 @@ Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) in En
 
 ## Code of conduct
 
-To keep the community welcoming to everyone, please review and follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
+To keep the community welcoming to everyone, please review and follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security vulnerabilities
 
-If you discover a security vulnerability, please follow the [security policy](.github/SECURITY.md) instead of opening a public issue.
+If you discover a security vulnerability, please follow the [security policy](SECURITY.md) instead of opening a public issue.
 
 ## License
 
