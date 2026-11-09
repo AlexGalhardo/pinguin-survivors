@@ -150,11 +150,12 @@ Lista final e números em `src/data/weapons.ts` e balancing-and-simulation.md Pa
 
 - Abre **ao fim de cada round** com o tempo pausado, em tela estilo **ARPG (Diablo)** (ADR-006):
   - **Esquerda**: paper doll do herói, stats da run com deltas, **5 slots de equipamento** (elmo, armadura, pernas, anel, amuleto) sem mochila (comprar equipa na hora e o item que estava no slot é vendido), 6 slots de arma com fusão.
-  - **Direita**: **NPC lojista** (pinguim velho mercador com carrinho de peixes, idle animado, falas curtas por texto) com **4 ofertas** (só **armas, equipamentos e poções de velocidade**, raridades **I a III**, cada uma já com seus afixos), preço em Fish, **reroll** (preço cresce a cada uso na mesma loja; base cresce por round) e **lock** grátis por oferta (persiste entre lojas).
+  - **Direita**: **NPC lojista** (pinguim velho mercador com carrinho de peixes, idle animado, falas curtas por texto) com **4 ofertas** de **evolução** (ADR-021): só **armas e equipamentos que o jogador ainda não tem ou versões melhores dos que já tem**, nunca piores, raridades **I a V** (IV pede 1 **Marca de Elite**, V pede 1 **Núcleo de Boss**, além do Fish; toda Elite dá 1 Marca e todo Boss 1 Núcleo), cada uma já com seus afixos, preço em Fish, **reroll** (preço cresce a cada uso na mesma loja; base cresce por round) e **lock** grátis por oferta (persiste entre lojas).
   - Rodapé: Fish da run, próximo round, avisos de elite/horda (Danger ≥ 2), botão "Próximo round".
 - Oferta ponderada por **sorte**, round e classes que o herói já tem (leve viés para sinergia).
 - Vende também **poções de velocidade** de run (uso único, não confundir com os gambits do menu) a partir do round 5; as outras poções não são vendidas.
-- Vende **itens de suporte** (§12b) e a **poção de cura** da run (§12), sempre raridade I; comprar de novo o mesmo item sobe o nível.
+- Vende **itens de suporte** (§12b), sempre raridade I; comprar de novo o mesmo item sobe o nível. A **poção de cura** (§12) aparece como card só até a primeira compra; depois o rodapé tem o botão fixo **+1 poção** até 10.
+- Comprar uma versão melhor de uma arma que já se tem substitui a cópia de menor raridade no mesmo slot (a antiga é vendida); arma nova só aparece com slot livre.
 - **Didático**: cada oferta explica o que acontece ao comprar (nova arma no slot X, fusão II→III, stats antes→depois, afixos), via `describeOffer` (SDD-003 RF-10).
 
 ## 10. Cartas de level-up
