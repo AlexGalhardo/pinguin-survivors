@@ -8,7 +8,7 @@ import { formatStat } from '../../logic/format';
 import { resolveWeapon } from '../../logic/weapons';
 import { AtlasIcon, weaponFrames } from './AtlasIcon';
 import { weaponName } from './Hud';
-import { Divider, Hint, ItemCard, StatRow } from './Panel';
+import { Hint, ItemCard } from './Panel';
 
 /** A rolled stat bonus of an item, as the bridges carry it. */
 export interface AffixView {
@@ -62,10 +62,10 @@ export function AffixLines(props: { affixes?: readonly AffixView[] }): ReactElem
 	const list = props.affixes ?? [];
 	if (list.length === 0) return <Hint>{t('shop.noAffixes')}</Hint>;
 	return (
-		<ul className="m-0 list-none space-y-0.5 p-0 text-body">
+		<ul className="m-0 list-none space-y-0.5 p-0 text-secondary">
 			{list.map((a) => (
 				<li key={a.stat} className="flex items-baseline gap-2 text-xp">
-					<span className="text-[0.7em]">✦</span>
+					<span className="text-key">✦</span>
 					{affixText(a)}
 				</li>
 			))}
@@ -73,7 +73,7 @@ export function AffixLines(props: { affixes?: readonly AffixView[] }): ReactElem
 	);
 }
 
-/** Tooltip card of a weapon: name in the rarity color, what it does, numbers and affixes. */
+/** Tooltip card of a weapon (Style D tooltip, rarity-colored header): what it does, its numbers on one line and affixes. */
 export function WeaponCardView(props: { item: WeaponItem; footer?: ReactElement }): ReactElement {
 	const w = resolveWeapon({ id: props.item.id as WeaponId, tier: clampRarity(props.item.tier) });
 	return (
@@ -82,17 +82,12 @@ export function WeaponCardView(props: { item: WeaponItem; footer?: ReactElement 
 			color={rarityCss(props.item.tier)}
 			kind={`${t('shop.kind.weapon')} · ${numeral(props.item.tier)}`}
 			lines={[
-				<span key="b" className="text-text-light">
+				<span key="b" className="text-secondary text-text-light">
 					{t(`weapon.behavior.${w.behavior}` as I18nKey)}
 				</span>,
-				<StatRow key="d" label={t('weapon.stat.damage')} value={w.damage} />,
-				<StatRow
-					key="r"
-					label={t('weapon.stat.rate')}
-					value={(1 / w.cooldown).toFixed(1)}
-				/>,
-				<StatRow key="g" label={t('weapon.stat.range')} value={w.range} />,
-				<Divider key="div" className="my-1" />,
+				<span key="n" className="text-secondary font-bold tabular-nums">
+					{`${t('weapon.stat.damage')} ${w.damage} · ${(1 / w.cooldown).toFixed(1)}/s · ${t('weapon.stat.range')} ${w.range}`}
+				</span>,
 				<AffixLines key="a" affixes={props.item.affixes} />,
 			]}
 			footer={props.footer}
@@ -110,12 +105,11 @@ export function GearCardView(props: { item: GearItem; footer?: ReactElement }): 
 			kind={`${def ? label(`gslot.${def.slot}`) : t('shop.kind.gear')} · ${numeral(props.item.rarity)}`}
 			lines={[
 				...gearBaseLines(props.item.id).map((l) => (
-					<span key={l} className="flex items-baseline gap-2">
-						<span className="text-[0.6em] text-gold-aged">◆</span>
+					<span key={l} className="flex items-baseline gap-2 text-secondary">
+						<span className="text-key text-gold-aged">◆</span>
 						{l}
 					</span>
 				)),
-				<Divider key="div" className="my-1" />,
 				<AffixLines key="a" affixes={props.item.affixes} />,
 			]}
 			footer={props.footer}

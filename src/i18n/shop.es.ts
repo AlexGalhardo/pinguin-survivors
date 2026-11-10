@@ -5,6 +5,7 @@ export const shopEs = {
 	'shop.merchant': 'Comerciante',
 	'shop.you': 'TU PINGÜINO',
 	'shop.pickItem': 'Enfoca un objeto para verlo aquí.',
+	'shop.tapSlot': 'Toca un slot: vender o fusionar',
 	'shop.equipped': 'EQUIPADO',
 	'shop.offerLabel': 'EN VENTA',
 	'shop.weapons': 'ARMAS',

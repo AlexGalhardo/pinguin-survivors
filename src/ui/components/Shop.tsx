@@ -17,7 +17,6 @@ import { Btn } from './Btn';
 import { weaponName } from './Hud';
 import {
 	type AffixView,
-	affixText,
 	clampRarity,
 	GearCardView,
 	type GearItem,
@@ -30,8 +29,14 @@ import {
 	weaponFrames,
 } from './ItemViews';
 import { MerchantSprite } from './MerchantSprite';
-import { Heading, Hint, ItemCard, Panel } from './Panel';
-import { PlayerPanel, type PlayerPanelData, panelFromView } from './PlayerPanel';
+import { Heading, Hint } from './Panel';
+import {
+	type Detail,
+	detailCard,
+	PlayerPanel,
+	type PlayerPanelData,
+	panelFromView,
+} from './PlayerPanel';
 
 /** What the shop screen shows; the game publishes it (offers, wallet and the 6 weapon slots). */
 export interface ShopOfferData {
@@ -196,93 +201,101 @@ function outcomeText(d: OfferDescription): string {
 	}
 }
 
-/** Explanation of the focused offer: the card (and the worn item beside it for equipment), what buying does, stats before and after. */
-function OfferExplain({
+/** What buying the focused offer does, and the stats before and after (text only: the cards live on the right). */
+function OfferOutcome({
 	offer,
-	worn,
-	dense,
 	sentenceOnly,
 }: {
 	offer: ShopOfferData;
-	/** Phone landscape: just the sentence of what buying does. */
+	/** Phone landscape: just the sentence. */
 	sentenceOnly?: boolean;
-	/** Short screens: drop the small labels above the two cards. */
-	dense: boolean;
-	/** The item now worn in the slot this offer would take (equipment only). */
-	worn: GearItem | null;
 }): ReactElement {
 	const d = offer.description;
-	const rarity = offer.rarity ?? offer.tier;
-	const affixes = offer.affixes ?? offer.description?.affixes ?? [];
+	if (!d) return <Hint>{t(`shop.kind.${offer.kind}` as I18nKey)}</Hint>;
 	return (
-		<div
-			className={`flex min-h-0 flex-1 flex-col overflow-hidden ${dense ? 'gap-0.5' : 'gap-1.5'}`}
-		>
-			{!sentenceOnly && offer.kind === 'gear' && (
-				<div className={`grid min-h-0 gap-2 ${worn ? 'grid-cols-2' : 'grid-cols-1'}`}>
-					{worn && (
-						<div className="flex min-w-0 flex-col gap-0.5">
-							{!dense && <Hint>{t('shop.equipped')}</Hint>}
-							<GearCardView item={worn} />
+		<div className="flex min-w-0 flex-col gap-1">
+			<p className="m-0 text-body font-bold text-crit">{outcomeText(d)}</p>
+			{!sentenceOnly && (
+				<div className="grid grid-cols-2 gap-x-4 text-secondary">
+					{d.statChanges.map((c) => (
+						<div
+							key={c.stat}
+							className={c.after > c.before ? 'text-xp' : 'text-gold-bright'}
+						>
+							{t('shop.statChange', {
+								label: statLabel(c.stat),
+								before: formatStat(c.stat, c.before),
+								after: formatStat(c.stat, c.after),
+							})}
 						</div>
-					)}
-					<div className="flex min-w-0 flex-col gap-0.5">
-						{!dense && <Hint>{t('shop.offerLabel')}</Hint>}
-						<GearCardView item={{ id: offer.id, rarity, affixes }} />
-					</div>
+					))}
 				</div>
-			)}
-			{!sentenceOnly && offer.kind === 'weapon' && (
-				<WeaponCardView item={{ id: offer.id, tier: rarity, affixes }} />
-			)}
-			{!sentenceOnly && offer.kind !== 'gear' && offer.kind !== 'weapon' && (
-				<div className="font-bold" style={{ color: offerColor(offer) }}>
-					{offerName(offer)}
-				</div>
-			)}
-			{d ? (
-				<>
-					<p className={`m-0 font-bold ${sentenceOnly ? 'truncate' : ''}`}>
-						{outcomeText(d)}
-					</p>
-					<div className="grid grid-cols-2 gap-x-4" hidden={false}>
-						{(sentenceOnly ? [] : d.statChanges).map((c) => {
-							const up = c.after > c.before;
-							return (
-								<div key={c.stat} className={up ? 'text-xp' : 'text-blood'}>
-									{t('shop.statChange', {
-										label: statLabel(c.stat),
-										before: formatStat(c.stat, c.before),
-										after: formatStat(c.stat, c.after),
-									})}
-								</div>
-							);
-						})}
-					</div>
-				</>
-			) : (
-				<Hint>{t(`shop.kind.${offer.kind}` as I18nKey)}</Hint>
 			)}
 		</div>
 	);
 }
 
-/** Compact offer: icon, rarity-colored name, a one-line summary and the buy and lock buttons. */
-function OfferCard(props: {
+/** Tooltip zone of the focused offer: the card for sale and, for equipment, the worn one beside it. Sized by its content. */
+function OfferTooltips({
+	offer,
+	worn,
+	labels,
+}: {
+	offer: ShopOfferData;
+	worn: GearItem | null;
+	labels: boolean;
+}): ReactElement {
+	const rarity = offer.rarity ?? offer.tier;
+	const affixes = offer.affixes ?? offer.description?.affixes ?? [];
+	if (offer.kind === 'weapon')
+		return (
+			<div className="grid grid-cols-2 items-start gap-3">
+				<WeaponCardView item={{ id: offer.id, tier: rarity, affixes }} />
+			</div>
+		);
+	if (offer.kind === 'gear')
+		return (
+			<div className="grid grid-cols-2 items-start gap-3">
+				{worn && (
+					<div className="flex min-w-0 flex-col gap-0.5">
+						{labels && <Hint>{t('shop.equipped')}</Hint>}
+						<GearCardView item={worn} />
+					</div>
+				)}
+				<div className="flex min-w-0 flex-col gap-0.5">
+					{labels && <Hint>{t('shop.offerLabel')}</Hint>}
+					<GearCardView item={{ id: offer.id, rarity, affixes }} />
+				</div>
+			</div>
+		);
+	return (
+		<div className="flex flex-col gap-1">
+			<div className="text-item font-bold" style={{ color: offerColor(offer) }}>
+				{offerName(offer)}
+			</div>
+			<Hint>{t(`shop.kind.${offer.kind}` as I18nKey)}</Hint>
+		</div>
+	);
+}
+
+/** One offer as a row of the list: icon, rarity-colored name and a line of numbers, then the buy and lock actions. */
+function OfferRow(props: {
 	offer: ShopOfferData | null;
 	index: number;
+	picked: boolean;
 	locked: boolean;
 	fish: number;
 	materials: { elite: number; boss: number };
 	actions: ShopActions;
 	icon: number;
+	compact: boolean;
 }): ReactElement {
 	const { offer, index, actions } = props;
 	if (!offer) {
 		return (
 			<div
 				data-offer={index}
-				className="flex min-h-16 items-center justify-center border border-snow-dark bg-night/50 text-text-dim"
+				className="flex min-h-11 items-center justify-center text-secondary font-bold tracking-section text-text-dim"
 			>
 				{t('shop.sold')}
 			</div>
@@ -292,7 +305,6 @@ function OfferCard(props: {
 	const affordable =
 		props.fish >= offer.price && !missing && offer.description?.outcome.type !== 'barFull';
 	const rarity = offer.rarity ?? offer.tier;
-	const affixes = offer.affixes ?? offer.description?.affixes ?? [];
 	let summary = '';
 	if (offer.kind === 'weapon') {
 		const w =
@@ -306,93 +318,75 @@ function OfferCard(props: {
 					)
 				: gearBaseLines(offer.id)
 		).join(' · ');
+	} else if (offer.kind === 'support' || offer.kind === 'healPotion') {
+		summary =
+			offer.kind === 'support' ? t(`support.${offer.id}.desc` as I18nKey) : t('hpotion.desc');
 	}
 	const sets = offer.sets.map((s) => label(`shop.set.${s}`)).join(' / ');
+	const kind = `${t(`shop.kind.${offer.kind}` as I18nKey)}${
+		offer.kind === 'weapon' || offer.kind === 'item' || offer.kind === 'gear'
+			? ` ${numeral(offer.tier)}`
+			: ''
+	}${sets ? ` · ${sets}` : ''}`;
 	return (
-		<div data-offer={index} className="min-w-0">
-			<ItemCard
-				name={
-					<span className="flex items-center gap-2">
-						{offer.kind === 'potion' || offer.kind === 'healPotion' ? (
-							<AtlasIcon frames={offerFrames(offer)} size={props.icon} />
-						) : (
-							<SlotIcon
-								frames={offerFrames(offer)}
-								rarity={offer.tier}
-								size={props.icon}
-							/>
+		<div
+			data-offer={index}
+			data-picked={props.picked}
+			className="flex min-h-[max(52px,7vh)] min-w-0 items-center gap-2 py-0.5 pl-1 data-[picked=true]:bg-gold-bright/10"
+		>
+			{offer.kind === 'potion' || offer.kind === 'healPotion' ? (
+				<AtlasIcon frames={offerFrames(offer)} size={props.icon} />
+			) : (
+				<SlotIcon frames={offerFrames(offer)} rarity={offer.tier} size={props.icon} />
+			)}
+			<div className="flex min-w-0 flex-1 flex-col">
+				<span
+					className="truncate text-body leading-tight font-bold"
+					style={{ color: offerColor(offer) }}
+				>
+					{offerName(offer)}
+				</span>
+				{!props.compact && (
+					<span className="truncate text-secondary leading-tight text-text-light">
+						{kind}
+						{summary ? ` · ${summary}` : ''}
+						{offer.material && (
+							<span className={missing ? 'text-blood' : 'text-gold-bright'}>
+								{' · '}
+								{t('shop.needsMaterial', {
+									m: t(`shop.material.${offer.material}`),
+								})}
+							</span>
 						)}
-						<span className="min-w-0 flex-1 truncate">{offerName(offer)}</span>
 					</span>
-				}
-				color={offerColor(offer)}
-				kind={`${t(`shop.kind.${offer.kind}` as I18nKey)}${
-					offer.kind === 'weapon' || offer.kind === 'item' || offer.kind === 'gear'
-						? ` · ${numeral(offer.tier)}`
-						: ''
-				}${sets ? ` · ${sets}` : ''}`}
-				lines={[
-					summary ? (
-						<span key="s" className="block truncate">
-							{summary}
-						</span>
-					) : null,
-					affixes.length > 0 ? (
-						<span key="a" className="block truncate text-xp">
-							{affixes.map((a) => `✦ ${affixText(a)}`).join('  ')}
-						</span>
-					) : offer.kind === 'support' || offer.kind === 'healPotion' ? (
-						<Hint key="n">
-							{offer.kind === 'support'
-								? t(`support.${offer.id}.desc` as I18nKey)
-								: t('hpotion.desc')}
-						</Hint>
-					) : (
-						<Hint key="n">{t('shop.noAffixes')}</Hint>
-					),
-					offer.material ? (
-						<span
-							key="m"
-							className={`block truncate font-bold ${missing ? 'text-blood' : 'text-gold-bright'}`}
-						>
-							{t('shop.needsMaterial', { m: t(`shop.material.${offer.material}`) })}
-						</span>
-					) : null,
-				].filter(Boolean)}
-				footer={
-					<div className="mt-1 flex gap-1.5">
-						<Btn
-							onActivate={() => actions.buy(index)}
-							disabled={!affordable}
-							tint={offerColor(offer)}
-							className={`flex-1 ${offerColor(offer) ? '' : 'border-fish text-fish'}`}
-						>
-							{t('shop.buy', { n: offer.price })}
-						</Btn>
-						<Btn
-							onActivate={() => actions.lock(index)}
-							tint={offerColor(offer)}
-							className={
-								offerColor(offer)
-									? ''
-									: props.locked
-										? 'border-crit text-crit'
-										: 'border-snow text-text-dim'
-							}
-						>
-							{t(props.locked ? 'shop.unlock' : 'shop.lock')}
-						</Btn>
-					</div>
-				}
-			/>
+				)}
+			</div>
+			<Btn
+				onActivate={() => actions.buy(index)}
+				disabled={!affordable}
+				variant="secondary"
+				className="text-fish"
+			>
+				{t('shop.buy', { n: offer.price })}
+			</Btn>
+			<Btn
+				onActivate={() => actions.lock(index)}
+				variant="secondary"
+				className={props.locked ? 'text-gold-bright' : 'text-text-light'}
+			>
+				{t(props.locked ? 'shop.unlock' : 'shop.lock')}
+			</Btn>
 		</div>
 	);
 }
 
+type Target = { kind: 'offer' } | { kind: 'owned'; detail: Detail };
+
 /**
- * End-of-round shop, vendor style, built to never scroll: the merchant and the offers on the left
- * with the explanation of the focused offer below, the player on the right. Text follows the
- * screen height (`vh`), icons follow `useUiScale`.
+ * End-of-round shop, vendor style, built to never scroll (1920x1080, 2560x1080, 1280x720 and the
+ * 844x390 phone): merchant and offers on the left with what buying does, on the right the tooltip
+ * of the focused item (sized by its content) over the player. Text follows the screen height,
+ * icons follow `useUiScale`.
  */
 export function Shop({
 	data,
@@ -404,14 +398,15 @@ export function Shop({
 	const [speech, setSpeech] = useState(() => merchantLine('open'));
 	const firstOffer = data.offers.findIndex((o) => o !== null);
 	const [picked, setPicked] = useState(0);
+	const [target, setTarget] = useState<Target>({ kind: 'offer' });
 	const scale = useUiScale();
-	// Phone landscape: two offers per page (◀ ▶), no merchant sprite and only the sentence of the explanation.
+	// Phone landscape: four rows of one line, no merchant sprite and no tooltips, only the sentence.
 	const compact = useCompact();
 	const [offerPage, setOfferPage] = useState(0);
-	const OFFERS_PER_PAGE = compact ? 2 : data.offers.length;
+	const OFFERS_PER_PAGE = compact ? 4 : data.offers.length;
 	const offerPages = Math.max(1, Math.ceil(data.offers.length / OFFERS_PER_PAGE));
 	const shownPage = Math.min(offerPage, offerPages - 1);
-	const icon = Math.max(32, Math.round(48 * scale));
+	const icon = compact ? 32 : Math.max(32, Math.round(60 * scale));
 	const shown = data.offers[picked] ?? data.offers[firstOffer] ?? null;
 	// The merchant comments on what the player just did; purely cosmetic.
 	const actions: ShopActions = {
@@ -462,139 +457,143 @@ export function Shop({
 					};
 				}),
 			};
+	const ownedCard = target.kind === 'owned' ? detailCard(player, target.detail) : null;
+	const labels = scale >= 0.9;
 
 	return (
-		<FocusScope className="fixed inset-0 flex flex-col gap-[1vh] overflow-hidden bg-night px-[2vw] py-[1.5vh] [@media(max-height:400px)]:gap-0 [@media(max-height:400px)]:py-0.5 font-body text-[clamp(0.55rem,1.55vh,2.4rem)] text-text-light">
-			<header className="flex flex-wrap items-center justify-between gap-2">
-				<Heading className="min-w-[16rem] flex-1">
-					{t('shop.title', { n: data.round })}
-				</Heading>
-				{data.nextWaves && data.nextWaves.length > 0 && (
-					<div className="border border-blood bg-blood/20 px-3 py-0.5 font-bold text-blood">
-						{data.nextWaves.map((k) => t(`shop.nextWave.${k}` as I18nKey)).join(' · ')}
-					</div>
-				)}
-				<div className="flex items-center gap-1 font-bold text-fish">
-					<AtlasIcon
-						frames={['icon.currency.fish']}
-						size={Math.max(24, Math.round(28 * scale))}
-					/>
-					{t('shop.fish', { n: data.fish })}
+		<FocusScope className="fixed inset-0 flex flex-col gap-[1vh] overflow-hidden bg-night px-[2vw] py-[1.5vh] font-body text-body text-text-light [@media(max-height:500px)]:gap-0 [@media(max-height:500px)]:py-0.5">
+			<header className="flex items-center justify-between gap-4">
+				<Heading className="flex-1">{t('shop.title', { n: data.round })}</Heading>
+				<div className="flex flex-wrap items-center justify-end gap-x-4 font-bold">
+					{data.nextWaves && data.nextWaves.length > 0 && (
+						<span className="text-secondary font-bold text-blood">
+							{data.nextWaves
+								.map((k) => t(`shop.nextWave.${k}` as I18nKey))
+								.join(' · ')}
+						</span>
+					)}
+					<span className="flex items-center gap-1 text-fish">
+						<AtlasIcon
+							frames={['icon.currency.fish']}
+							size={Math.max(24, Math.round(28 * scale))}
+						/>
+						{t('shop.fish', { n: data.fish })}
+					</span>
+					{data.materials && (
+						<span className="text-gold-bright tabular-nums">
+							{t('shop.materials', data.materials)}
+						</span>
+					)}
 				</div>
-				{data.materials && (
-					<div className="font-bold text-gold-bright tabular-nums">
-						{t('shop.materials', data.materials)}
-					</div>
-				)}
 			</header>
 
-			<main className="grid min-h-0 flex-1 grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-3">
-				<Panel
-					fit
-					title={
-						<span className="flex items-center gap-2">
-							<span className="flex-1">{t('shop.merchant')}</span>
-							{offerPages > 1 && (
-								<span className="flex items-center gap-1 font-normal tracking-normal">
-									<Btn
-										onActivate={() =>
-											setOfferPage((shownPage - 1 + offerPages) % offerPages)
-										}
-										className="min-h-8 border-snow px-2 py-0"
-										label="-"
-									>
-										◀
-									</Btn>
-									<span className="tabular-nums">
-										{shownPage + 1}/{offerPages}
-									</span>
-									<Btn
-										onActivate={() =>
-											setOfferPage((shownPage + 1) % offerPages)
-										}
-										className="min-h-8 border-snow px-2 py-0"
-										label="+"
-									>
-										▶
-									</Btn>
-								</span>
-							)}
-						</span>
-					}
-					className="min-h-0"
+			<main className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] gap-[2vw]">
+				<section
+					aria-label={t('shop.merchant')}
+					className="flex min-h-0 min-w-0 flex-col gap-2"
 				>
 					<div className="flex items-center gap-3">
 						{/* Pixel art only scales by whole numbers: below ~970 px of height it would not fit, so only the speech stays. */}
 						{scale >= 0.9 && !compact && (
 							<MerchantSprite
-								scale={scale >= 1.5 ? 2 : 1}
+								scale={scale >= 1.4 ? 3 : 2}
 								title={t('shop.merchant')}
 							/>
 						)}
 						<div
 							role="status"
 							aria-live="polite"
-							className="min-w-0 flex-1 border border-snow-dark bg-night/80 px-3 py-1 italic"
+							className="min-w-0 flex-1 font-title text-item leading-snug italic"
 						>
 							{speech}
 						</div>
 					</div>
+					{offerPages > 1 && (
+						<div className="flex items-center justify-end gap-1 font-bold">
+							<Btn
+								onActivate={() =>
+									setOfferPage((shownPage - 1 + offerPages) % offerPages)
+								}
+								variant="secondary"
+								label="-"
+							>
+								◀
+							</Btn>
+							<span className="tabular-nums">
+								{shownPage + 1}/{offerPages}
+							</span>
+							<Btn
+								onActivate={() => setOfferPage((shownPage + 1) % offerPages)}
+								variant="secondary"
+								label="+"
+							>
+								▶
+							</Btn>
+						</div>
+					)}
 					<div
-						className="grid grid-cols-2 gap-2"
+						className="flex flex-col gap-1"
 						onFocusCapture={(e) => {
 							const el = (e.target as HTMLElement).closest<HTMLElement>(
 								'[data-offer]',
 							);
-							if (el) setPicked(Number(el.dataset.offer));
+							if (el) {
+								setPicked(Number(el.dataset.offer));
+								setTarget({ kind: 'offer' });
+							}
 						}}
 					>
 						{data.offers.map((o, i) =>
 							i >= shownPage * OFFERS_PER_PAGE &&
 							i < (shownPage + 1) * OFFERS_PER_PAGE ? (
-								<OfferCard
+								<OfferRow
 									key={o ? `${o.id}-${i}` : `sold-${i}`}
 									offer={o}
 									index={i}
+									picked={picked === i && target.kind === 'offer'}
 									locked={data.locks[i] ?? false}
 									fish={data.fish}
 									materials={data.materials ?? NO_MATERIALS}
 									actions={actions}
 									icon={icon}
+									compact={compact}
 								/>
 							) : null,
 						)}
 					</div>
-					{shown && (
-						<OfferExplain
-							offer={shown}
-							worn={wornFor(shown)}
-							dense={scale < 0.9}
-							sentenceOnly={compact}
-						/>
-					)}
-				</Panel>
+					{!compact && shown && <OfferOutcome offer={shown} />}
+				</section>
 
-				<Panel fit title={t('shop.you')} className="min-h-0">
+				<section
+					aria-label={t('shop.you')}
+					className="flex min-h-0 min-w-0 flex-col gap-[1.5vh]"
+				>
+					{compact ? (
+						shown && <OfferOutcome offer={shown} sentenceOnly />
+					) : target.kind === 'owned' ? (
+						<div className="grid grid-cols-2 items-start gap-3">
+							{ownedCard ?? <Hint>{t('shop.pickItem')}</Hint>}
+						</div>
+					) : shown ? (
+						<OfferTooltips offer={shown} worn={wornFor(shown)} labels={labels} />
+					) : null}
 					<PlayerPanel
 						data={player}
+						onPick={(detail) => setTarget({ kind: 'owned', detail })}
 						weaponBar={(slot) => {
 							const w = data.weapons[slot];
 							if (!w) return null;
 							const partner = fusePartner(data.weapons, slot);
 							return (
 								<>
-									<Btn
-										onActivate={() => actions.sell(slot)}
-										tint={rarityCss(w.tier)}
-										className="text-[0.9em]"
-									>
+									<Btn onActivate={() => actions.sell(slot)} variant="secondary">
 										{t('shop.sell', { n: w.sellValue })}
 									</Btn>
 									{partner >= 0 && (
 										<Btn
 											onActivate={() => actions.fuse(slot, partner)}
-											tint={rarityCss(w.tier)}
-											className="text-[0.9em]"
+											variant="secondary"
+											className="text-crit"
 										>
 											{t('shop.fuse')}
 										</Btn>
@@ -603,7 +602,7 @@ export function Shop({
 							);
 						}}
 					/>
-				</Panel>
+				</section>
 			</main>
 
 			<footer className="flex flex-wrap items-center justify-between gap-2">
@@ -630,7 +629,7 @@ export function Shop({
 				<Btn onActivate={actions.tree} variant="secondary">
 					{t('menu.workshop')}
 				</Btn>
-				<Btn onActivate={actions.next} variant="primary" className="min-w-52 text-[1.15em]">
+				<Btn onActivate={actions.next} variant="primary" className="min-w-52">
 					{t('shop.next')}
 				</Btn>
 			</footer>
