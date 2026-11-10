@@ -30,7 +30,7 @@ export function musicForRound(round: number, boss: boolean, biome?: BiomeId): Mu
 	return round >= LATE_MUSIC_FROM ? 'music.late' : 'music.round';
 }
 
-/** Track of each biome; the legacy station and ruins reuse the original round and late tracks. */
+/** Track of each biome; station and ruins reuse the original round and late tracks (no dedicated music yet). */
 const MUSIC_BY_BIOME: Record<BiomeId, MusicKey> = {
 	antarctica: 'music.round',
 	forest: 'music.forest',

@@ -205,10 +205,12 @@ Papéis por bioma: **enxame** (rápido e frágil), **voador** (ignora props), **
 
 | Bioma (campanha) | Inimigos | Boss |
 |---|---|---|
-| Antártida (rounds 1–10) | pinguim zumbi, skua, foca, cientista, pinguim inchado, morsa | **Urso polar zumbi** (patada, investida, rugido que invoca pinguins) |
-| Floresta (rounds 11–20) — proposta | lobo zumbi (enxame), corvo zumbi (voador), alce zumbi (tanque), raposa cuspidora (à distância), bloater fúngico (explosivo), javali zumbi (investida) | **Alce-rei zumbi** (investida de chifres, rugido que invoca lobos) |
-| Cidade destruída (rounds 21–30) — proposta | Vespa-Ácido (enxame), Sentinela Alada (voador), Couraçado (tanque), Espreitador Óptico (à distância), Cisto Biomecânico (explosivo), Rasgador Biomecânico (investida) | **Colosso Biomecânico** (esmagamento, poças de ácido, invoca Vespas-Ácido) |
-| Endless (rounds 31+) | todos os inimigos das campanhas, incluindo os legados estação de pesquisa (marinheiro, gaivota, leão-marinho, médico, bloater de combustível, narval) e cidade em ruínas (cidadão, rato, pombo, policial de choque, soldado, bloater ácido, brutamontes) | sorteado entre todos: urso polar zumbi, alce-rei zumbi, colosso biomecânico, **Kraken do Porto** (tentáculo, rajada de tinta, invoca marinheiros) e **Abominação** (investidas, poças de ácido, invoca ratos) |
+| Antártida (rounds 1–10) | pinguim zumbi, skua, foca, cientista, pinguim inchado, morsa | **Foca-leopardo Matriarca** (round 5) e **Urso polar zumbi** (round 10; patada, investida, rugido que invoca pinguins) |
+| Floresta (rounds 11–20) — proposta | lobo zumbi (enxame), corvo zumbi (voador), alce zumbi (tanque), raposa cuspidora (à distância), bloater fúngico (explosivo), javali zumbi (investida) | **Ent Podre** (round 15) e **Alce-rei zumbi** (round 20; investida de chifres, rugido que invoca lobos) |
+| Cidade destruída (rounds 21–30) — proposta | Vespa-Ácido (enxame), Sentinela Alada (voador), Couraçado (tanque), Espreitador Óptico (à distância), Cisto Biomecânico (explosivo), Rasgador Biomecânico (investida) | **Rainha da Colmeia** (round 25) e **Colosso Biomecânico** (round 30; esmagamento, poças de ácido, invoca Vespas-Ácido) |
+| Estação de pesquisa (rounds 31–40, ex-legado, ADR-023) | marinheiro, gaivota, leão-marinho, médico, bloater de combustível, narval | **Mergulhador Afogado** (round 35) e **Kraken do Porto** (round 40; tentáculo, rajada de tinta, invoca marinheiros) |
+| Cidade em ruínas (rounds 41–50, ex-legado, ADR-023) | cidadão, rato, pombo, policial de choque, soldado, bloater ácido, brutamontes | **Hierofante da Praga** (round 45) e **Abominação** (round 50; investidas, poças de ácido, invoca ratos) |
+| Endless (rounds 51+) | todos os inimigos dos 5 biomas (`fromRound` respeitado) | sorteado entre os 10 bosses, determinístico pela seed e pelo round |
 
 Os nomes da floresta e da cidade destruída são propostas (ADR-016) até a aprovação do desenvolvedor. Conceitos e linhas de inspiração por inimigo estão na §15.
 
@@ -216,7 +218,7 @@ Números em balancing-and-simulation.md Parte B §2.
 
 ## 15. Biomas
 
-**Campanha** (rounds 1–30, ADR-016):
+**Campanha** (rounds 1–50, ADR-016 e ADR-023; 5 biomas de 10 rounds e um boss a cada 5, 10 bosses distintos):
 
 - **1–10 Antártida**: neve pisoteada, noite polar, zumbis pinguins e focas.
 - **11–20 Floresta** (proposta): noite de coníferas, musgo, terra e névoa; zumbis de animais da mata (lobo, corvo, alce, raposa, javali) e um fungo inchado que solta esporos.
@@ -236,16 +238,20 @@ Números em balancing-and-simulation.md Parte B §2.
 
 Regra geral: a facção é original. Não usar nomes, designs, silhuetas icônicas ou marcas registradas de obras existentes, incluindo xenomorfo, Predador (yautja), facções e unidades de Warhammer (Tyranids, Space Marines, Necrons, Orks, Eldar, Chaos, Imperium e similares).
 
-**Endless** (rounds 31+): sem campanha fixa. A cada 10 rounds, o bioma (visual, tileset, pool de inimigos e boss) é sorteado pela seed da run entre Antártida, floresta, cidade destruída, estação de pesquisa (legado) e cidade em ruínas (legado). O pool de inimigos inclui todos, legados incluídos; o boss de cada sorteio é escolhido entre todos os bosses. Detalhes em §16.
+- **31–40 Estação de pesquisa** e **41–50 Cidade em ruínas** (ADR-023): antes legados do endless, agora campanha; reaproveitam a arte e os inimigos existentes (começam no round 31 e 41).
 
-Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool próprio de inimigos. Banner de chegada e troca de música no round 11/21.
+**Bosses da campanha** (ordem de `BOSS_ROUNDS`, SDD-016): 5 Foca-leopardo Matriarca · 10 Urso polar zumbi · 15 Ent Podre · 20 Alce-rei zumbi · 25 Rainha da Colmeia · 30 Colosso Biomecânico · 35 Mergulhador Afogado · 40 Kraken do Porto · 45 Hierofante da Praga · 50 Abominação.
+
+**Endless** (rounds 51+): sem campanha fixa. A cada 10 rounds, o bioma (visual, tileset e pool de inimigos) é sorteado pela seed da run entre os 5 biomas; o boss de cada round múltiplo de 5 é sorteado entre os 10 bosses. Detalhes em §16.
+
+Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool próprio de inimigos. Banner de chegada e troca de música no round 11/21/31/41 (estação e ruínas reusam as músicas existentes até haver trilha própria).
 
 ## 16. Dificuldade (Danger) e endless
 
 - **Danger 0–5 por herói** (ADR-008): vencer o boss do round 20 no Danger D libera D+1 para aquele herói.
 - Por danger: multiplicadores de HP/dano dos inimigos e de drops (o **Danger 0** é o modo fácil: inimigos com **0,5×** de vida e de dano, decisão do desenvolvedor 2026-11-08); **waves de elite/horda extras** (D0–1 nenhuma, D2–3 uma, D4–5 três), avisadas na loja a partir do D2.
-- **Endless** sem vitória; a cada volta de 30 rounds HP ×1,6 e dano ×2 (balancing-and-simulation.md Parte B §2).
-- **Visual e pool no endless** (round 31+): a cada 10 rounds, a seed da run sorteia o bioma entre Antártida, floresta, cidade destruída, estação de pesquisa e cidade em ruínas. O pool de inimigos e o boss usam todos os assets (ADR-016).
+- **Endless** sem vitória; a cada volta de 50 rounds HP ×1,6 e dano ×2 (balancing-and-simulation.md Parte B §2).
+- **Visual e pool no endless** (round 51+): a cada 10 rounds, a seed da run sorteia o bioma entre Antártida, floresta, cidade destruída, estação de pesquisa e cidade em ruínas. O pool de inimigos e o boss usam todos os assets (ADR-016).
 - Conquistas e leaderboards por herói e danger.
 
 ## 17. Economia

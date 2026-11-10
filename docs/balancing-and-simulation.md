@@ -124,11 +124,11 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 
 ### 2. Escala dos inimigos
 
-- `hpMul(N) = (1 + 0,15·(N−1)) · 1,3^ciclo · 4,5^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/30)` (endless: a cada volta completa pelos 3 biomas)
+- `hpMul(N) = (1 + 0,15·(N−1)) · 1,3^ciclo · 4,5^volta`, com `ciclo = floor((N−1)/10)` e `volta = floor((N−1)/50)` (endless: a cada volta completa pelos 5 biomas)
 - `dmgMul(N) = (1 + 0,26·(N−1)) · 1,15^ciclo · 1,6^volta` (`src/data/rounds.ts`: `dmgPerRound` 0,26, `dmgPerCycle` 1,15 (era 1,08; `hpPerCycle` era 1,12), `dmgPerLoop` 1,6, `hpPerLoop` 4,5; 2026-11-08, loja de evolução, ADR-021: o endless passou a escalar pela vida para segurar builds com IV e V)
 - `spawnRate(N)` (inimigos/s) = `min(1,5 + 0,5·N, 25)`; **×0,5 nos rounds de boss** (a luta é contra o boss; a arma mira o inimigo mais próximo); teto de **300 vivos** [1.0: revisar]
 - Bosses: HP base × `1,35^ciclo` (round 10 ×1, 20 ×1,35, 30 ×1,82…)
-- Biomas da campanha: rounds 1–10 Antártida, 11–20 floresta, 21–30 cidade destruída (ADR-016); no endless, a cada 10 rounds a seed sorteia entre os cinco biomas, incluindo estação e cidade em ruínas legados (`src/logic/biome.ts`). Os inimigos dos biomas 2–3 já têm base maior, por isso o salto por ciclo é pequeno.
+- Biomas da campanha: rounds 1–10 Antártida, 11–20 floresta, 21–30 cidade destruída (ADR-016), 31–40 estação de pesquisa, 41–50 cidade em ruínas (ADR-023); no endless (51+), a cada 10 rounds a seed sorteia entre os cinco biomas (`src/logic/biome.ts`). Os inimigos dos biomas 2–5 já têm base maior, por isso o salto por ciclo é pequeno.
 
 #### 2.1 Antártida (rounds 1–10)
 
@@ -169,7 +169,7 @@ Papéis iguais aos da campanha antiga; números copiados do papel equivalente (e
 
 #### 2.4 Bosses (pool rotativo)
 
-Campanha: urso polar (10), Alce-rei zumbi (20, proposta [1.0: calibrar]) e Colosso biomecânico (30, proposta [1.0: calibrar]). Os bosses legados kraken e abomination entram só no endless (ADR-016 decisão 7).
+Campanha (ADR-023, `BOSS_ROUNDS`): foca-leopardo (5), urso polar (10), ent podre (15), alce-rei (20), rainha da colmeia (25), colosso biomecânico (30), mergulhador afogado (35), kraken (40), hierofante da praga (45) e abominação (50); no endless (51+) o boss de cada múltiplo de 5 é sorteado entre os 10. Os números dos 5 bosses novos e os ataques em área (`BOSS_HAZARD`, SDD-016) estão em `src/data/enemies.ts` [1.0: calibrar]. A coluna Round da tabela abaixo é histórica (antes do ADR-023).
 
 | Boss | Round | HP base | Vel. | Dano | Raio | Alcance | Recarga | Padrão |
 |---|---|---|---|---|---|---|---|---|
@@ -183,7 +183,7 @@ Rajada do kraken: 170 u/s, alcance 520 u [1.0: revisar], dano 35% do dano do bos
 
 Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultrawide incluso). [1.0: revisar]
 
-#### 2.5 Legado do endless: estação de pesquisa / porto (ADR-016 decisão 7)
+#### 2.5 Estação de pesquisa / porto (rounds 31–40, ADR-023; antes legado do endless)
 
 | Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
 |---|---|---|---|---|---|---|---|---|
@@ -194,7 +194,7 @@ Spawn: ponto aleatório no perímetro da área **visível real** + 48 px (ultraw
 | fuelBloater | explosivo (42 u) | 22 | 62 | 16 | 12 | 2 | 14 | 3 |
 | zombieNarwhal | investida (220 u, 3,5 s) | 70 | 55 | 14 | 18 | 4 | 16 | 2 |
 
-#### 2.6 Legado do endless: cidade em ruínas (ADR-016 decisão 7)
+#### 2.6 Cidade em ruínas (rounds 41–50, ADR-023; antes legado do endless)
 
 | Inimigo (id) | Comportamento | HP | Vel. (u/s) | Dano | Raio | XP | Desde o round | Peso |
 |---|---|---|---|---|---|---|---|---|
@@ -531,7 +531,7 @@ Perfis: **bot médio** = reação 0,2 s e 5% de movimentos errados (proxy de um 
 
 | O quê | Antes | Depois |
 |---|---|---|
-| Escala por volta do endless (a cada 30 rounds) | — | **HP ×1,6, dano ×2** |
+| Escala por volta do endless (a cada 50 rounds desde o ADR-023; era 30) | — | **HP ×1,6, dano ×2** |
 | Spawn nos rounds de boss | 100% | **50%** |
 | HP / dano por ciclo | ×1,25 / ×1,15 | **×1,12 / ×1,08** |
 | HP do boss por ciclo | ×1,6 | **×1,35** |

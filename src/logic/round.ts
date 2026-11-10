@@ -36,7 +36,7 @@ export function rollElite(round: number, roll: number): EliteTier | null {
 	return null;
 }
 
-/** 0-based endless loop: rounds 1–30 → 0, 31–60 → 1… (the biomes start over, harder). */
+/** 0-based endless loop: rounds 1–50 → 0, 51–100 → 1… (the biomes start over, harder). */
 export function loop(round: number): number {
 	return Math.floor((round - 1) / ROUNDS.scaling.loopRounds);
 }

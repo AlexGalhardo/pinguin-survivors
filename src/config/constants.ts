@@ -6,12 +6,13 @@ export const MAX_ENEMIES = 300;
 export const HERO_IDS = ['jack', 'bob', 'lucia'] as const;
 export type HeroId = (typeof HERO_IDS)[number];
 
-/** Campaign biomes in visit order (rounds 1-30, one per 10 rounds); round 31+ is endless (see ENDLESS_BIOMES). */
-export const BIOME_IDS = ['antarctica', 'forest', 'city'] as const;
-/** The original biomes 2 and 3 (research station, ruined city): kept as endless-mode biomes. */
-export const LEGACY_BIOME_IDS = ['station', 'ruins'] as const;
-/** Visual and enemy sources for round 31+: a random one per block of 10 rounds. */
-export const ENDLESS_BIOMES = [...BIOME_IDS, ...LEGACY_BIOME_IDS] as const;
+/**
+ * Campaign biomes in visit order (rounds 1-50, one per 10 rounds; ADR-023). Station and ruins
+ * reuse the legacy PixelLab atlases. Round 51+ is endless (see ENDLESS_BIOMES).
+ */
+export const BIOME_IDS = ['antarctica', 'forest', 'city', 'station', 'ruins'] as const;
+/** Visual and enemy sources for round 51+: a random one per block of 10 rounds. */
+export const ENDLESS_BIOMES = BIOME_IDS;
 export type BiomeId = (typeof ENDLESS_BIOMES)[number];
 
 /** Game speed toggled with TAB (default 1x) and chosen in Settings. */

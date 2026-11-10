@@ -1,6 +1,6 @@
 # Glossário i18n — Pinguin Survivors
 
-> **Versão** 1.0 · **Data** 2026-11-08 · **Status** revisado pelo orquestrador (2026-11-08); termos marcados "proposta" aguardam o desenvolvedor (`questions-to-dev.md` #6). Tabelas em `src/i18n/` (`*.en.ts`, `*.pt-BR.ts`, `*.es.ts`, `*.zh-CN.ts`); paridade de chaves e placeholders com `bun scripts/i18n-check.ts`. Regras de tradução em [.agents/rules/game-data-and-i18n.md](../.agents/rules/game-data-and-i18n.md). Decisão de idiomas em [ADR-010](adrs/ADR-010-idiomas-en-ptbr-es-zh.md) e [SDD-009](sdds/SDD-009-i18n-es-zh.md).
+> **Versão** 1.1 · **Data** 2026-11-10 · **Status** revisado pelo orquestrador (2026-11-08); biomas e bosses atualizados para a campanha de [ADR-023](adrs/ADR-023-campanha-50-rounds-10-bosses.md) (2026-11-10); termos marcados "proposta" aguardam o desenvolvedor (`questions-to-dev.md` #6). Tabelas em `src/i18n/` (`*.en.ts`, `*.pt-BR.ts`, `*.es.ts`, `*.zh-CN.ts`); paridade de chaves e placeholders com `bun scripts/i18n-check.ts`. Regras de tradução em [.agents/rules/game-data-and-i18n.md](../.agents/rules/game-data-and-i18n.md). Decisão de idiomas em [ADR-010](adrs/ADR-010-idiomas-en-ptbr-es-zh.md) e [SDD-009](sdds/SDD-009-i18n-es-zh.md).
 
 ## Índice
 
@@ -98,14 +98,24 @@
 
 | EN | PT-BR | ES | ZH-CN | Nota |
 |---|---|---|---|---|
-| Antarctica | ANTÁRTIDA | ANTÁRTIDA | 南极洲 | bioma 1 |
-| The research station | A ESTAÇÃO DE PESQUISA | LA ESTACIÓN DE INVESTIGACIÓN | 研究站 | bioma 2 |
-| The ruined city | A CIDADE EM RUÍNAS | LA CIUDAD EN RUINAS | 废墟之城 | bioma 3 |
-| Zombie Polar Bear | URSO POLAR ZUMBI | OSO POLAR ZOMBI | 僵尸北极熊 | boss 10 |
-| Harbor Kraken | KRAKEN DO PORTO | KRAKEN DEL PUERTO | 港口克拉肯 | boss 20 |
-| The Abomination | A ABOMINAÇÃO | LA ABOMINACIÓN | 憎恶体 | boss 30 |
+| ANTARCTICA | ANTÁRTIDA | ANTÁRTIDA | 南极洲 | bioma 1 · rounds 1–10 (`biome.antarctica`) |
+| THE FOREST | A FLORESTA | EL BOSQUE | 森林 | bioma 2 · rounds 11–20 (`biome.forest`) |
+| THE ALIEN CITY | A CIDADE ALIEN | LA CIUDAD ALIENÍGENA | 外星之城 | bioma 3 · rounds 21–30 (`biome.city`) |
+| THE RESEARCH STATION | A ESTAÇÃO DE PESQUISA | LA ESTACIÓN DE INVESTIGACIÓN | 研究站 | bioma 4 · rounds 31–40 (`biome.station`) |
+| THE RUINED CITY | A CIDADE EM RUÍNAS | LA CIUDAD EN RUINAS | 废墟之城 | bioma 5 · rounds 41–50 (`biome.ruins`) |
+| LEOPARD SEAL MATRIARCH | FOCA-LEOPARDO MATRIARCA | FOCA LEOPARDO MATRIARCA | 豹海豹女王 | boss, round 5 (`boss.leopardSeal`) |
+| ZOMBIE POLAR BEAR | URSO POLAR ZUMBI | OSO POLAR ZOMBI | 僵尸北极熊 | boss, round 10 (`boss.polarBear`) |
+| ROTTEN TREANT | ENT PODRE | ENT PODRIDO | 腐朽树人 | boss, round 15 (`boss.rotTreant`) |
+| MOOSE KING | REI ALCE | REY ALCE | 驼鹿之王 | boss, round 20 (`boss.mooseKing`) |
+| HIVE QUEEN | RAINHA DA COLMEIA | REINA DE LA COLMENA | 蜂巢女王 | boss, round 25 (`boss.hiveQueen`) |
+| BIOMECH COLOSSUS | COLOSSO BIOMECÂNICO | COLOSO BIOMECÁNICO | 生物机械巨像 | boss, round 30 (`boss.biomechColossus`) |
+| DROWNED DIVER | MERGULHADOR AFOGADO | BUZO AHOGADO | 溺亡潜水员 | boss, round 35 (`boss.drownedDiver`) |
+| HARBOR KRAKEN | KRAKEN DO PORTO | KRAKEN DEL PUERTO | 港口克拉肯 | boss, round 40 (`boss.kraken`) |
+| PLAGUE HIEROPHANT | HIEROFANTE DA PRAGA | HIEROFANTE DE LA PLAGA | 瘟疫大祭司 | boss, round 45 (`boss.plagueHierophant`) |
+| THE ABOMINATION | A ABOMINAÇÃO | LA ABOMINACIÓN | 憎恶体 | boss, round 50 (`boss.abomination`) |
 | Penguin (jogador) | pinguim | pingüino | 企鹅 | |
 
 ## Histórico
 
+- 1.1 (2026-11-10): biomas 4 e 5 (Estação, Ruínas) e os 10 bosses da campanha (ADR-023), com os textos de `boss.*` e `biome.*` dos 4 idiomas.
 - 0.1 (2026-11-08): rascunho inicial com os termos usados nas tabelas `*.es.ts` e `*.zh-CN.ts`. Pendente: revisão do orquestrador (ZH-CN, fonte CJK, termos marcados como **proposta**).

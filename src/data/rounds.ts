@@ -2,7 +2,7 @@
 export const ROUNDS = {
 	firstDuration: 20,
 	durationStep: 5,
-	/** Biome and scaling block: Antarctica 1–10, forest 11–20, city 21–30, then endless blocks of 10. */
+	/** Biome and scaling block: Antarctica 1–10, forest 11–20, city 21–30, station 31–40, ruins 41–50 (ADR-023), then endless blocks of 10 from 51. */
 	biomeRounds: 10,
 	/** Boss rounds: 5, 10, 15… (developer rule, 2026-11-08). */
 	bossEvery: 5,
@@ -30,8 +30,8 @@ export const ROUNDS = {
 		spawnMax: 25,
 		/** Horde spawn rate during boss rounds (the fight is about the boss; auto-aim hits the nearest). */
 		bossSpawnMul: 0.5,
-		/** Endless: every full tour of the 3 biomes (30 rounds) multiplies HP/damage again. */
-		loopRounds: 30,
+		/** Endless: every full tour of the 5 biomes (50 rounds) multiplies HP/damage again. */
+		loopRounds: 50,
 		hpPerLoop: 4.5,
 		dmgPerLoop: 1.6,
 		/** Enemy speed per endless loop (1 = off; hook for balancing). */

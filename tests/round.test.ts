@@ -64,12 +64,12 @@ describe('scaling', () => {
 		expect(dmgMul(10)).toBeLessThan(dmgMul(11));
 	});
 
-	test('each 30-round loop multiplies again (endless)', () => {
+	test('each 50-round loop multiplies again (endless)', () => {
 		const k = ROUNDS.scaling;
-		expect([1, 30, 31, 60, 61].map(loop)).toEqual([0, 0, 1, 1, 2]);
+		expect([1, 50, 51, 100, 101].map(loop)).toEqual([0, 0, 1, 1, 2]);
 		const plain = (r: number) => (1 + k.hpPerRound * (r - 1)) * k.hpPerCycle ** cycle(r);
-		expect(hpMul(31)).toBeCloseTo(plain(31) * k.hpPerLoop);
-		expect(dmgMul(31) / dmgMul(30)).toBeGreaterThan(k.dmgPerLoop);
+		expect(hpMul(51)).toBeCloseTo(plain(51) * k.hpPerLoop);
+		expect(dmgMul(51) / dmgMul(50)).toBeGreaterThan(k.dmgPerLoop);
 	});
 
 	test('spawn rate is capped and slower on boss rounds', () => {
