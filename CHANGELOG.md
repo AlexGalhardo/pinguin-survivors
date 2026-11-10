@@ -7,12 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-10
+
 ### Changed
 
 - **ui:** Flat UI (ADR-027, SDD-020, design system v2.1): no shadows, glows, chamfered or worn card frames; every group of buttons or content is delimited by one 1 px `border-line` and every `Btn` has one style per function (primary, secondary, danger) on all screens. Focus uses a `crit` border, band and diamond instead of a glow. The main menu groups its entries with that thin border.
 - **ui:** Main menu loses the subtitle (`menu.tagline`) and the pearls and achievement points footer (`menu.wallet`), in the 4 languages.
 - **game:** Difficulty replaces Danger 0-5 (ADR-025, SDD-019): Easy x0.5, Normal x1 and Hard x2 on enemy HP and damage (bosses included); speed, drops and extra waves are neutral. Hard unlocks per hero by beating the round 20 boss on Normal. Saves migrate (Danger 0 to Easy, 1 to Normal, 2-5 to Hard; best rounds collapse the same way). Achievements `dangerWin`/`dangerAll` became `difficultyWin`/`difficultyAll` (Normal, Hard; 178 to 166 achievements). `--danger` became `--difficulty` in the sim and the bot, `?danger=` became `?difficulty=`, and balance goal #4 compares Easy, Normal and Hard.
 - **game:** Normal (non-boss) rounds last at most 2 minutes: `min(120, 30 + 5 * (N - 1))` (`ROUNDS.roundMax`), reached at round 19. Boss rounds are unchanged.
+
+### Added
+
+- **ui:** Show the skill tree as a grid of squares ([85bb715](https://github.com/AlexGalhardo/pinguin-survivors/commit/85bb715))
+- **ui:** Flatten every menu and group controls with thin borders ([8e39cd7](https://github.com/AlexGalhardo/pinguin-survivors/commit/8e39cd7))
+- **arena:** Add easy, normal and hard difficulty, cap rounds at 2 minutes and play each boss's theme ([13e25b1](https://github.com/AlexGalhardo/pinguin-survivors/commit/13e25b1))
+- **audio:** Compose ten boss themes, nine round themes and a shop theme ([3f7e6c7](https://github.com/AlexGalhardo/pinguin-survivors/commit/3f7e6c7))
+
+### Maintenance
+
+- **release:** Mark 0.9.0 as the current release ([d3a8d2c](https://github.com/AlexGalhardo/pinguin-survivors/commit/d3a8d2c))
 
 ## [0.9.0] - 2026-11-10
 
@@ -614,7 +627,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.2...v0.8.0
 [0.7.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.1...v0.7.2
