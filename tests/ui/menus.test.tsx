@@ -251,7 +251,7 @@ describe('HeroSelect', () => {
 describe('Settings and Controls', () => {
 	test('adjust buttons step a row; Esc goes back', () => {
 		log.length = 0;
-		const { getAllByLabelText, container } = render(
+		const { getAllByLabelText, getByText, container } = render(
 			<Router
 				view={{
 					screen: 'settings',
@@ -282,11 +282,15 @@ describe('Settings and Controls', () => {
 				}}
 			/>,
 		);
-		expect(container.textContent).toContain('Master volume: 50%');
-		fireEvent.click(getAllByLabelText('+')[5] as HTMLElement);
+		expect(container.textContent).toContain('Language');
+		expect(container.textContent).not.toContain('Master volume');
 		fireEvent.click(getAllByLabelText('-')[0] as HTMLElement);
+		fireEvent.click(getByText('Audio'));
+		expect(container.textContent).toContain('Master volume: 50%');
+		fireEvent.click(getAllByLabelText('+')[0] as HTMLElement);
+		fireEvent.focus(getAllByLabelText('+')[1] as HTMLElement);
 		key('Escape');
-		expect(log).toEqual(['adjust:master:1', 'adjust:language:-1', 'back']);
+		expect(log).toEqual(['adjust:language:-1', 'adjust:master:1', 'back']);
 		cleanup();
 	});
 

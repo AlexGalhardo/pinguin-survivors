@@ -1,8 +1,9 @@
-import type { ReactElement } from 'react';
+import { type ReactElement, type ReactNode, useState } from 'react';
 import { type I18nKey, t } from '../../i18n';
+import { useCompact } from '../compact';
 import { Btn } from './Btn';
 import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
-import { Filet, Hint } from './Panel';
+import { Hint } from './Panel';
 
 export interface SettingsData {
 	lang: string;
@@ -99,6 +100,17 @@ const GROUPS: readonly { title: I18nKey; rows: readonly SettingsRow[] }[] = [
 	{ title: 'settings.group.data', rows: ['telemetry'] },
 ];
 
+/** Entries per page on the phone (the list never scrolls). */
+const COMPACT_PAGE = 4;
+
+interface Entry {
+	id: string;
+	node: ReactNode;
+	/** What the single hint line under the list says while this entry is focused. */
+	hint: I18nKey;
+}
+
+/** Settings in tabs (one per group) with a single hint line for the focused option. */
 export function Settings({
 	data,
 	actions,
@@ -106,57 +118,117 @@ export function Settings({
 	data: SettingsData;
 	actions: SettingsActions;
 }): ReactElement {
+	const [tab, setTab] = useState(0);
+	const [page, setPage] = useState(0);
+	const [hint, setHint] = useState<I18nKey | null>(null);
+	const compact = useCompact();
+	const group = GROUPS[tab] ?? GROUPS[0];
+	const isData = group?.title === 'settings.group.data';
+
+	const action = (id: string, label: I18nKey, run: () => void, primary?: boolean): Entry => ({
+		id,
+		hint: 'settings.hint.data',
+		node: (
+			<Btn
+				onActivate={run}
+				variant={primary ? 'primary' : 'secondary'}
+				className="w-full justify-start"
+			>
+				{t(label)}
+			</Btn>
+		),
+	});
+	const entries: Entry[] = [
+		...(group?.rows ?? []).map(
+			(row): Entry => ({
+				id: row,
+				hint: `settings.hint.${row}` as I18nKey,
+				node: (
+					<AdjustRow
+						label={rowLabel(row, data)}
+						onPrev={() => actions.adjust(row, -1)}
+						onNext={() => actions.adjust(row, 1)}
+					/>
+				),
+			}),
+		),
+		...(isData
+			? [
+					action('export', 'settings.export', actions.exportSave),
+					action('import', 'settings.import', actions.importSave),
+					action('telemetry', 'settings.exportTelemetry', actions.exportTelemetry),
+					action('controls', 'settings.controls', actions.controls, true),
+				]
+			: []),
+	];
+	const pages = compact ? Math.ceil(entries.length / COMPACT_PAGE) : 1;
+	const current = Math.min(page, pages - 1);
+	const shown = compact
+		? entries.slice(current * COMPACT_PAGE, (current + 1) * COMPACT_PAGE)
+		: entries;
+	const pickTab = (n: number): void => {
+		setTab(n);
+		setPage(0);
+		setHint(null);
+	};
+
 	return (
 		<MenuScreen
 			title={t('settings.title')}
 			onBack={actions.back}
 			wide
-			subtitle={t('settings.subtitle')}
 			footer={<BackBtn onBack={actions.back} label={t('menu.back')} />}
 		>
-			<div className="grid grid-cols-1 gap-x-8 gap-y-3 min-[1100px]:grid-cols-2">
-				{GROUPS.map((g) => (
-					<div key={g.title} className="flex flex-col gap-2">
-						<h3 className="m-0 font-title text-[0.95em] font-bold tracking-wider text-crit uppercase">
+			<div className="flex flex-wrap justify-center gap-x-8">
+				{GROUPS.map((g, n) => (
+					<Btn key={g.title} onActivate={() => pickTab(n)} className="pr-2!">
+						<span
+							className={`font-title text-item font-bold tracking-wide ${n === tab ? 'text-gold-bright' : ''}`}
+						>
 							{t(g.title)}
-						</h3>
-						<Filet />
-						{g.rows.map((row) => (
-							<AdjustRow
-								key={row}
-								label={rowLabel(row, data)}
-								hint={t(`settings.hint.${row}` as I18nKey)}
-								onPrev={() => actions.adjust(row, -1)}
-								onNext={() => actions.adjust(row, 1)}
-							/>
-						))}
-						{g.title === 'settings.group.data' && (
-							<>
-								<div className="flex gap-2">
-									<Btn
-										onActivate={actions.exportSave}
-										className="flex-1 border-snow"
-									>
-										{t('settings.export')}
-									</Btn>
-									<Btn
-										onActivate={actions.importSave}
-										className="flex-1 border-snow"
-									>
-										{t('settings.import')}
-									</Btn>
-								</div>
-								<Btn onActivate={actions.exportTelemetry} className="border-snow">
-									{t('settings.exportTelemetry')}
-								</Btn>
-								<Btn onActivate={actions.controls} variant="primary">
-									{t('settings.controls')}
-								</Btn>
-								<Hint>{t('settings.hint.data')}</Hint>
-							</>
-						)}
-					</div>
+						</span>
+					</Btn>
 				))}
+			</div>
+			<div className="mx-auto flex w-full max-w-[56rem] flex-col gap-1">
+				{shown.map((e) => (
+					<fieldset
+						className="m-0 min-w-0 border-0 p-0"
+						key={e.id}
+						onFocusCapture={() => setHint(e.hint)}
+						onMouseEnter={() => setHint(e.hint)}
+					>
+						{e.node}
+					</fieldset>
+				))}
+			</div>
+			<div className="mx-auto mt-auto flex w-full max-w-[56rem] items-center gap-2">
+				<div className="min-h-[2lh] flex-1">
+					<Hint>{t(hint ?? shown[0]?.hint ?? 'settings.subtitle')}</Hint>
+				</div>
+				{pages > 1 && (
+					<>
+						<Btn
+							onActivate={() => setPage((current + pages - 1) % pages)}
+							className="pr-0! pl-0!"
+						>
+							<span className="font-title text-[32px] leading-none text-gold-bright">
+								‹
+							</span>
+						</Btn>
+						<span className="text-secondary font-bold tabular-nums">
+							{current + 1}/{pages}
+						</span>
+						<Btn
+							onActivate={() => setPage((current + 1) % pages)}
+							className="pr-0! pl-0!"
+						>
+							<span className="font-title text-[32px] leading-none text-gold-bright">
+								›
+							</span>
+						</Btn>
+					</>
+				)}
 			</div>
 		</MenuScreen>
 	);
