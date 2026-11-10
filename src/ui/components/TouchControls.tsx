@@ -56,7 +56,7 @@ function Stick(): ReactElement {
 			role="application"
 			aria-label={t('touch.stick')}
 			data-touch="stick"
-			className="pointer-events-auto absolute size-36 touch-none select-none rounded-full border-2 border-snow/60 bg-night/40"
+			className="pointer-events-auto absolute size-[144px] touch-none select-none rounded-full border-2 border-gold-aged/70 bg-night/40"
 			style={{ left: SAFE_LEFT, bottom: SAFE_BOTTOM }}
 			onPointerDown={down}
 			onPointerMove={move}
@@ -64,7 +64,7 @@ function Stick(): ReactElement {
 			onPointerCancel={up}
 		>
 			<div
-				className="absolute left-1/2 top-1/2 size-14 rounded-full border-2 border-snow bg-snow/50"
+				className="absolute left-1/2 top-1/2 size-[56px] rounded-full border-2 border-gold-bright bg-gold-aged/40"
 				style={{
 					transform: `translate(calc(-50% + ${thumb.x}px), calc(-50% + ${thumb.y}px))`,
 				}}
@@ -79,6 +79,8 @@ function ActionButton(props: {
 	glyph: string;
 	className: string;
 	disabled?: boolean;
+	/** Superpower charged: the border turns `crit`. */
+	ready?: boolean;
 	style?: CSSProperties;
 }): ReactElement {
 	return (
@@ -88,7 +90,7 @@ function ActionButton(props: {
 			data-touch={props.action}
 			disabled={props.disabled}
 			style={props.style}
-			className={`pointer-events-auto touch-none select-none rounded-full border-2 border-snow/70 bg-night/60 font-bold [font-family:inherit] disabled:opacity-40 ${props.className}`}
+			className={`pointer-events-auto touch-none select-none rounded-full border-2 text-secondary text-text-light ${props.ready ? 'border-crit' : 'border-gold-aged/80'} bg-night/60 font-bold [font-family:inherit] disabled:border-dashed disabled:border-snow disabled:text-text-dim ${props.className}`}
 			onPointerDown={(e) => {
 				e.preventDefault();
 				fireTouchAction(props.action);
@@ -117,13 +119,14 @@ export function TouchControls(): ReactElement | null {
 					action="speed"
 					label={t('touch.speed')}
 					glyph={hud.speed > 1 ? `${hud.speed}x` : '1x'}
-					className="size-12 text-sm"
+					className="size-[48px]"
 				/>
 				<ActionButton
 					action="super"
 					label={t('touch.super')}
 					glyph="★"
-					className={`size-20 text-3xl ${ready ? 'bg-crit/70' : ''}`}
+					className={`size-[80px] text-[2rem]! ${ready ? 'bg-crit/30' : ''}`}
+					ready={ready}
 					disabled={hud.superpower === null}
 				/>
 			</div>
@@ -131,7 +134,7 @@ export function TouchControls(): ReactElement | null {
 				action="pause"
 				label={t('touch.pause')}
 				glyph="II"
-				className="absolute size-11 text-sm"
+				className="absolute size-[44px]"
 				style={{ right: SAFE_RIGHT, top: 'max(0.75rem, env(safe-area-inset-top))' }}
 			/>
 		</div>

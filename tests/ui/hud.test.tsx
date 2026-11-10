@@ -84,7 +84,7 @@ describe('HudView', () => {
 		const { container } = render(
 			<HudView
 				hud={snapshot({
-					boss: { id: 'brute', hp: 50, maxHp: 100 },
+					boss: { id: 'kraken', hp: 50, maxHp: 100 },
 					superpower: { charge: 3, cost: 3 },
 					speed: 2,
 				})}
@@ -140,6 +140,45 @@ describe('Hud over menus', () => {
 		act(() => uiStore.set({ screen: 'settings' }));
 		expect(view.container.textContent).toBe('');
 		act(() => uiStore.set({ screen: 'none' }));
+		cleanup();
+	});
+});
+
+const setUrl = (url: string): void =>
+	(window as unknown as { happyDOM: { setURL: (u: string) => void } }).happyDOM.setURL(url);
+
+describe('HudView top stack and gambits', () => {
+	test('stacks timer, elite banner and boss bar in that order inside the round block', () => {
+		const { container } = render(
+			<HudView
+				hud={snapshot({ elite: 'orange', boss: { id: 'kraken', hp: 5, maxHp: 10 } })}
+			/>,
+		);
+		const text = container.querySelector('[data-hud="round"]')?.textContent ?? '';
+		expect(text.indexOf('1:24')).toBeGreaterThan(-1);
+		expect(text.indexOf('ELITE ROUND')).toBeGreaterThan(text.indexOf('1:24'));
+		expect(text.indexOf('HARBOR KRAKEN')).toBeGreaterThan(text.indexOf('ELITE ROUND'));
+		cleanup();
+	});
+
+	test('phones show at most 2 gambits and strike the used ones; desktop shows all', () => {
+		const gambits = [1, 2, 3].map((slot) => ({
+			slot,
+			potion: 'speed',
+			condition: 'hp50',
+			used: slot === 1,
+		})) as unknown as Snapshot['gambits'];
+		const rows = (): NodeListOf<Element> | undefined =>
+			document.querySelectorAll('[data-hud="gambits"] > div');
+		const desktop = render(<HudView hud={snapshot({ gambits })} />);
+		expect(rows()?.length).toBe(3);
+		expect(rows()?.[0]?.className).toContain('line-through');
+		desktop.unmount();
+		setUrl('http://localhost/?touch=1');
+		const phone = render(<HudView hud={snapshot({ gambits })} />);
+		expect(rows()?.length).toBe(2);
+		phone.unmount();
+		setUrl('http://localhost/');
 		cleanup();
 	});
 });
