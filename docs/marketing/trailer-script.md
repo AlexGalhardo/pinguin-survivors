@@ -15,7 +15,7 @@
 
 - **Duração**: 110–120 s, nunca mais de 2 min (site.md §6).
 - **Formato**: MP4 H.264 1080p60 + WebM (site.md §6). Legendas EN embutidas; PT-BR, ES e ZH-CN opcionais.
-- **Só o que existe**: a 0.9.0 tem árvore de habilidades por herói, três slots de save, raridade I–V, itens de suporte, poção de cura, três heróis, Danger 0–5 e endless. Nada de conteúdo prometido sem data.
+- **Só o que existe**: a 0.10.0 tem árvore de habilidades por herói, três slots de save, raridade I–V, itens de suporte, poção de cura, três heróis, Danger 0–5 e endless. Nada de conteúdo prometido sem data.
 - **Loja**: a loja vende só armas, equipamentos e poções de velocidade, com raridades **I a III** (ADR-017). Raridades IV e V aparecem em drops de elites e bosses. O trailer não deve mostrar compra de IV ou V.
 - **Chefes na campanha**: urso polar (round 10), alce-rei zumbi (round 20) e colosso biomecânico (round 30), os dois últimos propostos (ADR-016). Kraken do Porto e Abominação são **só do endless**; não mostrar como chefes da campanha.
 - **Biomas**: Antártida (1–10), floresta (11–20) e cidade destruída com aliens (21–30), nomes propostos em ADR-016 até aprovação. Confirmar antes de gravar.
