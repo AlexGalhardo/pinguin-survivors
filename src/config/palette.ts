@@ -1,6 +1,15 @@
 /** Every color used by the game. Dark polar night + saturated heroes, blood and magic (P-08). */
 export const PALETTE = {
 	night: 0x0b0e14,
+	// Per-biome night tints of the darkness layer and the ambient weather (SDD-017).
+	nightAntarctica: 0x0a1626,
+	nightForest: 0x07150c,
+	nightCity: 0x10131f,
+	nightStation: 0x081a20,
+	nightRuins: 0x1c0d0a,
+	rain: 0xa9cbe8,
+	ash: 0xb9aea4,
+	dust: 0xcdb98a,
 	// UI surfaces and ornaments (docs/design-system.md): panel gradient and the aged-gold frame.
 	panelTop: 0x161c29,
 	panelBottom: 0x0a0d13,

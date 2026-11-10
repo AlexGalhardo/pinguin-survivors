@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
 
 const LIGHT = 'fx.light';
@@ -21,6 +22,7 @@ export interface Light {
  */
 export class Lighting {
 	private readonly rt: Phaser.GameObjects.RenderTexture;
+	private tint: number = PALETTE.night;
 
 	constructor(
 		scene: Phaser.Scene,
@@ -50,6 +52,12 @@ export class Lighting {
 		this.darkness = value;
 	}
 
+	/** Ambient look of the biome: night colour and strength (SDD-017 RF-06). */
+	setLook(tint: number, darkness: number): void {
+		this.tint = tint;
+		this.darkness = darkness;
+	}
+
 	draw(lights: readonly Light[]): void {
 		const rt = this.rt;
 		rt.clear();
@@ -57,7 +65,7 @@ export class Lighting {
 			rt.render();
 			return;
 		}
-		rt.fill(PALETTE.night, this.darkness);
+		rt.fill(this.tint, this.darkness);
 		for (const l of lights.slice(0, MAX_LIGHTS)) {
 			// stamp() honours scale/alpha; erase() with a game object ignores its scale.
 			rt.stamp(LIGHT, undefined, l.x, l.y, {
@@ -68,5 +76,33 @@ export class Lighting {
 			});
 		}
 		rt.render();
+	}
+}
+
+/** Dark edges of the screen (SDD-017): one stretched image above the darkness layer, every tier. */
+export class Vignette {
+	private readonly img: Phaser.GameObjects.Image;
+
+	constructor(scene: Phaser.Scene) {
+		this.img = scene.add
+			.image(0, 0, KEYS.vignette)
+			.setOrigin(0, 0)
+			.setDepth(-99)
+			.setVisible(false);
+	}
+
+	resize(width: number, height: number): void {
+		this.img.setDisplaySize(Math.ceil(width), Math.ceil(height));
+	}
+
+	setLook(tint: number, strength: number): void {
+		this.img
+			.setTint(tint)
+			.setAlpha(strength)
+			.setVisible(strength > 0);
+	}
+
+	destroy(): void {
+		this.img.destroy();
 	}
 }

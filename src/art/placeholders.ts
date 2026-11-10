@@ -5,6 +5,7 @@ import { ARENA } from '../data/arena';
 import { ENEMY_LIST } from '../data/enemies';
 import { GEAR } from '../data/equipment';
 import { DIRS, type Dir } from '../logic/projection';
+import { installAmbientArt } from './ambient-art';
 import { BIOMES, KEYS } from './manifest';
 
 const T = ARENA.tile;
@@ -16,6 +17,7 @@ export function installPlaceholders(scene: Phaser.Scene): void {
 	biomePlaceholders(scene);
 	borderPlaceholders(scene);
 	gearPlaceholders(scene);
+	installAmbientArt(scene);
 	const biome = BIOMES.antarctica;
 	const tileColors = [PALETTE.snow, PALETTE.snowDark, PALETTE.snowLight, PALETTE.ice];
 	for (let v = 0; v < biome.tileVariants; v++) {

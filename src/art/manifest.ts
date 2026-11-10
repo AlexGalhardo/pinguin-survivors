@@ -29,6 +29,13 @@ export const KEYS = {
 	splat: (kind: 'blood' | 'goo', n: number) => `fx.splat.${kind}.${n}`,
 	gib: (n: number) => `fx.gib.${n}`,
 	droplet: 'fx.droplet',
+	/** Ambient weather particle (`dot`, `streak`, `leaf`), SDD-017; white, tinted by the emitter. */
+	weather: (shape: string) => `fx.weather.${shape}`,
+	/** Warm radial glow (campfires) and the screen-edge vignette, drawn in code. */
+	glow: 'fx.glow',
+	vignette: 'fx.vignette',
+	/** Animated campfire prop, frames 0-3 (code art). */
+	campfire: (n: number) => `fx.campfire.${n}`,
 	/** Signature/secondary weapon held by the hero, drawn pointing right, pivot at the grip (P-56). */
 	weapon: (id: string) => `weapon.${id}`,
 	/** Tiered weapon texture (SDD-002); placeholder tinted by tier until the art lands. */

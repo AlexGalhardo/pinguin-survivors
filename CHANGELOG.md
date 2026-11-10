@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **game:** The first round lasts 30 s instead of 20 s (`ROUNDS.firstDuration`; later normal rounds keep the +5 s step, so each is 10 s longer).
+- **game:** Darkness layer per biome: its own night tint and strength (never above 0.66), a screen-edge vignette, a soft wider halo around the hero and a light on rarity III+ drops (SDD-017).
+
 - **game:** Elites have double HP (purple 2→4, orange 3→6) and double size (scale 1.25→2.5, 1.4→2.8); the hit radius grows with the sprite (SDD-016 RF-09).
 - **art:** Forest (biome 2) trees, the pine and the dry tree, are drawn at twice their size: packed 2x with nearest-neighbor in the `forest` atlas, and their collision circle doubles (`decoRadiusMul`); logs and rocks are unchanged.
 - **game:** The campaign now has 50 rounds and 5 biomes (research station 31–40 and ruined city 41–50 are no longer endless-only); the endless starts at round 51 and each loop is 50 rounds (ADR-023, SDD-016).
@@ -16,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **game:** Ambient weather per biome with Phaser 4 particles: snow (Antarctica), wind-blown leaves and dust (forest), green spores (city), rain (station) and embers and ash (ruins); capped per tier (low 40%).
+- **game:** Animated campfires scattered through each arena (seeded, no collision) with a pulsing warm light, additive glow and rising embers; the pulse is steady with reduced flashes.
+- **docs:** SDD-017 (round 1 at 30 s, ambient weather, campfires and lighting).
 - **game:** Five new bosses (Leopard Seal Matriarch, Rotten Treant, Hive Queen, Drowned Diver, Plague Hierophant) with names and descriptions in the 4 languages; sprite scale entries are provisional until the art lands.
 - **game:** Bosses telegraph four area attacks with red marks on the ground before they hurt: a rain of circles, expanding rings with a safe gap, beams in two volleys and a checkerboard floor (SDD-016).
 - **game:** Elites draw one of five red-mark area attacks at spawn (seeded) and use it every 6 s when the hero is within reach: nova, frontal cone, rotating cross, stomp trail and cage; at most 4 elite attacks on screen (SDD-016 RF-09).

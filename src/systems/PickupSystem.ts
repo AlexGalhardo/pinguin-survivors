@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { KEYS } from '../art/manifest';
 import { weaponArt } from '../art/weapon-art';
 import { rarityColor } from '../config/palette';
+import { EXTRA_LIGHTS } from '../data/ambient';
 import { COMBAT_FX } from '../data/combat-fx';
 import { ECONOMY } from '../data/economy';
 import { DROPS, GEAR_BY_ID } from '../data/equipment';
@@ -198,6 +199,23 @@ export class PickupSystem {
 	}
 
 	/** End of round: everything on the ground is collected at once (gear included). */
+	/** High-rarity walk-on drops glow in the darkness (capped, SDD-017 RF-06). */
+	collectLights(out: { x: number; y: number; radius: number; strength: number }[]): void {
+		const L = EXTRA_LIGHTS.drop;
+		let n = 0;
+		for (const p of this.items) {
+			if (!p.alive || !isWalkOn(p.kind)) continue;
+			const def = p.gearId ? GEAR_BY_ID[p.gearId] : undefined;
+			const rarity =
+				p.kind === 'potion'
+					? p.value
+					: (p.item?.rarity ?? (def ? LEGACY_GEAR_RARITY[def.rarity] : 1));
+			if (rarity < L.minRarity) continue;
+			out.push({ x: p.x, y: p.y, radius: L.radius, strength: L.strength });
+			if (++n >= L.max) return;
+		}
+	}
+
 	collectAll(): void {
 		for (const p of this.items) if (p.alive) this.collect(p);
 	}

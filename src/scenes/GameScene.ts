@@ -18,6 +18,7 @@ import { platform, reportAchievements } from '../core/platform';
 import { watchSuspend } from '../core/suspend';
 import { activeBudget } from '../core/tier';
 import { trackZoom } from '../core/viewport';
+import { EXTRA_LIGHTS } from '../data/ambient';
 import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DEMO, STEAM_URL } from '../data/demo';
 import { DANGER, type Danger, type DangerMods } from '../data/difficulty';
@@ -174,6 +175,7 @@ import { publishDemoEnd, publishLevelUp, publishPause, publishRunOver } from '..
 import { publishShop, type ShopView } from '../ui/shop-bridge';
 import { uiStore } from '../ui/store';
 import { showToast } from '../ui/toast';
+import { Ambience } from '../world/Ambience';
 import { Arena } from '../world/Arena';
 
 /** What a saved run snapshot holds (save.activeRun.state). */
@@ -271,6 +273,7 @@ export class GameScene extends Phaser.Scene {
 	private combat!: CombatSystem;
 	private fx!: FxSystem;
 	private pickups!: PickupSystem;
+	private ambience!: Ambience;
 	private hostile!: HostileSystem;
 	private bossHazards!: BossHazardSystem;
 	private eliteHazards!: BossHazardSystem;
@@ -424,6 +427,7 @@ export class GameScene extends Phaser.Scene {
 		this.arena = new Arena(this, seed, biome, this.run.round, params.arena);
 		this.obstacles = new ObstacleField(this.arena.props);
 		this.fx = new FxSystem(this, save.settings, this.arena);
+		this.ambience = new Ambience(this, seed, biome, save.settings.reducedFlashes);
 		this.pickups = new PickupSystem(this, (kind, value, gearId, item) =>
 			this.collect(kind, value, gearId, item),
 		);
@@ -608,6 +612,7 @@ export class GameScene extends Phaser.Scene {
 			publishPause(null);
 			hudStore.set({ hud: null });
 			this.arena.destroy();
+			this.ambience.destroy();
 		});
 	}
 
@@ -618,6 +623,7 @@ export class GameScene extends Phaser.Scene {
 			this.hitStop -= deltaMs / 1000;
 			return;
 		}
+		this.ambience.update(Math.min(deltaMs, 50) / 1000, this.cameras.main.worldView);
 		if (this.deadFor >= 0) {
 			this.deadFor += dt;
 			this.fx.update(dt);
@@ -734,8 +740,11 @@ export class GameScene extends Phaser.Scene {
 		out.length = 0;
 		if (!this.hero) return out;
 		out.push({ x: this.hero.x, y: this.hero.y, radius: 240, strength: 1 });
+		out.push({ x: this.hero.x, y: this.hero.y, ...EXTRA_LIGHTS.heroHalo });
 		if (this.superpower?.active)
 			out.push({ x: this.hero.x, y: this.hero.y, radius: 360, strength: 1 });
+		this.ambience?.collectLights(out);
+		this.pickups?.collectLights(out);
 		this.area?.collectLights(out);
 		this.pool?.collectLights(out);
 		for (const e of this.enemies?.active ?? []) {
@@ -1862,12 +1871,14 @@ export class GameScene extends Phaser.Scene {
 		this.enemies.bounds = bounds;
 		this.pool.bounds = bounds;
 		this.hostile.bounds = bounds;
+		this.ambience.sync(bounds, this.arena.sideTiles, this.arena.props);
 	}
 
 	/** New biome every 10 rounds: rebuild the ground and announce it (P-18). */
 	private enterBiome(): void {
 		const biome = biomeForRound(this.run.round, this.run.seed);
 		this.arena.setBiome(biome);
+		this.ambience.setBiome(biome);
 		this.fx.banner(this.hero.x, this.hero.y, `biome.${biome}` as I18nKey);
 	}
 

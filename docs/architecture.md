@@ -152,6 +152,7 @@ docs/                       # gdd, visual, audio, architecture, workflow, balanc
 
 - Decalques carimbados na `DynamicTexture` da arena (teto por tier, 4.000 no `high`; ao passar do teto sai o mais antigo, `src/world/GoreLayer.ts`), recarimbados ao crescer; gore reduzido/gosma por settings.
 - Luz: `DynamicTexture` de escuridão do tamanho da tela com luzes em ERASE (herói, tiros, fogo, elites, boss, superpoder); vinheta; bloom opcional (desligado por padrão, P-65).
+- Ambiente (SDD-017): `world/Ambience.ts` (clima por bioma + fogueiras), `Vignette` em `world/Lighting.ts`; `TierBudget.ambientScale` (low 0,4 · mid 0,75 · high 1) e `glow` (só low desliga).
 - Orçamento: 60 FPS com 300 inimigos + 2.000 decalques + luzes em 1920×1080 na arena 40×40 (`bun scripts/perf.ts --round 40`, SDD-001 RF-10); o `Platform.tier` (`detectTier`) escolhe o orçamento de efeitos.
 - Orçamento por tier (`src/data/performance.ts`, `tierBudget()` em `src/logic/performance.ts`, tier ativo em `src/core/tier.ts`; `?tier=low|mid|high` força para QA): `low` = 1.000 decalques, sem luzes dinâmicas, sem bloom, 50% das partículas e gibs; `mid` = 2.000 decalques, até 24 luzes, bloom opcional, 75% das partículas; `high` = o jogo completo (4.000, 64 luzes, 100%). O bloom continua opt-in nas Configurações; o tier só o proíbe.
 

@@ -9,6 +9,8 @@ import type { AchievementDef } from '../data/achievements';
 import { GEAR_SLOTS } from '../data/equipment';
 import { HEAL_POTION } from '../data/potions';
 import { t } from '../i18n';
+import { lightingFor } from '../logic/ambient';
+import { biomeForRound } from '../logic/biome';
 import { xpToNext } from '../logic/progression';
 import { worldToScreen } from '../logic/projection';
 import { eliteTiers, isBossRound } from '../logic/round';
@@ -16,7 +18,7 @@ import { achievementName } from '../ui/achievement-text';
 import { UI_FONT, UI_WEIGHT } from '../ui/font';
 import { hudDue, hudWeapons, publishHud } from '../ui/hud-bridge';
 import { showToast } from '../ui/toast';
-import { type Light, Lighting } from '../world/Lighting';
+import { type Light, Lighting, Vignette } from '../world/Lighting';
 import type { GameScene } from './GameScene';
 
 /**
@@ -27,6 +29,8 @@ import type { GameScene } from './GameScene';
 export class HudScene extends Phaser.Scene {
 	private debugText?: Phaser.GameObjects.Text;
 	private lighting: Lighting | null = null;
+	private vignette: Vignette | null = null;
+	private lookBiome: string | null = null;
 	private readonly hudLights: Light[] = [];
 
 	constructor() {
@@ -45,6 +49,8 @@ export class HudScene extends Phaser.Scene {
 			});
 		}
 		if (activeBudget().dynamicLights) this.lighting = new Lighting(this, 0.62);
+		this.vignette = new Vignette(this);
+		this.lookBiome = null;
 		const onUnlock = (defs: AchievementDef[]) => {
 			sfx(this, 'sfx.achievement');
 			for (const def of defs) showToast(`${t('ach.unlocked')}: ${achievementName(def)}`);
@@ -57,6 +63,7 @@ export class HudScene extends Phaser.Scene {
 		trackZoom(this, cam, (view) => {
 			cam.centerOn(view.width / 2, view.height / 2);
 			this.lighting?.resize(view.width, view.height);
+			this.vignette?.resize(view.width, view.height);
 		});
 	}
 
@@ -64,6 +71,7 @@ export class HudScene extends Phaser.Scene {
 		const game = this.scene.get('Game') as GameScene;
 		const run = game.run;
 		if (!run) return;
+		this.applyLook(game);
 		this.drawLights(game);
 		if (hudDue()) this.publishReactHud(game);
 		this.debugText?.setText(
@@ -128,6 +136,16 @@ export class HudScene extends Phaser.Scene {
 			speed: game.speed,
 			fps: Math.round(this.game.loop.actualFps),
 		});
+	}
+
+	/** Night tint, darkness and vignette of the round's biome; only touched when the biome changes. */
+	private applyLook(game: GameScene): void {
+		const biome = biomeForRound(game.run.round, game.run.seed);
+		if (biome === this.lookBiome) return;
+		this.lookBiome = biome;
+		const look = lightingFor(biome);
+		this.lighting?.setLook(look.tint, look.darkness);
+		this.vignette?.setLook(look.tint, look.vignette);
 	}
 
 	/** World lights → HUD coordinates (the HUD camera maps 0..view to the screen). */

@@ -70,6 +70,7 @@
 - VFX por código (anéis, zonas, flashes, auras) + sprites: `fx.slash`, `fx.muzzle`, meteoro, explosão.
 - **VFX dos superpoderes** (pendentes, PixelLab objeto animado ≥ 12 frames, 128–192 px): tornado de sangue (Jack), sinalizador + bombas + crateras (Bob), vórtice de 4 cores + meteoro + pilares (Lucia).
 - Luz: camada de escuridão com luzes apagadas (herói, tiros, fogo, elites, boss, superpoder); vinheta; bloom opcional desligado por padrão (P-65).
+- **Ambiente e luz (SDD-017, 2026-11-10).** Tudo em código, sem arte PixelLab. Clima por bioma em `AMBIENT` (`src/data/ambient.ts`), um emitter de partículas por vez (`src/world/Ambience.ts`), acima dos personagens e abaixo dos números: neve (Antártida), folhas e poeira ao vento (Floresta), esporos verdes aditivos (Cidade), chuva (Estação), brasas e cinzas (Ruínas). Alfa de 0,4 a 0,8 para não cobrir as marcas `PALETTE.hazard`. Fogueiras: `ceil(lado/8)` por arena (mín. 2), sem colisão, 4 quadros de chama (`src/art/ambient-art.ts`), brilho aditivo `fx.glow`, luz apagada da escuridão e brasas; posições por seed em `campfireSpots` (`src/logic/ambient.ts`) e estáveis quando a arena cresce. Iluminação: `LIGHTING` dá tinta e escuridão por bioma (teto `MAX_DARKNESS` 0,66), vinheta (`Vignette`, imagem única em todos os tiers), halo suave de 440 px no herói e luz em drops de raridade ≥ III. Tier `low`: clima a 40%, sem brilho aditivo nem escuridão; `reducedFlashes`: fogueira com luz estável.
 
 ## 7. UI (React + Tailwind)
 

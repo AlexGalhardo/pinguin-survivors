@@ -25,6 +25,7 @@ test('mid sits between low and high on every knob', () => {
 		'particleScale',
 		'critLabels',
 		'critSparks',
+		'ambientScale',
 	] as const) {
 		expect(mid?.[k]).toBeGreaterThan(low?.[k] ?? 0);
 		expect(mid?.[k]).toBeLessThan(high?.[k] ?? 0);

@@ -66,7 +66,7 @@ Menu (árvore de habilidades · Pérolas: poções/gambits · arma inicial)
   → Morte / desistência → resumo → XP, Pérolas e conquistas ficam → Menu
 ```
 
-- **Duração do round N** (não boss): `20 + 5·(N−1)` s, sem teto (pedido do desenvolvedor, 2026-11-08: o jogo estava fácil).
+- **Duração do round N** (não boss): `30 + 5·(N−1)` s, sem teto (pedido do desenvolvedor, 2026-11-08: o jogo estava fácil; 1º round de 20 → 30 s em 2026-11-10).
 - **Boss**: rounds 5, 10, 15, 20…; barra de boss e timer de `2 + (N/5 − 1)` min (round 5: 2:00, round 10: 3:00, round 15: 4:00…); matar encerra o round; zerar o timer é game over. A **vida do boss dobra a cada boss** (round 5 ×1, 10 ×2, 15 ×4, 20 ×8…; pedido do desenvolvedor, 2026-11-08: os bosses estavam fáceis). Biomas e ciclos de escala continuam em blocos de 10 rounds.
 - **Elites** nos rounds múltiplos de 3 (roxo 2×; laranja 3× a partir do round 11). Waves de elite/horda extras por Danger (§16).
 - **Endless**: sem fim e sem tela de vitória (ADR-008).

@@ -17,6 +17,10 @@ export interface TierBudget {
 	critLabels: number;
 	/** Spark particles on a crit (scaled again by `particleScale`). */
 	critSparks: number;
+	/** Multiplier on live ambient weather particles and campfire embers (SDD-017). */
+	ambientScale: number;
+	/** Additive glow under campfires (the flame itself always draws). */
+	glow: boolean;
 }
 
 /**
@@ -34,6 +38,8 @@ export const TIER_BUDGET: Readonly<Record<PlatformTier, TierBudget>> = {
 		particleScale: 0.5,
 		critLabels: 4,
 		critSparks: 3,
+		ambientScale: 0.4,
+		glow: false,
 	},
 	mid: {
 		decalCap: 2000,
@@ -43,6 +49,8 @@ export const TIER_BUDGET: Readonly<Record<PlatformTier, TierBudget>> = {
 		particleScale: 0.75,
 		critLabels: 8,
 		critSparks: 6,
+		ambientScale: 0.75,
+		glow: true,
 	},
 	high: {
 		decalCap: ARENA.decalCap,
@@ -52,5 +60,7 @@ export const TIER_BUDGET: Readonly<Record<PlatformTier, TierBudget>> = {
 		particleScale: 1,
 		critLabels: 14,
 		critSparks: 8,
+		ambientScale: 1,
+		glow: true,
 	},
 };
