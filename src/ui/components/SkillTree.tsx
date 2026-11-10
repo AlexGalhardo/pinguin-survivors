@@ -8,7 +8,7 @@ import type { StatKey } from '../../logic/stats';
 import { useFocusable } from '../focus';
 import { Btn } from './Btn';
 import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
-import { Hint, Panel, StatRow } from './Panel';
+import { Hint, ItemCard, Panel } from './Panel';
 
 export interface SkillTreeData {
 	heroes: readonly HeroId[];
@@ -123,7 +123,7 @@ function NodeBtn(props: {
 			}}
 		>
 			{node.maxRank > 1 && (
-				<span className="pointer-events-none absolute -right-3 -bottom-3 rounded bg-night px-0.5 text-[0.65rem] leading-none font-bold text-gold-bright tabular-nums">
+				<span className="pointer-events-none absolute -right-3 -bottom-3 rounded bg-night px-0.5 text-[0.875rem] leading-none font-bold text-gold-bright tabular-nums">
 					{props.rank}/{node.maxRank}
 				</span>
 			)}
@@ -241,6 +241,7 @@ export function SkillTree({
 	};
 	const onPointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
 		pointerType.current = e.pointerType;
+		setAnchored(e.pointerType === 'mouse');
 		pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
 		moved.current = false;
 		if (pointers.current.size === 2) {
@@ -252,6 +253,7 @@ export function SkillTree({
 		drag.current = { x: e.clientX, y: e.clientY, camX: cam.x, camY: cam.y };
 	};
 	const onPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
+		if (e.pointerType === 'mouse') setAnchored(true);
 		if (pointers.current.has(e.pointerId))
 			pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
 		if (pointers.current.size === 2) {
@@ -289,6 +291,29 @@ export function SkillTree({
 		}
 		setCam((c) => ({ x: c.x - e.deltaX, y: c.y - e.deltaY, smooth: false }));
 	};
+
+	// The detail sits next to its node only while the mouse drives; keyboard, gamepad and touch get
+	// a fixed corner, so it never covers the neighbors the focus moves to (wireframe 2.5).
+	const [anchored, setAnchored] = useState(false);
+	useEffect(() => {
+		const off = (): void => setAnchored(false);
+		window.addEventListener('keydown', off);
+		return () => window.removeEventListener('keydown', off);
+	}, []);
+	const tipStyle: React.CSSProperties = (() => {
+		const fixed: React.CSSProperties = { right: 8, bottom: 8 };
+		if (!anchored || !node) return fixed;
+		const v = view();
+		const p = px(node);
+		const w = Math.min(460, v.w * 0.48);
+		const x = cam.x + p.x + SIZE[node.kind];
+		const left = x + w > v.w ? cam.x + p.x - SIZE[node.kind] - w : x;
+		return {
+			left: Math.max(0, left),
+			top: Math.max(0, Math.min(cam.y + p.y - 24, v.h - 280)),
+			transition: cam.smooth ? 'left 260ms ease-out, top 260ms ease-out' : 'none',
+		};
+	})();
 
 	const i = data.heroes.indexOf(data.hero);
 	const other = (d: number): HeroId =>
@@ -330,19 +355,21 @@ export function SkillTree({
 				</>
 			}
 		>
-			<div className="grid h-full min-h-0 w-full flex-1 grid-cols-1 gap-3 min-[1100px]:grid-cols-[1fr_22rem] [@media(max-height:500px)]:grid-cols-[1fr_14rem] [@media(max-height:500px)]:gap-1.5">
+			<div className="flex h-full min-h-0 w-full flex-1 flex-col">
 				<Panel className="h-full min-h-[50vh] [@media(max-height:500px)]:min-h-0">
 					<div className="flex flex-wrap items-center gap-2 [@media(max-height:500px)]:flex-nowrap [@media(max-height:500px)]:gap-1">
-						<AdjustRow
-							label={`${t(`hero.${data.hero}` as I18nKey)} · ${t('select.level', { n: data.level })}`}
-							onPrev={() => actions.selectHero(other(-1))}
-							onNext={() => actions.selectHero(other(1))}
-							disabled={data.heroes.length < 2}
-						/>
-						<div className="font-bold whitespace-nowrap text-crit [@media(max-height:500px)]:text-[0.8em]">
+						<div className="min-w-[22rem] flex-1 [@media(max-height:500px)]:min-w-0">
+							<AdjustRow
+								label={`${t(`hero.${data.hero}` as I18nKey)} · ${t('select.level', { n: data.level })}`}
+								onPrev={() => actions.selectHero(other(-1))}
+								onNext={() => actions.selectHero(other(1))}
+								disabled={data.heroes.length < 2}
+							/>
+						</div>
+						<div className="text-secondary font-bold whitespace-nowrap text-crit">
 							{t('tree.points', { n: data.points })}
 						</div>
-						<div className="font-bold whitespace-nowrap text-fish [@media(max-height:500px)]:text-[0.8em]">
+						<div className="text-secondary font-bold whitespace-nowrap text-fish">
 							{t('tree.pearls', { n: data.pearls })}
 						</div>
 						<input
@@ -351,7 +378,7 @@ export function SkillTree({
 							onChange={(e) => setQuery(e.target.value)}
 							placeholder={t('tree.search')}
 							aria-label={t('tree.search')}
-							className="min-h-11 flex-1 rounded border border-snow bg-night px-2 text-text-light [font-family:inherit] [@media(max-height:500px)]:hidden"
+							className="min-h-11 flex-1 appearance-none border-0 border-b-2 border-gold-aged bg-transparent px-1 text-secondary text-text-light outline-none [font-family:inherit] focus:border-crit [@media(max-height:500px)]:hidden"
 						/>
 						<Btn
 							onActivate={() => setZoomIndex((z) => Math.max(0, z - 1))}
@@ -387,7 +414,7 @@ export function SkillTree({
 							e.currentTarget.scrollLeft = 0;
 							e.currentTarget.scrollTop = 0;
 						}}
-						className="relative min-h-0 flex-1 cursor-grab touch-none overflow-hidden rounded bg-panel-bottom active:cursor-grabbing"
+						className="relative min-h-0 flex-1 cursor-grab touch-none overflow-hidden bg-night/60 active:cursor-grabbing"
 					>
 						<div
 							className="absolute top-0 left-0"
@@ -462,57 +489,86 @@ export function SkillTree({
 								);
 							})}
 						</div>
+						{node && (
+							<div
+								data-tree-detail
+								className="pointer-events-none absolute z-10 w-[460px] max-w-[48%] [@media(max-height:500px)]:w-[336px]"
+								style={tipStyle}
+							>
+								<ItemCard
+									name={nodeTitle(node)}
+									color={node.branch >= 0 ? BRANCH_COLOR[node.branch] : undefined}
+									kind={
+										<>
+											{node.branch >= 0
+												? t(
+														`tree.b.${tree.branches[node.branch]}` as I18nKey,
+													)
+												: t('tree.kind.shared')}
+											{' · '}
+											{t(`tree.kindName.${node.kind}` as I18nKey)}
+										</>
+									}
+									lines={[
+										...statLines(node.stats).map((line) => (
+											<span key={line} className="font-bold text-xp">
+												{line}
+											</span>
+										)),
+										...(node.maxRank > 1
+											? [
+													<span key="rank" className="text-gold-bright">
+														{t('tree.rank', {
+															n: rank,
+															max: node.maxRank,
+														})}
+														{rank > 1 &&
+															` · ${t('tree.rankTotal')} ${statLines(scaleStats(node.stats, rank)).join(', ')}`}
+													</span>,
+												]
+											: []),
+										...(node.kind === 'keystone'
+											? [<Hint key="ks">{t('tree.keystoneHint')}</Hint>]
+											: []),
+										<span key="action" className="font-bold text-crit">
+											{action}
+										</span>,
+									]}
+									footer={
+										canRankUp && refundable ? (
+											<div className="pointer-events-auto">
+												<Btn
+													onActivate={() => actions.refund(node.id)}
+													disabled={data.pearls < data.refundCost}
+													variant="danger"
+												>
+													{t('tree.refundOne', { n: data.refundCost })}
+												</Btn>
+											</div>
+										) : undefined
+									}
+								/>
+							</div>
+						)}
+						{totals.length > 0 && (
+							<div className="pointer-events-none absolute bottom-0 left-0 z-10 flex max-w-[40%] flex-col bg-linear-to-t from-night/80 to-transparent px-2 pt-6 pb-1 [text-shadow:0_2px_4px_var(--color-shadow)] [@media(max-height:500px)]:hidden">
+								<div className="text-secondary font-bold tracking-section text-gold-bright uppercase">
+									{t('tree.totals')}
+								</div>
+								{totals.slice(0, 6).map((line) => (
+									<div key={line} className="text-secondary font-bold text-xp">
+										{line}
+									</div>
+								))}
+								{totals.length > 6 && (
+									<div className="text-secondary text-text-light">…</div>
+								)}
+							</div>
+						)}
 					</div>
 					<div className="[@media(max-height:500px)]:hidden">
 						<Hint>{t('tree.hint')}</Hint>
 					</div>
-				</Panel>
-				<Panel title={t('tree.details')}>
-					{node && (
-						<>
-							<div className="text-[1.3em] font-black tracking-wider text-gold-bright uppercase">
-								{nodeTitle(node)}
-							</div>
-							<div className="text-text-dim">
-								{node.branch >= 0
-									? t(`tree.b.${tree.branches[node.branch]}` as I18nKey)
-									: t('tree.kind.shared')}
-								{' · '}
-								{t(`tree.kindName.${node.kind}` as I18nKey)}
-							</div>
-							{statLines(node.stats).map((line) => (
-								<div key={line} className="font-bold">
-									{line}
-								</div>
-							))}
-							{node.maxRank > 1 && (
-								<div className="text-gold-bright">
-									{t('tree.rank', { n: rank, max: node.maxRank })}
-									{rank > 1 &&
-										` · ${t('tree.rankTotal')} ${statLines(scaleStats(node.stats, rank)).join(', ')}`}
-								</div>
-							)}
-							{node.kind === 'keystone' && <Hint>{t('tree.keystoneHint')}</Hint>}
-							<div className="mt-1 font-bold text-crit">{action}</div>
-							{canRankUp && refundable && (
-								<Btn
-									onActivate={() => actions.refund(node.id)}
-									disabled={data.pearls < data.refundCost}
-									variant="danger"
-								>
-									{t('tree.refundOne', { n: data.refundCost })}
-								</Btn>
-							)}
-						</>
-					)}
-					<div className="mt-3 font-bold tracking-[0.14em] text-gold-bright uppercase">
-						{t('tree.totals')}
-					</div>
-					{totals.length === 0 ? (
-						<Hint>{t('tree.empty')}</Hint>
-					) : (
-						totals.map((line) => <StatRow key={line} label={line} value="" />)
-					)}
 				</Panel>
 			</div>
 		</MenuScreen>
