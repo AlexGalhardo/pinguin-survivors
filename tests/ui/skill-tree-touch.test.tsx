@@ -56,3 +56,15 @@ test('mouse: one click allocates at once', () => {
 	expect(calls).toEqual([`allocate:${neighbor}`]);
 	cleanup();
 });
+
+test('the detail sits in a fixed corner until the mouse moves, and goes back on a key press', () => {
+	const { viewport } = setup();
+	const tip = (): HTMLElement | null => viewport.querySelector<HTMLElement>('[data-tree-detail]');
+	expect(tip()?.style.right).toBe('8px');
+	fireEvent.pointerMove(viewport, { pointerId: 1, pointerType: 'mouse' });
+	expect(tip()?.style.right).toBe('');
+	expect(tip()?.style.left).not.toBe('');
+	fireEvent.keyDown(window, { code: 'ArrowRight' });
+	expect(tip()?.style.right).toBe('8px');
+	cleanup();
+});
