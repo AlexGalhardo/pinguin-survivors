@@ -23,7 +23,7 @@ export async function floorRow(file: string): Promise<number> {
 	return info.height - 1;
 }
 
-/** Effect-like pixels: bright whites, hot or pale yellows, and anything opaque below the feet. */
+/** Effect-like pixels: bright whites, hot or pale yellows, neon greens and cyans, and anything opaque below the feet. */
 export async function fxPixels(file: string, floor = Number.POSITIVE_INFINITY): Promise<number> {
 	const { data, info } = await sharp(file)
 		.ensureAlpha()
@@ -44,7 +44,9 @@ export async function fxPixels(file: string, floor = Number.POSITIVE_INFINITY): 
 		const whiteish = max > 215 && max - min < 60;
 		const hot = r > 220 && g > 170 && b < 120;
 		const pale = r > 220 && g > 200 && b >= 120 && b < 200;
-		if (whiteish || hot || pale) n++;
+		// Neon green and cyan bursts (spit, gas jets, magic sparks).
+		const neon = g > 200 && (r < 190 || b > 220) && g - Math.min(r, b) > 70;
+		if (whiteish || hot || pale || neon) n++;
 	}
 	return n;
 }
