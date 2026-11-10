@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **game:** Elites have double HP (purple 2→4, orange 3→6) and double size (scale 1.25→2.5, 1.4→2.8); the hit radius grows with the sprite (SDD-016 RF-09).
 - **art:** Forest (biome 2) trees, the pine and the dry tree, are drawn at twice their size: packed 2x with nearest-neighbor in the `forest` atlas, and their collision circle doubles (`decoRadiusMul`); logs and rocks are unchanged.
 - **game:** The campaign now has 50 rounds and 5 biomes (research station 31–40 and ruined city 41–50 are no longer endless-only); the endless starts at round 51 and each loop is 50 rounds (ADR-023, SDD-016).
 - **game:** A distinct boss every 5 rounds up to 50 (ten in total); from round 51 the boss is random among the ten.
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **game:** Five new bosses (Leopard Seal Matriarch, Rotten Treant, Hive Queen, Drowned Diver, Plague Hierophant) with names and descriptions in the 4 languages; sprite scale entries are provisional until the art lands.
 - **game:** Bosses telegraph four area attacks with red marks on the ground before they hurt: a rain of circles, expanding rings with a safe gap, beams in two volleys and a checkerboard floor (SDD-016).
+- **game:** Elites draw one of five red-mark area attacks at spawn (seeded) and use it every 6 s when the hero is within reach: nova, frontal cone, rotating cross, stomp trail and cage; at most 4 elite attacks on screen (SDD-016 RF-09).
 - **docs:** SDD-016, ADR-023 and roadmap tasks T7.16–T7.19; GDD and balancing docs updated for the 50-round campaign.
 
 ## [0.8.0] - 2026-11-10

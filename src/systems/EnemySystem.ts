@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { MAX_ENEMIES } from '../config/constants';
 import { ARENA } from '../data/arena';
 import { DANGER, type DangerMods, EXTRA_WAVES } from '../data/difficulty';
+import { ELITE_HAZARD } from '../data/elite-hazard';
 import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { OBSTACLES } from '../data/obstacles';
 import { Enemy } from '../entities/Enemy';
@@ -13,6 +14,7 @@ import {
 	spawnRing,
 } from '../logic/arena';
 import { bossForRound } from '../logic/biome';
+import { drawEliteHazard, eliteCanCast } from '../logic/elite-hazard';
 import { AI, cloakAlpha, stepAi } from '../logic/enemy-ai';
 import { type ObstacleField, pushOut } from '../logic/obstacles';
 import type { Vec2 } from '../logic/projection';
@@ -41,6 +43,10 @@ export interface EnemyAttacks {
 	volley: (enemy: Enemy) => void;
 	pool: (enemy: Enemy) => void;
 	hazard: (enemy: Enemy) => void;
+	/** Elite red-mark attack; false when it could not fire (screen cap), so the elite retries soon. */
+	eliteHazard: (enemy: Enemy) => boolean;
+	/** Elite attacks currently on screen. */
+	eliteHazardsActive: () => number;
 }
 
 /** World size covered by the neighbor grid around the hero (larger than any view). */
@@ -168,6 +174,13 @@ export class EnemySystem {
 			const step =
 				slow > 0 ? stepAi(e.def, e.ai, dist, dt) : { move: 'hold' as const, action: null };
 			e.telegraph = e.ai.mode === 'windup';
+			if (e.eliteHazard && slow > 0) {
+				e.ai.hazardCd -= dt;
+				if (eliteCanCast(dist, e.ai.hazardCd, this.attacks.eliteHazardsActive()))
+					e.ai.hazardCd = this.attacks.eliteHazard(e)
+						? ELITE_HAZARD.every
+						: ELITE_HAZARD.retry;
+			}
 			if (step.action === 'chargeStart') {
 				e.chargeX = dx / (dist || 1);
 				e.chargeY = dy / (dist || 1);
@@ -217,7 +230,8 @@ export class EnemySystem {
 		stats.total++;
 		if (telegraphed) stats.telegraphed++;
 		else if (insideBounds({ x, y }, view)) stats.silentInView++;
-		this.take().spawn(
+		const e = this.take();
+		e.spawn(
 			data.def,
 			x,
 			y,
@@ -226,6 +240,10 @@ export class EnemySystem {
 			data.elite,
 			this.mods.speed * speedMul(this.round),
 		);
+		if (data.elite) {
+			e.eliteHazard = drawEliteHazard(this.rng);
+			e.ai.hazardCd = ELITE_HAZARD.firstDelay;
+		}
 	}
 
 	kill(enemy: Enemy): void {

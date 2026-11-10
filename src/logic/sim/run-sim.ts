@@ -2,6 +2,7 @@ import type { HeroId } from '../../config/constants';
 import { ALL_CARDS } from '../../data/cards';
 import { COMBAT } from '../../data/combat';
 import { DANGER, type Danger, EXTRA_WAVES } from '../../data/difficulty';
+import { ELITE_HAZARD } from '../../data/elite-hazard';
 import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
 import { SIM_BRANCH_ORDER } from '../../data/skill-tree';
@@ -221,13 +222,21 @@ function averageEnemy(round: number, eliteMul = 1): AverageEnemy {
 	const tiers = eliteTiers(round);
 	let eliteHp = 1;
 	let eliteDmg = 1;
+	// Premise: each elite casts once per `every` s and `simHitChance` of casts land for `simDamage` of its
+	// damage; contact hits are limited by the i-frames, so one cast weighs `heroIFrames / every` contact hits.
+	const castLoad =
+		ELITE_HAZARD.simHitChance *
+		ELITE_HAZARD.simDamage *
+		(COMBAT.heroIFrames / ELITE_HAZARD.every);
 	if (tiers.includes('purple')) {
 		eliteHp += ROUNDS.purpleShare * eliteMul * (ROUNDS.elite.purple.hp - 1);
-		eliteDmg += ROUNDS.purpleShare * eliteMul * (ROUNDS.elite.purple.damage - 1);
+		eliteDmg +=
+			ROUNDS.purpleShare * eliteMul * (ROUNDS.elite.purple.damage * (1 + castLoad) - 1);
 	}
 	if (tiers.includes('orange')) {
 		eliteHp += ROUNDS.orangeShare * eliteMul * (ROUNDS.elite.orange.hp - 1);
-		eliteDmg += ROUNDS.orangeShare * eliteMul * (ROUNDS.elite.orange.damage - 1);
+		eliteDmg +=
+			ROUNDS.orangeShare * eliteMul * (ROUNDS.elite.orange.damage * (1 + castLoad) - 1);
 	}
 	out.hp *= hpMul(round) * eliteHp;
 	out.damage *= dmgMul(round) * eliteDmg;

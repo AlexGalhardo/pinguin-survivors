@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { type AnimMeta, registerCharacterAnims } from '../art/anim-atlas';
 import { KEYS } from '../art/manifest';
 import { PALETTE } from '../config/palette';
+import type { EliteHazardKind } from '../data/elite-hazard';
 import type { EnemyDef } from '../data/enemies';
 import { ROUNDS } from '../data/rounds';
 import { spriteScale } from '../data/sprite-scale';
@@ -31,6 +32,8 @@ export class Enemy implements Mover {
 	maxHp = 0;
 	damage = 0;
 	elite: EliteTier | null = null;
+	/** The one area attack this elite uses (drawn at spawn), null for non-elites. */
+	eliteHazard: EliteHazardKind | null = null;
 	alive = false;
 	hitFlash = 0;
 	/** Time left before the next white hit flash may start. */
@@ -100,6 +103,7 @@ export class Enemy implements Mover {
 		this.hp = this.maxHp;
 		this.damage = def.damage * dmgMul * (e?.damage ?? 1);
 		this.elite = elite;
+		this.eliteHazard = null;
 		this.alive = true;
 		this.hitFlash = 0;
 		this.flashCooldown = 0;

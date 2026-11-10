@@ -1,6 +1,6 @@
 # SDD-016 — Dez bosses, 5 biomas e ataques em área
 
-**Versão** 1.0 · **Data** 2026-11-10 · **Status** Aprovada (2026-11-10, desenvolvedor no chat: orçamento até 600 gerações, novos bosses nos rounds 5/15/25/35/45, temas da lista, campanha de 50 rounds) · **ADR** [023](../adrs/ADR-023-campanha-50-rounds-10-bosses.md) · **Depende de** SDD-012, SDD-013
+**Versão** 1.1 · **Data** 2026-11-10 · **Status** Aprovada (2026-11-10, desenvolvedor no chat: orçamento até 600 gerações, novos bosses nos rounds 5/15/25/35/45, temas da lista, campanha de 50 rounds; v1.1: RF-09 Elites, pedido explícito do desenvolvedor em 2026-11-10) · **ADR** [023](../adrs/ADR-023-campanha-50-rounds-10-bosses.md) · **Depende de** SDD-012, SDD-013
 
 ## Requisitos
 
@@ -18,6 +18,11 @@
   - Bosses novos: concept de 2 seeds a 160 px → 🛑 aprovação → `walk` e `attack` v3 de 8 frames em 5 direções.
 - **RF-07 Textos.** Nome do boss (`boss.<id>`) e `enemy.<id>.name/desc` nos 4 idiomas para os 5 novos.
 - **RF-08 Balanceamento.** As simulações (`bun scripts/sim.ts`) cobrem até o round 50. Três estagiários revisam a curva dos bosses, a progressão dos rounds 31–50 e a economia, e entregam propostas com números. O orquestrador aplica as aprovadas.
+- **RF-09 Elites.** Elites ficam com o dobro da vida e o dobro do tamanho e ganham ataques em área com aviso vermelho (mesma linguagem do RF-05):
+  - Números em `ROUNDS.elite`: roxo `hp` 4 e `scale` 2,5; laranja `hp` 6 e `scale` 2,8. O raio de colisão já é `def.radius × scale`, então a hitbox cresce junto com o visual (o dobro).
+  - Cinco padrões novos, menores que os de boss, em `src/logic/elite-hazard.ts` e `ELITE_HAZARD` em `src/data/elite-hazard.ts`: `nova` (círculo cheio ao redor do elite), `cone` (leque frontal mirando o herói, novo shape `sector`), `cross` (4 raios curtos em + que depois giram para x), `stomp` (3 círculos em sequência a partir de onde o herói estava) e `cage` (anel de círculos pequenos ao redor do herói com o centro seguro). Telegraph ≥ 0,8 s; dano = fração do dano do elite.
+  - Ao nascer, cada elite sorteia 1 dos 5 com o rng da run (determinístico pela seed) e usa só esse, a cada `every` s, quando o herói está a até `maxDist` dele. No máximo `maxActive` ataques de elite ao mesmo tempo; passou do limite, o elite espera e tenta de novo.
+  - Reaproveita `hazardHits` e o `BossHazardSystem` (2ª instância); o sim (`run-sim`) usa a vida nova e uma aproximação do dano dos ataques.
 
 ## Fora de escopo
 

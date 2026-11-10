@@ -22,6 +22,7 @@ import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DEMO, STEAM_URL } from '../data/demo';
 import { DANGER, type Danger, type DangerMods } from '../data/difficulty';
 import { ECONOMY } from '../data/economy';
+import { ELITE_HAZARD } from '../data/elite-hazard';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { GEAR_BY_ID, GEAR_SLOTS } from '../data/equipment';
 import { HEROES } from '../data/heroes';
@@ -75,6 +76,7 @@ import {
 	scaleDrops,
 	unlockDanger,
 } from '../logic/difficulty';
+import { planEliteHazard } from '../logic/elite-hazard';
 import { nextHazard } from '../logic/enemy-ai';
 import {
 	emptyGear,
@@ -271,6 +273,7 @@ export class GameScene extends Phaser.Scene {
 	private pickups!: PickupSystem;
 	private hostile!: HostileSystem;
 	private bossHazards!: BossHazardSystem;
+	private eliteHazards!: BossHazardSystem;
 	private rng!: Rng;
 	private deadFor = -1;
 	/** Simulation freeze left (hit-stop); rendering keeps going. */
@@ -438,6 +441,9 @@ export class GameScene extends Phaser.Scene {
 		this.bossHazards = new BossHazardSystem(this, (damage) =>
 			this.combat.heroHit(damage, false),
 		);
+		this.eliteHazards = new BossHazardSystem(this, (damage) =>
+			this.combat.heroHit(damage, false),
+		);
 		this.enemies = new EnemySystem(this, this.rng, (e, t) => this.combat.dot(e, t), {
 			shoot: (e) =>
 				this.hostile.spawn(
@@ -455,6 +461,8 @@ export class GameScene extends Phaser.Scene {
 			volley: (e) => this.volley(e),
 			pool: (e) => this.acidPools(e),
 			hazard: (e) => this.bossHazard(e),
+			eliteHazard: (e) => this.eliteHazard(e),
+			eliteHazardsActive: () => this.eliteHazards.activeAttacks(),
 		});
 		this.combat = new CombatSystem(
 			this.rng,
@@ -663,6 +671,7 @@ export class GameScene extends Phaser.Scene {
 		this.hostile.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
 		this.area.update(dt, grid);
 		this.bossHazards.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
+		this.eliteHazards.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
 		this.combat.contact(dt);
 		this.pickups.update(
 			dt,
@@ -1082,6 +1091,14 @@ export class GameScene extends Phaser.Scene {
 		this.bossHazards.spawn(marks, e.damage);
 	}
 
+	/** Elite red-mark attack (SDD-016 RF-09): the one kind the elite drew at spawn. */
+	private eliteHazard(e: Enemy): boolean {
+		if (!e.eliteHazard || this.eliteHazards.activeAttacks() >= ELITE_HAZARD.maxActive)
+			return false;
+		this.eliteHazards.spawn(planEliteHazard(e.eliteHazard, e, this.hero), e.damage);
+		return true;
+	}
+
 	/** Damage over time from ground hazards: bypasses i-frames, respects god mode and shields. */
 	private hazardDamage(amount: number): void {
 		if (this.combat.god || this.deadFor >= 0) return;
@@ -1293,6 +1310,7 @@ export class GameScene extends Phaser.Scene {
 	/** Bob unlocks on the first round-10 boss kill, Lucia on round 20 (P-17). */
 	private onBossKilled(): void {
 		this.bossHazards.clear();
+		this.eliteHazards.clear();
 		const save = getSave(this);
 		const biome = biomeForRound(this.run.round, this.run.seed);
 		addFeat(
@@ -1379,6 +1397,7 @@ export class GameScene extends Phaser.Scene {
 		this.area.clear();
 		this.hostile.clear();
 		this.bossHazards.clear();
+		this.eliteHazards.clear();
 		this.secondaries.clear();
 		healHero(this.run, this.run.maxHp * ROUNDS.roundEndHeal);
 		// Collecting the last orbs can still level up: it must be queued before `endRound`.

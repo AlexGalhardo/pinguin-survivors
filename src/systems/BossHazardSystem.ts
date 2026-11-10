@@ -18,6 +18,8 @@ interface Attack {
 	hurt: number;
 	shook: number;
 	bossDamage: number;
+	/** Marks not finished yet; the attack counts as on screen until it reaches 0. */
+	left: number;
 }
 
 interface Entry {
@@ -29,7 +31,7 @@ interface Entry {
 }
 
 /**
- * Telegraphed red ground marks of boss area attacks (SDD-016): each mark waits `at`, charges for
+ * Telegraphed red ground marks of boss and elite area attacks (SDD-016): each mark waits `at`, charges for
  * `telegraph` (fill and outline grow), then detonates once and hurts the hero at most once per group.
  * One Graphics redrawn only while marks are alive; entries are pooled.
  */
@@ -38,6 +40,7 @@ export class BossHazardSystem {
 	private readonly entries: Entry[] = [];
 	private readonly quad = Array.from({ length: 4 }, () => new Phaser.Math.Vector2());
 	private active = 0;
+	private attacks = 0;
 
 	constructor(
 		private readonly scene: Phaser.Scene,
@@ -47,7 +50,8 @@ export class BossHazardSystem {
 	}
 
 	spawn(marks: readonly HazardMark[], bossDamage: number): void {
-		const attack: Attack = { hurt: 0, shook: 0, bossDamage };
+		const attack: Attack = { hurt: 0, shook: 0, bossDamage, left: marks.length };
+		if (marks.length > 0) this.attacks++;
 		for (const mark of marks) {
 			let e = this.entries.find((q) => !q.alive);
 			if (!e) {
@@ -61,6 +65,11 @@ export class BossHazardSystem {
 			e.alive = true;
 			this.active++;
 		}
+	}
+
+	/** Attacks (not marks) still charging or flashing. */
+	activeAttacks(): number {
+		return this.attacks;
 	}
 
 	update(dt: number, hx: number, hy: number, heroRadius: number): void {
@@ -93,6 +102,7 @@ export class BossHazardSystem {
 			if (f <= 0) {
 				e.alive = false;
 				this.active--;
+				if (--e.attack.left === 0) this.attacks--;
 				continue;
 			}
 			this.draw(g, m.shape, 0.9 * f * peak, f * peak, PALETTE.textLight);
@@ -102,6 +112,7 @@ export class BossHazardSystem {
 	clear(): void {
 		for (const e of this.entries) e.alive = false;
 		this.active = 0;
+		this.attacks = 0;
 		this.gfx.clear();
 	}
 
@@ -149,6 +160,15 @@ export class BossHazardSystem {
 					p.y = s.y + a * n + b * c;
 				}
 				g.fillPoints(q, true).strokePoints(q, true);
+				break;
+			}
+			case 'sector': {
+				const a0 = s.angle - s.arc / 2;
+				g.beginPath()
+					.moveTo(s.x, s.y)
+					.arc(s.x, s.y, s.r, a0, a0 + s.arc)
+					.closePath();
+				g.fillPath().strokePath();
 				break;
 			}
 			case 'cell': {

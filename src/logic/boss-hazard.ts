@@ -6,7 +6,9 @@ export type HazardShape =
 	| { kind: 'circle'; x: number; y: number; r: number }
 	| { kind: 'annulus'; x: number; y: number; r0: number; r1: number }
 	| { kind: 'line'; x: number; y: number; angle: number; length: number; width: number }
-	| { kind: 'cell'; x: number; y: number; size: number };
+	| { kind: 'cell'; x: number; y: number; size: number }
+	/** Pie slice of radius `r` centered on `angle`, `arc` radians wide (elite cone). */
+	| { kind: 'sector'; x: number; y: number; angle: number; r: number; arc: number };
 
 /**
  * One red ground mark: it starts `at` seconds after the attack, fills up for `telegraph` seconds
@@ -145,6 +147,15 @@ export function hazardHits(s: HazardShape, x: number, y: number, radius: number)
 		case 'cell': {
 			const h = s.size / 2;
 			return Math.abs(x - s.x) <= h + radius && Math.abs(y - s.y) <= h + radius;
+		}
+		case 'sector': {
+			const d = Math.hypot(x - s.x, y - s.y);
+			if (d > s.r + radius) return false;
+			if (d <= radius) return true;
+			// Widen the wedge by the angle the hero's body subtends.
+			const turn = Math.atan2(y - s.y, x - s.x) - s.angle;
+			const off = Math.abs(Math.atan2(Math.sin(turn), Math.cos(turn)));
+			return off <= s.arc / 2 + Math.asin(radius / d);
 		}
 	}
 }
