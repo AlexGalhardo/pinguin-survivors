@@ -1,7 +1,7 @@
 {
 	"name": "pinguin-survivors",
 	"private": true,
-	"version": "0.7.2",
+	"version": "0.8.0",
 	"buildName": "playdev-7",
 	"type": "module",
 	"scripts": {

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-10
+
 ### Added
 
 - **ui:** Style D foundations: type scale, 4 px spacing and elevation tokens, the `d-*` utilities (vignette, glow, filet, chamfer, worn border, focus) and the new `Ornament`, `Vignette` and `MenuList` components.
@@ -23,6 +25,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ui:** The skill tree detail is a tooltip anchored to the node with the mouse and fixed in a corner with keyboard, gamepad or touch, so it never hides neighbouring nodes.
 - **ui:** The HUD stacks round, timer, elite banner and boss bar at the top centre and shows at most two gambits on phones.
 - **docs:** The UI direction is now the organic Diablo 4 style (Style D): wireframes of every screen, design system v2, ADR-022, SDD-015, roadmap tasks T3.13–T3.18 and the `pinguin-ui-hud` skill for menus and HUD.
+
+### Added
+
+- **ui:** Restyle the HUD and touch controls in Style D with a fixed top stack ([915500a](https://github.com/AlexGalhardo/pinguin-survivors/commit/915500a))
+- **ui:** Restyle the demo end screen in Style D with an input grace window ([92a7b2c](https://github.com/AlexGalhardo/pinguin-survivors/commit/92a7b2c))
+- **ui:** Restyle the controls in Style D ([a72ecef](https://github.com/AlexGalhardo/pinguin-survivors/commit/a72ecef))
+- **ui:** Restyle the unlock screen in Style D ([e993d56](https://github.com/AlexGalhardo/pinguin-survivors/commit/e993d56))
+- **ui:** Restyle the skill tree detail as a corner tooltip in Style D ([a30cec8](https://github.com/AlexGalhardo/pinguin-survivors/commit/a30cec8))
+- **ui:** Restyle the game over screen in Style D with an input grace window ([359a778](https://github.com/AlexGalhardo/pinguin-survivors/commit/359a778))
+- **ui:** Restyle achievements, extras and history in Style D with paged lists ([d71cb2a](https://github.com/AlexGalhardo/pinguin-survivors/commit/d71cb2a))
+- **ui:** Restyle the level-up cards in Style D with 1-4 hotkeys ([fe1acba](https://github.com/AlexGalhardo/pinguin-survivors/commit/fe1acba))
+- **ui:** Restyle the settings in Style D with tabs and one hint line ([b2bcc53](https://github.com/AlexGalhardo/pinguin-survivors/commit/b2bcc53))
+- **ui:** Restyle the pause screen in Style D ([6879063](https://github.com/AlexGalhardo/pinguin-survivors/commit/6879063))
+- **ui:** Restyle the heroes and potions screen in Style D ([488201c](https://github.com/AlexGalhardo/pinguin-survivors/commit/488201c))
+- **ui:** Restyle the shop to fit 1080p, 720p and phone in Style D ([103b731](https://github.com/AlexGalhardo/pinguin-survivors/commit/103b731))
+- **ui:** Restyle the hero select in Style D ([ba3d985](https://github.com/AlexGalhardo/pinguin-survivors/commit/ba3d985))
+- **ui:** Restyle the save slots in Style D ([ef79a7e](https://github.com/AlexGalhardo/pinguin-survivors/commit/ef79a7e))
+- **ui:** Restyle the main menu in Style D ([1bc445f](https://github.com/AlexGalhardo/pinguin-survivors/commit/1bc445f))
+- **ui:** Load Cinzel 700 and 900 for titles (T3.14) ([eadde2e](https://github.com/AlexGalhardo/pinguin-survivors/commit/eadde2e))
+- **ui:** Finish Style D primitives base (T3.13) ([64e2ec0](https://github.com/AlexGalhardo/pinguin-survivors/commit/64e2ec0))
+- **ui:** Restyle Btn, MenuScreen, AdjustRow and Toast in Style D ([e547c25](https://github.com/AlexGalhardo/pinguin-survivors/commit/e547c25))
+- **ui:** Restyle Panel, Heading, ItemCard and rows in Style D ([4f4e97a](https://github.com/AlexGalhardo/pinguin-survivors/commit/4f4e97a))
+- **ui:** Add d-pad, d-cta and d-danger utilities ([8e62c05](https://github.com/AlexGalhardo/pinguin-survivors/commit/8e62c05))
+- **ui:** Add MenuList for focus-by-diamond option lists ([855bd3a](https://github.com/AlexGalhardo/pinguin-survivors/commit/855bd3a))
+- **ui:** Add Ornament and Vignette primitives ([fd03192](https://github.com/AlexGalhardo/pinguin-survivors/commit/fd03192))
+- **ui:** Add Style D tokens and d-* utilities to the theme ([b6650b4](https://github.com/AlexGalhardo/pinguin-survivors/commit/b6650b4))
+
+### Fixed
+
+- **release:** Write the generated notes into the changelog section ([638f371](https://github.com/AlexGalhardo/pinguin-survivors/commit/638f371))
+
+### Maintenance
+
+- **roadmap:** Close T3.15-T3.18 with the Style D evidence ([08a3b20](https://github.com/AlexGalhardo/pinguin-survivors/commit/08a3b20))
+- **repo:** Keep the exported wireframe SVGs out of Biome ([41eccf5](https://github.com/AlexGalhardo/pinguin-survivors/commit/41eccf5))
+- **skills:** Add the pinguin-ui-hud skill and point the UI rules at Style D ([58929dc](https://github.com/AlexGalhardo/pinguin-survivors/commit/58929dc))
+- **sdd:** Approve SDD-015 and plan tasks T3.13-T3.18 for the Style D UI ([4226e4c](https://github.com/AlexGalhardo/pinguin-survivors/commit/4226e4c))
+- **adr:** Accept ADR-022, the organic Diablo 4 UI with Cinzel titles ([bdd8146](https://github.com/AlexGalhardo/pinguin-survivors/commit/bdd8146))
+- **design:** Rewrite the design system for the organic Diablo 4 style ([5190dd4](https://github.com/AlexGalhardo/pinguin-survivors/commit/5190dd4))
+- **wireframes:** Add the four-style wireframes and the Style D screen specs ([4249f9f](https://github.com/AlexGalhardo/pinguin-survivors/commit/4249f9f))
+- **repo:** Run the browser e2e on pull requests ([51e928c](https://github.com/AlexGalhardo/pinguin-survivors/commit/51e928c))
+- **repo:** Move the code of conduct and security policy to the repository root ([e18d6d3](https://github.com/AlexGalhardo/pinguin-survivors/commit/e18d6d3))
+- **changelog:** Backfill the notes of 0.6.0 to 0.7.2 ([cd254e7](https://github.com/AlexGalhardo/pinguin-survivors/commit/cd254e7))
 
 ## [0.7.2] - 2026-11-09
 
@@ -488,7 +533,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.2...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.2...v0.8.0
 [0.7.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.6.0...v0.7.0
