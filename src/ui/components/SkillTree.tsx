@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { HeroId } from '../../config/constants';
 import type { TreeNode } from '../../data/skill-tree';
 import { type I18nKey, t } from '../../i18n';
@@ -6,6 +6,7 @@ import { formatStat } from '../../logic/format';
 import { canRefund, heroTree, pathTo, rankOf, treeStats } from '../../logic/skill-tree';
 import type { StatKey } from '../../logic/stats';
 import { useFocusable } from '../focus';
+import { BAND, type GridDir, layoutGrid, stepGrid } from '../skill-grid';
 import { Btn } from './Btn';
 import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
 import { Hint, ItemCard, Panel } from './Panel';
@@ -34,18 +35,14 @@ export interface SkillTreeActions {
 /** Branch colors: offense, defense, utility (design-system.md, "Árvore"). */
 const BRANCH_COLOR = ['var(--color-blood)', 'var(--color-ice)', 'var(--color-xp)'] as const;
 const NEUTRAL = 'var(--color-snow-light)';
-const GOLD = 'var(--color-gold-bright)';
-/** Tree units to CSS pixels at zoom 1. */
-const BASE_SCALE = 0.5;
-const ZOOMS = [0.6, 0.8, 1, 1.25, 1.6, 2] as const;
-/** Node diameter in px by kind. */
-const SIZE: Record<TreeNode['kind'], number> = {
-	start: 40,
-	small: 22,
-	travel: 18,
-	notable: 36,
-	keystone: 44,
+const ARROWS: Record<string, GridDir> = {
+	ArrowUp: 'up',
+	ArrowDown: 'down',
+	ArrowLeft: 'left',
+	ArrowRight: 'right',
 };
+
+type CellState = 'locked' | 'available' | 'bought' | 'max';
 
 const statLabel = (key: string): string =>
 	key === 'cardRerolls' ? t('tree.stat.cardRerolls') : t(`gstat.${key}` as I18nKey);
@@ -72,66 +69,86 @@ function nodeTitle(node: TreeNode): string {
 	return t(node.kind === 'travel' ? 'tree.kind.travel' : 'tree.kind.small');
 }
 
-function NodeBtn(props: {
+/** Two-letter badge of a square: the initials of two words, or the first two letters. */
+function sigla(node: TreeNode): string {
+	const first = Object.keys(node.stats)[0];
+	const text = node.name || !first ? nodeTitle(node) : statLabel(first);
+	const words = text.trim().split(/\s+/);
+	const letters =
+		words.length > 1
+			? words.slice(0, 2).map((w) => Array.from(w)[0])
+			: Array.from(text).slice(0, 2);
+	return letters.join('').toUpperCase();
+}
+
+const STATE_STYLE: Record<CellState, string> = {
+	locked: 'border-snow-dark bg-night text-text-dim',
+	available: 'bg-night text-text-light',
+	bought: 'border-gold-bright bg-night text-gold-bright',
+	max: 'border-gold-bright bg-gold-aged text-night',
+};
+
+function Square(props: {
 	node: TreeNode;
-	x: number;
-	y: number;
-	allocated: boolean;
-	/** Ranks taken (ranked nodes show `rank/max`). */
+	state: CellState;
 	rank: number;
-	onPath: boolean;
-	match: boolean;
 	onActivate: () => void;
 	onFocus: () => void;
+	onArrow: (dir: GridDir) => boolean;
 }): ReactElement {
 	const f = useFocusable({ onActivate: props.onActivate });
-	const { node } = props;
 	const focusChanged = useRef(props.onFocus);
 	focusChanged.current = props.onFocus;
 	useEffect(() => {
 		if (f.focused) focusChanged.current();
 	}, [f.focused]);
-	const size = SIZE[node.kind];
-	const color = node.branch >= 0 ? BRANCH_COLOR[node.branch] : NEUTRAL;
-	const ring = props.allocated ? GOLD : props.onPath ? GOLD : color;
+	const { node, state } = props;
+	const big = node.kind === 'notable' || node.kind === 'keystone';
 	return (
 		<button
 			type="button"
 			ref={f.ref}
 			{...f.props}
-			aria-label={nodeTitle(node)}
-			aria-pressed={props.allocated}
-			className="absolute cursor-pointer appearance-none p-0 outline-offset-4 data-[focused=true]:outline-2 data-[focused=true]:outline-crit"
-			style={{
-				left: props.x - size / 2,
-				top: props.y - size / 2,
-				width: size,
-				height: size,
-				borderRadius: node.kind === 'keystone' ? 6 : '50%',
-				transform: node.kind === 'keystone' ? 'rotate(45deg)' : undefined,
-				border: `${node.kind === 'notable' || node.kind === 'keystone' ? 3 : 2}px ${props.onPath && !props.allocated ? 'dashed' : 'solid'} ${ring}`,
-				background: props.allocated
-					? `radial-gradient(circle, ${GOLD} 0%, var(--color-gold-aged) 70%)`
-					: 'var(--color-night)',
-				boxShadow: props.allocated
-					? `0 0 12px ${GOLD}`
-					: props.match
-						? '0 0 0 4px var(--color-crit)'
-						: node.kind === 'notable' || node.kind === 'keystone'
-							? `0 0 8px ${color}`
-							: undefined,
+			data-node={node.id}
+			data-state={state}
+			aria-label={`${nodeTitle(node)}${node.maxRank > 1 ? ` ${props.rank}/${node.maxRank}` : ''}`}
+			onKeyDown={(e) => {
+				const dir = ARROWS[e.code];
+				if (dir && props.onArrow(dir)) {
+					e.preventDefault();
+					// The scope's geometric handler listens on window; the grid already moved the focus.
+					e.stopPropagation();
+				}
 			}}
+			className={`relative flex h-full w-full cursor-pointer appearance-none flex-col items-center justify-center rounded-none p-0 font-body leading-none font-bold outline-offset-2 data-[focused=true]:outline-3 data-[focused=true]:outline-crit ${big ? 'border-[3px]' : 'border-2'} ${STATE_STYLE[state]}`}
+			style={
+				state === 'available'
+					? { borderColor: node.branch >= 0 ? BRANCH_COLOR[node.branch] : NEUTRAL }
+					: undefined
+			}
 		>
+			<span className="pointer-events-none text-[1.125rem]">{sigla(node)}</span>
 			{node.maxRank > 1 && (
-				<span className="pointer-events-none absolute -right-3 -bottom-3 rounded bg-night px-0.5 text-[0.875rem] leading-none font-bold text-gold-bright tabular-nums">
+				<span className="pointer-events-none mt-0.5 text-[0.875rem] tabular-nums">
 					{props.rank}/{node.maxRank}
+				</span>
+			)}
+			{big && (
+				<span
+					aria-hidden="true"
+					className="pointer-events-none absolute top-0 left-0.5 text-[0.75rem]"
+				>
+					{node.kind === 'keystone' ? '★' : '◆'}
 				</span>
 			)}
 		</button>
 	);
 }
 
-/** Path of Exile style passive tree (ADR-019): pan by scrolling or dragging, zoom, search, path preview. */
+/**
+ * Skill tree as a grid of squares (ADR-026, amends ADR-019 in presentation only): one band of
+ * columns per branch, rows = tier, fixed details on the right. Arrows move cell by cell.
+ */
 export function SkillTree({
 	data,
 	actions,
@@ -140,86 +157,59 @@ export function SkillTree({
 	actions: SkillTreeActions;
 }): ReactElement {
 	const tree = heroTree(data.hero);
-	const nodes = useMemo(() => Object.values(tree.nodes), [tree]);
+	const cells = useMemo(() => layoutGrid(tree), [tree]);
+	const byId = useMemo(() => new Map(cells.map((c) => [c.id, c])), [cells]);
+	const at = useMemo(() => new Map(cells.map((c) => [`${c.row},${c.col}`, c])), [cells]);
 	const allocated = useMemo(() => new Set(data.allocated), [data.allocated]);
-	const [zoomIndex, setZoomIndex] = useState(2);
-	const [selected, setSelected] = useState<string>(tree.start);
-	const [query, setQuery] = useState('');
-	const viewport = useRef<HTMLDivElement>(null);
-	const zoom = ZOOMS[zoomIndex] ?? 1;
-	const scale = BASE_SCALE * zoom;
+	const [selected, setSelected] = useState<string>('');
+	const grid = useRef<HTMLDivElement>(null);
+	const pointerType = useRef('mouse');
+	// Square the last touch tap selected; the initial focus must not count as that first tap.
+	const tapped = useRef('');
+	const rows = Math.max(...cells.map((c) => c.row));
 
-	const bounds = useMemo(() => {
-		const pad = 60;
-		const xs = nodes.map((n) => n.x);
-		const ys = nodes.map((n) => n.y);
-		return {
-			minX: Math.min(...xs) - pad,
-			minY: Math.min(...ys) - pad,
-			w: Math.max(...xs) - Math.min(...xs) + pad * 2,
-			h: Math.max(...ys) - Math.min(...ys) + pad * 2,
-		};
-	}, [nodes]);
-	const px = (n: TreeNode): { x: number; y: number } => ({
-		x: (n.x - bounds.minX) * scale,
-		y: (n.y - bounds.minY) * scale,
-	});
-
-	// Camera (no scrollbars, developer request): the world moves by a CSS transform that eases to
-	// the focused node; dragging and the wheel move it directly.
-	const [cam, setCam] = useState({ x: 0, y: 0, smooth: true });
-	const drag = useRef<{ x: number; y: number; camX: number; camY: number } | null>(null);
-	const view = (): { w: number; h: number } => ({
-		w: viewport.current?.clientWidth ?? 800,
-		h: viewport.current?.clientHeight ?? 600,
-	});
-	const centerOn = (n: TreeNode | undefined, smooth = true): void => {
-		if (!n) return;
-		const p = px(n);
-		const v = view();
-		setCam({ x: v.w / 2 - p.x, y: v.h / 2 - p.y, smooth });
+	const stateOf = (n: TreeNode): CellState => {
+		const rank = rankOf(data.allocated, n.id);
+		if (rank >= n.maxRank) return 'max';
+		if (rank > 0) return 'bought';
+		const owned = (id: string): boolean => id === tree.start || allocated.has(id);
+		return n.links.some(owned) ? 'available' : 'locked';
 	};
 
-	// Opening the screen (or switching hero) centers the view on the start node.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: recenter only when the hero changes
+	// Opening the screen (or switching hero) puts the focus on a square that can be bought now.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: refocus only when the hero changes
 	useEffect(() => {
-		setSelected(tree.start);
-		centerOn(tree.nodes[tree.start], false);
+		const first =
+			grid.current?.querySelector<HTMLElement>('[data-state="available"]') ??
+			grid.current?.querySelector<HTMLElement>('[data-node]');
+		first?.focus();
 	}, [data.hero]);
 
-	const node = tree.nodes[selected] ?? tree.nodes[tree.start];
+	const move = useCallback(
+		(id: string, dir: GridDir): boolean => {
+			const from = byId.get(id);
+			const to = from && stepGrid(cells, from, dir);
+			const el = to && grid.current?.querySelector<HTMLElement>(`[data-node="${to.id}"]`);
+			el?.focus();
+			return !!el;
+		},
+		[byId, cells],
+	);
+
+	const node = tree.nodes[selected] ?? tree.nodes[cells[0]?.id ?? tree.start];
+	const rank = node ? rankOf(data.allocated, node.id) : 0;
 	const path = useMemo(
 		() => (node ? pathTo(tree, data.allocated, node.id) : []),
 		[tree, data.allocated, node],
 	);
-	const onPath = useMemo(() => new Set(path), [path]);
-	const q = query.trim().toLowerCase();
-	const matches = useMemo(() => {
-		if (!q) return new Set<string>();
-		return new Set(
-			nodes
-				.filter((n) =>
-					[nodeTitle(n), ...statLines(n.stats)].join(' ').toLowerCase().includes(q),
-				)
-				.map((n) => n.id),
-		);
-	}, [nodes, q]);
-	// The camera follows the selected node (keyboard, gamepad, click) and keeps it centered on zoom.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: follow selection and zoom only
-	useEffect(() => {
-		if (!drag.current) centerOn(node);
-	}, [selected, zoomIndex]);
-	const totals = statLines(treeStats(tree, data.allocated));
-	const isAllocated = node ? allocated.has(node.id) : false;
 	const refundable = node ? canRefund(tree, data.allocated, node.id) : false;
+	const totals = statLines(treeStats(tree, data.allocated));
 
-	// Touch: the first tap on a node selects it (details and path preview), a second tap on the
-	// same node allocates or refunds it. Mouse and keyboard keep the one-step behavior.
-	const pointerType = useRef('mouse');
+	// Touch: the first tap on a square selects it (details), a second tap on the same one allocates
+	// or refunds it. Mouse and keyboard keep the one-step behavior.
 	const activate = (n: TreeNode): void => {
-		// A drag that ended on a node is not a tap.
-		if (moved.current) return;
-		if (pointerType.current === 'touch' && selected !== n.id) {
+		if (pointerType.current === 'touch' && tapped.current !== n.id) {
+			tapped.current = n.id;
 			setSelected(n.id);
 			return;
 		}
@@ -230,111 +220,31 @@ export function SkillTree({
 		else actions.refund(n.id);
 	};
 
-	// Drag to pan (mouse, pen and touch, also when the finger starts on a node); two fingers pinch to
-	// zoom; the wheel pans, Ctrl+wheel zooms. A drag never counts as a tap on a node.
-	const pointers = useRef(new Map<number, { x: number; y: number }>());
-	const pinchBase = useRef(0);
-	const moved = useRef(false);
-	const spread = (): number => {
-		const [a, b] = [...pointers.current.values()];
-		return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 0;
-	};
-	const onPointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
-		pointerType.current = e.pointerType;
-		setAnchored(e.pointerType === 'mouse');
-		pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-		moved.current = false;
-		if (pointers.current.size === 2) {
-			pinchBase.current = spread();
-			drag.current = null;
-			return;
-		}
-		if (e.pointerType !== 'touch' && (e.target as HTMLElement).closest('button')) return;
-		drag.current = { x: e.clientX, y: e.clientY, camX: cam.x, camY: cam.y };
-	};
-	const onPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-		if (e.pointerType === 'mouse') setAnchored(true);
-		if (pointers.current.has(e.pointerId))
-			pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-		if (pointers.current.size === 2) {
-			moved.current = true;
-			const ratio = spread() / (pinchBase.current || 1);
-			if (ratio > 1.25 || ratio < 0.8) {
-				setZoomIndex((z) =>
-					Math.max(0, Math.min(ZOOMS.length - 1, z + (ratio > 1 ? 1 : -1))),
-				);
-				pinchBase.current = spread();
-			}
-			return;
-		}
-		const d = drag.current;
-		if (!d) return;
-		if (!moved.current && Math.hypot(e.clientX - d.x, e.clientY - d.y) > 8) {
-			moved.current = true;
-			// Capture only once it is a drag, so a plain tap still reaches the node under the finger.
-			e.currentTarget.setPointerCapture(e.pointerId);
-		}
-		if (moved.current)
-			setCam({ x: d.camX + e.clientX - d.x, y: d.camY + e.clientY - d.y, smooth: false });
-	};
-	const stopDrag = (e: React.PointerEvent<HTMLDivElement>): void => {
-		pointers.current.delete(e.pointerId);
-		if (pointers.current.size < 2) pinchBase.current = 0;
-		if (pointers.current.size === 0) drag.current = null;
-	};
-	const onWheel = (e: React.WheelEvent<HTMLDivElement>): void => {
-		if (e.ctrlKey) {
-			setZoomIndex((z) =>
-				Math.max(0, Math.min(ZOOMS.length - 1, z + (e.deltaY < 0 ? 1 : -1))),
-			);
-			return;
-		}
-		setCam((c) => ({ x: c.x - e.deltaX, y: c.y - e.deltaY, smooth: false }));
-	};
-
-	// The detail sits next to its node only while the mouse drives; keyboard, gamepad and touch get
-	// a fixed corner, so it never covers the neighbors the focus moves to (wireframe 2.5).
-	const [anchored, setAnchored] = useState(false);
-	useEffect(() => {
-		const off = (): void => setAnchored(false);
-		window.addEventListener('keydown', off);
-		return () => window.removeEventListener('keydown', off);
-	}, []);
-	const tipStyle: React.CSSProperties = (() => {
-		const fixed: React.CSSProperties = { right: 8, bottom: 8 };
-		if (!anchored || !node) return fixed;
-		const v = view();
-		const p = px(node);
-		const w = Math.min(460, v.w * 0.48);
-		const x = cam.x + p.x + SIZE[node.kind];
-		const left = x + w > v.w ? cam.x + p.x - SIZE[node.kind] - w : x;
-		return {
-			left: Math.max(0, left),
-			top: Math.max(0, Math.min(cam.y + p.y - 24, v.h - 280)),
-			transition: cam.smooth ? 'left 260ms ease-out, top 260ms ease-out' : 'none',
-		};
-	})();
-
 	const i = data.heroes.indexOf(data.hero);
 	const other = (d: number): HeroId =>
 		data.heroes[(i + d + data.heroes.length) % data.heroes.length] ?? data.hero;
 
-	const rank = node ? rankOf(data.allocated, node.id) : 0;
 	const canRankUp = !!node && rank > 0 && rank < node.maxRank;
+	const state = node ? stateOf(node) : 'locked';
 	let action = t('tree.action.start');
-	if (node && node.id !== tree.start) {
-		if (canRankUp)
+	let cost = 0;
+	if (node) {
+		if (canRankUp) {
+			cost = 1;
 			action = data.points > 0 ? t('tree.action.rankUp') : t('tree.action.short', { n: 1 });
-		else if (isAllocated)
+		} else if (rank > 0)
 			action = refundable
 				? t('tree.action.refund', { n: data.refundCost })
 				: t('tree.action.locked');
-		else
+		else {
+			cost = path.length;
 			action =
 				path.length > data.points
 					? t('tree.action.short', { n: path.length })
 					: t('tree.action.allocate', { n: path.length });
+		}
 	}
+	const ranked = !!node && node.maxRank > 1;
 
 	return (
 		<MenuScreen
@@ -357,7 +267,7 @@ export function SkillTree({
 		>
 			<div className="flex h-full min-h-0 w-full flex-1 flex-col">
 				<Panel className="h-full min-h-[50vh] [@media(max-height:500px)]:min-h-0">
-					<div className="flex flex-wrap items-center gap-2 [@media(max-height:500px)]:flex-nowrap [@media(max-height:500px)]:gap-1">
+					<div className="flex flex-wrap items-center gap-x-4 gap-y-1 [@media(max-height:500px)]:flex-nowrap [@media(max-height:500px)]:gap-2">
 						<div className="min-w-[22rem] flex-1 [@media(max-height:500px)]:min-w-0">
 							<AdjustRow
 								label={`${t(`hero.${data.hero}` as I18nKey)} · ${t('select.level', { n: data.level })}`}
@@ -366,135 +276,108 @@ export function SkillTree({
 								disabled={data.heroes.length < 2}
 							/>
 						</div>
-						<div className="text-secondary font-bold whitespace-nowrap text-crit">
+						<div
+							data-tree-points
+							className="font-title text-title leading-none font-bold whitespace-nowrap text-crit"
+						>
 							{t('tree.points', { n: data.points })}
 						</div>
 						<div className="text-secondary font-bold whitespace-nowrap text-fish">
 							{t('tree.pearls', { n: data.pearls })}
 						</div>
-						<input
-							type="search"
-							value={query}
-							onChange={(e) => setQuery(e.target.value)}
-							placeholder={t('tree.search')}
-							aria-label={t('tree.search')}
-							className="min-h-11 flex-1 appearance-none border-0 border-b-2 border-gold-aged bg-transparent px-1 text-secondary text-text-light outline-none [font-family:inherit] focus:border-crit [@media(max-height:500px)]:hidden"
-						/>
-						<Btn
-							onActivate={() => setZoomIndex((z) => Math.max(0, z - 1))}
-							label={t('tree.zoomOut')}
-						>
-							−
-						</Btn>
-						<Btn
-							onActivate={() =>
-								setZoomIndex((z) => Math.min(ZOOMS.length - 1, z + 1))
-							}
-							label={t('tree.zoomIn')}
-						>
-							+
-						</Btn>
 					</div>
-					<div
-						ref={viewport}
-						onPointerDown={onPointerDown}
-						onPointerMove={onPointerMove}
-						onPointerUp={stopDrag}
-						onClickCapture={(e) => {
-							// A drag or a pinch ending over a node must not allocate it.
-							if (moved.current) {
-								e.stopPropagation();
-								moved.current = false;
-							}
-						}}
-						onPointerCancel={stopDrag}
-						onWheel={onWheel}
-						// Focusing a node must not scroll the clipped viewport: the camera moves instead.
-						onScroll={(e) => {
-							e.currentTarget.scrollLeft = 0;
-							e.currentTarget.scrollTop = 0;
-						}}
-						className="relative min-h-0 flex-1 cursor-grab touch-none overflow-hidden bg-night/60 active:cursor-grabbing"
-					>
+					<div className="flex min-h-0 flex-1 gap-3">
 						<div
-							className="absolute top-0 left-0"
-							style={{
-								width: bounds.w * scale,
-								height: bounds.h * scale,
-								transform: `translate(${cam.x}px, ${cam.y}px)`,
-								transition: cam.smooth ? 'transform 260ms ease-out' : 'none',
+							ref={grid}
+							data-tree-grid
+							onPointerDown={(e) => {
+								pointerType.current = e.pointerType;
 							}}
+							className="no-scrollbar min-h-0 flex-1 overflow-auto bg-night/60 p-1 [--cell:max(2.75rem,4vh)] [--gap:0.375rem] [@media(max-height:500px)]:[--cell:2.5rem] [@media(max-height:500px)]:[--gap:0.25rem]"
 						>
-							<svg
-								aria-hidden="true"
-								className="pointer-events-none absolute inset-0"
-								width={bounds.w * scale}
-								height={bounds.h * scale}
-							>
-								{nodes.flatMap((a) =>
-									a.links
-										.filter((id) => id > a.id)
-										.map((id) => {
-											const b = tree.nodes[id];
-											if (!b) return null;
-											const pa = px(a);
-											const pb = px(b);
-											const lit =
-												(allocated.has(a.id) || a.id === tree.start) &&
-												(allocated.has(b.id) || b.id === tree.start);
-											const preview =
-												(onPath.has(a.id) || onPath.has(b.id)) &&
-												(onPath.has(a.id) ||
-													allocated.has(a.id) ||
-													a.id === tree.start) &&
-												(onPath.has(b.id) ||
-													allocated.has(b.id) ||
-													b.id === tree.start);
-											return (
-												<line
-													key={`${a.id}-${id}`}
-													x1={pa.x}
-													y1={pa.y}
-													x2={pb.x}
-													y2={pb.y}
-													stroke={
-														lit || preview
-															? GOLD
-															: 'var(--color-snow-dark)'
-													}
-													strokeWidth={lit ? 4 : 2}
-													strokeDasharray={
-														preview && !lit ? '6 5' : undefined
-													}
-												/>
-											);
-										}),
-								)}
-							</svg>
-							{nodes.map((n) => {
-								const p = px(n);
-								return (
-									<NodeBtn
-										key={n.id}
-										node={n}
-										x={p.x}
-										y={p.y}
-										allocated={allocated.has(n.id) || n.id === tree.start}
-										rank={rankOf(data.allocated, n.id)}
-										onPath={onPath.has(n.id)}
-										match={matches.has(n.id)}
-										onActivate={() => activate(n)}
-										onFocus={() => setSelected(n.id)}
-									/>
-								);
-							})}
-						</div>
-						{node && (
 							<div
-								data-tree-detail
-								className="pointer-events-none absolute z-10 w-[460px] max-w-[48%] [@media(max-height:500px)]:w-[336px]"
-								style={tipStyle}
+								className="mx-auto grid w-max gap-(--gap)"
+								style={{
+									gridTemplateColumns: `auto repeat(${tree.branches.length * BAND}, var(--cell))`,
+									gridTemplateRows: `auto repeat(${rows}, var(--cell))`,
+								}}
 							>
+								{tree.branches.map((theme, b) => (
+									<div
+										key={theme}
+										className="sticky top-0 z-10 border-b-2 bg-night text-center text-secondary font-bold tracking-section whitespace-nowrap uppercase"
+										style={{
+											gridRow: 1,
+											gridColumn: `${b * BAND + 2} / span 3`,
+											borderColor: BRANCH_COLOR[b],
+										}}
+									>
+										{t(`tree.b.${theme}` as I18nKey)}
+									</div>
+								))}
+								{Array.from({ length: rows }, (_, r) => (
+									<div
+										// biome-ignore lint/suspicious/noArrayIndexKey: static tier labels
+										key={r}
+										aria-hidden="true"
+										className="flex items-center justify-end pr-1 text-secondary font-bold text-gold-aged tabular-nums"
+										style={{ gridRow: r + 2, gridColumn: 1 }}
+									>
+										{r + 1}
+									</div>
+								))}
+								{cells.map((cell) => {
+									const n = tree.nodes[cell.id] as TreeNode;
+									const lit = allocated.has(n.id);
+									const link = (row: number, col: number): string | null => {
+										const to = at.get(`${row},${col}`);
+										return to && n.links.includes(to.id) ? to.id : null;
+									};
+									const down = link(cell.row + 1, cell.col);
+									const right = link(cell.row, cell.col + 1);
+									const line = (id: string | null): string =>
+										lit && id && allocated.has(id)
+											? 'bg-gold-bright'
+											: 'bg-snow-dark';
+									return (
+										<div
+											key={n.id}
+											className="relative"
+											style={{
+												gridRow: cell.row + 1,
+												gridColumn: cell.col + 2,
+											}}
+										>
+											{down && (
+												<span
+													aria-hidden="true"
+													className={`absolute top-full left-1/2 h-(--gap) w-0.5 -translate-x-1/2 ${line(down)}`}
+												/>
+											)}
+											{right && (
+												<span
+													aria-hidden="true"
+													className={`absolute top-1/2 left-full h-0.5 w-(--gap) -translate-y-1/2 ${line(right)}`}
+												/>
+											)}
+											<Square
+												node={n}
+												state={stateOf(n)}
+												rank={rankOf(data.allocated, n.id)}
+												onActivate={() => activate(n)}
+												onFocus={() => setSelected(n.id)}
+												onArrow={(dir) => move(n.id, dir)}
+											/>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+						<aside
+							data-tree-detail
+							className="no-scrollbar flex min-h-0 w-[24rem] shrink-0 flex-col gap-2 overflow-y-auto [@media(max-height:500px)]:w-[13.5rem]"
+						>
+							{node && (
 								<ItemCard
 									name={nodeTitle(node)}
 									color={node.branch >= 0 ? BRANCH_COLOR[node.branch] : undefined}
@@ -507,23 +390,65 @@ export function SkillTree({
 												: t('tree.kind.shared')}
 											{' · '}
 											{t(`tree.kindName.${node.kind}` as I18nKey)}
+											{' · '}
+											{t('tree.tier', { n: byId.get(node.id)?.row ?? 0 })}
 										</>
 									}
 									lines={[
-										...statLines(node.stats).map((line) => (
-											<span key={line} className="font-bold text-xp">
-												{line}
-											</span>
-										)),
-										...(node.maxRank > 1
+										<span key="state" className="font-bold text-gold-bright">
+											{t(`tree.state.${state}` as I18nKey)}
+											{ranked &&
+												` · ${t('tree.rank', { n: rank, max: node.maxRank })}`}
+										</span>,
+										...(ranked
 											? [
-													<span key="rank" className="text-gold-bright">
-														{t('tree.rank', {
-															n: rank,
-															max: node.maxRank,
+													<span key="now" className="text-text-light">
+														{t('tree.now', {
+															v:
+																rank > 0
+																	? statLines(
+																			scaleStats(
+																				node.stats,
+																				rank,
+																			),
+																		).join(', ')
+																	: '—',
 														})}
-														{rank > 1 &&
-															` · ${t('tree.rankTotal')} ${statLines(scaleStats(node.stats, rank)).join(', ')}`}
+													</span>,
+													...(rank < node.maxRank
+														? [
+																<span
+																	key="next"
+																	className="font-bold text-xp"
+																>
+																	{t('tree.next', {
+																		v: statLines(
+																			scaleStats(
+																				node.stats,
+																				rank + 1,
+																			),
+																		).join(', '),
+																	})}
+																</span>,
+															]
+														: []),
+												]
+											: statLines(node.stats).map((line) => (
+													<span key={line} className="font-bold text-xp">
+														{line}
+													</span>
+												))),
+										...(cost > 0
+											? [
+													<span key="cost" className="text-text-light">
+														{t('tree.cost', { n: cost })}
+													</span>,
+												]
+											: []),
+										...(path.length > 1
+											? [
+													<span key="req" className="text-text-light">
+														{t('tree.requires', { n: path.length - 1 })}
 													</span>,
 												]
 											: []),
@@ -536,35 +461,36 @@ export function SkillTree({
 									]}
 									footer={
 										canRankUp && refundable ? (
-											<div className="pointer-events-auto">
-												<Btn
-													onActivate={() => actions.refund(node.id)}
-													disabled={data.pearls < data.refundCost}
-													variant="danger"
-												>
-													{t('tree.refundOne', { n: data.refundCost })}
-												</Btn>
-											</div>
+											<Btn
+												onActivate={() => actions.refund(node.id)}
+												disabled={data.pearls < data.refundCost}
+												variant="danger"
+											>
+												{t('tree.refundOne', { n: data.refundCost })}
+											</Btn>
 										) : undefined
 									}
 								/>
-							</div>
-						)}
-						{totals.length > 0 && (
-							<div className="pointer-events-none absolute bottom-0 left-0 z-10 flex max-w-[40%] flex-col bg-linear-to-t from-night/80 to-transparent px-2 pt-6 pb-1 [text-shadow:0_2px_4px_var(--color-shadow)] [@media(max-height:500px)]:hidden">
-								<div className="text-secondary font-bold tracking-section text-gold-bright uppercase">
-									{t('tree.totals')}
-								</div>
-								{totals.slice(0, 6).map((line) => (
-									<div key={line} className="text-secondary font-bold text-xp">
-										{line}
+							)}
+							{totals.length > 0 && (
+								<div className="flex flex-col [@media(max-height:500px)]:hidden">
+									<div className="text-secondary font-bold tracking-section text-gold-bright uppercase">
+										{t('tree.totals')}
 									</div>
-								))}
-								{totals.length > 6 && (
-									<div className="text-secondary text-text-light">…</div>
-								)}
-							</div>
-						)}
+									{totals.slice(0, 6).map((line) => (
+										<div
+											key={line}
+											className="text-secondary font-bold text-xp"
+										>
+											{line}
+										</div>
+									))}
+									{totals.length > 6 && (
+										<div className="text-secondary text-text-light">…</div>
+									)}
+								</div>
+							)}
+						</aside>
 					</div>
 					<div className="[@media(max-height:500px)]:hidden">
 						<Hint>{t('tree.hint')}</Hint>
