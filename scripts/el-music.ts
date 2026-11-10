@@ -11,6 +11,69 @@ interface Track {
 	lengthMs: number;
 }
 
+/** [boss id, musical theme, bpm] — the boss's own battle music (src/data/enemies.ts BOSS_ROUNDS). */
+const BOSS_THEMES: readonly (readonly [string, string, number])[] = [
+	[
+		'leopardSeal',
+		'icy antarctic coast, howling polar wind, cold tremolo picking, deep sub drops like cracking ice',
+		158,
+	],
+	[
+		'polarBear',
+		'frozen tundra, massive slow stomping riffs, roaring low brass stabs, blizzard noise',
+		140,
+	],
+	[
+		'rotTreant',
+		'cursed rotting forest, creaking wood percussion, tribal war drums, eerie low flute over doom riffs',
+		128,
+	],
+	['mooseKing', 'ancient forest king, regal horn calls, galloping riffs, thunderous toms', 150],
+	[
+		'hiveQueen',
+		'alien insect hive, buzzing distorted synths, skittering hi-hats, acidic dissonant leads',
+		168,
+	],
+	[
+		'biomechColossus',
+		'giant war machine, mechanical industrial hammering, servo whines, heavy syncopated djent riffs',
+		145,
+	],
+	[
+		'drownedDiver',
+		'sunken harbor, deep underwater rumble, sonar pings, slow crushing sludge riffs, chains dragging',
+		120,
+	],
+	[
+		'kraken',
+		'stormy sea monster, crashing waves, tentacle-like swirling guitar leads, relentless blast beats',
+		175,
+	],
+	[
+		'plagueHierophant',
+		'plague cathedral, dark choir-like synth pads, church bell tolls, ritual drums, blackened tremolo riffs',
+		162,
+	],
+	[
+		'abomination',
+		'final nightmare, chaotic dissonant chords, screaming feedback, the heaviest breakdown, apocalyptic and huge',
+		180,
+	],
+];
+
+/** Round themes: different styles so random rounds do not repeat the same mood. */
+const ROUND_THEMES: readonly string[] = [
+	'groovy thrash riffs, palm-muted chugs, punchy snare, 165 bpm',
+	'industrial metal with pulsing synth bass and mechanical percussion, 145 bpm',
+	'melodic death metal with harmonized twin guitar leads, 160 bpm',
+	'stomping groove metal with bouncy syncopated riffs, 125 bpm',
+	'fast hardcore punk metal with gang-shout energy but no voices, 180 bpm',
+	'dark synthwave meets metal, retro arpeggios over distorted guitars, 140 bpm',
+	'nu metal style bouncy riffs with scratchy turntable-like noises, 110 bpm',
+	'blackened speed metal with icy tremolo picking, 190 bpm',
+	'heavy sludge groove with fuzzed bass and slow massive drums turning into a fast section, 100 bpm',
+];
+
 const TRACKS: Track[] = [
 	{
 		key: 'music.late',
@@ -31,6 +94,23 @@ const TRACKS: Track[] = [
 		key: 'music.city',
 		prompt: 'Instrumental industrial metal track for a destroyed city overrun by alien creatures in a brutal horde survival video game: cold mechanical synth pulses, distorted guitars, metallic percussion, acidic dissonant lead, tense and relentless, 150 bpm, loopable, no vocals',
 		lengthMs: 36000,
+	},
+	// Boss battle themes, one per campaign boss (2026-11-10, developer request; ~50 s each).
+	...BOSS_THEMES.map(([id, theme, bpm]) => ({
+		key: `music.boss.${id}`,
+		prompt: `Instrumental heavy metal boss battle track for a brutal zombie horde survival video game, ${theme}, crushing low-tuned guitars, pounding double kick drums, epic and menacing, ${bpm} bpm, loopable, no long intro, no vocals`,
+		lengthMs: 50000,
+	})),
+	// Round themes picked at random during normal rounds (2026-11-10; ~45 s each).
+	...ROUND_THEMES.map((theme, i) => ({
+		key: `music.round.${i + 1}`,
+		prompt: `Instrumental metal track for a fast arena round of a brutal zombie horde survival video game, ${theme}, loopable, no long intro, no vocals`,
+		lengthMs: 45000,
+	})),
+	{
+		key: 'music.shop.theme',
+		prompt: 'Instrumental theme for a merchant shop screen between rounds of a brutal zombie horde game: a lone wandering penguin merchant, warm low acoustic guitar with a slow metal riff underneath, soft music-box melody, crackling campfire ambience, calm but with a hint of danger, 85 bpm, loopable, no vocals',
+		lengthMs: 40000,
 	},
 ];
 
