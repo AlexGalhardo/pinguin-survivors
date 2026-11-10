@@ -1,6 +1,6 @@
 // Superpower VFX loop (SDD-012 RF-07, T7.4): a 192 px top-down object + a 12-frame v3 animation,
 // the same pipeline as `fx.super.jack`.
-// Usage: bun scripts/pl-fx.ts <bob|lucia>
+// Usage: bun scripts/pl-fx.ts <bob|lucia|jack-blades|jack-cleave>
 // Output: art-src/pixellab/anim/fx.super.<hero>/loop/south/<nn>.png (never touches existing art).
 import { existsSync, mkdirSync } from 'node:fs';
 import { api, download, generationsLeft, logGeneration, waitJob } from './lib/pixellab';
@@ -16,11 +16,22 @@ const FX = {
 		animation:
 			'the four elemental arms rotate clockwise around the pulsing white core as a seamless loop, sparks and shards fly outward',
 	},
+	// Melee redraws of Jack's Red Harvest (the original loop read as generic magic, too close to Lucia's).
+	'jack-blades': {
+		object: 'a whirlwind blade storm seen from above: a circular ring of giant crimson steel sword slashes and curved blade arcs spinning around an empty center, blood spray streaks, sharp white steel glints, dark red edge, centered, pixel art, transparent background, no outline, no magic runes, no glowing orbs, no energy',
+		animation:
+			'the blade arcs spin fast clockwise around the empty center as a seamless loop, slash trails flash and blood droplets fly outward',
+	},
+	'jack-cleave': {
+		object: 'a ground-shattering melee slam seen from above: a cracked stone crater with jagged radial cracks and a ring of crossed axe and machete slash marks, red blood splatter, flying rock chunks, centered, pixel art, transparent background, no outline, no magic, no glow, no energy',
+		animation:
+			'huge slash marks cut across the crater one after another and the cracks pulse outward as a seamless loop, rock debris and blood fly outward',
+	},
 } as const;
 
 const hero = process.argv[2] as keyof typeof FX;
 if (!(hero in FX)) {
-	console.error('usage: bun scripts/pl-fx.ts <bob|lucia>');
+	console.error('usage: bun scripts/pl-fx.ts <bob|lucia|jack-blades|jack-cleave>');
 	process.exit(1);
 }
 const dir = `art-src/pixellab/anim/fx.super.${hero}/loop/south`;

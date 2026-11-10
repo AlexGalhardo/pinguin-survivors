@@ -580,67 +580,67 @@
 		"src": "art-src/pixellab/images/icon.danger.5/11.png"
 	},
 	"fx.super.jack.00": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/00.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/00.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.01": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/01.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/01.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.02": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/02.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/02.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.03": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/03.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/03.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.04": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/04.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/04.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.05": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/05.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/05.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.06": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/06.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/06.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.07": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/07.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/07.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.08": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/08.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/08.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.09": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/09.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/09.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.10": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/10.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/10.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.11": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/11.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/11.png",
 		"group": "core",
 		"trim": false
 	},
 	"fx.super.jack.12": {
-		"src": "art-src/pixellab/anim/fx.super.jack/loop/south/12.png",
+		"src": "art-src/pixellab/anim/fx.super.jack-blades/loop/south/12.png",
 		"group": "core",
 		"trim": false
 	},
