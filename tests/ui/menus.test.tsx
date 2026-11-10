@@ -320,6 +320,36 @@ describe('Settings and Controls', () => {
 	});
 });
 
+describe('Controls on a phone', () => {
+	test('pages the key rows', () => {
+		const win = window as unknown as { matchMedia?: unknown };
+		win.matchMedia = () => ({
+			matches: true,
+			addEventListener: () => {},
+			removeEventListener: () => {},
+		});
+		const rows = ['up', 'down', 'left', 'right', 'super', 'speed', 'pause'].map((action) => ({
+			action,
+			keyLabel: 'X',
+		}));
+		const r = render(
+			<Router
+				view={{
+					screen: 'controls',
+					data: { rows, waiting: null },
+					actions: actionsOf(['rebind', 'reset', 'back']),
+				}}
+			/>,
+		);
+		expect(r.queryByText('Pause: X')).toBeNull();
+		expect(r.container.textContent).toContain('1/2');
+		fireEvent.click(r.getByText('›'));
+		expect(r.queryByText('Pause: X')).toBeTruthy();
+		cleanup();
+		win.matchMedia = undefined;
+	});
+});
+
 describe('HeroScreen and lists', () => {
 	test('hero screen opens the skill tree and buys potions', () => {
 		log.length = 0;
