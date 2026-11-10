@@ -7,6 +7,7 @@ import { formatTime } from '../../logic/format';
 import { type HudSnapshot, hudStore } from '../hud-bridge';
 import { useOverlayOpen } from '../overlay';
 import { AtlasIcon } from './AtlasIcon';
+import { Ornament } from './Ornament';
 
 const name = (key: string): string => (t(key as I18nKey) as string | undefined) ?? key;
 
@@ -52,7 +53,7 @@ function PotionStatus({
 				{potion.charges}/{potion.level}
 			</span>
 			{!full && (
-				<span className="text-[0.8em] font-medium text-text-dim">
+				<span className="font-medium text-text-light">
 					{t('hud.potionKills', { n: potion.kills, max: potion.killsPerPotion })}
 				</span>
 			)}
@@ -63,71 +64,81 @@ function PotionStatus({
 const pct = (value: number, max: number): string =>
 	`${Math.round(Math.max(0, Math.min(1, max > 0 ? value / max : 0)) * 100)}%`;
 
+/** HUD bar: no frame and no blur, a dark track and a flat fill; the label sits inside when given. */
 function Bar(props: {
 	value: number;
 	max: number;
 	fill: string;
 	height: string;
-	label: ReactNode;
-	labelClass?: string;
+	label?: ReactNode;
 }): ReactElement {
 	return (
-		<div
-			className={`relative w-full overflow-hidden rounded-sm bg-night/90 p-0.5 ${props.height}`}
-		>
-			<div className="relative h-full w-full bg-snow-dark">
-				<div
-					className={`absolute inset-y-0 left-0 ${props.fill}`}
-					style={{ width: pct(props.value, props.max) }}
-				/>
-				<div
-					className={`absolute inset-0 flex items-center justify-center font-bold text-text-light ${props.labelClass ?? ''}`}
-				>
+		<div className={`relative w-full overflow-hidden bg-panel-bottom/80 ${props.height}`}>
+			<div
+				className={`absolute inset-y-0 left-0 ${props.fill}`}
+				style={{ width: pct(props.value, props.max) }}
+			/>
+			{props.label != null && (
+				<div className="text-secondary absolute inset-0 flex items-center justify-center font-bold tabular-nums">
 					{props.label}
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }
+
+/** Phones show at most two gambits (wireframe 2.10); desktop shows them all. */
+const PHONE_GAMBITS = 2;
 
 export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }): ReactElement {
 	// Touch screens have the 1x/2x button instead of the TAB hint, and the pause button sits there.
 	const touch = touchControlsEnabled(platform().kind, window.location.search);
 	const boss = hud.boss;
+	const urgent = hud.timeLeft <= 5 || hud.bossRound;
+	const gambits = touch ? hud.gambits.slice(0, PHONE_GAMBITS) : hud.gambits;
 	return (
-		<div className="pointer-events-none fixed inset-0 overflow-hidden font-body text-[clamp(0.75rem,1.5vh,1rem)] text-text-light">
+		<div className="text-secondary pointer-events-none fixed inset-0 overflow-hidden font-body tabular-nums text-text-light [text-shadow:0_2px_4px_var(--color-shadow),0_0_1px_var(--color-night)]">
+			<div
+				aria-hidden="true"
+				className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_62%,color-mix(in_srgb,var(--color-shadow)_35%,transparent)_100%)]"
+			/>
 			<div
 				data-hud="status"
-				className="absolute top-[1.2vh] left-[1vw] w-[clamp(11rem,16vw,20rem)] space-y-1"
-				style={touch ? { left: 'max(1vw, env(safe-area-inset-left))' } : undefined}
+				className="absolute top-[3vh] left-[3vw] w-[clamp(14rem,19vw,24rem)] space-y-1"
+				style={
+					touch
+						? { left: 'max(1.5vw, env(safe-area-inset-left))', top: '1.5vh' }
+						: undefined
+				}
 			>
 				<Bar
 					value={hud.hp}
 					max={hud.maxHp}
 					fill="bg-blood"
-					height="h-[clamp(1.5rem,3vh,2rem)]"
+					height="h-[max(26px,calc(var(--spacing)*7))]"
 					label={t('hud.hpBar', { hp: Math.ceil(hud.hp), max: Math.round(hud.maxHp) })}
 				/>
-				<Bar
-					value={hud.xp}
-					max={hud.xpToNext}
-					fill="bg-xp"
-					height="h-[clamp(1rem,2vh,1.25rem)]"
-					labelClass="text-[0.75em]"
-					label={t('hud.level', { n: hud.level })}
-				/>
-				<div className="flex items-center gap-1 font-bold text-fish">
-					<AtlasIcon frames={['icon.currency.fish']} size={24} />
-					{t('hud.fish', { n: hud.fish })}
+				<div className="flex items-center gap-2">
+					<Bar value={hud.xp} max={hud.xpToNext} fill="bg-xp" height="h-2" />
+					<span className="font-bold whitespace-nowrap">
+						{t('hud.level', { n: hud.level })}
+					</span>
 				</div>
-				<div className="text-text-dim">{t('hud.kills', { n: hud.kills })}</div>
+				<div className="flex items-center gap-3 font-bold">
+					<span className="flex items-center gap-1 text-fish">
+						<AtlasIcon frames={['icon.currency.fish']} size={24} />
+						{t('hud.fish', { n: hud.fish })}
+					</span>
+					<span>{t('hud.kills', { n: hud.kills })}</span>
+				</div>
 				{hud.healPotion && <PotionStatus potion={hud.healPotion} />}
-				{/* On touch screens the bottom corners belong to the joystick and the buttons. */}
-				{touch && hud.gambits.length > 0 && (
-					<div className="text-[0.8em] text-dot-poison">
-						{hud.gambits.map((g) => (
-							<div key={g.slot} className={g.used ? 'opacity-50' : ''}>
-								{g.used ? '✕ ' : ''}
+				{gambits.length > 0 && (
+					<div data-hud="gambits" className="text-dot-poison">
+						{gambits.map((g) => (
+							<div
+								key={g.slot}
+								className={g.used ? 'text-text-dim line-through' : ''}
+							>
 								{name(`potion.${g.potion}`)} · {name(`cond.${g.condition}`)}
 							</div>
 						))}
@@ -139,63 +150,63 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 				data-hud="round"
 				className="absolute top-[1vh] left-1/2 flex -translate-x-1/2 flex-col items-center"
 			>
-				<div className="font-bold">{t('hud.round', { n: hud.round })}</div>
-				<div
-					className={`font-title text-[clamp(1.5rem,4vh,2.5rem)] font-bold ${
-						hud.timeLeft <= 5 || hud.bossRound ? 'text-blood' : ''
-					}`}
-				>
-					{formatTime(hud.timeLeft)}
+				<div className="text-section font-bold tracking-section uppercase">
+					{t('hud.round', { n: hud.round })}
 				</div>
+				<div className="flex items-center gap-3">
+					<Ornament kind="diamond" size={12} />
+					<div
+						className={`font-title text-[max(28px,5.2vh)] leading-none font-bold ${urgent ? 'text-blood' : ''}`}
+					>
+						{formatTime(hud.timeLeft)}
+					</div>
+					<Ornament kind="diamond" size={12} />
+				</div>
+				{hud.elite !== 'none' && (
+					<div
+						className={`font-bold tracking-section uppercase ${hud.elite === 'orange' ? 'text-aura-orange' : 'text-aura-purple'}`}
+					>
+						{t('hud.eliteRound')}
+					</div>
+				)}
 				{boss && (
-					<div className="mt-1 w-[clamp(16rem,24vw,30rem)]">
+					<div className="mt-1 w-[clamp(16rem,31vw,38rem)]">
 						<Bar
 							value={boss.hp}
 							max={boss.maxHp}
 							fill="bg-aura-orange"
-							height="h-[clamp(1rem,2vh,1.25rem)]"
-							label={null}
+							height="h-[max(12px,calc(var(--spacing)*4))]"
 						/>
-						<div className="text-center font-bold text-aura-orange">
+						<div className="text-center font-title text-item font-bold text-aura-orange">
 							{name(`boss.${boss.id}`)}
 						</div>
 					</div>
 				)}
 			</div>
 
-			<div
-				data-hud="fps"
-				className="absolute top-[1.2vh] right-[1vw] flex flex-col items-end gap-1"
-				style={
-					touch
-						? { right: 'calc(max(1.25rem, env(safe-area-inset-right)) + 3.5rem)' }
-						: undefined
-				}
-			>
-				{!touch && (
-					<div className="font-bold text-text-dim">{t('hud.fps', { n: hud.fps })}</div>
-				)}
-				{hud.elite !== 'none' && (
-					<div
-						className={`font-bold ${hud.elite === 'orange' ? 'text-aura-orange' : 'text-aura-purple'}`}
-					>
-						{t('hud.eliteRound')}
-					</div>
-				)}
-			</div>
+			{!touch && (
+				<div
+					data-hud="fps"
+					className="absolute top-[3vh] right-[3vw] font-bold text-text-dim"
+				>
+					{t('hud.fps', { n: hud.fps })}
+				</div>
+			)}
 
 			{/* Super Magic bottom left (developer, 2026-11-08); the weapons are seen on the hero, not here. */}
 			<div
 				data-hud="super"
-				className={`absolute bottom-[1.2vh] ${touch ? 'left-1/2 -translate-x-1/2' : 'left-[1vw]'}`}
+				className={`absolute bottom-[3vh] ${touch ? 'left-1/2 -translate-x-1/2' : 'left-[3vw]'}`}
 			>
 				{hud.superpower &&
 					(() => {
 						const { charge, cost } = hud.superpower;
 						const ready = charge >= cost;
 						return (
-							<div className="w-[clamp(12rem,16vw,20rem)]">
-								<div className={`font-bold ${ready ? 'text-crit' : ''}`}>
+							<div className="w-[clamp(12rem,18vw,22rem)]">
+								<div
+									className={`text-section font-bold tracking-section uppercase ${ready ? 'text-crit' : 'text-blood'}`}
+								>
 									{ready
 										? t('hud.superReady')
 										: t('hud.super', { n: charge, max: cost })}
@@ -203,9 +214,8 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 								<Bar
 									value={charge}
 									max={cost}
-									fill={ready ? 'bg-crit' : 'bg-blood'}
-									height="h-[clamp(0.75rem,1.4vh,1rem)]"
-									label={null}
+									fill={ready ? 'bg-gold-bright' : 'bg-blood'}
+									height="h-3"
 								/>
 							</div>
 						);
@@ -213,22 +223,16 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 			</div>
 
 			{version && !touch && (
-				<div className="absolute bottom-[0.6vh] left-1/2 -translate-x-1/2 text-[0.7em] text-text-dim">
+				<div className="absolute bottom-[0.6vh] left-1/2 -translate-x-1/2 text-[0.7rem] text-text-dim">
 					{version}
 				</div>
 			)}
 
 			{!touch && (
-				<div className="absolute right-[1vw] bottom-[1.2vh] flex flex-col items-end gap-0.5 text-dot-poison">
-					<div className={`font-bold ${hud.speed > 1 ? 'text-crit' : 'text-text-dim'}`}>
-						{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
-					</div>
-					{hud.gambits.map((g) => (
-						<div key={g.slot} className={g.used ? 'opacity-50' : ''}>
-							{g.used ? '✕ ' : ''}
-							{name(`potion.${g.potion}`)} · {name(`cond.${g.condition}`)}
-						</div>
-					))}
+				<div
+					className={`absolute right-[3vw] bottom-[3vh] text-key font-bold tracking-section uppercase ${hud.speed > 1 ? 'text-crit' : 'text-text-light'}`}
+				>
+					{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
 				</div>
 			)}
 		</div>
