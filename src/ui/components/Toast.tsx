@@ -15,14 +15,14 @@ function ToastView({ toast }: { toast: ToastItem }): ReactElement {
 	);
 }
 
-/** Stacked top-center notifications; announced by screen readers (aria-live). */
+/** Notifications on the right edge, vertically centered between the FPS meter and the speed hint, stacking downward; announced by screen readers (aria-live). */
 export function ToastHost(): ReactElement {
 	const queue = useSyncExternalStore(toastStore.subscribe, () => toastStore.get().queue);
 	return (
 		<div
 			aria-live="polite"
 			role="status"
-			className="pointer-events-none fixed top-[6vh] left-1/2 flex -translate-x-1/2 flex-col gap-2"
+			className="pointer-events-none fixed top-[38vh] right-[3vw] flex max-w-[32vw] flex-col items-end gap-2"
 		>
 			{queue.slice(0, MAX_VISIBLE_TOASTS).map((toast) => (
 				<ToastView key={toast.id} toast={toast} />
