@@ -683,9 +683,6 @@ export const ENEMIES = {
 		fromRound: 0,
 		weight: 0,
 		placeholder: { color: 0x9aa6a8, height: 150 },
-		// shortcut: reuses polarBear tinted until its own art is approved (T7.18), then drop art/tint.
-		art: 'polarBear',
-		tint: 0xb8c4c8,
 		range: 100,
 		cooldown: 3,
 		boss: {
@@ -718,9 +715,6 @@ export const ENEMIES = {
 		fromRound: 0,
 		weight: 0,
 		placeholder: { color: 0x4a3a22, height: 170 },
-		// shortcut: reuses mooseKing tinted until its own art is approved (T7.18), then drop art/tint.
-		art: 'mooseKing',
-		tint: 0x8a7a5a,
 		range: 140,
 		cooldown: 3.4,
 		boss: {
