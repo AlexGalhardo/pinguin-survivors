@@ -8,6 +8,7 @@ import { ECONOMY } from '../data/economy';
 import { DROPS, GEAR_BY_ID } from '../data/equipment';
 import { LEGACY_GEAR_RARITY, type Rarity, weaponVisualTier } from '../data/rarity';
 import type { ItemDrop } from '../logic/equipment';
+import { pickupPull } from '../logic/pickup-pull';
 import { depthOf, worldToScreen } from '../logic/projection';
 
 /** heal: value = share of max HP; gear: value unused, `gearId` names the item; potion: value = rarity. */
@@ -37,7 +38,7 @@ interface Pickup {
 }
 
 const MAX_PICKUPS = 500;
-/** Gear must be walked over (no magnet), a little more generous than orbs. */
+/** Gear is picked up on contact (after the magnet pulls it in), a little more generous than orbs. */
 const GEAR_COLLECT_RADIUS = 22;
 
 const BEAM_KEY = 'fx.dropBeam';
@@ -159,6 +160,7 @@ export class PickupSystem {
 		p.life = isWalkOn(kind) ? DROPS.gearLifetime : Number.POSITIVE_INFINITY;
 		p.sprite
 			.setTexture(this.textureOf(kind, value, gearId, item))
+			.setScale(kind === 'fish' ? ECONOMY.fishDropScale : 1)
 			.setVisible(true)
 			.setAlpha(1);
 		if (isWalkOn(kind)) {
@@ -220,6 +222,10 @@ export class PickupSystem {
 		for (const p of this.items) if (p.alive) this.collect(p);
 	}
 
+	hasAlive(): boolean {
+		return this.items.some((i) => i.alive);
+	}
+
 	/** Pulls every pickup towards the hero (magnet effect). */
 	attractAll(): void {
 		this.vacuum = true;
@@ -239,23 +245,23 @@ export class PickupSystem {
 			any = true;
 			const dx = hx - p.x;
 			const dy = hy - p.y;
-			const d = Math.hypot(dx, dy);
-			if (isWalkOn(p.kind)) {
-				this.updateGear(p, dt, d, hx, hy);
-				continue;
-			}
-			if (d < ECONOMY.collectRadius) {
+			let d = Math.hypot(dx, dy);
+			const walkOn = isWalkOn(p.kind);
+			if (!walkOn && d < ECONOMY.collectRadius) {
 				this.collect(p);
 				continue;
 			}
-			// Magnetic support item: only XP orbs and Fish reach farther and are pulled faster.
-			const pulled = p.kind === 'xp' || p.kind === 'fish';
-			if (this.vacuum || d < pickupRange + (pulled ? magnet.radius : 0)) p.magnet = true;
-			if (p.magnet) {
-				const speed =
-					ECONOMY.magnetSpeed * (this.vacuum ? 3 : 1) * (pulled ? magnet.pull : 1);
-				p.x += (dx / d) * Math.min(d, speed * dt);
-				p.y += (dy / d) * Math.min(d, speed * dt);
+			const pull = pickupPull(p.kind, d, pickupRange, magnet, this.vacuum);
+			if (pull.start) p.magnet = true;
+			if (p.magnet && d > 0) {
+				const step = Math.min(d, pull.speed * dt);
+				p.x += (dx / d) * step;
+				p.y += (dy / d) * step;
+				d -= step;
+			}
+			if (walkOn) {
+				this.updateGear(p, dt, d, hx, hy);
+				continue;
 			}
 			p.bob += dt * 4;
 			const s = worldToScreen(p.x, p.y, 4 + Math.sin(p.bob) * 2);

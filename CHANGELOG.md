@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **game:** Magnetic now has a clear effect: extra pull radius 120/200/300/420/560 and pull speed x1.5/1.9/2.4/3/3.8 by level. Equipment and potion drops are pulled in by the pickup range too, and at the end of a round everything left on the ground (XP, Fish, gear, potions) flies to the hero before the cards or shop open. Fish on the ground are drawn at twice the size. Achievement and equipment toasts moved to the right edge, between the FPS meter and the speed hint.
 - **game:** The first round lasts 30 s instead of 20 s (`ROUNDS.firstDuration`; later normal rounds keep the +5 s step, so each is 10 s longer).
 - **game:** Darkness layer per biome: its own night tint and strength (never above 0.66), a screen-edge vignette, a soft wider halo around the hero and a light on rarity III+ drops (SDD-017).
 - **game:** Game speed is now 1x / 1.5x / 2x (default 1x). Movement and attacks run at twice the speed factor (the new 1x moves like the old 2x, the new 2x like the old 4x) while the round timer, the boss time limit, the spawn budget and the red boss/elite marks follow the plain factor, so a 30 s round lasts 30 s at 1x and 15 s at 2x with the same enemy count (SDD-018, ADR-024). Saved 3x/4x become 2x. Balance impact (more combat per round second) still needs a balance pass.

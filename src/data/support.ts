@@ -12,8 +12,8 @@ export const SUPPORT_PRICE = 14;
 
 /** Magnetic: extra pull radius (world units) and speed multiplier for XP orbs and Fish, by level 1..5. */
 export const MAGNETIC = {
-	radius: [40, 75, 110, 150, 200],
-	pull: [1.25, 1.5, 1.8, 2.2, 2.8],
+	radius: [120, 200, 300, 420, 560],
+	pull: [1.5, 1.9, 2.4, 3, 3.8],
 } as const;
 
 /** Stat items: cumulative bonus by level 1..5, added to the hero's stats. */

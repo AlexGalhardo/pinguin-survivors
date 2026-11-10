@@ -14,6 +14,8 @@ export const ECONOMY = {
 		bossPerCycle: 25,
 	},
 	magnetSpeed: 320,
+	/** Ground sprite scale of a dropped Fish (UI icons are untouched). */
+	fishDropScale: 2,
 	collectRadius: 14,
 } as const;
 

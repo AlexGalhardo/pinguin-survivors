@@ -97,6 +97,7 @@ import {
 } from '../logic/heal-potion';
 import { buildPlayerPanel, weaponStatsView } from '../logic/item-view';
 import { ObstacleField, pushOut } from '../logic/obstacles';
+import { roundFlushDone } from '../logic/pickup-pull';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
 import { addXp, type LevelState, orbXp } from '../logic/progression';
 import { depthOf, inputToWorld, worldToScreen } from '../logic/projection';
@@ -651,6 +652,19 @@ export class GameScene extends Phaser.Scene {
 	/** `dt` is the motion time (SDD-018); `clockDt` is the round clock, boss/elite marks and spawn budget. */
 	private step(dt: number, clockDt: number): void {
 		const run = this.run;
+		if (this.flushTime >= 0) {
+			// Round over: the leftovers fly to the hero before the cards/shop open.
+			this.flushTime += dt;
+			this.pickups.update(
+				dt,
+				this.hero.x,
+				this.hero.y,
+				this.stats.pickupRange,
+				magnetBonus(run.support),
+			);
+			if (roundFlushDone(this.pickups.hasAlive(), this.flushTime)) this.finishRound();
+			return;
+		}
 		run.elapsed += clockDt;
 		run.timeLeft -= clockDt;
 
@@ -698,6 +712,8 @@ export class GameScene extends Phaser.Scene {
 	/** Set bonuses currently added to `stats`, so a build change can swap them (not idempotent). */
 	private appliedSet: SetModifier[] = [];
 	private quickReloadTime = 0;
+	/** Seconds since the round ended while the drops on the ground fly in; -1 when not flushing. */
+	private flushTime = -1;
 
 	/**
 	 * Run start: `startingWeapons[0]` (the picker comes with the React hero select), or the
@@ -1412,6 +1428,12 @@ export class GameScene extends Phaser.Scene {
 		this.bossHazards.clear();
 		this.eliteHazards.clear();
 		this.secondaries.clear();
+		if (this.flushTime < 0 && this.pickups.hasAlive()) {
+			this.flushTime = 0;
+			this.pickups.attractAll();
+			return;
+		}
+		this.flushTime = -1;
 		healHero(this.run, this.run.maxHp * ROUNDS.roundEndHeal);
 		// Collecting the last orbs can still level up: it must be queued before `endRound`.
 		this.pickups.collectAll();
