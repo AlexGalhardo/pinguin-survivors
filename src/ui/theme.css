@@ -7,6 +7,29 @@
 @theme {
 	--font-body: "Roboto", "Noto Sans SC", sans-serif;
 	--font-title: "Roboto", "Noto Sans SC", sans-serif;
+
+	/* Type scale by viewport height with a phone floor: max(floor, base * 100vh / 1080). */
+	--text-display: max(44px, calc(88 / 1080 * 100vh));
+	--text-title: max(24px, calc(48 / 1080 * 100vh));
+	--text-item: max(22px, calc(32 / 1080 * 100vh));
+	--text-cta: max(22px, calc(36 / 1080 * 100vh));
+	--text-section: max(18px, calc(26 / 1080 * 100vh));
+	--text-list: max(24px, calc(30 / 1080 * 100vh));
+	--text-body: max(18px, calc(24 / 1080 * 100vh));
+	--text-secondary: max(18px, calc(22 / 1080 * 100vh));
+	--text-key: max(18px, calc(22 / 1080 * 100vh));
+
+	/* 4 px grid that follows the height: p-3 = 12 px and p-4 = 16 px at 1080. Exact targets use max(44px, ...). */
+	--spacing: calc(4 / 1080 * 100vh);
+
+	--shadow-inset: inset 0 0 40px var(--color-shadow);
+	--shadow-1: 0 8px 24px color-mix(in srgb, var(--color-shadow) 80%, transparent);
+	--shadow-2: 0 20px 60px var(--color-shadow);
+	--shadow-focus: 0 0 32px color-mix(in srgb, var(--color-gold-bright) 20%, transparent);
+
+	--tracking-title: 0.25em;
+	--tracking-list: 0.12em;
+	--tracking-section: 0.15em;
 }
 
 /* Without preflight, text and buttons would fall back to the browser's black; give the overlay a base
@@ -91,5 +114,129 @@
 		transform: rotate(45deg);
 		background: var(--color-gold-bright);
 		box-shadow: 0 0 6px color-mix(in srgb, var(--color-gold-aged) 80%, transparent);
+	}
+}
+
+/* Style D (Diablo 4 organic) utilities, docs/design-system.md sections 3.3, 3.4 and 6. */
+@layer components {
+	/* One per screen, last non-interactive layer. Static gradient, no blur. */
+	.d-vignette {
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			ellipse at center,
+			transparent 55%,
+			color-mix(in srgb, var(--color-shadow) 70%, transparent) 100%
+		);
+	}
+
+	/* Soft light behind the main group of a screen. */
+	.d-glow {
+		pointer-events: none;
+		background: radial-gradient(
+			ellipse at center,
+			color-mix(in srgb, var(--color-panel-top) 60%, transparent) 0%,
+			transparent 70%
+		);
+	}
+
+	/* Gold line that thins out at both ends. */
+	.d-filet {
+		height: 2px;
+		width: 100%;
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			var(--color-gold-aged) 25%,
+			var(--color-gold-bright) 50%,
+			var(--color-gold-aged) 75%,
+			transparent 100%
+		);
+	}
+
+	/* 12 px cut on the four corners (tooltips, dialogs). */
+	.d-chamfer {
+		clip-path: polygon(
+			12px 0,
+			calc(100% - 12px) 0,
+			100% 12px,
+			100% calc(100% - 12px),
+			calc(100% - 12px) 100%,
+			12px 100%,
+			0 calc(100% - 12px),
+			0 12px
+		);
+	}
+
+	/* 1 px worn border, dashes 22-2-5-2, in `--worn` (default gold-aged) over an optional `--worn-fill`. */
+	.d-worn {
+		--worn: var(--color-gold-aged);
+		--dash-x: repeating-linear-gradient(
+			90deg,
+			var(--worn) 0 22px,
+			transparent 22px 24px,
+			var(--worn) 24px 29px,
+			transparent 29px 31px
+		);
+		--dash-y: repeating-linear-gradient(
+			180deg,
+			var(--worn) 0 22px,
+			transparent 22px 24px,
+			var(--worn) 24px 29px,
+			transparent 29px 31px
+		);
+		background:
+			var(--dash-x) top / 100% 1px no-repeat,
+			var(--dash-x) bottom / 100% 1px no-repeat,
+			var(--dash-y) left / 1px 100% no-repeat,
+			var(--dash-y) right / 1px 100% no-repeat,
+			var(--worn-fill, transparent);
+	}
+
+	/* Focus of a list item: gold band, glow and a crit diamond on the left. The element needs `relative`. */
+	.d-focus {
+		transition:
+			background-color 120ms ease-out,
+			box-shadow 120ms ease-out,
+			color 120ms ease-out;
+	}
+
+	.d-focus:hover:not([aria-disabled="true"]) {
+		background-color: color-mix(in srgb, var(--color-gold-bright) 6%, transparent);
+		color: var(--color-gold-bright);
+	}
+
+	.d-focus:focus-visible,
+	.d-focus[data-focused="true"] {
+		outline: none;
+		background-color: color-mix(in srgb, var(--color-gold-bright) 12%, transparent);
+		box-shadow: var(--shadow-focus);
+		color: var(--color-crit);
+	}
+
+	.d-focus:focus-visible::before,
+	.d-focus[data-focused="true"]::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 50%;
+		width: 14px;
+		height: 14px;
+		margin-top: -7px;
+		transform: rotate(45deg);
+		background: var(--color-crit);
+		box-shadow: 0 0 12px var(--color-crit);
+	}
+
+	/* Flashes off for players who ask for less motion (design-system section 12). */
+	@media (prefers-reduced-motion: reduce) {
+		.d-focus {
+			transition: none;
+		}
+
+		.d-focus::before {
+			box-shadow: none;
+		}
 	}
 }
