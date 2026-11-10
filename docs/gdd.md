@@ -1,6 +1,6 @@
 # Game Design Document — Pinguin Survivors
 
-> **Versão** 2.1 · **Data** 2026-11-08 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
+> **Versão** 2.2 · **Data** 2026-11-10 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
 > Substitui `game-design.md` e `ui-hud.md`. Números em [balancing-and-simulation.md](balancing-and-simulation.md) (Parte B); decisões em [brainstorming.md](brainstorming.md) (B-xx) e [adrs/](adrs/README.md); histórico anterior (P-xx) no `docs/decisions.md` removido, recuperável pelo git (`git log -- docs/decisions.md`). Arte em [visual.md](visual.md); som em [audio.md](audio.md); técnica em [architecture.md](architecture.md); especificações de implementação em [sdds/](sdds/README.md).
 > Onde este documento e o código atual divergem, **este documento é o alvo** e o [ROADMAP.md](../ROADMAP.md) lista o trabalho para alinhar o código.
 
@@ -68,7 +68,7 @@ Menu (árvore de habilidades · Pérolas: poções/gambits · arma inicial)
 
 - **Duração do round N** (não boss): `30 + 5·(N−1)` s, sem teto (pedido do desenvolvedor, 2026-11-08: o jogo estava fácil; 1º round de 20 → 30 s em 2026-11-10).
 - **Boss**: rounds 5, 10, 15, 20…; barra de boss e timer de `2 + (N/5 − 1)` min (round 5: 2:00, round 10: 3:00, round 15: 4:00… teto de 10:00 do boss 45 em diante); matar encerra o round; zerar o timer é game over. A **vida do boss dobra a cada boss** (round 5 ×1, 10 ×2, 15 ×4, 20 ×8…; pedido do desenvolvedor, 2026-11-08: os bosses estavam fáceis). Biomas e ciclos de escala continuam em blocos de 10 rounds.
-- **Elites** nos rounds múltiplos de 3 (roxo 2×; laranja 3× a partir do round 11). Waves de elite/horda extras por Danger (§16).
+- **Elites** nos rounds múltiplos de 3 (roxo, HP ×4; laranja, HP ×6 a partir do round 11). Waves de elite/horda extras por Danger (§16).
 - **Endless**: sem fim e sem tela de vitória (ADR-008).
 - Cura de 25% do HP máximo ao fim de cada round; o HP restante passa para o próximo.
 
@@ -174,7 +174,7 @@ As três exclusivas marcadas "vira arma" passam a ser **armas iniciais/da loja e
 
 ## 11. Equipamentos, itens e packs
 
-- **Equipamento** (P-66): 5 slots × 10 itens-base (3 comuns, 4 raros, 3 lendários) com a **raridade I–V** e os **afixos** da escala única (ADR-017): na loja, comum, raro e lendário são I, II e III; **IV só de Elite e V só de Boss** (bases lendárias com 3 e 4 afixos). Pego pisando (sem ímã), some em 60 s. Itens antigos sem sorteio leem-se como I, II e III.
+- **Equipamento** (P-66): 5 slots × 10 itens-base (3 comuns, 4 raros, 3 lendários) com a **raridade I–V** e os **afixos** da escala única (ADR-017): na loja saem I a III desde o início, **IV a partir do round 11 e V a partir do round 21** (`SHOP.rarityFromRound`), e IV/V também caem de Elite e de Boss (bases lendárias com 3 e 4 afixos). O ímã puxa o item pelo alcance de coleta; some em 60 s. Itens antigos sem sorteio leem-se como I, II e III.
 - **Itens passivos** da loja (novos, estilo Brotato): modificadores de stat e de regra (ex.: "+1 projétil", "Fish extra por elite"), tiers I–IV, sem limite de quantidade.
 - **Packs de vida**: +25% (50%), +50% (30%), +75% (20%); chance 1,2% comuns, 25% elites, 100% bosses.
 
@@ -201,7 +201,7 @@ As três exclusivas marcadas "vira arma" passam a ser **armas iniciais/da loja e
 
 ## 14. Inimigos, elites e bosses
 
-Papéis por bioma: **enxame** (rápido e frágil), **voador** (ignora props), **tanque**, **à distância** (cospe), **explosivo** (nuvem de veneno), **investida**. Elites usam o mesmo sprite ×1,25 (roxo) / ×1,4 (laranja) com aura e barra de HP, drop garantido de Fish.
+Papéis por bioma: **enxame** (rápido e frágil), **voador** (ignora props), **tanque**, **à distância** (cospe), **explosivo** (nuvem de veneno), **investida**. Elites usam o mesmo sprite em escala 2,5 (roxo) / 2,8 (laranja), com aura, barra de HP, um ataque em área com aviso no chão e Fish em 25% dos casos (2 roxo, 4 laranja).
 
 | Bioma (campanha) | Inimigos | Boss |
 |---|---|---|
@@ -292,7 +292,7 @@ MainMenu ─► HeroSelect (herói · danger · arma inicial) ─► Game (+ HUD
 
 **Linguagem visual e fundos** (ADR-018): Conquistas, Configurações, Árvore de habilidades, Histórico e Escolha seu Pinguim seguem a linguagem visual **Diablo 4** da loja (painéis escuros, moldura metálica, raridade por cor, Roboto). **Todos os menus, exceto o inicial, têm fundo preto ou neutro** (sem a arte do menu), responsivos, fáceis e didáticos. A **Pausa** usa o layout da loja (status do jogador e itens equipados), sem o NPC, com 3 botões: Continuar, Configurações e Sair.
 
-**HUD**: HP e XP grandes com número, Fish da run, round e timer, barra do boss + 3:00, aviso de elite, **SUPER MAGIA** no canto inferior esquerdo (a partir do level 5; as armas são vistas no herói, sem ícones na HUD), 3 gambits, velocidade 1×–4× (TAB), FPS (opcional), rodapé com versão. A HUD some sob qualquer tela cheia (loja, cartas, pausa, resumo, menus).
+**HUD**: HP e XP grandes com número, Fish da run, round e timer, barra e timer do boss, aviso de elite, **SUPER MAGIA** no canto inferior esquerdo (a partir do level 5; as armas são vistas no herói, sem ícones na HUD), 3 gambits, velocidade 1×, 1,5× e 2× (TAB), FPS (opcional), rodapé com versão. A HUD some sob qualquer tela cheia (loja, cartas, pausa, resumo, menus).
 
 ## 22. Demo
 

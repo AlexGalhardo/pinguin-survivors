@@ -192,7 +192,7 @@ Wireframe: [2.9-controles.svg](d4/2.9-controles.svg)
   - Ordem da pilha: timer, depois faixa, depois barra do chefe (checklist, item 2).
 - **Superior direito:** "60 FPS" em 22 (só desktop).
 - **Inferior esquerdo:** SUPER MAGIA em `section` 24 mais `DBar` de 340 × 12. Carregando: "SUPER MAGIA 61/100" em `blood`. Pronta: "SUPER MAGIA · SPACE" em `crit` com barra `gold-bright` e brilho. Oculta abaixo do nível 5.
-- **Inferior direito:** "TAB · VELOCIDADE 3x ▶▶" em `key-hint` (`crit` quando ativo).
+- **Inferior direito:** "TAB · VELOCIDADE 2x ▶▶" em `key-hint` (`crit` quando ativo).
 - **844×390:**
   - status em x 52, w 230, com textos de 18 e no máximo 2 gambits;
   - timer em Cinzel 28;

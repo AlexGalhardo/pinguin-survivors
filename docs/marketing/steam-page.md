@@ -1,6 +1,6 @@
 # Página da Steam — textos nos 4 idiomas (T5.8)
 
-> **Versão** 1.0 · **Data** 2026-11-08 · **Status** rascunho para aprovação do desenvolvedor · Coerente com o jogo na versão 0.4.0 (`package.json`). Só descreve o que existe; o que falta está marcado **(TBD)**.
+> **Versão** 1.0 · **Data** 2026-11-08 · **Status** rascunho para aprovação do desenvolvedor · Coerente com o jogo na versão 0.8.0 (`package.json`). Só descreve o que existe; o que falta está marcado **(TBD)**.
 
 ## Índice
 
@@ -69,7 +69,7 @@ Raise the danger from 0 to 5 for stronger enemies and better rewards, or keep go
 - A shop after every round, with weapons, equipment and healing items.
 - A skill tree for each penguin, and level-up cards during the run.
 - Danger 0–5, and endless rounds after the campaign.
-- Bosses every 10 rounds.
+- Bosses every 5 rounds.
 - Three save slots.
 - Gore with a toggle: maximum, reduced or green goo.
 - English, Português (BR), Español and 简体中文.
@@ -96,7 +96,7 @@ Suba o Danger de 0 a 5 para inimigos mais fortes e recompensas melhores, ou cont
 - Uma loja após cada round, com armas, equipamentos e itens de cura.
 - Uma árvore de habilidades para cada pinguim, e cartas de subida de nível durante a partida.
 - Danger 0–5, e rounds infinitos depois da campanha.
-- Chefes a cada 10 rounds.
+- Chefes a cada 5 rounds.
 - Três slots de save.
 - Gore com interruptor: máximo, reduzido ou gosma verde.
 - Inglês, Português (BR), Espanhol e Chinês simplificado.
@@ -123,7 +123,7 @@ Sube el Danger de 0 a 5 para enemigos más fuertes y mejores recompensas, o sigu
 - Una tienda después de cada round, con armas, equipo y objetos de curación.
 - Un árbol de habilidades para cada pingüino, y cartas de subida de nivel durante la partida.
 - Danger 0–5, y rounds infinitos después de la campaña.
-- Jefes cada 10 rounds.
+- Jefes cada 5 rounds.
 - Tres slots de guardado.
 - Gore con interruptor: máximo, reducido o gosma verde.
 - Inglés, portugués (BR), español y chino simplificado.

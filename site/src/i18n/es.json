@@ -113,7 +113,7 @@
 			"f2": "Seis ranuras de arma automáticas, cuatro tiers cada una, bonos de set y fusión.",
 			"f3": "Tienda del mercader tras cada round: reroll, lock, venta y fusión.",
 			"f4": "Nivel 1–100 por héroe que nunca se reinicia, y Danger 0–5 desbloqueado por héroe.",
-			"f5": "Jefe cada 10 rounds y rounds infinitos, sin pantalla de victoria.",
+			"f5": "Jefe cada 5 rounds, campaña de 50 rounds y después rounds infinitos, sin pantalla de victoria.",
 			"f6": "Mando, teclado y táctil; cuatro idiomas; sin voces."
 		},
 		"shots": {

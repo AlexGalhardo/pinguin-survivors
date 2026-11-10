@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Pinguin Survivors is a Brotato-style arena survivor roguelite in pixel art. Jack (melee), Bob (firearms) and Lucia (magic) are the last three penguins of a zombie apocalypse in Antarctica. Rounds are timed, up to six weapons fire on their own, a shop opens after every round, a boss shows up every ten rounds, and hero progress (level 1–100) never resets.
+Pinguin Survivors is a Brotato-style arena survivor roguelite in pixel art. Jack (melee), Bob (firearms) and Lucia (magic) are the last three penguins of a zombie apocalypse in Antarctica. Rounds are timed, up to six weapons fire on their own, a shop opens after every round, a boss shows up every five rounds, and hero progress (level 1–100) never resets.
 
 The game is built with [Phaser 4](https://phaser.io), TypeScript, Vite, React and Tailwind CSS, and runs on Bun. It ships on Steam (Windows, via Electron) and Google Play (Android, via Capacitor), with a browser demo. Art is generated with [PixelLab](https://pixellab.ai) and audio with [ElevenLabs](https://elevenlabs.io).
 
@@ -39,11 +39,11 @@ The game is built with [Phaser 4](https://phaser.io), TypeScript, Vite, React an
 
 ## Features
 
-- Timed rounds (20 s → 60 s), elites every third round, a boss every tenth round, endless mode.
+- Timed rounds (30 s, +5 s each round), a 50-round campaign in five biomes, elites every third round, a boss every fifth round (ten different bosses, with area attacks marked on the ground), endless mode from round 51.
 - Six weapon slots, weapon classes and set bonuses, one I–V rarity scale (white to orange) with random affixes and fusion, a starting weapon per hero. Weapons visibly strike their target (lunge, recoil, throw, plant, cast).
 - Shop after every round in a Diablo 4 style (merchant NPC, four offers that say exactly what each purchase changes, reroll, lock, weapons, equipment and speed potions) with an in-run currency (Fish) and a persistent one (Pearls).
 - Stat cards on level-up, six exclusive cards per hero, a superpower unlocked at level 5.
-- Danger 0–5 per hero, 131 achievements, a passive skill tree per hero (Path of Exile 2 style, replaces the old workshop and stat points), FFXII-style potion gambits, game speed 1× to 4×.
+- Danger 0–5 per hero, 178 achievements, a passive skill tree per hero (Path of Exile 2 style, replaces the old workshop and stat points), FFXII-style potion gambits, game speed 1×, 1.5× and 2×.
 - DOOM-grade gore with a toggle, dynamic lights, hit-stop and screen shake.
 - English, Brazilian Portuguese, Spanish and Simplified Chinese.
 

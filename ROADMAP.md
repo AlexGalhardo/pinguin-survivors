@@ -35,9 +35,16 @@
 | 2026-12-15 | 🛑 Conta Steamworks criada; página da Steam em rascunho | dev |
 | 2026-12-20 | 6 slots, loja, cartas de level-up, Fish/Pérolas jogáveis com placeholders | M2 → `0.0.13` |
 | 2027-01-10 | **Inscrição no Next Fest fecha (23:59 PST)**; UI React completa; Danger 0–5 | M3 → `0.1.0` |
-| 2027-01-17 | Arte top-down (chão, bordas, props, lojista, tiers) e áudio da loja | M4 → `0.2.0` (Latest) |
-| 2026-11-08 | Raridade I–V, Loja e Pausa estilo Diablo 4, velocidade 4×, voadores e ataques animados, lojista (fora da ordem dos marcos, pedidos do desenvolvedor) | `0.3.0` (Latest) |
-| 2026-11-08 | Árvore de habilidades por herói (ADR-019), armas atacando o alvo, obstáculos grandes, HUD sem ícones de arma, design system | `0.4.0` (em preparação) |
+| 2027-01-17 | Arte top-down (chão, bordas, props, lojista, tiers) e áudio da loja | M4 → `0.2.0` |
+| 2026-11-08 | Raridade I–V, Loja e Pausa estilo Diablo 4, velocidade 4×, voadores e ataques animados, lojista (fora da ordem dos marcos, pedidos do desenvolvedor) | `0.3.0` |
+| 2026-11-08 | Árvore de habilidades por herói (ADR-019), armas atacando o alvo, obstáculos grandes, HUD sem ícones de arma, design system | `0.4.0` |
+| 2026-11-08 | Árvore de habilidades editável no pause e na loja (nós ranqueados até 5 pontos), poções repostas a cada round, Danger 0 fácil, site com `/play/` | `0.5.0` |
+| 2026-11-09 | Loja de evolução com raridades I–V, Marcas de Elite e Núcleos de Boss (ADR-021); poções começam vazias e recarregam com abates | `0.6.0` |
+| 2026-11-09 | Loja de evolução no simulador, escala de inimigos mais íngreme por ciclo de 10 rounds, raridade IV a partir do round 11 e V a partir do 21 na loja | `0.7.0` |
+| 2026-11-09 | Boss a cada 5 rounds e rounds longos sem teto | `0.7.1` |
+| 2026-11-09 | Vida dos bosses dobra a cada boss | `0.7.2` |
+| 2026-11-10 | Estilo D (Diablo 4 orgânico) em todas as telas e no HUD, fonte Cinzel nos títulos, cartas de level-up com teclas 1–4 e R (ADR-022) | `0.8.0` (Latest) |
+| — | Campanha de 50 rounds em 5 biomas e 10 bosses com ataques em área (ADR-023, SDD-016), velocidade 1×/1,5×/2× com dois relógios (ADR-024, SDD-018), elites com HP ×4/×6, ambiente e fogueiras por bioma (SDD-017), Fish por abate reduzido | `0.9.0` (em preparação) |
 | 2027-01-25 | Build da demo enviado à Steam (data de terceiros; 08/02 é a oficial para itens em revisão) | M5 |
 | 2027-02-08 | **Itens do Next Fest em revisão**; site no ar com `/demo`; Electron Windows | M5 → `0.1.2`–`0.1.3` |
 | 2027-02-22 → 03-01 | **Steam Next Fest** | M6 → `0.1.4`+ hotfixes |

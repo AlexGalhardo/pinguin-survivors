@@ -1,6 +1,6 @@
 # Arquitetura técnica — Pinguin Survivors
 
-> **Versão** 2.4 · **Data** 2026-11-08 · Estado atual do código (0.4.0 em preparação: UI só React, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.5 · **Data** 2026-11-10 · Estado atual do código (release 0.8.0; 0.9.0 em preparação: UI só React no Estilo D, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4, campanha de 50 rounds em 5 biomas, velocidade 1×/1,5×/2×). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 

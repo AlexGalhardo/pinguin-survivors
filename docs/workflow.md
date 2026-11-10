@@ -74,7 +74,7 @@ Tipos: `feat` (MINOR), `fix` (PATCH), `docs`, `style`, `refactor`, `perf`, `test
 Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 
 - **SemVer sem pré-release**: `0.0.x` = alpha (refatoração top-down até a demo jogável), `0.1.x` = beta (demo pública, Next Fest, polimento), **`1.0.0`** = lançamento comercial; depois MAJOR (save incompatível ou remoção de conteúdo), MINOR (conteúdo/feature), PATCH (correções e balanceamento).
-- `package.json.version` = tag sem `v`. Versão atual: **0.4.0** publicada (Latest).
+- `package.json.version` = tag sem `v`. Versão atual: **0.8.0** publicada (Latest).
 - **Release como merge rebase**: o corpo da release lista **cada micro-commit** desde a tag anterior (uma linha por commit, agrupada por tipo), como se a branch tivesse sido integrada com rebase. Um super commit apaga essa história e é proibido.
 - **Release GitHub** por tag: título `vX.Y.Z`; corpo em grupos Keep a Changelog (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`, só os não vazios), linhas `- **escopo:** Descrição ([abc1234](…/commit/sha))`; `0.x` marcados **pre-release**.
 - **Fluxo ao fechar um marco**: micro-commits → `docs(roadmap): close <marco>` → `bun scripts/release.ts X.Y.Z` (gates, bump, CHANGELOG, commit `chore(release): X.Y.Z`, tag anotada, `git push --follow-tags`, `gh release create`). Detalhes em [sdds/SDD-011](sdds/SDD-011-releases-vukem.md).

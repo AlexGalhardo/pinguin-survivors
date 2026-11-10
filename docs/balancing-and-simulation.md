@@ -1,6 +1,6 @@
 # Balanceamento e simulação — Pinguin Survivors
 
-> **Versão** 2.10 · **Data** 2026-11-08 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
+> **Versão** 2.11 · **Data** 2026-11-10 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).
 
 ## Índice
@@ -22,7 +22,7 @@
 ### A1. Filosofia
 
 1. **Curva de poder, não parede**: o jogador deve sentir que fica forte; a morte vem de decisões ruins de build ou de posicionamento, não de um pico de dificuldade arbitrário.
-2. **Jogador novo morre entre os rounds 8 e 20** no Danger 1 sem meta-progressão; **jogador com level 10 e a árvore de habilidades** (alocação automática) passa do boss 20; **jogador level 20+** só morre na volta do endless (round 31+). Esses três perfis definem tudo (§A4).
+2. **Jogador novo morre entre os rounds 8 e 20** no Danger 1 sem meta-progressão; **jogador com level 10 e a árvore de habilidades** (alocação automática) passa do boss 20; **jogador level 20+** só morre no endless (round 51+). Esses três perfis definem tudo (§A4).
 3. **Nenhuma arma/classe dominante**: em 100 runs simuladas, nenhuma arma pode aparecer em mais de 35% das builds finais nem menos de 3%.
 4. **Economia fechada por run**: Fish ganho ≈ Fish gasto; reroll é luxo (≤ 15% do gasto médio).
 5. **Medir antes de mexer**: toda mudança de número vem com relatório antes/depois (sim ou bot).
@@ -109,7 +109,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 
 - **6 slots iguais e tiers I–IV** (ADR-005): o DPS do herói passa a crescer pela loja, não por cartas de evolução. A Parte B §6 precisa de uma tabela por arma × tier; ponto de partida: tier I = valores atuais das secundárias; tier IV ≈ 3,5× o tier I em DPS (Brotato escala ~1,6×/tier, aqui 4 tiers em 20 rounds).
 - **Loja e Fish da run** (ADR-006/007): a renda de Fish por round define o ritmo de compra. Alvo: 1 compra de arma a cada ~2 rounds até o round 12, 1 fusão a cada ~4 rounds depois.
-- **Arena quadrada** (ADR-003): densidade de inimigos por área cai conforme a arena cresce; `spawnRate(N)` precisa ser reavaliado com a área (`side²`). Hipótese inicial: manter `spawnRate` e aceitar menor densidade no round 31+ como alívio antes da volta do endless.
+- **Arena quadrada** (ADR-003): densidade de inimigos por área cai conforme a arena cresce; `spawnRate(N)` precisa ser reavaliado com a área (`side²`). Hipótese inicial: manter `spawnRate` e aceitar menor densidade no round 31+ (arena já no teto de 40×40) como alívio.
 - **Danger 0–5** (ADR-008): substitui EASY/NORMAL/HARD; multiplicadores iniciais em SDD-005 RF-01. **Danger 0 = 0,5×** de vida e dano dos inimigos (2026-11-08, pedido do desenvolvedor; antes 0,8×); velocidade 0,95× e drops 0,9× seguem.
 - **Cartas só de stat** (4 opções): a curva de stats por round sobe (mais cartas de stat por run). Compensar reduzindo o multiplicador de raridade em ~10% se o #1 estourar.
 - **Sem arma assinada**: multiplicadores por classe do herói continuam; o Jack com 6 armas melee tem +30% em tudo: observar meta #5.

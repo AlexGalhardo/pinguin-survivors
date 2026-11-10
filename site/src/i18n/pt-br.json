@@ -113,7 +113,7 @@
 			"f2": "Seis slots de arma automáticos, quatro tiers cada, bônus de set e fusão.",
 			"f3": "Loja do mercador após cada round: reroll, lock, venda e fusão.",
 			"f4": "Nível 1–100 por herói que nunca reinicia, e Danger 0–5 liberado por herói.",
-			"f5": "Chefe a cada 10 rounds e rounds infinitos, sem tela de vitória.",
+			"f5": "Chefe a cada 5 rounds, campanha de 50 rounds e depois rounds infinitos, sem tela de vitória.",
 			"f6": "Controle, teclado e toque; quatro idiomas; sem dublagem."
 		},
 		"shots": {
