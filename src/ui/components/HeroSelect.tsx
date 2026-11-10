@@ -7,12 +7,13 @@ import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import type { WeaponId } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
 import { resolveWeapon } from '../../logic/weapons';
-import { useMedia } from '../compact';
+import { useCompact, useUiScale } from '../compact';
 import { AtlasIcon, weaponFrames } from './AtlasIcon';
 import { Btn } from './Btn';
 import { HeroSprite } from './HeroSprite';
 import { weaponName } from './Hud';
 import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
+import { Ornament } from './Ornament';
 import { Filet, Hint, StatRow } from './Panel';
 
 export interface HeroSelectHero {
@@ -52,31 +53,36 @@ const UNLOCK_HINT: Record<HeroId, I18nKey | null> = {
 };
 
 const pct = (v: number): string => `${Math.round(v * 100)}%`;
+// Adverse changes use crit (orange): blood is reserved for bold text of 24 px or more.
 const bonus = (mul: number): { text: string; tone: string } => {
 	const n = Math.round((mul - 1) * 100);
 	return {
 		text: `${n > 0 ? '+' : ''}${n}%`,
-		tone: n > 0 ? 'text-xp' : n < 0 ? 'text-blood' : 'text-text-light',
+		tone: n > 0 ? 'text-xp' : n < 0 ? 'text-crit' : 'text-text-light',
 	};
 };
 
-/** One block of the hero sheet: gold title, filet, content. */
-function Section(props: { title: string; children: ReactNode }): ReactElement {
+/** One block of the screen: gold title with a diamond, filet, content. No box. */
+function Section(props: { title: string; children: ReactNode; bare?: boolean }): ReactElement {
 	return (
-		<section className="flex min-w-0 flex-col gap-1.5 border border-snow-dark bg-night/60 p-3">
-			<h3 className="m-0 font-title text-[0.95em] font-bold tracking-wider text-crit uppercase">
-				{props.title}
-			</h3>
-			<Filet />
+		<section className="flex min-w-0 flex-col gap-1">
+			{!props.bare && (
+				<>
+					<h3 className="m-0 flex items-center gap-2 text-section font-black tracking-section text-gold-bright uppercase">
+						<Ornament kind="diamond" size={10} />
+						{props.title}
+					</h3>
+					<Filet />
+				</>
+			)}
 			{props.children}
 		</section>
 	);
 }
 
-/** Base stats and the superpower of a hero (data/heroes, data/superpowers). */
-function HeroSheet({ hero }: { hero: HeroId }): ReactElement {
+/** Base stats of a hero (data/heroes), in compact pairs. */
+function StatsSection({ hero, bare }: { hero: HeroId; bare?: boolean }): ReactElement {
 	const def = HEROES[hero];
-	const sup = SUPERPOWERS[hero];
 	const row = (key: I18nKey, value: string, accent?: string): ReactElement => (
 		<StatRow
 			key={key}
@@ -90,76 +96,96 @@ function HeroSheet({ hero }: { hero: HeroId }): ReactElement {
 		return row(`gstat.tagMul.${tag}` as I18nKey, b.text, b.tone);
 	});
 	return (
-		<>
-			<Section title={t('select.sheet.stats')}>
-				<div className="grid grid-cols-1 gap-x-6 gap-y-1 min-[1500px]:grid-cols-2">
-					{row('gstat.maxHp', String(def.hp))}
-					{row('gstat.regen', `${def.regen}/s`)}
-					{row('gstat.armor', String(def.armor))}
-					{row('gstat.moveSpeed', String(def.moveSpeed))}
-					{row('gstat.crit', pct(def.crit))}
-					{row('gstat.critDamage', pct(def.critDamage))}
-					{row('gstat.dodge', pct(def.dodge))}
-					{row('gstat.parry', pct(def.parry))}
-					{tags}
-					{(['fire', 'earth', 'ice', 'energy'] as const).map((el) =>
-						row(`gstat.resist.${el}` as I18nKey, pct(def.resist[el])),
-					)}
-				</div>
-			</Section>
-			<Section title={`${t('select.sheet.super')}: ${t(`super.${sup.id}.name` as I18nKey)}`}>
-				<p className="m-0">
-					{t(`super.${sup.id}.desc` as I18nKey, {
-						duration: sup.duration,
-						mul: sup.damageMul,
-						n: sup.explosions ?? 0,
-					})}
-				</p>
-				<Hint>{t('select.superUnlock', { n: SUPER.unlockLevel })}</Hint>
-			</Section>
-		</>
+		<Section title={t('select.sheet.stats')} bare={bare}>
+			<div className="grid grid-cols-2 gap-x-6">
+				{row('gstat.maxHp', String(def.hp))}
+				{row('gstat.regen', `${def.regen}/s`)}
+				{row('gstat.armor', String(def.armor))}
+				{row('gstat.moveSpeed', String(def.moveSpeed))}
+				{row('gstat.crit', pct(def.crit))}
+				{row('gstat.critDamage', pct(def.critDamage))}
+				{row('gstat.dodge', pct(def.dodge))}
+				{row('gstat.parry', pct(def.parry))}
+				{tags}
+				{(['fire', 'earth', 'ice', 'energy'] as const).map((el) =>
+					row(`gstat.resist.${el}` as I18nKey, pct(def.resist[el])),
+				)}
+			</div>
+		</Section>
+	);
+}
+
+/** Superpower of a hero (data/superpowers). */
+function SuperSection({ hero }: { hero: HeroId }): ReactElement {
+	const sup = SUPERPOWERS[hero];
+	return (
+		<Section title={`${t('select.sheet.super')}: ${t(`super.${sup.id}.name` as I18nKey)}`}>
+			<p className="m-0 text-body">
+				{t(`super.${sup.id}.desc` as I18nKey, {
+					duration: sup.duration,
+					mul: sup.damageMul,
+					n: sup.explosions ?? 0,
+				})}
+			</p>
+			<Hint>{t('select.superUnlock', { n: SUPER.unlockLevel })}</Hint>
+		</Section>
 	);
 }
 
 /** The picked starting weapon: icon, what it does and its tier I numbers. */
-function WeaponSheet({ weapon }: { weapon: string }): ReactElement {
+function WeaponSection({ weapon }: { weapon: string }): ReactElement {
 	const w = resolveWeapon({ id: weapon as WeaponId, tier: 1 });
 	return (
 		<Section title={t('select.sheet.weapon')}>
 			<div className="flex items-center gap-3">
 				<AtlasIcon frames={weaponFrames(weapon, 1)} size={64} />
 				<div className="min-w-0">
-					<div className="font-title text-[1.1em] font-bold">{weaponName(weapon)}</div>
+					<div className="font-title text-item font-bold">{weaponName(weapon)}</div>
 					<Hint>{t(`weapon.behavior.${w.behavior}` as I18nKey)}</Hint>
 				</div>
 			</div>
-			<StatRow label={t('weapon.stat.damage')} value={w.damage} />
-			<StatRow label={t('weapon.stat.rate')} value={(1 / w.cooldown).toFixed(1)} />
-			<StatRow label={t('weapon.stat.range')} value={w.range} />
+			<div className="flex flex-wrap gap-x-6">
+				<StatRow label={t('weapon.stat.damage')} value={w.damage} />
+				<StatRow label={t('weapon.stat.rate')} value={(1 / w.cooldown).toFixed(1)} />
+				<StatRow label={t('weapon.stat.range')} value={w.range} />
+			</div>
 		</Section>
 	);
 }
 
-/** What a Danger level changes, as rows. */
-function DangerSheet({ danger }: { danger: Danger }): ReactElement {
+/** What a Danger level changes, in pairs. */
+function DangerSection({ danger }: { danger: Danger }): ReactElement {
 	const m = DANGER[danger];
 	const mul = (v: number): string => `×${v}`;
 	const worse = (v: number): string =>
-		v > 1 ? 'text-blood' : v < 1 ? 'text-xp' : 'text-text-light';
+		v > 1 ? 'text-crit' : v < 1 ? 'text-xp' : 'text-text-light';
 	return (
 		<Section title={t('select.sheet.danger', { n: danger })}>
-			<StatRow label={t('select.dm.hp')} value={mul(m.hp)} accent={worse(m.hp)} />
-			<StatRow label={t('select.dm.dmg')} value={mul(m.dmg)} accent={worse(m.dmg)} />
-			<StatRow label={t('select.dm.speed')} value={mul(m.speed)} accent={worse(m.speed)} />
-			<StatRow
-				label={t('select.dm.drops')}
-				value={mul(m.drops)}
-				accent={m.drops > 1 ? 'text-xp' : m.drops < 1 ? 'text-blood' : 'text-text-light'}
-			/>
-			<StatRow label={t('select.dm.waves')} value={m.extraWaves} />
+			<div className="grid grid-cols-2 gap-x-6">
+				<StatRow label={t('select.dm.hp')} value={mul(m.hp)} accent={worse(m.hp)} />
+				<StatRow label={t('select.dm.dmg')} value={mul(m.dmg)} accent={worse(m.dmg)} />
+				<StatRow
+					label={t('select.dm.speed')}
+					value={mul(m.speed)}
+					accent={worse(m.speed)}
+				/>
+				<StatRow
+					label={t('select.dm.drops')}
+					value={mul(m.drops)}
+					accent={m.drops > 1 ? 'text-xp' : m.drops < 1 ? 'text-crit' : 'text-text-light'}
+				/>
+				<StatRow label={t('select.dm.waves')} value={m.extraWaves} />
+			</div>
 		</Section>
 	);
 }
+
+type SheetTab = 'stats' | 'super' | 'weapon';
+const SHEET_TABS: readonly { id: SheetTab; label: I18nKey }[] = [
+	{ id: 'stats', label: 'select.sheet.stats' },
+	{ id: 'super', label: 'select.sheet.super' },
+	{ id: 'weapon', label: 'select.sheet.weapon' },
+];
 
 /** Hero, Danger (0..5, capped by what the hero unlocked) and starting weapon, then start. */
 export function HeroSelect({
@@ -172,8 +198,9 @@ export function HeroSelect({
 	const [heroId, setHeroId] = useState<HeroId>(data.heroes[0]?.id ?? 'jack');
 	const [danger, setDanger] = useState(0);
 	const [weaponIndex, setWeaponIndex] = useState(0);
-	// Whole-number sprite scale (pixel art): 160 px on tall screens, 80 px otherwise.
-	const tall = useMedia('(min-height: 860px)');
+	const [tab, setTab] = useState<SheetTab>('stats');
+	const compact = useCompact();
+	const uiScale = useUiScale();
 	const hero = data.heroes.find((h) => h.id === heroId);
 	if (!hero)
 		return (
@@ -190,6 +217,72 @@ export function HeroSelect({
 	const shownDanger = Math.min(danger, hero.maxDanger);
 	const weapon = hero.weapons[Math.min(weaponIndex, hero.weapons.length - 1)];
 	const step = (value: number, d: -1 | 1, len: number): number => (value + d + len) % len;
+	// Whole-number sprite scale (pixel art): 320 px at 1080p, 80 px on the phone.
+	const sprite = compact ? 1 : Math.max(1, Math.round(4 * uiScale));
+
+	const tabs = (
+		<div className="flex w-full justify-center gap-[3vw]">
+			{data.heroes.map((h) => {
+				const hint = UNLOCK_HINT[h.id];
+				const picked = h.id === heroId;
+				return (
+					<div key={h.id} className="flex flex-col items-center">
+						<Btn onActivate={() => pickHero(h.id)}>
+							<span
+								className={`font-title text-list font-bold tracking-wide ${
+									picked ? 'text-gold-bright' : h.unlocked ? '' : 'text-text-dim'
+								}`}
+							>
+								{t(`hero.${h.id}` as I18nKey).toUpperCase()}
+							</span>
+						</Btn>
+						{!h.unlocked && !compact && (
+							<span className="text-secondary text-text-light">
+								{h.demoLocked
+									? t('demo.fullGame')
+									: `${t('select.locked')}${hint ? ` · ${t(hint)}` : ''}`}
+							</span>
+						)}
+					</div>
+				);
+			})}
+		</div>
+	);
+
+	const picker = (
+		<>
+			<AdjustRow
+				label={
+					<span className="inline-flex items-center gap-2">
+						<AtlasIcon frames={[`icon.danger.${shownDanger}`]} size={32} />
+						{`${t('select.danger', { n: shownDanger })} · ${t('select.dangerBest', {
+							n: hero.bestByDanger[shownDanger] ?? 0,
+						})}`}
+					</span>
+				}
+				onPrev={() => setDanger(step(shownDanger, -1, hero.maxDanger + 1))}
+				onNext={() => setDanger(step(shownDanger, 1, hero.maxDanger + 1))}
+				disabled={!hero.unlocked}
+			/>
+			{weapon && (
+				<AdjustRow
+					label={t('select.weapon', { name: weaponName(weapon) })}
+					onPrev={() => setWeaponIndex(step(weaponIndex, -1, hero.weapons.length))}
+					onNext={() => setWeaponIndex(step(weaponIndex, 1, hero.weapons.length))}
+					disabled={!hero.unlocked}
+				/>
+			)}
+		</>
+	);
+
+	const portrait = (
+		<HeroSprite
+			hero={hero.id}
+			scale={sprite}
+			locked={!hero.unlocked}
+			title={t(`hero.${hero.id}` as I18nKey)}
+		/>
+	);
 
 	return (
 		<MenuScreen
@@ -206,7 +299,7 @@ export function HeroSelect({
 						}
 						disabled={!hero.unlocked || !weapon}
 						variant="primary"
-						className="min-w-52 text-[1.1em]"
+						className="min-w-52 text-cta"
 					>
 						{t('select.play')}
 					</Btn>
@@ -214,85 +307,60 @@ export function HeroSelect({
 				</>
 			}
 		>
-			<div className="grid w-full grid-cols-3 gap-[1.5vw]">
-				{data.heroes.map((h) => {
-					const hint = UNLOCK_HINT[h.id];
-					const picked = h.id === heroId;
-					return (
-						<Btn
-							key={h.id}
-							onActivate={() => pickHero(h.id)}
-							className={`flex flex-col items-center justify-center gap-1 border-2 py-2 ${
-								picked ? 'border-crit bg-crit/10' : 'border-snow-dark'
-							}`}
-						>
-							<HeroSprite
-								hero={h.id}
-								scale={tall ? 2 : 1}
-								locked={!h.unlocked}
-								title={t(`hero.${h.id}` as I18nKey)}
-							/>
-							<span className="font-title text-[1.4em] tracking-wide">
-								{t(`hero.${h.id}` as I18nKey).toUpperCase()}
-							</span>
-							<span className="text-[0.8em] font-normal text-text-dim">
-								{t(`role.${h.id}` as I18nKey)}
-							</span>
-							<span
-								className={`text-[0.85em] ${h.unlocked ? 'text-crit' : 'text-blood'}`}
-							>
-								{h.unlocked
-									? `${t('select.level', { n: h.level })} · ${t('select.best', { n: h.bestRound })}`
-									: h.demoLocked
-										? t('demo.fullGame')
-										: `${t('select.locked')}${hint ? ` · ${t(hint)}` : ''}`}
-							</span>
-						</Btn>
-					);
-				})}
-			</div>
-
-			<div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-3 min-[1100px]:grid-cols-2">
-				<div className="flex min-w-0 flex-col gap-3">
-					<HeroSheet hero={hero.id} />
+			{tabs}
+			{compact ? (
+				<div className="flex min-h-0 w-full flex-1 gap-3">
+					<div className="flex min-w-0 flex-1 flex-col gap-1">
+						<div className="flex gap-4">
+							{SHEET_TABS.map((x) => (
+								<Btn
+									key={x.id}
+									onActivate={() => setTab(x.id)}
+									className="pr-0! pl-0!"
+								>
+									<span
+										className={`whitespace-nowrap ${tab === x.id ? 'text-gold-bright' : ''}`}
+									>
+										{t(x.label)}
+									</span>
+								</Btn>
+							))}
+						</div>
+						{tab === 'stats' && <StatsSection hero={hero.id} bare />}
+						{tab === 'super' && <SuperSection hero={hero.id} />}
+						{tab === 'weapon' && weapon && <WeaponSection weapon={weapon} />}
+					</div>
+					<div className="flex w-[19rem] shrink-0 flex-col items-center gap-1 [&_.text-list]:text-body [&_.text-list]:tracking-normal">
+						{portrait}
+						{picker}
+					</div>
 				</div>
-				<div className="flex min-w-0 flex-col gap-3">
-					<AdjustRow
-						label={
-							<span className="inline-flex items-center gap-2">
-								<AtlasIcon frames={[`icon.danger.${shownDanger}`]} size={32} />
-								{`${t('select.danger', { n: shownDanger })} · ${t(
-									'select.dangerBest',
-									{
-										n: hero.bestByDanger[shownDanger] ?? 0,
-									},
-								)}`}
-							</span>
-						}
-						hint={t('select.hintDanger')}
-						onPrev={() => setDanger(step(shownDanger, -1, hero.maxDanger + 1))}
-						onNext={() => setDanger(step(shownDanger, 1, hero.maxDanger + 1))}
-						disabled={!hero.unlocked}
-					/>
-					<DangerSheet danger={shownDanger as Danger} />
-					{weapon && (
-						<>
-							<AdjustRow
-								label={t('select.weapon', { name: weaponName(weapon) })}
-								hint={t('select.hintWeapon')}
-								onPrev={() =>
-									setWeaponIndex(step(weaponIndex, -1, hero.weapons.length))
-								}
-								onNext={() =>
-									setWeaponIndex(step(weaponIndex, 1, hero.weapons.length))
-								}
-								disabled={!hero.unlocked}
-							/>
-							<WeaponSheet weapon={weapon} />
-						</>
-					)}
+			) : (
+				<div className="grid min-h-0 w-full flex-1 grid-cols-[1fr_auto_1.2fr] gap-[2vw]">
+					<div className="flex min-w-0 flex-col gap-3">
+						<StatsSection hero={hero.id} />
+						<SuperSection hero={hero.id} />
+					</div>
+					<div className="flex flex-col items-center gap-1">
+						{portrait}
+						{hero.unlocked && (
+							<>
+								<span className="text-body font-bold">
+									{t(`role.${hero.id}` as I18nKey)}
+								</span>
+								<span className="text-body font-bold text-crit">
+									{`${t('select.level', { n: hero.level })} · ${t('select.best', { n: hero.bestRound })}`}
+								</span>
+							</>
+						)}
+					</div>
+					<div className="flex min-w-0 flex-col gap-3">
+						{picker}
+						<DangerSection danger={shownDanger as Danger} />
+						{weapon && <WeaponSection weapon={weapon} />}
+					</div>
 				</div>
-			</div>
+			)}
 		</MenuScreen>
 	);
 }
