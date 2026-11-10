@@ -15,12 +15,6 @@ function MenuListItemView(props: {
 }): ReactElement {
 	const { item, selected } = props;
 	const f = useFocusable({ onActivate: () => props.onSelect(item.id), disabled: item.disabled });
-	// Text always starts 40 px in: the focus diamond (d-focus) and the selected marker live in that gutter.
-	const tone = item.disabled
-		? 'text-text-dim'
-		: selected
-			? 'text-gold-bright'
-			: 'text-text-light';
 	return (
 		<button
 			type="button"
@@ -29,8 +23,9 @@ function MenuListItemView(props: {
 			aria-current={selected ? 'true' : undefined}
 			data-selected={selected}
 			{...f.props}
-			// No Tailwind preflight, so reset the native button look here.
-			className={`d-focus relative flex min-h-[max(46px,calc(var(--spacing)*13.5))] w-full cursor-pointer appearance-none items-center border-0 bg-transparent py-1 pr-4 pl-10 text-left text-list font-bold tracking-list uppercase [font-family:inherit] data-[focused=true]:font-black disabled:cursor-not-allowed ${tone}`}
+			// Text starts 40 px in: the focus diamond and the selected marker live in that gutter.
+			// No Tailwind preflight, so the native button look is reset here.
+			className={`d-focus relative flex min-h-[max(46px,calc(var(--spacing)*13.5))] w-full cursor-pointer appearance-none items-center border-0 py-1 pr-[16px] pl-[40px] text-left text-list font-bold tracking-list uppercase [font-family:inherit] data-[focused=true]:font-black disabled:cursor-not-allowed disabled:text-text-dim`}
 		>
 			{selected && !f.focused && (
 				<Ornament kind="diamond" size={10} className="absolute left-0.5" />

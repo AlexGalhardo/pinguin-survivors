@@ -23,7 +23,17 @@ describe('theme.css (Style D tokens)', () => {
 	});
 
 	test('defines the d-* utilities', () => {
-		for (const c of ['vignette', 'glow', 'filet', 'chamfer', 'worn', 'focus']) {
+		for (const c of [
+			'vignette',
+			'glow',
+			'filet',
+			'chamfer',
+			'worn',
+			'focus',
+			'pad',
+			'cta',
+			'danger',
+		]) {
 			expect(css).toContain(`.d-${c}`);
 		}
 	});
