@@ -64,7 +64,14 @@ export const KEYS = {
 
 export const BIOMES = {
 	antarctica: { id: 'antarctica', tileVariants: 4, decoVariants: 4, decoDensity: 0.06 },
-	forest: { id: 'forest', tileVariants: 4, decoVariants: 4, decoDensity: 0.1 },
+	// Trees (variants 0-1) are packed at 2x in the atlas (selection.json scale 2): the collision circle follows.
+	forest: {
+		id: 'forest',
+		tileVariants: 4,
+		decoVariants: 4,
+		decoDensity: 0.1,
+		decoRadiusMul: [2, 2, 1, 1],
+	},
 	city: { id: 'city', tileVariants: 4, decoVariants: 4, decoDensity: 0.09 },
 	// Legacy biomes (endless mode): research station and ruined city keep their PixelLab atlas.
 	station: { id: 'station', tileVariants: 4, decoVariants: 3, decoDensity: 0.07 },

@@ -114,6 +114,8 @@ export interface PropLayout {
 	decoVariants: number;
 	/** Probability of a prop per tile. */
 	decoDensity: number;
+	/** Per-variant collision radius multiplier for art packed bigger than the base (default 1). */
+	decoRadiusMul?: readonly number[];
 }
 
 export interface Prop extends Obstacle {
@@ -141,7 +143,8 @@ export function propLayout(seed: number, layout: PropLayout, b: Bounds): Prop[] 
 			const x = tx + rng.range(0.25, 0.75) * t;
 			const y = ty + rng.range(0.25, 0.75) * t;
 			const r =
-				OBSTACLES.radiusByVariant[variant] ?? (OBSTACLES.radiusByVariant[0] as number);
+				(OBSTACLES.radiusByVariant[variant] ?? (OBSTACLES.radiusByVariant[0] as number)) *
+				(layout.decoRadiusMul?.[variant] ?? 1);
 			if (Math.hypot(x, y) < clear + r) continue;
 			const edge = Math.min(x - b.minX, b.maxX - x, y - b.minY, b.maxY - y);
 			if (edge < r + gap) continue;

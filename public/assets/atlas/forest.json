@@ -1,75 +1,75 @@
 {
 	"frames": {
+		"deco.forest.1": {
+			"frame": { "x": 0, "y": 0, "w": 72, "h": 84 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 72, "h": 84 },
+			"sourceSize": { "w": 72, "h": 84 }
+		},
+		"deco.forest.0": {
+			"frame": { "x": 73, "y": 0, "w": 52, "h": 74 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 52, "h": 74 },
+			"sourceSize": { "w": 52, "h": 74 }
+		},
 		"border.forest.0": {
-			"frame": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"frame": { "x": 126, "y": 0, "w": 64, "h": 64 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
 			"sourceSize": { "w": 64, "h": 64 }
 		},
 		"border.forest.1": {
-			"frame": { "x": 65, "y": 0, "w": 64, "h": 64 },
+			"frame": { "x": 191, "y": 0, "w": 64, "h": 64 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
 			"sourceSize": { "w": 64, "h": 64 }
 		},
 		"tile.forest.0": {
-			"frame": { "x": 130, "y": 0, "w": 64, "h": 64 },
+			"frame": { "x": 256, "y": 0, "w": 64, "h": 64 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
 			"sourceSize": { "w": 64, "h": 64 }
 		},
 		"tile.forest.1": {
-			"frame": { "x": 195, "y": 0, "w": 64, "h": 64 },
+			"frame": { "x": 321, "y": 0, "w": 64, "h": 64 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
 			"sourceSize": { "w": 64, "h": 64 }
 		},
 		"tile.forest.2": {
-			"frame": { "x": 260, "y": 0, "w": 64, "h": 64 },
+			"frame": { "x": 386, "y": 0, "w": 64, "h": 64 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
 			"sourceSize": { "w": 64, "h": 64 }
 		},
 		"tile.forest.3": {
-			"frame": { "x": 325, "y": 0, "w": 64, "h": 64 },
+			"frame": { "x": 451, "y": 0, "w": 64, "h": 64 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
 			"sourceSize": { "w": 64, "h": 64 }
 		},
-		"deco.forest.1": {
-			"frame": { "x": 390, "y": 0, "w": 36, "h": 42 },
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 42 },
-			"sourceSize": { "w": 36, "h": 42 }
-		},
 		"deco.forest.2": {
-			"frame": { "x": 427, "y": 0, "w": 45, "h": 40 },
+			"frame": { "x": 516, "y": 0, "w": 45, "h": 40 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 45, "h": 40 },
 			"sourceSize": { "w": 45, "h": 40 }
 		},
-		"deco.forest.0": {
-			"frame": { "x": 473, "y": 0, "w": 26, "h": 37 },
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": { "x": 0, "y": 0, "w": 26, "h": 37 },
-			"sourceSize": { "w": 26, "h": 37 }
-		},
 		"deco.forest.3": {
-			"frame": { "x": 500, "y": 0, "w": 42, "h": 36 },
+			"frame": { "x": 562, "y": 0, "w": 42, "h": 36 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 42, "h": 36 },
 			"sourceSize": { "w": 42, "h": 36 }
 		}
 	},
-	"meta": { "image": "forest.png", "size": { "w": 1024, "h": 64 }, "scale": "1" }
+	"meta": { "image": "forest.png", "size": { "w": 1024, "h": 128 }, "scale": "1" }
 }

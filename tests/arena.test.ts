@@ -97,6 +97,19 @@ describe('propLayout', () => {
 	});
 });
 
+describe('propLayout decoRadiusMul', () => {
+	it('scales the collision radius of the marked variants only', () => {
+		const b = arenaBounds(31);
+		const base = { decoVariants: 2, decoDensity: 0.2 };
+		const rs = (l: typeof base & { decoRadiusMul?: number[] }): Map<number, number> =>
+			new Map(propLayout(5, l, b).map((p) => [p.variant, p.r]));
+		const one = rs(base);
+		const big = rs({ ...base, decoRadiusMul: [2, 1] });
+		expect(big.get(0)).toBe((one.get(0) ?? 0) * 2);
+		expect(big.get(1)).toBe(one.get(1));
+	});
+});
+
 describe('tileVariant (RF-07)', () => {
 	it('is stable per (seed, tx, ty), in range, and mostly the plain variant', () => {
 		let plain = 0;

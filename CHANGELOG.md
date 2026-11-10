@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **art:** Forest (biome 2) trees, the pine and the dry tree, are drawn at twice their size: packed 2x with nearest-neighbor in the `forest` atlas, and their collision circle doubles (`decoRadiusMul`); logs and rocks are unchanged.
 - **game:** The campaign now has 50 rounds and 5 biomes (research station 31–40 and ruined city 41–50 are no longer endless-only); the endless starts at round 51 and each loop is 50 rounds (ADR-023, SDD-016).
 - **game:** A distinct boss every 5 rounds up to 50 (ten in total); from round 51 the boss is random among the ten.
 

@@ -706,11 +706,13 @@
 	},
 	"deco.forest.0": {
 		"src": "art-src/pixellab/images/prop.forest.0/11.png",
-		"group": "forest"
+		"group": "forest",
+		"scale": 2
 	},
 	"deco.forest.1": {
 		"src": "art-src/pixellab/images/prop.forest.1/22.png",
-		"group": "forest"
+		"group": "forest",
+		"scale": 2
 	},
 	"deco.forest.2": {
 		"src": "art-src/pixellab/images/prop.forest.2/11.png",
