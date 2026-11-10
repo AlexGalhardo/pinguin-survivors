@@ -141,6 +141,7 @@ describe('SaveSlots', () => {
 		fireEvent.click(del.getAllByText('DELETE')[0] as HTMLElement);
 		expect(log).toEqual([]);
 		expect(del.container.textContent).toContain('Delete slot 1?');
+		expect(document.activeElement?.textContent).toBe('CANCEL');
 		fireEvent.click(del.getByText('CONFIRM'));
 		expect(log).toEqual(['remove:0']);
 		cleanup();
@@ -391,7 +392,36 @@ describe('HeroScreen and lists', () => {
 			/>,
 		);
 		expect(b.container.textContent).toContain('1/2 unlocked');
-		expect(b.container.textContent).toContain('Kill 100  ·  40%');
+		expect(b.container.textContent).toContain('40%');
+		fireEvent.focus(b.getByText('Slayer II'));
+		expect(b.container.textContent).toContain('Kill 100');
+		cleanup();
+	});
+
+	test('long lists page with PageDown and the pager buttons', () => {
+		const rows = Array.from({ length: 20 }, (_, i) => ({
+			id: `a${i}`,
+			name: `Name ${i}`,
+			description: 'd',
+			unlocked: false,
+			progress: 0,
+		}));
+		const a = render(
+			<Router
+				view={{
+					screen: 'achievements',
+					data: { done: 0, total: 20, points: 0, rows },
+					actions: { extras: () => {}, back: () => {} },
+				}}
+			/>,
+		);
+		expect(a.container.textContent).toContain('PAGE 1 / 3');
+		expect(a.queryByText('Name 8')).toBeNull();
+		fireEvent.keyDown(window, { code: 'PageDown' });
+		expect(a.container.textContent).toContain('PAGE 2 / 3');
+		expect(a.getAllByText('Name 8').length).toBeGreaterThan(0);
+		fireEvent.click(a.getByLabelText('Previous page'));
+		expect(a.container.textContent).toContain('PAGE 1 / 3');
 		cleanup();
 	});
 });
