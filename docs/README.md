@@ -6,7 +6,8 @@
 |---|---|
 | [gdd.md](gdd.md) | **Game Design Document**: pitch, loop, arena, heróis, armas (6 slots), loja, cartas, economia, danger, inimigos, UI, demo |
 | [visual.md](visual.md) | **Art Bible**: direção de arte, escala, personagens, armas, arena, VFX, UI, pipeline PixelLab, chaves, orçamento, registro de produção |
-| [design-system.md](design-system.md) | **Design system da UI**: cor (papéis, raridade, contraste), tipografia, espaçamento, molduras, componentes, estados, responsividade, movimento |
+| [design-system.md](design-system.md) | **Design system da UI v2 (Estilo D, Diablo 4 orgânico)**: tokens de cor, tipografia, espaçamento, elevação e ornamentos; componentes, estados, responsividade, movimento e `@theme` do Tailwind |
+| [wireframes/](wireframes/README.md) | Wireframes das 16 telas nos estilos A–D (`.fig` do OpenPencil) e especificação de implementação de cada tela no Estilo D, com SVGs em `wireframes/d4/` |
 | [audio.md](audio.md) | **Direção de Som**: direção, engenharia, catálogo e prompts de SFX e música, pendências, orçamento ElevenLabs |
 | [architecture.md](architecture.md) | Stack, camadas, mundo/arena, React sobre o canvas, pastas, princípios, tela/zoom, performance, persistência, builds, debug |
 | [balancing-and-simulation.md](balancing-and-simulation.md) | Metodologia de balanceamento (dev e pós-1.0), números e fórmulas (espelho de `src/data`), histórico de calibração |
@@ -17,6 +18,6 @@
 | [site.md](site.md) | Site comercial: objetivo, mensagem, estrutura da landing, copy, demo, trailer, SEO, hospedagem, checklist |
 | [marketing/trailer-script.md](marketing/trailer-script.md) | Roteiro do trailer (≤ 2 min): beats, planos com URLs de debug, textos EN e música |
 | [marketing/steam-page.md](marketing/steam-page.md) | Página da Steam: descrição curta e longa, features, tags e requisitos (TBD) nos 4 idiomas |
-| [adrs/](adrs/README.md) | Architecture Decision Records (ADR-000 histórico, ADR-001…019) |
-| [sdds/](sdds/README.md) | Specs de implementação (SDD-001…013) com critérios de aceite verificáveis |
+| [adrs/](adrs/README.md) | Architecture Decision Records (ADR-000 histórico, ADR-001…022) |
+| [sdds/](sdds/README.md) | Specs de implementação (SDD-001…015) com critérios de aceite verificáveis |
 | `reports/` | Relatórios de balanceamento, QA e playtest gerados pelos scripts e pelas skills `ccgs-*` |
