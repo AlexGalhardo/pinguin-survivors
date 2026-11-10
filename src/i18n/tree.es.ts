@@ -86,4 +86,8 @@ export const treeEs = {
 	'tree.n.overcharge': 'Sobrecarga',
 	'tree.n.staticField': 'Campo Estático',
 	'tree.n.stormcaller': 'Invocadora de Tormentas',
+	'list.page': 'PÁGINA {n} / {total}',
+	'list.prev': 'Página anterior',
+	'list.next': 'Página siguiente',
+	'list.done': 'obtenido',
 } as const;

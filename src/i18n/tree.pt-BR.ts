@@ -86,4 +86,8 @@ export const treePtBR = {
 	'tree.n.overcharge': 'Sobrecarga',
 	'tree.n.staticField': 'Campo Estático',
 	'tree.n.stormcaller': 'Invocadora da Tempestade',
+	'list.page': 'PÁGINA {n} / {total}',
+	'list.prev': 'Página anterior',
+	'list.next': 'Próxima página',
+	'list.done': 'obtida',
 } as const;
