@@ -6,7 +6,7 @@ import type { HeroId } from '../config/constants';
  * hit radii (`EnemyDef.radius`) and every gameplay number stay as they were.
  *
  * Targets in world units (1 tile = 64): hero 72 (~1.1 tile), common enemies ~60 (0.8x the hero),
- * elites x1.25 / x1.4 on top (`ROUNDS.elite`), bosses 2-3x the hero.
+ * elites x2.5 / x2.8 on top (`ROUNDS.elite`), bosses 2-3x the hero.
  */
 export const HERO_SPRITE_SCALE: Readonly<Record<HeroId, number>> = {
 	jack: 1,

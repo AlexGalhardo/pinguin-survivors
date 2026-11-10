@@ -1,6 +1,6 @@
 /** Round rules (docs/balancing-and-simulation.md §1–2). */
 export const ROUNDS = {
-	firstDuration: 20,
+	firstDuration: 30,
 	durationStep: 5,
 	/** Biome and scaling block: Antarctica 1–10, forest 11–20, city 21–30, station 31–40, ruins 41–50 (ADR-023), then endless blocks of 10 from 51. */
 	biomeRounds: 10,
@@ -14,9 +14,10 @@ export const ROUNDS = {
 	orangeFrom: 11,
 	purpleShare: 0.08,
 	orangeShare: 0.04,
+	/** Elites: double HP and double size (SDD-016 RF-09); the hit radius scales with `scale`. */
 	elite: {
-		purple: { hp: 2, damage: 2, scale: 1.25 },
-		orange: { hp: 3, damage: 3, scale: 1.4 },
+		purple: { hp: 4, damage: 2, scale: 2.5 },
+		orange: { hp: 6, damage: 3, scale: 2.8 },
 	},
 	scaling: {
 		hpPerRound: 0.15,
