@@ -295,6 +295,38 @@ describe('DemoEnd', () => {
 		cleanup();
 	});
 
+	test('ignores input during the grace window', async () => {
+		const { DemoEnd } = await import('../../src/ui/components/DemoEnd');
+		inputGrace.ms = 60;
+		const calls: string[] = [];
+		const { getByText } = render(
+			<DemoEnd
+				data={{
+					won: true,
+					round: 10,
+					kills: 1,
+					seconds: 5,
+					damage: 1,
+					bobLocked: false,
+					wishlistUrl: 'x',
+				}}
+				actions={{
+					wishlist: () => calls.push('wishlist'),
+					playAgain: () => {},
+					menu: () => calls.push('menu'),
+				}}
+			/>,
+		);
+		fireEvent.click(getByText('WISHLIST ON STEAM'));
+		key('Escape');
+		expect(calls).toEqual([]);
+		await new Promise((r) => setTimeout(r, 90));
+		fireEvent.click(getByText('WISHLIST ON STEAM'));
+		expect(calls).toEqual(['wishlist']);
+		inputGrace.ms = 0;
+		cleanup();
+	});
+
 	test('a lost demo hides the teaser when Bob is already unlocked', async () => {
 		const { DemoEnd } = await import('../../src/ui/components/DemoEnd');
 		const { container } = render(
