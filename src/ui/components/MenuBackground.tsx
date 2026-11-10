@@ -50,7 +50,7 @@ export function MenuBackground(): ReactElement {
 				className={`absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2 [image-rendering:pixelated] ${scale > 0 ? '' : 'invisible'}`}
 			/>
 			<div className="absolute inset-0 bg-night/30" />
-			<div className="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-night/70 to-transparent" />
+			<div className="absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-night/90 via-night/70 to-transparent" />
 		</div>
 	);
 }
