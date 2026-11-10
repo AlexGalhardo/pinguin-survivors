@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **game:** The campaign now has 50 rounds and 5 biomes (research station 31–40 and ruined city 41–50 are no longer endless-only); the endless starts at round 51 and each loop is 50 rounds (ADR-023, SDD-016).
+- **game:** A distinct boss every 5 rounds up to 50 (ten in total); from round 51 the boss is random among the ten.
+
+### Added
+
+- **game:** Five new bosses (Leopard Seal Matriarch, Rotten Treant, Hive Queen, Drowned Diver, Plague Hierophant) with names and descriptions in the 4 languages; sprite scale entries are provisional until the art lands.
+- **game:** Bosses telegraph four area attacks with red marks on the ground before they hurt: a rain of circles, expanding rings with a safe gap, beams in two volleys and a checkerboard floor (SDD-016).
+- **docs:** SDD-016, ADR-023 and roadmap tasks T7.16–T7.19; GDD and balancing docs updated for the 50-round campaign.
+
 ## [0.8.0] - 2026-11-10
 
 ### Added

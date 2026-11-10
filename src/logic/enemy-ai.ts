@@ -1,4 +1,4 @@
-import type { BossProfile, EnemyDef } from '../data/enemies';
+import type { BossProfile, EnemyDef, HazardKind } from '../data/enemies';
 
 /** Timings of special behaviors (docs/gdd.md §11). */
 export const AI = {
@@ -19,6 +19,7 @@ export type AiAction =
 	| 'summon'
 	| 'volley'
 	| 'pool'
+	| 'hazard'
 	| null;
 
 export interface AiState {
@@ -30,6 +31,9 @@ export interface AiState {
 	roarCd: number;
 	volleyCd: number;
 	poolCd: number;
+	hazardCd: number;
+	/** Index of the next area attack in the boss `hazards` rotation. */
+	hazardIdx: number;
 	/** What the current wind-up leads to. */
 	pending: 'swipe' | 'charge' | null;
 	chargeMul: number;
@@ -45,6 +49,8 @@ export function newAi(def?: EnemyDef): AiState {
 		roarCd: b?.roarEvery ?? 0,
 		volleyCd: b?.volleyEvery ?? 0,
 		poolCd: b?.poolEvery ?? 0,
+		hazardCd: b?.hazardEvery ?? 0,
+		hazardIdx: 0,
 		pending: null,
 		chargeMul: 1,
 	};
@@ -125,6 +131,11 @@ function chargeCycle(
 	}
 }
 
+/** Next area attack of the boss rotation (call when the 'hazard' action fires). */
+export function nextHazard(b: BossProfile, ai: AiState): HazardKind {
+	return b.hazards[ai.hazardIdx++ % b.hazards.length] as HazardKind;
+}
+
 /** A timer of 0 in the profile means the boss never uses that attack. */
 function due(every: number, left: number): boolean {
 	return every > 0 && left <= 0;
@@ -135,6 +146,7 @@ function bossStep(def: EnemyDef, b: BossProfile, ai: AiState, dist: number, dt: 
 	ai.roarCd -= dt;
 	ai.volleyCd -= dt;
 	ai.poolCd -= dt;
+	ai.hazardCd -= dt;
 	if (ai.mode === 'move') {
 		if (due(b.roarEvery, ai.roarCd)) {
 			ai.roarCd = b.roarEvery;
@@ -147,6 +159,10 @@ function bossStep(def: EnemyDef, b: BossProfile, ai: AiState, dist: number, dt: 
 		if (due(b.poolEvery, ai.poolCd)) {
 			ai.poolCd = b.poolEvery;
 			return { move: 'seek', action: 'pool' };
+		}
+		if (b.hazards.length > 0 && due(b.hazardEvery, ai.hazardCd)) {
+			ai.hazardCd = b.hazardEvery;
+			return { move: 'seek', action: 'hazard' };
 		}
 		if (dist <= (def.range ?? 90) && ai.cooldown <= 0) {
 			ai.mode = 'windup';

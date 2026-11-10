@@ -73,6 +73,9 @@ export const SIM = {
 	/** Boss hits per second on the hero (telegraphed swipes, charges) and share that lands. */
 	bossHitRate: 0.33,
 	bossLand: 0.1,
+	/** Share of red-mark area attacks (SDD-016) that land: 1 s+ telegraphs are mostly dodged, at ~0.8x boss damage. */
+	bossHazardLand: 0.1,
+	bossHazardDamage: 0.8,
 	/** Superpower: share of the crowd it clears. */
 	superClear: 0.7,
 };
@@ -355,6 +358,11 @@ export function simulateRun(config: SimConfig): SimResult {
 				const bossHits = SIM.bossHitRate * SIM.bossLand * SIM.step;
 				hits += bossHits;
 				incoming += bossHits * bossDmg;
+				if (boss.boss) {
+					const hazards = (SIM.bossHazardLand * SIM.step) / boss.boss.hazardEvery;
+					hits += hazards;
+					incoming += hazards * bossDmg * SIM.bossHazardDamage;
+				}
 			}
 			const loss = incoming * avoid * armor;
 			hp = Math.min(eff.maxHp, hp - loss + eff.regen * SIM.step);

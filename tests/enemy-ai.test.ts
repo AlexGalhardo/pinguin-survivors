@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { ENEMIES } from '../src/data/enemies';
-import { AI, newAi, stepAi } from '../src/logic/enemy-ai';
+import { AI, newAi, nextHazard, stepAi } from '../src/logic/enemy-ai';
 
 describe('enemy AI', () => {
 	test('chasers always seek', () => {
@@ -62,5 +62,21 @@ describe('enemy AI', () => {
 		expect(seen.has('pool')).toBe(true);
 		expect(seen.has('chargeStart')).toBe(true);
 		expect(seen.has('volley')).toBe(false);
+	});
+
+	test('boss area attacks fire every hazardEvery and rotate through the profile', () => {
+		const d = ENEMIES.polarBear;
+		const b = d.boss;
+		const ai = newAi(d);
+		expect(ai.hazardCd).toBe(b.hazardEvery);
+		ai.hazardCd = 0;
+		ai.roarCd = ai.volleyCd = ai.poolCd = 999;
+		const step = stepAi(d, ai, 500, 0.1);
+		expect(step.action).toBe('hazard');
+		expect(step.move).toBe('seek');
+		expect(ai.hazardCd).toBe(b.hazardEvery);
+		const kinds = Array.from({ length: b.hazards.length + 1 }, () => nextHazard(b, ai));
+		expect(kinds.slice(0, -1)).toEqual([...b.hazards]);
+		expect(kinds.at(-1)).toBe(b.hazards[0]);
 	});
 });

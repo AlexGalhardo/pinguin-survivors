@@ -40,6 +40,7 @@ export interface EnemyAttacks {
 	summon: (enemy: Enemy) => void;
 	volley: (enemy: Enemy) => void;
 	pool: (enemy: Enemy) => void;
+	hazard: (enemy: Enemy) => void;
 }
 
 /** World size covered by the neighbor grid around the hero (larger than any view). */
