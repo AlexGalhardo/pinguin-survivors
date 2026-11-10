@@ -2,10 +2,11 @@ import type { ReactElement, ReactNode } from 'react';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
 import { Heading, Hint, Panel } from './Panel';
+import { Vignette } from './Vignette';
 
-/** Shared frame of the menu screens: title with a gold filet, a framed panel that scrolls inside
- * itself (never the page), an optional footer with the actions, Esc/B goes back. Plain dark
- * backdrop (no main menu art) so the player focuses on the menu, as the developer asked. */
+/** Shared frame of the menu screens (Style D): Cinzel title over the filet, a soft central glow,
+ * a surface that scrolls inside itself (never the page), an optional footer with the actions and
+ * a static vignette on top. Esc/B goes back. Plain dark backdrop (no main menu art). */
 export function MenuScreen(props: {
 	title: string;
 	onBack: () => void;
@@ -23,7 +24,8 @@ export function MenuScreen(props: {
 			onBack={props.onBack}
 			className="fixed inset-0 flex flex-col items-center gap-[1.6vh] overflow-hidden bg-night px-[3vw] py-[2.5vh] font-body text-[clamp(0.8rem,1.7vh,1.125rem)] text-text-light [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:py-1"
 		>
-			<header className={`flex w-full flex-col items-center gap-1 ${width}`}>
+			<div aria-hidden="true" className="d-glow absolute inset-0" />
+			<header className={`relative flex w-full flex-col items-center gap-1 ${width}`}>
 				<Heading>{props.title}</Heading>
 				{props.subtitle && (
 					<div className="[@media(max-height:500px)]:hidden">
@@ -31,12 +33,13 @@ export function MenuScreen(props: {
 					</div>
 				)}
 			</header>
-			<Panel className={`w-full flex-1 ${width}`}>{props.children}</Panel>
+			<Panel className={`relative w-full flex-1 ${width}`}>{props.children}</Panel>
 			{props.footer && (
-				<footer className={`flex w-full flex-wrap justify-center gap-2 ${width}`}>
+				<footer className={`relative flex w-full flex-wrap justify-center gap-2 ${width}`}>
 					{props.footer}
 				</footer>
 			)}
+			<Vignette />
 		</FocusScope>
 	);
 }
@@ -59,13 +62,13 @@ export function BackBtn(props: {
 	);
 }
 
-/** Row with decrement/increment buttons around the label (touch and left/right navigation). */
+/** Row with ‹ › around the label (touch and left/right navigation); 48 px arrow targets. */
 export function AdjustRow(props: {
 	label: ReactNode;
 	onPrev: () => void;
 	onNext: () => void;
 	disabled?: boolean;
-	/** What the option does, in one dim line under the row. */
+	/** What the option does, in one line under the row. */
 	hint?: ReactNode;
 }): ReactElement {
 	return (
@@ -74,19 +77,21 @@ export function AdjustRow(props: {
 				<Btn
 					onActivate={props.onPrev}
 					disabled={props.disabled}
-					className="border-snow"
+					className="min-h-[48px] min-w-[48px] pr-0! pl-0! font-title text-[32px]"
 					label="-"
 				>
-					◀
+					<span className="text-gold-bright">‹</span>
 				</Btn>
-				<div className="flex-1 text-center font-bold">{props.label}</div>
+				<div className="flex-1 text-center text-list font-bold tracking-list uppercase">
+					{props.label}
+				</div>
 				<Btn
 					onActivate={props.onNext}
 					disabled={props.disabled}
-					className="border-snow"
+					className="min-h-[48px] min-w-[48px] pr-0! pl-0! font-title text-[32px]"
 					label="+"
 				>
-					▶
+					<span className="text-gold-bright">›</span>
 				</Btn>
 			</div>
 			{props.hint && (
