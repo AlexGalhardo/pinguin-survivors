@@ -1,3 +1,5 @@
+import '@fontsource/cinzel/700.css';
+import '@fontsource/cinzel/900.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import '@fontsource/roboto/900.css';
@@ -30,9 +32,13 @@ initDisplay(save.settings.resolution);
 
 // Text objects rasterize once, so the font must be ready before the first scene.
 await Promise.all(
-	['500 16px "Roboto"', 'bold 16px "Roboto"', '900 16px "Roboto"'].map((f) =>
-		document.fonts.load(f).catch(() => undefined),
-	),
+	[
+		'500 16px "Roboto"',
+		'bold 16px "Roboto"',
+		'900 16px "Roboto"',
+		'700 16px "Cinzel"',
+		'900 16px "Cinzel"',
+	].map((f) => document.fonts.load(f).catch(() => undefined)),
 );
 
 const initial = currentRenderSize();

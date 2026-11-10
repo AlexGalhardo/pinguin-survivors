@@ -5,6 +5,7 @@
     "": {
       "name": "starfall-survivors",
       "dependencies": {
+        "@fontsource/cinzel": "5.3.0",
         "@fontsource/noto-sans-sc": "5.3.1",
         "@fontsource/roboto": "5.3.0",
         "phaser": "4.2.1",
@@ -99,6 +100,8 @@
     "@conventional-changelog/template": ["@conventional-changelog/template@1.4.0", "", {}, "sha512-aalGyl7dbB5PArRebDIX43ZvBlXrYm9uWzGJ26t+4SzJVPsOuvfILGGbw5X4yX7i50YEmJ8zvbiWnqH/AAnZqg=="],
 
     "@emnapi/runtime": ["@emnapi/runtime@1.11.3", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA=="],
+
+    "@fontsource/cinzel": ["@fontsource/cinzel@5.3.0", "", {}, "sha512-KEOYTsrRppW0uRIPWBDPrQgunCS6f8u4nzZxYRBfo9SCknKojLYjK7B0ZoVmJhyVLefz271ZQRF9EOpHZlfhRw=="],
 
     "@fontsource/noto-sans-sc": ["@fontsource/noto-sans-sc@5.3.1", "", {}, "sha512-YxZ/VWAWo9FWzH08Q6fGTzIW6vYNP2TMhUFCnfhlimbhdXnWrxJLrzX3KWt2FKnV0s8XiM5vjpGHQiyFRlTj0w=="],
 

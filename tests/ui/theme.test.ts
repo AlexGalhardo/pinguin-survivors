@@ -22,6 +22,10 @@ describe('theme.css (Style D tokens)', () => {
 		for (const s of ['title', 'list', 'section']) expect(css).toContain(`--tracking-${s}:`);
 	});
 
+	test('titles use Cinzel and fall back to Noto Sans SC for CJK', () => {
+		expect(css).toContain('--font-title: "Cinzel", "Noto Sans SC", serif;');
+	});
+
 	test('defines the d-* utilities', () => {
 		for (const c of [
 			'vignette',
