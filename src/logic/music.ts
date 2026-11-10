@@ -21,3 +21,19 @@ export function roundTrack(seed: number, round: number): number {
 	}
 	return prev;
 }
+
+/** A volume ramp of one music sound, advanced by real time (never by a scene's tween clock). */
+export interface Fade {
+	from: number;
+	to: number;
+	/** Seconds the ramp lasts and seconds already elapsed. */
+	duration: number;
+	elapsed: number;
+}
+
+/** Advances a fade by `dt` seconds: the current volume and whether the ramp is over. */
+export function stepFade(fade: Fade, dt: number): { volume: number; done: boolean } {
+	fade.elapsed = Math.min(fade.duration, fade.elapsed + Math.max(0, dt));
+	const k = fade.duration > 0 ? fade.elapsed / fade.duration : 1;
+	return { volume: fade.from + (fade.to - fade.from) * k, done: k >= 1 };
+}

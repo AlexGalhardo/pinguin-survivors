@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
 import { BOSS_ROUNDS } from '../data/enemies';
-import { ROUND_TRACKS, roundTrack } from '../logic/music';
+import { type Fade, ROUND_TRACKS, roundTrack, stepFade } from '../logic/music';
 import { isBossRound } from '../logic/round';
 import { getSave } from './context';
 
@@ -55,11 +55,39 @@ function fallbackFor(key: MusicKey): MusicKey | null {
 	return null;
 }
 
-const FADE_MS = 800;
+const FADE_S = 0.8;
 /** Music sits under the SFX in the mix. */
 const MUSIC_GAIN = 0.55;
 
-let current: { key: MusicKey; sound: Phaser.Sound.BaseSound } | null = null;
+type MusicSound = Phaser.Sound.BaseSound & { volume: number };
+
+let current: { key: MusicKey; sound: MusicSound } | null = null;
+/**
+ * Fades run on the game clock, not on a scene's tweens: a scene that stops or restarts (back to
+ * menu, play again) used to take the fade-out with it, so the old track looped forever under the new
+ * one. A fade-out destroys its sound when it ends.
+ */
+const fades = new Map<MusicSound, Fade & { destroy: boolean }>();
+let ticking: Phaser.Game | null = null;
+
+function tick(_time: number, deltaMs: number): void {
+	for (const [sound, fade] of fades) {
+		const { volume, done } = stepFade(fade, deltaMs / 1000);
+		sound.volume = volume;
+		if (!done) continue;
+		fades.delete(sound);
+		if (fade.destroy) sound.destroy();
+	}
+}
+
+function fadeTo(scene: Phaser.Scene, sound: MusicSound, to: number, destroy: boolean): void {
+	if (ticking !== scene.game) {
+		ticking?.events.off('step', tick);
+		ticking = scene.game;
+		ticking.events.on('step', tick);
+	}
+	fades.set(sound, { from: sound.volume, to, duration: FADE_S, elapsed: 0, destroy });
+}
 
 function targetVolume(scene: Phaser.Scene): number {
 	const v = getSave(scene).settings.volume;
@@ -76,9 +104,12 @@ export function playMusic(scene: Phaser.Scene, key: MusicKey): void {
 		return;
 	}
 	stopMusic(scene);
-	const sound = scene.sound.add(key, { loop: true, volume: 0 });
+	// Safety net: any other music sound still alive (and not already fading out) goes too.
+	for (const s of scene.sound.getAllPlaying() as MusicSound[])
+		if (String(s.key).startsWith('music.') && !fades.get(s)?.destroy) fadeTo(scene, s, 0, true);
+	const sound = scene.sound.add(key, { loop: true, volume: 0 }) as MusicSound;
 	sound.play();
-	scene.tweens.add({ targets: sound, volume: targetVolume(scene), duration: FADE_MS });
+	fadeTo(scene, sound, targetVolume(scene), false);
 	current = { key, sound };
 }
 
@@ -86,15 +117,13 @@ export function stopMusic(scene: Phaser.Scene): void {
 	if (!current) return;
 	const old = current.sound;
 	current = null;
-	scene.tweens.add({
-		targets: old,
-		volume: 0,
-		duration: FADE_MS,
-		onComplete: () => old.destroy(),
-	});
+	fadeTo(scene, old, 0, true);
 }
 
 /** Settings changed: apply the new music volume right away. */
 export function refreshMusicVolume(scene: Phaser.Scene): void {
-	if (current) (current.sound as Phaser.Sound.WebAudioSound).setVolume(targetVolume(scene));
+	if (!current) return;
+	const fade = fades.get(current.sound);
+	if (fade && !fade.destroy) fade.to = targetVolume(scene);
+	else current.sound.volume = targetVolume(scene);
 }

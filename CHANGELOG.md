@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **audio:** Music no longer stacks: fades ran as tweens of the scene that started them, so going back to the menu or restarting a run killed the fade-out and the old track kept looping under the new one (two round themes at once, a round theme under the shop). Fades now run on the game clock and any other live music track is faded out when a new one starts.
+
 ## [0.10.0] - 2026-11-10
 
 ### Changed

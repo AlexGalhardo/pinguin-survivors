@@ -1,7 +1,7 @@
-import { expect, test } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
 import { MUSIC_KEYS, musicForRound } from '../src/core/music';
 import { BOSS_ROUNDS } from '../src/data/enemies';
-import { ROUND_TRACKS, roundTrack } from '../src/logic/music';
+import { ROUND_TRACKS, roundTrack, stepFade } from '../src/logic/music';
 import { isBossRound } from '../src/logic/round';
 
 test('each boss round plays the theme of its own boss, also in the endless', () => {
@@ -52,4 +52,25 @@ test('every new track is registered for loading and the legacy ones stay', () =>
 	])
 		expect(MUSIC_KEYS).toContain(k as never);
 	expect(MUSIC_KEYS).toHaveLength(8 + ROUND_TRACKS + BOSS_ROUNDS.length);
+});
+
+describe('stepFade (game-clock music fades)', () => {
+	test.each([
+		[0, 0.26, 0.4, 0.13, false],
+		[0, 0.26, 0.8, 0.26, true],
+		[0.26, 0, 1.5, 0, true],
+		[0.26, 0, 0, 0.26, false],
+	])('from %p to %p after %p s → %p (done %p)', (from, to, dt, volume, done) => {
+		const fade = { from, to, duration: 0.8, elapsed: 0 };
+		const r = stepFade(fade, dt);
+		expect(r.volume).toBeCloseTo(volume);
+		expect(r.done).toBe(done);
+	});
+
+	test('a fade advanced in small steps ends on its target', () => {
+		const fade = { from: 0.26, to: 0, duration: 0.8, elapsed: 0 };
+		let r = { volume: 0.26, done: false };
+		for (let i = 0; i < 100 && !r.done; i++) r = stepFade(fade, 1 / 60);
+		expect(r).toEqual({ volume: 0, done: true });
+	});
 });
