@@ -114,7 +114,7 @@ export function LevelUpCards({
 	return (
 		<FocusScope className="fixed inset-0 flex flex-col items-center justify-center gap-[3vh] bg-night/90 font-body text-body text-text-light [@media(max-height:500px)]:gap-1">
 			<div className="flex flex-col items-center gap-1">
-				<h1 className="m-0 font-title text-display leading-[1.15] font-black tracking-title text-crit uppercase [@media(max-height:500px)]:text-title">
+				<h1 className="m-0 font-title text-display leading-[1.4] font-black tracking-title text-crit uppercase [@media(max-height:500px)]:text-title">
 					{t('levelup.title', { n: data.level })}
 				</h1>
 				<Ornament kind="filet" size={compact ? 'compact' : 'full'} />
