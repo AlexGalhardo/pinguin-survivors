@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **ui:** Style D foundations: type scale, 4 px spacing and elevation tokens, the `d-*` utilities (vignette, glow, filet, chamfer, worn border, focus) and the new `Ornament`, `Vignette` and `MenuList` components.
+
 ### Changed
+
+- **ui:** `Panel`, `Heading`, `ItemCard`, `StatRow`, `Hint`, `Bar`, `Btn`, `MenuScreen`, `AdjustRow`, `SlotIcon` and `Toast` now look like the Diablo 4 organic style (text buttons with a diamond focus, borderless surfaces, glow and vignette behind menus, top-center toasts).
 
 - **docs:** The UI direction is now the organic Diablo 4 style (Style D): wireframes of every screen, design system v2, ADR-022, SDD-015, roadmap tasks T3.13–T3.18 and the `pinguin-ui-hud` skill for menus and HUD.
 
