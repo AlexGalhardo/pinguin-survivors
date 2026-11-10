@@ -6,7 +6,8 @@
 
 @theme {
 	--font-body: "Roboto", "Noto Sans SC", sans-serif;
-	--font-title: "Roboto", "Noto Sans SC", sans-serif;
+	/* Cinzel has no CJK glyphs: zh-CN titles fall through to Noto Sans SC (lang-font.ts). */
+	--font-title: "Cinzel", "Noto Sans SC", serif;
 
 	/* Type scale by viewport height with a phone floor: max(floor, base * 100vh / 1080). */
 	--text-display: max(44px, calc(88 / 1080 * 100vh));
