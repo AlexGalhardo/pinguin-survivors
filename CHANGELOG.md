@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **sim:** Normal rounds now take damage below the safe crowd: `SIM.touchPerEnemy` (contact per enemy alive) and `SIM.shotLand` (ranged shots), fit to the playtest bot at a third of its value; the boss superpower damage uses `SIM.superBossShare` (Jack and Lucia 1, Bob 0.25, from SuperpowerSystem) instead of a fixed 0.5. L1 median 18 to 9-10, L10 24 to 18; see docs A2b.
+- **bot:** The playtest bot dodges the red marks of bosses and elites (`safePoint` in `src/logic/hazard-escape.ts`, `--ignore-marks` for the old behavior) and logs `damageBySource` per round.
+
 - **sim:** The headless sim models the two clocks (SDD-018): combat terms run `m = motion / clock = 2` times faster per round second, spawn budget, boss time limit and red marks follow the round clock (`--speed 1|1.5|2` only changes wall seconds). Boss red marks use the real `BOSS_HAZARD` damage and a landing chance (`SIM.hazardHit`); swipes, charges, volleys, acid pools and roars come from the boss profile; elite red marks are a separate damage term instead of a contact multiplier. Fish per kill (`ECONOMY.fishDrop`) now enters the income. Boss time-outs are counted apart from deaths by damage (`SimResult.cause`), `SIM.maxRound` is 70, `past30` became `past50`, and the balance-goal windows for 50 rounds are a proposal (`GOAL_ROUNDS`).
 - **game:** Fish per kill cut: common enemies drop 1 Fish with 0.5% chance (was 5%); elites drop Fish only 25% of the time (was guaranteed), 2 for purple and 4 for orange (was 3 and 6). Boss and end-of-round Fish are unchanged (`ECONOMY.fishDrop`, `rollFishDrop`). Bosses no longer roll the common drop.
 - **game:** Boss time limit is capped at 10 minutes (`ROUNDS.bossTimeMax` 600 s): bosses 45, 50 and the whole endless use 600 s.

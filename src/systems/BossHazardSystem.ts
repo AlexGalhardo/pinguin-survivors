@@ -3,6 +3,7 @@ import { PALETTE } from '../config/palette';
 import { getSave } from '../core/context';
 import { shake } from '../core/feel';
 import { type HazardMark, type HazardShape, hazardHits } from '../logic/boss-hazard';
+import type { PendingMark } from '../logic/hazard-escape';
 import { GROUND_DEPTH } from '../world/Arena';
 
 /** Seconds a detonated mark stays lit, and the fill alpha range while it charges. */
@@ -70,6 +71,17 @@ export class BossHazardSystem {
 	/** Attacks (not marks) still charging or flashing. */
 	activeAttacks(): number {
 		return this.attacks;
+	}
+
+	/** Marks that have not detonated yet (read by the playtest bot, which has to dodge them). */
+	pending(): PendingMark[] {
+		const out: PendingMark[] = [];
+		for (const e of this.entries) {
+			const remaining = e.mark.at + e.mark.telegraph - e.t;
+			if (e.alive && remaining > 0)
+				out.push({ shape: e.mark.shape, remaining, group: e.mark.group });
+		}
+		return out;
 	}
 
 	update(dt: number, hx: number, hy: number, heroRadius: number): void {

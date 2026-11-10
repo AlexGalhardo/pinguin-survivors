@@ -84,6 +84,31 @@ describe('two clocks (SDD-018)', () => {
 		expect(eliteHazardLoad(10, 0.1, 10)).toBeLessThan(eliteHazardLoad(300, 0.5, 10));
 	});
 
+	test('contact and ranged shots hurt a normal round even below the safe crowd', () => {
+		const lost = (round: number) =>
+			simulateRun({ hero: 'jack', level: 30, seed: 5 }).perRound[round - 1] as number;
+		const [touch, shot] = [SIM.touchPerEnemy, SIM.shotLand];
+		try {
+			SIM.touchPerEnemy = 0;
+			SIM.shotLand = 0;
+			const bare = [2, 4].map(lost);
+			SIM.touchPerEnemy = touch;
+			expect(lost(2)).toBeGreaterThan(bare[0] as number);
+			SIM.shotLand = shot;
+			expect(lost(4)).toBeGreaterThan(bare[1] as number);
+		} finally {
+			SIM.touchPerEnemy = touch;
+			SIM.shotLand = shot;
+		}
+	});
+
+	test('the superpower reaches the boss by the game rules: full ticks for Jack and Lucia, a share of Bob bombs', () => {
+		expect(SIM.superBossShare.jack).toBe(1);
+		expect(SIM.superBossShare.lucia).toBe(1);
+		expect(SIM.superBossShare.bob).toBeGreaterThan(0);
+		expect(SIM.superBossShare.bob).toBeLessThan(1);
+	});
+
 	test('boss end is split into damage death and time-out', () => {
 		const r = simulateRun({ hero: 'jack', level: 10, seed: 3 });
 		expect(['death', 'bossDeath', 'bossTimeout', 'survived']).toContain(r.cause);

@@ -50,6 +50,23 @@ const mistakes = Number(arg('mistakes', '0'));
 /** Start round (debug `?round=`): cards are not granted, so use it for boss checks only. */
 const startRound = arg('round', '');
 const danger = arg('danger', '1');
+/** Baseline for A/B: the brain ignores the red marks of bosses and elites. */
+const ignoreMarks = flag('ignore-marks');
+/** Hero body radius (mirrors HERO_RADIUS in CombatSystem, which cannot be imported without Phaser). */
+const HERO_RADIUS = 12;
+
+/** `safePoint` bundled for the page: the brain runs in the browser and cannot import project modules. */
+const escapeBundle = await Bun.build({
+	entrypoints: [`${import.meta.dir}/../src/logic/hazard-escape.ts`],
+	target: 'browser',
+});
+// The ESM output ends with `export { safePoint };`: turn it into a window global.
+const escapeJs = ((await escapeBundle.outputs[0]?.text()) ?? '').replace(
+	/export\s*\{\s*safePoint\s*\};?\s*$/,
+	'window.HazardEscape = { safePoint };',
+);
+if (!escapeJs.includes('window.HazardEscape'))
+	throw new Error('could not bundle src/logic/hazard-escape.ts');
 
 export interface RoundLog {
 	round: number;
@@ -61,6 +78,8 @@ export interface RoundLog {
 	kills: number;
 	/** HP lost to hits this round (sum of drops, before regen/heals). */
 	damageTaken: number;
+	/** `damageTaken` split by origin (HP actually lost), e.g. `contact:chaser`, `shot`, `explode`, `boss`, `mark`, `dot`. */
+	damageBySource: Record<string, number>;
 }
 
 export interface RunLog {
@@ -132,8 +151,21 @@ function saveFor(hero: HeroId, level: number): string {
 
 /** Installs the per-frame brain and the substep speed-up inside the page. */
 async function installBrain(page: Page, seed: number): Promise<boolean> {
+	if (!(await page.evaluate(() => 'HazardEscape' in window))) {
+		await page.addScriptTag({ content: escapeJs });
+	}
 	return page.evaluate(
-		({ speed, superCharge, superLevel, react, mistakes, seed, weaponInfo }) => {
+		({
+			speed,
+			superCharge,
+			superLevel,
+			react,
+			mistakes,
+			seed,
+			weaponInfo,
+			ignoreMarks,
+			heroRadius,
+		}) => {
 			type E = {
 				x: number;
 				y: number;
@@ -176,7 +208,23 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 					pools?: { x: number; y: number; radius: number; alive: boolean }[];
 				};
 				castSuper(): void;
+				combat: { heroHit(...args: unknown[]): void };
+				bossHazards: { pending(): PendingMark[] };
+				eliteHazards: { pending(): PendingMark[] };
 			};
+			type PendingMark = import('../src/logic/hazard-escape').PendingMark;
+			const dodge = (
+				window as unknown as {
+					HazardEscape: {
+						safePoint(
+							marks: PendingMark[],
+							from: { x: number; y: number },
+							radius: number,
+							speed: number,
+						): { x: number; y: number } | null;
+					};
+				}
+			).HazardEscape;
 			if (w.__BOT__) return true;
 			if (!s?.run || !s.hero) return false;
 			// Key combos (D/A = ±x, S/W = ±y) are world directions (top-down, no rotation).
@@ -210,8 +258,34 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 				roundStart: s.run.elapsed,
 				killsStart: s.run.kills,
 				bossLeft: 0,
+				bySource: {} as Record<string, number>,
 			};
 			w.__BOT__ = bot;
+			// Names the origin of every hit that goes through heroHit (HP actually lost); acid pools
+			// bypass it, so what is left of the round's loss is `dot`.
+			const heroHit = s.combat.heroHit.bind(s.combat);
+			let attributed = 0;
+			s.combat.heroHit = (...args: unknown[]) => {
+				const before = (s.run as Run).hp;
+				heroHit(...args);
+				const lost = before - (s.run as Run).hp;
+				if (lost <= 0) return;
+				const src = args[3] as E | undefined;
+				const stack = new Error().stack ?? '';
+				const key = src
+					? src.def.behavior === 'boss'
+						? 'boss'
+						: `contact:${src.def.behavior}`
+					: args[2] === 'earth'
+						? 'explode'
+						: stack.includes('detonate')
+							? s.enemies.boss?.alive
+								? 'mark:boss'
+								: 'mark:elite'
+							: 'shot';
+				bot.bySource[key] = (bot.bySource[key] ?? 0) + lost;
+				attributed += lost;
+			};
 			// The brain drives GameInput.move() directly (screen-space intent, like a held key).
 			const intent = { x: 0, y: 0 };
 			s.controls.move = () => intent;
@@ -232,7 +306,10 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 						maxHp: run.maxHp,
 						kills: run.kills - bot.killsStart,
 						damageTaken: bot.dmg,
+						damageBySource: { ...bot.bySource, dot: Math.max(0, bot.dmg - attributed) },
 					});
+					bot.bySource = {};
+					attributed = 0;
 					bot.round = run.round;
 					bot.bossLeft = 0;
 					bot.roundStart = run.elapsed;
@@ -282,6 +359,29 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 						nearestD = d;
 						nearest = e;
 					}
+				}
+				// Red marks (boss and elite): walk out of the footprint before it detonates. Like the hero in
+				// the game, the bot leaves by the shortest way to a spot that is clear when each wave fires.
+				const marks = ignoreMarks
+					? []
+					: [...s.bossHazards.pending(), ...s.eliteHazards.pending()];
+				const way = marks.length
+					? dodge.safePoint(marks, h, heroRadius, s.stats.moveSpeed * 2)
+					: null;
+				if (way && Math.hypot(way.x - h.x, way.y - h.y) > 1) {
+					let pick = 0;
+					let pickDot = Number.NEGATIVE_INFINITY;
+					for (let i = 0; i < dirs.length; i++) {
+						const v = dirs[i] as { x: number; y: number };
+						const dot = v.x * (way.x - h.x) + v.y * (way.y - h.y);
+						if (dot > pickDot) {
+							pickDot = dot;
+							pick = i;
+						}
+					}
+					last = random() < mistakes ? Math.floor(random() * 9) - 1 : pick;
+					setKeys(last);
+					return;
 				}
 				const engage = !boss && nearest && run.hp / run.maxHp > 0.5;
 				const prefer = w.kind === 'arc' ? w.range * 0.8 : w.range * 0.75;
@@ -359,6 +459,8 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 			react,
 			mistakes,
 			seed,
+			ignoreMarks,
+			heroRadius: HERO_RADIUS,
 			weaponInfo: Object.fromEntries(
 				WEAPON_LINES.map((w) => [
 					w.id,
@@ -574,6 +676,7 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 					hpMin: number;
 					dmg: number;
 					bossLeft: number;
+					bySource: Record<string, number>;
 				};
 			}
 		).__BOT__;
@@ -584,6 +687,7 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 			hpEnd: bot.prevHp,
 			hpMin: bot.hpMin,
 			damageTaken: bot.dmg,
+			damageBySource: bot.bySource,
 		};
 		return { rounds: [...bot.rounds, last] as RoundLog[], bossLeft: bot.bossLeft };
 	});

@@ -72,6 +72,18 @@ export const SIM = {
 	safeCrowd: 100,
 	/** Contact hits per motion-second per enemy above the safe crowd. */
 	hitPerExtra: 0.001,
+	/**
+	 * Contact hits per motion-second per enemy alive, on top of the crowd term above. Premise: even a kiting
+	 * hero gets touched at a rate that follows how many enemies share the screen, so the damage is not 0
+	 * below `safeCrowd`. The medium bot (rounds 1-2) fits ~0.003; kept at ~1/3 of that because the bot also
+	 * loses HP to slow tanks it should outwalk, and the full value drops the L1 median below goal #1.
+	 */
+	touchPerEnemy: 0.001,
+	/**
+	 * Share of ranged-enemy shots (`def.range`, one per `cooldown` of motion time) that land on a hero who
+	 * dodges by habit. The bot's round 4 (first shooters) fits ~0.07; kept at ~0.02 for the same reason.
+	 */
+	shotLand: 0.02,
 	/** Hero speed / average enemy speed at which the safe crowd is exactly `safeCrowd`. */
 	mobilityRef: 1.35,
 	/** Average enemies hit per weapon attack by kind, in a full crowd. */
@@ -95,6 +107,14 @@ export const SIM = {
 	eliteDamage: ELITE_HAZARD.simDamage,
 	/** Superpower: share of the crowd it clears. */
 	superClear: 0.7,
+	/**
+	 * Superpower: share of its `burst` (every tick or bomb) that reaches the boss. The game applies the full
+	 * weapon hit to every enemy in radius, boss included (SuperpowerSystem, no boss resistance). Jack (180) and
+	 * Lucia (260) tick on anything whose center is in radius and the hero fights the boss inside that, so all
+	 * ticks land. Bob's 16 bombs (radius 80, rings at 100 and 200) cover a boss (radius ~42) standing
+	 * 150-200 away only when they fall within 122 of its center: ~4 of 16 by geometry.
+	 */
+	superBossShare: { jack: 1, bob: 0.25, lucia: 1 } satisfies Record<HeroId, number>,
 };
 
 export interface SimConfig {
@@ -230,19 +250,35 @@ interface AverageEnemy {
 	/** Share of the spawns that are elites, and the mean damage of one (before the Danger multiplier). */
 	eliteShare: number;
 	eliteDamage: number;
+	/** Share of the spawns that shoot, the mean (damage / cooldown) of one and the mean damage of the average enemy. */
+	rangedShare: number;
+	rangedPerSecond: number;
 }
 
 /** Average enemy of the pool available in `round`, elites included. */
 function averageEnemy(round: number, eliteMul = 1): AverageEnemy {
 	const pool = enemyPoolForRound(round);
 	const total = pool.reduce((a, e) => a + e.weight, 0);
-	const out = { hp: 0, damage: 0, xp: 0, speed: 0, eliteShare: 0, eliteDamage: 0 };
+	const out = {
+		hp: 0,
+		damage: 0,
+		xp: 0,
+		speed: 0,
+		eliteShare: 0,
+		eliteDamage: 0,
+		rangedShare: 0,
+		rangedPerSecond: 0,
+	};
 	for (const e of pool) {
 		const w = e.weight / total;
 		out.hp += e.hp * w;
 		out.damage += e.damage * w;
 		out.xp += e.xp * w;
 		out.speed += e.speed * w;
+		if (e.behavior === 'ranged') {
+			out.rangedShare += w;
+			out.rangedPerSecond += (w * e.damage) / (e.cooldown ?? 3);
+		}
 	}
 	const tiers = eliteTiers(round);
 	let eliteHp = 1;
@@ -265,6 +301,7 @@ function averageEnemy(round: number, eliteMul = 1): AverageEnemy {
 	// Elite hazards are cast separately (`eliteHazardLoad`), so contact damage keeps only the multiplier.
 	out.eliteDamage =
 		out.eliteShare > 0 ? (out.damage * dmgMul(round) * eliteDamageSum) / out.eliteShare : 0;
+	out.rangedPerSecond *= dmgMul(round);
 	out.hp *= hpMul(round) * eliteHp;
 	out.damage *= dmgMul(round) * eliteDmg;
 	return out;
@@ -378,6 +415,7 @@ export function simulateRun(config: SimConfig): SimResult {
 		const enemy = averageEnemy(round, wave === 'elite' ? EXTRA_WAVES.eliteMul : 1);
 		enemy.hp *= mods.hp;
 		enemy.damage *= mods.dmg;
+		enemy.rangedPerSecond *= mods.dmg;
 		enemy.speed *= mods.speed;
 		const spawnMul = wave === 'horde' ? EXTRA_WAVES.hordeMul : 1;
 		const boss = bossForRound(round, config.seed);
@@ -439,14 +477,20 @@ export function simulateRun(config: SimConfig): SimResult {
 					eff.damage *
 					superDef.damageMul *
 					(superDef.explosions ?? superDef.duration / SUPER.tick);
-				if (bossHp > 0) bossHp -= burst * 0.5;
+				if (bossHp > 0) bossHp -= burst * SIM.superBossShare[config.hero];
 			}
 			const avoid =
 				(1 - Math.min(COMBAT.dodgeCap, eff.dodge)) *
 				(1 - Math.min(COMBAT.parryCap, eff.parry));
 			const armor = 1 - armorReduction(eff.armor);
+			// Per alive enemy, `rangedPerSecond` is damage over cooldown of the shooters in the pool: motion clock.
+			const touches = Math.min(1 / COMBAT.heroIFrames, alive * SIM.touchPerEnemy);
 			let incoming =
-				contactRate(alive, eff.moveSpeed, enemy.speed) * SIM.step * m * enemy.damage;
+				(contactRate(alive, eff.moveSpeed, enemy.speed) + touches) *
+				SIM.step *
+				m *
+				enemy.damage;
+			incoming += alive * SIM.shotLand * enemy.rangedPerSecond * SIM.step * m;
 			if (bossHp > 0) incoming += bossPerSecond * SIM.step;
 			else incoming += eliteHazardLoad(alive, enemy.eliteShare, eliteDamage) * SIM.step;
 			const loss = incoming * avoid * armor;
