@@ -7,8 +7,10 @@ import { GROUND_DEPTH } from '../world/Arena';
 
 /** Seconds a detonated mark stays lit, and the fill alpha range while it charges. */
 const FLASH = 0.2;
-const FILL_FROM = 0.15;
-const FILL_TO = 0.5;
+const FILL_FROM = 0.25;
+const FILL_TO = 0.6;
+/** The last share of the telegraph pulses so the moment to leave reads at a glance. */
+const PULSE_FROM = 0.7;
 const REDUCED_FLASH = 0.35;
 
 /** One attack's shared state: groups that already hurt the hero or shook the camera (bit masks). */
@@ -73,12 +75,13 @@ export class BossHazardSystem {
 			if (local < 0) continue;
 			if (local < m.telegraph) {
 				const k = local / m.telegraph;
+				const pulse = k < PULSE_FROM ? 1 : 0.75 + 0.25 * Math.cos(local * 40);
 				this.draw(
 					g,
 					m.shape,
-					FILL_FROM + (FILL_TO - FILL_FROM) * k,
-					0.5 + 0.4 * k,
-					PALETTE.blood,
+					(FILL_FROM + (FILL_TO - FILL_FROM) * k) * pulse,
+					0.8 + 0.2 * k,
+					PALETTE.hazard,
 				);
 				continue;
 			}
@@ -120,7 +123,7 @@ export class BossHazardSystem {
 		line: number,
 		color: number,
 	): void {
-		g.fillStyle(color, fill).lineStyle(2, color, line);
+		g.fillStyle(color, fill).lineStyle(3, color, line);
 		switch (s.kind) {
 			case 'circle':
 				g.fillCircle(s.x, s.y, s.r).strokeCircle(s.x, s.y, s.r);
@@ -128,7 +131,7 @@ export class BossHazardSystem {
 			case 'annulus': {
 				// A thick stroke fills the band (Graphics fills have no holes).
 				g.lineStyle(s.r1 - s.r0, color, fill).strokeCircle(s.x, s.y, (s.r0 + s.r1) / 2);
-				g.lineStyle(2, color, line)
+				g.lineStyle(3, color, line)
 					.strokeCircle(s.x, s.y, s.r0)
 					.strokeCircle(s.x, s.y, s.r1);
 				break;

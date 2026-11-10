@@ -32,6 +32,8 @@ export const PALETTE = {
 	rock: 0x2c2f3a,
 	blood: 0xc4161c,
 	bloodDark: 0x6e0b10,
+	/** Boss area-attack ground marks (SDD-016): a hot red that stays red over every biome floor. */
+	hazard: 0xff2436,
 	goo: 0x7cff4f,
 	shadow: 0x000000,
 	jack: 0xe8b83a,
