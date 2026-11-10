@@ -27,3 +27,4 @@ Decisões de produto anteriores à virada comercial (P-01…P-68) estão em [ADR
 | [ADR-019](ADR-019-arvore-de-habilidades.md) | Árvore de habilidades por herói (estilo PoE2) substitui a Oficina e os pontos de stat | Aceito |
 | [ADR-020](ADR-020-save-em-tres-slots.md) | Save em três slots (documento único, `SaveData` no lugar), sem compatibilidade com saves antigos | Aceito |
 | [ADR-021](ADR-021-loja-de-evolucao.md) | Loja de evolução: só itens novos ou melhores, I–V à venda, IV com Marca de Elite e V com Núcleo de Boss | Aceito |
+| [ADR-022](ADR-022-ui-diablo-4-organica.md) | UI Diablo 4 orgânica (Estilo D) em todos os menus e no HUD; títulos em Cinzel | Aceito |
