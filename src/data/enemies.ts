@@ -811,9 +811,6 @@ export const ENEMIES = {
 		fromRound: 0,
 		weight: 0,
 		placeholder: { color: 0x3a4a2a, height: 170 },
-		// shortcut: reuses abomination tinted until its own art is approved (T7.18), then drop art/tint.
-		art: 'abomination',
-		tint: 0x8a9a6a,
 		range: 110,
 		cooldown: 2.8,
 		boss: {
