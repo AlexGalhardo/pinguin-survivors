@@ -1,6 +1,6 @@
 # Página da Steam — textos nos 4 idiomas (T5.8)
 
-> **Versão** 1.0 · **Data** 2026-11-08 · **Status** rascunho para aprovação do desenvolvedor · Coerente com o jogo na versão 0.8.0 (`package.json`). Só descreve o que existe; o que falta está marcado **(TBD)**.
+> **Versão** 1.0 · **Data** 2026-11-08 · **Status** rascunho para aprovação do desenvolvedor · Coerente com o jogo na versão 0.9.0 (`package.json`). Só descreve o que existe; o que falta está marcado **(TBD)**.
 
 ## Índice
 

@@ -43,8 +43,8 @@
 | 2026-11-09 | Loja de evolução no simulador, escala de inimigos mais íngreme por ciclo de 10 rounds, raridade IV a partir do round 11 e V a partir do 21 na loja | `0.7.0` |
 | 2026-11-09 | Boss a cada 5 rounds e rounds longos sem teto | `0.7.1` |
 | 2026-11-09 | Vida dos bosses dobra a cada boss | `0.7.2` |
-| 2026-11-10 | Estilo D (Diablo 4 orgânico) em todas as telas e no HUD, fonte Cinzel nos títulos, cartas de level-up com teclas 1–4 e R (ADR-022) | `0.8.0` (Latest) |
-| — | Campanha de 50 rounds em 5 biomas e 10 bosses com ataques em área (ADR-023, SDD-016), velocidade 1×/1,5×/2× com dois relógios (ADR-024, SDD-018), elites com HP ×4/×6, ambiente e fogueiras por bioma (SDD-017), Fish por abate reduzido | `0.9.0` (em preparação) |
+| 2026-11-10 | Estilo D (Diablo 4 orgânico) em todas as telas e no HUD, fonte Cinzel nos títulos, cartas de level-up com teclas 1–4 e R (ADR-022) | `0.8.0` |
+| 2026-11-10 | Campanha de 50 rounds em 5 biomas e 10 bosses com ataques em área (ADR-023, SDD-016), velocidade 1×/1,5×/2× com dois relógios (ADR-024, SDD-018), elites com HP ×4/×6, ambiente e fogueiras por bioma (SDD-017), Fish por abate reduzido | `0.9.0` (Latest) |
 | 2027-01-25 | Build da demo enviado à Steam (data de terceiros; 08/02 é a oficial para itens em revisão) | M5 |
 | 2027-02-08 | **Itens do Next Fest em revisão**; site no ar com `/demo`; Electron Windows | M5 → `0.1.2`–`0.1.3` |
 | 2027-02-22 → 03-01 | **Steam Next Fest** | M6 → `0.1.4`+ hotfixes |
