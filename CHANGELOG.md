@@ -10,12 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **ui:** Style D foundations: type scale, 4 px spacing and elevation tokens, the `d-*` utilities (vignette, glow, filet, chamfer, worn border, focus) and the new `Ornament`, `Vignette` and `MenuList` components.
+- **ui:** Level-up cards can be picked with keys 1–4 and rerolled with R.
+- **ui:** The game over and demo end screens ignore input for half a second after opening, so a key mashed in combat does not confirm them.
 
 ### Changed
 
 - **ui:** Screen and item titles use the Cinzel font (700 and 900); Chinese titles keep falling back to Noto Sans SC.
 - **ui:** `Panel`, `Heading`, `ItemCard`, `StatRow`, `Hint`, `Bar`, `Btn`, `MenuScreen`, `AdjustRow`, `SlotIcon` and `Toast` now look like the Diablo 4 organic style (text buttons with a diamond focus, borderless surfaces, glow and vignette behind menus, top-center toasts).
-
+- **ui:** Every menu and the HUD now use the organic Diablo 4 look (Style D): content floats over a dark vignette instead of web-style cards, option lists highlight with a gold diamond, secondary text is at least 22 px at 1080p and panels keep tight padding.
+- **ui:** The shop and the pause screen fit 1080p, ultrawide, 720p and phones without clipping; on phones, tapping a slot opens a sell/fuse bar.
+- **ui:** Settings are split into tabs with one hint line; achievements, extras and history are paged lists (PageUp/PageDown or L1/R1 jump a page); the match history shows an outcome seal.
+- **ui:** The skill tree detail is a tooltip anchored to the node with the mouse and fixed in a corner with keyboard, gamepad or touch, so it never hides neighbouring nodes.
+- **ui:** The HUD stacks round, timer, elite banner and boss bar at the top centre and shows at most two gambits on phones.
 - **docs:** The UI direction is now the organic Diablo 4 style (Style D): wireframes of every screen, design system v2, ADR-022, SDD-015, roadmap tasks T3.13–T3.18 and the `pinguin-ui-hud` skill for menus and HUD.
 
 ## [0.7.2] - 2026-11-09
