@@ -2,6 +2,8 @@
 export const screensEn = {
 	'levelup.title': 'LEVEL UP · {n}',
 	'levelup.reroll': 'REROLL · {n} left',
+	'levelup.keys': '1–{n} PICK · R REROLL',
+	'levelup.enter': 'ENTER',
 	'rarity.common': 'Common',
 	'rarity.rare': 'Rare',
 	'rarity.epic': 'Epic',

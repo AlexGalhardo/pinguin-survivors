@@ -2,6 +2,8 @@
 export const screensPtBR = {
 	'levelup.title': 'NÍVEL {n}',
 	'levelup.reroll': 'REROLAR · {n} restantes',
+	'levelup.keys': '1–{n} ESCOLHER · R REROLAR',
+	'levelup.enter': 'ENTER',
 	'rarity.common': 'Comum',
 	'rarity.rare': 'Rara',
 	'rarity.epic': 'Épica',
