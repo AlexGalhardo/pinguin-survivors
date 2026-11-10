@@ -85,6 +85,36 @@ describe('LevelUpCards', () => {
 	});
 });
 
+describe('LevelUpCards hotkeys', () => {
+	test('1-4 pick the card and R rerolls only while rerolls are left', () => {
+		const calls: string[] = [];
+		const card = (id: string) => ({
+			id,
+			rarity: 'common' as const,
+			name: id,
+			description: id,
+		});
+		const actions = {
+			pick: (i: number) => calls.push(`pick:${i}`),
+			reroll: () => calls.push('reroll'),
+		};
+		const view = (rerollsLeft: number) => (
+			<LevelUpCards
+				data={{ level: 2, rerollsLeft, cards: [card('maxHp'), card('crit')] }}
+				actions={actions}
+			/>
+		);
+		const { rerender } = render(view(1));
+		key('Digit2');
+		key('Digit3');
+		key('KeyR');
+		rerender(view(0));
+		key('KeyR');
+		expect(calls).toEqual(['pick:1', 'reroll']);
+		cleanup();
+	});
+});
+
 describe('Pause', () => {
 	const data = {
 		weapons: [{ slot: 0, id: 'machete', tier: 2 as const }],

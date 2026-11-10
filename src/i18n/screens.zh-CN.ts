@@ -2,6 +2,8 @@
 export const screensZhCN = {
 	'levelup.title': '升级 · {n}',
 	'levelup.reroll': '刷新 · 剩余 {n}',
+	'levelup.keys': '1–{n} 选择 · R 重抽',
+	'levelup.enter': 'ENTER',
 	'rarity.common': '普通',
 	'rarity.rare': '稀有',
 	'rarity.epic': '史诗',
