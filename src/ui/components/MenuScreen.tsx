@@ -77,10 +77,10 @@ export function AdjustRow(props: {
 				<Btn
 					onActivate={props.onPrev}
 					disabled={props.disabled}
-					className="min-h-[48px] min-w-[48px] pr-0! pl-0! font-title text-[32px]"
+					className="min-h-[48px] min-w-[48px] pr-0! pl-0!"
 					label="-"
 				>
-					<span className="text-gold-bright">‹</span>
+					<span className="font-title text-[32px] leading-none text-gold-bright">‹</span>
 				</Btn>
 				<div className="flex-1 text-center text-list font-bold tracking-list uppercase">
 					{props.label}
@@ -88,10 +88,10 @@ export function AdjustRow(props: {
 				<Btn
 					onActivate={props.onNext}
 					disabled={props.disabled}
-					className="min-h-[48px] min-w-[48px] pr-0! pl-0! font-title text-[32px]"
+					className="min-h-[48px] min-w-[48px] pr-0! pl-0!"
 					label="+"
 				>
-					<span className="text-gold-bright">›</span>
+					<span className="font-title text-[32px] leading-none text-gold-bright">›</span>
 				</Btn>
 			</div>
 			{props.hint && (
