@@ -87,7 +87,7 @@ Menu (árvore de habilidades · Pérolas: poções/gambits · arma inicial)
 |---|---|---|---|
 | Mover (8 direções) | WASD / setas | Analógico esquerdo / D-pad | Joystick virtual flutuante (polegar esquerdo) |
 | Superpoder | Espaço | △ / Y | Botão na tela (direita) |
-| Velocidade 1×/2×/3×/4× (também em Configurações) | TAB | □ / X ou View | Botão na HUD |
+| Velocidade 1×/1,5×/2× (também em Configurações; movimento e ataques ×2·s, relógio do round ×s, [SDD-018](sdds/SDD-018-velocidade-de-jogo-dois-relogios.md)) | TAB | □ / X ou View | Botão na HUD |
 | Confirmar / loja / cartas | Enter, mouse, 1–4 | ✕ / A, D-pad | Toque |
 | Pausa | Esc / P | Options / Start | Botão na HUD |
 

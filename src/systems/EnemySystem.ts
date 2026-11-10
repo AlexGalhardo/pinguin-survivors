@@ -124,11 +124,12 @@ export class EnemySystem {
 		}
 	}
 
-	update(dt: number, round: number, hero: Vec2, view: Bounds): void {
+	/** `clockDt` (real-time share of `dt`, SDD-018) feeds only the spawn budget so a round spawns the same count at any speed. */
+	update(dt: number, round: number, hero: Vec2, view: Bounds, clockDt = dt): void {
 		this.round = round;
 		this.pending.update(dt, (p) => this.materialize(p.x, p.y, p.data, view, true));
 		this.spawnBudget +=
-			spawnRate(round) * (this.wave === 'horde' ? EXTRA_WAVES.hordeMul : 1) * dt;
+			spawnRate(round) * (this.wave === 'horde' ? EXTRA_WAVES.hordeMul : 1) * clockDt;
 		while (this.spawnBudget >= 1) {
 			this.spawnBudget -= 1;
 			if (this.active.length + this.pending.size >= MAX_ENEMIES || !this.bounds) break;

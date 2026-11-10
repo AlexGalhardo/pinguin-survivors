@@ -16,7 +16,7 @@ export const ENDLESS_BIOMES = BIOME_IDS;
 export type BiomeId = (typeof ENDLESS_BIOMES)[number];
 
 /** Game speed toggled with TAB (default 1x) and chosen in Settings. */
-export const GAME_SPEEDS = [1, 2, 3, 4] as const;
+export const GAME_SPEEDS = [1, 1.5, 2] as const;
 export type GameSpeed = (typeof GAME_SPEEDS)[number];
 /** Longest world step in seconds: faster speeds run several of them per frame. */
 export const MAX_STEP = 1 / 30;

@@ -1,4 +1,4 @@
-import { GAME_SPEEDS, type GameSpeed, HERO_IDS, type HeroId } from '../config/constants';
+import { type GameSpeed, HERO_IDS, type HeroId } from '../config/constants';
 import {
 	type AchievementDef,
 	FEATS,
@@ -28,6 +28,7 @@ import {
 } from './achievements';
 import { DEFAULT_BINDS, type KeyBinds, parseBinds } from './keybinds';
 import { heroTree, sanitizeAllocation } from './skill-tree';
+import { parseGameSpeed } from './speed';
 import { parseRunEndEvents, type RunEndEvent } from './telemetry';
 
 /**
@@ -224,7 +225,7 @@ function parseSaveObject(raw: unknown, lang: Lang): SaveData {
 		bloomOptIn: bool(s.bloomOptIn, base.settings.bloomOptIn),
 		numberSize: oneOf(s.numberSize, NUMBER_SIZES, base.settings.numberSize),
 		reducedFlashes: bool(s.reducedFlashes, base.settings.reducedFlashes),
-		gameSpeed: GAME_SPEEDS.find((v) => v === s.gameSpeed) ?? base.settings.gameSpeed,
+		gameSpeed: parseGameSpeed(s.gameSpeed, base.settings.gameSpeed),
 		keys: parseBinds(s.keys),
 		damageNumbers: bool(s.damageNumbers, base.settings.damageNumbers),
 		resolution: oneOf(s.resolution, RESOLUTION_IDS, base.settings.resolution),

@@ -10,7 +10,7 @@
 // Usage: bun scripts/playtest-bot.ts [--url http://localhost:5183] [--heroes jack,bob,lucia]
 //   [--levels 1,10,30] [--runs 1] [--seed 100] [--speed 4] [--max 1500] [--potions]
 //   [--no-extras] [--cards smart|first] [--json out.jsonl] [--headed]
-// --speed runs N simulation substeps per frame (same dt as 1x, so collisions stay exact).
+// --speed runs N simulation substeps per frame (same dt as the game's 1x, so collisions stay exact).
 // --max is the wall-clock limit per run in seconds.
 import { appendFileSync } from 'node:fs';
 import { chromium, type Page } from 'playwright';
@@ -159,6 +159,7 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 			};
 			const s = w.__GAME__.scene.getScene('Game') as unknown as {
 				sys: { sceneUpdate: (t: number, d: number) => void; isActive(): boolean };
+				speed: number;
 				time: { timeScale: number };
 				tweens: { timeScale: number };
 				run?: Run;
@@ -346,8 +347,9 @@ async function installBrain(page: Page, seed: number): Promise<boolean> {
 					orig.call(this, t, d);
 				}
 			};
-			s.time.timeScale = speed;
-			s.tweens.timeScale = speed;
+			// Game speed 1x is motion x2 (SDD-018), on top of the N substeps.
+			s.time.timeScale = speed * 2 * s.speed;
+			s.tweens.timeScale = speed * 2 * s.speed;
 			return true;
 		},
 		{

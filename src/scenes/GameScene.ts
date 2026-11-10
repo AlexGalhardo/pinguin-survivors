@@ -142,7 +142,7 @@ import {
 } from '../logic/shop';
 import { describeOffer } from '../logic/shop-describe';
 import { heroTree, treeStats } from '../logic/skill-tree';
-import { nextSpeed } from '../logic/speed';
+import { nextSpeed, speedFactors } from '../logic/speed';
 import {
 	getStat,
 	heroStats,
@@ -351,8 +351,8 @@ export class GameScene extends Phaser.Scene {
 		this.fishRerolled = 0;
 		this.ended = false;
 		this.speed = save.settings.gameSpeed;
-		this.time.timeScale = this.speed;
-		this.tweens.timeScale = this.speed;
+		this.time.timeScale = speedFactors(this.speed).motion;
+		this.tweens.timeScale = speedFactors(this.speed).motion;
 		this.levelsGained = 0;
 		this.startedAt = Date.now();
 		this.achievementTimer = 0;
@@ -617,7 +617,10 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	override update(_time: number, deltaMs: number): void {
-		const dt = (Math.min(deltaMs, 50) / 1000) * this.speed;
+		const real = Math.min(deltaMs, 50) / 1000;
+		const factors = speedFactors(this.speed);
+		const dt = real * factors.motion;
+		const clockDt = real * factors.clock;
 		this.hitStopCooldown -= deltaMs / 1000;
 		if (this.hitStop > 0) {
 			this.hitStop -= deltaMs / 1000;
@@ -625,7 +628,7 @@ export class GameScene extends Phaser.Scene {
 		}
 		this.ambience.update(Math.min(deltaMs, 50) / 1000, this.cameras.main.worldView);
 		if (this.deadFor >= 0) {
-			this.deadFor += dt;
+			this.deadFor += clockDt;
 			this.fx.update(dt);
 			// The scene stays alive behind the React summary, so the run may close only once.
 			if (this.deadFor >= DEATH_DELAY && !this.ended) this.endRun();
@@ -638,17 +641,18 @@ export class GameScene extends Phaser.Scene {
 			this.arena.update();
 			return;
 		}
-		// Fast-forward subdivides the fixed step so nothing tunnels through a collision at 3x/4x.
+		// Fast-forward subdivides the fixed step so nothing tunnels through a collision at 1.5x/2x.
 		const steps = Math.ceil(dt / MAX_STEP);
 		for (let i = 0; i < steps && this.run.phase === 'round' && this.deadFor < 0; i++)
-			this.step(dt / steps);
+			this.step(dt / steps, clockDt / steps);
 		this.arena.update();
 	}
 
-	private step(dt: number): void {
+	/** `dt` is the motion time (SDD-018); `clockDt` is the round clock, boss/elite marks and spawn budget. */
+	private step(dt: number, clockDt: number): void {
 		const run = this.run;
-		run.elapsed += dt;
-		run.timeLeft -= dt;
+		run.elapsed += clockDt;
+		run.timeLeft -= clockDt;
 
 		const intent = this.controls.move();
 		this.moving = intent.x !== 0 || intent.y !== 0;
@@ -661,7 +665,7 @@ export class GameScene extends Phaser.Scene {
 		const grid = this.enemies.grid;
 		this.followCamera(dt);
 		const view = this.viewSize();
-		this.enemies.update(dt, run.round, this.hero, this.viewBounds());
+		this.enemies.update(dt, run.round, this.hero, this.viewBounds(), clockDt);
 		this.updatePerks(dt);
 		this.weapons.update(dt, this.hero.x, this.hero.y, grid);
 		this.secondaries.update(dt, this.hero.x, this.hero.y, grid);
@@ -676,8 +680,8 @@ export class GameScene extends Phaser.Scene {
 		this.pool.update(dt, grid);
 		this.hostile.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
 		this.area.update(dt, grid);
-		this.bossHazards.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
-		this.eliteHazards.update(dt, this.hero.x, this.hero.y, HERO_RADIUS);
+		this.bossHazards.update(clockDt, this.hero.x, this.hero.y, HERO_RADIUS);
+		this.eliteHazards.update(clockDt, this.hero.x, this.hero.y, HERO_RADIUS);
 		this.combat.contact(dt);
 		this.pickups.update(
 			dt,
@@ -767,8 +771,8 @@ export class GameScene extends Phaser.Scene {
 			save.settings.gameSpeed = speed;
 			persist(this);
 		}
-		this.time.timeScale = speed;
-		this.tweens.timeScale = speed;
+		this.time.timeScale = speedFactors(speed).motion;
+		this.tweens.timeScale = speedFactors(speed).motion;
 	}
 
 	/** Camera center, tracked here so the view is exact in the same frame the hero moves. */
@@ -1332,7 +1336,7 @@ export class GameScene extends Phaser.Scene {
 		);
 		if (this.run.timeLeft > 120) addFeat(save, 'bossUnder60s');
 		if (this.run.timeLeft < 5) addFeat(save, 'bossLastSecond');
-		if (this.speed > 1) addFeat(save, 'bossAt2x');
+		if (this.speed >= 2) addFeat(save, 'bossAt2x');
 		if (this.run.round >= 10 && !save.heroes.bob.unlocked) {
 			save.heroes.bob.unlocked = true;
 			addFeat(save, 'unlockBob');

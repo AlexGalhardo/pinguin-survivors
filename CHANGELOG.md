@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **game:** The first round lasts 30 s instead of 20 s (`ROUNDS.firstDuration`; later normal rounds keep the +5 s step, so each is 10 s longer).
 - **game:** Darkness layer per biome: its own night tint and strength (never above 0.66), a screen-edge vignette, a soft wider halo around the hero and a light on rarity III+ drops (SDD-017).
+- **game:** Game speed is now 1x / 1.5x / 2x (default 1x). Movement and attacks run at twice the speed factor (the new 1x moves like the old 2x, the new 2x like the old 4x) while the round timer, the boss time limit, the spawn budget and the red boss/elite marks follow the plain factor, so a 30 s round lasts 30 s at 1x and 15 s at 2x with the same enemy count (SDD-018, ADR-024). Saved 3x/4x become 2x. Balance impact (more combat per round second) still needs a balance pass.
 
 - **game:** Elites have double HP (purple 2→4, orange 3→6) and double size (scale 1.25→2.5, 1.4→2.8); the hit radius grows with the sprite (SDD-016 RF-09).
 - **art:** Forest (biome 2) trees, the pine and the dry tree, are drawn at twice their size: packed 2x with nearest-neighbor in the `forest` atlas, and their collision circle doubles (`decoRadiusMul`); logs and rocks are unchanged.

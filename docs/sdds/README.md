@@ -22,3 +22,4 @@ Regra: nenhuma tarefa de implementação começa sem a SDD correspondente em sta
 | [SDD-015](SDD-015-ui-diablo-4-organica.md) | UI Diablo 4 orgânica (Estilo D): tokens, primitivos e as 16 telas | SDD-004 | Aprovada |
 | [SDD-016](SDD-016-dez-bosses-e-ataques-em-area.md) | Dez bosses, 5 biomas (50 rounds) e ataques em área | SDD-012, SDD-013 | Aprovada |
 | [SDD-017](SDD-017-ambiente-e-iluminacao.md) | Round 1 de 30 s, clima por bioma, fogueiras e iluminação | SDD-012, SDD-016 | Aprovada |
+| [SDD-018](SDD-018-velocidade-de-jogo-dois-relogios.md) | Velocidade de jogo 1×/1,5×/2× com dois relógios (movimento e relógio do round) | SDD-001, SDD-016 | Aprovada |

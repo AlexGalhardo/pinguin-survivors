@@ -29,3 +29,4 @@ Decisões de produto anteriores à virada comercial (P-01…P-68) estão em [ADR
 | [ADR-021](ADR-021-loja-de-evolucao.md) | Loja de evolução: só itens novos ou melhores, I–V à venda, IV com Marca de Elite e V com Núcleo de Boss | Aceito |
 | [ADR-022](ADR-022-ui-diablo-4-organica.md) | UI Diablo 4 orgânica (Estilo D) em todos os menus e no HUD; títulos em Cinzel | Aceito |
 | [ADR-023](ADR-023-campanha-50-rounds-10-bosses.md) | Campanha de 50 rounds, 5 biomas e 10 bosses; endless a partir do 51 | Aceito |
+| [ADR-024](ADR-024-dois-relogios-de-velocidade.md) | Dois relógios de velocidade: movimento (2×s) e relógio do round (s) | Aceito |
