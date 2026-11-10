@@ -4,6 +4,8 @@ export const shopPtBR = {
 	'shop.fish': 'PEIXES {n}',
 	'shop.merchant': 'Lojista',
 	'shop.you': 'SEU PINGUIM',
+	'shop.yourGear': 'SEU EQUIPAMENTO',
+	'shop.details': 'DETALHES',
 	'shop.pickItem': 'Foque um item para vê-lo aqui.',
 	'shop.tapSlot': 'Toque num slot: vender ou fundir',
 	'shop.equipped': 'EQUIPADO',

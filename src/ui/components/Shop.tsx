@@ -31,11 +31,14 @@ import {
 import { MerchantSprite } from './MerchantSprite';
 import { Heading, Hint } from './Panel';
 import {
+	Block,
 	type Detail,
 	detailCard,
+	HeroStats,
 	PlayerPanel,
 	type PlayerPanelData,
 	panelFromView,
+	SectionTitle,
 } from './PlayerPanel';
 
 /** What the shop screen shows; the game publishes it (offers, wallet and the 6 weapon slots). */
@@ -216,7 +219,7 @@ function OfferOutcome({
 		<div className="flex min-w-0 flex-col gap-1">
 			<p className="m-0 text-body font-bold text-crit">{outcomeText(d)}</p>
 			{!sentenceOnly && (
-				<div className="grid grid-cols-2 gap-x-4 text-secondary">
+				<div className="grid grid-cols-1 text-secondary">
 					{d.statChanges.map((c) => (
 						<div
 							key={c.stat}
@@ -248,24 +251,20 @@ function OfferTooltips({
 	const rarity = offer.rarity ?? offer.tier;
 	const affixes = offer.affixes ?? offer.description?.affixes ?? [];
 	if (offer.kind === 'weapon')
-		return (
-			<div className="grid grid-cols-2 items-start gap-3">
-				<WeaponCardView item={{ id: offer.id, tier: rarity, affixes }} />
-			</div>
-		);
+		return <WeaponCardView item={{ id: offer.id, tier: rarity, affixes }} />;
 	if (offer.kind === 'gear')
 		return (
-			<div className="grid grid-cols-2 items-start gap-3">
+			<div className="flex flex-col gap-2">
+				<div className="flex min-w-0 flex-col gap-0.5">
+					{labels && <Hint>{t('shop.offerLabel')}</Hint>}
+					<GearCardView item={{ id: offer.id, rarity, affixes }} />
+				</div>
 				{worn && (
 					<div className="flex min-w-0 flex-col gap-0.5">
 						{labels && <Hint>{t('shop.equipped')}</Hint>}
 						<GearCardView item={worn} />
 					</div>
 				)}
-				<div className="flex min-w-0 flex-col gap-0.5">
-					{labels && <Hint>{t('shop.offerLabel')}</Hint>}
-					<GearCardView item={{ id: offer.id, rarity, affixes }} />
-				</div>
 			</div>
 		);
 	return (
@@ -349,7 +348,7 @@ function OfferRow(props: {
 			)}
 			<div className="flex min-w-0 flex-1 flex-col">
 				<span
-					className="truncate text-body leading-tight font-bold"
+					className={`text-body leading-tight font-bold ${props.compact ? 'truncate' : ''}`}
 					style={{ color: offerColor(offer) }}
 				>
 					{offerName(offer)}
@@ -360,7 +359,7 @@ function OfferRow(props: {
 					</span>
 				)}
 				{!props.compact && !upgrade && (
-					<span className="truncate text-secondary leading-tight text-text-light">
+					<span className="text-secondary leading-tight text-text-light">
 						{kind}
 						{summary ? ` · ${summary}` : ''}
 						{offer.material && (
@@ -500,7 +499,7 @@ export function Shop({
 				</div>
 			</header>
 
-			<main className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] gap-[2vw]">
+			<main className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-[2vw] [@media(max-height:500px)]:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
 				<section
 					aria-label={t('shop.merchant')}
 					className="flex min-h-0 min-w-0 flex-col gap-2"
@@ -574,22 +573,17 @@ export function Shop({
 							) : null,
 						)}
 					</div>
-					{!compact && shown && <OfferOutcome offer={shown} />}
 				</section>
 
 				<section
 					aria-label={t('shop.you')}
-					className="flex min-h-0 min-w-0 flex-col gap-[1.5vh]"
+					className={
+						compact
+							? 'flex min-h-0 min-w-0 flex-col gap-[1.5vh]'
+							: 'grid min-h-0 min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-[1.5vw]'
+					}
 				>
-					{compact ? (
-						shown && <OfferOutcome offer={shown} sentenceOnly />
-					) : target.kind === 'owned' ? (
-						<div className="grid grid-cols-2 items-start gap-3">
-							{ownedCard ?? <Hint>{t('shop.pickItem')}</Hint>}
-						</div>
-					) : shown ? (
-						<OfferTooltips offer={shown} worn={wornFor(shown)} labels={labels} />
-					) : null}
+					{compact && shown && <OfferOutcome offer={shown} sentenceOnly />}
 					<PlayerPanel
 						data={player}
 						onPick={(detail) => setTarget({ kind: 'owned', detail })}
@@ -615,6 +609,31 @@ export function Shop({
 							);
 						}}
 					/>
+					{!compact && (
+						<section
+							aria-label={t('shop.details')}
+							className="flex min-h-0 min-w-0 flex-col gap-2"
+						>
+							<SectionTitle>{t('shop.details')}</SectionTitle>
+							{target.kind === 'owned' ? (
+								(ownedCard ?? <Hint>{t('shop.pickItem')}</Hint>)
+							) : shown ? (
+								<>
+									<OfferTooltips
+										offer={shown}
+										worn={wornFor(shown)}
+										labels={labels}
+									/>
+									<OfferOutcome offer={shown} />
+								</>
+							) : null}
+							<div className="mt-auto">
+								<Block title={t('shop.you')}>
+									<HeroStats data={player} />
+								</Block>
+							</div>
+						</section>
+					)}
 				</section>
 			</main>
 

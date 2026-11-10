@@ -227,21 +227,18 @@ Wireframe: [2.12-loja.svg](d4/2.12-loja.svg) · [844×390](d4/2.12-loja-844x390.
   - **cabeçalho** (y 36): "LOJA · ROUND 7" em Cinzel 42, `DCurrency` "🐟 120 PEIXES" 28 e o aviso de elites em `blood` 22 bold à direita;
   - **esquerda superior** (x 80, y 130, w 600): lojista de 240 (`MerchantSprite`, escala inteira) e a fala em Cinzel 26 entre aspas;
   - **esquerda inferior** (x 56, y 470, w 660): 4 ofertas como `DMenuItem` de 72 px, cada uma com `DSlot` de 52, nome 26 na cor da raridade e preço 26 `fish`. Estados: travado ("· travado" em `gold-bright`), sem Fish (`text-dim`), VENDIDO;
-  - **direita superior** (x 760, y 120): `DTooltip` "à venda" (w 580) e "equipado" (w 500) lado a lado, gap 20. O à venda traz a frase do que a compra faz em 24 `crit` e "ENTER COMPRAR · 60 · T TRAVAR"; o equipado traz as linhas antes → depois;
-  - **direita inferior** (x 760, y 500, w 1104):
-    - "SEU PINGUIM — HP 140 · ARMADURA 12 · DANO 100%" em 24 900 e os demais atributos numa frase de 22;
-    - `DSlot` 6 × 64 de armas e 5 × 64 de equipamento, separados por 24;
-    - ações do slot focado: "Machete I · VENDER 27 · FUNDIR" em 24;
-    - suporte e poção em 22;
+  - **direita**, em duas sub-colunas de mesma largura (x 760 a 1864, gap 28):
+    - **"SEU EQUIPAMENTO"** (esquerda): "ARMAS n/6" com uma linha por arma (`DSlot` de 40, nome na cor da raridade, numeral à direita; na arma focada, "VENDER · 27" e "FUNDIR" na mesma linha), "EQUIPAMENTO" com os 5 slots fixos (vazio em `text-dim`) e "SUPORTE n/4" com os itens de suporte e a poção ("Nv 2/5"); cada linha é focável e leva ao painel de detalhes;
+    - **"DETALHES"** (direita, sempre no mesmo lugar): o `DTooltip` do item em foco, seja uma oferta ("à venda", e para equipamento o "equipado" empilhado abaixo) ou um item próprio, seguido, nas ofertas, da frase do que a compra faz em 24 `crit` e das mudanças de atributo (verde sobe, ouro desce, uma por linha). No pé da coluna, "SEU PINGUIM" com os atributos em grade de 2 colunas (HP, armadura e dano primeiro, em negrito);
   - **rodapé** (y 980): "R REROLAR · 8" e `DCta` PRÓXIMO ROUND.
-- **Foco:** ofertas ↑↓, depois → slots do jogador (←→), depois o CTA. Enter compra ou mostra as ações do slot, T trava. Esc não fecha.
+- **Foco:** ofertas ↑↓, depois → linhas do equipamento (↑↓, armas, equipamento, suporte), depois o CTA. Enter compra ou mostra as ações do slot, T trava. Esc não fecha.
 - **844×390:**
   - 4 ofertas de 52 px à esquerda (w 400);
   - à direita, a frase de ação, os afixos e os 6 `DSlot` de 36;
   - "Toque no slot: vender/fundir" em 18;
   - REROLAR e PRÓXIMO ROUND no rodapé (y 334);
   - sem lojista nem tooltip comparativo.
-- **Diferenças em relação à atual:** a grade 2×2 de cartões e o painel com moldura somem; a comparação vira dois tooltips D4 lado a lado; a densidade da coluna do jogador cai (atributos em frase).
+- **Diferenças em relação à atual:** a grade 2×2 de cartões e o painel com moldura somem; o jogador (esquerda) e o detalhe (direita) ficam em colunas fixas, a comparação empilha na coluna de detalhes e os atributos viram uma grade compacta.
 
 ### 2.13 Pausa
 

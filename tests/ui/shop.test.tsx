@@ -178,4 +178,27 @@ describe('Shop', () => {
 		expect(container.textContent).toContain('Weapon · IV');
 		cleanup();
 	});
+
+	test('details sit in one fixed column: a support row and an offer both fill it, stats stay below', () => {
+		const { a } = actions();
+		const player: Data['player'] = {
+			stats: [
+				{ key: 'maxHp', value: 140 },
+				{ key: 'armor', value: 12 },
+			],
+			weapons: [],
+			gear: [],
+			support: [{ id: 'magnetic', level: 2, max: 5, value: 120 }],
+			supportSlots: 4,
+			healPotion: null,
+		};
+		const { getByLabelText, getByText } = render(<Shop data={data({ player })} actions={a} />);
+		const details = getByLabelText('DETAILS');
+		expect(details.textContent).toContain('Weapon · I');
+		expect(details.textContent).toContain('max HP');
+		fireEvent.focus(getByText('Magnetic'));
+		expect(details.textContent).toContain('Pulls XP orbs and Fish toward you.');
+		expect(details.textContent).toContain('Lv 2/5');
+		cleanup();
+	});
 });

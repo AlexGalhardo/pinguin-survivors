@@ -8,6 +8,7 @@ import { weaponName } from './Hud';
 import {
 	GearCardView,
 	type GearItem,
+	gearName,
 	numeral,
 	rarityCss,
 	SlotIcon,
@@ -15,7 +16,8 @@ import {
 	type WeaponItem,
 	weaponFrames,
 } from './ItemViews';
-import { Hint, StatRow } from './Panel';
+import { Ornament } from './Ornament';
+import { Hint, ItemCard, StatRow } from './Panel';
 
 export interface PlayerPanelData {
 	/** Main stats already formatted (`gstat.<key>` is the label). */
@@ -33,7 +35,11 @@ export interface PlayerPanelData {
 	healPotion?: PlayerPanelView['healPotion'];
 }
 
-export type Detail = { kind: 'weapon'; slot: number } | { kind: 'gear'; slot: string };
+export type Detail =
+	| { kind: 'weapon'; slot: number }
+	| { kind: 'gear'; slot: string }
+	| { kind: 'support'; id: string }
+	| { kind: 'potion' };
 
 /** Contract view of the player (`PlayerPanelView`) to what the panel draws. */
 export function panelFromView(
@@ -67,10 +73,30 @@ export function detailCard(data: PlayerPanelData, detail: Detail | null): ReactE
 		const item = data.gear.find((g) => g.slot === detail.slot)?.item;
 		return item ? <GearCardView item={item} /> : null;
 	}
+	if (detail?.kind === 'support') {
+		const s = data.support?.find((x) => x.id === detail.id);
+		return s ? (
+			<ItemCard
+				name={t(`support.${s.id}.name` as I18nKey)}
+				kind={`${t('shop.kind.support')} · ${t('support.level', { n: s.level, max: s.max })}`}
+				lines={[<Hint key="d">{t(`support.${s.id}.desc` as I18nKey)}</Hint>]}
+			/>
+		) : null;
+	}
+	if (detail?.kind === 'potion' && data.healPotion) {
+		return (
+			<ItemCard
+				name={t('hpotion.name')}
+				color={rarityCss(data.healPotion.rarity)}
+				kind={`${t('shop.kind.healPotion')} · ${numeral(data.healPotion.rarity)}`}
+				lines={[<Hint key="d">{t('hpotion.desc')}</Hint>]}
+			/>
+		);
+	}
 	return null;
 }
 
-function Block(props: { title: string; children: ReactNode }): ReactElement {
+export function Block(props: { title: string; children: ReactNode }): ReactElement {
 	return (
 		<section className="flex min-w-0 flex-col gap-1">
 			<h3 className="m-0 flex items-center gap-2 font-body text-section font-black tracking-section text-gold-bright uppercase">
@@ -94,6 +120,41 @@ function headlineOf(data: PlayerPanelData): {
 		line: head.map((s) => `${t(`gstat.${s.key}` as I18nKey)} ${s.value}`).join(' · '),
 		rest: data.stats.filter((s) => !head.includes(s)),
 	};
+}
+
+/** Section title of the shop columns ("YOUR EQUIPMENT", "DETAILS"): gold small caps over a thinning filet. */
+export function SectionTitle(props: { children: ReactNode }): ReactElement {
+	return (
+		<div className="flex flex-col gap-1">
+			<h2 className="m-0 font-body text-item font-black tracking-section text-gold-bright uppercase">
+				{props.children}
+			</h2>
+			<Ornament kind="filet" size="compact" />
+		</div>
+	);
+}
+
+/** Hero stats as a compact two-column grid: the headline three first and bold, then the rest. */
+export function HeroStats({ data }: { data: PlayerPanelData }): ReactElement {
+	const head = ['maxHp', 'armor', 'damage'];
+	const sorted = [...data.stats].sort((a, b) => {
+		const ia = head.indexOf(a.key);
+		const ib = head.indexOf(b.key);
+		return (ia < 0 ? head.length : ia) - (ib < 0 ? head.length : ib);
+	});
+	return (
+		<div className="grid grid-cols-2 gap-x-4">
+			{sorted.map((s) => (
+				<div
+					key={s.key}
+					className={`flex items-baseline justify-between gap-2 text-secondary ${head.includes(s.key) ? 'font-black text-gold-bright' : 'text-text-light'}`}
+				>
+					<span>{t(`gstat.${s.key}` as I18nKey)}</span>
+					<span className="font-bold tabular-nums">{s.value}</span>
+				</div>
+			))}
+		</div>
+	);
 }
 
 /**
@@ -137,6 +198,8 @@ export function PlayerPanel(props: {
 		const [kind, id] = v.split(':');
 		if (kind === 'weapon') pick({ kind: 'weapon', slot: Number(id) });
 		else if (kind === 'gear') pick({ kind: 'gear', slot: id as string });
+		else if (kind === 'support') pick({ kind: 'support', id: id as string });
+		else if (kind === 'potion') pick({ kind: 'potion' });
 	};
 
 	const tile = (
@@ -245,6 +308,121 @@ export function PlayerPanel(props: {
 			)}
 		</div>
 	);
+
+	if (!props.wide && !compact) {
+		const rowIcon = Math.max(28, Math.round(32 * scale));
+		const row = (o: {
+			detail: string;
+			frames: string[];
+			rarity: number;
+			label: string;
+			name: string;
+			active: boolean;
+			onClick: () => void;
+			actions?: ReactNode;
+		}): ReactElement => (
+			<div key={o.detail} data-detail={o.detail} className="flex min-w-0 items-center">
+				<Btn
+					onActivate={o.onClick}
+					label={o.label}
+					className={`min-w-0 flex-1 justify-start! gap-2 py-0! text-left normal-case! tracking-normal! ${o.active ? 'bg-gold-bright/10' : ''}`}
+				>
+					<SlotIcon frames={o.frames} rarity={o.rarity} size={rowIcon} />
+					<span
+						className="min-w-0 flex-1 leading-tight"
+						style={{ color: rarityCss(o.rarity) }}
+					>
+						{o.name}
+					</span>
+					<span className="font-black" style={{ color: rarityCss(o.rarity) }}>
+						{numeral(o.rarity)}
+					</span>
+				</Btn>
+				{o.actions}
+			</div>
+		);
+		const owned = data.weapons.length;
+		return (
+			<div onFocusCapture={track} className="flex min-h-0 min-w-0 flex-col gap-1">
+				<SectionTitle>{t('shop.yourGear')}</SectionTitle>
+				<Block title={`${t('shop.weapons')} ${owned}/${data.maxWeapons}`}>
+					{data.weapons.map((w, i) =>
+						row({
+							detail: `weapon:${i}`,
+							frames: weaponFrames(w.id, w.tier),
+							rarity: w.tier,
+							label: weaponName(w.id),
+							name: weaponName(w.id),
+							active: pickedWeapon === i,
+							onClick: () => pick({ kind: 'weapon', slot: i }),
+							actions:
+								pickedWeapon === i && props.weaponBar ? (
+									<div className="flex shrink-0 items-center">
+										{props.weaponBar(i)}
+									</div>
+								) : undefined,
+						}),
+					)}
+					{owned < data.maxWeapons && (
+						<span className="text-secondary text-text-dim">
+							{t('shop.empty')} ×{data.maxWeapons - owned}
+						</span>
+					)}
+				</Block>
+				<Block title={t('shop.equipment')}>
+					{data.gear.map((g) =>
+						g.item ? (
+							row({
+								detail: `gear:${g.slot}`,
+								frames: [`item.${g.item.id}`],
+								rarity: g.item.rarity,
+								label: slotLabel(g.slot),
+								name: gearName(g.item.id),
+								active: false,
+								onClick: () => pick({ kind: 'gear', slot: g.slot }),
+							})
+						) : (
+							<span key={g.slot} className="text-secondary text-text-dim">
+								{slotLabel(g.slot)} · {t('shop.empty')}
+							</span>
+						),
+					)}
+				</Block>
+				{supportLines && (
+					<Block
+						title={`${t('panel.support')} ${data.support?.length ?? 0}/${data.supportSlots ?? 0}`}
+					>
+						{data.support?.map((s) => (
+							<div key={s.id} data-detail={`support:${s.id}`} className="flex">
+								<Btn
+									onActivate={() => pick({ kind: 'support', id: s.id })}
+									className="w-full justify-between! py-0! normal-case! tracking-normal!"
+								>
+									<span>{t(`support.${s.id}.name` as I18nKey)}</span>
+									<span className="tabular-nums">
+										{t('support.level', { n: s.level, max: s.max })}
+									</span>
+								</Btn>
+							</div>
+						))}
+						{data.healPotion && (
+							<div data-detail="potion:heal" className="flex">
+								<Btn
+									onActivate={() => pick({ kind: 'potion' })}
+									className="w-full justify-between! py-0! normal-case! tracking-normal!"
+								>
+									<span>{t('hpotion.name')}</span>
+									<span className="tabular-nums">
+										{data.healPotion.charges}/{data.healPotion.level}
+									</span>
+								</Btn>
+							</div>
+						)}
+					</Block>
+				)}
+			</div>
+		);
+	}
 
 	if (!props.wide) {
 		return (

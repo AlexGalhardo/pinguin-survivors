@@ -4,6 +4,8 @@ export const shopZhCN = {
 	'shop.fish': '鱼 {n}',
 	'shop.merchant': '商人',
 	'shop.you': '你的企鹅',
+	'shop.yourGear': '你的装备',
+	'shop.details': '详情',
 	'shop.pickItem': '选中物品即可在此查看。',
 	'shop.tapSlot': '点按栏位：出售或融合',
 	'shop.equipped': '已装备',

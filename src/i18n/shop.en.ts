@@ -4,6 +4,8 @@ export const shopEn = {
 	'shop.fish': 'FISH {n}',
 	'shop.merchant': 'Merchant',
 	'shop.you': 'YOUR PENGUIN',
+	'shop.yourGear': 'YOUR EQUIPMENT',
+	'shop.details': 'DETAILS',
 	'shop.pickItem': 'Focus an item to see it here.',
 	'shop.tapSlot': 'Tap a slot: sell or fuse',
 	'shop.equipped': 'EQUIPPED',
