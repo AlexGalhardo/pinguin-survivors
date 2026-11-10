@@ -33,7 +33,7 @@ export interface PlayerPanelData {
 	healPotion?: PlayerPanelView['healPotion'];
 }
 
-type Detail = { kind: 'weapon'; slot: number } | { kind: 'gear'; slot: string };
+export type Detail = { kind: 'weapon'; slot: number } | { kind: 'gear'; slot: string };
 
 /** Contract view of the player (`PlayerPanelView`) to what the panel draws. */
 export function panelFromView(
@@ -57,85 +57,236 @@ export function panelFromView(
 
 const slotLabel = (slot: string): string => t(`gslot.${slot}` as I18nKey);
 
-function Block(props: { title: string; children: ReactNode; aside?: ReactNode }): ReactElement {
+/** Tooltip card of the owned item a `Detail` points at, or null when the slot is empty. */
+export function detailCard(data: PlayerPanelData, detail: Detail | null): ReactElement | null {
+	if (detail?.kind === 'weapon') {
+		const w = data.weapons[detail.slot];
+		return w ? <WeaponCardView item={w} /> : null;
+	}
+	if (detail?.kind === 'gear') {
+		const item = data.gear.find((g) => g.slot === detail.slot)?.item;
+		return item ? <GearCardView item={item} /> : null;
+	}
+	return null;
+}
+
+function Block(props: { title: string; children: ReactNode }): ReactElement {
 	return (
 		<section className="flex min-w-0 flex-col gap-1">
-			<h3 className="m-0 flex items-center gap-2 font-title text-[0.9em] font-bold tracking-[0.14em] text-gold-bright uppercase">
+			<h3 className="m-0 flex items-center gap-2 font-body text-section font-black tracking-section text-gold-bright uppercase">
 				<span className="diamond" />
-				<span className="flex-1">{props.title}</span>
-				{props.aside}
+				{props.title}
 			</h3>
 			{props.children}
 		</section>
 	);
 }
 
+/** The three headline numbers as one line, and the other stats. */
+function headlineOf(data: PlayerPanelData): {
+	line: string;
+	rest: { key: string; value: string }[];
+} {
+	const head = ['maxHp', 'armor', 'damage']
+		.map((k) => data.stats.find((s) => s.key === k))
+		.filter((s): s is { key: string; value: string } => Boolean(s));
+	return {
+		line: head.map((s) => `${t(`gstat.${s.key}` as I18nKey)} ${s.value}`).join(' · '),
+		rest: data.stats.filter((s) => !head.includes(s)),
+	};
+}
+
 /**
- * The player's side of the shop and the pause screen, built to never scroll: three headline
- * numbers, the stats in columns, the weapon and equipment slots as icon tiles
- * and, in the space that is left, the card of the focused item. Focus (keyboard, pad, mouse) on a
- * tile picks the item; `weaponBar` is the fixed bar of actions for the picked weapon.
+ * The player's side of the shop and the pause screen (Style D, no boxes, never scrolls). Shop: one
+ * bold line of headline numbers, the other stats in a sentence, the 6 weapon and 5 equipment slots
+ * in one row, the action bar of the picked weapon and the support lines. Pause (`wide`): stats on
+ * the left, slots in two columns in the middle and, on the right, the card of the focused slot
+ * over `footer` (the actions). Focus (keyboard, pad, mouse) on a slot picks the item.
  */
 export function PlayerPanel(props: {
 	data: PlayerPanelData;
 	/** Actions for the picked weapon slot (sell, fuse), in a fixed bar under the weapon tiles. */
 	weaponBar?: (slot: number) => ReactNode;
-	/** Pause layout: one more column for the focused item card. */
+	/** Pause layout. */
 	wide?: boolean;
+	/** Pause: the actions under the card. */
+	footer?: ReactNode;
+	/** Called when focus or a click picks an owned item (the shop draws the card itself). */
+	onPick?: (d: Detail) => void;
 }): ReactElement {
 	const { data } = props;
 	const scale = useUiScale();
-	// Phone landscape: only the three headline numbers, no stat list and no card in the shop.
 	const compact = useCompact();
-	// Icon box of the tiles follows the screen height; the atlas icons snap to whole-number scales.
-	const icon = Math.max(24, Math.round((props.wide ? 76 : 44) * scale));
+	const icon = compact ? 32 : Math.max(28, Math.round((props.wide ? 80 : 60) * scale));
 	const [detail, setDetail] = useState<Detail | null>(null);
-	const [pickedWeapon, setPickedWeapon] = useState(0);
+	// Phone: no slot is picked until the player taps one, then the action bar appears.
+	const [pickedWeapon, setPickedWeapon] = useState<number | null>(compact ? null : 0);
 	const slots = Array.from({ length: data.maxWeapons }, (_, i) => data.weapons[i]);
+	const { line, rest } = headlineOf(data);
 
-	const headline = ['maxHp', 'armor', 'damage']
-		.map((k) => data.stats.find((s) => s.key === k))
-		.filter((s): s is { key: string; value: string } => Boolean(s));
-	const rest = data.stats.filter((s) => !headline.includes(s));
-
-	let card: ReactElement | null = null;
-	if (detail?.kind === 'weapon' && data.weapons[detail.slot])
-		card = <WeaponCardView item={data.weapons[detail.slot] as WeaponItem} />;
-	else if (detail?.kind === 'gear') {
-		const item = data.gear.find((g) => g.slot === detail.slot)?.item;
-		if (item) card = <GearCardView item={item} />;
-	}
-
+	const pick = (d: Detail): void => {
+		setDetail(d);
+		if (d.kind === 'weapon') setPickedWeapon(d.slot);
+		props.onPick?.(d);
+	};
 	// Focus bubbles from the tiles: the nearest wrapper decides which card to show.
 	const track = (e: React.FocusEvent<HTMLElement>): void => {
 		const el = (e.target as HTMLElement).closest<HTMLElement>('[data-detail]');
 		const v = el?.dataset.detail;
 		if (!v) return;
 		const [kind, id] = v.split(':');
-		if (kind === 'weapon') {
-			setDetail({ kind: 'weapon', slot: Number(id) });
-			setPickedWeapon(Number(id));
-		} else if (kind === 'gear') setDetail({ kind: 'gear', slot: id as string });
+		if (kind === 'weapon') pick({ kind: 'weapon', slot: Number(id) });
+		else if (kind === 'gear') pick({ kind: 'gear', slot: id as string });
 	};
 
-	const stats = (
-		<Block title={t('pause.stats')}>
-			{headline.length > 0 && !(compact && !props.wide) && (
-				<div className="grid grid-cols-3 gap-1.5 text-center">
-					{headline.map((s) => (
-						<div key={s.key} className="border border-snow-dark bg-night/60 px-1 py-1">
-							<div className="font-title text-[1.5em] leading-tight font-black tabular-nums">
-								{s.value}
-							</div>
-							<div className="mt-0.5 text-[0.7em] tracking-wider text-text-dim uppercase">
-								{t(`gstat.${s.key}` as I18nKey)}
-							</div>
-						</div>
-					))}
+	const tile = (
+		w: { frames: string[]; rarity: number; label: string; detail: string },
+		active: boolean,
+		onClick: () => void,
+	): ReactElement => (
+		<div key={w.detail} data-detail={w.detail} className="flex">
+			<Btn
+				onActivate={onClick}
+				className={`flex flex-col items-center justify-center gap-0 border-0 bg-transparent py-0 pr-0! pl-0! ${active ? 'outline outline-1 outline-crit' : ''}`}
+				label={w.label}
+			>
+				<SlotIcon frames={w.frames} rarity={w.rarity} size={icon} />
+				{!compact && (
+					<span
+						className="text-key leading-tight font-black"
+						style={{ color: rarityCss(w.rarity) }}
+					>
+						{numeral(w.rarity)}
+					</span>
+				)}
+			</Btn>
+		</div>
+	);
+	const empty = (key: string, label?: string): ReactElement => (
+		<div
+			key={key}
+			title={label}
+			className="border border-dashed border-snow-dark bg-night/40"
+			style={{ width: icon + 8, height: icon + 8 }}
+		></div>
+	);
+	const weaponTiles = slots.map((w, i) =>
+		w
+			? tile(
+					{
+						frames: weaponFrames(w.id, w.tier),
+						rarity: w.tier,
+						label: weaponName(w.id),
+						detail: `weapon:${i}`,
+					},
+					pickedWeapon === i,
+					() => pick({ kind: 'weapon', slot: i }),
+				)
+			: // Fixed slots: the position is the identity.
+				empty(`w${i}`),
+	);
+	const gearTiles = data.gear.map((g) =>
+		g.item
+			? tile(
+					{
+						frames: [`item.${g.item.id}`],
+						rarity: g.item.rarity,
+						label: slotLabel(g.slot),
+						detail: `gear:${g.slot}`,
+					},
+					false,
+					() => pick({ kind: 'gear', slot: g.slot }),
+				)
+			: empty(`g${g.slot}`, slotLabel(g.slot)),
+	);
+
+	const picked = pickedWeapon === null ? undefined : data.weapons[pickedWeapon];
+	const bar =
+		props.weaponBar && !props.wide ? (
+			picked && pickedWeapon !== null ? (
+				<div className="flex flex-wrap items-center gap-x-3">
+					<span
+						className="min-w-0 flex-1 truncate text-body font-bold"
+						style={{ color: rarityCss(picked.tier) }}
+					>
+						{weaponName(picked.id)} {numeral(picked.tier)}
+					</span>
+					{props.weaponBar(pickedWeapon)}
 				</div>
+			) : (
+				<Hint>{t('shop.tapSlot')}</Hint>
+			)
+		) : null;
+
+	const supportLines = (data.support?.length || data.healPotion) && (
+		<div className="flex flex-col">
+			{data.support?.map((s) => (
+				<StatRow
+					key={s.id}
+					label={t(`support.${s.id}.name` as I18nKey)}
+					value={t('support.level', { n: s.level, max: s.max })}
+				/>
+			))}
+			{data.healPotion && (
+				<StatRow
+					label={t('hpotion.name')}
+					accent=""
+					value={
+						<span style={{ color: rarityCss(data.healPotion.rarity) }}>
+							{t('panel.healPotion', {
+								charges: data.healPotion.charges,
+								level: data.healPotion.level,
+								pct: Math.round(data.healPotion.healShare * 100),
+								rarity: numeral(data.healPotion.rarity),
+							})}
+						</span>
+					}
+				/>
 			)}
-			{!compact && (
-				<div className="grid grid-cols-2 gap-x-4 gap-y-0">
+		</div>
+	);
+
+	if (!props.wide) {
+		return (
+			<div onFocusCapture={track} className="flex min-h-0 min-w-0 flex-col gap-1.5">
+				<p className="m-0 text-body font-black tracking-wider uppercase">{line}</p>
+				{!compact && (
+					<p className="m-0 text-secondary leading-snug text-text-light">
+						{rest
+							.map((s) => `${t(`gstat.${s.key}` as I18nKey)} ${s.value}`)
+							.join(' · ')}
+					</p>
+				)}
+				<div
+					className={
+						compact ? 'flex flex-col gap-1.5' : 'flex flex-wrap items-start gap-1.5'
+					}
+				>
+					<div className="flex gap-1.5">{weaponTiles}</div>
+					{!compact && <span className="w-4" />}
+					<div className="flex gap-1.5">{gearTiles}</div>
+				</div>
+				{bar}
+				{!compact && supportLines}
+			</div>
+		);
+	}
+
+	return (
+		<div
+			onFocusCapture={track}
+			className="grid min-h-0 min-w-0 flex-1 grid-cols-[minmax(0,0.95fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-[2vw]"
+		>
+			{/* Right column first in the DOM so the actions get the initial focus. */}
+			<div className="order-3 flex min-h-0 min-w-0 flex-col justify-between gap-2">
+				<div className="min-h-0 overflow-hidden">
+					{detailCard(data, detail) ?? <Hint>{t('shop.pickItem')}</Hint>}
+				</div>
+				{props.footer}
+			</div>
+			<div className="order-1 flex min-h-0 min-w-0 flex-col gap-1.5">
+				<p className="m-0 text-cta font-black tracking-wider uppercase">{line}</p>
+				<div className={compact ? 'grid grid-cols-2 gap-x-4' : ''}>
 					{rest.map((s) => (
 						<StatRow
 							key={s.key}
@@ -146,150 +297,33 @@ export function PlayerPanel(props: {
 						/>
 					))}
 				</div>
-			)}
-			{!compact && data.cards && data.cards.length > 0 && (
-				<Hint>
-					{data.cards
-						.map((c) => `${c.name} ${t('hud.level', { n: c.level })}`)
-						.join(' · ')}
-				</Hint>
-			)}
-		</Block>
-	);
-
-	const tiles = (
-		<div className="flex min-w-0 flex-col gap-2 [@media(max-height:500px)]:gap-0.5">
-			<Block title={`${t('shop.weapons')} ${data.weapons.length}/${data.maxWeapons}`}>
-				<div className="grid grid-cols-6 gap-1.5">
-					{slots.map((w, i) => (
-						// Fixed slots: the position is the identity.
-						// biome-ignore lint/suspicious/noArrayIndexKey: fixed-size slot list
-						<div key={i} data-detail={w ? `weapon:${i}` : undefined} className="flex">
-							{w ? (
-								<Btn
-									onActivate={() => setPickedWeapon(i)}
-									className={`flex w-full flex-col items-center justify-center gap-0 border-0 bg-transparent p-0 ${
-										pickedWeapon === i ? 'outline outline-1 outline-crit' : ''
-									}`}
-									label={weaponName(w.id)}
-								>
-									<SlotIcon
-										frames={weaponFrames(w.id, w.tier)}
-										rarity={w.tier}
-										size={icon}
-									/>
-									<span
-										className="text-[0.7em] leading-none font-bold"
-										style={{ color: rarityCss(w.tier) }}
-									>
-										{numeral(w.tier)}
-									</span>
-								</Btn>
-							) : (
-								<div className="flex min-h-11 w-full items-center justify-center border border-dashed border-snow-dark bg-night/40" />
-							)}
-						</div>
-					))}
-				</div>
-				{props.weaponBar && data.weapons[pickedWeapon] && (
-					<div className="flex items-center gap-2">
-						<span
-							className="min-w-0 flex-1 truncate font-bold"
-							style={{ color: rarityCss(data.weapons[pickedWeapon]?.tier ?? 1) }}
-						>
-							{weaponName(data.weapons[pickedWeapon]?.id ?? '')}
-						</span>
-						{props.weaponBar(pickedWeapon)}
-					</div>
+				{data.cards && data.cards.length > 0 && !compact && (
+					<Block title={t('pause.cards')}>
+						<Hint>
+							{data.cards
+								.map((c) => `${c.name} ${t('hud.level', { n: c.level })}`)
+								.join(' · ')}
+						</Hint>
+					</Block>
 				)}
-			</Block>
-			<Block title={t('shop.equipment')}>
-				<div className="grid grid-cols-5 gap-1.5">
-					{data.gear.map((g) => (
-						<div
-							key={g.slot}
-							data-detail={g.item ? `gear:${g.slot}` : undefined}
-							className="flex"
-						>
-							{g.item ? (
-								<Btn
-									onActivate={() => setDetail({ kind: 'gear', slot: g.slot })}
-									className="flex w-full flex-col items-center justify-center gap-0 border-0 bg-transparent p-0"
-									label={slotLabel(g.slot)}
-								>
-									<SlotIcon
-										frames={[`item.${g.item.id}`]}
-										rarity={g.item.rarity}
-										size={icon}
-									/>
-									<span
-										className="text-[0.7em] leading-none font-bold"
-										style={{ color: rarityCss(g.item.rarity) }}
-									>
-										{numeral(g.item.rarity)}
-									</span>
-								</Btn>
-							) : (
-								<div className="flex min-h-11 w-full items-center justify-center border border-dashed border-snow-dark bg-night/40 px-0.5 text-center text-[0.65em] text-text-dim">
-									{slotLabel(g.slot)}
-								</div>
-							)}
-						</div>
-					))}
+				{!compact && supportLines && (
+					<Block
+						title={`${t('panel.support')} ${data.support?.length ?? 0}/${data.supportSlots ?? 0}`}
+					>
+						{supportLines}
+					</Block>
+				)}
+			</div>
+			<div
+				className={`order-2 flex min-h-0 min-w-0 justify-center ${compact ? 'flex-col items-center gap-1.5' : 'items-start gap-[1.5vw]'}`}
+			>
+				<div className={`flex gap-1.5 ${compact ? 'flex-row' : 'flex-col'}`}>
+					{gearTiles}
 				</div>
-			</Block>
-			{(data.support?.length || data.healPotion) && (
-				<Block
-					title={`${t('panel.support')} ${data.support?.length ?? 0}/${data.supportSlots ?? 0}`}
-				>
-					{data.support?.map((s) => (
-						<StatRow
-							key={s.id}
-							label={t(`support.${s.id}.name` as I18nKey)}
-							value={t('support.level', { n: s.level, max: s.max })}
-						/>
-					))}
-					{data.healPotion && (
-						<StatRow
-							label={t('hpotion.name')}
-							accent=""
-							value={
-								<span style={{ color: rarityCss(data.healPotion.rarity) }}>
-									{t('panel.healPotion', {
-										charges: data.healPotion.charges,
-										level: data.healPotion.level,
-										pct: Math.round(data.healPotion.healShare * 100),
-										rarity: numeral(data.healPotion.rarity),
-									})}
-								</span>
-							}
-						/>
-					)}
-				</Block>
-			)}
-		</div>
-	);
-
-	const cardZone = (
-		<div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-			{card ?? <Hint>{t('shop.pickItem')}</Hint>}
-		</div>
-	);
-
-	return (
-		<div
-			onFocusCapture={track}
-			className={`grid min-h-0 min-w-0 flex-1 gap-3 ${props.wide ? 'grid-cols-[minmax(0,0.8fr)_minmax(0,1.3fr)_minmax(0,1fr)] items-start text-[1.15em] [@media(max-height:500px)]:text-[1em]' : 'grid-cols-1 grid-rows-[auto_auto_minmax(0,1fr)]'}`}
-		>
-			{compact && !props.wide ? null : (
-				<div className="flex min-h-0 min-w-0 flex-col gap-2">{stats}</div>
-			)}
-			{tiles}
-			{props.wide ? (
-				cardZone
-			) : compact ? null : (
-				<div className="flex min-h-0 flex-col">{cardZone}</div>
-			)}
+				<div className={`flex gap-1.5 ${compact ? 'flex-row' : 'flex-col'}`}>
+					{weaponTiles}
+				</div>
+			</div>
 		</div>
 	);
 }

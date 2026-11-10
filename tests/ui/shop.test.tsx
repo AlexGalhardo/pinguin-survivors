@@ -169,4 +169,13 @@ describe('Shop', () => {
 		expect(getByText('max HP 140 → 146').className).toContain('text-xp');
 		cleanup();
 	});
+
+	test('focusing an owned slot swaps the offer tooltip for that item card', () => {
+		const { a } = actions();
+		const { container, getByLabelText } = render(<Shop data={data()} actions={a} />);
+		expect(container.textContent).toContain('Weapon · I');
+		fireEvent.focus(getByLabelText('Throwing Knives'));
+		expect(container.textContent).toContain('Weapon · IV');
+		cleanup();
+	});
 });

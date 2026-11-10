@@ -101,10 +101,10 @@ describe('Pause', () => {
 			tree: () => calls.push('tree'),
 			quit: () => calls.push('quit'),
 		};
-		const { getAllByText, getByText, queryByText } = render(
+		const { container, getByText, queryByText } = render(
 			<Pause data={data} actions={actions} />,
 		);
-		expect(getAllByText('140').length).toBeGreaterThan(0);
+		expect(container.textContent).toContain('140');
 		fireEvent.click(getByText('QUIT RUN'));
 		expect(calls).toEqual([]);
 		expect(queryByText('YES, QUIT')).not.toBeNull();

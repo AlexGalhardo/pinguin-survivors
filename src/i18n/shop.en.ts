@@ -5,6 +5,7 @@ export const shopEn = {
 	'shop.merchant': 'Merchant',
 	'shop.you': 'YOUR PENGUIN',
 	'shop.pickItem': 'Focus an item to see it here.',
+	'shop.tapSlot': 'Tap a slot: sell or fuse',
 	'shop.equipped': 'EQUIPPED',
 	'shop.offerLabel': 'FOR SALE',
 	'shop.weapons': 'WEAPONS',
