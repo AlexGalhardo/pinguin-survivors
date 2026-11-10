@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1000" viewBox="0 0 1920 1000">
+  <defs>
+    <filter id="fx0">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="fx0_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx0_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx0_is_off" operator="out" result="fx0_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx0_is_inv" operator="in" result="fx0_is_shadow"/>
+      <feComposite in="fx0_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx1">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="1"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="20" stdDeviation="30" flood-color="#000000" flood-opacity="1"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#E0BB62" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1000" fill="#0B0E14"/>
+    <g transform="translate(48, 48)">
+      <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">4 · ELEVAÇÃO E EFEITOS</text>
+    </g>
+    <g transform="translate(48, 116)">
+      <g filter="url(#fx0)">
+        <rect width="240" height="120" fill="#161C29"/>
+        <g transform="translate(61.5, 46.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">elev-0 inset</text>
+        </g>
+      </g>
+      <g transform="translate(280, 0)" filter="url(#fx1)">
+        <rect width="240" height="120" fill="#161C29"/>
+        <g transform="translate(90.5, 46.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">elev-1</text>
+        </g>
+      </g>
+      <g transform="translate(560, 0)" filter="url(#fx2)">
+        <rect width="240" height="120" fill="#0B0E14"/>
+        <g transform="translate(54.5, 46.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">elev-2 tooltip</text>
+        </g>
+      </g>
+      <g transform="translate(840, 0)" filter="url(#fx3)">
+        <rect width="240" height="120" fill="#E0BB62"/>
+        <g transform="translate(62.5, 46.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#FFD84A">focus-glow</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(48, 250)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">elev-0 (superfícies: cartas, encaixes): inset 0 0 40px #000 100%. elev-1 (selo, carta solta): 0 8 24 #000 80%. elev-2 (tooltip, diálogo): 0 20 60 #000 100%. focus-glow: 0 0 32 #e0bb62 20% + losango 14 px com 0 0 10–14 #ffd84a. Vinheta: 1 por tela, sempre a última camada não interativa. Limite: no máximo 3 camadas com blur visíveis ao mesmo tempo (vinheta, brilho, 1 tooltip); sombra nunca em itens de lista não focados.</text>
+    </g>
+    <g transform="translate(48, 345)">
+      <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">5 · BORDAS E ORNAMENTOS</text>
+    </g>
+    <g transform="translate(48, 413)">
+      <g transform="translate(0, 7.5)">
+        <rect width="130" height="1" fill="#A8843A"/>
+      </g>
+      <g transform="translate(130, 7)">
+        <rect width="170" height="2" fill="#A8843A"/>
+      </g>
+      <g transform="translate(300, 3) rotate(45, 5, 5)">
+        <rect width="10" height="10" fill="#E0BB62"/>
+      </g>
+      <g transform="translate(310, 7)">
+        <rect width="170" height="2" fill="#A8843A"/>
+      </g>
+      <g transform="translate(480, 7.5)">
+        <rect width="130" height="1" fill="#A8843A"/>
+      </g>
+    </g>
+    <g transform="translate(48, 443)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Filete de título (Ornament): 620 × 16; pontas 130 px a 1 px #a8843a 20%, miolo 170 px a 2 px #a8843a, losango central 10 px #e0bb62 (rotação 45°). Versão curta 520 (pontas 110, miolo 140). 844×390: 320 (pontas 60, miolo 90, losango 8).</text>
+    </g>
+    <g transform="translate(48, 511)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Losangos: 16 (foco de lista principal) · 14 (foco padrão) · 12 (CTA, marcador) · 10 (filete, celular) · 8 (escala de volume). Separador de linhas: 1 px #a8843a 20–40%. Borda de tooltip: 1 px na cor da raridade, tracejado “desgastado” 22-2-5-2. Desabilitado/vazio: 1–2 px #5a6378 tracejado 6-4.</text>
+    </g>
+    <g transform="translate(48, 579)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Moldura recortada (implementação): clip-path com cantos chanfrados de 12 px a 45° em painéis/tooltips; cantos ornamentados em L de 18 px em #a8843a só em diálogos. Nada de border-radius em painéis; círculos só em encaixes de gambit, joystick e brilhos.</text>
+    </g>
+  </g>
+</svg>

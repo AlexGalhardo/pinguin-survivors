@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx0_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx0_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx0_is_off" operator="out" result="fx0_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx0_is_inv" operator="in" result="fx0_is_shadow"/>
+      <feComposite in="fx0_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx1">
+      <feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#A8843A" flood-opacity="0.33"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(1000, 0)">
+      <rect width="920" height="1080" fill="#161C29"/>
+      <g transform="translate(391.5, 405.5)">
+        <text x="0" y="200" font-family="Roboto" font-size="200" font-weight="900" fill="#3A4152">X</text>
+      </g>
+      <g transform="translate(322, 647.5)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Arte: heróis, chefes, biomas</text>
+      </g>
+    </g>
+    <g filter="url(#fx0)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(110, 0)">
+      <g transform="translate(0, 208)">
+        <text x="0" y="72" font-family="Cinzel" font-size="72" font-weight="700" fill="#E0BB62" letter-spacing="10">DEMO COMPLETA</text>
+      </g>
+      <g transform="translate(0, 321)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(0, 353)">
+        <text x="0" y="44" font-family="Cinzel" font-size="44" font-weight="700" fill="#E8ECF2" letter-spacing="4">Round 10</text>
+      </g>
+      <g transform="translate(0, 428)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E8ECF2">1.532 abates · 12:35 · 48.210 de dano</text>
+      </g>
+      <g transform="translate(0, 476)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#E0BB62">Bob é desbloqueado no jogo completo</text>
+      </g>
+      <g transform="translate(0, 524)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">◆ 3 heróis   ◆ biomas e endless   ◆ árvore de habilidades</text>
+      </g>
+      <g transform="translate(0, 569)"/>
+      <g transform="translate(0, 601)" filter="url(#fx1)">
+        <rect width="550" height="76" fill="#A8843A"/>
+        <g transform="translate(16, 30) rotate(45, 8, 8)">
+          <rect width="16" height="16" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(48, 12.5)">
+          <text x="0" y="38" font-family="Cinzel" font-size="38" font-weight="700" fill="#FFD84A" letter-spacing="6">DESEJAR NA STEAM</text>
+        </g>
+      </g>
+      <g transform="translate(0, 693)">
+        <g transform="translate(46, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">JOGAR DE NOVO</text>
+        </g>
+      </g>
+      <g transform="translate(0, 769)">
+        <g transform="translate(46, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">MENU PRINCIPAL</text>
+        </g>
+      </g>
+      <g transform="translate(0, 845)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Derrota: “FIM DA DEMO”. A Steam abre no navegador do sistema.</text>
+      </g>
+    </g>
+  </g>
+</svg>

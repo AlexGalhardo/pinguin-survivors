@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="80" flood-color="#161C29" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="15" flood-color="#E0BB62" flood-opacity="0.13"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(460, 200)" filter="url(#fx0)">
+      <rect width="1000" height="700" rx="350" ry="350" fill="#161C29"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(0, 36)">
+      <g transform="translate(749.5, 0)">
+        <text x="0" y="48" font-family="Cinzel" font-size="48" font-weight="700" fill="#E0BB62" letter-spacing="12">CONTROLES</text>
+      </g>
+      <g transform="translate(650, 73)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(588.5, 97)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">ENTER e depois a nova tecla · ESC cancela · as setas sempre movem</text>
+      </g>
+    </g>
+    <g transform="translate(160, 860)">
+      <g transform="translate(50, 0)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Controle: analógico move · X/A confirma · Triângulo/Y super magia · Quadrado/X ou View troca a velocidade 1x-4x · Options pausa</text>
+      </g>
+      <g transform="translate(330, 39)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">R  RESTAURAR PADRÃO      ESC  VOLTAR (bloqueado enquanto espera a tecla)</text>
+      </g>
+    </g>
+    <g transform="translate(460, 200)">
+      <g>
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">MOVER PARA CIMA</text>
+        </g>
+        <g transform="translate(926, 12.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#E0BB62">W</text>
+        </g>
+      </g>
+      <g transform="translate(0, 64)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">MOVER PARA BAIXO</text>
+        </g>
+        <g transform="translate(939, 10.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#E0BB62">S</text>
+        </g>
+      </g>
+      <g transform="translate(0, 128)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">MOVER PARA A ESQUERDA</text>
+        </g>
+        <g transform="translate(935, 10.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#E0BB62">A</text>
+        </g>
+      </g>
+      <g transform="translate(0, 192)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">MOVER PARA A DIREITA</text>
+        </g>
+        <g transform="translate(931, 10.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#E0BB62">D</text>
+        </g>
+      </g>
+      <g transform="translate(0, 256)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">SUPER MAGIA</text>
+        </g>
+        <g transform="translate(864, 10.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#E0BB62">Space</text>
+        </g>
+      </g>
+      <g transform="translate(0, 320)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">VELOCIDADE 1X-4X</text>
+        </g>
+        <g transform="translate(585, 18.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#C4161C">Tab já é usada em Velocidade</text>
+        </g>
+        <g transform="translate(899, 10.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#C4161C">Tab</text>
+        </g>
+      </g>
+      <g transform="translate(0, 384)" filter="url(#fx2)">
+        <rect width="1000" height="68" fill="#E0BB62"/>
+        <g transform="translate(14, 27) rotate(45, 7, 7)" filter="url(#fx3)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(42, 16)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="900" fill="#FFD84A" letter-spacing="3">PAUSA: APERTE UMA TECLA…</text>
+        </g>
+        <g transform="translate(971, 14.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#FFD84A">_</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

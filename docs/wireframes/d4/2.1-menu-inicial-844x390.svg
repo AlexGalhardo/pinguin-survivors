@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="844" height="390" viewBox="0 0 844 390">
+  <defs>
+    <filter id="fx0">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="60" result="fx0_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx0_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx0_is_off" operator="out" result="fx0_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx0_is_inv" operator="in" result="fx0_is_shadow"/>
+      <feComposite in="fx0_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="844" height="390" fill="#161C29"/>
+    <g transform="translate(480, 0)">
+      <g transform="translate(147.5, 134.5)">
+        <text x="0" y="100" font-family="Roboto" font-size="100" font-weight="900" fill="#3A4152">X</text>
+      </g>
+    </g>
+    <rect width="500" height="390" fill="#0B0E14"/>
+    <g filter="url(#fx0)">
+      <rect width="844" height="390" fill="#000000"/>
+    </g>
+    <g transform="translate(44, 10)">
+      <text x="0" y="30" font-family="Cinzel" font-size="30" font-weight="700" fill="#E0BB62" letter-spacing="4">PINGUIN SURVIVORS</text>
+    </g>
+    <g transform="translate(44, 48)">
+      <g>
+        <rect width="440" height="48" fill="#E0BB62"/>
+        <g transform="translate(10, 19) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(30, 8)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#FFD84A" letter-spacing="3">CONTINUAR</text>
+        </g>
+        <g transform="translate(223, 13)">
+          <text x="0" y="18" font-family="Roboto" font-size="18" fill="#E0BB62">round 7</text>
+        </g>
+      </g>
+      <g transform="translate(0, 48)">
+        <g transform="translate(30, 8.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2" letter-spacing="3">JOGAR</text>
+        </g>
+      </g>
+      <g transform="translate(0, 94)">
+        <g transform="translate(30, 8.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2" letter-spacing="3">NOVO JOGO</text>
+        </g>
+      </g>
+      <g transform="translate(0, 140)">
+        <g transform="translate(30, 8.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2" letter-spacing="3">CARREGAR</text>
+        </g>
+      </g>
+      <g transform="translate(0, 186)">
+        <g transform="translate(30, 8.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2" letter-spacing="3">HERÓIS E POÇÕES</text>
+        </g>
+      </g>
+      <g transform="translate(0, 232)">
+        <g transform="translate(0, 2)">
+          <g transform="translate(17, 6.5)">
+            <text x="0" y="26" font-family="Cinzel" font-size="26" fill="#E0BB62">‹</text>
+          </g>
+        </g>
+        <g transform="translate(60, 13)">
+          <text x="0" y="18" font-family="Roboto" font-size="18" fill="#E8ECF2">página 1/2</text>
+        </g>
+        <g transform="translate(162, 2)">
+          <g transform="translate(17, 6.5)">
+            <text x="0" y="26" font-family="Cinzel" font-size="26" fill="#E0BB62">›</text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(540, 356)">
+      <text x="0" y="18" font-family="Roboto" font-size="18" font-weight="700" fill="#E0BB62">12 PÉROLAS ◆ 3 PONTOS</text>
+    </g>
+  </g>
+</svg>

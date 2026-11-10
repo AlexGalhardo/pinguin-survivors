@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="80" flood-color="#161C29" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="30" flood-color="#E0BB62" flood-opacity="0.13"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+    <filter id="fx4">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="fx4_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx4_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx4_is_off" operator="out" result="fx4_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx4_is_inv" operator="in" result="fx4_is_shadow"/>
+      <feComposite in="fx4_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(260, 200)" filter="url(#fx0)">
+      <rect width="1400" height="700" rx="350" ry="350" fill="#161C29"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g>
+      <g transform="translate(641, 48)">
+        <text x="0" y="52" font-family="Cinzel" font-size="52" font-weight="700" fill="#E0BB62" letter-spacing="12">CARREGAR JOGO</text>
+      </g>
+      <g transform="translate(650, 132)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(698, 162)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Escolha um slot de save para continuar jogando.</text>
+      </g>
+      <g transform="translate(126, 205)">
+        <g transform="translate(0, 140.5)" filter="url(#fx2)">
+          <rect width="540" height="505" fill="#E0BB62"/>
+          <g transform="translate(110.5, 16)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#E0BB62" letter-spacing="5">◆ SLOT 1 · ATIVO ◆</text>
+          </g>
+          <g transform="translate(170, 55)">
+            <rect width="200" height="200" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+            <g transform="translate(86, 76)">
+              <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+            </g>
+          </g>
+          <g transform="translate(213.5, 265)">
+            <text x="0" y="36" font-family="Cinzel" font-size="36" font-weight="700" fill="#E8ECF2" letter-spacing="4">JACK</text>
+          </g>
+          <g transform="translate(130.5, 324)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Nível 12 · melhor round 14</text>
+          </g>
+          <g transform="translate(45.5, 363)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Jogado 3h 05m · Salvo em 08/11/2026 18:42</text>
+          </g>
+          <g transform="translate(137, 400)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#FF9A3C" letter-spacing="2">RUN EM ANDAMENTO</text>
+          </g>
+          <g transform="translate(105, 437)">
+            <g>
+              <g transform="translate(0, 20) rotate(45, 6, 6)" filter="url(#fx3)">
+                <rect width="12" height="12" fill="#FFD84A"/>
+              </g>
+              <g transform="translate(22, 10)">
+                <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#FFD84A" letter-spacing="3">CARREGAR</text>
+              </g>
+            </g>
+            <g transform="translate(214, 0)">
+              <g transform="translate(0, 11.5)">
+                <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#C4161C" letter-spacing="3">APAGAR</text>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(564, 144.5)">
+          <g transform="translate(214, 16)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#E8ECF2" letter-spacing="5">SLOT 2</text>
+          </g>
+          <g transform="translate(170, 55)">
+            <rect width="200" height="200" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+            <g transform="translate(86, 76)">
+              <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+            </g>
+          </g>
+          <g transform="translate(224, 265)">
+            <text x="0" y="36" font-family="Cinzel" font-size="36" font-weight="700" fill="#E8ECF2" letter-spacing="4">BOB</text>
+          </g>
+          <g transform="translate(140.5, 324)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Nível 4 · melhor round 6</text>
+          </g>
+          <g transform="translate(20, 363)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2">Apagar o slot 2? Todo o progresso dele será perdido.</text>
+          </g>
+          <g transform="translate(94, 429)">
+            <g transform="translate(0, 11.5)">
+              <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#C4161C" letter-spacing="3">CONFIRMAR</text>
+            </g>
+            <g transform="translate(199, 0)">
+              <g transform="translate(0, 11.5)">
+                <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2" letter-spacing="3">CANCELAR</text>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g transform="translate(1128, 219.5)">
+          <g transform="translate(214, 16)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#E8ECF2" letter-spacing="5">SLOT 3</text>
+          </g>
+          <g transform="translate(170, 55)" filter="url(#fx4)">
+            <rect width="200" height="200" rx="100" ry="100" fill="#161C29"/>
+            <g transform="translate(86.5, 62.5)">
+              <text x="0" y="56" font-family="Cinzel" font-size="56" fill="#9AA3B5">+</text>
+            </g>
+          </g>
+          <g transform="translate(217.5, 265)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Slot vazio</text>
+          </g>
+          <g transform="translate(61, 304)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" fill="#9AA3B5" letter-spacing="2">CARREGAR indisponível (tracejado)</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(716.5, 1005)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">ESC  VOLTAR     ←→  SLOT     ↑↓  AÇÃO</text>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1000" viewBox="0 0 1920 1000">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#E0BB62" flood-opacity="0.2"/>
+    </filter>
+    <filter id="fx1">
+      <feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#A8843A" flood-opacity="0.33"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1000" fill="#0B0E14"/>
+    <g transform="translate(48, 48)">
+      <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">6 · COMPONENTES — ITEM DE LISTA E BOTÕES</text>
+    </g>
+    <g transform="translate(48, 116)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">DMenuItem: altura 54 (normal) / 64 (focado), padding-x 14 (com losango) ou 42–46 (alinha o texto ao do focado), sem borda. Alvo de toque = linha inteira ≥ 44.</text>
+    </g>
+    <g transform="translate(48, 157)">
+      <g transform="translate(0, 5)">
+        <g transform="translate(42, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">NORMAL</text>
+        </g>
+      </g>
+      <g transform="translate(364, 5)">
+        <rect width="340" height="54" fill="#E0BB62"/>
+        <g transform="translate(42, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E0BB62" letter-spacing="4">HOVER</text>
+        </g>
+      </g>
+      <g transform="translate(728, 0)" filter="url(#fx0)">
+        <rect width="340" height="64" fill="#E0BB62"/>
+        <g transform="translate(14, 25) rotate(45, 7, 7)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(42, 12.5)">
+          <text x="0" y="32" font-family="Roboto" font-size="32" font-weight="900" fill="#FFD84A" letter-spacing="4">FOCO</text>
+        </g>
+      </g>
+      <g transform="translate(1092, 0)">
+        <rect width="340" height="64" fill="#A8843A"/>
+        <g transform="translate(14, 25) rotate(45, 7, 7)">
+          <rect width="14" height="14" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(42, 12.5)">
+          <text x="0" y="32" font-family="Roboto" font-size="32" font-weight="900" fill="#E0BB62" letter-spacing="4">PRESSIONADO</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(48, 235)">
+      <g>
+        <g transform="translate(14, 22) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(36, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E0BB62" letter-spacing="4">SELECIONADO</text>
+        </g>
+      </g>
+      <g transform="translate(364, 0)">
+        <g transform="translate(42, -9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#9AA3B5" letter-spacing="4">DESABILITADO</text>
+        </g>
+      </g>
+      <g transform="translate(728, 0)">
+        <g transform="translate(42, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#C4161C" letter-spacing="4">DESISTIR</text>
+        </g>
+      </g>
+      <g transform="translate(1092, 0)">
+        <g transform="translate(42, -3)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#C4161C">✕ Sem peixes suficientes</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(48, 303)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Botões sem aparência web: DCta (primário) = faixa cta-band #a8843a33 + 2 losangos 12 px + Cinzel 32–38 tracking 0,2em, altura 64–76, padding-x 16–20; foco troca o ouro por #ffd84a e soma focus-glow. Secundário = DMenuItem. Perigo = DMenuItem em blood, sempre com confirmação.</text>
+    </g>
+    <g transform="translate(48, 371)">
+      <g>
+        <rect width="412" height="68" fill="#A8843A"/>
+        <g transform="translate(20, 28) rotate(45, 6, 6)">
+          <rect width="12" height="12" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(46, 11)">
+          <text x="0" y="34" font-family="Cinzel" font-size="34" font-weight="700" fill="#E0BB62" letter-spacing="8">INICIAR RUN</text>
+        </g>
+        <g transform="translate(380, 28) rotate(45, 6, 6)">
+          <rect width="12" height="12" fill="#E0BB62"/>
+        </g>
+      </g>
+      <g transform="translate(452, 0)" filter="url(#fx1)">
+        <rect width="416" height="68" fill="#A8843A"/>
+        <g transform="translate(20, 27) rotate(45, 7, 7)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(48, 11)">
+          <text x="0" y="34" font-family="Cinzel" font-size="34" font-weight="700" fill="#FFD84A" letter-spacing="8">INICIAR RUN</text>
+        </g>
+        <g transform="translate(382, 27) rotate(45, 7, 7)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+      </g>
+      <g transform="translate(908, 0)">
+        <rect width="360" height="68" fill="none" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(20, 11)">
+          <text x="0" y="34" font-family="Cinzel" font-size="34" font-weight="700" fill="#9AA3B5" letter-spacing="8">INICIAR RUN</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(48, 453)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">DTab: texto 26 Roboto 700 tracking 0,15em, altura 52; ativo = #ffd84a 900 + sublinhado 70 × 2 px com brilho; inativo = #e8ecf2. DPager: ‹ › Cinzel 32 #e0bb62 em alvo 48 × 48 + “PÁGINA 1 / 23” 24 px; ‹ › some (não desabilita) na primeira/última página.</text>
+    </g>
+  </g>
+</svg>

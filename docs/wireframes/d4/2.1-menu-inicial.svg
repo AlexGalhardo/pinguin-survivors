@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2040" height="1320" viewBox="0 0 2040 1320">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="80" dy="0" stdDeviation="60" flood-color="#0B0E14" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#E0BB62" flood-opacity="0.2"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g transform="translate(120, 120)">
+    <rect width="1920" height="1080" fill="#161C29"/>
+    <g>
+      <g transform="translate(1462, 369)">
+        <text x="0" y="260" font-family="Roboto" font-size="260" font-weight="900" fill="#3A4152">X</text>
+      </g>
+      <g transform="translate(1210, 684)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#9AA3B5">Arte pixel art (zumbis-pinguins, pôr do sol)</text>
+      </g>
+    </g>
+    <g filter="url(#fx0)">
+      <rect width="940" height="1080" fill="#0B0E14"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(110, 70)">
+      <g>
+        <text x="0" y="80" font-family="Cinzel" font-size="80" font-weight="700" fill="#E0BB62" letter-spacing="10">PINGUIN SURVIVORS</text>
+      </g>
+      <g transform="translate(0, 118)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(0, 144)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="500" fill="#E8ECF2" letter-spacing="2">Os três últimos pinguins do apocalipse zumbi</text>
+      </g>
+    </g>
+    <g transform="translate(1220, 1012)">
+      <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E0BB62" letter-spacing="2">12 PÉROLAS  ◆  3 PONTOS DE CONQUISTA</text>
+    </g>
+    <g transform="translate(1780, 40)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">v0.4.0</text>
+    </g>
+    <g transform="translate(110, 300)">
+      <g filter="url(#fx2)">
+        <rect width="720" height="64" fill="#E0BB62"/>
+        <g transform="translate(14, 24) rotate(45, 8, 8)" filter="url(#fx3)">
+          <rect width="16" height="16" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(46, 10)">
+          <text x="0" y="36" font-family="Roboto" font-size="36" font-weight="900" fill="#FFD84A" letter-spacing="5">CONTINUAR</text>
+        </g>
+        <g transform="translate(322, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E0BB62">round 7</text>
+        </g>
+      </g>
+      <g transform="translate(0, 64)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">JOGAR</text>
+        </g>
+      </g>
+      <g transform="translate(0, 118)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">NOVO JOGO</text>
+        </g>
+      </g>
+      <g transform="translate(0, 172)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">CARREGAR</text>
+        </g>
+      </g>
+      <g transform="translate(0, 226)"/>
+      <g transform="translate(0, 238)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">HERÓIS E POÇÕES</text>
+        </g>
+      </g>
+      <g transform="translate(0, 292)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">ÁRVORE DE HABILIDADES</text>
+        </g>
+      </g>
+      <g transform="translate(0, 346)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">CONQUISTAS</text>
+        </g>
+      </g>
+      <g transform="translate(0, 400)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">HISTÓRICO DE PARTIDAS</text>
+        </g>
+      </g>
+      <g transform="translate(0, 454)"/>
+      <g transform="translate(0, 466)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">CONFIGURAÇÕES</text>
+        </g>
+      </g>
+      <g transform="translate(0, 520)">
+        <g transform="translate(46, 9)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">SAIR</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

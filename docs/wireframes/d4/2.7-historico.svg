@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="80" flood-color="#161C29" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(260, 200)" filter="url(#fx0)">
+      <rect width="1400" height="700" rx="350" ry="350" fill="#161C29"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(0, 36)">
+      <g transform="translate(521, 0)">
+        <text x="0" y="48" font-family="Cinzel" font-size="48" font-weight="700" fill="#E0BB62" letter-spacing="12">HISTÓRICO DE PARTIDAS</text>
+      </g>
+      <g transform="translate(650, 73)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(670, 97)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Suas últimas partidas, da mais recente para a mais antiga.</text>
+      </g>
+    </g>
+    <g transform="translate(760, 900)">
+      <g transform="translate(39.5, 6)">
+        <g transform="translate(17.5, 4.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" fill="#E0BB62">‹</text>
+        </g>
+      </g>
+      <g transform="translate(111.5, 15.5)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2" letter-spacing="3">PÁGINA 1 / 2</text>
+      </g>
+      <g transform="translate(312.5, 6)">
+        <g transform="translate(17.5, 4.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" fill="#E0BB62">›</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(260, 980)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Vazio: “Nenhuma partida ainda. Vá matar uns zumbis!”</text>
+    </g>
+    <g transform="translate(1460, 1010)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">ESC  VOLTAR</text>
+    </g>
+    <g transform="translate(160, 200)">
+      <g>
+        <g transform="translate(42, 9)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="3">DATA</text>
+        </g>
+        <g transform="translate(350, 8.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="3">HERÓI</text>
+        </g>
+        <g transform="translate(568, 8.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="3">ROUND</text>
+        </g>
+        <g transform="translate(716, 8.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="3">ABATES</text>
+        </g>
+        <g transform="translate(884, 8.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="3">TEMPO</text>
+        </g>
+        <g transform="translate(1022, 8.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="3">PEIXES</text>
+        </g>
+        <g transform="translate(1180, 8.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="3">DESFECHO</text>
+        </g>
+      </g>
+      <g transform="translate(0, 44)">
+        <rect width="1600" height="64" fill="#E0BB62"/>
+        <g transform="translate(14, 25) rotate(45, 7, 7)" filter="url(#fx2)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(36, -18)"/>
+        <g transform="translate(50, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">08/11/2026 18:42</text>
+        </g>
+        <g transform="translate(358, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Jack · Nv 12</text>
+        </g>
+        <g transform="translate(576, 13)">
+          <text x="0" y="28" font-family="Cinzel" font-size="28" font-weight="700" fill="#E0BB62">14 ♛</text>
+        </g>
+        <g transform="translate(724, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">1.532</text>
+        </g>
+        <g transform="translate(892, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">12:35</text>
+        </g>
+        <g transform="translate(1030, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#FF9A3C">+340</text>
+        </g>
+        <g transform="translate(1188, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#C4161C">MORREU</text>
+        </g>
+      </g>
+      <g transform="translate(0, 108)">
+        <g transform="translate(42, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">07/11/2026 22:10</text>
+        </g>
+        <g transform="translate(350, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Jack · Nv 11</text>
+        </g>
+        <g transform="translate(568, 15)">
+          <text x="0" y="28" font-family="Cinzel" font-size="28" font-weight="700" fill="#E8ECF2">10</text>
+        </g>
+        <g transform="translate(716, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">1.104</text>
+        </g>
+        <g transform="translate(884, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">10:02</text>
+        </g>
+        <g transform="translate(1022, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#FF9A3C">+250</text>
+        </g>
+        <g transform="translate(1180, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#FF9A3C">TEMPO DO CHEFE</text>
+        </g>
+      </g>
+      <g transform="translate(0, 172)">
+        <g transform="translate(42, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#9AA3B5">07/11/2026 20:31</text>
+        </g>
+        <g transform="translate(350, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#9AA3B5">Bob · Nv 4</text>
+        </g>
+        <g transform="translate(568, 15)">
+          <text x="0" y="28" font-family="Cinzel" font-size="28" font-weight="700" fill="#9AA3B5">3</text>
+        </g>
+        <g transform="translate(716, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#9AA3B5">212</text>
+        </g>
+        <g transform="translate(884, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#9AA3B5">2:48</text>
+        </g>
+        <g transform="translate(1022, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#9AA3B5">+40</text>
+        </g>
+        <g transform="translate(1180, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#9AA3B5">DESISTIU</text>
+        </g>
+      </g>
+      <g transform="translate(0, 236)">
+        <g transform="translate(609, 116.5)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#9AA3B5">… 10 linhas por página (64 px cada) …</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

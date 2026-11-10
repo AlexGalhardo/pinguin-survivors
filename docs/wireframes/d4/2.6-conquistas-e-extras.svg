@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1980" height="1080" viewBox="0 0 1980 1080">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="80" flood-color="#161C29" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#E0BB62" flood-opacity="1"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="30" flood-color="#A8843A" flood-opacity="0.53"/>
+    </filter>
+    <filter id="fx4">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(1000, 200)" filter="url(#fx0)">
+      <rect width="820" height="700" rx="350" ry="350" fill="#161C29"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(0, 36)">
+      <g transform="translate(736.5, 0)">
+        <text x="0" y="48" font-family="Cinzel" font-size="48" font-weight="700" fill="#E0BB62" letter-spacing="12">CONQUISTAS</text>
+      </g>
+      <g transform="translate(601.5, 73)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2" letter-spacing="2">17/178 DESBLOQUEADAS  ◆  4 PONTOS PARA GASTAR</text>
+      </g>
+      <g transform="translate(640, 110)">
+        <rect width="640" height="4" fill="#0A0D13"/>
+        <g filter="url(#fx2)">
+          <rect width="61" height="4" fill="#E0BB62"/>
+        </g>
+      </g>
+      <g transform="translate(646.5, 122)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Cada conquista dá pontos para gastar em bônus permanentes.</text>
+      </g>
+    </g>
+    <g transform="translate(1060, 230)">
+      <g transform="translate(260, 0)" filter="url(#fx3)">
+        <rect width="180" height="180" rx="90" ry="90" fill="#161C29" stroke="#E0BB62" stroke-width="2"/>
+        <g transform="translate(42, 42)">
+          <rect width="96" height="96" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+          <g transform="translate(34, 24)">
+            <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(153, 194)">
+        <text x="0" y="36" font-family="Cinzel" font-size="36" font-weight="700" fill="#E0BB62" letter-spacing="3">Matador de Perigo I</text>
+      </g>
+      <g transform="translate(30, 257)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E8ECF2">Derrote o chefe do round 20 no Perigo 1 com Jack</text>
+      </g>
+      <g transform="translate(90, 303)">
+        <g transform="translate(0, 7.5)">
+          <rect width="110" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(110, 7)">
+          <rect width="140" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(250, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(260, 7)">
+          <rect width="140" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(400, 7.5)">
+          <rect width="110" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(142.5, 333)">
+        <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="900" fill="#E0BB62" letter-spacing="3">+1 PONTO DE CONQUISTA</text>
+      </g>
+    </g>
+    <g transform="translate(560, 1010)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">L  LOJA DE EXTRAS (bônus permanentes)      ESC  VOLTAR</text>
+    </g>
+    <g transform="translate(80, 220)">
+      <g>
+        <rect width="880" height="64" fill="#E0BB62"/>
+        <g transform="translate(14, 25) rotate(45, 7, 7)" filter="url(#fx4)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="900" fill="#FFD84A" letter-spacing="2">MATADOR DE PERIGO I</text>
+        </g>
+        <g transform="translate(765, 17.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E0BB62">◆ obtida</text>
+        </g>
+      </g>
+      <g transform="translate(0, 64)">
+        <g transform="translate(42, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E0BB62" letter-spacing="2">SOBREVIVENTE I</text>
+        </g>
+        <g transform="translate(738, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E0BB62">◆ obtida</text>
+        </g>
+      </g>
+      <g transform="translate(0, 124)">
+        <g transform="translate(42, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E0BB62" letter-spacing="2">MATADOR DE ZUMBIS I</text>
+        </g>
+        <g transform="translate(738, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E0BB62">◆ obtida</text>
+        </g>
+      </g>
+      <g transform="translate(0, 184)">
+        <g transform="translate(42, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="2">MATADOR DE PERIGO II</text>
+        </g>
+        <g transform="translate(785, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">50%</text>
+        </g>
+      </g>
+      <g transform="translate(0, 244)">
+        <g transform="translate(42, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="2">CAÇADOR ROXO</text>
+        </g>
+        <g transform="translate(785, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">25%</text>
+        </g>
+      </g>
+      <g transform="translate(0, 304)">
+        <g transform="translate(42, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="2">PEIXEIRO</text>
+        </g>
+        <g transform="translate(786, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">70%</text>
+        </g>
+      </g>
+      <g transform="translate(0, 364)">
+        <g transform="translate(42, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="2">QUEBRA-CHEFES</text>
+        </g>
+        <g transform="translate(783, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">40%</text>
+        </g>
+      </g>
+      <g transform="translate(0, 424)">
+        <g transform="translate(42, 12)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#9AA3B5" letter-spacing="2">NA RAÇA</text>
+        </g>
+        <g transform="translate(799, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#9AA3B5">0%</text>
+        </g>
+      </g>
+      <g transform="translate(0, 484)">
+        <g transform="translate(271, 6)">
+          <g transform="translate(17.5, 4.5)">
+            <text x="0" y="32" font-family="Cinzel" font-size="32" fill="#E0BB62">‹</text>
+          </g>
+        </g>
+        <g transform="translate(343, 15.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2" letter-spacing="3">PÁGINA 1 / 23</text>
+        </g>
+        <g transform="translate(561, 6)">
+          <g transform="translate(17.5, 4.5)">
+            <text x="0" y="32" font-family="Cinzel" font-size="32" fill="#E0BB62">›</text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

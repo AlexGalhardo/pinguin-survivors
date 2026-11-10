@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1932" height="900" viewBox="0 0 1932 900">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="20" stdDeviation="30" flood-color="#000000" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="1"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#4FD06A" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g transform="translate(12, 0)">
+    <rect width="1920" height="900" fill="#0B0E14"/>
+    <g transform="translate(48, 48)">
+      <g>
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">DSECTION (painel sem caixa)</text>
+      </g>
+      <g transform="translate(0, 48)">
+        <g>
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#E0BB62" letter-spacing="4">ATRIBUTOS BASE</text>
+        </g>
+        <g transform="translate(0, 37)">
+          <rect width="560" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(0, 46)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Conteúdo direto sobre o fundo; agrupado por luz (brilho) e espaço.</text>
+        </g>
+      </g>
+      <g transform="translate(0, 168)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Quando precisa de superfície (carta, tooltip, encaixe): panel-top + elev-0 inset, padding 12–16, sem borda sólida.</text>
+      </g>
+      <g transform="translate(0, 238)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">DCONFIRM (diálogo)</text>
+      </g>
+      <g transform="translate(0, 286)" filter="url(#fx0)">
+        <rect width="620" height="152" fill="#0B0E14" stroke="#A8843A" stroke-width="1"/>
+        <g transform="translate(16, 16)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#E8ECF2">Apagar o slot 2? Todo o progresso dele será perdido.</text>
+        </g>
+        <g transform="translate(16, 84)">
+          <g transform="translate(12, 10)">
+            <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#C4161C" letter-spacing="3">CONFIRMAR</text>
+          </g>
+          <g transform="translate(231, 0)">
+            <rect width="211" height="52" fill="#E0BB62"/>
+            <g transform="translate(12, 20) rotate(45, 6, 6)">
+              <rect width="12" height="12" fill="#FFD84A"/>
+            </g>
+            <g transform="translate(34, 10)">
+              <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#FFD84A" letter-spacing="3">CANCELAR</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(0, 454)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Foco inicial sempre na opção segura; Esc/B = cancelar; fundo escurece com shade 87%; cantos em L de 18 px #a8843a.</text>
+      </g>
+      <g transform="translate(0, 524)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">DTOAST</text>
+      </g>
+      <g transform="translate(0, 572)" filter="url(#fx1)">
+        <rect width="226" height="56" fill="#0B0E14"/>
+        <g transform="translate(16, 23) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#4FD06A"/>
+        </g>
+        <g transform="translate(38, 13.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2">Save exportado</text>
+        </g>
+      </g>
+      <g transform="translate(0, 644)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Topo central, 3 s, losango na cor do papel (xp sucesso, blood erro, ice info); nunca recebe foco.</text>
+      </g>
+    </g>
+    <g transform="translate(988, 48)">
+      <g>
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">DBAR (progresso)</text>
+      </g>
+      <g transform="translate(0, 48)">
+        <rect width="560" height="6" fill="#0A0D13"/>
+        <g filter="url(#fx2)">
+          <rect width="200" height="6" fill="#4FD06A"/>
+        </g>
+      </g>
+      <g transform="translate(0, 70)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Altura 4–6 (menus), 14–28 (HUD); trilho panel-bottom; preenchimento na cor do papel com glow 8 px; rótulo 22 acima ou ao lado, nunca dentro abaixo de 14 px de altura.</text>
+      </g>
+      <g transform="translate(0, 167)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">DCURRENCY</text>
+      </g>
+      <g transform="translate(0, 215)">
+        <g>
+          <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="900" fill="#FF9A3C" letter-spacing="2">🐟 120 PEIXES</text>
+        </g>
+        <g transform="translate(201, 0)">
+          <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="900" fill="#6FA3C7" letter-spacing="2">12 PÉROLAS</text>
+        </g>
+        <g transform="translate(416, 0)">
+          <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="900" fill="#E0BB62" letter-spacing="2">3 PONTOS</text>
+        </g>
+      </g>
+      <g transform="translate(0, 266)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Ícone pixel art 24/32 + número 28 900 tabular; preço insuficiente = blood bold.</text>
+      </g>
+      <g transform="translate(0, 309)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">DKEYHINT</text>
+      </g>
+      <g transform="translate(0, 357)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">ENTER  CONFIRMAR      ESC  VOLTAR      L1/R1  ABA</text>
+      </g>
+      <g transform="translate(0, 400)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Troca conforme a entrada (teclado: ENTER/ESC; gamepad: ícones A/B 32 px; toque: some, e as ações viram itens tocáveis de 44+). Cada dica no rodapé é também um alvo de toque de 44 px.</text>
+      </g>
+      <g transform="translate(0, 497)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">ESTADO VAZIO</text>
+      </g>
+      <g transform="translate(0, 545)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Frase centralizada 24 + sprite 96 apagado: “Nenhuma partida ainda. Vá matar uns zumbis!”</text>
+      </g>
+    </g>
+  </g>
+</svg>

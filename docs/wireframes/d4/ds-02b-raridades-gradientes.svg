@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="860" viewBox="0 0 1920 860">
+  <g>
+    <rect width="1920" height="860" fill="#0B0E14"/>
+    <g transform="translate(48, 48)">
+      <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">RARIDADES (borda do slot, cabeçalho do tooltip, nome do item)</text>
+    </g>
+    <g transform="translate(48, 90)">
+      <g>
+        <rect width="150" height="44" fill="#E8ECF2"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">I #e8ecf2 · 16,29</text>
+        </g>
+      </g>
+      <g transform="translate(191, 0)">
+        <rect width="150" height="44" fill="#4F9DFF"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#4F9DFF">II #4f9dff · 6,99</text>
+        </g>
+      </g>
+      <g transform="translate(374, 0)">
+        <rect width="150" height="44" fill="#4FD06A"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#4FD06A">III #4fd06a · 9,72</text>
+        </g>
+      </g>
+      <g transform="translate(572, 0)">
+        <rect width="150" height="44" fill="#B347FF"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#B347FF">IV #b347ff · 4,84</text>
+        </g>
+      </g>
+      <g transform="translate(769, 0)">
+        <rect width="150" height="44" fill="#FF8A1F"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#FF8A1F">V #ff8a1f · 8,19</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(48, 177)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Fundo de slot por raridade (sólido): I #3a4152 · II #16263f · III #163222 · IV #2a1640 · V #3a2210. Cabeçalho do tooltip: cor da raridade a 20% (…33). Cartas de level-up usam a escala de 4 (comum #9aa3b5, rara, épica, lendária).</text>
+    </g>
+    <g transform="translate(48, 241)">
+      <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">TRANSPARÊNCIAS PERMITIDAS</text>
+    </g>
+    <g transform="translate(48, 283)">
+      <g>
+        <rect width="220" height="44" fill="#E0BB62" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">focus-band gold 12% (#e0bb621f)</text>
+        </g>
+      </g>
+      <g transform="translate(369, 0)">
+        <rect width="220" height="44" fill="#A8843A" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">cta-band aged 20% (#a8843a33)</text>
+        </g>
+      </g>
+      <g transform="translate(735, 0)">
+        <rect width="220" height="44" fill="#161C29" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">glow panel 60% (#161c2999)</text>
+        </g>
+      </g>
+      <g transform="translate(1054, 0)">
+        <rect width="220" height="44" fill="#0B0E14" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">shade night 87% (#0b0e14dd)</text>
+        </g>
+      </g>
+      <g transform="translate(1384, 0)">
+        <rect width="220" height="44" fill="#A8843A" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(0, 50)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">divider aged 40% (#a8843a66)</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(48, 370)">
+      <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">GRADIENTES (stops exatos)</text>
+    </g>
+    <g transform="translate(48, 412)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Vinheta de tela: radial-gradient(ellipse at center, transparent 55%, #000000b3 100%) — equivalente usado no wireframe: box-shadow inset 0 0 280px #000 (844×390: 120px).</text>
+    </g>
+    <g transform="translate(48, 449)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Brilho central: radial-gradient(ellipse, #161c2999 0%, #161c2900 70%) atrás do conteúdo principal; brilho dourado de destaque (desbloqueio): #a8843a33 → transparente.</text>
+    </g>
+    <g transform="translate(48, 486)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Filete que afina: linear-gradient(90deg, #a8843a00 0%, #a8843a 25%, #e0bb62 50%, #a8843a 75%, #a8843a00 100%), altura 2 px no centro, 1 px nas pontas.</text>
+    </g>
+    <g transform="translate(48, 523)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Superfície: linear-gradient(180deg, #161c29 0%, #0a0d13 100%) (panel-top → panel-bottom). Vinheta de morte (2.14): inset 0 0 320px #c4161c66.</text>
+    </g>
+  </g>
+</svg>
