@@ -747,9 +747,6 @@ export const ENEMIES = {
 		fromRound: 0,
 		weight: 0,
 		placeholder: { color: 0x8a6ab8, height: 160, shape: 'alien' },
-		// shortcut: reuses biomechColossus tinted until its own art is approved (T7.18), then drop art/tint.
-		art: 'biomechColossus',
-		tint: 0xc8a0e8,
 		range: 120,
 		cooldown: 3,
 		boss: {
@@ -782,9 +779,6 @@ export const ENEMIES = {
 		fromRound: 0,
 		weight: 0,
 		placeholder: { color: 0x6a7a5a, height: 160 },
-		// shortcut: reuses kraken tinted until its own art is approved (T7.18), then drop art/tint.
-		art: 'kraken',
-		tint: 0x9ab08a,
 		range: 130,
 		cooldown: 3,
 		boss: {
