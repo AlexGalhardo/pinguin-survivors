@@ -23,10 +23,8 @@
 	/* 4 px grid that follows the height: p-3 = 12 px and p-4 = 16 px at 1080. Exact targets use max(44px, ...). */
 	--spacing: calc(4 / 1080 * 100vh);
 
-	--shadow-inset: inset 0 0 40px var(--color-shadow);
-	--shadow-1: 0 8px 24px color-mix(in srgb, var(--color-shadow) 80%, transparent);
-	--shadow-2: 0 20px 60px var(--color-shadow);
-	--shadow-focus: 0 0 32px color-mix(in srgb, var(--color-gold-bright) 20%, transparent);
+	/* Flat UI (ADR-027): no shadows. The one thin border that delimits every group of buttons or content. */
+	--color-line: color-mix(in srgb, var(--color-gold-aged) 55%, var(--color-night));
 
 	--tracking-title: 0.25em;
 	--tracking-list: 0.12em;
@@ -46,10 +44,10 @@
 	}
 }
 
-/* Ornate frames of the Diablo-style UI (docs/design-system.md). Colors come from palette.css. */
+/* Flat Diablo-style UI (docs/design-system.md section 5). Colors come from palette.css. */
 @layer components {
 	/* Item button: border, text and a translucent fill in the item's rarity color (`--rc`), stronger on
-	   hover and focus. Disabled keeps readable text (AA) and loses the fill and the glow. */
+	   hover and focus. Disabled keeps readable text (AA) and loses the fill. */
 	.rarity-btn {
 		border-color: var(--rc);
 		color: var(--rc);
@@ -59,7 +57,6 @@
 	.rarity-btn:enabled:hover,
 	.rarity-btn[data-focused="true"]:enabled {
 		background-color: color-mix(in srgb, var(--rc) 32%, var(--color-night));
-		box-shadow: 0 0 10px color-mix(in srgb, var(--rc) 55%, transparent);
 	}
 
 	.rarity-btn:disabled {
@@ -78,34 +75,6 @@
 		display: none;
 	}
 
-	/* Dark panel: vertical gradient, soft glow at the top and gold corner brackets. */
-	.ornate {
-		background:
-			radial-gradient(
-				ellipse at 50% 0%,
-				color-mix(in srgb, var(--color-snow-dark) 45%, transparent),
-				transparent 62%
-			),
-			linear-gradient(180deg, var(--color-panel-top), var(--color-panel-bottom));
-	}
-
-	.ornate::before {
-		content: "";
-		position: absolute;
-		inset: -1px;
-		pointer-events: none;
-		--c: var(--color-gold-aged);
-		background:
-			linear-gradient(var(--c), var(--c)) top left / 18px 2px no-repeat,
-			linear-gradient(var(--c), var(--c)) top left / 2px 18px no-repeat,
-			linear-gradient(var(--c), var(--c)) top right / 18px 2px no-repeat,
-			linear-gradient(var(--c), var(--c)) top right / 2px 18px no-repeat,
-			linear-gradient(var(--c), var(--c)) bottom left / 18px 2px no-repeat,
-			linear-gradient(var(--c), var(--c)) bottom left / 2px 18px no-repeat,
-			linear-gradient(var(--c), var(--c)) bottom right / 18px 2px no-repeat,
-			linear-gradient(var(--c), var(--c)) bottom right / 2px 18px no-repeat;
-	}
-
 	/* Small gold diamond used by headings and dividers. */
 	.diamond {
 		display: inline-block;
@@ -114,7 +83,6 @@
 		flex-shrink: 0;
 		transform: rotate(45deg);
 		background: var(--color-gold-bright);
-		box-shadow: 0 0 6px color-mix(in srgb, var(--color-gold-aged) 80%, transparent);
 	}
 }
 
@@ -142,65 +110,18 @@
 		);
 	}
 
-	/* Gold line that thins out at both ends. */
+	/* Plain 1 px group line. */
 	.d-filet {
-		height: 2px;
+		height: 1px;
 		width: 100%;
-		background: linear-gradient(
-			90deg,
-			transparent 0%,
-			var(--color-gold-aged) 25%,
-			var(--color-gold-bright) 50%,
-			var(--color-gold-aged) 75%,
-			transparent 100%
-		);
+		background: var(--color-line);
 	}
 
-	/* 12 px cut on the four corners (tooltips, dialogs). */
-	.d-chamfer {
-		clip-path: polygon(
-			12px 0,
-			calc(100% - 12px) 0,
-			100% 12px,
-			100% calc(100% - 12px),
-			calc(100% - 12px) 100%,
-			12px 100%,
-			0 calc(100% - 12px),
-			0 12px
-		);
-	}
-
-	/* 1 px worn border, dashes 22-2-5-2, in `--worn` (default gold-aged) over an optional `--worn-fill`. */
-	.d-worn {
-		--worn: var(--color-gold-aged);
-		--dash-x: repeating-linear-gradient(
-			90deg,
-			var(--worn) 0 22px,
-			transparent 22px 24px,
-			var(--worn) 24px 29px,
-			transparent 29px 31px
-		);
-		--dash-y: repeating-linear-gradient(
-			180deg,
-			var(--worn) 0 22px,
-			transparent 22px 24px,
-			var(--worn) 24px 29px,
-			transparent 29px 31px
-		);
-		background:
-			var(--dash-x) top / 100% 1px no-repeat,
-			var(--dash-x) bottom / 100% 1px no-repeat,
-			var(--dash-y) left / 1px 100% no-repeat,
-			var(--dash-y) right / 1px 100% no-repeat,
-			var(--worn-fill, transparent);
-	}
-
-	/* Focus of a list item: gold band, glow and a crit diamond on the left. The element needs `relative`. */
+	/* Focus of a list item: gold band, crit border and a crit diamond on the left, no shadow. The element needs `relative`. */
 	.d-focus {
 		background-color: transparent;
 		transition:
 			background-color 120ms ease-out,
-			box-shadow 120ms ease-out,
 			color 120ms ease-out;
 	}
 
@@ -217,8 +138,8 @@
 	.d-focus:focus-visible,
 	.d-focus[data-focused="true"] {
 		outline: none;
+		border-color: var(--color-crit);
 		background-color: color-mix(in srgb, var(--color-gold-bright) 12%, transparent);
-		box-shadow: var(--shadow-focus);
 		color: var(--color-crit);
 	}
 
@@ -233,7 +154,6 @@
 		margin-top: -7px;
 		transform: rotate(45deg);
 		background: var(--color-crit);
-		box-shadow: 0 0 12px var(--color-crit);
 	}
 
 	/* Inner padding of surfaces: 12 px at 1080 with an 8 px floor on phones. */
@@ -241,8 +161,14 @@
 		padding: max(8px, calc(var(--spacing) * 3));
 	}
 
-	/* Main action: gold band, stronger on hover and focus (focus color comes from d-focus). */
+	/* Secondary button: 1 px group line, transparent fill. Primary and danger below swap the border color. */
+	.d-btn {
+		border-color: var(--color-line);
+	}
+
+	/* Main action: gold border and band, stronger on hover and focus (focus color comes from d-focus). */
 	.d-cta {
+		border-color: var(--color-gold-bright);
 		background-color: color-mix(in srgb, var(--color-gold-aged) 20%, transparent);
 		color: var(--color-gold-bright);
 	}
@@ -252,7 +178,11 @@
 		background-color: color-mix(in srgb, var(--color-gold-aged) 25%, transparent);
 	}
 
-	/* Destructive action: stays blood red when focused, the diamond still marks the focus. */
+	/* Destructive action: blood red text and border; focus swaps the border, the diamond still marks it. */
+	.d-danger {
+		border-color: var(--color-blood);
+	}
+
 	.d-danger,
 	.d-danger.d-focus:hover:not([aria-disabled="true"]),
 	.d-danger.d-focus[data-focused="true"] {
@@ -264,10 +194,6 @@
 	@media (prefers-reduced-motion: reduce) {
 		.d-focus {
 			transition: none;
-		}
-
-		.d-focus::before {
-			box-shadow: none;
 		}
 	}
 }

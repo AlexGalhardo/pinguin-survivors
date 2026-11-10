@@ -179,7 +179,7 @@ describe('Shop', () => {
 		cleanup();
 	});
 
-	test('details sit in one fixed column: a support row and an offer both fill it, stats stay below', () => {
+	test('details sit in one fixed column: a support row and an offer both fill it, stats sit in their own strip under it', () => {
 		const { a } = actions();
 		const player: Data['player'] = {
 			stats: [
@@ -192,10 +192,15 @@ describe('Shop', () => {
 			supportSlots: 4,
 			healPotion: null,
 		};
-		const { getByLabelText, getByText } = render(<Shop data={data({ player })} actions={a} />);
+		const { container, getByLabelText, getByText } = render(
+			<Shop data={data({ player })} actions={a} />,
+		);
 		const details = getByLabelText('DETAILS');
 		expect(details.textContent).toContain('Weapon · I');
-		expect(details.textContent).toContain('max HP');
+		// The stats live in a strip below the details, never inside it (so they cannot push into the footer).
+		expect(details.textContent).not.toContain('max HP');
+		expect(container.querySelector('main .border-t')?.textContent).toContain('max HP');
+		expect(container.querySelector('footer')?.textContent).not.toContain('max HP');
 		fireEvent.focus(getByText('Magnetic'));
 		expect(details.textContent).toContain('Pulls XP orbs and Fish toward you.');
 		expect(details.textContent).toContain('Lv 2/5');

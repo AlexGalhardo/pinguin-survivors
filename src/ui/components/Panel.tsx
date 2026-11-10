@@ -1,21 +1,21 @@
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import { Ornament } from './Ornament';
 
-/** Thin gold line that closes a header: the "filet" that thins out at both ends. */
+/** Plain 1 px line that closes a header. */
 export function Filet(props: { className?: string }): ReactElement {
 	return <div aria-hidden="true" className={`d-filet ${props.className ?? ''}`} />;
 }
 
-/** Separator with a small diamond in the middle. */
+/** Separator with a small diamond in the middle, flat 1 px lines. */
 export function Divider(props: { className?: string }): ReactElement {
 	return (
 		<div
 			aria-hidden="true"
 			className={`flex w-full items-center gap-2 ${props.className ?? ''}`}
 		>
-			<span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold-aged" />
+			<span className="h-px flex-1 bg-line" />
 			<Ornament kind="diamond" size={10} />
-			<span className="h-px flex-1 bg-gradient-to-l from-transparent to-gold-aged" />
+			<span className="h-px flex-1 bg-line" />
 		</div>
 	);
 }
@@ -24,7 +24,7 @@ export function Divider(props: { className?: string }): ReactElement {
 export function Heading(props: { children: ReactNode; className?: string }): ReactElement {
 	return (
 		<div className={`flex w-full flex-col items-center gap-1 ${props.className ?? ''}`}>
-			<h1 className="m-0 text-center font-title text-title leading-tight font-bold tracking-title text-gold-bright uppercase [text-shadow:0_2px_8px_var(--color-shadow)]">
+			<h1 className="m-0 text-center font-title text-title leading-tight font-bold tracking-title text-gold-bright uppercase ">
 				{props.children}
 			</h1>
 			<Ornament kind="filet" size="full" className="[@media(max-height:500px)]:hidden" />
@@ -38,8 +38,8 @@ export function Heading(props: { children: ReactNode; className?: string }): Rea
 }
 
 /**
- * Dark surface of a menu screen: vertical gradient and inner shadow, no border and no radius,
- * padding 12 px. Scrolls inside itself, never the page.
+ * Flat surface of a menu screen (ADR-027): solid `night`, 1 px `line` border, no shadow and no
+ * radius, padding 12 px. Scrolls inside itself, never the page.
  */
 export function Panel(props: {
 	children: ReactNode;
@@ -50,7 +50,7 @@ export function Panel(props: {
 }): ReactElement {
 	return (
 		<section
-			className={`relative flex min-h-0 flex-col bg-linear-to-b from-panel-top to-panel-bottom shadow-inset ${props.className ?? ''}`}
+			className={`relative flex min-h-0 flex-col border border-line bg-night ${props.className ?? ''}`}
 		>
 			{props.title !== undefined && (
 				<header className="d-pad pb-0">
@@ -89,9 +89,9 @@ export function StatRow(props: {
 }
 
 /**
- * Item card / tooltip: chamfered, worn 1 px border and header tinted in the rarity color (a CSS
+ * Item card / tooltip: flat, 1 px border in the rarity color and header tinted in it (a CSS
  * color passed by prop, so the one `rarityColor` source can feed it), name, optional type line,
- * bonus lines and a footer. `className` lands on the outer wrapper (size, position).
+ * bonus lines and a footer. No shadow, no chamfer. `className` lands on the outer wrapper (size, position).
  */
 export function ItemCard(props: {
 	name: ReactNode;
@@ -102,13 +102,10 @@ export function ItemCard(props: {
 	footer?: ReactNode;
 	className?: string;
 }): ReactElement {
-	const style = {
-		'--worn': props.color ?? 'var(--color-gold-aged)',
-		'--worn-fill': 'var(--color-night)',
-	} as CSSProperties;
+	const style = { borderColor: props.color ?? 'var(--color-line)' } as CSSProperties;
 	return (
-		<div className={`drop-shadow-[0_20px_30px_var(--color-shadow)] ${props.className ?? ''}`}>
-			<div className="d-chamfer d-worn flex h-full flex-col" style={style}>
+		<div className={props.className ?? ''}>
+			<div className="flex h-full flex-col border bg-night" style={style}>
 				<div
 					className="flex flex-col gap-1 px-3.5 py-3"
 					style={

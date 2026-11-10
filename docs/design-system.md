@@ -1,6 +1,6 @@
 # Design system da UI — Pinguin Survivors
 
-Versão 2.0 (Diablo IV orgânico, "Estilo D") · 2026-11-09. Substitui a v1.0 de 2026-11-08. Vale para toda a UI React: menus, HUD, loja, pausa e telas de run.
+Versão 2.1 (Diablo IV orgânico, "Estilo D", regra plano) · 2026-11-10. A v2.1 emenda a v2.0 (2026-11-09) só em elevação, bordas e cards (ver §5 e ADR-027); a v2.0 substituiu a v1.0 de 2026-11-08. Vale para toda a UI React: menus, HUD, loja, pausa e telas de run.
 
 O código segue este documento, e o documento reflete o código:
 
@@ -17,7 +17,7 @@ Decisão de origem: [ADR-022](adrs/ADR-022-ui-diablo-4-organica.md), que complem
 2. [Grade e espaçamento](#2-grade-e-espaçamento)
 3. [Cor](#3-cor)
 4. [Tipografia](#4-tipografia)
-5. [Elevação e efeitos](#5-elevação-e-efeitos)
+5. [Elevação e efeitos: regra plano](#5-elevação-e-efeitos-regra-plano-v21)
 6. [Bordas e ornamentos](#6-bordas-e-ornamentos)
 7. [Componentes](#7-componentes)
 8. [Estados](#8-estados)
@@ -215,21 +215,35 @@ Regras:
 - `text-dim` só em `secondary` ou maior e só em estado desabilitado.
 - Número de dano no mundo continua em Phaser ([visual.md](visual.md)).
 
-## 5. Elevação e efeitos
+## 5. Elevação e efeitos: regra plano (v2.1)
 
-Prancha: [`ds-04-05-elevacao-ornamentos.svg`](wireframes/d4/ds-04-05-elevacao-ornamentos.svg).
+Decisão: [ADR-027](adrs/ADR-027-ui-plana.md) (emenda o ADR-022) e [SDD-020](sdds/SDD-020-ui-plana.md). A tipografia, as cores, a Cinzel, os losangos de foco e o filete de título do Estilo D continuam; muda só como as superfícies são desenhadas.
+
+**A regra:**
+
+- **Sem sombras e sem elevação.** Nada de `box-shadow`, `drop-shadow`, brilho (`glow`), `shadow-inset`, `shadow-1`, `shadow-2` ou `shadow-focus`. Os tokens `--shadow-*` foram removidos do `@theme`.
+- **Sem moldura de card.** Sem chanfro (`.d-chamfer`), sem borda tracejada "desgastada" (`.d-worn`), sem cantos em L, sem gradiente de painel (`.ornate`) e sem borda grossa: toda superfície é um retângulo liso de cor sólida.
+- **Grupo = borda fina.** Cada grupo de botões ou de conteúdo (painel, coluna, lista de opções, carta, toast) é delimitado por **uma** borda de 1 px no token único `border-line` (`--color-line`, derivado de `gold-aged`, sem hex novo). Os itens de dentro não têm borda de grupo; o espaçamento (gap de 8 px, padding de 12 px) separa os itens. Não há grupo dentro de grupo com a mesma borda.
+- **Um estilo de botão por função, em todas as telas** (`Btn`):
+
+  | Função | Variante | Aparência |
+  |---|---|---|
+  | Primário (a ação principal da tela, no máximo uma) | `primary` | Borda 1 px `gold-bright`, fundo `gold-aged` a 20 %, texto `gold-bright` |
+  | Secundário (voltar, trocar, opção) | `secondary` | Borda 1 px `line`, fundo transparente, texto `text-light` |
+  | Perigo (apagar, vender) | `danger` | Borda 1 px `blood`, fundo transparente, texto `blood` |
+  | Desabilitado | qualquer | Borda tracejada `snow` 1 px, texto `text-dim` (sem opacidade) |
+
+- **Foco sem sombra:** a borda do item vira `crit` (1 px, sem engrossar para não mexer no layout), o fundo ganha `gold-bright` a 12 %, o losango de 14 px `crit` fica à esquerda (sem brilho) e o texto vira `crit`. Mouse, teclado, gamepad e toque iguais.
+- **Texto:** sem `text-shadow` nos menus. Exceção única: texto sobre o mundo do jogo ou sobre a arte do menu inicial (HUD e título), onde o contraste AA depende do contorno.
+- **Camadas:** vinheta de tela e brilho central continuam (fundo, não elevação); 1 por tela.
+- **Legibilidade inalterada:** texto secundário ≥ 22 px, itens de lista ≥ 30 px, alvo ≥ 44 px, contraste AA.
+
+Prancha histórica (v2.0, com sombras): [`ds-04-05-elevacao-ornamentos.svg`](wireframes/d4/ds-04-05-elevacao-ornamentos.svg); vale só a vinheta.
 
 | Token | Valor | Quando usar |
 |---|---|---|
-| `shadow-inset` (elev-0) | `inset 0 0 40px #000` | Toda superfície `panel-top`: carta de level-up, encaixe de gambit, círculo de slot vazio |
-| `shadow-1` | `0 8px 24px rgb(0 0 0 / 0.8)` | Selo (NOVO RECORDE), toast, carta solta |
-| `shadow-2` | `0 20px 60px #000` | Tooltip, diálogo de confirmação |
-| `shadow-focus` | `0 0 32px rgb(224 187 98 / 0.2)` | Faixa do item focado |
-| `glow-diamond` | `0 0 12px #ffd84a` | Losango de foco (10–14 px de blur) |
-| `glow-bar` | `0 0 8px <cor da barra>` | Preenchimento de `DBar` |
+| `border-line` (`--color-line`) | 1 px, `gold-aged` a 55 % sobre `night` | Borda de todo grupo |
 | `vignette` | §3.4 | Uma por tela, sempre a última camada não interativa (`pointer-events: none`) |
-
-**Limite:** no máximo **3 camadas com blur** visíveis ao mesmo tempo (vinheta, brilho central e 1 tooltip ou foco). Itens não focados nunca têm sombra. No Android, a vinheta e o brilho são estáticos (sem animação de blur).
 
 ## 6. Bordas e ornamentos
 
@@ -259,11 +273,11 @@ Os nomes `D*` são os componentes React sugeridos. Os da v1 (`Panel`, `Btn`, `It
 | `DStatRow` | `StatRow` | Altura 36–40. Rótulo `body` `text-light` à esquerda, valor `value` bold à direita, delta "→ 7%" em `xp`/`blood`. Sem pontilhado | Texto 18 |
 | `DAdjustRow` | `AdjustRow` | Altura 64 (68 focado). Rótulo `list-item` mais `‹ valor ›` com valor de 28 numa coluna de 220–360. O slider usa 10 losangos de 8 px; o atual tem 12 px e é `crit` | Altura 48, texto 18–24 |
 | `DSlot` | `SlotIcon` | Quadrado de 88 (pausa), 64 (loja e painel), 52 (lista de ofertas) ou 36 (celular). Borda de 2 px na raridade, fundo da raridade a 20 %, numeral 24 bold. Vazio: tracejado `snow` com o nome do slot em 22 | 36, numeral 18 |
-| `DTooltip` | `ItemCard`, `WeaponCardView`, `GearCardView` | Largura 460–580 (celular 336), chanfro de 12, `shadow-2`. Cabeçalho com padding 14 × 12 e fundo `rarity-head`: nome `item-name` e linha de tipo "ARMA · II · …" em 22 bold. Corpo com padding 14 × 12 e gap 6: base com ◆, separador, afixos com ✦ em `xp`, frase de ação em `crit` bold 24 e dica de tecla em `key-hint` | Largura 336, texto 18 |
-| `DSection` | `Panel` (sem caixa) | Rótulo `section` mais separador de 1 px a 40 %. Conteúdo direto sobre o fundo. Quando precisa de superfície, usa `panel-top` + `shadow-inset` + padding 12–16, sem borda | — |
-| `DConfirm` | Modal de confirmação | Largura 620, padding 16, borda de 1 px `gold-aged` com cantos em L de 18, `shadow-2`. Abre sobre `shade`. Pergunta em 26 bold e duas ações `DMenuItem` (a destrutiva em `blood`). Foco inicial na opção segura | Largura 600, texto 18 |
-| `DToast` | `ToastHost` | Altura 56, padding-x 16, fundo `night`, `shadow-1`, losango de 10 na cor do papel e texto 24 bold. No topo central, dura 3 s e nunca recebe foco | Altura 44, texto 18 |
-| `DBar` | `Bar` | Altura 4–6 nos menus e 14–28 no HUD. Trilho `panel-bottom`, preenchimento na cor do papel com `glow-bar`. O rótulo fica fora da barra quando a altura é menor que 14 | — |
+| `DTooltip` | `ItemCard`, `WeaponCardView`, `GearCardView` | Largura 460–580 (celular 336), borda de 1 px na cor da raridade, sem chanfro e sem sombra. Cabeçalho com padding 14 × 12 e fundo `rarity-head`: nome `item-name` e linha de tipo "ARMA · II · …" em 22 bold. Corpo com padding 14 × 12 e gap 6: base com ◆, separador, afixos com ✦ em `xp`, frase de ação em `crit` bold 24 e dica de tecla em `key-hint` | Largura 336, texto 18 |
+| `DSection` | `Panel` (sem caixa) | Rótulo `section` mais separador de 1 px a 40 %. Conteúdo direto sobre o fundo. Quando precisa de superfície, usa `night` liso + borda `line` de 1 px + padding 12–16 | — |
+| `DConfirm` | Modal de confirmação | Largura 620, padding 16, borda de 1 px `line`, sem cantos em L e sem sombra. Abre sobre `shade`. Pergunta em 26 bold e duas ações `DMenuItem` (a destrutiva em `blood`). Foco inicial na opção segura | Largura 600, texto 18 |
+| `DToast` | `ToastHost` | Altura 56, padding-x 16, fundo `night`, borda `line` de 1 px, losango de 10 na cor do papel e texto 24 bold. No topo central, dura 3 s e nunca recebe foco | Altura 44, texto 18 |
+| `DBar` | `Bar` | Altura 4–6 nos menus e 14–28 no HUD. Trilho `panel-bottom`, preenchimento liso na cor do papel. O rótulo fica fora da barra quando a altura é menor que 14 | — |
 | `DCurrency` | Contadores soltos | Ícone pixel art de 24/32 mais número 28 900 `tabular-nums` na cor da moeda. Preço insuficiente em `blood` bold | Texto 18–20 |
 | `DKeyHint` | `Hint` de teclas | `key-hint` em `gold-bright`, separados por 6 espaços. No gamepad vira ícone A/B de 32 px. No toque cada dica é um alvo tocável ≥ 44 px | Texto 18 |
 | `Ornament` | `Filet`, `Divider`, losangos do `Heading` | SVG inline com as medidas de §6 | 320 |
@@ -277,7 +291,7 @@ Prancha dos estados de lista e CTA: [`ds-06a-lista-botoes.svg`](wireframes/d4/ds
 |---|---|---|---|---|
 | Normal | Texto `text-light` 700, sem fundo | `cta-band`, texto e losangos `gold-bright` | Borda de raridade de 2 px | — |
 | Hover (mouse) | `hover-band` e texto `gold-bright` | `cta-band` 25 % | Borda de 3 px | O mouse também move o foco |
-| Foco | Losango de 14 `crit` com `glow-diamond`, `focus-band` + `shadow-focus`, texto `crit` 900 e altura 64 | Losangos e texto `crit`, `cta-band` 25 % + `shadow-focus` | Borda de 3 px `crit` + brilho de 20 px | Sempre visível em teclado, gamepad e toque (`data-focused`) |
+| Foco | Losango de 14 `crit` sem brilho, `focus-band`, borda `crit` de 1 px, texto `crit` 900 e altura 64 | Losangos, borda e texto `crit`, `cta-band` 25 % | Borda de 3 px `crit`, sem brilho | Sempre visível em teclado, gamepad e toque (`data-focused`) |
 | Pressionado | `cta-band` e losango `gold-bright` | Fundo `gold-aged` a 33 % | Escala 0,96 por 80 ms | Som `sfx.uiConfirm` |
 | Selecionado | Losango de 10 `gold-bright` fixo e texto `gold-bright` | — | Selo ✓ `gold-bright` | Valor atual de uma lista de escolha |
 | Desabilitado | Texto `text-dim` ≥ 22 (sem opacidade), `aria-disabled`, fora do ciclo de foco | Borda tracejada `snow` 6-4, texto `text-dim` | Fundo `panel-bottom`, borda tracejada | Contraste AA mantido (7,62) |
@@ -375,10 +389,7 @@ A paleta continua gerada em `src/ui/palette.css` (`@theme` com `--color-*`, nome
 
   --spacing: calc(4 / 1080 * 100vh); /* p-3 = 12 px e p-4 = 16 px na base 1080 */
 
-  --shadow-inset: inset 0 0 40px #000;
-  --shadow-1: 0 8px 24px rgb(0 0 0 / 0.8);
-  --shadow-2: 0 20px 60px #000;
-  --shadow-focus: 0 0 32px rgb(224 187 98 / 0.2);
+  --color-line: color-mix(in srgb, var(--color-gold-aged) 55%, var(--color-night)); /* borda fina de grupo */
 
   --tracking-title: 0.25em;
   --tracking-list: 0.12em;
@@ -392,10 +403,8 @@ Utilitários em `@layer components` (`theme.css`):
 |---|---|
 | `.d-vignette` | Pseudo-elemento fixo `inset: 0`, `pointer-events: none`, gradiente de §3.4 |
 | `.d-glow` | Elipse com o brilho central (§3.4), atrás da zona principal |
-| `.d-filet` | `bg-linear-to-r from-transparent via-gold-bright to-transparent`, h 2 px |
-| `.d-chamfer` | `clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px)` |
-| `.d-worn` | Borda de 1 px desgastada via `border-image` com SVG (tracejado 22-2-5-2) |
-| `.d-focus` | `:focus-visible, [data-focused="true"]`: `::before` com losango de 14 px `crit` + `glow-diamond`, fundo `focus-band`, `shadow-focus`, texto `crit` |
+| `.d-filet` | Linha lisa de 1 px em `line` |
+| `.d-focus` | `:focus-visible, [data-focused="true"]`: `::before` com losango de 14 px `crit` sem brilho, fundo `focus-band`, borda `crit`, texto `crit` (sem sombra) |
 
 Na escala por altura, `--spacing` em `vh` mantém o padding proporcional. Medidas que precisam ser exatas no celular (alvos de 44 px) usam `max(44px, …)`.
 

@@ -99,6 +99,7 @@ export function Pause({
 		</>
 	) : (
 		<MenuList
+			className="border border-line"
 			onSelect={onSelect}
 			items={[
 				{ id: 'resume', label: t('pause.resume') },

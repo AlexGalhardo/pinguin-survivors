@@ -74,7 +74,7 @@ export function SaveSlots({
 			<div
 				key={i}
 				data-slot={i}
-				className="flex min-w-0 flex-1 flex-col items-center gap-1 px-3 py-2 text-center focus-within:bg-gold-bright/5 focus-within:shadow-focus"
+				className="flex min-w-0 flex-1 flex-col items-center gap-1 border border-line px-3 py-2 text-center focus-within:border-crit focus-within:bg-gold-bright/5"
 			>
 				<div className="flex items-center gap-2 text-section font-black tracking-section text-gold-bright uppercase">
 					{t('slots.slot', { n: i + 1 })}
@@ -87,7 +87,7 @@ export function SaveSlots({
 				) : (
 					<span
 						aria-hidden="true"
-						className="flex items-center justify-center rounded-full bg-panel-top font-title text-display text-text-dim shadow-inset"
+						className="flex items-center justify-center rounded-full border border-line font-title text-display text-text-dim"
 						style={{ width: 80 * portrait, height: 80 * portrait }}
 					>
 						+

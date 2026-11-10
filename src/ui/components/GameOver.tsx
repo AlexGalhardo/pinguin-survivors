@@ -71,7 +71,7 @@ export function GameOver({
 						<span className="text-ice">{t('over.pearls', { n: data.pearls })}</span>
 					</div>
 					{data.newBest && (
-						<div className="-rotate-[4deg] bg-gold-bright px-4 py-1 font-title text-item font-black text-night shadow-1">
+						<div className="-rotate-[4deg] bg-gold-bright px-4 py-1 font-title text-item font-black text-night">
 							{t('over.newBest')}
 						</div>
 					)}

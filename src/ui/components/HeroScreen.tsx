@@ -114,7 +114,7 @@ export function HeroScreen({
 						<Btn
 							onActivate={() => actions.cycleGambitPotion(slot, 1)}
 							label={text}
-							className="rounded-full bg-panel-top pr-0! pl-0! shadow-inset"
+							className="rounded-full pr-0! pl-0!"
 						>
 							<span
 								className="flex items-center justify-center"

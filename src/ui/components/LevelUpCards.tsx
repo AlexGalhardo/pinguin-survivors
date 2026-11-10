@@ -54,7 +54,7 @@ function Card(props: {
 			ref={f.ref}
 			{...f.props}
 			// No Tailwind preflight, so the native button look is reset here.
-			className={`relative flex ${props.compact ? 'w-[180px]' : 'w-[min(22vw,calc(380*100vh/1080))]'} cursor-pointer appearance-none flex-col items-start gap-2 overflow-hidden border-0 bg-linear-to-b from-panel-top to-panel-bottom p-0 text-left shadow-inset [font-family:inherit] data-[focused=true]:shadow-focus data-[focused=true]:outline-2 data-[focused=true]:outline-crit`}
+			className={`relative flex ${props.compact ? 'w-[180px]' : 'w-[min(22vw,calc(380*100vh/1080))]'} cursor-pointer appearance-none flex-col items-start gap-2 overflow-hidden border border-line bg-night p-0 text-left [font-family:inherit] data-[focused=true]:border-crit`}
 		>
 			<span className={`block h-1.5 w-full ${r.stripe}`} />
 			<span className="flex w-full flex-col gap-2 px-3 pb-3">

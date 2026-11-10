@@ -1,6 +1,6 @@
 # SDD-015 — UI Diablo 4 orgânica (Estilo D)
 
-**Versão** 1.0 · **Data** 2026-11-09 · **Status** Aprovada (2026-11-09, desenvolvedor: com Cinzel) · **ADR** [022](../adrs/ADR-022-ui-diablo-4-organica.md) · **Depende de** SDD-004 · **Wireframes** [docs/wireframes/](../wireframes/README.md)
+**Versão** 1.1 · **Data** 2026-11-10 · **Status** Aprovada (2026-11-09, desenvolvedor: com Cinzel) · **ADR** [022](../adrs/ADR-022-ui-diablo-4-organica.md) · **Emendada por** [SDD-020](SDD-020-ui-plana.md) (UI plana) · **Depende de** SDD-004 · **Wireframes** [docs/wireframes/](../wireframes/README.md)
 
 Reestiliza todas as telas React existentes no Estilo D. A lógica, os contratos (`store.ts`, `GameEvents`, `GameCommands`, views como `ShopOfferView` e `PlayerPanelView`), a navegação por foco, o i18n e os fluxos continuam como estão. Muda a camada visual e, onde o wireframe pede, a disposição dos elementos na tela.
 
@@ -49,6 +49,12 @@ Reestiliza todas as telas React existentes no Estilo D. A lógica, os contratos 
   - paginação sem scroll e textos via `t()` nos quatro idiomas;
   - `describeOffer` e `rarityColor`.
 - **RF-10 Feedback dos wireframes.** Os 12 pontos de `docs/wireframes/README.md` são aplicados quando a tela correspondente for migrada. Ponto descartado tem o motivo anotado na tarefa.
+- **RF-11 Árvore em grade (v1.1, [ADR-026](../adrs/ADR-026-arvore-de-habilidades-em-grade.md)).** A tela 2.5 troca o grafo estilo PoE2 por uma grade de quadrados (wireframe 2.5 atualizado em texto). Valem a exceção a RF-07 para a grade da árvore (quadrados enfileirados, por pedido do desenvolvedor) e estes pontos:
+  - uma faixa de 3 colunas por ramo mais uma coluna de nós de caminho entre ramos; linhas = tier;
+  - quadrado com sigla, `nível/máximo` e estado (bloqueado, disponível, comprado, máximo) por borda e cor, repetido em texto no painel;
+  - painel de detalhes fixo à direita (nome, efeito atual → próximo nível, custo, requisitos) e pontos em destaque no topo;
+  - setas movem célula a célula; toque: um toque seleciona, o segundo aloca;
+  - estilo plano: sem sombra, borda fina; lógica, nós e custos intactos (ADR-019).
 
 ## Especificação
 

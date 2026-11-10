@@ -31,7 +31,6 @@ import {
 import { MerchantSprite } from './MerchantSprite';
 import { Heading, Hint } from './Panel';
 import {
-	Block,
 	type Detail,
 	detailCard,
 	HeroStats,
@@ -77,7 +76,7 @@ export interface ShopData {
 	gear: readonly (string | null)[];
 	/** The player panel of the contract (stats, weapons and gear with rarity and affixes). */
 	player?: PlayerPanelView;
-	/** Extra waves of the next round (Danger 2+). */
+	/** Extra waves of the next round (none with the current difficulties). */
 	nextWaves?: readonly ('elite' | 'horde')[];
 	/** Elite Marks and Boss Cores of the run (ADR-021). */
 	materials?: { elite: number; boss: number };
@@ -580,35 +579,40 @@ export function Shop({
 					className={
 						compact
 							? 'flex min-h-0 min-w-0 flex-col gap-[1.5vh]'
-							: 'grid min-h-0 min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-[1.5vw]'
+							: 'grid min-h-0 min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto] gap-x-[1.5vw] gap-y-1'
 					}
 				>
 					{compact && shown && <OfferOutcome offer={shown} sentenceOnly />}
-					<PlayerPanel
-						data={player}
-						onPick={(detail) => setTarget({ kind: 'owned', detail })}
-						weaponBar={(slot) => {
-							const w = data.weapons[slot];
-							if (!w) return null;
-							const partner = fusePartner(data.weapons, slot);
-							return (
-								<>
-									<Btn onActivate={() => actions.sell(slot)} variant="secondary">
-										{t('shop.sell', { n: w.sellValue })}
-									</Btn>
-									{partner >= 0 && (
+					<div className={compact ? 'contents' : 'min-h-0 min-w-0'}>
+						<PlayerPanel
+							data={player}
+							onPick={(detail) => setTarget({ kind: 'owned', detail })}
+							weaponBar={(slot) => {
+								const w = data.weapons[slot];
+								if (!w) return null;
+								const partner = fusePartner(data.weapons, slot);
+								return (
+									<>
 										<Btn
-											onActivate={() => actions.fuse(slot, partner)}
+											onActivate={() => actions.sell(slot)}
 											variant="secondary"
-											className="text-crit"
 										>
-											{t('shop.fuse')}
+											{t('shop.sell', { n: w.sellValue })}
 										</Btn>
-									)}
-								</>
-							);
-						}}
-					/>
+										{partner >= 0 && (
+											<Btn
+												onActivate={() => actions.fuse(slot, partner)}
+												variant="secondary"
+												className="text-crit"
+											>
+												{t('shop.fuse')}
+											</Btn>
+										)}
+									</>
+								);
+							}}
+						/>
+					</div>
 					{!compact && (
 						<section
 							aria-label={t('shop.details')}
@@ -627,12 +631,13 @@ export function Shop({
 									<OfferOutcome offer={shown} />
 								</>
 							) : null}
-							<div className="mt-auto">
-								<Block title={t('shop.you')}>
-									<HeroStats data={player} />
-								</Block>
-							</div>
 						</section>
+					)}
+					{!compact && (
+						// Full-width strip under both columns: the stats can never push into the action footer.
+						<div className="col-span-2 border-t border-line pt-1">
+							<HeroStats data={player} />
+						</div>
 					)}
 				</section>
 			</main>

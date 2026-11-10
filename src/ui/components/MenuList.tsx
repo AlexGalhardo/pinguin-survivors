@@ -25,7 +25,7 @@ function MenuListItemView(props: {
 			{...f.props}
 			// Text starts 40 px in: the focus diamond and the selected marker live in that gutter.
 			// No Tailwind preflight, so the native button look is reset here.
-			className={`d-focus relative flex min-h-[max(46px,calc(var(--spacing)*13.5))] w-full cursor-pointer appearance-none items-center border-0 py-1 pr-[16px] pl-[40px] text-left text-list font-bold tracking-list uppercase [font-family:inherit] data-[focused=true]:font-black disabled:cursor-not-allowed disabled:text-text-dim`}
+			className={`d-focus relative flex min-h-[max(46px,calc(var(--spacing)*13.5))] w-full cursor-pointer appearance-none items-center border border-transparent py-1 pr-[16px] pl-[40px] text-left text-list font-bold tracking-list uppercase [font-family:inherit] data-[focused=true]:font-black disabled:cursor-not-allowed disabled:text-text-dim`}
 		>
 			{selected && !f.focused && (
 				<Ornament kind="diamond" size={10} className="absolute left-0.5" />

@@ -126,7 +126,7 @@ export function SlotIcon(props: {
 }): ReactElement {
 	return (
 		<span
-			className="flex shrink-0 items-center justify-center border-2 shadow-inset"
+			className="flex shrink-0 items-center justify-center border-2"
 			style={{
 				borderColor: rarityCss(props.rarity),
 				backgroundColor: `color-mix(in srgb, ${rarityCss(props.rarity)} 20%, var(--color-night))`,

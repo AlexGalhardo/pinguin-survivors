@@ -134,7 +134,7 @@ export function SectionTitle(props: { children: ReactNode }): ReactElement {
 	);
 }
 
-/** Hero stats as a compact two-column grid: the headline three first and bold, then the rest. */
+/** Hero stats as a compact four-column strip (3 rows): the headline three first and bold, then the rest. */
 export function HeroStats({ data }: { data: PlayerPanelData }): ReactElement {
 	const head = ['maxHp', 'armor', 'damage'];
 	const sorted = [...data.stats].sort((a, b) => {
@@ -143,7 +143,7 @@ export function HeroStats({ data }: { data: PlayerPanelData }): ReactElement {
 		return (ia < 0 ? head.length : ia) - (ib < 0 ? head.length : ib);
 	});
 	return (
-		<div className="grid grid-cols-2 gap-x-4">
+		<div className="grid grid-cols-4 gap-x-4">
 			{sorted.map((s) => (
 				<div
 					key={s.key}
@@ -210,7 +210,7 @@ export function PlayerPanel(props: {
 		<div key={w.detail} data-detail={w.detail} className="flex">
 			<Btn
 				onActivate={onClick}
-				className={`flex flex-col items-center justify-center gap-0 border-0 bg-transparent py-0 pr-0! pl-0! ${active ? 'outline outline-1 outline-crit' : ''}`}
+				className={`flex flex-col items-center justify-center gap-0 border-0! bg-transparent py-0 pr-0! pl-0! ${active ? 'outline outline-1 outline-crit' : ''}`}
 				label={w.label}
 			>
 				<SlotIcon frames={w.frames} rarity={w.rarity} size={icon} />
@@ -310,7 +310,7 @@ export function PlayerPanel(props: {
 	);
 
 	if (!props.wide && !compact) {
-		const rowIcon = Math.max(28, Math.round(32 * scale));
+		const rowIcon = Math.max(22, Math.round(24 * scale));
 		const row = (o: {
 			detail: string;
 			frames: string[];
@@ -325,7 +325,7 @@ export function PlayerPanel(props: {
 				<Btn
 					onActivate={o.onClick}
 					label={o.label}
-					className={`min-w-0 flex-1 justify-start! gap-2 py-0! text-left normal-case! tracking-normal! ${o.active ? 'bg-gold-bright/10' : ''}`}
+					className={`min-h-[34px]! min-w-0 flex-1 justify-start! gap-2 py-0! text-left normal-case! tracking-normal! ${o.active ? 'bg-gold-bright/10' : ''}`}
 				>
 					<SlotIcon frames={o.frames} rarity={o.rarity} size={rowIcon} />
 					<span
@@ -396,7 +396,7 @@ export function PlayerPanel(props: {
 							<div key={s.id} data-detail={`support:${s.id}`} className="flex">
 								<Btn
 									onActivate={() => pick({ kind: 'support', id: s.id })}
-									className="w-full justify-between! py-0! normal-case! tracking-normal!"
+									className="min-h-[34px]! w-full justify-between! py-0! normal-case! tracking-normal!"
 								>
 									<span>{t(`support.${s.id}.name` as I18nKey)}</span>
 									<span className="tabular-nums">
@@ -409,7 +409,7 @@ export function PlayerPanel(props: {
 							<div data-detail="potion:heal" className="flex">
 								<Btn
 									onActivate={() => pick({ kind: 'potion' })}
-									className="w-full justify-between! py-0! normal-case! tracking-normal!"
+									className="min-h-[34px]! w-full justify-between! py-0! normal-case! tracking-normal!"
 								>
 									<span>{t('hpotion.name')}</span>
 									<span className="tabular-nums">

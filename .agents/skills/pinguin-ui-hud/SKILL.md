@@ -60,7 +60,7 @@ Skill própria do projeto. Para a arquitetura genérica de UI de jogos (âncoras
   - Vida, XP e a poção ficam no canto superior esquerdo. Fish fica à direita.
   - No celular, limite os gambits visíveis a 2.
 - Os números usam `tabular-nums`. Contadores podem ficar abaixo de 22 px só onde o design system listar a exceção.
-- Sem blur no HUD (custa FPS). Use as sombras `elev-0`/`elev-1`. Rode `bun scripts/perf.ts` (60 FPS com 300 inimigos) depois de mexer.
+- Sem blur no HUD (custa FPS). Sem sombras: a UI é plana (design system v2.1, ADR-027). Rode `bun scripts/perf.ts` (60 FPS com 300 inimigos) depois de mexer.
 
 ## Revisão de diff de UI (checklist rápido)
 

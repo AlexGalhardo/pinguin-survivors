@@ -8,7 +8,7 @@ function ToastView({ toast }: { toast: ToastItem }): ReactElement {
 		return () => clearTimeout(timer);
 	}, [toast.id, toast.ms]);
 	return (
-		<div className="flex min-h-14 items-center gap-3 bg-night px-4 text-body font-bold text-text-light shadow-1">
+		<div className="flex min-h-14 items-center gap-3 border border-line bg-night px-4 text-body font-bold text-text-light">
 			<Ornament kind="diamond" size={10} />
 			{toast.message}
 		</div>
