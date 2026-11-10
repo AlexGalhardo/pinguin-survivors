@@ -402,6 +402,8 @@ export const ENEMIES = {
 		fromRound: 0,
 		weight: 0,
 		placeholder: { color: 0x8aa84a, height: 170 },
+		// Animated from the legacy still (walk + attack); frames with baked impact effects were dropped.
+		art: 'abomination-b',
 		range: 95,
 		cooldown: 2.6,
 		boss: {
