@@ -271,6 +271,8 @@ export const ENEMIES = {
 		fromRound: 0,
 		weight: 0,
 		placeholder: { color: 0x7a3a6a, height: 150 },
+		// Animated redraw without the ground patch baked into the legacy still (developer, 2026-11-10).
+		art: 'kraken-b',
 		range: 150,
 		cooldown: 3.2,
 		boss: {

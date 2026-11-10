@@ -38,6 +38,7 @@ export const ENEMY_SPRITE_SCALE: Readonly<Record<string, number>> = {
 	// Forest boss (v3 canvas 208, 146 px tall): about 2.2x the hero, like the polar bear.
 	mooseKing: 1.1,
 	kraken: 1.1,
+	'kraken-b': 1.25,
 	// Opening boss of each biome, rounds 5-45 (ADR-023, SDD-016): [ajustar com a arte]
 	leopardSeal: 1.2,
 	rotTreant: 1.2,
