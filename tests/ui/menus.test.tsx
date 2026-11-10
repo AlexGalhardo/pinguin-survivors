@@ -395,3 +395,47 @@ describe('HeroScreen and lists', () => {
 		cleanup();
 	});
 });
+
+describe('MainMenu on a phone', () => {
+	test('pages the entries instead of scrolling', () => {
+		const win = window as unknown as { matchMedia?: unknown };
+		win.matchMedia = () => ({
+			matches: true,
+			addEventListener: () => {},
+			removeEventListener: () => {},
+		});
+		const view: View = {
+			screen: 'main-menu',
+			data: {
+				pearls: 0,
+				points: 0,
+				continueRound: 4,
+				canQuit: true,
+				hasSlot: true,
+				hasSaves: true,
+			},
+			actions: actionsOf([
+				'continueRun',
+				'play',
+				'newGame',
+				'load',
+				'heroes',
+				'workshop',
+				'achievements',
+				'history',
+				'settings',
+				'quit',
+			]),
+		};
+		const r = render(<Router view={view} />);
+		expect(r.queryByText('CONTINUE (ROUND 4)')).toBeTruthy();
+		expect(r.queryByText('QUIT')).toBeNull();
+		expect(r.container.textContent).toContain('1/2');
+		fireEvent.click(r.getByLabelText('+'));
+		expect(r.queryByText('CONTINUE (ROUND 4)')).toBeNull();
+		expect(r.queryByText('QUIT')).toBeTruthy();
+		expect(r.container.textContent).toContain('2/2');
+		cleanup();
+		win.matchMedia = undefined;
+	});
+});
