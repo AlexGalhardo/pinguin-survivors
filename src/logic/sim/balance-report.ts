@@ -10,6 +10,26 @@ import type { RunEndEvent } from '../telemetry';
 /** Time a player spends in one shop and its level-up cards (SDD-006 A5). */
 export const SHOP_SECONDS = 45;
 
+/**
+ * Goal windows for the 50-round campaign (PROPOSAL, docs/balancing-and-simulation.md A4): the old 30-round
+ * windows scaled by 50/30 and rounded; `campaign` is the last campaign round, `endlessCap` the sim cut.
+ */
+export const GOAL_ROUNDS = {
+	campaign: 50,
+	endlessCap: 70,
+	/** #1 new player: median death window and the round nobody passes. */
+	l1Median: [13, 33],
+	l1Max: 50,
+	/** #2 L10: every hero passes this boss round; at most 5% die before `l10Early`. */
+	l10Boss: 35,
+	l10Early: 20,
+	/** #3 L20: median past this round and under the endless cap. */
+	l20Past: 50,
+	/** #4 Danger: D0 reaches this many rounds past D1; D5 dies by `d5Max`. */
+	dangerGap: 8,
+	d5Max: 25,
+} as const;
+
 export type Status = '✓' | '✗' | 'n/d';
 
 export interface GoalResult {
@@ -102,7 +122,7 @@ export function evaluateGoals(
 
 	// #1 new player: L1, Danger 1, empty tree.
 	{
-		const goal = 'mediana de morte entre os rounds 8 e 20; nenhum herói passa do 30';
+		const goal = `mediana de morte entre os rounds ${GOAL_ROUNDS.l1Median[0]} e ${GOAL_ROUNDS.l1Median[1]}; nenhum herói passa do ${GOAL_ROUNDS.l1Max}`;
 		const profile = 'L1, D1, árvore vazia';
 		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 1, danger: 1 })).filter(
 			(r) => r.length > 0,
@@ -116,7 +136,9 @@ export function evaluateGoals(
 					1,
 					profile,
 					goal,
-					meds.every((m) => m >= 8 && m <= 20) && max <= 30,
+					meds.every(
+						(m) => m >= GOAL_ROUNDS.l1Median[0] && m <= GOAL_ROUNDS.l1Median[1],
+					) && max <= GOAL_ROUNDS.l1Max,
 					`medianas ${meds.map((m) => m.toFixed(0)).join(' / ')}, máximo ${max}`,
 				),
 			);
@@ -125,22 +147,23 @@ export function evaluateGoals(
 
 	// #2 L10 with the auto-allocated tree (docs A4: at most 5% of the runs die before round 12).
 	{
-		const goal =
-			'cada herói passa do boss 20 em ≥ 1 run; ≤ 5% das runs morrem antes do round 12';
+		const goal = `cada herói passa do boss ${GOAL_ROUNDS.l10Boss} em ≥ 1 run; ≤ 5% das runs morrem antes do round ${GOAL_ROUNDS.l10Early}`;
 		const profile = 'L10, D1, árvore automática';
 		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 10, danger: 1 }));
 		if (rows.some((r) => r.length === 0))
 			out.push(nd(2, profile, goal, 'falta herói sem runs'));
 		else {
-			const passes = rows.map((r) => r.some((e) => e.round > 20));
-			const early = rows.map((r) => r.filter((e) => e.round < 12).length / r.length);
+			const passes = rows.map((r) => r.some((e) => e.round > GOAL_ROUNDS.l10Boss));
+			const early = rows.map(
+				(r) => r.filter((e) => e.round < GOAL_ROUNDS.l10Early).length / r.length,
+			);
 			out.push(
 				result(
 					2,
 					profile,
 					goal,
 					passes.every(Boolean) && early.every((e) => e <= 0.05),
-					`passam do 20: ${passes.map((p, i) => `${HERO_IDS[i]} ${p ? 'sim' : 'não'}`).join(', ')}; morrem antes do 12: ${early.map((e, i) => `${HERO_IDS[i]} ${pct(e)}`).join(', ')}`,
+					`passam do 20: ${passes.map((p, i) => `${HERO_IDS[i]} ${p ? 'sim' : 'não'}`).join(', ')}; morrem antes do ${GOAL_ROUNDS.l10Early}: ${early.map((e, i) => `${HERO_IDS[i]} ${pct(e)}`).join(', ')}`,
 				),
 			);
 		}
@@ -148,7 +171,7 @@ export function evaluateGoals(
 
 	// #3 L20 with the auto-allocated tree.
 	{
-		const goal = 'os 3 heróis passam do round 30 (mediana) e morrem antes do 60';
+		const goal = `os 3 heróis passam do round ${GOAL_ROUNDS.l20Past} (mediana) e morrem antes do ${GOAL_ROUNDS.endlessCap}`;
 		const profile = 'L20, D1, árvore automática';
 		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 20, danger: 1 }));
 		if (rows.some((r) => r.length === 0))
@@ -160,7 +183,7 @@ export function evaluateGoals(
 					3,
 					profile,
 					goal,
-					meds.every((m) => m > 30 && m < 60),
+					meds.every((m) => m > GOAL_ROUNDS.l20Past && m < GOAL_ROUNDS.endlessCap),
 					`medianas ${meds.map((m) => m.toFixed(0)).join(' / ')}`,
 				),
 			);
@@ -169,7 +192,7 @@ export function evaluateGoals(
 
 	// #4 Danger 0 vs 1 vs 5 at L10.
 	{
-		const goal = 'D0 chega ≥ 5 rounds além do D1; D5 morre até o round 15';
+		const goal = `D0 chega ≥ ${GOAL_ROUNDS.dangerGap} rounds além do D1; D5 morre até o round ${GOAL_ROUNDS.d5Max}`;
 		const profile = 'L10, D0 / D1 / D5';
 		const d = (danger: 0 | 1 | 5) => pick(events, { level: 10, danger });
 		if (d(0).length === 0 || d(1).length === 0 || d(5).length === 0)
@@ -185,7 +208,7 @@ export function evaluateGoals(
 					4,
 					profile,
 					goal,
-					m0 >= m1 + 5 && m5 <= 15,
+					m0 >= m1 + GOAL_ROUNDS.dangerGap && m5 <= GOAL_ROUNDS.d5Max,
 					`medianas D0 ${m0.toFixed(0)}, D1 ${m1.toFixed(0)}, D5 ${m5.toFixed(0)}`,
 				),
 			);
@@ -312,7 +335,7 @@ export function evaluateGoals(
 	return out;
 }
 
-/** Hero × level × Danger table: runs, median, p25/p75 and the share past round 30. */
+/** Hero × level × Danger table: runs, median, p25/p75 and the share past the campaign (round 50). */
 export function summaryRows(events: readonly RunEndEvent[]): string[][] {
 	const keys = new Map<string, RunEndEvent[]>();
 	for (const e of events) {
@@ -340,7 +363,7 @@ export function summaryRows(events: readonly RunEndEvent[]): string[][] {
 				quantile(sorted, 0.5).toFixed(0),
 				quantile(sorted, 0.25).toFixed(0),
 				quantile(sorted, 0.75).toFixed(0),
-				pct(rows.filter((r) => r.round > 30).length / rows.length),
+				pct(rows.filter((r) => r.round > GOAL_ROUNDS.campaign).length / rows.length),
 			];
 		});
 }
@@ -378,7 +401,7 @@ export function renderReport(
 		'## Round de morte por herói, nível e Danger',
 		'',
 		table(
-			['Herói', 'Nível', 'Danger', 'Runs', 'Mediana', 'p25', 'p75', 'Passa do 30'],
+			['Herói', 'Nível', 'Danger', 'Runs', 'Mediana', 'p25', 'p75', 'Passa do 50'],
 			summaryRows(events),
 		),
 		'',

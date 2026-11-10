@@ -31,7 +31,7 @@
 
 | Ferramenta | O quê | Comando | Quando usar |
 |---|---|---|---|
-| **Sim headless** (`src/logic/sim/run-sim.ts`) | Modelo analítico da run com as fórmulas reais; determinística por seed; roda centenas de runs em segundos | `bun scripts/sim.ts [runs] [--rounds] [--danger d] [--hero h] [--level L]` | Comparar variantes de números rapidamente; gate de CI (`tests/sim.test.ts`) |
+| **Sim headless** (`src/logic/sim/run-sim.ts`) | Modelo analítico da run com as fórmulas reais; determinística por seed; roda centenas de runs em segundos | `bun scripts/sim.ts [runs] [--rounds] [--danger d] [--speed N]` | Comparar variantes de números rapidamente; gate de CI (`tests/sim.test.ts`) |
 | **Bot de playtest** (`scripts/playtest-bot.ts`) | Joga o jogo real no Chrome (Playwright): foge do perigo, mantém alcance, usa superpoder, compra na loja pela política, escolhe cartas | `bun scripts/playtest-bot.ts --url http://localhost:4173 --heroes jack,bob,lucia --levels 1,10,20 --danger 1 --runs 2 --react 0.2 --mistakes 0.05 --json out.jsonl` | Aprovar milestones; validar o que a sim não modela (posicionamento, projéteis, poças) |
 | **Metas** (`scripts/balance-goals.ts`) | Metas #1–#6 da sim numa tabela ok/BAD; `--patch v.json` aplica overrides em memória (sem editar `src/`), `--seed` troca o conjunto | `bun scripts/balance-goals.ts 100 --seed 300 --patch v.json` | Comparar variantes em paralelo |
 | **Relatório** (`scripts/balance-report.ts`) | Tabelas herói × level × danger, DPS por arma, compra por item, metas ✓/✗ | `bun scripts/balance-report.ts out.jsonl` → `docs/reports/balance-<data>.md` | Fim de cada passada |
@@ -39,6 +39,31 @@
 | **Debug no browser** | `?skipMenu=1&hero=jack&round=12&seed=7&level=10&danger=3&weapons=…&god=1&debug=1` | — | Reproduzir uma situação específica |
 
 Build para o bot: `NODE_ENV=development vite build --mode development && vite preview --port 4173` (edita código sem recarregar as runs). Máximo 2 instâncias de Chrome em paralelo (CPU/GPU compartilhados invalidam o tempo).
+
+### A2b. O que a sim modela hoje (2026-11-10: dois relógios, campanha de 50)
+
+**Relógios (SDD-018).** Um passo da sim (`SIM.step`, 0,25 s) é de **relógio do round**. Termos de `motion` (= 2·s) valem `m = motion / clock = 2` vezes mais por segundo de round; termos de `clock` não mudam. A velocidade `s` só muda os segundos de parede reportados (`seconds = relógio / clock`): rounds, kills e mortes saem iguais em 1×, 1,5× e 2× (flag `--speed`, `SimConfig.speed`, `speedFactors`). A sim roda no 1× novo por padrão; os resultados antigos (`motion = clock = 1`) valem metade do combate por segundo de round.
+
+| Termo | Conversão |
+|---|---|
+| DPS das armas (`buildDps`, `weaponDps` em dano por segundo de `motion`) | × `m` por passo (cadência e cooldown seguem `motion`) |
+| Abates por segundo | saem do DPS (× `m`); a fila de inimigos esvazia 2× mais rápido |
+| Contato (`contactRate`, com o teto `1 / heroIFrames`) | × `m`: i-frames e golpes são de combate |
+| Regeneração | × `m` |
+| Golpes do boss (golpe `1/cooldown`, investida `1/chargeEvery`, rajada, poça) | × `m`; chance de acertar `SIM.bossLand` (0,1), `projectileLand` (0,1); poça: dano `BOSS_POOL.dps × SIM.poolExposure` (1 s) por cast |
+| Rugido do boss | `summonCount` inimigos a cada `roarEvery` (× `m`) entram em `alive` |
+| Marcas vermelhas do boss (`BOSS_HAZARD`) | `clock`: um cast por `hazardEvery`; acerta com `SIM.hazardHit` (0,1) e causa a média do `damage` dos tipos da rotação do boss × dano do boss |
+| Marcas vermelhas de elite (`ELITE_HAZARD`) | `clock`: elites vivos = `alive × eliteShare`, no máximo `maxActive` (4) lançam, um cast por `every` (6 s); acerta `SIM.eliteHit` (= `simHitChance`, 0,2) com `SIM.eliteDamage` (= `simDamage`, 0,55) do dano do elite. Antes entrava como multiplicador do dano de contato |
+| Orçamento de spawn (`spawnRate`) e limite de tempo do boss (`roundDuration`) | `clock`, sem fator |
+| Fish por abate | valor esperado de `ECONOMY.fishDrop` (comum `common` por abate; elite `elite.chance` × Fish do tier), somado antes de `endRound`; boss e fim de round vêm de `roundClearFish`. Coleta assumida em 100% |
+
+Fim de run (`SimResult.cause`): `death` (round normal), `bossDeath` (dano do boss), `bossTimeout` (acabou o tempo) ou `survived`. O resumo separa `bossHit` e `bossTime`; no JSONL só `bossTimeout` vira `cause: 'bossTimeout'`.
+
+**Campanha de 50.** `SIM.maxRound` = 70 (50 + 20 de endless). `past30` virou `past50`.
+
+**Metas por round (PROPOSTA, não aprovada).** `GOAL_ROUNDS` (`src/logic/sim/balance-report.ts`) escala as janelas atuais por 50/30 e arredonda, sem número de design novo: #1 mediana 13–33 e ninguém passa do 50 (era 8–20 / 30); #2 passa do boss 35 e ≤ 5% morrem antes do 20 (era 20 / 12); #3 mediana > 50 e < 70, o corte do endless na sim (era 30 / 60); #4 D0 ≥ D1 + 8 e D5 ≤ 25 (era 5 / 15). #5, #6 e #7 não dependem do número de rounds. O A4 acima segue com as metas de 30 até o desenvolvedor aprovar.
+
+**Premissas e constantes calibráveis** (`SIM`): `bossLand`, `projectileLand`, `hazardHit`, `poolExposure`, `eliteHit`, `eliteDamage`. São chutes a calibrar com o bot (taxa de acerto de um herói que desvia por hábito); `safeCrowd`, `hitPerExtra` e `engageHalf` continuam do ajuste contra o bot na escala antiga de tempo e precisam de novo ajuste.
 
 ### A3. Fluxo de uma passada de balanceamento
 

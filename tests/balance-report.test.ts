@@ -42,26 +42,27 @@ describe('goal checks', () => {
 		for (const g of evaluateGoals([])) expect(g.status).toBe('n/d');
 	});
 
-	test('#1 passes inside 8-20 and fails past 30 or out of range', () => {
-		const ok = HERO_IDS.flatMap((hero) => many(10, { hero, round: 12 }));
+	test('#1 passes inside 13-33 and fails past 50 or out of range', () => {
+		const ok = HERO_IDS.flatMap((hero) => many(10, { hero, round: 20 }));
 		expect(goal(ok, 1)?.status).toBe('✓');
-		expect(goal([...ok, ev({ round: 31 })], 1)?.status).toBe('✗');
+		expect(goal([...ok, ev({ round: 51 })], 1)?.status).toBe('✗');
 		const low = HERO_IDS.flatMap((hero) => many(10, { hero, round: 3 }));
 		expect(goal(low, 1)?.status).toBe('✗');
 	});
 
-	test('#3 needs every hero and respects the 30-60 window', () => {
+	test('#3 needs every hero and respects the 50-70 window', () => {
 		const heroes = (round: number) =>
 			HERO_IDS.flatMap((hero) => many(5, { hero, level: 20, workshop: 4, round }));
-		expect(goal(heroes(40), 3)?.status).toBe('✓');
-		expect(goal(heroes(61), 3)?.status).toBe('✗');
-		expect(goal(heroes(40).slice(5), 3)?.status).toBe('n/d');
+		expect(goal(heroes(55), 3)?.status).toBe('✓');
+		expect(goal(heroes(71), 3)?.status).toBe('✗');
+		expect(goal(heroes(40), 3)?.status).toBe('✗');
+		expect(goal(heroes(55).slice(5), 3)?.status).toBe('n/d');
 	});
 
 	test('#4 compares Danger 0, 1 and 5 at L10', () => {
 		const at = (danger: 0 | 1 | 5, round: number) => many(5, { level: 10, danger, round });
 		expect(goal([...at(0, 40), ...at(1, 30), ...at(5, 10)], 4)?.status).toBe('✓');
-		expect(goal([...at(0, 32), ...at(1, 30), ...at(5, 10)], 4)?.status).toBe('✗');
+		expect(goal([...at(0, 36), ...at(1, 30), ...at(5, 10)], 4)?.status).toBe('✗');
 		expect(goal([...at(0, 40), ...at(1, 30)], 4)?.status).toBe('n/d');
 	});
 
@@ -104,7 +105,7 @@ describe('goal checks', () => {
 		const heroRuns = (early: number) =>
 			HERO_IDS.flatMap((hero) =>
 				Array.from({ length: 100 }, (_, i) =>
-					ev({ hero, level: 10, workshop: 2, round: i < early ? 10 : 24 }),
+					ev({ hero, level: 10, workshop: 2, round: i < early ? 10 : 40 }),
 				),
 			);
 		expect(goal(heroRuns(5), 2)?.status).toBe('✓');

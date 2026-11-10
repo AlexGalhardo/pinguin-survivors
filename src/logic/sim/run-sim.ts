@@ -1,8 +1,10 @@
-import type { HeroId } from '../../config/constants';
+import type { GameSpeed, HeroId } from '../../config/constants';
 import { ALL_CARDS } from '../../data/cards';
 import { COMBAT } from '../../data/combat';
 import { DANGER, type Danger, EXTRA_WAVES } from '../../data/difficulty';
+import { ECONOMY } from '../../data/economy';
 import { ELITE_HAZARD } from '../../data/elite-hazard';
+import { BOSS_HAZARD, BOSS_POOL, BOSS_VOLLEY, type EnemyDef } from '../../data/enemies';
 import { HEROES } from '../../data/heroes';
 import { ROUNDS } from '../../data/rounds';
 import { SIM_BRANCH_ORDER } from '../../data/skill-tree';
@@ -45,6 +47,7 @@ import {
 } from '../run-state';
 import { defaultSave } from '../save';
 import { autoAllocate, heroTree } from '../skill-tree';
+import { speedFactors } from '../speed';
 import { addStat, heroStats, type PlayerStats } from '../stats';
 import { pickBest } from './card-policy';
 import { makeTaste, playShop, takeDrop } from './shop-policy';
@@ -53,15 +56,21 @@ import { makeTaste, playShop, takeDrop } from './shop-policy';
  * Headless balance model (PLAN 3.2): a per-step approximation of a run using the real data,
  * formulas and card draws. It has no positions, so crowd behaviour is folded into the named
  * constants below, calibrated against the real-game playtest bot (docs/balancing-and-simulation.md §10).
+ *
+ * Two clocks (SDD-018): a step is `SIM.step` seconds of the round clock. Terms that follow `motion`
+ * (weapons, contact and boss swings, regen) are multiplied by `motion / clock` (= 2 at every speed);
+ * `clock` terms (spawn budget, boss time limit, red-mark hazards) are not. The speed only changes the
+ * wall seconds reported (`seconds = clock seconds / clock`).
  */
 /** Mutable so calibration scripts can fit it; gameplay never reads it. */
 export const SIM = {
-	/** Seconds simulated per step. */
+	/** Seconds of the round clock simulated per step. */
 	step: 0.25,
-	maxRound: 60,
+	/** Campaign is 50 rounds (ADR-023); the rest is endless, cut here so a run always ends. */
+	maxRound: 70,
 	/** Enemies alive that a kiting hero keeps at bay with no hits (scaled by mobility). */
 	safeCrowd: 100,
-	/** Contact hits per second per enemy above the safe crowd. */
+	/** Contact hits per motion-second per enemy above the safe crowd. */
 	hitPerExtra: 0.001,
 	/** Hero speed / average enemy speed at which the safe crowd is exactly `safeCrowd`. */
 	mobilityRef: 1.35,
@@ -71,12 +80,19 @@ export const SIM = {
 	engageHalf: { arc: 75, spread: 30, bolt: 25 },
 	/** Share of the damage aimed at the boss (weapons target it first when in range). */
 	bossFocus: 0.8,
-	/** Boss hits per second on the hero (telegraphed swipes, charges) and share that lands. */
-	bossHitRate: 0.33,
+	/**
+	 * Share of the boss attacks that land on a hero who dodges by habit. Swipes (1 per `cooldown`) and
+	 * charges (1 per `chargeEvery`) are telegraphed; a volley projectile and a red-mark cast use their own.
+	 */
 	bossLand: 0.1,
-	/** Share of red-mark area attacks (SDD-016) that land: 1 s+ telegraphs are mostly dodged, at ~0.8x boss damage. */
-	bossHazardLand: 0.1,
-	bossHazardDamage: 0.8,
+	projectileLand: 0.1,
+	/** Boss red-mark cast (BOSS_HAZARD, 1 per `hazardEvery` of the round clock): chance that it lands at all. */
+	hazardHit: 0.1,
+	/** Seconds the hero stands in the acid pool that spawns on him before leaving it (the others scatter away). */
+	poolExposure: 1,
+	/** Elite red-mark cast (1 per `ELITE_HAZARD.every` of the round clock): chance it lands, and damage fraction. */
+	eliteHit: ELITE_HAZARD.simHitChance,
+	eliteDamage: ELITE_HAZARD.simDamage,
 	/** Superpower: share of the crowd it clears. */
 	superClear: 0.7,
 };
@@ -91,7 +107,12 @@ export interface SimConfig {
 	danger?: Danger;
 	/** Tier of the starting weapon (debug). */
 	tier?: 1 | 2 | 3;
+	/** Game speed (default 1, the standard 1x): only the wall seconds change, see `SIM`. */
+	speed?: GameSpeed;
 }
+
+/** How the run ended: killed in a normal round, killed by a boss, boss time limit, or lived through `SIM.maxRound`. */
+export type SimCause = 'death' | 'bossDeath' | 'bossTimeout' | 'survived';
 
 export interface SimResult {
 	hero: HeroId;
@@ -99,6 +120,7 @@ export interface SimResult {
 	/** Round the hero died on (or SIM.maxRound + 1 if he survived them all). */
 	round: number;
 	kills: number;
+	/** Wall-clock seconds of play (round clock divided by the speed's `clock`). */
 	seconds: number;
 	damageTaken: number;
 	xp: number;
@@ -111,7 +133,7 @@ export interface SimResult {
 	pearls: number;
 	/** Final weapon slots as `id:tier`. */
 	weapons: string[];
-	diedToBoss: boolean;
+	cause: SimCause;
 	cards: string[];
 	/** Damage taken per round (index = round − 1), for calibration against the bot. */
 	perRound: number[];
@@ -205,13 +227,16 @@ interface AverageEnemy {
 	damage: number;
 	xp: number;
 	speed: number;
+	/** Share of the spawns that are elites, and the mean damage of one (before the Danger multiplier). */
+	eliteShare: number;
+	eliteDamage: number;
 }
 
 /** Average enemy of the pool available in `round`, elites included. */
 function averageEnemy(round: number, eliteMul = 1): AverageEnemy {
 	const pool = enemyPoolForRound(round);
 	const total = pool.reduce((a, e) => a + e.weight, 0);
-	const out = { hp: 0, damage: 0, xp: 0, speed: 0 };
+	const out = { hp: 0, damage: 0, xp: 0, speed: 0, eliteShare: 0, eliteDamage: 0 };
 	for (const e of pool) {
 		const w = e.weight / total;
 		out.hp += e.hp * w;
@@ -222,25 +247,64 @@ function averageEnemy(round: number, eliteMul = 1): AverageEnemy {
 	const tiers = eliteTiers(round);
 	let eliteHp = 1;
 	let eliteDmg = 1;
-	// Premise: each elite casts once per `every` s and `simHitChance` of casts land for `simDamage` of its
-	// damage; contact hits are limited by the i-frames, so one cast weighs `heroIFrames / every` contact hits.
-	const castLoad =
-		ELITE_HAZARD.simHitChance *
-		ELITE_HAZARD.simDamage *
-		(COMBAT.heroIFrames / ELITE_HAZARD.every);
+	let eliteDamageSum = 0;
 	if (tiers.includes('purple')) {
-		eliteHp += ROUNDS.purpleShare * eliteMul * (ROUNDS.elite.purple.hp - 1);
-		eliteDmg +=
-			ROUNDS.purpleShare * eliteMul * (ROUNDS.elite.purple.damage * (1 + castLoad) - 1);
+		const t = ROUNDS.elite.purple;
+		eliteHp += ROUNDS.purpleShare * eliteMul * (t.hp - 1);
+		eliteDmg += ROUNDS.purpleShare * eliteMul * (t.damage - 1);
+		out.eliteShare += ROUNDS.purpleShare * eliteMul;
+		eliteDamageSum += ROUNDS.purpleShare * eliteMul * t.damage;
 	}
 	if (tiers.includes('orange')) {
-		eliteHp += ROUNDS.orangeShare * eliteMul * (ROUNDS.elite.orange.hp - 1);
-		eliteDmg +=
-			ROUNDS.orangeShare * eliteMul * (ROUNDS.elite.orange.damage * (1 + castLoad) - 1);
+		const t = ROUNDS.elite.orange;
+		eliteHp += ROUNDS.orangeShare * eliteMul * (t.hp - 1);
+		eliteDmg += ROUNDS.orangeShare * eliteMul * (t.damage - 1);
+		out.eliteShare += ROUNDS.orangeShare * eliteMul;
+		eliteDamageSum += ROUNDS.orangeShare * eliteMul * t.damage;
 	}
+	// Elite hazards are cast separately (`eliteHazardLoad`), so contact damage keeps only the multiplier.
+	out.eliteDamage =
+		out.eliteShare > 0 ? (out.damage * dmgMul(round) * eliteDamageSum) / out.eliteShare : 0;
 	out.hp *= hpMul(round) * eliteHp;
 	out.damage *= dmgMul(round) * eliteDmg;
 	return out;
+}
+
+/**
+ * Elite red-mark attacks (ELITE_HAZARD) as damage per round-clock second. Premise: elites alive follow
+ * their spawn share, at most `maxActive` cast at once, each once per `every` s, and `SIM.eliteHit` of the
+ * casts land for `SIM.eliteDamage` of the elite damage (a hero who dodges by habit).
+ */
+export function eliteHazardLoad(alive: number, eliteShare: number, eliteDamage: number): number {
+	const casters = Math.min(alive * eliteShare, ELITE_HAZARD.maxActive);
+	return (casters * SIM.eliteHit * SIM.eliteDamage * eliteDamage) / ELITE_HAZARD.every;
+}
+
+/** Mean `damage` fraction of the marks of the boss' red-mark rotation (BOSS_HAZARD). */
+function hazardDamage(kinds: readonly (keyof typeof BOSS_HAZARD)[]): number {
+	if (kinds.length === 0) return 0;
+	return kinds.reduce((a, k) => a + BOSS_HAZARD[k].damage, 0) / kinds.length;
+}
+
+/**
+ * Damage per round-clock second of the boss on the hero before mitigation. `motion` attacks (swipes,
+ * charges, volleys, pools: cooldowns follow the movement clock) are scaled by `m = motion / clock`;
+ * red-mark casts follow the round clock. Chances to land are `SIM.bossLand`, `projectileLand`, `hazardHit`.
+ */
+export function bossDps(boss: EnemyDef, bossDmg: number, m: number): number {
+	const b = boss.boss;
+	const swipes = 1 / (boss.cooldown ?? 3);
+	if (!b) return m * swipes * SIM.bossLand * bossDmg;
+	const charges = b.chargeEvery > 0 ? 1 / b.chargeEvery : 0;
+	const melee = (swipes + charges) * SIM.bossLand * bossDmg;
+	const volley =
+		b.volleyEvery > 0
+			? (b.volleyCount * SIM.projectileLand * BOSS_VOLLEY.damage * bossDmg) / b.volleyEvery
+			: 0;
+	const pool = b.poolEvery > 0 ? (BOSS_POOL.dps * SIM.poolExposure * bossDmg) / b.poolEvery : 0;
+	const marks =
+		b.hazardEvery > 0 ? (SIM.hazardHit * hazardDamage(b.hazards) * bossDmg) / b.hazardEvery : 0;
+	return m * (melee + volley + pool) + marks;
 }
 
 /** Contact hits per second for this many enemies alive around a kiting hero. */
@@ -280,11 +344,14 @@ export function simulateRun(config: SimConfig): SimResult {
 	let damageTaken = 0;
 	let xp = 0;
 	let fishEarned = 0;
+	let fishCarry = 0;
 	let fishSpent = 0;
 	let fishRerolled = 0;
 	let charge = 0;
 	const perRound: number[] = [];
-	const result = (round: number, diedToBoss: boolean): SimResult => {
+	const { motion, clock } = speedFactors(config.speed ?? 1);
+	const m = motion / clock;
+	const result = (round: number, cause: SimCause): SimResult => {
 		const pearls = finishRun(run, save);
 		return {
 			hero: config.hero,
@@ -299,7 +366,7 @@ export function simulateRun(config: SimConfig): SimResult {
 			fishRerolled,
 			pearls,
 			weapons: build.weapons.map((w) => `${w.id}:${w.tier}`),
-			diedToBoss,
+			cause,
 			cards: [...build.cards],
 			perRound,
 		};
@@ -316,20 +383,35 @@ export function simulateRun(config: SimConfig): SimResult {
 		const boss = bossForRound(round, config.seed);
 		let bossHp = isBossRound(round) ? boss.hp * bossHpMul(round) * mods.hp : 0;
 		const bossDmg = boss.damage * dmgMul(round) * mods.dmg;
+		const bossPerSecond = bossDps(boss, bossDmg, m);
+		const summonPerSecond =
+			boss.boss && boss.boss.roarEvery > 0
+				? (m * boss.boss.summonCount) / boss.boss.roarEvery
+				: 0;
+		const eliteDamage = enemy.eliteDamage * mods.dmg;
 		let alive = 0;
 		let spawnBudget = 0;
+		let summonBudget = 0;
+		let roundKills = 0;
 		let overflow = 0;
 		let taken = 0;
 		for (let t = 0; t < duration; t += SIM.step) {
-			seconds += SIM.step;
+			seconds += SIM.step / clock;
 			spawnBudget += spawnRate(round) * spawnMul * SIM.step;
 			const spawned = Math.floor(spawnBudget);
 			spawnBudget -= spawned;
 			alive = Math.min(300, alive + spawned);
-			let dmg = buildDps(eff, build, alive) * SIM.step;
+			if (bossHp > 0) {
+				summonBudget += summonPerSecond * SIM.step;
+				const summoned = Math.floor(summonBudget);
+				summonBudget -= summoned;
+				alive = Math.min(300, alive + summoned);
+			}
+			// Weapons and cooldowns run on the movement clock: `m` times more attacks per round second.
+			let dmg = buildDps(eff, build, alive) * SIM.step * m;
 			if (bossHp > 0) {
 				// Single-target damage on the boss: the crowd factor does not apply.
-				const single = buildDps(eff, build, alive, true) * SIM.step;
+				const single = buildDps(eff, build, alive, true) * SIM.step * m;
 				bossHp -= single * SIM.bossFocus;
 				dmg *= 1 - SIM.bossFocus;
 			}
@@ -338,6 +420,7 @@ export function simulateRun(config: SimConfig): SimResult {
 			overflow = alive > killed ? overflow - killed * enemy.hp : 0;
 			alive -= killed;
 			kills += killed;
+			roundKills += killed;
 			charge += killed;
 			xp += killed * orbXp(enemy.xp, round) * mods.drops;
 			if (superOn && charge >= SUPER.charge && (bossHp > 0 || alive >= 25)) {
@@ -345,6 +428,7 @@ export function simulateRun(config: SimConfig): SimResult {
 				const cleared = Math.floor(alive * SIM.superClear);
 				alive -= cleared;
 				kills += cleared;
+				roundKills += cleared;
 				const main = build.weapons[0] as WeaponInstance;
 				const mainDef = WEAPON_LINE_BY_ID[main.id];
 				const mainTier = weaponTierStats(mainDef, main.tier);
@@ -361,30 +445,22 @@ export function simulateRun(config: SimConfig): SimResult {
 				(1 - Math.min(COMBAT.dodgeCap, eff.dodge)) *
 				(1 - Math.min(COMBAT.parryCap, eff.parry));
 			const armor = 1 - armorReduction(eff.armor);
-			let hits = contactRate(alive, eff.moveSpeed, enemy.speed) * SIM.step;
-			let incoming = hits * enemy.damage;
-			if (bossHp > 0) {
-				const bossHits = SIM.bossHitRate * SIM.bossLand * SIM.step;
-				hits += bossHits;
-				incoming += bossHits * bossDmg;
-				if (boss.boss) {
-					const hazards = (SIM.bossHazardLand * SIM.step) / boss.boss.hazardEvery;
-					hits += hazards;
-					incoming += hazards * bossDmg * SIM.bossHazardDamage;
-				}
-			}
+			let incoming =
+				contactRate(alive, eff.moveSpeed, enemy.speed) * SIM.step * m * enemy.damage;
+			if (bossHp > 0) incoming += bossPerSecond * SIM.step;
+			else incoming += eliteHazardLoad(alive, enemy.eliteShare, eliteDamage) * SIM.step;
 			const loss = incoming * avoid * armor;
-			hp = Math.min(eff.maxHp, hp - loss + eff.regen * SIM.step);
+			hp = Math.min(eff.maxHp, hp - loss + eff.regen * SIM.step * m);
 			damageTaken += loss;
 			taken += loss;
 			if (hp <= 0) {
 				perRound.push(taken);
-				return result(round, bossHp > 0);
+				return result(round, bossHp > 0 ? 'bossDeath' : 'death');
 			}
 			if (isBossRound(round) && bossHp <= 0) break;
 		}
 		perRound.push(taken);
-		if (isBossRound(round) && bossHp > 0) return result(round, true);
+		if (isBossRound(round) && bossHp > 0) return result(round, 'bossTimeout');
 		hp = Math.min(eff.maxHp, hp + eff.maxHp * ROUNDS.roundEndHeal);
 		// Rarity IV drops from Elites and V from the Boss (ADR-017): expected kills of the round. Only
 		// weapon drops are modelled; equipment is not (as before: the sim has no gear).
@@ -392,6 +468,21 @@ export function simulateRun(config: SimConfig): SimResult {
 			? ROUNDS.purpleShare + (round >= ROUNDS.orangeFrom ? ROUNDS.orangeShare : 0)
 			: 0;
 		const elites = Math.round(spawnRate(round) * duration * eliteShare);
+		// Fish per kill (ECONOMY.fishDrop, expected value): commons roll `common`; elites roll `elite.chance`
+		// for their tier. Boss and round-end Fish are paid by `endRound`. Collection is assumed 100%.
+		const drop = ECONOMY.fishDrop;
+		const orange = round >= ROUNDS.orangeFrom ? ROUNDS.orangeShare : 0;
+		const eliteFish =
+			eliteShare > 0
+				? (ROUNDS.purpleShare * drop.elite.purple + orange * drop.elite.orange) / eliteShare
+				: 0;
+		const eliteKills = Math.min(elites, roundKills);
+		fishCarry +=
+			(roundKills - eliteKills) * drop.common + eliteKills * drop.elite.chance * eliteFish;
+		const killFish = Math.floor(fishCarry);
+		fishCarry -= killFish;
+		run.fish += killFish;
+		fishEarned += killFish;
 		// One Elite Mark per Elite and one Boss Core per Boss pay for shop rarities IV and V (ADR-021).
 		run.materials.elite += elites;
 		if (isBossRound(round)) run.materials.boss++;
@@ -432,7 +523,7 @@ export function simulateRun(config: SimConfig): SimResult {
 		eff = effectiveStats(stats, build);
 		leaveShop(run);
 	}
-	return result(SIM.maxRound + 1, false);
+	return result(SIM.maxRound + 1, 'survived');
 }
 
 export interface SimSummary {
@@ -441,9 +532,11 @@ export interface SimSummary {
 	runs: number;
 	avgRound: number;
 	medianRound: number;
-	/** Share of runs that got past round 30 (the third boss). */
-	past30: number;
+	/** Share of runs that got past round 50 (the campaign; the rest is endless). */
+	past50: number;
+	/** Runs that ended on a boss round: killed by the boss, or out of time. */
 	bossDeaths: number;
+	bossTimeouts: number;
 	avgKills: number;
 	avgXp: number;
 	avgPearls: number;
@@ -456,9 +549,10 @@ export function simulateMany(
 	runs: number,
 	seed = 1,
 	danger: Danger = 1,
+	speed: GameSpeed = 1,
 ): SimSummary {
 	const results = Array.from({ length: runs }, (_, i) =>
-		simulateRun({ hero, level, seed: seed + i, danger }),
+		simulateRun({ hero, level, seed: seed + i, danger, speed }),
 	);
 	const rounds = results.map((r) => r.round).sort((a, b) => a - b);
 	const avg = (f: (r: SimResult) => number) => results.reduce((a, r) => a + f(r), 0) / runs;
@@ -468,8 +562,9 @@ export function simulateMany(
 		runs,
 		avgRound: avg((r) => r.round),
 		medianRound: rounds[Math.floor(runs / 2)] as number,
-		past30: results.filter((r) => r.round > 30).length / runs,
-		bossDeaths: results.filter((r) => r.diedToBoss).length,
+		past50: results.filter((r) => r.round > 50).length / runs,
+		bossDeaths: results.filter((r) => r.cause === 'bossDeath').length,
+		bossTimeouts: results.filter((r) => r.cause === 'bossTimeout').length,
 		avgKills: avg((r) => r.kills),
 		avgXp: avg((r) => r.xp),
 		avgPearls: avg((r) => r.pearls),

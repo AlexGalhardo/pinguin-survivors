@@ -13,6 +13,7 @@ import { HEROES } from '../src/data/heroes';
 import { HEAL_POTION } from '../src/data/potions';
 import { ROUNDS } from '../src/data/rounds';
 import { STARTING_WEAPONS } from '../src/data/unlocks';
+import { GOAL_ROUNDS } from '../src/logic/sim/balance-report';
 import { simulateRun } from '../src/logic/sim/run-sim';
 import { LEVEL_GROWTH } from '../src/logic/stats';
 
@@ -70,15 +71,21 @@ for (const hero of HERO_IDS) {
 	const l20 = rounds(hero, 20, 1);
 	const d0 = median(rounds(hero, 10, 0));
 	const d5 = median(rounds(hero, 10, 5));
-	// Tails: with 100 seeds one lucky run in 100 is noise, so "no run past 30/60" reads as ≤ 1% (A4).
-	const g1 = median(l1) >= 8 && median(l1) <= 20 && share(l1, (r) => r > 30) <= 1;
-	const early = share(l10, (r) => r < 12);
-	const past20 = share(l10, (r) => r > 20);
+	// Tails: with 100 seeds one lucky run in 100 is noise, so "no run past the cap" reads as ≤ 1% (A4).
+	// Windows are the 50-round campaign proposal (`GOAL_ROUNDS`).
+	const g1 =
+		median(l1) >= GOAL_ROUNDS.l1Median[0] &&
+		median(l1) <= GOAL_ROUNDS.l1Median[1] &&
+		share(l1, (r) => r > GOAL_ROUNDS.l1Max) <= 1;
+	const early = share(l10, (r) => r < GOAL_ROUNDS.l10Early);
+	const past20 = share(l10, (r) => r > GOAL_ROUNDS.l10Boss);
 	const g2 = early <= 5 && past20 > 0;
-	const g3 = median(l20) > 30 && share(l20, (r) => r > 60) <= 1;
-	const g4 = d0 >= median(l10) + 5 && d5 <= 15;
+	const past70 = share(l20, (r) => r > GOAL_ROUNDS.endlessCap);
+	const g3 =
+		median(l20) > GOAL_ROUNDS.l20Past && median(l20) < GOAL_ROUNDS.endlessCap && past70 <= 1;
+	const g4 = d0 >= median(l10) + GOAL_ROUNDS.dangerGap && d5 <= GOAL_ROUNDS.d5Max;
 	console.log(
-		`${hero.padEnd(6)} #1 ${mark(g1)} L1 median ${median(l1)} max ${l1[l1.length - 1]} | #2 ${mark(g2)} L10 median ${median(l10)} die<12 ${early}% past20 ${past20}% | #3 ${mark(g3)} L20 median ${median(l20)} past60 ${share(l20, (r) => r > 60)}% | #4 ${mark(g4)} D0 ${d0} D1 ${median(l10)} D5 ${d5}`,
+		`${hero.padEnd(6)} #1 ${mark(g1)} L1 median ${median(l1)} max ${l1[l1.length - 1]} | #2 ${mark(g2)} L10 median ${median(l10)} die<${GOAL_ROUNDS.l10Early} ${early}% past${GOAL_ROUNDS.l10Boss} ${past20}% | #3 ${mark(g3)} L20 median ${median(l20)} past${GOAL_ROUNDS.endlessCap} ${past70}% | #4 ${mark(g4)} D0 ${d0} D1 ${median(l10)} D5 ${d5}`,
 	);
 }
 
