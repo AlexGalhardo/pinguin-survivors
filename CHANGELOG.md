@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **game:** Boss HP comes from an explicit per-boss table (`BOSS_HP`, SDD-016 RF-10: 3000, 4000, 5500, 7500, 10000, 12500, 17000, 22000, 27000, 33000 for rounds 5-50, provisional) instead of doubling per boss (boss 50 was about 1.2M). Endless bosses multiply their table value by `endlessBossStep` 1.2 per boss after round 50. `scaling.bossHpPerBoss` removed.
 - **sim:** Normal rounds now take damage below the safe crowd: `SIM.touchPerEnemy` (contact per enemy alive) and `SIM.shotLand` (ranged shots), fit to the playtest bot at a third of its value; the boss superpower damage uses `SIM.superBossShare` (Jack and Lucia 1, Bob 0.25, from SuperpowerSystem) instead of a fixed 0.5. L1 median 18 to 9-10, L10 24 to 18; see docs A2b.
 - **bot:** The playtest bot dodges the red marks of bosses and elites (`safePoint` in `src/logic/hazard-escape.ts`, `--ignore-marks` for the old behavior) and logs `damageBySource` per round.
 

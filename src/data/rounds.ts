@@ -26,8 +26,8 @@ export const ROUNDS = {
 		hpPerCycle: 1.3,
 		dmgPerRound: 0.26,
 		dmgPerCycle: 1.15,
-		/** Boss HP doubles with every boss: round 5 ×1, 10 ×2, 15 ×4… (developer rule, 2026-11-08). */
-		bossHpPerBoss: 2,
+		/** Endless boss HP: each boss after round 50 multiplies its `BOSS_HP` by this (55 → ×1.2, 60 → ×1.44…). */
+		endlessBossStep: 1.2,
 		spawnBase: 1.5,
 		spawnPerRound: 0.5,
 		spawnMax: 25,

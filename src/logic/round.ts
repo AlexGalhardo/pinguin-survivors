@@ -1,3 +1,4 @@
+import { BOSS_ROUNDS } from '../data/enemies';
 import { ROUNDS } from '../data/rounds';
 
 export type EliteTier = 'purple' | 'orange';
@@ -65,9 +66,10 @@ export function speedMul(round: number): number {
 	return ROUNDS.scaling.speedPerLoop ** loop(round);
 }
 
-/** Boss HP doubles with every boss: round 5 → ×1, 10 → ×2, 15 → ×4, 20 → ×8… */
+/** Endless boss HP multiplier over its `BOSS_HP`: 1 up to round 50, then `endlessBossStep` per boss (55 -> x1.2, 60 -> x1.44...). */
 export function bossHpMul(round: number): number {
-	return ROUNDS.scaling.bossHpPerBoss ** (Math.max(1, Math.floor(round / ROUNDS.bossEvery)) - 1);
+	const past = Math.max(0, Math.floor(round / ROUNDS.bossEvery) - BOSS_ROUNDS.length);
+	return ROUNDS.scaling.endlessBossStep ** past;
 }
 
 /** Enemies per second. */

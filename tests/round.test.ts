@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { BOSS_ROUNDS, ENEMIES } from '../src/data/enemies';
 import { ROUNDS } from '../src/data/rounds';
 import {
 	bossHpMul,
@@ -32,8 +33,16 @@ describe('round timing (P-14)', () => {
 		expect(rounds.map(roundDuration)).toEqual([120, 180, 540, 600, 600, 600, 600]);
 	});
 
-	test('boss HP doubles with every boss; biomes stay in blocks of 10', () => {
-		expect([5, 10, 15, 20, 30].map(bossHpMul)).toEqual([1, 2, 4, 8, 32]);
+	test('boss HP comes from the BOSS_HP table; the endless steps it by endlessBossStep per boss', () => {
+		const expected = [3000, 4000, 5500, 7500, 10000, 12500, 17000, 22000, 27000, 33000];
+		BOSS_ROUNDS.forEach((id, i) => {
+			expect(ENEMIES[id].hp * bossHpMul((i + 1) * 5)).toBe(expected[i] as number);
+		});
+		expect([55, 60].map(bossHpMul)).toEqual([1.2, 1.2 ** 2]);
+		expect(bossHpMul(51)).toBe(1);
+	});
+
+	test('biomes stay in blocks of 10', () => {
 		expect([10, 11, 20].map(cycle)).toEqual([0, 1, 1]);
 	});
 });

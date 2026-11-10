@@ -1,6 +1,6 @@
 # SDD-016 — Dez bosses, 5 biomas e ataques em área
 
-**Versão** 1.1 · **Data** 2026-11-10 · **Status** Aprovada (2026-11-10, desenvolvedor no chat: orçamento até 600 gerações, novos bosses nos rounds 5/15/25/35/45, temas da lista, campanha de 50 rounds; v1.1: RF-09 Elites, pedido explícito do desenvolvedor em 2026-11-10) · **ADR** [023](../adrs/ADR-023-campanha-50-rounds-10-bosses.md) · **Depende de** SDD-012, SDD-013
+**Versão** 1.2 · **Data** 2026-11-10 · **Status** Aprovada (2026-11-10, desenvolvedor no chat: orçamento até 600 gerações, novos bosses nos rounds 5/15/25/35/45, temas da lista, campanha de 50 rounds; v1.1: RF-09 Elites, pedido explícito do desenvolvedor em 2026-11-10; v1.2: RF-10 vida por boss, decisão do desenvolvedor no chat em 2026-11-10) · **ADR** [023](../adrs/ADR-023-campanha-50-rounds-10-bosses.md) · **Depende de** SDD-012, SDD-013
 
 ## Requisitos
 
@@ -23,6 +23,7 @@
   - Cinco padrões novos, menores que os de boss, em `src/logic/elite-hazard.ts` e `ELITE_HAZARD` em `src/data/elite-hazard.ts`: `nova` (círculo cheio ao redor do elite), `cone` (leque frontal mirando o herói, novo shape `sector`), `cross` (4 raios curtos em + que depois giram para x), `stomp` (3 círculos em sequência a partir de onde o herói estava) e `cage` (anel de círculos pequenos ao redor do herói com o centro seguro). Telegraph ≥ 0,8 s; dano = fração do dano do elite.
   - Ao nascer, cada elite sorteia 1 dos 5 com o rng da run (determinístico pela seed) e usa só esse, a cada `every` s, quando o herói está a até `maxDist` dele. No máximo `maxActive` ataques de elite ao mesmo tempo; passou do limite, o elite espera e tenta de novo.
   - Reaproveita `hazardHits` e o `BossHazardSystem` (2ª instância); o sim (`run-sim`) usa a vida nova e uma aproximação do dano dos ataques.
+- **RF-10 Vida por boss.** A vida efetiva de cada boss da campanha vem de uma tabela explícita, `BOSS_HP` em `src/data/enemies.ts` (no Danger de referência, `mods.hp` 1), e não de um expoente por boss; o `hp` do `EnemyDef` de cada boss lê a tabela, que é o único lugar para ajustá-la. Valores iniciais (provisórios, `[calibrar com o bot]`): foca-leopardo 3000, urso polar 4000, ent podre 5500, alce-rei 7500, rainha da colmeia 10000, colosso biomecânico 12500, mergulhador afogado 17000, kraken 22000, hierofante da praga 27000, abominação 33000 (curva suave ≈ ×1,35 por boss, sem degrau extra nos finais 30/45/50). No endless (51+) o boss sorteado usa o valor da tabela × `ROUNDS.scaling.endlessBossStep` (1,2) elevado ao número de bosses desde o round 50 (55 → ×1,2, 60 → ×1,44…; `bossHpMul`). `bossHpPerBoss` foi removido. Danger e `mods.hp` continuam multiplicando.
 
 ## Fora de escopo
 

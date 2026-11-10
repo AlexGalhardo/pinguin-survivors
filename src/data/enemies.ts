@@ -59,6 +59,24 @@ export interface EnemyDef {
 	cloakRange?: number;
 }
 
+/**
+ * Effective HP of each campaign boss at the reference Danger (`mods.hp` 1), SDD-016 RF-10. The boss `hp` below reads
+ * from here, so this is the only place to tune a boss life; the endless multiplies it by `bossHpMul`.
+ * [calibrar com o bot] provisional curve (~x1.35 per boss, no extra step at the finales 30/45/50).
+ */
+export const BOSS_HP = {
+	leopardSeal: 3000,
+	polarBear: 4000,
+	rotTreant: 5500,
+	mooseKing: 7500,
+	hiveQueen: 10000,
+	biomechColossus: 12500,
+	drownedDiver: 17000,
+	kraken: 22000,
+	plagueHierophant: 27000,
+	abomination: 33000,
+} as const;
+
 export const ENEMIES = {
 	zombiePenguin: {
 		id: 'zombiePenguin',
@@ -147,7 +165,7 @@ export const ENEMIES = {
 		id: 'polarBear',
 		biome: 'antarctica',
 		behavior: 'boss',
-		hp: 3000,
+		hp: BOSS_HP.polarBear,
 		speed: 70,
 		damage: 25,
 		radius: 40,
@@ -263,7 +281,7 @@ export const ENEMIES = {
 		id: 'kraken',
 		biome: 'station',
 		behavior: 'boss',
-		hp: 3000,
+		hp: BOSS_HP.kraken,
 		speed: 45,
 		damage: 17,
 		radius: 44,
@@ -394,7 +412,7 @@ export const ENEMIES = {
 		id: 'abomination',
 		biome: 'ruins',
 		behavior: 'boss',
-		hp: 3500,
+		hp: BOSS_HP.abomination,
 		speed: 80,
 		damage: 28,
 		radius: 42,
@@ -525,7 +543,7 @@ export const ENEMIES = {
 		id: 'mooseKing',
 		biome: 'forest',
 		behavior: 'boss',
-		hp: 3000,
+		hp: BOSS_HP.mooseKing,
 		speed: 45,
 		damage: 17,
 		radius: 44,
@@ -642,7 +660,7 @@ export const ENEMIES = {
 		id: 'biomechColossus',
 		biome: 'city',
 		behavior: 'boss',
-		hp: 3500,
+		hp: BOSS_HP.biomechColossus,
 		speed: 80,
 		damage: 28,
 		radius: 42,
@@ -675,7 +693,7 @@ export const ENEMIES = {
 		id: 'leopardSeal',
 		biome: 'antarctica',
 		behavior: 'boss',
-		hp: 2400,
+		hp: BOSS_HP.leopardSeal,
 		speed: 75,
 		damage: 20,
 		radius: 40,
@@ -707,7 +725,7 @@ export const ENEMIES = {
 		id: 'rotTreant',
 		biome: 'forest',
 		behavior: 'boss',
-		hp: 3000,
+		hp: BOSS_HP.rotTreant,
 		speed: 40,
 		damage: 20,
 		radius: 46,
@@ -739,7 +757,7 @@ export const ENEMIES = {
 		id: 'hiveQueen',
 		biome: 'city',
 		behavior: 'boss',
-		hp: 3200,
+		hp: BOSS_HP.hiveQueen,
 		speed: 50,
 		damage: 22,
 		radius: 44,
@@ -771,7 +789,7 @@ export const ENEMIES = {
 		id: 'drownedDiver',
 		biome: 'station',
 		behavior: 'boss',
-		hp: 3300,
+		hp: BOSS_HP.drownedDiver,
 		speed: 55,
 		damage: 24,
 		radius: 42,
@@ -803,7 +821,7 @@ export const ENEMIES = {
 		id: 'plagueHierophant',
 		biome: 'ruins',
 		behavior: 'boss',
-		hp: 3400,
+		hp: BOSS_HP.plagueHierophant,
 		speed: 60,
 		damage: 26,
 		radius: 38,
