@@ -9,7 +9,7 @@ description: >
   aspect ratio, safe area, controller/keyboard menu navigation, or wiring UI to game state.
 ---
 
-> **Pinguin Survivors:** skill de terceiros (`gamedev-skills/awesome-gamedev-agent-skills`, Apache-2.0). Siga as regras do `CLAUDE.md`/`AGENTS.md` do projeto quando houver conflito (Phaser 4, Bun, lógica pura em `src/logic`, números em `src/data`, textos em `src/i18n`).
+> **Pinguin Survivors:** skill de terceiros (`gamedev-skills/awesome-gamedev-agent-skills`, Apache-2.0). Siga as regras do `CLAUDE.md`/`AGENTS.md` do projeto quando houver conflito (Phaser 4, Bun, lógica pura em `src/logic`, números em `src/data`, textos em `src/i18n`). **Para qualquer menu ou HUD deste jogo, use primeiro a skill própria [`pinguin-ui-hud`](../pinguin-ui-hud/SKILL.md)** (Estilo D, design system v2, wireframes); esta aqui fica para padrões genéricos (âncoras, safe area, pilha de telas).
 
 
 # Game UI/UX
