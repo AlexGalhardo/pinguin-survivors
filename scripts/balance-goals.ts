@@ -2,11 +2,11 @@
 // Usage: bun scripts/balance-goals.ts [runs=100] [--patch variant.json] [--seed first=100]
 // A patch is a JSON object of `"OBJECT.path": value` overrides applied to the data in memory before
 // the sim runs (nothing in src/ changes), so several candidate variants can be compared in parallel.
-// Patchable objects: ECONOMY, SHOP, ROUNDS, HEROES, DANGER, EXTRA_WAVES, DROPS, HEAL_POTION, COMBAT, LEVEL_GROWTH.
+// Patchable objects: ECONOMY, SHOP, ROUNDS, HEROES, DIFFICULTY, EXTRA_WAVES, DROPS, HEAL_POTION, COMBAT, LEVEL_GROWTH.
 import { readFileSync } from 'node:fs';
 import { HERO_IDS } from '../src/config/constants';
 import { COMBAT } from '../src/data/combat';
-import { DANGER, type Danger, EXTRA_WAVES } from '../src/data/difficulty';
+import { DIFFICULTY, type Difficulty, EXTRA_WAVES } from '../src/data/difficulty';
 import { ECONOMY, SHOP } from '../src/data/economy';
 import { DROPS } from '../src/data/equipment';
 import { HEROES } from '../src/data/heroes';
@@ -22,7 +22,7 @@ const TARGETS: Record<string, unknown> = {
 	SHOP,
 	ROUNDS,
 	HEROES,
-	DANGER,
+	DIFFICULTY,
 	EXTRA_WAVES,
 	DROPS,
 	HEAL_POTION,
@@ -54,10 +54,10 @@ if (patchFile) {
 	console.log(`patch ${patchFile}: ${Object.keys(patch).join(', ')}`);
 }
 
-const rounds = (hero: (typeof HERO_IDS)[number], level: number, danger: Danger): number[] =>
+const rounds = (hero: (typeof HERO_IDS)[number], level: number, difficulty: Difficulty): number[] =>
 	Array.from(
 		{ length: runs },
-		(_, i) => simulateRun({ hero, level, seed: seed0 + i, danger }).round,
+		(_, i) => simulateRun({ hero, level, seed: seed0 + i, difficulty }).round,
 	).sort((a, b) => a - b);
 const median = (rs: number[]): number => rs[Math.floor(rs.length / 2)] ?? 0;
 const share = (rs: number[], f: (r: number) => boolean): number =>
@@ -70,7 +70,7 @@ for (const hero of HERO_IDS) {
 	const l10 = rounds(hero, 10, 1);
 	const l20 = rounds(hero, 20, 1);
 	const d0 = median(rounds(hero, 10, 0));
-	const d5 = median(rounds(hero, 10, 5));
+	const d5 = median(rounds(hero, 10, 2));
 	// Tails: with 100 seeds one lucky run in 100 is noise, so "no run past the cap" reads as ≤ 1% (A4).
 	// Windows are the 50-round campaign proposal (`GOAL_ROUNDS`).
 	const g1 =
@@ -83,9 +83,9 @@ for (const hero of HERO_IDS) {
 	const past70 = share(l20, (r) => r > GOAL_ROUNDS.endlessCap);
 	const g3 =
 		median(l20) > GOAL_ROUNDS.l20Past && median(l20) < GOAL_ROUNDS.endlessCap && past70 <= 1;
-	const g4 = d0 >= median(l10) + GOAL_ROUNDS.dangerGap && d5 <= GOAL_ROUNDS.d5Max;
+	const g4 = d0 >= median(l10) + GOAL_ROUNDS.easyGap && d5 <= GOAL_ROUNDS.hardMax;
 	console.log(
-		`${hero.padEnd(6)} #1 ${mark(g1)} L1 median ${median(l1)} max ${l1[l1.length - 1]} | #2 ${mark(g2)} L10 median ${median(l10)} die<${GOAL_ROUNDS.l10Early} ${early}% past${GOAL_ROUNDS.l10Boss} ${past20}% | #3 ${mark(g3)} L20 median ${median(l20)} past${GOAL_ROUNDS.endlessCap} ${past70}% | #4 ${mark(g4)} D0 ${d0} D1 ${median(l10)} D5 ${d5}`,
+		`${hero.padEnd(6)} #1 ${mark(g1)} L1 median ${median(l1)} max ${l1[l1.length - 1]} | #2 ${mark(g2)} L10 median ${median(l10)} die<${GOAL_ROUNDS.l10Early} ${early}% past${GOAL_ROUNDS.l10Boss} ${past20}% | #3 ${mark(g3)} L20 median ${median(l20)} past${GOAL_ROUNDS.endlessCap} ${past70}% | #4 ${mark(g4)} Easy ${d0} Normal ${median(l10)} Hard ${d5}`,
 	);
 }
 
@@ -96,7 +96,7 @@ const weapons: Record<string, number> = {};
 let total = 0;
 for (const hero of HERO_IDS)
 	for (let i = 0; i < runs; i++) {
-		const r = simulateRun({ hero, level: 10, seed: seed0 + i, danger: 1 });
+		const r = simulateRun({ hero, level: 10, seed: seed0 + i, difficulty: 1 });
 		earned += r.fish;
 		spent += r.fishSpent;
 		rerolled += r.fishRerolled;

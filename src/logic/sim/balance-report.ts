@@ -25,9 +25,9 @@ export const GOAL_ROUNDS = {
 	l10Early: 20,
 	/** #3 L20: median past this round and under the endless cap. */
 	l20Past: 50,
-	/** #4 Danger: D0 reaches this many rounds past D1; D5 dies by `d5Max`. */
-	dangerGap: 8,
-	d5Max: 25,
+	/** #4 Difficulty: Easy reaches this many rounds past Normal; Hard dies by `hardMax`. */
+	easyGap: 8,
+	hardMax: 25,
 } as const;
 
 export type Status = '✓' | '✗' | 'n/d';
@@ -56,13 +56,13 @@ export const median = (events: readonly RunEndEvent[]): number =>
 
 const pick = (
 	events: readonly RunEndEvent[],
-	where: Partial<Pick<RunEndEvent, 'hero' | 'level' | 'danger'>>,
+	where: Partial<Pick<RunEndEvent, 'hero' | 'level' | 'difficulty'>>,
 ): RunEndEvent[] =>
 	events.filter(
 		(e) =>
 			(where.hero === undefined || e.hero === where.hero) &&
 			(where.level === undefined || e.level === where.level) &&
-			(where.danger === undefined || e.danger === where.danger),
+			(where.difficulty === undefined || e.difficulty === where.difficulty),
 	);
 
 const pct = (n: number): string => `${(n * 100).toFixed(1)}%`;
@@ -120,11 +120,11 @@ export function evaluateGoals(
 	const events = allEvents.filter((e) => e.source !== 'bot');
 	const botRuns = allEvents.filter((e) => e.source === 'bot');
 
-	// #1 new player: L1, Danger 1, empty tree.
+	// #1 new player: L1, Difficulty 1, empty tree.
 	{
 		const goal = `mediana de morte entre os rounds ${GOAL_ROUNDS.l1Median[0]} e ${GOAL_ROUNDS.l1Median[1]}; nenhum herói passa do ${GOAL_ROUNDS.l1Max}`;
-		const profile = 'L1, D1, árvore vazia';
-		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 1, danger: 1 })).filter(
+		const profile = 'L1, Normal, árvore vazia';
+		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 1, difficulty: 1 })).filter(
 			(r) => r.length > 0,
 		);
 		if (rows.length === 0) out.push(nd(1, profile, goal, 'sem runs'));
@@ -148,8 +148,8 @@ export function evaluateGoals(
 	// #2 L10 with the auto-allocated tree (docs A4: at most 5% of the runs die before round 12).
 	{
 		const goal = `cada herói passa do boss ${GOAL_ROUNDS.l10Boss} em ≥ 1 run; ≤ 5% das runs morrem antes do round ${GOAL_ROUNDS.l10Early}`;
-		const profile = 'L10, D1, árvore automática';
-		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 10, danger: 1 }));
+		const profile = 'L10, Normal, árvore automática';
+		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 10, difficulty: 1 }));
 		if (rows.some((r) => r.length === 0))
 			out.push(nd(2, profile, goal, 'falta herói sem runs'));
 		else {
@@ -172,8 +172,8 @@ export function evaluateGoals(
 	// #3 L20 with the auto-allocated tree.
 	{
 		const goal = `os 3 heróis passam do round ${GOAL_ROUNDS.l20Past} (mediana) e morrem antes do ${GOAL_ROUNDS.endlessCap}`;
-		const profile = 'L20, D1, árvore automática';
-		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 20, danger: 1 }));
+		const profile = 'L20, Normal, árvore automática';
+		const rows = HERO_IDS.map((hero) => pick(events, { hero, level: 20, difficulty: 1 }));
 		if (rows.some((r) => r.length === 0))
 			out.push(nd(3, profile, goal, 'falta herói sem runs'));
 		else {
@@ -190,15 +190,15 @@ export function evaluateGoals(
 		}
 	}
 
-	// #4 Danger 0 vs 1 vs 5 at L10.
+	// #4 Easy vs Normal vs Hard at L10.
 	{
-		const goal = `D0 chega ≥ ${GOAL_ROUNDS.dangerGap} rounds além do D1; D5 morre até o round ${GOAL_ROUNDS.d5Max}`;
-		const profile = 'L10, D0 / D1 / D5';
-		const d = (danger: 0 | 1 | 5) => pick(events, { level: 10, danger });
-		if (d(0).length === 0 || d(1).length === 0 || d(5).length === 0)
-			out.push(nd(4, profile, goal, 'faltam Danger 0, 1 ou 5'));
+		const goal = `Fácil chega ≥ ${GOAL_ROUNDS.easyGap} rounds além do Normal; Difícil morre até o round ${GOAL_ROUNDS.hardMax}`;
+		const profile = 'L10, Fácil / Normal / Difícil';
+		const d = (difficulty: 0 | 1 | 2) => pick(events, { level: 10, difficulty });
+		if (d(0).length === 0 || d(1).length === 0 || d(2).length === 0)
+			out.push(nd(4, profile, goal, 'faltam Fácil, Normal ou Difícil'));
 		else {
-			const [m0, m1, m5] = [median(d(0)), median(d(1)), median(d(5))] as [
+			const [m0, m1, m5] = [median(d(0)), median(d(1)), median(d(2))] as [
 				number,
 				number,
 				number,
@@ -208,8 +208,8 @@ export function evaluateGoals(
 					4,
 					profile,
 					goal,
-					m0 >= m1 + GOAL_ROUNDS.dangerGap && m5 <= GOAL_ROUNDS.d5Max,
-					`medianas D0 ${m0.toFixed(0)}, D1 ${m1.toFixed(0)}, D5 ${m5.toFixed(0)}`,
+					m0 >= m1 + GOAL_ROUNDS.easyGap && m5 <= GOAL_ROUNDS.hardMax,
+					`medianas Fácil ${m0.toFixed(0)}, Normal ${m1.toFixed(0)}, Difícil ${m5.toFixed(0)}`,
 				),
 			);
 		}
@@ -221,8 +221,8 @@ export function evaluateGoals(
 	{
 		const goal =
 			'toda arma de loja aparece em ≥ 3% das builds de pelo menos um herói (limites de 35% por arma e 50% por set por herói: exceção justificada, valores medidos abaixo)';
-		const profile = 'L10, D1, por herói (armas da loja, sem a inicial)';
-		const rows = pick(events, { level: 10, danger: 1 });
+		const profile = 'L10, Normal, por herói (armas da loja, sem a inicial)';
+		const rows = pick(events, { level: 10, difficulty: 1 });
 		const perHero = HERO_IDS.map((hero) => ({
 			hero,
 			rows: rows.filter((e) => e.hero === hero),
@@ -287,9 +287,9 @@ export function evaluateGoals(
 		const goal = 'run L1 mediana entre 10 e 18 min (tempo de jogo + 45 s por loja)';
 		const rows =
 			botRuns.length > 0
-				? pick(botRuns, { level: 1, danger: 1 })
-				: pick(events, { level: 1, danger: 1 });
-		const profile = botRuns.length > 0 ? 'L1, D1, bot do jogo real' : 'L1, D1, sim';
+				? pick(botRuns, { level: 1, difficulty: 1 })
+				: pick(events, { level: 1, difficulty: 1 });
+		const profile = botRuns.length > 0 ? 'L1, Normal, bot do jogo real' : 'L1, Normal, sim';
 		if (rows.length === 0) out.push(nd(7, profile, goal, 'sem runs de L1'));
 		else {
 			const sorted = rows
@@ -335,11 +335,11 @@ export function evaluateGoals(
 	return out;
 }
 
-/** Hero × level × Danger table: runs, median, p25/p75 and the share past the campaign (round 50). */
+/** Hero × level × Difficulty table: runs, median, p25/p75 and the share past the campaign (round 50). */
 export function summaryRows(events: readonly RunEndEvent[]): string[][] {
 	const keys = new Map<string, RunEndEvent[]>();
 	for (const e of events) {
-		const k = `${e.hero}|${e.level}|${e.danger}`;
+		const k = `${e.hero}|${e.level}|${e.difficulty}`;
 		const bucket = keys.get(k);
 		if (bucket) bucket.push(e);
 		else keys.set(k, [e]);
@@ -381,7 +381,7 @@ export function renderReport(
 	meta: { date: string; sources: string[]; perf?: readonly PerfRun[] },
 ): string {
 	const goals = evaluateGoals(events, meta.perf);
-	const { weapons, sets } = buildShares(pick(events, { level: 10, danger: 1 }));
+	const { weapons, sets } = buildShares(pick(events, { level: 10, difficulty: 1 }));
 	const share = (m: Record<string, number>) =>
 		Object.entries(m)
 			.sort((a, b) => b[1] - a[1])
@@ -398,14 +398,14 @@ export function renderReport(
 			goals.map((g) => [String(g.id), g.profile, g.goal, g.status, g.detail]),
 		),
 		'',
-		'## Round de morte por herói, nível e Danger',
+		'## Round de morte por herói, nível e dificuldade',
 		'',
 		table(
-			['Herói', 'Nível', 'Danger', 'Runs', 'Mediana', 'p25', 'p75', 'Passa do 50'],
+			['Herói', 'Nível', 'Dificuldade', 'Runs', 'Mediana', 'p25', 'p75', 'Passa do 50'],
 			summaryRows(events),
 		),
 		'',
-		'## Armas nas builds finais (L10, D1, sem a arma inicial)',
+		'## Armas nas builds finais (L10, Normal, sem a arma inicial)',
 		'',
 		table(['Arma', 'Builds'], share(weapons)),
 		'',

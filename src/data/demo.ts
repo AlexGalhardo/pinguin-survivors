@@ -1,5 +1,5 @@
 import type { HeroId } from '../config/constants';
-import type { Danger } from './difficulty';
+import type { Difficulty } from './difficulty';
 
 /**
  * Marker the bundle check looks for (SDD-006 A1, `scripts/build-demo.ts`). Written against the
@@ -20,7 +20,7 @@ export interface DemoConfig {
 	/** The run ends (won or lost) at this round. */
 	maxRound: number;
 	heroes: readonly HeroId[];
-	maxDanger: Danger;
+	maxDifficulty: Difficulty;
 }
 
 /** The demo is a cut of the full game: same code and content, only these limits (RF-07). */
@@ -28,7 +28,7 @@ export const DEMO: DemoConfig = {
 	enabled: isDemoBuild(),
 	maxRound: 10,
 	heroes: ['jack'],
-	maxDanger: 1,
+	maxDifficulty: 1,
 };
 
 /** Steam store page for the wishlist button. Placeholder until the app id exists (T15.1). */

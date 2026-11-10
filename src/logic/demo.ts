@@ -1,7 +1,7 @@
 import type { HeroId } from '../config/constants';
 import type { AchievementDef } from '../data/achievements';
 import { DEMO, type DemoConfig } from '../data/demo';
-import type { Danger } from '../data/difficulty';
+import type { Difficulty } from '../data/difficulty';
 
 export type DemoEndReason = 'won' | 'lost';
 
@@ -14,8 +14,8 @@ export function demoAllowsRound(round: number, demo: DemoConfig = DEMO): boolean
 	return !demo.enabled || round <= demo.maxRound;
 }
 
-export function demoAllowsDanger(danger: Danger, demo: DemoConfig = DEMO): boolean {
-	return !demo.enabled || danger <= demo.maxDanger;
+export function demoAllowsDifficulty(difficulty: Difficulty, demo: DemoConfig = DEMO): boolean {
+	return !demo.enabled || difficulty <= demo.maxDifficulty;
 }
 
 /** The hero the game falls back to when a locked one is requested (e.g. `?hero=bob` in the demo). */
@@ -23,9 +23,9 @@ export function demoHero(hero: HeroId, demo: DemoConfig = DEMO): HeroId {
 	return demoAllowsHero(hero, demo) ? hero : (demo.heroes[0] as HeroId);
 }
 
-/** Highest Danger the player may pick: the unlocked one, capped by the demo. */
-export function demoDanger(unlocked: Danger, demo: DemoConfig = DEMO): Danger {
-	return demo.enabled ? (Math.min(unlocked, demo.maxDanger) as Danger) : unlocked;
+/** Highest Difficulty the player may pick: the unlocked one, capped by the demo. */
+export function demoDifficulty(unlocked: Difficulty, demo: DemoConfig = DEMO): Difficulty {
+	return demo.enabled ? (Math.min(unlocked, demo.maxDifficulty) as Difficulty) : unlocked;
 }
 
 /**
@@ -46,7 +46,7 @@ export function demoEndReason(
 const FEATS_BEYOND_DEMO = new Set(['unlockLucia', 'bossBiome2', 'bossBiome3']);
 
 /**
- * Achievements the demo cannot reach (SDD-006 RF-04): rounds past `maxRound`, Danger wins
+ * Achievements the demo cannot reach (SDD-006 RF-04): rounds past `maxRound`, Difficulty wins
  * (they need the round 20 boss), later biomes and heroes the demo does not offer.
  */
 export function demoHidesAchievement(def: AchievementDef, demo: DemoConfig = DEMO): boolean {
@@ -58,10 +58,11 @@ export function demoHidesAchievement(def: AchievementDef, demo: DemoConfig = DEM
 			return c.stat === 'maxRound' && c.value > demo.maxRound;
 		case 'hero':
 			return (
-				(c.stat === 'bestRound' && c.value > demo.maxRound) || c.stat === 'dangerUnlocked'
+				(c.stat === 'bestRound' && c.value > demo.maxRound) ||
+				c.stat === 'difficultyUnlocked'
 			);
 		case 'allHeroesStat':
-			return c.stat === 'dangerUnlocked';
+			return c.stat === 'difficultyUnlocked';
 		case 'feat':
 			return FEATS_BEYOND_DEMO.has(c.feat);
 		default:

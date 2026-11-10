@@ -37,13 +37,13 @@ export const LIFETIME_STATS = [
 export type LifetimeStat = (typeof LIFETIME_STATS)[number];
 
 /** Per-hero lifetime counters. */
-/** `dangerUnlocked` = highest Danger selectable for the hero (SDD-005 RF-03); starts at 1. */
+/** `difficultyUnlocked` 1-3: 1 = Easy and Normal, 2 = Hard open, 3 = Hard beaten (SDD-019 RF-02); starts at 1. */
 export const HERO_STATS = [
 	'exclusiveCards',
 	'superUses',
 	'bestRound',
 	'fusedT4',
-	'dangerUnlocked',
+	'difficultyUnlocked',
 ] as const;
 export type HeroStat = (typeof HERO_STATS)[number];
 
@@ -88,7 +88,7 @@ export interface AchievementDef {
 	tier: number;
 	/** Hero shown in the name/description, when the family is per hero. */
 	hero?: HeroId;
-	/** Number shown as `{n}` when it is not the condition value (e.g. the Danger of a win). */
+	/** Number shown as `{n}` when it is not the condition value (e.g. the Difficulty of a win). */
 	display?: number;
 	condition: AchievementCondition;
 }
@@ -144,24 +144,24 @@ for (const hero of HERO_IDS) {
 			condition: { kind: 'heroLevel', hero, value },
 		});
 }
-// Winning the round 20 boss on Danger D unlocks D + 1 (SDD-005 RF-03), so `dangerUnlocked >= D + 1`.
+// Tier 1 = Normal, 2 = Hard: beating the round 20 boss on tier D unlocks D + 1, so `difficultyUnlocked >= D + 1` (SDD-019 RF-05).
 for (const hero of HERO_IDS)
-	for (const danger of [1, 2, 3, 4, 5])
+	for (const difficulty of [1, 2])
 		defs.push({
-			id: `dangerWin.${hero}.${danger}`,
-			family: 'dangerWin',
-			tier: danger,
+			id: `difficultyWin.${hero}.${difficulty}`,
+			family: 'difficultyWin',
+			tier: difficulty,
 			hero,
-			display: danger,
-			condition: { kind: 'hero', hero, stat: 'dangerUnlocked', value: danger + 1 },
+			display: difficulty,
+			condition: { kind: 'hero', hero, stat: 'difficultyUnlocked', value: difficulty + 1 },
 		});
-for (const danger of [1, 2, 3, 4, 5])
+for (const difficulty of [1, 2])
 	defs.push({
-		id: `dangerAll.${danger}`,
-		family: 'dangerAll',
-		tier: danger,
-		display: danger,
-		condition: { kind: 'allHeroesStat', stat: 'dangerUnlocked', value: danger + 1 },
+		id: `difficultyAll.${difficulty}`,
+		family: 'difficultyAll',
+		tier: difficulty,
+		display: difficulty,
+		condition: { kind: 'allHeroesStat', stat: 'difficultyUnlocked', value: difficulty + 1 },
 	});
 for (const set of SET_IDS)
 	for (const [i, value] of SET_THRESHOLDS.entries())

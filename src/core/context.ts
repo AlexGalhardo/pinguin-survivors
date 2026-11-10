@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
 import type { HeroId } from '../config/constants';
-import type { Danger } from '../data/difficulty';
+import type { Difficulty } from '../data/difficulty';
 import type { WeaponId } from '../data/weapons';
 import type { DebugParams } from '../debug/params';
 import type { SaveData } from '../logic/save';
@@ -9,7 +9,7 @@ import { writeSave } from './storage';
 const PARAMS = 'debugParams';
 const SAVE = 'save';
 const RUN_HERO = 'runHero';
-const RUN_DANGER = 'runDanger';
+const RUN_DIFFICULTY = 'runDifficulty';
 const RUN_WEAPON = 'runWeapon';
 
 export function setParams(game: Phaser.Game, params: DebugParams): void {
@@ -42,13 +42,13 @@ export function getRunHero(scene: Phaser.Scene): HeroId | undefined {
 	return scene.game.registry.get(RUN_HERO) as HeroId | undefined;
 }
 
-/** Danger picked in the hero select screen for the next run (0-5). */
-export function setRunDanger(game: Phaser.Game, danger: Danger): void {
-	game.registry.set(RUN_DANGER, danger);
+/** Difficulty picked in the hero select screen for the next run (0-2). */
+export function setRunDifficulty(game: Phaser.Game, difficulty: Difficulty): void {
+	game.registry.set(RUN_DIFFICULTY, difficulty);
 }
 
-export function getRunDanger(scene: Phaser.Scene): Danger | undefined {
-	return scene.game.registry.get(RUN_DANGER) as Danger | undefined;
+export function getRunDifficulty(scene: Phaser.Scene): Difficulty | undefined {
+	return scene.game.registry.get(RUN_DIFFICULTY) as Difficulty | undefined;
 }
 
 /** Starting weapon picked for the next run. */

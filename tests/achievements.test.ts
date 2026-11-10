@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { ACHIEVEMENT_SHOP, ACHIEVEMENTS, type ExtraDef } from '../src/data/achievements';
+import { MAX_DIFFICULTY_UNLOCKED } from '../src/data/difficulty';
 import { HEROES } from '../src/data/heroes';
 import {
 	achievementProgress,
@@ -118,26 +119,25 @@ test('every achievement family has EN/PT-BR name and description', async () => {
 	}
 });
 
-describe('1.0 achievements: Danger, sets, fusion, endless', () => {
+describe('1.0 achievements: Difficulty, sets, fusion, endless', () => {
 	const unlocked = (p = emptyProgress()) => {
 		const state = emptyAchievementState();
 		evaluateAchievements(p, state, 1);
 		return Object.keys(state.unlocked);
 	};
 
-	test('Danger wins follow dangerUnlocked per hero and for everyone', () => {
+	test('Difficulty wins follow difficultyUnlocked per hero and for everyone', () => {
 		const p = emptyProgress();
-		p.hero.jack.dangerUnlocked = 3; // beat D1 and D2 with Jack
+		p.hero.jack.difficultyUnlocked = 2; // beat Normal with Jack
 		const ids = unlocked(p);
-		expect(ids).toContain('dangerWin.jack.1');
-		expect(ids).toContain('dangerWin.jack.2');
-		expect(ids).not.toContain('dangerWin.jack.3');
-		expect(ids).not.toContain('dangerWin.bob.1');
-		expect(ids.some((id) => id.startsWith('dangerAll.'))).toBe(false);
-		for (const h of ['jack', 'bob', 'lucia'] as const) p.hero[h].dangerUnlocked = 6;
+		expect(ids).toContain('difficultyWin.jack.1');
+		expect(ids).not.toContain('difficultyWin.jack.2');
+		expect(ids).not.toContain('difficultyWin.bob.1');
+		expect(ids.some((id) => id.startsWith('difficultyAll.'))).toBe(false);
+		for (const h of ['jack', 'bob', 'lucia'] as const) p.hero[h].difficultyUnlocked = 3; // beat Hard
 		const all = unlocked(p);
-		for (let d = 1; d <= 5; d++) expect(all).toContain(`dangerAll.${d}`);
-		expect(all).toContain('dangerWin.lucia.5');
+		for (let d = 1; d <= 2; d++) expect(all).toContain(`difficultyAll.${d}`);
+		expect(all).toContain('difficultyWin.lucia.2');
 	});
 
 	test('set achievements unlock at 2, 4 and 6 weapons', () => {
@@ -173,9 +173,22 @@ describe('1.0 achievements: Danger, sets, fusion, endless', () => {
 	test('progress bars for the new conditions', () => {
 		const p = emptyProgress();
 		p.setBest.blade = 3;
-		p.hero.bob.dangerUnlocked = 1;
+		p.hero.bob.difficultyUnlocked = 1;
 		const find = (id: string) => ACHIEVEMENTS.find((a) => a.id === id);
 		expect(achievementProgress(find('set.blade.2') as never, p)).toBe(0.75);
-		expect(achievementProgress(find('dangerAll.1') as never, p)).toBe(0.5);
+		expect(achievementProgress(find('difficultyAll.1') as never, p)).toBe(0.5);
+	});
+});
+
+describe('Difficulty achievements are reachable (SDD-019 A4)', () => {
+	test('with difficultyUnlocked at its max every difficulty achievement unlocks', () => {
+		const p = emptyProgress();
+		for (const h of ['jack', 'bob', 'lucia'] as const)
+			p.hero[h].difficultyUnlocked = MAX_DIFFICULTY_UNLOCKED;
+		const state = emptyAchievementState();
+		evaluateAchievements(p, state, 1);
+		const wanted = ACHIEVEMENTS.filter((a) => a.family.startsWith('difficulty'));
+		expect(wanted).toHaveLength(8);
+		for (const a of wanted) expect(state.unlocked[a.id]).toBeDefined();
 	});
 });

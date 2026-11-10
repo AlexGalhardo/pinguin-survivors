@@ -1,7 +1,7 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
 import type { PlatformTier } from '../core/platform/types';
 import { ARENA } from '../data/arena';
-import { DANGER_LEVELS, type Danger } from '../data/difficulty';
+import { DIFFICULTY_LEVELS, type Difficulty } from '../data/difficulty';
 import {
 	MAX_WEAPON_SLOTS,
 	WEAPON_LINE_BY_ID,
@@ -10,7 +10,7 @@ import {
 } from '../data/weapons';
 import type { WeaponInstance } from '../logic/build';
 
-/** Debug/test options from the URL, e.g. ?skipMenu=1&hero=bob&round=10&seed=1&debug=1&god=1&tier=2&danger=5&arena=40&weapon=hammer */
+/** Debug/test options from the URL, e.g. ?skipMenu=1&hero=bob&round=10&seed=1&debug=1&god=1&tier=2&difficulty=5&arena=40&weapon=hammer */
 export interface DebugParams {
 	seed?: number;
 	hero?: HeroId;
@@ -19,8 +19,8 @@ export interface DebugParams {
 	tier?: 1 | 2 | 3;
 	/** Effects tier for QA (`?tier=low|mid|high`, SDD-007); the numeric form is the hero art tier. */
 	fxTier?: PlatformTier;
-	/** Danger 0-5 of the run (ADR-008). */
-	danger?: Danger;
+	/** Difficulty 0-2 of the run (ADR-025). */
+	difficulty?: Difficulty;
 	/** Starting weapon (QA); `weapons` forces the whole bar. */
 	weapon?: WeaponId;
 	/** Forces the arena side in tiles (QA). */
@@ -61,7 +61,7 @@ export function parseDebugParams(search: string): DebugParams {
 	const hero = p.get('hero');
 	const round = nonNegativeInt(p.get('round'));
 	const tier = nonNegativeInt(p.get('tier'));
-	const danger = nonNegativeInt(p.get('danger'));
+	const difficulty = nonNegativeInt(p.get('difficulty'));
 	const weapon = p.get('weapon');
 	const arena = nonNegativeInt(p.get('arena'));
 	return {
@@ -70,7 +70,7 @@ export function parseDebugParams(search: string): DebugParams {
 		round: round !== undefined && round >= 1 ? round : undefined,
 		fxTier: PLATFORM_TIERS.find((x) => x === p.get('tier')),
 		tier: tier === 1 || tier === 2 || tier === 3 ? tier : undefined,
-		danger: DANGER_LEVELS.find((d) => d === danger),
+		difficulty: DIFFICULTY_LEVELS.find((d) => d === difficulty),
 		weapon: weapon && weapon in WEAPON_LINE_BY_ID ? (weapon as WeaponId) : undefined,
 		arena: arena !== undefined && arena >= 1 ? Math.min(arena, ARENA.maxSide) : undefined,
 		weapons: weaponList(p.get('weapons')),

@@ -74,14 +74,12 @@ Endpoint `POST /v1/music` (`force_instrumental: true`), ~560 créditos por 45 s 
 | Chave | Duração | Uso |
 |---|---|---|
 | `music.menu` | 40 s | menu principal |
-| `music.round` | 45 s | rounds 1–20 |
-| `music.late` | 45 s | rounds ≥ 21 |
-| `music.boss` | 45 s | rounds de boss |
-| `music.shop` | 30 s | loja (toca ao abrir, volta à música do round ao fechar) |
-| `music.forest` | 36 s | floresta (rounds 11–20 e endless quando sorteada) |
-| `music.city` | 36 s | cidade destruída (rounds 21–30 e endless quando sorteada) |
+| `music.round.1` a `music.round.9` | — | rounds normais: sorteia uma das nove |
+| `music.boss.<id>` (10: `leopardSeal`, `polarBear`, `rotTreant`, `mooseKing`, `hiveQueen`, `biomechColossus`, `drownedDiver`, `kraken`, `plagueHierophant`, `abomination`) | — | luta contra aquele boss (no endless, o boss sorteado) |
+| `music.shop.theme` | — | loja (toca ao abrir, volta à música do round ao fechar) |
+| `music.round`, `music.late`, `music.boss`, `music.shop`, `music.forest`, `music.city` | 30–45 s | faixas antigas: continuam carregadas, mas fora do sorteio; só servem de reserva |
 
-Por bioma (`musicForRound(round, boss, biome)` em `src/core/music.ts`): `antarctica` → `music.round`, `forest` → `music.forest`, `city` → `music.city`; os legados `station` → `music.round` e `ruins` → `music.late` (não há faixa `music.station`/`music.ruins`); round de boss sempre `music.boss`. Se uma faixa nova faltar, cai em `music.round`.
+`musicForRound(round, seed, bossId)` em `src/core/music.ts`: round de boss toca `music.boss.<id>` do boss em campo; round normal toca `music.round.N`, com N sorteado por `roundTrack(seed, round)` (`src/logic/music.ts`, determinístico por seed e round, nunca igual ao do round normal anterior; ver SDD-019 não: regra do desenvolvedor de 2026-11-10). Se um arquivo faltar: `music.boss.<id>` cai em `music.boss`, `music.round.N` em `music.round` e `music.shop.theme` em `music.shop`.
 
 Loops de reserva feitos pelo endpoint de SFX em `art-src/elevenlabs/music/*-loop.mp3`.
 
@@ -91,7 +89,7 @@ Histórico, mantido para referência (arquivos e código na branch `legacy-voice
 
 ## 6. Pendências para a 1.0
 
-Nenhuma. Tudo o que estava listado foi gerado, normalizado e ligado (loja, elementos, armas, bosses, UI/meta e músicas de loja, floresta e cidade; ver §7). Sons novos entram aqui antes de gerar.
+Nenhuma. Tudo o que estava listado foi gerado, normalizado e ligado (loja, elementos, armas, bosses, UI/meta e músicas; ver §7). Os dez temas de boss, os nove de round e o tema da loja (commit 3f7e6c7, `scripts/el-music.ts`) estão ligados desde 2026-11-10. Sons novos entram aqui antes de gerar.
 
 ## 7. Orçamento
 
@@ -117,3 +115,7 @@ Plano **Creator** (ativo), 124.333 créditos no ciclo atual, 66.135 usados em 20
 
 - Teto duro: 150 créditos. Gerados e ligados `sfx.krakenInk` (volley do kraken), `sfx.abominationAcid` (poças ácidas dos bosses), `sfx.pearls` (fim de run com Pérolas), `sfx.dangerUnlock` (Danger liberado), `sfx.equip` (equipar e desequipar na pausa, gear comprado na loja) e `sfx.demoEnd` (tela de fim da demo). 1 take cada, normalizados a −14 LUFS.
 - Gasto: 76 créditos (uso 67.796 → 67.872; saldo 56.537 → 56.461).
+
+### Registro de 2026-11-10 (músicas novas)
+
+- Geradas e ligadas: dez temas de boss, nove temas de round e `music.shop.theme`. Saldo do plano: cerca de 11,1 mil créditos gastos no ciclo e 45.317 restantes; o ciclo reseta em 14/11.

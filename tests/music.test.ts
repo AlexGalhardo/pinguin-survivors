@@ -1,19 +1,55 @@
 import { expect, test } from 'bun:test';
-import { musicForRound } from '../src/core/music';
+import { MUSIC_KEYS, musicForRound } from '../src/core/music';
+import { BOSS_ROUNDS } from '../src/data/enemies';
+import { ROUND_TRACKS, roundTrack } from '../src/logic/music';
+import { isBossRound } from '../src/logic/round';
 
-test('boss track on boss rounds, late track from round 21', () => {
-	expect(musicForRound(5, false)).toBe('music.round');
-	expect(musicForRound(10, true)).toBe('music.boss');
-	expect(musicForRound(21, false)).toBe('music.late');
-	expect(musicForRound(30, true)).toBe('music.boss');
-	expect(musicForRound(45, false)).toBe('music.late');
+test('each boss round plays the theme of its own boss, also in the endless', () => {
+	for (const [i, id] of BOSS_ROUNDS.entries())
+		expect(musicForRound((i + 1) * 5, 1, id)).toBe(`music.boss.${id}`);
+	expect(musicForRound(55, 1, 'kraken')).toBe('music.boss.kraken');
+	expect(musicForRound(60, 1)).toBe('music.boss');
+	expect(musicForRound(60, 1, 'unknown')).toBe('music.boss');
 });
 
-test('each biome has its own track; the legacy ones reuse the original tracks; bosses win', () => {
-	expect(musicForRound(15, false, 'forest')).toBe('music.forest');
-	expect(musicForRound(25, false, 'city')).toBe('music.city');
-	expect(musicForRound(40, false, 'antarctica')).toBe('music.round');
-	expect(musicForRound(40, false, 'station')).toBe('music.round');
-	expect(musicForRound(40, false, 'ruins')).toBe('music.late');
-	expect(musicForRound(20, true, 'forest')).toBe('music.boss');
+test('normal rounds draw one of the nine themes, deterministic by seed, never repeating the previous', () => {
+	for (const seed of [0, 1, 7, 12345]) {
+		let prev = 0;
+		for (let round = 1; round <= 120; round++) {
+			if (isBossRound(round)) continue;
+			const t = roundTrack(seed, round);
+			expect(t).toBeGreaterThanOrEqual(1);
+			expect(t).toBeLessThanOrEqual(ROUND_TRACKS);
+			expect(t).not.toBe(prev);
+			expect(roundTrack(seed, round)).toBe(t);
+			expect(musicForRound(round, seed)).toBe(`music.round.${t}` as never);
+			prev = t;
+		}
+	}
+});
+
+test('the draw uses every theme and depends on the seed', () => {
+	const used = new Set<number>();
+	for (let round = 1; round <= 200; round++)
+		if (!isBossRound(round)) used.add(roundTrack(3, round));
+	expect(used.size).toBe(ROUND_TRACKS);
+	const run = (seed: number) => Array.from({ length: 12 }, (_, i) => roundTrack(seed, i + 1));
+	expect(run(1)).not.toEqual(run(2));
+});
+
+test('every new track is registered for loading and the legacy ones stay', () => {
+	for (const k of [
+		'music.shop.theme',
+		'music.round.1',
+		'music.round.9',
+		'music.boss.rotTreant',
+		'music.round',
+		'music.boss',
+		'music.late',
+		'music.forest',
+		'music.city',
+		'music.shop',
+	])
+		expect(MUSIC_KEYS).toContain(k as never);
+	expect(MUSIC_KEYS).toHaveLength(8 + ROUND_TRACKS + BOSS_ROUNDS.length);
 });

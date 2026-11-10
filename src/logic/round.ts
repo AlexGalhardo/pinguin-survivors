@@ -14,7 +14,7 @@ export function roundDuration(round: number): number {
 			ROUNDS.bossTimeMax,
 			ROUNDS.bossTimeLimit + ROUNDS.bossTimeStep * (round / ROUNDS.bossEvery - 1),
 		);
-	return ROUNDS.firstDuration + ROUNDS.durationStep * (round - 1);
+	return Math.min(ROUNDS.roundMax, ROUNDS.firstDuration + ROUNDS.durationStep * (round - 1));
 }
 
 /** 0-based biome block: rounds 1–10 → 0, 11–20 → 1… (biome, scaling per cycle). */

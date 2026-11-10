@@ -1,16 +1,16 @@
 // Balance table from the headless model (PLAN 2.6/3.2): death round per hero × level.
-// Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]] [--danger 0-5] [--speed 1|1.5|2] [--jsonl file [runs]]  (--rounds prints damage taken per round)
+// Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]] [--difficulty 0-2] [--speed 1|1.5|2] [--jsonl file [runs]]  (--rounds prints damage taken per round)
 import { GAME_SPEEDS, type GameSpeed, HERO_IDS } from '../src/config/constants';
-import { DANGER_LEVELS, type Danger } from '../src/data/difficulty';
+import { DIFFICULTY_LEVELS, type Difficulty } from '../src/data/difficulty';
 import { STARTING_WEAPONS } from '../src/data/unlocks';
 import { WEAPON_LINE_BY_ID, type WeaponId } from '../src/data/weapons';
 import { simulateMany, simulateRun } from '../src/logic/sim/run-sim';
 
 const runs = Number(process.argv[2]) || 40;
-const dangerArg = Number(process.argv[process.argv.indexOf('--danger') + 1]);
-const danger = (
-	process.argv.includes('--danger') ? Math.min(5, Math.max(0, dangerArg || 0)) : 1
-) as Danger;
+const difficultyArg = Number(process.argv[process.argv.indexOf('--difficulty') + 1]);
+const difficulty = (
+	process.argv.includes('--difficulty') ? Math.min(2, Math.max(0, difficultyArg || 0)) : 1
+) as Difficulty;
 const speedArg = Number(process.argv[process.argv.indexOf('--speed') + 1]);
 const speed = (
 	process.argv.includes('--speed') && GAME_SPEEDS.some((v) => v === speedArg) ? speedArg : 1
@@ -21,7 +21,7 @@ console.log(
 );
 for (const hero of HERO_IDS) {
 	for (const level of LEVELS) {
-		const s = simulateMany(hero, level, runs, 1, danger, speed);
+		const s = simulateMany(hero, level, runs, 1, difficulty, speed);
 		console.log(
 			`${hero.padEnd(6)} ${String(level).padStart(3)}  ${s.avgRound.toFixed(1).padStart(8)}  ${String(s.medianRound).padStart(6)}  ${`${Math.round(s.past50 * 100)}%`.padStart(6)}  ${String(s.bossDeaths).padStart(7)}  ${String(s.bossTimeouts).padStart(8)}  ${Math.round(s.avgKills).toString().padStart(8)}  ${Math.round(s.avgXp).toString().padStart(5)}  ${Math.round(s.avgPearls).toString().padStart(6)}  ${Math.round(s.avgFishSpent).toString().padStart(9)}`,
 		);
@@ -30,7 +30,7 @@ for (const hero of HERO_IDS) {
 if (process.argv.includes('--rounds')) {
 	for (const hero of HERO_IDS)
 		for (const level of LEVELS) {
-			const r = simulateRun({ hero, level, seed: 100, danger, speed });
+			const r = simulateRun({ hero, level, seed: 100, difficulty, speed });
 			console.log(
 				`${hero} L${level} →${r.round}: ${r.perRound.map((d) => Math.round(d)).join(' ')}`,
 			);
@@ -44,7 +44,7 @@ if (process.argv.includes('--report')) {
 	console.log('\n#1  L1 death round (median / max / share past 50)');
 	for (const hero of HERO_IDS) {
 		const rs = Array.from({ length: n }, (_, i) =>
-			simulateRun({ hero, level: 1, seed: 100 + i, danger, speed }),
+			simulateRun({ hero, level: 1, seed: 100 + i, difficulty, speed }),
 		).map((r) => r.round);
 		rs.sort((a, b) => a - b);
 		console.log(
@@ -59,7 +59,7 @@ if (process.argv.includes('--report')) {
 	let total = 0;
 	for (const hero of HERO_IDS)
 		for (let i = 0; i < n; i++) {
-			const r = simulateRun({ hero, level: 10, seed: 100 + i, danger, speed });
+			const r = simulateRun({ hero, level: 10, seed: 100 + i, difficulty, speed });
 			total++;
 			earned += r.fish;
 			spent += r.fishSpent;
@@ -84,7 +84,7 @@ if (process.argv.includes('--report')) {
 	);
 }
 
-// --jsonl file [runs=30]: run-end events for scripts/balance-report.ts over hero × level × Danger.
+// --jsonl file [runs=30]: run-end events for scripts/balance-report.ts over hero × level × Difficulty.
 // The tree is auto-allocated per level (simTree), as the bot does (ADR-019).
 if (process.argv.includes('--jsonl')) {
 	const file = process.argv[process.argv.indexOf('--jsonl') + 1] as string;
@@ -92,14 +92,14 @@ if (process.argv.includes('--jsonl')) {
 	const lines: string[] = [];
 	for (const hero of HERO_IDS)
 		for (const level of [1, 10, 20])
-			for (const d of DANGER_LEVELS) {
+			for (const d of DIFFICULTY_LEVELS) {
 				for (let i = 0; i < n; i++) {
-					const r = simulateRun({ hero, level, seed: 100 + i, danger: d, speed });
+					const r = simulateRun({ hero, level, seed: 100 + i, difficulty: d, speed });
 					lines.push(
 						JSON.stringify({
 							version: 'sim',
 							hero,
-							danger: d,
+							difficulty: d,
 							level,
 							round: r.round,
 							weapons: r.weapons,

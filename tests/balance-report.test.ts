@@ -14,7 +14,7 @@ import { parseJsonl, type RunEndEvent, toJsonl } from '../src/logic/telemetry';
 const ev = (over: Partial<RunEndEvent>): RunEndEvent => ({
 	version: 'sim',
 	hero: 'jack',
-	danger: 1,
+	difficulty: 1,
 	level: 1,
 	round: 12,
 	weapons: ['machete:1'],
@@ -59,10 +59,11 @@ describe('goal checks', () => {
 		expect(goal(heroes(55).slice(5), 3)?.status).toBe('n/d');
 	});
 
-	test('#4 compares Danger 0, 1 and 5 at L10', () => {
-		const at = (danger: 0 | 1 | 5, round: number) => many(5, { level: 10, danger, round });
-		expect(goal([...at(0, 40), ...at(1, 30), ...at(5, 10)], 4)?.status).toBe('✓');
-		expect(goal([...at(0, 36), ...at(1, 30), ...at(5, 10)], 4)?.status).toBe('✗');
+	test('#4 compares Easy, Normal and Hard at L10', () => {
+		const at = (difficulty: 0 | 1 | 2, round: number) =>
+			many(5, { level: 10, difficulty, round });
+		expect(goal([...at(0, 40), ...at(1, 30), ...at(2, 10)], 4)?.status).toBe('✓');
+		expect(goal([...at(0, 36), ...at(1, 30), ...at(2, 10)], 4)?.status).toBe('✗');
 		expect(goal([...at(0, 40), ...at(1, 30)], 4)?.status).toBe('n/d');
 	});
 
@@ -138,12 +139,12 @@ describe('goal checks', () => {
 });
 
 describe('report output', () => {
-	test('summary rows are ordered by hero, level and Danger with quartiles', () => {
+	test('summary rows are ordered by hero, level and Difficulty with quartiles', () => {
 		const rows = summaryRows([
-			ev({ hero: 'bob', level: 10, danger: 2, round: 20 }),
-			ev({ hero: 'jack', level: 10, danger: 0, round: 10 }),
-			ev({ hero: 'jack', level: 1, danger: 1, round: 4 }),
-			ev({ hero: 'jack', level: 1, danger: 1, round: 8 }),
+			ev({ hero: 'bob', level: 10, difficulty: 2, round: 20 }),
+			ev({ hero: 'jack', level: 10, difficulty: 0, round: 10 }),
+			ev({ hero: 'jack', level: 1, difficulty: 1, round: 4 }),
+			ev({ hero: 'jack', level: 1, difficulty: 1, round: 8 }),
 		]);
 		expect(rows.map((r) => r.slice(0, 3).join('/'))).toEqual([
 			'jack/1/1',
@@ -159,7 +160,7 @@ describe('report output', () => {
 		expect(md).toContain('# Balanço automático (2026-11-08)');
 		for (let id = 1; id <= 8; id++) expect(md).toMatch(new RegExp(`| ${id} |`));
 		expect(md).toMatch(/\| 1 \|.*\| ✓ \|/);
-		expect(md).toContain('## Round de morte por herói, nível e Danger');
+		expect(md).toContain('## Round de morte por herói, nível e dificuldade');
 	});
 });
 

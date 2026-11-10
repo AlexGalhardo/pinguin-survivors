@@ -22,7 +22,7 @@
 
 | EN | PT-BR | ES | ZH-CN | Nota |
 |---|---|---|---|---|
-| Danger | Danger | Danger | Danger | termo fixo, não traduzir (precedente no pt-BR) |
+| Difficulty | Dificuldade | Dificultad | 难度 | níveis Easy/Normal/Hard, Fácil/Normal/Difícil, Fácil/Normal/Difícil, 简单/普通/困难 (ADR-025; substitui o termo "Danger") |
 | Jack | Jack | Jack | Jack | nome próprio |
 | Bob | Bob | Bob | Bob | nome próprio |
 | Lucia | Lucia | Lucia | Lucia | nome próprio |

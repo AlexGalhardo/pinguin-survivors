@@ -10,7 +10,7 @@ import {
 const ev = (round: number, over: Partial<RunEndEvent> = {}): RunEndEvent => ({
 	version: '0.1.0',
 	hero: 'jack',
-	danger: 1,
+	difficulty: 1,
 	level: 1,
 	round,
 	weapons: ['machete:1'],
@@ -38,7 +38,7 @@ describe('telemetry', () => {
 	});
 
 	test('JSONL round-trips and skips junk lines', () => {
-		const events = [ev(3), ev(9, { hero: 'lucia', danger: 4, fishSpent: 12 })];
+		const events = [ev(3), ev(9, { hero: 'lucia', difficulty: 2, fishSpent: 12 })];
 		expect(parseJsonl(toJsonl(events))).toEqual(events);
 		const dirty = `${toJsonl(events)}\nnot json\n{"hero":"nobody"}\n\n`;
 		expect(parseJsonl(dirty)).toEqual(events);

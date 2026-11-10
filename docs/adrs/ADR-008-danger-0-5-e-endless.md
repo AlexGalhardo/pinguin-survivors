@@ -2,6 +2,8 @@
 
 **Data** 2026-11-08 · **Status** Aceito · **Decisão de origem** B-15, B-16 · **Supera** P-62 (EASY/NORMAL/HARD)
 
+> **Nota (2026-11-10)**: o Danger 0–5 foi substituído por Fácil/Normal/Difícil ([ADR-025](ADR-025-tres-dificuldades-e-teto-de-round.md)); o endless sem vitória segue válido.
+
 ## Contexto
 
 A dificuldade atual é EASY/NORMAL/HARD global (±25%). O Brotato usa Danger 0–5 desbloqueado em sequência, o que dá rejogabilidade e conquistas por nível. O desenvolvedor quer endless puro, sem vitória.

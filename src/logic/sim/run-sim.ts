@@ -1,7 +1,7 @@
 import type { GameSpeed, HeroId } from '../../config/constants';
 import { ALL_CARDS } from '../../data/cards';
 import { COMBAT } from '../../data/combat';
-import { DANGER, type Danger, EXTRA_WAVES } from '../../data/difficulty';
+import { DIFFICULTY, type Difficulty, EXTRA_WAVES } from '../../data/difficulty';
 import { ECONOMY } from '../../data/economy';
 import { ELITE_HAZARD } from '../../data/elite-hazard';
 import { BOSS_HAZARD, BOSS_POOL, BOSS_VOLLEY, type EnemyDef } from '../../data/enemies';
@@ -123,8 +123,8 @@ export interface SimConfig {
 	seed: number;
 	/** Allocated tree nodes (default: `autoAllocate` in `SIM_BRANCH_ORDER`). */
 	tree?: readonly string[];
-	/** Danger 0–5 (default 1, the baseline). */
-	danger?: Danger;
+	/** Difficulty 0–2 (default 1, the baseline). */
+	difficulty?: Difficulty;
 	/** Tier of the starting weapon (debug). */
 	tier?: 1 | 2 | 3;
 	/** Game speed (default 1, the standard 1x): only the wall seconds change, see `SIM`. */
@@ -247,7 +247,7 @@ interface AverageEnemy {
 	damage: number;
 	xp: number;
 	speed: number;
-	/** Share of the spawns that are elites, and the mean damage of one (before the Danger multiplier). */
+	/** Share of the spawns that are elites, and the mean damage of one (before the Difficulty multiplier). */
 	eliteShare: number;
 	eliteDamage: number;
 	/** Share of the spawns that shoot, the mean (damage / cooldown) of one and the mean damage of the average enemy. */
@@ -360,9 +360,9 @@ export function simulateRun(config: SimConfig): SimResult {
 	let eff = effectiveStats(stats, build);
 	const superDef = SUPERPOWERS[config.hero];
 	const superOn = config.level >= SUPER.unlockLevel;
-	const danger = config.danger ?? 1;
-	const mods = DANGER[danger];
-	const waves = extraWaves(config.seed, danger);
+	const difficulty = config.difficulty ?? 1;
+	const mods = DIFFICULTY[difficulty];
+	const waves = extraWaves(config.seed, difficulty);
 	const gear = emptyGear();
 	// Drops use their own stream so adding or tuning them never reshuffles the shop and card draws.
 	const dropRng = new Rng((config.seed ^ 0x7f4a7c15) >>> 0);
@@ -592,11 +592,11 @@ export function simulateMany(
 	level: number,
 	runs: number,
 	seed = 1,
-	danger: Danger = 1,
+	difficulty: Difficulty = 1,
 	speed: GameSpeed = 1,
 ): SimSummary {
 	const results = Array.from({ length: runs }, (_, i) =>
-		simulateRun({ hero, level, seed: seed + i, danger, speed }),
+		simulateRun({ hero, level, seed: seed + i, difficulty, speed }),
 	);
 	const rounds = results.map((r) => r.round).sort((a, b) => a - b);
 	const avg = (f: (r: SimResult) => number) => results.reduce((a, r) => a + f(r), 0) / runs;

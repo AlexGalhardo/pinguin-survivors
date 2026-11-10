@@ -1,7 +1,10 @@
 /** Pantallas de menú: selección de héroe y pantalla del héroe (src/ui/components). */
 export const menusEs = {
-	'select.danger': 'Danger {n}',
-	'select.dangerBest': 'mejor round {n}',
+	'select.difficulty': 'Dificultad: {name}',
+	'difficulty.0': 'Fácil',
+	'difficulty.1': 'Normal',
+	'difficulty.2': 'Difícil',
+	'select.difficultyBest': 'mejor round {n}',
 	'select.weapon': 'Arma inicial: {name}',
 	'select.play': 'EMPEZAR PARTIDA',
 	'hero.condition': 'Cambiar condición',

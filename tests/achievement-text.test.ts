@@ -33,16 +33,16 @@ test('no achievement text keeps an unfilled placeholder', () => {
 	setLang('en');
 });
 
-test('Danger wins show the Danger, not the unlock threshold, in every language', () => {
+test('Difficulty wins show the difficulty name, not the unlock threshold, in every language', () => {
 	const expected = {
-		en: 'Defeat the round 20 boss on Danger 3 with Jack',
-		'pt-BR': 'Derrote o chefe do round 20 no Danger 3 com Jack',
-		es: 'Derrota al jefe del round 20 en Danger 3 con Jack',
-		'zh-CN': '使用 Jack 在危险 3 难度击败第 20 回合的首领',
+		en: 'Defeat the round 20 boss on Hard with Jack',
+		'pt-BR': 'Derrote o chefe do round 20 no Difícil com Jack',
+		es: 'Derrota al jefe del round 20 en Difícil con Jack',
+		'zh-CN': '使用 Jack 在困难难度击败第 20 回合的首领',
 	} as const;
 	for (const [lang, text] of Object.entries(expected)) {
 		setLang(lang as keyof typeof expected);
-		expect(achievementDescription(byId('dangerWin.jack.3'))).toBe(text);
+		expect(achievementDescription(byId('difficultyWin.jack.2'))).toBe(text);
 		for (const a of ACHIEVEMENTS) {
 			expect(achievementName(a)).not.toContain('{');
 			expect(achievementDescription(a)).not.toContain('{');

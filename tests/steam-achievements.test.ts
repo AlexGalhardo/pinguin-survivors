@@ -20,6 +20,6 @@ describe('Steam achievement map', () => {
 		expect(steamApiName('kills.1')).toBe('ACH_KILLS_1');
 		expect(steamApiName('heroRound.jack.2')).toBe('ACH_HERO_ROUND_JACK_2');
 		expect(steamApiName('feat.bossNoPotion')).toBe('ACH_FEAT_BOSS_NO_POTION');
-		expect(steamApiName('dangerWin.bob.3')).toBe('ACH_DANGER_WIN_BOB_3');
+		expect(steamApiName('difficultyWin.bob.2')).toBe('ACH_DIFFICULTY_WIN_BOB_2');
 	});
 });

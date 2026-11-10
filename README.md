@@ -43,7 +43,7 @@ The game is built with [Phaser 4](https://phaser.io), TypeScript, Vite, React an
 - Six weapon slots, weapon classes and set bonuses, one I–V rarity scale (white to orange) with random affixes and fusion, a starting weapon per hero. Weapons visibly strike their target (lunge, recoil, throw, plant, cast).
 - Shop after every round in a Diablo 4 style (merchant NPC, four offers that say exactly what each purchase changes, reroll, lock, weapons, equipment and speed potions) with an in-run currency (Fish) and a persistent one (Pearls).
 - Stat cards on level-up, six exclusive cards per hero, a superpower unlocked at level 5.
-- Danger 0–5 per hero, 178 achievements, a passive skill tree per hero (Path of Exile 2 style, replaces the old workshop and stat points), FFXII-style potion gambits, game speed 1×, 1.5× and 2×.
+- Easy/Normal/Hard difficulty per hero, 166 achievements, a passive skill tree per hero (Path of Exile 2 style, replaces the old workshop and stat points), FFXII-style potion gambits, game speed 1×, 1.5× and 2×.
 - DOOM-grade gore with a toggle, dynamic lights, hit-stop and screen shake.
 - English, Brazilian Portuguese, Spanish and Simplified Chinese.
 

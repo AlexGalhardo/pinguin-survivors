@@ -1,5 +1,5 @@
 import type { HeroId } from '../config/constants';
-import type { Danger } from '../data/difficulty';
+import type { Difficulty } from '../data/difficulty';
 import { ECONOMY, PEARLS, SHOP } from '../data/economy';
 import { GEAR, GEAR_BY_ID } from '../data/equipment';
 import type { HeroDef } from '../data/heroes';
@@ -43,8 +43,8 @@ export type RunPhase = 'round' | 'cards' | 'shop';
 export interface RunState {
 	hero: HeroId;
 	tier: 1 | 2 | 3;
-	/** Danger 0–5 of the run (ADR-008), chosen before the run. */
-	danger: Danger;
+	/** Difficulty 0–2 of the run (ADR-025), chosen before the run. */
+	difficulty: Difficulty;
 	seed: number;
 	round: number;
 	/** Seconds left in the current round. */
@@ -89,7 +89,7 @@ export function createRunState(
 		seed: number;
 		round?: number;
 		tier?: 1 | 2 | 3;
-		danger?: Danger;
+		difficulty?: Difficulty;
 		cardRerolls?: number;
 	},
 ): RunState {
@@ -97,7 +97,7 @@ export function createRunState(
 	return {
 		hero: hero.id,
 		tier: opts.tier ?? 1,
-		danger: opts.danger ?? 1,
+		difficulty: opts.difficulty ?? 1,
 		seed: opts.seed,
 		round,
 		timeLeft: roundDuration(round),

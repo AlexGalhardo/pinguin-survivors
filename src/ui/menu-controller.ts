@@ -19,8 +19,8 @@ import { RESOLUTION_IDS } from '../data/display';
 import { GAMBIT_CONDITIONS, POTION_PRICES, POTION_TYPES } from '../data/potions';
 import { LANGS, setLang } from '../i18n';
 import { achievementProgress, availablePoints, buyExtra, extraLevel } from '../logic/achievements';
-import { demoAllowsHero, demoDanger, demoHidesAchievement } from '../logic/demo';
-import { maxSelectableDanger } from '../logic/difficulty';
+import { demoAllowsHero, demoDifficulty, demoHidesAchievement } from '../logic/demo';
+import { maxSelectableDifficulty } from '../logic/difficulty';
 import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/keybinds';
 import { xpToNext } from '../logic/progression';
 import { type GoreMode, NUMBER_SIZES, type SaveData } from '../logic/save';
@@ -117,8 +117,6 @@ function mainMenu(save: SaveData): MenuView {
 	return {
 		screen: 'main-menu',
 		data: {
-			pearls: save.pearls,
-			points: availablePoints(save.achievements),
 			hasSlot: hasActiveSlot(),
 			hasSaves: slotSummaries().some((s) => s !== null),
 			continueRound: hasActiveSlot() && save.activeRun ? save.activeRun.nextRound : null,
@@ -187,8 +185,8 @@ function heroSelect(save: SaveData): MenuView {
 				demoLocked: !demoAllowsHero(id),
 				level: save.heroes[id].level,
 				bestRound: save.progress.hero[id].bestRound,
-				maxDanger: demoDanger(maxSelectableDanger(save, id)),
-				bestByDanger: save.bestRoundByDanger[id],
+				maxDifficulty: demoDifficulty(maxSelectableDifficulty(save, id)),
+				bestByDifficulty: save.bestRoundByDifficulty[id],
 				weapons: availableStartingWeapons(save, id),
 			})),
 		},

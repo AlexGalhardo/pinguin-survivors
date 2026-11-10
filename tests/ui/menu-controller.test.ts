@@ -67,7 +67,7 @@ beforeEach(() => {
 	Object.assign(slotFake, { bound: false, active: 0, used: [false, false, false] });
 	uiStore.set({ screen: 'main-menu' });
 	bindMenuCommands({
-		startRun: (r) => calls.push(`start:${r.hero}:${r.danger}:${r.weapon}`),
+		startRun: (r) => calls.push(`start:${r.hero}:${r.difficulty}:${r.weapon}`),
 		continueRun: () => calls.push('continue'),
 		refreshAudio: () => calls.push('audio'),
 		toggleFullscreen: () => calls.push('fullscreen'),
@@ -75,20 +75,19 @@ beforeEach(() => {
 });
 
 describe('main menu and hero select', () => {
-	test('wallet and continue come from the save; play opens hero select', () => {
-		save.pearls = 7;
-		expect(view('main-menu').data).toMatchObject({ pearls: 7, continueRound: null });
+	test('continue comes from the save; play opens hero select', () => {
+		expect(view('main-menu').data).toMatchObject({ continueRound: null });
 		view('main-menu').actions.play();
 		expect(uiStore.get().screen).toBe('hero-select');
 	});
 
-	test('hero select exposes danger caps and starting weapons; start closes the menu', () => {
+	test('hero select exposes difficulty caps and starting weapons; start closes the menu', () => {
 		const d = view('hero-select').data;
 		const jack = d.heroes.find((h) => h.id === 'jack');
-		expect(jack?.maxDanger).toBe(1);
+		expect(jack?.maxDifficulty).toBe(1);
 		expect(jack?.weapons).toEqual(['machete', 'knives', 'fishBoomerang']);
 		expect(d.heroes.find((h) => h.id === 'bob')?.unlocked).toBe(false);
-		view('hero-select').actions.start({ hero: 'jack', danger: 1, weapon: 'knives' });
+		view('hero-select').actions.start({ hero: 'jack', difficulty: 1, weapon: 'knives' });
 		expect(calls).toEqual(['start:jack:1:knives']);
 		expect(uiStore.get().screen).toBe('none');
 	});

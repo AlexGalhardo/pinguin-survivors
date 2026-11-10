@@ -98,7 +98,7 @@ export interface ShopFusionView {
 export interface ShopView {
 	/** Round just cleared. */
 	round: number;
-	/** Extra waves of the next round, shown from Danger 2 on (`elite` or `horde`). */
+	/** Extra waves of the next round, shown when a difficulty adds extra waves (`elite` or `horde`). */
 	nextWaves: ('elite' | 'horde')[];
 	fish: number;
 	/** `null` slots were bought and stay empty until the next reroll. */

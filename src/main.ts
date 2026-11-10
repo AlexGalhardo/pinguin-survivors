@@ -6,7 +6,7 @@ import '@fontsource/roboto/900.css';
 import Phaser from 'phaser';
 import { gameConfig } from './config/game-config';
 import { sfx } from './core/audio';
-import { setParams, setRunDanger, setRunHero, setRunWeapon, setSave } from './core/context';
+import { setParams, setRunDifficulty, setRunHero, setRunWeapon, setSave } from './core/context';
 import { attachGame, currentRenderSize, initDisplay } from './core/display';
 import { installGamepad } from './core/gamepad';
 import { refreshMusicVolume } from './core/music';
@@ -58,9 +58,9 @@ publishSave(save);
 if (!params.skipMenu) uiStore.set({ screen: 'main-menu' });
 bindUiSound((key) => sfx(game.scene.getScene('Boot'), key));
 bindMenuCommands({
-	startRun: ({ hero, danger, weapon }) => {
+	startRun: ({ hero, difficulty, weapon }) => {
 		setRunHero(game, hero);
-		setRunDanger(game, danger);
+		setRunDifficulty(game, difficulty);
 		// GameScene only accepts it if it is one of the hero's starting weapons.
 		setRunWeapon(game, weapon as WeaponId);
 		game.scene.start('Game');

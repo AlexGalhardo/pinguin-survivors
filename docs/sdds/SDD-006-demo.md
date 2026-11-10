@@ -6,7 +6,7 @@
 
 ## Requisitos
 
-- RF-01 Build com `VITE_DEMO=1` define `DEMO = { enabled: true, maxRound: 10, heroes: ['jack'], maxDanger: 1 }` (`src/data/demo.ts`); no build completo `enabled: false`.
+- RF-01 Build com `VITE_DEMO=1` define `DEMO = { enabled: true, maxRound: 10, heroes: ['jack'], maxDifficulty: 1 }` (`src/data/demo.ts`); no build completo `enabled: false`.
 - RF-02 Round 10 vencido ou perdido → estado `demoEnd` → componente `DemoEnd`: resumo da run, "Bob desbloqueado no jogo completo" com retrato, botão **Wishlist na Steam** (`Platform.openUrl(STEAM_URL)`; no Electron abre o overlay da Steam), "Jogar de novo", "Menu".
 - RF-03 `HeroSelect` mostra Bob e Lucia bloqueados com "Disponível no jogo completo"; danger limitado a 0–1.
 - RF-04 Oficina, gambits, conquistas e histórico funcionam; conquistas acima do round 10 ficam ocultas na demo.

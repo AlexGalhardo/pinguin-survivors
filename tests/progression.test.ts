@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'bun:test';
-import { maxSelectableDanger, recordBestRound, unlockDanger } from '../src/logic/difficulty';
+import {
+	maxSelectableDifficulty,
+	recordBestRound,
+	unlockDifficulty,
+} from '../src/logic/difficulty';
 import {
 	addXp,
 	freePoints,
@@ -36,42 +40,42 @@ describe('progression (P-24/P-25)', () => {
 	});
 });
 
-describe('Danger unlock (SDD-005 A4)', () => {
-	test('beating the round 20 boss on D1 unlocks D2 for that hero only', () => {
+describe('Difficulty unlock (SDD-005 A4)', () => {
+	test('beating the round 20 boss on Normal unlocks Hard for that hero only', () => {
 		const save = defaultSave();
-		unlockDanger(save, 'jack', 1);
-		expect(save.progress.hero.jack.dangerUnlocked).toBe(2);
-		expect(save.progress.hero.bob.dangerUnlocked).toBe(1);
-		expect(maxSelectableDanger(save, 'jack')).toBe(2);
-		expect(maxSelectableDanger(save, 'bob')).toBe(1);
+		unlockDifficulty(save, 'jack', 1);
+		expect(save.progress.hero.jack.difficultyUnlocked).toBe(2);
+		expect(save.progress.hero.bob.difficultyUnlocked).toBe(1);
+		expect(maxSelectableDifficulty(save, 'jack')).toBe(2);
+		expect(maxSelectableDifficulty(save, 'bob')).toBe(1);
 	});
 
 	test('does not go backwards, skip locked levels or pass the cap', () => {
 		const save = defaultSave();
-		unlockDanger(save, 'bob', 0);
-		expect(save.progress.hero.bob.dangerUnlocked).toBe(1);
-		unlockDanger(save, 'bob', 4);
-		expect(save.progress.hero.bob.dangerUnlocked).toBe(1);
-		for (const d of [1, 2, 3, 4, 5] as const) unlockDanger(save, 'bob', d);
-		expect(save.progress.hero.bob.dangerUnlocked).toBe(6);
-		expect(maxSelectableDanger(save, 'bob')).toBe(5);
-		unlockDanger(save, 'bob', 5);
-		expect(save.progress.hero.bob.dangerUnlocked).toBe(6);
+		unlockDifficulty(save, 'bob', 0);
+		expect(save.progress.hero.bob.difficultyUnlocked).toBe(1);
+		unlockDifficulty(save, 'bob', 2);
+		expect(save.progress.hero.bob.difficultyUnlocked).toBe(1);
+		for (const d of [1, 2] as const) unlockDifficulty(save, 'bob', d);
+		expect(save.progress.hero.bob.difficultyUnlocked).toBe(3);
+		expect(maxSelectableDifficulty(save, 'bob')).toBe(2);
+		unlockDifficulty(save, 'bob', 2);
+		expect(save.progress.hero.bob.difficultyUnlocked).toBe(3);
 	});
 
-	test('best round per Danger is kept per hero and survives a save round-trip', () => {
+	test('best round per Difficulty is kept per hero and survives a save round-trip', () => {
 		const save = defaultSave();
-		recordBestRound(save, 'lucia', 3, 14);
-		recordBestRound(save, 'lucia', 3, 9);
+		recordBestRound(save, 'lucia', 2, 14);
+		recordBestRound(save, 'lucia', 2, 9);
 		recordBestRound(save, 'lucia', 0, 21);
 		const back = parseSave(serializeSave(save));
-		expect(back.bestRoundByDanger.lucia).toEqual([21, 0, 0, 14, 0, 0]);
-		expect(back.bestRoundByDanger.jack).toEqual([0, 0, 0, 0, 0, 0]);
+		expect(back.bestRoundByDifficulty.lucia).toEqual([21, 0, 14]);
+		expect(back.bestRoundByDifficulty.jack).toEqual([0, 0, 0]);
 	});
 
 	test('a save without bests reads as empty bests and stays idempotent', () => {
 		const once = parseSave(JSON.stringify({ version: SAVE_VERSION }));
-		expect(once.bestRoundByDanger.jack).toEqual([0, 0, 0, 0, 0, 0]);
+		expect(once.bestRoundByDifficulty.jack).toEqual([0, 0, 0]);
 		expect(parseSave(serializeSave(once))).toEqual(once);
 	});
 });

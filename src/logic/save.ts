@@ -7,7 +7,7 @@ import {
 	type LifetimeStat,
 	RUN_BESTS,
 } from '../data/achievements';
-import { DANGER_LEVELS } from '../data/difficulty';
+import { DIFFICULTY_LEVELS, MAX_DIFFICULTY_UNLOCKED } from '../data/difficulty';
 import { RESOLUTION_IDS, type ResolutionId } from '../data/display';
 import {
 	GAMBIT_CONDITIONS,
@@ -118,8 +118,8 @@ export interface SaveData {
 	settings: Settings;
 	heroes: Record<HeroId, HeroSave>;
 	fish: number;
-	/** Best round per hero and Danger 0–5 (SDD-005 RF-05); index = Danger. */
-	bestRoundByDanger: Record<HeroId, number[]>;
+	/** Best round per hero and Difficulty (Easy, Normal, Hard; SDD-019); index = Difficulty. */
+	bestRoundByDifficulty: Record<HeroId, number[]>;
 	/** Meta currency (SDD-005 RF-05); Fish→Pearls conversion lands with T2.7. */
 	pearls: number;
 	potions: Record<PotionType, number>;
@@ -160,8 +160,8 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 		) as Record<HeroId, HeroSave>,
 		fish: 0,
 		pearls: 0,
-		bestRoundByDanger: Object.fromEntries(
-			HERO_IDS.map((h) => [h, [0, 0, 0, 0, 0, 0]]),
+		bestRoundByDifficulty: Object.fromEntries(
+			HERO_IDS.map((h) => [h, DIFFICULTY_LEVELS.map(() => 0)]),
 		) as Record<HeroId, number[]>,
 		potions: Object.fromEntries(POTION_TYPES.map((p) => [p, 0])) as Record<PotionType, number>,
 		gambits: Array.from({ length: GAMBIT_SLOTS }, () => ({ potion: null, condition: null })),
@@ -276,20 +276,26 @@ function parseSaveObject(raw: unknown, lang: Lang): SaveData {
 
 	for (const h of HERO_IDS) {
 		const stats = progress.hero[h];
-		stats.dangerUnlocked = Math.min(6, Math.max(1, Math.floor(stats.dangerUnlocked)));
+		// Pre-0.10 saves stored `dangerUnlocked` 1-6; 1 stays, 2 opens Hard, 3+ means Hard beaten (SDD-019 RF-04).
+		const row = isObj(ph[h]) ? ph[h] : {};
+		const raw = row.difficultyUnlocked ?? row.dangerUnlocked;
+		stats.difficultyUnlocked = Math.min(
+			MAX_DIFFICULTY_UNLOCKED,
+			Math.max(1, Math.floor(num(raw, 1))),
+		);
 	}
 
 	const a = isObj(r.achievements) ? r.achievements : {};
+	const unlockedRaw = isObj(a.unlocked)
+		? (Object.fromEntries(
+				Object.entries(a.unlocked).filter(([, v]) => typeof v === 'number'),
+			) as Record<string, number>)
+		: {};
+	const { unlocked, merged } = migrateDangerAchievements(unlockedRaw);
 	const achievements: AchievementState = {
-		unlocked: isObj(a.unlocked)
-			? Object.fromEntries(
-					Object.entries(a.unlocked).filter(([, v]) => typeof v === 'number') as [
-						string,
-						number,
-					][],
-				)
-			: {},
-		spent: num(a.spent, 0),
+		unlocked,
+		// Each merged achievement was a point: take it off `spent` so the points to spend stay the same.
+		spent: Math.max(0, num(a.spent, 0) - merged),
 		purchases: Array.isArray(a.purchases)
 			? a.purchases.filter((x): x is string => typeof x === 'string')
 			: [],
@@ -302,7 +308,9 @@ function parseSaveObject(raw: unknown, lang: Lang): SaveData {
 		heroes,
 		fish: num(r.fish, 0),
 		pearls: num(r.pearls, 0),
-		bestRoundByDanger: parseBestByDanger(r.bestRoundByDanger),
+		bestRoundByDifficulty: parseBestByDifficulty(
+			r.bestRoundByDifficulty ?? r.bestRoundByDanger,
+		),
 		potions: numRecord(r.potions, POTION_TYPES, base.potions),
 		gambits,
 		progress,
@@ -314,6 +322,27 @@ function parseSaveObject(raw: unknown, lang: Lang): SaveData {
 		activeRun: isRunSnapshot(r.activeRun) ? r.activeRun : null,
 		unlocks: parseUnlocks(r.unlocks),
 	};
+}
+
+/**
+ * Danger achievements became Difficulty ones (SDD-019 RF-05): tier 1 stays, tiers 2-5 collapse into 2.
+ * Keeps the earliest unlock time; `merged` counts the ids that disappeared into another.
+ */
+export function migrateDangerAchievements(old: Record<string, number>): {
+	unlocked: Record<string, number>;
+	merged: number;
+} {
+	const unlocked: Record<string, number> = {};
+	let merged = 0;
+	for (const [id, at] of Object.entries(old)) {
+		const m = /^danger(Win|All)\.(?:(\w+)\.)?(\d+)$/.exec(id);
+		const next = m
+			? `difficulty${m[1]}.${m[2] ? `${m[2]}.` : ''}${Math.min(2, Number(m[3]))}`
+			: id;
+		if (next in unlocked) merged++;
+		unlocked[next] = Math.min(unlocked[next] ?? at, at);
+	}
+	return { unlocked, merged };
 }
 
 /** Unknown weapon ids and duplicates are dropped; a missing section is empty (no version bump). */
@@ -332,12 +361,15 @@ function parseUnlocks(v: unknown): SaveData['unlocks'] {
 	};
 }
 
-function parseBestByDanger(v: unknown): Record<HeroId, number[]> {
+/** Old saves had six Danger slots: Easy = D0, Normal = D1, Hard = best of D2-D5 (SDD-019 RF-04). */
+function parseBestByDifficulty(v: unknown): Record<HeroId, number[]> {
 	const src = isObj(v) ? v : {};
 	return Object.fromEntries(
 		HERO_IDS.map((h) => {
-			const row = Array.isArray(src[h]) ? (src[h] as unknown[]) : [];
-			return [h, DANGER_LEVELS.map((d) => num(row[d], 0))];
+			const row = (Array.isArray(src[h]) ? (src[h] as unknown[]) : []).map((x) => num(x, 0));
+			const hard =
+				row.length > DIFFICULTY_LEVELS.length ? Math.max(...row.slice(2)) : (row[2] ?? 0);
+			return [h, [row[0] ?? 0, row[1] ?? 0, hard]];
 		}),
 	) as Record<HeroId, number[]>;
 }

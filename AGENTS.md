@@ -2,7 +2,7 @@
 
 Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini, Copilot, etc.). Regras detalhadas em [`.agents/rules/`](.agents/rules/README.md); skills em [`.agents/skills/`](.agents/skills/THIRD_PARTY.md). Nenhuma ferramenta carrega essas pastas sozinha: **leia os arquivos pelo caminho** conforme a tarefa.
 
-**Projeto:** arena survivor roguelite **top-down 2D em pixel art**, estilo Brotato, para **Steam (Windows, Electron)** e **Google Play (Android, Capacitor)** com demo web em `/demo`. Jack (melee), Bob (fogo) e Lucia (magia): rounds cronometrados → loja no fim do round → próximo round; 6 slots de arma automáticos que atacam o alvo (raridade I–V com afixos, ADR-017); cartas de stat no level-up; campanha de 50 rounds em 5 biomas com um boss diferente a cada 5 (10 bosses, ADR-023) e ataques em área com aviso vermelho (bosses e elites, SDD-016); Danger 0–5; endless a partir do 51; level 1–100 persistente com **árvore de habilidades por herói** (ADR-019; substituiu a Oficina e os pontos de stat); loja e pausa estilo Diablo 4 (ADR-018); gore estilo DOOM com toggle. Versão atual: **0.9.0** (Latest); 0.10.0 em preparação.
+**Projeto:** arena survivor roguelite **top-down 2D em pixel art**, estilo Brotato, para **Steam (Windows, Electron)** e **Google Play (Android, Capacitor)** com demo web em `/demo`. Jack (melee), Bob (fogo) e Lucia (magia): rounds cronometrados → loja no fim do round → próximo round; 6 slots de arma automáticos que atacam o alvo (raridade I–V com afixos, ADR-017); cartas de stat no level-up; campanha de 50 rounds em 5 biomas com um boss diferente a cada 5 (10 bosses, ADR-023) e ataques em área com aviso vermelho (bosses e elites, SDD-016); dificuldade Fácil/Normal/Difícil (ADR-025); endless a partir do 51; level 1–100 persistente com **árvore de habilidades por herói** (ADR-019; substituiu a Oficina e os pontos de stat); loja e pausa estilo Diablo 4 (ADR-018); gore estilo DOOM com toggle. Versão atual: **0.9.0** (Latest); 0.10.0 em preparação.
 **Stack:** TypeScript · Vite 8 · Phaser 4.2.x (só o mundo, sem física de engine) · React 19 + Tailwind CSS v4 (toda a UI) · **Bun 1.4.x** (`bun:test`) · Electron · Capacitor · Astro 7.4 (site estático). Arte **PixelLab API v2**, áudio **ElevenLabs** (SFX e música; sem vozes). UI em EN, PT-BR, ES, ZH-CN; docs em PT-BR.
 **Marco:** demo no Steam Next Fest de 22/02 a 01/03/2027 (inscrição até 10/01/2027); 1.0 depois.
 **Legado:** branches `legacy-voices` (iso + vozes) e `starfall-survivors-legacy` (jogo anterior). `PLAN.md` é histórico e não está versionado.
@@ -15,7 +15,7 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 | Preciso de… | Leia |
 |---|---|
 | Como trabalhar numa sessão, papéis, git, releases, gates, ferramentas | [docs/workflow.md](docs/workflow.md) |
-| Regras do jogo, heróis, armas, loja, cartas, economia, danger, UI, demo | [docs/gdd.md](docs/gdd.md) |
+| Regras do jogo, heróis, armas, loja, cartas, economia, dificuldade, UI, demo | [docs/gdd.md](docs/gdd.md) |
 | Fórmulas, números, metodologia de balanceamento e simulação | [docs/balancing-and-simulation.md](docs/balancing-and-simulation.md) |
 | Camadas, arena, React sobre o canvas, pastas, builds, debug | [docs/architecture.md](docs/architecture.md) |
 | Cores, tipografia, componentes e telas da UI (Estilo D, Diablo 4 orgânico) | [docs/design-system.md](docs/design-system.md) · [docs/wireframes/](docs/wireframes/README.md) · [`.agents/skills/pinguin-ui-hud`](.agents/skills/pinguin-ui-hud/SKILL.md) |

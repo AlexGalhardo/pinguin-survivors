@@ -50,7 +50,7 @@ describe('MainMenu', () => {
 		log.length = 0;
 		const view = (continueRound: number | null, canQuit = false): View => ({
 			screen: 'main-menu',
-			data: { pearls: 12, points: 3, continueRound, canQuit, hasSlot: true, hasSaves: true },
+			data: { continueRound, canQuit, hasSlot: true, hasSaves: true },
 			actions: actionsOf([
 				'continueRun',
 				'play',
@@ -71,7 +71,9 @@ describe('MainMenu', () => {
 		cleanup();
 		const b = render(<Router view={view(4)} />);
 		expect(b.getByText('CONTINUE (ROUND 4)')).toBeTruthy();
-		expect(b.container.textContent).toContain('12 pearls');
+		// The old subtitle and wallet footer are gone.
+		expect(b.container.textContent).not.toContain('pearls');
+		expect(b.container.textContent).not.toContain('penguins');
 		cleanup();
 		// Quit only exists in the desktop and mobile shells.
 		expect(render(<Router view={view(null)} />).queryByText('QUIT')).toBeNull();
@@ -88,8 +90,6 @@ describe('MainMenu without a loaded slot', () => {
 		const view = (hasSaves: boolean): View => ({
 			screen: 'main-menu',
 			data: {
-				pearls: 0,
-				points: 0,
 				continueRound: null,
 				canQuit: false,
 				hasSlot: false,
@@ -168,8 +168,8 @@ describe('HeroSelect', () => {
 			unlocked: true,
 			level: 5,
 			bestRound: 9,
-			maxDanger: 2 as const,
-			bestByDanger: [9, 4, 0, 0, 0, 0],
+			maxDifficulty: 2 as const,
+			bestByDifficulty: [9, 4, 0],
 			weapons: ['machete', 'knives', 'fishBoomerang'],
 		},
 		{
@@ -177,13 +177,13 @@ describe('HeroSelect', () => {
 			unlocked: false,
 			level: 1,
 			bestRound: 0,
-			maxDanger: 0 as const,
-			bestByDanger: [0, 0, 0, 0, 0, 0],
+			maxDifficulty: 0 as const,
+			bestByDifficulty: [0, 0, 0],
 			weapons: ['doubleBarrel'],
 		},
 	];
 
-	test('danger wraps within the hero unlock and start sends hero, danger and weapon', () => {
+	test('difficulty wraps within the hero unlock and start sends hero, difficulty and weapon', () => {
 		let started: unknown;
 		const { getAllByLabelText, getByText, container } = render(
 			<Router
@@ -199,22 +199,22 @@ describe('HeroSelect', () => {
 				}}
 			/>,
 		);
-		expect(container.textContent).toContain('Danger 0');
+		expect(container.textContent).toContain('Difficulty: Normal');
 		const next = getAllByLabelText('+');
-		const dangerNext = next[0] as HTMLElement;
-		fireEvent.click(dangerNext);
-		fireEvent.click(dangerNext);
-		expect(container.textContent).toContain('Danger 2');
-		fireEvent.click(dangerNext);
-		expect(container.textContent).toContain('Danger 0');
-		fireEvent.click(dangerNext);
+		const difficultyNext = next[0] as HTMLElement;
+		fireEvent.click(difficultyNext);
+		expect(container.textContent).toContain('Difficulty: Hard');
+		fireEvent.click(difficultyNext);
+		expect(container.textContent).toContain('Difficulty: Easy');
+		fireEvent.click(difficultyNext);
+		expect(container.textContent).toContain('Difficulty: Normal');
 		fireEvent.click(next[1] as HTMLElement);
 		fireEvent.click(getByText('START RUN'));
-		expect(started).toEqual({ hero: 'jack', danger: 1, weapon: 'knives' });
+		expect(started).toEqual({ hero: 'jack', difficulty: 1, weapon: 'knives' });
 		cleanup();
 	});
 
-	test('the sheet shows the hero stats, superpower, weapon and what Danger changes', () => {
+	test('the sheet shows the hero stats, superpower, weapon and what Difficulty changes', () => {
 		const { container } = render(
 			<Router
 				view={{
@@ -504,8 +504,6 @@ describe('MainMenu on a phone', () => {
 		const view: View = {
 			screen: 'main-menu',
 			data: {
-				pearls: 0,
-				points: 0,
 				continueRound: 4,
 				canQuit: true,
 				hasSlot: true,

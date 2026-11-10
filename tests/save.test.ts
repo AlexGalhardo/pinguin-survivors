@@ -90,17 +90,42 @@ describe('older saves (ADR-020: no compatibility)', () => {
 		expect(parseSave(JSON.stringify({ ...v1Fixture, version: 2 }))).toEqual(defaultSave());
 	});
 
-	test('dangerUnlocked and pearls survive a round-trip and are clamped', () => {
+	test('difficultyUnlocked and pearls survive a round-trip and are clamped', () => {
 		const s = defaultSave();
 		s.pearls = 7;
-		s.progress.hero.bob.dangerUnlocked = 3;
+		s.progress.hero.bob.difficultyUnlocked = 3;
 		expect(parseSave(serializeSave(s))).toEqual(s);
 		const raw = JSON.parse(serializeSave(s));
-		raw.progress.hero.bob.dangerUnlocked = 99;
-		raw.progress.hero.jack.dangerUnlocked = -4;
+		raw.progress.hero.bob.difficultyUnlocked = 99;
+		raw.progress.hero.jack.difficultyUnlocked = -4;
 		const back = parseSave(JSON.stringify(raw));
-		expect(back.progress.hero.bob.dangerUnlocked).toBe(6);
-		expect(back.progress.hero.jack.dangerUnlocked).toBe(1);
+		expect(back.progress.hero.bob.difficultyUnlocked).toBe(3);
+		expect(back.progress.hero.jack.difficultyUnlocked).toBe(1);
+	});
+});
+
+describe('Danger saves migrate to Difficulty (SDD-019 RF-04)', () => {
+	const legacy = (unlocked: number, best: number[]) => {
+		const raw = JSON.parse(serializeSave(defaultSave()));
+		raw.progress.hero.jack = { ...raw.progress.hero.jack, dangerUnlocked: unlocked };
+		delete raw.progress.hero.jack.difficultyUnlocked;
+		delete raw.bestRoundByDifficulty;
+		raw.bestRoundByDanger = { jack: best };
+		return raw;
+	};
+
+	test('dangerUnlocked 1..6 maps to 1 (Easy/Normal), 2 (Hard open) or 3 (Hard beaten)', () => {
+		const expected = [1, 1, 2, 3, 3, 3, 3];
+		for (let d = 1; d <= 6; d++)
+			expect(
+				parseSave(JSON.stringify(legacy(d, []))).progress.hero.jack.difficultyUnlocked,
+			).toBe(expected[d] as number);
+	});
+
+	test('best rounds per Danger 0..5 collapse to Easy, Normal and Hard (best of D2-D5)', () => {
+		const s = parseSave(JSON.stringify(legacy(3, [12, 20, 7, 30, 9, 4])));
+		expect(s.bestRoundByDifficulty.jack).toEqual([12, 20, 30]);
+		expect(parseSave(serializeSave(s))).toEqual(s);
 	});
 });
 
@@ -167,7 +192,7 @@ describe('demo save → full game (SDD-006 A4)', () => {
 		expect(s.pearls).toBe(96);
 		expect(s.achievements.unlocked['kills.1']).toBe(1769000000000);
 		expect(s.progress.hero.jack.bestRound).toBe(10);
-		expect(s.bestRoundByDanger.jack).toEqual([10, 10, 0, 0, 0, 0]);
+		expect(s.bestRoundByDifficulty.jack).toEqual([10, 10, 0]);
 		expect(s.history).toHaveLength(1);
 	});
 
@@ -182,7 +207,7 @@ describe('telemetry in the save (SDD-013 A5)', () => {
 	const event = (round: number): RunEndEvent => ({
 		version: '0.1.0',
 		hero: 'jack',
-		danger: 1,
+		difficulty: 1,
 		level: 1,
 		round,
 		weapons: ['machete:1'],
@@ -251,5 +276,40 @@ describe('starting weapon unlocks (SDD-005 RF-05)', () => {
 			bob: [],
 			lucia: [],
 		});
+	});
+});
+
+describe('Danger achievement ids migrate (SDD-019 RF-05)', () => {
+	const cases: [string, string][] = [
+		['dangerWin.jack.1', 'difficultyWin.jack.1'],
+		['dangerWin.jack.2', 'difficultyWin.jack.2'],
+		['dangerWin.bob.3', 'difficultyWin.bob.2'],
+		['dangerWin.lucia.5', 'difficultyWin.lucia.2'],
+		['dangerAll.1', 'difficultyAll.1'],
+		['dangerAll.2', 'difficultyAll.2'],
+		['dangerAll.5', 'difficultyAll.2'],
+		['kills.1', 'kills.1'],
+	];
+
+	test.each(cases)('%s becomes %s with its unlock time', (from, to) => {
+		const raw = JSON.parse(serializeSave(defaultSave()));
+		raw.achievements.unlocked = { [from]: 1234 };
+		expect(parseSave(JSON.stringify(raw)).achievements.unlocked).toEqual({ [to]: 1234 });
+	});
+
+	test('tiers that collapse keep the earliest time, are not duplicated and keep the points', () => {
+		const raw = JSON.parse(serializeSave(defaultSave()));
+		raw.achievements.unlocked = {
+			'dangerWin.jack.2': 300,
+			'dangerWin.jack.3': 100,
+			'dangerWin.jack.5': 200,
+			'kills.1': 1,
+		};
+		raw.achievements.spent = 3;
+		const s = parseSave(JSON.stringify(raw));
+		expect(s.achievements.unlocked).toEqual({ 'difficultyWin.jack.2': 100, 'kills.1': 1 });
+		expect(s.achievements.spent).toBe(1);
+		expect(Object.keys(s.achievements.unlocked).length - s.achievements.spent).toBe(1);
+		expect(parseSave(serializeSave(s))).toEqual(s);
 	});
 });

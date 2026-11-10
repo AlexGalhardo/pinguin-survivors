@@ -1,6 +1,8 @@
 /** Round rules (docs/balancing-and-simulation.md §1–2). */
 export const ROUNDS = {
 	firstDuration: 30,
+	/** Cap on a normal (non-boss) round in seconds (developer decision 2026-11-10, SDD-019): reached at round 19. */
+	roundMax: 120,
 	durationStep: 5,
 	/** Biome and scaling block: Antarctica 1–10, forest 11–20, city 21–30, station 31–40, ruins 41–50 (ADR-023), then endless blocks of 10 from 51. */
 	biomeRounds: 10,

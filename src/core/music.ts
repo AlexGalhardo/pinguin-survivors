@@ -1,7 +1,10 @@
 import type Phaser from 'phaser';
-import type { BiomeId } from '../config/constants';
+import { BOSS_ROUNDS } from '../data/enemies';
+import { ROUND_TRACKS, roundTrack } from '../logic/music';
+import { isBossRound } from '../logic/round';
 import { getSave } from './context';
 
+type RoundTrack = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type MusicKey =
 	| 'music.menu'
 	| 'music.round'
@@ -9,7 +12,16 @@ export type MusicKey =
 	| 'music.late'
 	| 'music.shop'
 	| 'music.forest'
-	| 'music.city';
+	| 'music.city'
+	| 'music.shop.theme'
+	| `music.round.${RoundTrack}`
+	| `music.boss.${(typeof BOSS_ROUNDS)[number]}`;
+
+const ROUND_KEYS = Array.from(
+	{ length: ROUND_TRACKS },
+	(_, i) => `music.round.${i + 1}` as MusicKey,
+);
+/** Registered tracks: the legacy ones stay loaded but only act as fallbacks. */
 export const MUSIC_KEYS: readonly MusicKey[] = [
 	'music.menu',
 	'music.round',
@@ -18,26 +30,30 @@ export const MUSIC_KEYS: readonly MusicKey[] = [
 	'music.shop',
 	'music.forest',
 	'music.city',
+	'music.shop.theme',
+	...ROUND_KEYS,
+	...BOSS_ROUNDS.map((id) => `music.boss.${id}` as const),
 ];
 
-/** First round of the late-game track (the ruined city onwards). */
-export const LATE_MUSIC_FROM = 21;
-
-/** Track for a gameplay round: boss fights, then the late-game track, else the round loop. */
-export function musicForRound(round: number, boss: boolean, biome?: BiomeId): MusicKey {
-	if (boss) return 'music.boss';
-	if (biome) return MUSIC_BY_BIOME[biome];
-	return round >= LATE_MUSIC_FROM ? 'music.late' : 'music.round';
+/**
+ * Track for a gameplay round: a boss fight plays its own boss theme (`bossId` is the boss on the
+ * field, also in the endless), a normal round one of the nine round themes drawn by the run seed.
+ */
+export function musicForRound(round: number, seed: number, bossId?: string): MusicKey {
+	if (isBossRound(round)) {
+		const key = `music.boss.${bossId}` as MusicKey;
+		return MUSIC_KEYS.includes(key) ? key : 'music.boss';
+	}
+	return `music.round.${roundTrack(seed, round) as RoundTrack}`;
 }
 
-/** Track of each biome; station and ruins reuse the original round and late tracks (no dedicated music yet). */
-const MUSIC_BY_BIOME: Record<BiomeId, MusicKey> = {
-	antarctica: 'music.round',
-	forest: 'music.forest',
-	city: 'music.city',
-	station: 'music.round',
-	ruins: 'music.late',
-};
+/** Where a track falls back to when its file is missing. */
+function fallbackFor(key: MusicKey): MusicKey | null {
+	if (key.startsWith('music.boss.')) return 'music.boss';
+	if (key === 'music.shop.theme') return 'music.shop';
+	if (key.startsWith('music.round.')) return 'music.round';
+	return null;
+}
 
 const FADE_MS = 800;
 /** Music sits under the SFX in the mix. */
@@ -54,10 +70,9 @@ function targetVolume(scene: Phaser.Scene): number {
 export function playMusic(scene: Phaser.Scene, key: MusicKey): void {
 	if (import.meta.env.SOUND_MUTED === 'true') return;
 	if (current?.key === key && current.sound.isPlaying) return;
-	// A missing late track falls back to the regular round loop.
 	if (!scene.cache.audio.exists(key)) {
-		if (key === 'music.late' || key === 'music.forest' || key === 'music.city')
-			playMusic(scene, 'music.round');
+		const fallback = fallbackFor(key);
+		if (fallback) playMusic(scene, fallback);
 		return;
 	}
 	stopMusic(scene);

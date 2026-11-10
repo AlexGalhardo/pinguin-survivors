@@ -1,6 +1,6 @@
 import { HERO_IDS, type HeroId } from '../config/constants';
 import type { PlatformKind } from '../core/platform/types';
-import { DANGER_LEVELS, type Danger } from '../data/difficulty';
+import { DIFFICULTY_LEVELS, type Difficulty } from '../data/difficulty';
 
 /**
  * Local, opt-in run telemetry (SDD-013 RF-05). Nothing leaves the machine: events are kept in a
@@ -16,7 +16,7 @@ export type TelemetrySource = 'player' | 'sim' | 'bot';
 export interface RunEndEvent {
 	version: string;
 	hero: HeroId;
-	danger: Danger;
+	difficulty: Difficulty;
 	level: number;
 	round: number;
 	/** Final weapon slots as `id:tier`. */
@@ -55,7 +55,7 @@ function isRunEnd(v: unknown): v is RunEndEvent {
 	const e = v as Record<string, unknown>;
 	return (
 		HERO_IDS.includes(e.hero as HeroId) &&
-		DANGER_LEVELS.includes(e.danger as Danger) &&
+		DIFFICULTY_LEVELS.includes(e.difficulty as Difficulty) &&
 		typeof e.level === 'number' &&
 		typeof e.round === 'number' &&
 		Array.isArray(e.weapons) &&

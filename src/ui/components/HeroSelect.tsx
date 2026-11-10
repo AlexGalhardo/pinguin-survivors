@@ -1,7 +1,7 @@
 import { type ReactElement, type ReactNode, useState } from 'react';
 import type { HeroId } from '../../config/constants';
-import type { Danger } from '../../data/difficulty';
-import { DANGER } from '../../data/difficulty';
+import type { Difficulty } from '../../data/difficulty';
+import { DIFFICULTY } from '../../data/difficulty';
 import { HEROES } from '../../data/heroes';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import type { WeaponId } from '../../data/weapons';
@@ -23,10 +23,10 @@ export interface HeroSelectHero {
 	demoLocked?: boolean;
 	level: number;
 	bestRound: number;
-	/** Highest Danger the hero can pick (`maxSelectableDanger`). */
-	maxDanger: Danger;
-	/** Best round per Danger 0..5 (`save.bestRoundByDanger[hero]`). */
-	bestByDanger: readonly number[];
+	/** Highest Difficulty the hero can pick (`maxSelectableDifficulty`). */
+	maxDifficulty: Difficulty;
+	/** Best round per Difficulty 0..5 (`save.bestRoundByDifficulty[hero]`). */
+	bestByDifficulty: readonly number[];
 	/** Starting weapons the player can pick (`HeroDef.startingWeapons` plus Pearl unlocks). */
 	weapons: readonly string[];
 }
@@ -37,7 +37,7 @@ export interface HeroSelectData {
 
 export interface StartRunRequest {
 	hero: HeroId;
-	danger: Danger;
+	difficulty: Difficulty;
 	weapon: string;
 }
 
@@ -153,28 +153,20 @@ function WeaponSection({ weapon }: { weapon: string }): ReactElement {
 	);
 }
 
-/** What a Danger level changes, in pairs. */
-function DangerSection({ danger }: { danger: Danger }): ReactElement {
-	const m = DANGER[danger];
+/** Atlas frames reused from the old Danger icons (Easy, Normal, Hard). */
+const DIFFICULTY_ICON = { 0: 0, 1: 2, 2: 5 } as const;
+
+/** What a Difficulty level changes. */
+function DifficultySection({ difficulty }: { difficulty: Difficulty }): ReactElement {
+	const m = DIFFICULTY[difficulty];
 	const mul = (v: number): string => `×${v}`;
 	const worse = (v: number): string =>
 		v > 1 ? 'text-crit' : v < 1 ? 'text-xp' : 'text-text-light';
 	return (
-		<Section title={t('select.sheet.danger', { n: danger })}>
+		<Section title={t('select.sheet.difficulty')}>
 			<div className="grid grid-cols-2 gap-x-6">
 				<StatRow label={t('select.dm.hp')} value={mul(m.hp)} accent={worse(m.hp)} />
 				<StatRow label={t('select.dm.dmg')} value={mul(m.dmg)} accent={worse(m.dmg)} />
-				<StatRow
-					label={t('select.dm.speed')}
-					value={mul(m.speed)}
-					accent={worse(m.speed)}
-				/>
-				<StatRow
-					label={t('select.dm.drops')}
-					value={mul(m.drops)}
-					accent={m.drops > 1 ? 'text-xp' : m.drops < 1 ? 'text-crit' : 'text-text-light'}
-				/>
-				<StatRow label={t('select.dm.waves')} value={m.extraWaves} />
 			</div>
 		</Section>
 	);
@@ -187,7 +179,7 @@ const SHEET_TABS: readonly { id: SheetTab; label: I18nKey }[] = [
 	{ id: 'weapon', label: 'select.sheet.weapon' },
 ];
 
-/** Hero, Danger (0..5, capped by what the hero unlocked) and starting weapon, then start. */
+/** Hero, Difficulty (0..5, capped by what the hero unlocked) and starting weapon, then start. */
 export function HeroSelect({
 	data,
 	actions,
@@ -196,7 +188,7 @@ export function HeroSelect({
 	actions: HeroSelectActions;
 }): ReactElement {
 	const [heroId, setHeroId] = useState<HeroId>(data.heroes[0]?.id ?? 'jack');
-	const [danger, setDanger] = useState(0);
+	const [difficulty, setDifficulty] = useState(1);
 	const [weaponIndex, setWeaponIndex] = useState(0);
 	const [tab, setTab] = useState<SheetTab>('stats');
 	const compact = useCompact();
@@ -211,10 +203,10 @@ export function HeroSelect({
 
 	const pickHero = (id: HeroId): void => {
 		setHeroId(id);
-		setDanger(0);
+		setDifficulty(1);
 		setWeaponIndex(0);
 	};
-	const shownDanger = Math.min(danger, hero.maxDanger);
+	const shownDifficulty = Math.min(difficulty, hero.maxDifficulty);
 	const weapon = hero.weapons[Math.min(weaponIndex, hero.weapons.length - 1)];
 	const step = (value: number, d: -1 | 1, len: number): number => (value + d + len) % len;
 	// Whole-number sprite scale (pixel art): 320 px at 1080p, 80 px on the phone.
@@ -254,14 +246,22 @@ export function HeroSelect({
 			<AdjustRow
 				label={
 					<span className="inline-flex items-center gap-2">
-						<AtlasIcon frames={[`icon.danger.${shownDanger}`]} size={32} />
-						{`${t('select.danger', { n: shownDanger })} · ${t('select.dangerBest', {
-							n: hero.bestByDanger[shownDanger] ?? 0,
-						})}`}
+						<AtlasIcon
+							frames={[
+								`icon.danger.${DIFFICULTY_ICON[shownDifficulty as Difficulty]}`,
+							]}
+							size={32}
+						/>
+						{`${t('select.difficulty', { name: t(`difficulty.${shownDifficulty}` as I18nKey) })} · ${t(
+							'select.difficultyBest',
+							{
+								n: hero.bestByDifficulty[shownDifficulty] ?? 0,
+							},
+						)}`}
 					</span>
 				}
-				onPrev={() => setDanger(step(shownDanger, -1, hero.maxDanger + 1))}
-				onNext={() => setDanger(step(shownDanger, 1, hero.maxDanger + 1))}
+				onPrev={() => setDifficulty(step(shownDifficulty, -1, hero.maxDifficulty + 1))}
+				onNext={() => setDifficulty(step(shownDifficulty, 1, hero.maxDifficulty + 1))}
 				disabled={!hero.unlocked}
 			/>
 			{weapon && (
@@ -295,7 +295,11 @@ export function HeroSelect({
 					<Btn
 						onActivate={() =>
 							weapon &&
-							actions.start({ hero: hero.id, danger: shownDanger as Danger, weapon })
+							actions.start({
+								hero: hero.id,
+								difficulty: shownDifficulty as Difficulty,
+								weapon,
+							})
 						}
 						disabled={!hero.unlocked || !weapon}
 						variant="primary"
@@ -356,7 +360,7 @@ export function HeroSelect({
 					</div>
 					<div className="flex min-w-0 flex-col gap-3">
 						{picker}
-						<DangerSection danger={shownDanger as Danger} />
+						<DifficultySection difficulty={shownDifficulty as Difficulty} />
 						{weapon && <WeaponSection weapon={weapon} />}
 					</div>
 				</div>

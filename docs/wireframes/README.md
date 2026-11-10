@@ -37,20 +37,21 @@ Fonte: [`pinguin-survivors-wireframes.fig`](pinguin-survivors-wireframes.fig), a
 
 ### 2.1 Menu inicial
 
+> Regra plano (v2.1, [ADR-027](../adrs/ADR-027-ui-plana.md)): em todas as telas, sem sombras nem brilho nem molduras de card; grupos de botões e de conteúdo ficam numa borda de 1 px `line` e `Btn` tem um estilo por função. Os wireframes SVG com sombra são históricos nesse ponto.
+
 Wireframe: [2.1-menu-inicial.svg](d4/2.1-menu-inicial.svg) · [844×390](d4/2.1-menu-inicial-844x390.svg)
 
 - **Componente:** `MainMenu.tsx` (+ `MenuBackground.tsx`). Única tela com arte.
 - **Regiões:**
   - arte em tela cheia, com sombreado `shade` de x 0 a 940 e brilho lateral;
-  - logotipo `display` 80 em x 110, y 70, com `Ornament` 620 e a tagline `body` 24;
+  - logotipo `display` 80 em x 110, y 70, com `Ornament` 620 (sem subtítulo desde a v2.1);
   - lista de `DMenuItem` em x 110, y 300, w 720, em grupos separados por 12 px: jogo (CONTINUAR/JOGAR, NOVO JOGO, CARREGAR), progressão (HERÓIS E POÇÕES, ÁRVORE, CONQUISTAS, HISTÓRICO) e sistema (CONFIGURAÇÕES, SAIR);
-  - carteira `DCurrency` 24 em x 1220, y 1012, e a versão em 22 no canto superior direito.
-- **Componentes:** `DMenuItem` (focado 36 px), `DCurrency`, `Ornament`.
+  - cada grupo da lista tem borda fina de 1 px `line` (regra plano, ADR-027); sem rodapé de carteira (pérolas e pontos de conquista saíram do menu inicial) e a versão em 22 no canto superior direito.
+- **Componentes:** `DMenuItem` (focado 36 px), `Ornament`.
 - **Tokens:** `title` / `display` em Cinzel, `list-item`, `gold-bright`, `crit`, `focus-band`, `shade`.
 - **Foco:** primeiro item visível (CONTINUAR ou NOVO JOGO) e ↑↓ em ciclo. Sem Esc. Itens condicionais somem, e a lista se reorganiza sem deixar buracos.
 - **844×390:**
   - título 30 e lista de 5 itens (48/46 px) com `DPager` 1/2, sem logotipo grande;
-  - a carteira desce para y 356.
 - **Diferenças em relação à atual:** botões `Btn` com borda viram texto de 30 px; o foco por contorno vira losango com faixa; sai a moldura do painel da coluna.
 
 ### 2.2 Novo jogo e Carregar
@@ -100,20 +101,18 @@ Wireframe: [2.4-herois-e-pocoes.svg](d4/2.4-herois-e-pocoes.svg)
 
 ### 2.5 Árvore de habilidades
 
-Wireframe: [2.5-arvore-de-habilidades.svg](d4/2.5-arvore-de-habilidades.svg)
+Wireframe: [2.5-arvore-de-habilidades.svg](d4/2.5-arvore-de-habilidades.svg) (desenho do grafo anterior; a v1.1 em grade, [ADR-026](../adrs/ADR-026-arvore-de-habilidades-em-grade.md), está descrita abaixo e o SVG será refeito).
 
-- **Componente:** `SkillTree.tsx` (a câmera e o grafo atuais continuam).
+- **Componente:** `SkillTree.tsx`; a grade é derivada dos ids dos nós por `src/ui/skill-grid.ts`.
 - **Regiões:**
-  - **grafo em tela cheia** atrás da vinheta;
-  - **topo esquerdo:** título Cinzel 40 e `‹ JACK · NÍVEL 12 › 5 PONTOS 130 PÉROLAS` em 24;
-  - **topo direito:** campo "Buscar nós" (linha `gold-aged` de 2 px, sem caixa, texto 22) e zoom − + com alvos de 48;
-  - **canto inferior esquerdo:** "BÔNUS DA ÁRVORE" + soma em 24 `xp`;
-  - **rodapé direito:** `DKeyHint` "R REINICIAR · 150 PÉROLAS · ESC VOLTAR";
-  - **detalhe:** `DTooltip` (w 460, borda `gold-aged`, cabeçalho na cor do ramo a 20 %) ancorado ao nó selecionado, com nome em Cinzel 30, "LÂMINA · NOTÁVEL · NÍVEL 2/5" em 22, bônus em 24 `xp` e ação em 24 `crit`.
-- **Nós:** caminho 18, passiva 22, notável 36–40, pedra-chave 44 (losango). Alocado em `gold-bright` com brilho; prévia tracejada; resultado de busca com halo `crit`; foco com borda de 3 `crit` + brilho de 24 px.
-- **Foco:** o direcional pula para o nó vizinho mais próximo na direção, o stick move a câmera, Enter aloca. No gamepad, o tooltip fica ancorado num canto fixo (ver checklist, item 5).
-- **844×390:** sem busca; tooltip fixo à direita (w 336) e ferramentas numa linha superior.
-- **Diferenças em relação à atual:** sai o painel lateral de 22 rem; os detalhes vão para o tooltip e os bônus para o canto.
+  - **topo:** título Cinzel, `‹ JACK · NÍVEL 12 ›`, **"5 PONTOS"** grande em `crit` e "130 PÉROLAS" em `fish`;
+  - **esquerda (grade):** 12 colunas de quadrados mais a coluna de tier (1–13): 3 ramos × [cluster esquerdo, espinha, cluster direito] + 1 coluna de nós de caminho depois de cada ramo; cabeçalho de ramo na cor do ramo; linhas = tier;
+  - **direita (detalhes fixos, w ~24 rem):** nome Cinzel, "LÂMINA · NOTÁVEL · TIER 5", estado em texto, efeito atual → próximo nível, custo em pontos, "Requer N nós antes", ação (Enter) e, embaixo, "Bônus da árvore";
+  - **rodapé:** REINICIAR · pérolas e VOLTAR.
+- **Quadrado (48–56 px, 44 no celular):** sigla de 2 letras e `2/5` quando há níveis; notável com marca ◆ e pedra-chave com ★. Estados: **bloqueado** (borda `snow-dark`, texto apagado), **disponível** (borda na cor do ramo), **comprado** (borda `gold-bright`), **máximo** (preenchido `gold-aged`). Foco: borda de 3 `crit`. Linha reta de 2 px entre quadrados vizinhos (dourada quando os dois estão comprados); sem sombra e sem curvas.
+- **Foco:** setas movem de célula em célula (esquerda/direita na linha, cima/baixo na coluna, pulando vazios; sem célula na direção, o foco segue a navegação geométrica); Enter aloca (ou devolve num nó cheio); no toque, o primeiro toque seleciona e o segundo aloca.
+- **844×390:** grade rola na vertical sem barra (o foco leva a célula à vista); detalhes em coluna de 260 px; sem "Bônus da árvore".
+- **Diferenças em relação à anterior:** saem câmera, zoom, busca, grafo radial e tooltip ancorado; entram a grade, o painel fixo e os pontos em destaque.
 
 ### 2.6 Conquistas e Loja de extras
 

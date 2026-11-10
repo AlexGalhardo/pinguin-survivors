@@ -49,7 +49,7 @@ const react = Number(arg('react', '0'));
 const mistakes = Number(arg('mistakes', '0'));
 /** Start round (debug `?round=`): cards are not granted, so use it for boss checks only. */
 const startRound = arg('round', '');
-const danger = arg('danger', '1');
+const difficulty = arg('difficulty', '1');
 /** Baseline for A/B: the brain ignores the red marks of bosses and elites. */
 const ignoreMarks = flag('ignore-marks');
 /** Hero body radius (mirrors HERO_RADIUS in CombatSystem, which cannot be imported without Phaser). */
@@ -108,7 +108,7 @@ function runEndEvent(log: RunLog): Record<string, unknown> {
 	return {
 		...log,
 		version: 'bot',
-		danger: Number(danger),
+		difficulty: Number(difficulty),
 		cause: log.outcome === 'bossTimeout' ? 'bossTimeout' : 'death',
 		durationS: log.gameSeconds,
 		platform: 'web',
@@ -558,7 +558,7 @@ async function playRun(page: Page, hero: HeroId, level: number, seed: number): P
 		[SAVE_KEY, saveFor(hero, level)] as const,
 	);
 	await page.goto(
-		`${url}/?skipMenu=1&hero=${hero}&seed=${seed}&danger=${danger}${startRound ? `&round=${startRound}` : ''}`,
+		`${url}/?skipMenu=1&hero=${hero}&seed=${seed}&difficulty=${difficulty}${startRound ? `&round=${startRound}` : ''}`,
 	);
 	const start = Date.now();
 	let installed = false;

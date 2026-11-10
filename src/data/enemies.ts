@@ -60,7 +60,7 @@ export interface EnemyDef {
 }
 
 /**
- * Effective HP of each campaign boss at the reference Danger (`mods.hp` 1), SDD-016 RF-10. The boss `hp` below reads
+ * Effective HP of each campaign boss at the reference Normal difficulty (`mods.hp` 1), SDD-016 RF-10. The boss `hp` below reads
  * from here, so this is the only place to tune a boss life; the endless multiplies it by `bossHpMul`.
  * [calibrar com o bot] provisional curve (~x1.35 per boss, no extra step at the finales 30/45/50).
  */

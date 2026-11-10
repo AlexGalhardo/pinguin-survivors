@@ -2,6 +2,7 @@
 
 **Versão** 1.0 · **Data** 2026-11-08 · **Status** Aprovada · **ADR** [008](../adrs/ADR-008-danger-0-5-e-endless.md), [007](../adrs/ADR-007-fish-na-run-perolas-meta.md) · **GDD** §16, §18
 
+>
 > **Nota (2026-11-08)**: o save v2 e a migração v1 → v2 foram superados: o save é versionado (`SAVE_VERSION`, hoje 3) e **não migra** antes da 1.0 (decisão do desenvolvedor); por herói guarda `tree` no lugar de `points` e `upgrades` ([ADR-019](../adrs/ADR-019-arvore-de-habilidades.md)). O Danger 0–5 segue como especificado. TODO (sênior de slots de save): documentar os slots de save quando o ADR-020 for fechado.
 
 ## Requisitos

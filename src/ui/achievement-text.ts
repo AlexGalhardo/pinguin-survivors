@@ -15,5 +15,8 @@ export function achievementDescription(def: AchievementDef): string {
 	return t(`ach.${def.family}.desc` as I18nKey, {
 		n: n.toLocaleString(getLang()),
 		hero: def.hero ? t(`hero.${def.hero}` as I18nKey) : '',
+		difficulty: def.family.startsWith('difficulty')
+			? t(`difficulty.${def.display}` as I18nKey)
+			: '',
 	});
 }

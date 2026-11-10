@@ -4,7 +4,7 @@ import { type GameSpeed, type HeroId, MAX_STEP } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import {
 	getParams,
-	getRunDanger,
+	getRunDifficulty,
 	getRunHero,
 	getRunWeapon,
 	getSave,
@@ -21,7 +21,7 @@ import { trackZoom } from '../core/viewport';
 import { EXTRA_LIGHTS } from '../data/ambient';
 import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DEMO, STEAM_URL } from '../data/demo';
-import { DANGER, type Danger, type DangerMods } from '../data/difficulty';
+import { DIFFICULTY, type Difficulty, type DifficultyMods } from '../data/difficulty';
 import { ELITE_HAZARD } from '../data/elite-hazard';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { GEAR_BY_ID, GEAR_SLOTS } from '../data/equipment';
@@ -74,7 +74,7 @@ import {
 	extraWaves,
 	recordBestRound,
 	scaleDrops,
-	unlockDanger,
+	unlockDifficulty,
 } from '../logic/difficulty';
 import { planEliteHazard } from '../logic/elite-hazard';
 import { nextHazard } from '../logic/enemy-ai';
@@ -259,7 +259,7 @@ export class GameScene extends Phaser.Scene {
 	speed: GameSpeed = 1;
 	private controls!: GameInput;
 	private obstacles!: ObstacleField;
-	private mods: DangerMods = DANGER[1];
+	private mods: DifficultyMods = DIFFICULTY[1];
 	private waves: ExtraWave[] = [];
 	private readonly collideHero = (hero: Hero): void => {
 		pushOut(hero, HERO_RADIUS, this.obstacles.near(hero.x, hero.y, HERO_RADIUS));
@@ -396,10 +396,10 @@ export class GameScene extends Phaser.Scene {
 						? Math.min(params.round, DEMO.maxRound)
 						: params.round,
 				tier,
-				danger: Math.min(
-					params.danger ?? getRunDanger(this) ?? 1,
-					DEMO.enabled ? DEMO.maxDanger : 5,
-				) as Danger,
+				difficulty: Math.min(
+					params.difficulty ?? getRunDifficulty(this) ?? 1,
+					DEMO.enabled ? DEMO.maxDifficulty : 2,
+				) as Difficulty,
 				cardRerolls: this.stats.cardRerolls,
 			});
 			this.run.maxHp = this.stats.maxHp;
@@ -554,20 +554,13 @@ export class GameScene extends Phaser.Scene {
 		this.enemies.obstacles = this.obstacles;
 		this.enemies.onTelegraph = (x, y) => this.fx.spawnMark(x, y);
 		this.syncArena();
-		this.run.danger ??= 1;
-		this.mods = DANGER[this.run.danger];
-		this.waves = extraWaves(this.run.seed, this.run.danger);
+		this.run.difficulty ??= 1;
+		this.mods = DIFFICULTY[this.run.difficulty];
+		this.waves = extraWaves(this.run.seed, this.run.difficulty);
 		this.enemies.mods = this.mods;
 		this.enemies.seed = this.run.seed;
 		this.startEnemyRound();
-		playMusic(
-			this,
-			musicForRound(
-				this.run.round,
-				isBossRound(this.run.round),
-				biomeForRound(this.run.round, this.run.seed),
-			),
-		);
+		playMusic(this, musicForRound(this.run.round, this.run.seed, this.enemies.boss?.def.id));
 
 		this.scene.launch('Hud');
 		this.run.phase ??= 'round';
@@ -1355,9 +1348,9 @@ export class GameScene extends Phaser.Scene {
 			this.fx.banner(this.hero.x, this.hero.y, 'unlock.bob');
 		}
 		if (this.run.round === 20) {
-			const before = save.progress.hero[this.run.hero].dangerUnlocked;
-			unlockDanger(save, this.run.hero, this.run.danger);
-			if (save.progress.hero[this.run.hero].dangerUnlocked > before)
+			const before = save.progress.hero[this.run.hero].difficultyUnlocked;
+			unlockDifficulty(save, this.run.hero, this.run.difficulty);
+			if (save.progress.hero[this.run.hero].difficultyUnlocked > before)
 				this.fx.play('sfx.dangerUnlock');
 		}
 		if (this.run.round >= 20 && !save.heroes.lucia.unlocked) {
@@ -1473,7 +1466,7 @@ export class GameScene extends Phaser.Scene {
 		}
 		if (this.run.phase === 'shop') {
 			this.fx.play('sfx.shopOpen');
-			playMusic(this, 'music.shop');
+			playMusic(this, 'music.shop.theme');
 			this.publishShopView();
 		}
 	}
@@ -1623,7 +1616,7 @@ export class GameScene extends Phaser.Scene {
 		const price = rerollPrice(run.round, shop.rerolls);
 		// From D2 the shop warns about the extra wave of the round that is about to start.
 		const wave =
-			run.danger >= 2 ? this.waves.find((x) => x.round === run.round + 1) : undefined;
+			run.difficulty >= 2 ? this.waves.find((x) => x.round === run.round + 1) : undefined;
 		publishShop({
 			round: run.round,
 			nextWaves: wave ? [wave.kind] : [],
@@ -1840,14 +1833,7 @@ export class GameScene extends Phaser.Scene {
 			this.fx.play(bossRoarSfx(this.enemies.boss.def.id));
 			zoomPunch(this, 0.08, 400);
 		}
-		playMusic(
-			this,
-			musicForRound(
-				this.run.round,
-				isBossRound(this.run.round),
-				biomeForRound(this.run.round, this.run.seed),
-			),
-		);
+		playMusic(this, musicForRound(this.run.round, this.run.seed, this.enemies.boss?.def.id));
 		this.roundStartedAt = this.run.elapsed;
 		this.potionsThisRound = 0;
 		this.drinkShopPotions();
@@ -1947,7 +1933,7 @@ export class GameScene extends Phaser.Scene {
 			{
 				version: __APP_VERSION__,
 				hero: run.hero,
-				danger: run.danger,
+				difficulty: run.difficulty,
 				level: this.level.level,
 				round: run.round,
 				weapons: this.build.weapons.map((w) => `${w.id}:${w.tier}`),
@@ -1988,7 +1974,7 @@ export class GameScene extends Phaser.Scene {
 			cards: [...this.build.cards],
 			seed: run.seed,
 		};
-		recordBestRound(save, run.hero, run.danger, run.round);
+		recordBestRound(save, run.hero, run.difficulty, run.round);
 		const previousBest = save.progress.hero[run.hero].bestRound;
 		const fresh = recordRunEnd(save, record, run.counters, Date.now());
 		reportAchievements(fresh.filter((d) => !demoHidesAchievement(d)));

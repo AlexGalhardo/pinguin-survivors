@@ -9,8 +9,6 @@ import { Ornament } from './Ornament';
 import { Vignette } from './Vignette';
 
 export interface MainMenuData {
-	pearls: number;
-	points: number;
 	/** Next round of the saved run, or null when there is nothing to continue. */
 	continueRound: number | null;
 	/** A save slot is loaded: the hero, workshop, history and play entries need one. */
@@ -108,14 +106,12 @@ export function MainMenu({
 						size="short"
 						className="[@media(max-height:500px)]:hidden"
 					/>
-					<p className="m-0 text-body text-text-light [@media(max-height:500px)]:hidden">
-						{t('menu.tagline')}
-					</p>
 				</div>
 				<div className="flex flex-col gap-3 [@media(max-height:500px)]:gap-1">
 					{groups.map((g) => (
 						<MenuList
 							key={g[0]?.id}
+							className="border border-line"
 							items={g.map((i) => ({ id: i.id, label: i.label }))}
 							onSelect={run}
 						/>
@@ -138,9 +134,6 @@ export function MainMenu({
 						</Btn>
 					</div>
 				)}
-				<div className="text-body font-bold text-fish">
-					{t('menu.wallet', { pearls: data.pearls, points: data.points })}
-				</div>
 			</div>
 			<Vignette />
 		</FocusScope>

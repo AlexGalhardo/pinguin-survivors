@@ -16,14 +16,14 @@ describe('parseDebugParams', () => {
 		});
 	});
 
-	test('danger and weapon are validated', () => {
-		expect(parseDebugParams('?danger=5&weapon=hammer')).toMatchObject({
-			danger: 5,
+	test('difficulty and weapon are validated', () => {
+		expect(parseDebugParams('?difficulty=2&weapon=hammer')).toMatchObject({
+			difficulty: 2,
 			weapon: 'hammer',
 		});
-		expect(parseDebugParams('?danger=6&weapon=nope').danger).toBeUndefined();
-		expect(parseDebugParams('?danger=6&weapon=nope').weapon).toBeUndefined();
-		expect(parseDebugParams('?danger=0').danger).toBe(0);
+		expect(parseDebugParams('?difficulty=3&weapon=nope').difficulty).toBeUndefined();
+		expect(parseDebugParams('?difficulty=3&weapon=nope').weapon).toBeUndefined();
+		expect(parseDebugParams('?difficulty=0').difficulty).toBe(0);
 	});
 
 	test('arena forces the side, clamped to the maximum', () => {

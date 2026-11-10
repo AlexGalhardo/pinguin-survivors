@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { MAX_ENEMIES } from '../config/constants';
 import { ARENA } from '../data/arena';
-import { DANGER, type DangerMods, EXTRA_WAVES } from '../data/difficulty';
+import { DIFFICULTY, type DifficultyMods, EXTRA_WAVES } from '../data/difficulty';
 import { ELITE_HAZARD } from '../data/elite-hazard';
 import { ENEMY_LIST, type EnemyDef } from '../data/enemies';
 import { OBSTACLES } from '../data/obstacles';
@@ -62,8 +62,8 @@ export class EnemySystem {
 	boss: Enemy | null = null;
 	/** Run seed: draws the endless-mode boss. */
 	seed = 0;
-	/** Danger multipliers on enemy HP, damage and speed (ADR-008). */
-	mods: DangerMods = DANGER[1];
+	/** Difficulty multipliers on enemy HP, damage and speed (ADR-008). */
+	mods: DifficultyMods = DIFFICULTY[1];
 	/** Extra wave of the current round (SDD-005 RF-02): elites ×3 or spawn rate ×2. */
 	wave: 'elite' | 'horde' | null = null;
 	/** Solid decorations walkers slide around (flyers and bosses ignore them). */

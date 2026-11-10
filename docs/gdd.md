@@ -21,7 +21,7 @@
 13. [Superpoderes](#13-superpoderes)
 14. [Inimigos, elites e bosses](#14-inimigos-elites-e-bosses)
 15. [Biomas](#15-biomas)
-16. [Dificuldade (Danger) e endless](#16-dificuldade-danger-e-endless)
+16. [Dificuldade e endless](#16-dificuldade-e-endless)
 17. [Economia](#17-economia)
 18. [Progressão persistente](#18-progressão-persistente)
 19. [Conquistas e extras](#19-conquistas-e-extras)
@@ -68,7 +68,7 @@ Menu (árvore de habilidades · Pérolas: poções/gambits · arma inicial)
 
 - **Duração do round N** (não boss): `30 + 5·(N−1)` s, sem teto (pedido do desenvolvedor, 2026-11-08: o jogo estava fácil; 1º round de 20 → 30 s em 2026-11-10).
 - **Boss**: rounds 5, 10, 15, 20…; barra de boss e timer de `2 + (N/5 − 1)` min (round 5: 2:00, round 10: 3:00, round 15: 4:00… teto de 10:00 do boss 45 em diante); matar encerra o round; zerar o timer é game over. A **vida de cada boss** vem de uma tabela (`BOSS_HP`, SDD-016 RF-10: 3000 no round 5 até 33000 no 50, curva ≈ ×1,35 por boss; no endless ×1,2 por boss após o 50). Biomas e ciclos de escala continuam em blocos de 10 rounds.
-- **Elites** nos rounds múltiplos de 3 (roxo, HP ×4; laranja, HP ×6 a partir do round 11). Waves de elite/horda extras por Danger (§16).
+- **Elites** nos rounds múltiplos de 3 (roxo, HP ×4; laranja, HP ×6 a partir do round 11). Waves de elite/horda extras não existem mais (ADR-025).
 - **Endless**: sem fim e sem tela de vitória (ADR-008).
 - Cura de 25% do HP máximo ao fim de cada round; o HP restante passa para o próximo.
 
@@ -103,7 +103,7 @@ Ataques 100% automáticos; sem dash (esquiva é stat). Teclas rebindáveis.
 
 - Cada herói tem **perfil de stats**, **multiplicadores por classe**, **6 cartas exclusivas** (§10) e **1 superpoder** (§13). Números em balancing-and-simulation.md Parte B §4.
 - **Arma inicial** escolhida na seleção (ADR-005): Jack machete / facas / bumerangue de peixe; Bob escopeta cano duplo / pistola / besta; Lucia cajado elemental / estilhaços de gelo / anel de chamas. Outras armas iniciais desbloqueiam com Pérolas.
-- **Danger** por herói (§16) e **melhor round por herói e danger** aparecem na seleção.
+- **Dificuldade** por herói (§16) e **melhor round por herói e dificuldade** aparecem na seleção.
 
 ## 7. Atributos
 
@@ -151,7 +151,7 @@ Lista final e números em `src/data/weapons.ts` e balancing-and-simulation.md Pa
 - Abre **ao fim de cada round** com o tempo pausado, em tela estilo **ARPG (Diablo)** (ADR-006):
   - **Esquerda**: paper doll do herói, stats da run com deltas, **5 slots de equipamento** (elmo, armadura, pernas, anel, amuleto) sem mochila (comprar equipa na hora e o item que estava no slot é vendido), 6 slots de arma com fusão.
   - **Direita**: **NPC lojista** (pinguim velho mercador com carrinho de peixes, idle animado, falas curtas por texto) com **4 ofertas** de **evolução** (ADR-021): só **armas e equipamentos que o jogador ainda não tem ou versões melhores dos que já tem**, nunca piores, raridades **I a V** (IV a partir do round 11 e pede 1 **Marca de Elite**; V a partir do round 21 e pede 1 **Núcleo de Boss**, além do Fish; toda Elite dá 1 Marca e todo Boss 1 Núcleo), cada uma já com seus afixos, preço em Fish, **reroll** (preço cresce a cada uso na mesma loja; base cresce por round) e **lock** grátis por oferta (persiste entre lojas).
-  - Rodapé: Fish da run, próximo round, avisos de elite/horda (Danger ≥ 2), botão "Próximo round".
+  - Rodapé: Fish da run, próximo round, avisos de elite/horda (hoje sem waves extras), botão "Próximo round".
 - Oferta ponderada por **sorte**, round e classes que o herói já tem (leve viés para sinergia).
 - Vende também **poções de velocidade** de run (uso único, não confundir com os gambits do menu) a partir do round 5; as outras poções não são vendidas.
 - Vende **itens de suporte** (§12b), sempre raridade I; comprar de novo o mesmo item sobe o nível. A **poção de cura** (§12) aparece como card só até a primeira compra; depois o rodapé tem o botão fixo **+1 poção** até 10.
@@ -246,13 +246,13 @@ Regra geral: a facção é original. Não usar nomes, designs, silhuetas icônic
 
 Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool próprio de inimigos. Banner de chegada e troca de música no round 11/21/31/41 (estação e ruínas reusam as músicas existentes até haver trilha própria).
 
-## 16. Dificuldade (Danger) e endless
+## 16. Dificuldade e endless
 
-- **Danger 0–5 por herói** (ADR-008): vencer o boss do round 20 no Danger D libera D+1 para aquele herói.
-- Por danger: multiplicadores de HP/dano dos inimigos e de drops (o **Danger 0** é o modo fácil: inimigos com **0,5×** de vida e de dano, decisão do desenvolvedor 2026-11-08); **waves de elite/horda extras** (D0–1 nenhuma, D2–3 uma, D4–5 três), avisadas na loja a partir do D2.
+- **Dificuldade por herói** (ADR-025, substitui o Danger 0–5): **Fácil ×0,5, Normal ×1, Difícil ×2** em vida e dano dos inimigos (bosses inclusos); velocidade, drops e waves extras ficam neutros. Fácil e Normal desde o início; vencer o boss do round 20 no Normal libera o Difícil para aquele herói.
+- **Duração do round comum**: `min(120 s, 30 + 5·(N−1))` (teto de 2 minutos desde o round 19); bosses seguem `120 + 60/boss`, teto de 600 s (ADR-025).
 - **Endless** sem vitória; a cada volta de 50 rounds HP ×1,6 e dano ×2 (balancing-and-simulation.md Parte B §2).
 - **Visual e pool no endless** (round 51+): a cada 10 rounds, a seed da run sorteia o bioma entre Antártida, floresta, cidade destruída, estação de pesquisa e cidade em ruínas. O pool de inimigos e o boss usam todos os assets (ADR-016).
-- Conquistas e leaderboards por herói e danger.
+- Conquistas e leaderboards por herói e dificuldade.
 
 ## 17. Economia
 
@@ -271,7 +271,7 @@ Preços de loja e reroll em `src/data/economy.ts` (SDD-003); Árvore de habilida
 
 ## 19. Conquistas e extras
 
-131 conquistas globais (1 ponto cada) → **loja de extras** (10 bônus permanentes pequenos, até nível 10). Conquistas viram conquistas Steam. Novas: por danger, por set completo, por fusão IV, por round 20/30/50 por herói.
+131 conquistas globais (1 ponto cada) → **loja de extras** (10 bônus permanentes pequenos, até nível 10). Conquistas viram conquistas Steam. Novas: por dificuldade (Normal e Difícil), por set completo, por fusão IV, por round 20/30/50 por herói.
 
 ## 20. Game feel e gore
 
@@ -282,7 +282,7 @@ As armas equipadas **atacam o alvo** de forma visível: golpe com lunge até o i
 Toda a UI é React + Tailwind v4 sobre o canvas (ADR-002); textos em `src/i18n/`; navegável por teclado, mouse, gamepad e toque; layouts validados em 1920×1080, 2560×1440 e 2400×1080 (celular landscape) nos 4 idiomas.
 
 ```
-MainMenu ─► HeroSelect (herói · danger · arma inicial) ─► Game (+ HUD)
+MainMenu ─► HeroSelect (herói · dificuldade · arma inicial) ─► Game (+ HUD)
    │            │                                            │ level-up ─► LevelUpCards ─► Game
    │            └─► Hero (árvore · gambits · armas)        │ fim do round ─► Shop ─► Game
    ├─► Achievements / Extras                                 │ Esc ─► Pause (stats, armas, equipamento) ─► Settings
@@ -296,7 +296,7 @@ MainMenu ─► HeroSelect (herói · danger · arma inicial) ─► Game (+ HUD
 
 ## 22. Demo
 
-Rounds 1–10 (termina no urso polar), só Jack, Danger 0–1; Bob e Lucia bloqueados com aviso; tela final com resumo, "Bob desbloqueado no jogo completo", botão **Wishlist** e "Jogar de novo"; save migra para o jogo completo. Mesma demo em `/demo` (web) e na Steam (ADR-013).
+Rounds 1–10 (termina no urso polar), só Jack, Fácil e Normal; Bob e Lucia bloqueados com aviso; tela final com resumo, "Bob desbloqueado no jogo completo", botão **Wishlist** e "Jogar de novo"; save migra para o jogo completo. Mesma demo em `/demo` (web) e na Steam (ADR-013).
 
 ## 23. Fora do escopo da 1.0
 
