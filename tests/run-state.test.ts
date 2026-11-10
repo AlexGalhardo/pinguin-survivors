@@ -32,7 +32,7 @@ import { baseStats } from '../src/logic/stats';
 test('run starts with the hero profile and round timer', () => {
 	const s = createRunState(HEROES.lucia, { seed: 5, round: 3 });
 	expect(s.hp).toBe(HEROES.lucia.hp);
-	expect(s.timeLeft).toBe(30);
+	expect(s.timeLeft).toBe(40);
 	startRound(s, 10);
 	expect(s.timeLeft).toBe(180);
 });

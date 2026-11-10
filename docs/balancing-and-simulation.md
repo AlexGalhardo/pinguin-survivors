@@ -116,7 +116,7 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 
 | Regra | Valor |
 |---|---|
-| Duração do round N (não boss) | `20 + 5·(N−1)` s, sem teto (2026-11-08) |
+| Duração do round N (não boss) | `30 + 5·(N−1)` s, sem teto (2026-11-08; base 20 → 30 s em 2026-11-10) |
 | Boss | rounds `N % 5 == 0`; limite `120 + 60·(N/5 − 1)` s (round 5: 2 min, 10: 3 min, 15: 4 min…); timeout = game over; vida do boss `× 2^(N/5 − 1)` (`bossHpPerBoss` 2: round 5 ×1, 10 ×2, 15 ×4, 20 ×8) |
 | Elite roxo (2×) | rounds `N % 3 == 0` e não boss; 8% dos spawns do round |
 | Elite laranja (3×) | idem, a partir do round 11; 4% dos spawns |

@@ -15,9 +15,9 @@ import {
 } from '../src/logic/round';
 
 describe('round timing (P-14)', () => {
-	test('20s, +5s per round, no cap', () => {
+	test('30s, +5s per round, no cap', () => {
 		expect([1, 2, 3, 8, 9, 14, 21, 41].map(roundDuration)).toEqual([
-			20, 25, 30, 55, 60, 85, 120, 220,
+			30, 35, 40, 65, 70, 95, 130, 230,
 		]);
 	});
 
