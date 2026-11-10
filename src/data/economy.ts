@@ -5,13 +5,17 @@ export const ECONOMY = {
 	/** Orb XP grows with the round: xp × (1 + perRound × round). */
 	xpPerRound: 0.05,
 	fish: {
-		commonChance: 0.05,
-		elitePurple: 3,
-		eliteOrange: 6,
 		/** Fish a run starts with: enough for one tier I weapon in the first shop (price 8 + 2 per round). */
 		start: 10,
 		roundEndBase: 2,
 		bossPerCycle: 25,
+	},
+	/** Fish dropped per kill (developer decision 2026-11-10); boss and round-end Fish are in `fish`. */
+	fishDrop: {
+		/** Chance of 1 Fish per common kill. */
+		common: 0.005,
+		/** Elites roll `chance` per kill, then drop `purple` / `orange` Fish. */
+		elite: { chance: 0.25, purple: 2, orange: 4 },
 	},
 	magnetSpeed: 320,
 	/** Ground sprite scale of a dropped Fish (UI icons are untouched). */

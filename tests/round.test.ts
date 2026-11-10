@@ -27,6 +27,11 @@ describe('round timing (P-14)', () => {
 		expect([5, 10, 15, 20].map(roundDuration)).toEqual([120, 180, 240, 300]);
 	});
 
+	test('boss time limit caps at 10 minutes (boss 45 onward)', () => {
+		const rounds = [5, 10, 40, 45, 50, 55, 100];
+		expect(rounds.map(roundDuration)).toEqual([120, 180, 540, 600, 600, 600, 600]);
+	});
+
 	test('boss HP doubles with every boss; biomes stay in blocks of 10', () => {
 		expect([5, 10, 15, 20, 30].map(bossHpMul)).toEqual([1, 2, 4, 8, 32]);
 		expect([10, 11, 20].map(cycle)).toEqual([0, 1, 1]);

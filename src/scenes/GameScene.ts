@@ -22,7 +22,6 @@ import { EXTRA_LIGHTS } from '../data/ambient';
 import { MAGIC_FIRE_SPLASH } from '../data/combat';
 import { DEMO, STEAM_URL } from '../data/demo';
 import { DANGER, type Danger, type DangerMods } from '../data/difficulty';
-import { ECONOMY } from '../data/economy';
 import { ELITE_HAZARD } from '../data/elite-hazard';
 import { BOSS_POOL, BOSS_VOLLEY, ENEMIES, type EnemyId } from '../data/enemies';
 import { GEAR_BY_ID, GEAR_SLOTS } from '../data/equipment';
@@ -99,7 +98,7 @@ import { buildPlayerPanel, weaponStatsView } from '../logic/item-view';
 import { ObstacleField, pushOut } from '../logic/obstacles';
 import { roundFlushDone } from '../logic/pickup-pull';
 import { type GambitSlot, loadGambits, pickGambit, returnUnused } from '../logic/potions';
-import { addXp, type LevelState, orbXp } from '../logic/progression';
+import { addXp, type LevelState, orbXp, rollFishDrop } from '../logic/progression';
 import { depthOf, inputToWorld, worldToScreen } from '../logic/projection';
 import { Rng, randomSeed } from '../logic/rng';
 import { isBossRound } from '../logic/round';
@@ -1143,12 +1142,8 @@ export class GameScene extends Phaser.Scene {
 		if (this.superpower.active) this.superpower.killsThisCast++;
 		if (this.build.perks.quickReload) this.quickReloadTime = PERKS.quickReload.duration;
 		this.pickups.drop('xp', orbXp(e.def.xp, run.round) * this.mods.drops, e.x, e.y);
-		const f = ECONOMY.fish;
-		let fish = 0;
 		// Boss Fish are paid at the end of the round (`endRound`), not dropped.
-		if (e.elite === 'orange') fish = f.eliteOrange;
-		else if (e.elite === 'purple') fish = f.elitePurple;
-		else if (this.rng.next() < f.commonChance) fish = 1;
+		let fish = kind === 'boss' ? 0 : rollFishDrop(this.rng, e.elite ?? null);
 		// D1 skips the extra roll so seeded runs keep the same RNG sequence.
 		if (fish > 0 && this.mods.drops !== 1)
 			fish = scaleDrops(fish, this.mods.drops, this.rng.next());

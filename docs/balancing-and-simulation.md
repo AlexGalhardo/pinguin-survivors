@@ -117,10 +117,10 @@ Impacto das decisões de 2026-11-08 ([brainstorming.md](brainstorming.md)) sobre
 | Regra | Valor |
 |---|---|
 | Duração do round N (não boss) | `30 + 5·(N−1)` s, sem teto (2026-11-08; base 20 → 30 s em 2026-11-10) |
-| Boss | rounds `N % 5 == 0`; limite `120 + 60·(N/5 − 1)` s (round 5: 2 min, 10: 3 min, 15: 4 min…); timeout = game over; vida do boss `× 2^(N/5 − 1)` (`bossHpPerBoss` 2: round 5 ×1, 10 ×2, 15 ×4, 20 ×8) |
+| Boss | rounds `N % 5 == 0`; limite `min(600, 120 + 60·(N/5 − 1))` s (round 5: 2 min, 10: 3 min… 40: 9 min; **teto de 10 min** do boss 45 em diante, incluindo o endless; `bossTimeMax`); timeout = game over; vida do boss `× 2^(N/5 − 1)` (`bossHpPerBoss` 2: round 5 ×1, 10 ×2, 15 ×4, 20 ×8) |
 | Elite roxo (4×, SDD-016 RF-09) | rounds `N % 3 == 0` e não boss; 8% dos spawns do round |
 | Elite laranja (6×, SDD-016 RF-09) | idem, a partir do round 11; 4% dos spawns |
-| Elite | HP ×4 / ×6, dano ×2 / ×3, escala visual 2,5 / 2,8 (dobradas em 2026-11-10), um ataque em área sorteado ao nascer, drop garantido de Fish |
+| Elite | HP ×4 / ×6, dano ×2 / ×3, escala visual 2,5 / 2,8 (dobradas em 2026-11-10), um ataque em área sorteado ao nascer, 25% de chance de Fish (2 roxo, 4 laranja) |
 
 ### 2. Escala dos inimigos
 
@@ -386,8 +386,8 @@ Só o maior patamar atingido vale. Valores são totais por patamar (`SET_BONUSES
 
 | Fonte | Fish |
 |---|---|
-| Inimigo comum | 5% de chance de 1 |
-| Elite roxo / laranja | 3 / 6 garantidos |
+| Inimigo comum | 0,5% de chance de 1 |
+| Elite roxo / laranja | 25% de chance de 2 / 4 por elite morto |
 | Fim de round | `2 + floor(N/2)` |
 | Boss | `25 · (1 + ciclo)` |
 

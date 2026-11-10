@@ -6,10 +6,13 @@ export function isBossRound(round: number): boolean {
 	return round % ROUNDS.bossEvery === 0;
 }
 
-/** Seconds of a round (no cap); a boss round gives one more minute per boss: 5 → 2 min, 10 → 3 min… */
+/** Seconds of a round; a boss round gives one more minute per boss (5 → 2 min, 10 → 3 min…) up to `bossTimeMax`. */
 export function roundDuration(round: number): number {
 	if (isBossRound(round))
-		return ROUNDS.bossTimeLimit + ROUNDS.bossTimeStep * (round / ROUNDS.bossEvery - 1);
+		return Math.min(
+			ROUNDS.bossTimeMax,
+			ROUNDS.bossTimeLimit + ROUNDS.bossTimeStep * (round / ROUNDS.bossEvery - 1),
+		);
 	return ROUNDS.firstDuration + ROUNDS.durationStep * (round - 1);
 }
 

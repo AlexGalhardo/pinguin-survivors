@@ -9,6 +9,8 @@ export const ROUNDS = {
 	/** Seconds to kill the boss of round 5; each later boss gets `bossTimeStep` more (10: 3 min, 15: 4 min…). */
 	bossTimeLimit: 120,
 	bossTimeStep: 60,
+	/** Cap on the boss time limit in seconds (developer decision 2026-11-10): boss 45 reaches it, 50+ and the endless stay at 10 min. */
+	bossTimeMax: 600,
 	eliteEvery: 3,
 	/** Orange elites start after the first boss. */
 	orangeFrom: 11,

@@ -1,4 +1,5 @@
 import { ECONOMY } from '../data/economy';
+import type { Rng } from './rng';
 
 /** XP needed to go from `level` to `level + 1`. */
 export function xpToNext(level: number): number {
@@ -37,4 +38,11 @@ export function orbXp(baseXp: number, round: number): number {
 
 export function roundEndFish(round: number): number {
 	return ECONOMY.fish.roundEndBase + Math.floor(round / 2);
+}
+
+/** Fish dropped by a non-boss kill (boss Fish are paid at the end of the round). 0 = no drop. */
+export function rollFishDrop(rng: Rng, elite: 'purple' | 'orange' | null): number {
+	const d = ECONOMY.fishDrop;
+	if (!elite) return rng.next() < d.common ? 1 : 0;
+	return rng.next() < d.elite.chance ? d.elite[elite] : 0;
 }

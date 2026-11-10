@@ -1,6 +1,13 @@
 import { describe, expect, test } from 'bun:test';
 import { maxSelectableDanger, recordBestRound, unlockDanger } from '../src/logic/difficulty';
-import { addXp, freePoints, orbXp, roundEndFish, xpToNext } from '../src/logic/progression';
+import {
+	addXp,
+	freePoints,
+	orbXp,
+	rollFishDrop,
+	roundEndFish,
+	xpToNext,
+} from '../src/logic/progression';
 import { defaultSave, parseSave, SAVE_VERSION, serializeSave } from '../src/logic/save';
 
 describe('progression (P-24/P-25)', () => {
@@ -66,5 +73,20 @@ describe('Danger unlock (SDD-005 A4)', () => {
 		const once = parseSave(JSON.stringify({ version: SAVE_VERSION }));
 		expect(once.bestRoundByDanger.jack).toEqual([0, 0, 0, 0, 0, 0]);
 		expect(parseSave(serializeSave(once))).toEqual(once);
+	});
+});
+
+describe('fish drop per kill', () => {
+	const rng = (v: number): { next: () => number } => ({ next: () => v });
+
+	test('common: 0.5% for 1 fish', () => {
+		expect(rollFishDrop(rng(0.004) as never, null)).toBe(1);
+		expect(rollFishDrop(rng(0.005) as never, null)).toBe(0);
+	});
+
+	test('elite: 25% chance, purple 2 / orange 4', () => {
+		expect(rollFishDrop(rng(0.24) as never, 'purple')).toBe(2);
+		expect(rollFishDrop(rng(0.24) as never, 'orange')).toBe(4);
+		expect(rollFishDrop(rng(0.25) as never, 'orange')).toBe(0);
 	});
 });

@@ -62,12 +62,12 @@ Menu (árvore de habilidades · Pérolas: poções/gambits · arma inicial)
       Round N (timer) → mata hordas, coleta XP e Fish
         → level-up: 4 cartas (stats/exclusivas) [tempo pausado]
       → fim do timer (ou boss morto) → LOJA (4 ofertas, reroll, lock, equipamento) → Round N+1
-      → round 5k: BOSS (2 min no round 5, +1 min a cada boss; timeout = game over)
+      → round 5k: BOSS (2 min no round 5, +1 min a cada boss, teto de 10 min a partir do boss 45; timeout = game over)
   → Morte / desistência → resumo → XP, Pérolas e conquistas ficam → Menu
 ```
 
 - **Duração do round N** (não boss): `30 + 5·(N−1)` s, sem teto (pedido do desenvolvedor, 2026-11-08: o jogo estava fácil; 1º round de 20 → 30 s em 2026-11-10).
-- **Boss**: rounds 5, 10, 15, 20…; barra de boss e timer de `2 + (N/5 − 1)` min (round 5: 2:00, round 10: 3:00, round 15: 4:00…); matar encerra o round; zerar o timer é game over. A **vida do boss dobra a cada boss** (round 5 ×1, 10 ×2, 15 ×4, 20 ×8…; pedido do desenvolvedor, 2026-11-08: os bosses estavam fáceis). Biomas e ciclos de escala continuam em blocos de 10 rounds.
+- **Boss**: rounds 5, 10, 15, 20…; barra de boss e timer de `2 + (N/5 − 1)` min (round 5: 2:00, round 10: 3:00, round 15: 4:00… teto de 10:00 do boss 45 em diante); matar encerra o round; zerar o timer é game over. A **vida do boss dobra a cada boss** (round 5 ×1, 10 ×2, 15 ×4, 20 ×8…; pedido do desenvolvedor, 2026-11-08: os bosses estavam fáceis). Biomas e ciclos de escala continuam em blocos de 10 rounds.
 - **Elites** nos rounds múltiplos de 3 (roxo 2×; laranja 3× a partir do round 11). Waves de elite/horda extras por Danger (§16).
 - **Endless**: sem fim e sem tela de vitória (ADR-008).
 - Cura de 25% do HP máximo ao fim de cada round; o HP restante passa para o próximo.
@@ -258,7 +258,7 @@ Cada bioma tem tileset top-down 64×64 (chão + borda), decorações e pool pró
 
 | Moeda | Escopo | Ganho | Gasto |
 |---|---|---|---|
-| **Fish 🐟** | run (começa com 10; não passa para a próxima run) | drop de inimigos (5% comuns, garantido em elites), fim de round `2 + floor(N/2)` × harvesting, boss | loja, reroll, poções de run |
+| **Fish 🐟** | run (começa com 10; não passa para a próxima run) | drop de inimigos (0,5% comuns, 25% de chance em elites), fim de round `2 + floor(N/2)` × harvesting, boss | loja, reroll, poções de run |
 | **Pérolas** | persistente | round concluído, boss, conquistas, conversão do Fish restante (10:1) | gambits, armas iniciais, devolver nós da árvore |
 
 Preços de loja e reroll em `src/data/economy.ts` (SDD-003); Árvore de habilidades em [ADR-019](adrs/ADR-019-arvore-de-habilidades.md).

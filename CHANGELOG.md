@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **game:** Fish per kill cut: common enemies drop 1 Fish with 0.5% chance (was 5%); elites drop Fish only 25% of the time (was guaranteed), 2 for purple and 4 for orange (was 3 and 6). Boss and end-of-round Fish are unchanged (`ECONOMY.fishDrop`, `rollFishDrop`). Bosses no longer roll the common drop.
+- **game:** Boss time limit is capped at 10 minutes (`ROUNDS.bossTimeMax` 600 s): bosses 45, 50 and the whole endless use 600 s.
 - **ui:** Shop right column split in two (wireframe 2.12): on the left "YOUR EQUIPMENT" (weapon rows with rarity and SELL/FUSE beside the picked one, five equipment rows, support items and potion, all focusable) and on the right "DETAILS" in a fixed spot (card of the focused item or offer, what buying does, the stat changes in green/red, and the hero stats as a compact two-column grid at the bottom). Offer rows no longer cut text with an ellipsis; phone landscape keeps its compact layout.
 - **game:** Magnetic now has a clear effect: extra pull radius 120/200/300/420/560 and pull speed x1.5/1.9/2.4/3/3.8 by level. Equipment and potion drops are pulled in by the pickup range too, and at the end of a round everything left on the ground (XP, Fish, gear, potions) flies to the hero before the cards or shop open. Fish on the ground are drawn at twice the size. Achievement and equipment toasts moved to the right edge, between the FPS meter and the speed hint.
 - **game:** The first round lasts 30 s instead of 20 s (`ROUNDS.firstDuration`; later normal rounds keep the +5 s step, so each is 10 s longer).
