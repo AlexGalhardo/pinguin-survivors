@@ -15,6 +15,7 @@
 			"!**/skills-lock.json",
 			"!**/*.md",
 			"!**/*.astro",
+			"!docs/wireframes",
 			"!site/node_modules",
 			"!site/dist",
 			"!site/.astro",
