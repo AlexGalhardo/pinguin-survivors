@@ -2,7 +2,7 @@
 export const supportEs = {
 	'shop.kind.support': 'Apoyo',
 	'shop.kind.healPotion': 'Poción de curación',
-	'shop.supportLevel': 'Nv. {from} → {to}',
+	'shop.supportLevel': 'Subir al nivel {to}',
 	'shop.supportNew': 'Nuevo',
 	'shop.outcome.supportNew': 'Nuevo objeto de apoyo, nivel 1: {stat}.',
 	'shop.outcome.supportUp': 'Objeto de apoyo del nivel {from} al {to}: {stat}.',

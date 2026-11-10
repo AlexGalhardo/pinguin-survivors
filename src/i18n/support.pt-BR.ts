@@ -2,7 +2,7 @@
 export const supportPtBR = {
 	'shop.kind.support': 'Suporte',
 	'shop.kind.healPotion': 'Poção de cura',
-	'shop.supportLevel': 'Nv {from} → {to}',
+	'shop.supportLevel': 'Aumentar para o nível {to}',
 	'shop.supportNew': 'Novo',
 	'shop.outcome.supportNew': 'Novo item de suporte, nível 1: {stat}.',
 	'shop.outcome.supportUp': 'Item de suporte do nível {from} para {to}: {stat}.',

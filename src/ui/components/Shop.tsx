@@ -323,22 +323,19 @@ function OfferRow(props: {
 			offer.kind === 'support' ? t(`support.${offer.id}.desc` as I18nKey) : t('hpotion.desc');
 	}
 	const sets = offer.sets.map((s) => label(`shop.set.${s}`)).join(' / ');
-	const kind = `${t(`shop.kind.${offer.kind}` as I18nKey)}${
-		offer.kind === 'weapon' || offer.kind === 'item' || offer.kind === 'gear'
-			? ` ${numeral(offer.tier)}`
-			: ''
-	}${
-		offer.description?.outcome.type === 'support'
-			? ` · ${
-					offer.description.outcome.from === 0
-						? t('shop.supportNew')
-						: t('shop.supportLevel', {
-								from: offer.description.outcome.from,
-								to: offer.description.outcome.to,
-							})
-				}`
-			: ''
-	}${sets ? ` · ${sets}` : ''}`;
+	const outcome = offer.description?.outcome;
+	// An upgrade reads only "Upgrade to level N": the row is narrow and the action matters most.
+	const upgrade = outcome?.type === 'support' && outcome.from > 0;
+	const kind =
+		outcome?.type === 'support' && outcome.from > 0
+			? t('shop.supportLevel', { to: outcome.to })
+			: `${t(`shop.kind.${offer.kind}` as I18nKey)}${
+					offer.kind === 'weapon' || offer.kind === 'item' || offer.kind === 'gear'
+						? ` ${numeral(offer.tier)}`
+						: ''
+				}${outcome?.type === 'support' ? ` · ${t('shop.supportNew')}` : ''}${
+					sets ? ` · ${sets}` : ''
+				}`;
 	return (
 		<div
 			data-offer={index}
@@ -357,7 +354,12 @@ function OfferRow(props: {
 				>
 					{offerName(offer)}
 				</span>
-				{!props.compact && (
+				{!props.compact && upgrade && (
+					<span className="text-secondary leading-tight font-bold text-gold-bright">
+						{kind}
+					</span>
+				)}
+				{!props.compact && !upgrade && (
 					<span className="truncate text-secondary leading-tight text-text-light">
 						{kind}
 						{summary ? ` · ${summary}` : ''}
