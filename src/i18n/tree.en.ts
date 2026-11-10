@@ -86,4 +86,8 @@ export const treeEn = {
 	'tree.n.overcharge': 'Overcharge',
 	'tree.n.staticField': 'Static Field',
 	'tree.n.stormcaller': 'Stormcaller',
+	'list.page': 'PAGE {n} / {total}',
+	'list.prev': 'Previous page',
+	'list.next': 'Next page',
+	'list.done': 'obtained',
 } as const;

@@ -84,4 +84,8 @@ export const treeZhCN = {
 	'tree.n.overcharge': '过载',
 	'tree.n.staticField': '静电场',
 	'tree.n.stormcaller': '唤雷者',
+	'list.page': '第 {n} / {total} 页',
+	'list.prev': '上一页',
+	'list.next': '下一页',
+	'list.done': '已获得',
 } as const;
