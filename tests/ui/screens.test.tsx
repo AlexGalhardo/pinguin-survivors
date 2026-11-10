@@ -6,9 +6,12 @@ const { LevelUpCards } = await import('../../src/ui/components/LevelUpCards');
 const { Pause } = await import('../../src/ui/components/Pause');
 const { GameOver } = await import('../../src/ui/components/GameOver');
 const { Unlock } = await import('../../src/ui/components/Unlock');
+const { inputGrace } = await import('../../src/ui/input-grace');
 
 afterAll(uninstall);
 beforeAll(() => {
+	// The grace window has its own tests; the other screen tests click right after mounting.
+	inputGrace.ms = 0;
 	// happy-dom has no layout: stack the buttons by document order for spatial navigation.
 	let n = 0;
 	const order = new WeakMap<object, number>();
@@ -197,6 +200,38 @@ describe('GameOver', () => {
 		fireEvent.click(getByText('PLAY AGAIN'));
 		key('Escape');
 		expect(calls).toEqual(['again', 'menu']);
+		cleanup();
+	});
+});
+
+describe('input grace', () => {
+	test('GameOver ignores clicks and Esc until the grace window passed', async () => {
+		inputGrace.ms = 60;
+		const calls: string[] = [];
+		const { getByText } = render(
+			<GameOver
+				data={{
+					bossTimeout: false,
+					round: 1,
+					kills: 1,
+					seconds: 1,
+					damage: 1,
+					xp: 1,
+					fish: 1,
+					pearls: 0,
+					levels: 0,
+					newBest: false,
+				}}
+				actions={{ playAgain: () => calls.push('again'), menu: () => calls.push('menu') }}
+			/>,
+		);
+		fireEvent.click(getByText('PLAY AGAIN'));
+		key('Escape');
+		expect(calls).toEqual([]);
+		await new Promise((r) => setTimeout(r, 90));
+		fireEvent.click(getByText('PLAY AGAIN'));
+		expect(calls).toEqual(['again']);
+		inputGrace.ms = 0;
 		cleanup();
 	});
 });
