@@ -354,6 +354,39 @@ describe('HeroScreen and lists', () => {
 		cleanup();
 	});
 
+	test('gambit slots cycle the potion and the condition', () => {
+		log.length = 0;
+		const { getByLabelText } = render(
+			<Router
+				view={{
+					screen: 'hero',
+					data: {
+						heroes: ['jack'],
+						hero: 'jack',
+						level: 3,
+						xp: 10,
+						xpNext: 100,
+						treePoints: 0,
+						pearls: 0,
+						potions: [],
+						gambits: [{ potion: 'shield', condition: 'hpBelow25' }],
+						weaponUnlocks: [],
+					},
+					actions: actionsOf([
+						'selectHero',
+						'openTree',
+						'cycleGambitPotion',
+						'cycleGambitCondition',
+					]),
+				}}
+			/>,
+		);
+		fireEvent.click(getByLabelText('Slot 1: Shield when HP < 25%'));
+		fireEvent.click(getByLabelText('Change condition'));
+		expect(log).toEqual(['cycleGambitPotion:0:1', 'cycleGambitCondition:0']);
+		cleanup();
+	});
+
 	test('history and achievements render rows; empty history shows the notice', () => {
 		const a = render(
 			<Router
