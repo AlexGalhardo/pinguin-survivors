@@ -18,7 +18,7 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 | Regras do jogo, heróis, armas, loja, cartas, economia, danger, UI, demo | [docs/gdd.md](docs/gdd.md) |
 | Fórmulas, números, metodologia de balanceamento e simulação | [docs/balancing-and-simulation.md](docs/balancing-and-simulation.md) |
 | Camadas, arena, React sobre o canvas, pastas, builds, debug | [docs/architecture.md](docs/architecture.md) |
-| Cores, tipografia, componentes e telas da UI | [docs/design-system.md](docs/design-system.md) |
+| Cores, tipografia, componentes e telas da UI (Estilo D, Diablo 4 orgânico) | [docs/design-system.md](docs/design-system.md) · [docs/wireframes/](docs/wireframes/README.md) · [`.agents/skills/pinguin-ui-hud`](.agents/skills/pinguin-ui-hud/SKILL.md) |
 | Arte, pipeline PixelLab, chaves, orçamento, registro de produção | [docs/visual.md](docs/visual.md) · [`.agents/skills/pinguin-art-assets`](.agents/skills/pinguin-art-assets/SKILL.md) |
 | Som e pipeline ElevenLabs | [docs/audio.md](docs/audio.md) · [`.agents/skills/pinguin-audio-assets`](.agents/skills/pinguin-audio-assets/SKILL.md) |
 | Especificação de uma frente antes de codar | [docs/sdds/](docs/sdds/README.md) |
@@ -49,14 +49,14 @@ Resumo das regras inegociáveis:
 3. Phaser **4** só no mundo; toda UI em React; sem Arcade Physics; câmera top-down e arena quadrada (ADR-003).
 4. Lógica pura em `src/logic/` (testada); números em `src/data/`; textos em `src/i18n/` (4 idiomas juntos); cores em `src/config/palette.ts`; chaves de assets em `src/art/manifest.ts`.
 5. Arte: reaproveitar sprites e **nunca apagar nem substituir arte existente** (variantes em `art-src/pixellab/anim-v2/`; animação nova `fly`/`attack` entra como extra no mesmo atlas, sem tocar o `walk`); personagem novo = concept 4 direções → **aprovação do desenvolvedor** → animação; armas com 4 linhas de arte (`t1…t4`, raridade I–IV; a V reaproveita a IV); API v2 com o token do `.env`. Áudio sem vozes.
-6. Tela cheia sem scroll (menus paginam listas longas), zoom inteiro pela altura 540 no canvas; pooling; 60 FPS com 300 inimigos. UI nova segue o [design system](docs/design-system.md); menus (exceto o inicial) com fundo neutro.
+6. Tela cheia sem scroll (menus paginam listas longas), zoom inteiro pela altura 540 no canvas; pooling; 60 FPS com 300 inimigos. UI nova segue o [design system](docs/design-system.md) v2 no Estilo D, Diablo 4 orgânico (ADR-022, skill `pinguin-ui-hud`): texto secundário ≥ 22 px, padding 12–16 px, nada de cards/botões com cara de web; menus (exceto o inicial) com fundo neutro.
 7. Segredos só no `.env`; dependências estáveis e fixas; nenhuma fora do que a SDD lista.
 8. **Micro-commits** (um por mudança lógica, com o teste; nunca um super commit que junta frentes) + Conventional Commits + SemVer padrão vukem (`0.0.x` → `0.1.x` → `1.0.0`); gates manuais; nunca `--no-verify`; push após cada commit; release por `bun scripts/release.ts X.Y.Z`, cujo corpo cita cada micro-commit como num merge rebase (`--stable` a partir da 0.2.0, que sai como Latest; o CI anexa os zips do Windows e o APK debug); uma release por marco; exatamente uma tag por release. Save sem compatibilidade retroativa antes da 1.0.
 9. Gates do desenvolvedor (🛑): concepts de arte, gasto > 200 gerações ou > 2.000 créditos, apagar/retaguear tags, publicar em loja, mudar escopo.
 
 ## Skills
 
-`.agents/skills/`: 26 skills Phaser 4 oficiais, `pinguin-art-assets`, `pinguin-audio-assets`, `agent-browser` (QA no browser), `graphify`, `grilling`, e 26 skills de gamedev de terceiros (`gd-*`, `gc-*`, `ccgs-*`; tabela "quando usar" em [docs/workflow.md](docs/workflow.md) §8; origem e remoções em [`.agents/skills/THIRD_PARTY.md`](.agents/skills/THIRD_PARTY.md)). As regras deste projeto vencem em conflito.
+`.agents/skills/`: 26 skills Phaser 4 oficiais, `pinguin-art-assets`, `pinguin-audio-assets`, `pinguin-ui-hud`, `agent-browser` (QA no browser), `graphify`, `grilling`, e 26 skills de gamedev de terceiros (`gd-*`, `gc-*`, `ccgs-*`; tabela "quando usar" em [docs/workflow.md](docs/workflow.md) §8; origem e remoções em [`.agents/skills/THIRD_PARTY.md`](.agents/skills/THIRD_PARTY.md)). As regras deste projeto vencem em conflito.
 
 ## Comandos
 

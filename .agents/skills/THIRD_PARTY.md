@@ -9,7 +9,7 @@ Cópias curadas (só `SKILL.md` + referências, **sem** hooks, settings, agentes
 | `gc-` | [PlayableIntelligence/game-creator](https://github.com/PlayableIntelligence/game-creator) | `4e64b83` | MIT | 3: `gc-game-designer`, `gc-game-qa`, `gc-review-game` |
 | `ccgs-` | [Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios) | `7ed2c3e` | MIT | 9: `ccgs-balance-check`, `ccgs-bug-report`, `ccgs-launch-checklist`, `ccgs-localize`, `ccgs-perf-profile`, `ccgs-playtest-report`, `ccgs-qa-plan`, `ccgs-release-checklist`, `ccgs-scope-check` |
 
-Outras skills do projeto (próprias): `pinguin-art-assets`, `pinguin-audio-assets`, `agent-browser` (vercel-labs), `graphify`, `grilling`.
+Outras skills do projeto (próprias): `pinguin-art-assets`, `pinguin-audio-assets`, `pinguin-ui-hud` (menus e HUD no Estilo D), `agent-browser` (vercel-labs), `graphify`, `grilling`.
 
 ## Removidas em 2026-11-08 (e por quê)
 
