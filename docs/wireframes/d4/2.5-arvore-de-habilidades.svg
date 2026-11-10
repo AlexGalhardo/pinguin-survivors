@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="80" flood-color="#161C29" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#E0BB62" flood-opacity="1"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="15" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+    <filter id="fx4">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx4_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx4_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx4_is_off" operator="out" result="fx4_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx4_is_inv" operator="in" result="fx4_is_shadow"/>
+      <feComposite in="fx4_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx5">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000000" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0A0D13"/>
+    <g transform="translate(460, 200)" filter="url(#fx0)">
+      <rect width="1000" height="700" rx="350" ry="350" fill="#161C29"/>
+    </g>
+    <g transform="translate(880, 460)">
+      <rect width="160" height="160" rx="80" ry="80" fill="none" stroke="#A8843A" stroke-width="2"/>
+    </g>
+    <g transform="translate(940, 520)" filter="url(#fx1)">
+      <rect width="40" height="40" rx="20" ry="20" fill="#E0BB62"/>
+    </g>
+    <g transform="translate(720, 330) rotate(50, 1.5, 120)">
+      <rect width="3" height="240" fill="#E0BB62"/>
+    </g>
+    <g transform="translate(560, 230) rotate(50, 1.5, 75)">
+      <rect width="3" height="150" fill="none" stroke="#E0BB62" stroke-width="1"/>
+    </g>
+    <g transform="translate(1200, 330) rotate(-50, 1, 120)">
+      <rect width="2" height="240" fill="#3A4152"/>
+    </g>
+    <g transform="translate(958, 630)">
+      <rect width="2" height="220" fill="#3A4152"/>
+    </g>
+    <g transform="translate(780, 400)">
+      <rect width="22" height="22" rx="11" ry="11" fill="#E0BB62"/>
+    </g>
+    <g transform="translate(620, 290)" filter="url(#fx2)">
+      <rect width="40" height="40" rx="20" ry="20" fill="#161C29" stroke="#FFD84A" stroke-width="3"/>
+    </g>
+    <g transform="translate(500, 200) rotate(45, 22, 22)">
+      <rect width="44" height="44" fill="#161C29" stroke="#C4161C" stroke-width="2"/>
+    </g>
+    <g transform="translate(1300, 290)" filter="url(#fx3)">
+      <rect width="36" height="36" rx="18" ry="18" fill="#161C29" stroke="#6FA3C7" stroke-width="3"/>
+    </g>
+    <g transform="translate(942, 830)">
+      <rect width="36" height="36" rx="18" ry="18" fill="#161C29" stroke="#4FD06A" stroke-width="3"/>
+    </g>
+    <g transform="translate(400, 150)">
+      <text x="0" y="30" font-family="Cinzel" font-size="30" font-weight="700" fill="#C4161C" letter-spacing="6">LÂMINA</text>
+    </g>
+    <g transform="translate(1300, 220)">
+      <text x="0" y="30" font-family="Cinzel" font-size="30" font-weight="700" fill="#6FA3C7" letter-spacing="6">BALUARTE</text>
+    </g>
+    <g transform="translate(870, 880)">
+      <text x="0" y="30" font-family="Cinzel" font-size="30" font-weight="700" fill="#4FD06A" letter-spacing="6">CAÇADOR</text>
+    </g>
+    <g filter="url(#fx4)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g>
+      <g transform="translate(690, 120)" filter="url(#fx5)">
+        <rect width="460" height="256" fill="#0B0E14" stroke="#A8843A" stroke-width="1"/>
+        <g>
+          <rect width="460" height="93" fill="#C4161C"/>
+          <g transform="translate(14, 12)">
+            <text x="0" y="30" font-family="Cinzel" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="2">Sangue Frio</text>
+          </g>
+          <g transform="translate(14, 54)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">LÂMINA · NOTÁVEL · NÍVEL 2/5</text>
+          </g>
+        </g>
+        <g transform="translate(0, 93)">
+          <g transform="translate(14, 12)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#4FD06A">+4% chance de crítico</text>
+          </g>
+          <g transform="translate(14, 47)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#4FD06A">+2 troca de cartas no level up</text>
+          </g>
+          <g transform="translate(14, 82)">
+            <rect width="432" height="1" fill="#A8843A"/>
+          </g>
+          <g transform="translate(14, 89)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#FFD84A">Enter: mais um nível (1 ponto)</text>
+          </g>
+          <g transform="translate(14, 124)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Devolver 1 nível · 20 pérolas</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(56, 36)">
+        <g>
+          <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">ÁRVORE DE HABILIDADES</text>
+        </g>
+        <g transform="translate(0, 60)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E8ECF2" letter-spacing="2">‹ JACK · NÍVEL 12 ›   5 PONTOS   130 PÉROLAS</text>
+        </g>
+      </g>
+      <g transform="translate(1400, 44)">
+        <g>
+          <g transform="translate(0, 15)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Buscar nós</text>
+          </g>
+          <g transform="translate(0, 46)">
+            <rect width="300" height="2" fill="#A8843A"/>
+          </g>
+        </g>
+        <g transform="translate(320, 0)">
+          <g transform="translate(14, 6)">
+            <text x="0" y="30" font-family="Roboto" font-size="30" fill="#E0BB62">−</text>
+          </g>
+        </g>
+        <g transform="translate(388, 0)">
+          <g transform="translate(14, 6)">
+            <text x="0" y="30" font-family="Roboto" font-size="30" fill="#E0BB62">+</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(56, 900)">
+        <g>
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E0BB62" letter-spacing="4">BÔNUS DA ÁRVORE</text>
+        </g>
+        <g transform="translate(0, 31)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#4FD06A">+12% dano · +30 HP máx.</text>
+        </g>
+      </g>
+      <g transform="translate(1180, 1010)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">R  REINICIAR · 150 PÉROLAS      ESC  VOLTAR</text>
+      </g>
+    </g>
+  </g>
+</svg>

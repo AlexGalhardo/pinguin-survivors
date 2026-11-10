@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="80" flood-color="#161C29" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx2">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FFD84A" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(460, 200)" filter="url(#fx0)">
+      <rect width="1000" height="700" rx="350" ry="350" fill="#161C29"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(0, 36)">
+      <g transform="translate(662, 0)">
+        <text x="0" y="48" font-family="Cinzel" font-size="48" font-weight="700" fill="#E0BB62" letter-spacing="12">CONFIGURAÇÕES</text>
+      </g>
+      <g transform="translate(510.5, 73)">
+        <g>
+          <g transform="translate(0, 7)">
+            <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#FFD84A" letter-spacing="4">TELA</text>
+          </g>
+          <g transform="translate(5.5, 43)" filter="url(#fx2)">
+            <rect width="70" height="2" fill="#FFD84A"/>
+          </g>
+        </g>
+        <g transform="translate(125, 0)">
+          <g transform="translate(0, 10)">
+            <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#E8ECF2" letter-spacing="4">ÁUDIO</text>
+          </g>
+        </g>
+        <g transform="translate(272, 0)">
+          <g transform="translate(0, 10)">
+            <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#E8ECF2" letter-spacing="4">JOGABILIDADE</text>
+          </g>
+        </g>
+        <g transform="translate(552, 0)">
+          <g transform="translate(0, 10)">
+            <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#E8ECF2" letter-spacing="4">DADOS E CONTROLES</text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(260, 900)">
+      <g transform="translate(390, 0)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(280, 24)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Idioma: English, Español, Português, 简体中文. As mudanças salvam na hora.</text>
+      </g>
+      <g transform="translate(336, 64)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">←→ VALOR    ↑↓ OPÇÃO    L1/R1 CATEGORIA    ESC VOLTAR</text>
+      </g>
+    </g>
+    <g transform="translate(380, 220)">
+      <g>
+        <rect width="1160" height="68" fill="#E0BB62"/>
+        <g transform="translate(14, 27) rotate(45, 7, 7)" filter="url(#fx3)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(42, 16)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#FFD84A" letter-spacing="3">IDIOMA</text>
+        </g>
+        <g transform="translate(792, 14.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" fill="#E0BB62">‹</text>
+        </g>
+        <g transform="translate(819, 17)">
+          <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="700" fill="#E8ECF2">Português</text>
+        </g>
+        <g transform="translate(1133, 14.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" fill="#E0BB62">›</text>
+        </g>
+      </g>
+      <g transform="translate(0, 68)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">RESOLUÇÃO</text>
+        </g>
+        <g transform="translate(758, 16)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E8ECF2">Automática (nativa)</text>
+        </g>
+      </g>
+      <g transform="translate(0, 132)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">TELA CHEIA</text>
+        </g>
+        <g transform="translate(758, 16)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E0BB62">LIGADO · F11 também</text>
+        </g>
+      </g>
+      <g transform="translate(0, 196)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">BLOOM (BRILHO)</text>
+        </g>
+        <g transform="translate(758, 16)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E0BB62">LIGADO</text>
+        </g>
+      </g>
+      <g transform="translate(0, 260)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">TREMOR DE TELA</text>
+        </g>
+        <g transform="translate(758, 16)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E8ECF2">DESLIGADO</text>
+        </g>
+      </g>
+      <g transform="translate(0, 324)">
+        <g transform="translate(42, 14)">
+          <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="3">VOLUME GERAL (ÁUDIO)</text>
+        </g>
+        <g transform="translate(758, 17.5)">
+          <g transform="translate(0, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(16, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(32, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(48, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(64, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(80, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(96, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(112, 8.5) rotate(45, 6, 6)">
+            <rect width="12" height="12" fill="#FFD84A"/>
+          </g>
+          <g transform="translate(132, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#3A4152"/>
+          </g>
+          <g transform="translate(148, 10.5) rotate(45, 4, 4)">
+            <rect width="8" height="8" fill="#3A4152"/>
+          </g>
+          <g transform="translate(164, 0)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">80%</text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

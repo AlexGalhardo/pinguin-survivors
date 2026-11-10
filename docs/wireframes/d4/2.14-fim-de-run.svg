@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="160" result="fx0_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx0_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx0_is_off" operator="out" result="fx0_is_inv"/>
+      <feFlood flood-color="#C4161C" flood-opacity="0.4"/>
+      <feComposite in2="fx0_is_inv" operator="in" result="fx0_is_shadow"/>
+      <feComposite in="fx0_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx1">
+      <feDropShadow dx="0" dy="0" stdDeviation="15" flood-color="#E0BB62" flood-opacity="0.53"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g filter="url(#fx0)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g>
+      <g transform="translate(472.5, 231)">
+        <text x="0" y="100" font-family="Cinzel" font-size="100" font-weight="700" fill="#C4161C" letter-spacing="18">VOCÊ MORREU</text>
+      </g>
+      <g transform="translate(650, 386)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+      <g transform="translate(786.5, 422)">
+        <text x="0" y="56" font-family="Cinzel" font-size="56" font-weight="700" fill="#E0BB62" letter-spacing="6">ROUND 14</text>
+      </g>
+      <g transform="translate(740, 517)">
+        <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E8ECF2">1.532 abates · 12:35 · 48.210 de dano</text>
+      </g>
+      <g transform="translate(881, 569)">
+        <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="900" fill="#E8ECF2">  ◆    ◆    ◆  </text>
+      </g>
+      <g transform="translate(801.5, 623) rotate(-4, 158.5, 25.5)" filter="url(#fx1)">
+        <rect width="317" height="51" fill="#E0BB62"/>
+        <g transform="translate(16, 8)">
+          <text x="0" y="26" font-family="Cinzel" font-size="26" font-weight="700" fill="#0B0E14" letter-spacing="4">NOVO RECORDE!</text>
+        </g>
+      </g>
+      <g transform="translate(910, 694)"/>
+      <g transform="translate(578.5, 738)">
+        <g>
+          <rect width="366" height="64" fill="#E0BB62"/>
+          <g transform="translate(14, 25) rotate(45, 7, 7)">
+            <rect width="14" height="14" fill="#FFD84A"/>
+          </g>
+          <g transform="translate(42, 12.5)">
+            <text x="0" y="32" font-family="Roboto" font-size="32" font-weight="900" fill="#FFD84A" letter-spacing="4">JOGAR DE NOVO</text>
+          </g>
+        </g>
+        <g transform="translate(426, 0)">
+          <g transform="translate(14, 14)">
+            <text x="0" y="30" font-family="Roboto" font-size="30" font-weight="700" fill="#E8ECF2" letter-spacing="4">MENU PRINCIPAL</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(518, 822)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Enter: jogar de novo · Esc: menu · variante: “O CHEFE SOBREVIVEU AO TEMPO” em ouro</text>
+      </g>
+    </g>
+  </g>
+</svg>

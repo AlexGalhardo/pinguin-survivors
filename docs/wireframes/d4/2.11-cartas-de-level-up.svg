@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1100" viewBox="0 0 1920 1100">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="80" flood-color="#161C29" flood-opacity="1"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx2">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="fx2_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx2_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx2_is_off" operator="out" result="fx2_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx2_is_inv" operator="in" result="fx2_is_shadow"/>
+      <feComposite in="fx2_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx3">
+      <feDropShadow dx="0" dy="0" stdDeviation="30" flood-color="#FFD84A" flood-opacity="0.33"/>
+    </filter>
+    <filter id="fx4">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="fx4_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx4_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx4_is_off" operator="out" result="fx4_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx4_is_inv" operator="in" result="fx4_is_shadow"/>
+      <feComposite in="fx4_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx5">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="20" result="fx5_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx5_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx5_is_off" operator="out" result="fx5_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx5_is_inv" operator="in" result="fx5_is_shadow"/>
+      <feComposite in="fx5_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g opacity="0.25">
+      <rect width="1920" height="1080" fill="#3A4152"/>
+    </g>
+    <g transform="translate(260, 240)" filter="url(#fx0)">
+      <rect width="1400" height="700" rx="350" ry="350" fill="#161C29"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(0, 40)">
+      <g transform="translate(770.5, 0)">
+        <text x="0" y="68" font-family="Cinzel" font-size="68" font-weight="700" fill="#E0BB62" letter-spacing="16">NÍVEL 7</text>
+      </g>
+      <g transform="translate(650, 100)">
+        <g transform="translate(0, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+        <g transform="translate(130, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(300, 3) rotate(45, 5, 5)">
+          <rect width="10" height="10" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(310, 7)">
+          <rect width="170" height="2" fill="#A8843A"/>
+        </g>
+        <g transform="translate(480, 7.5)">
+          <rect width="130" height="1" fill="#A8843A"/>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(520, 990)">
+      <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E0BB62" letter-spacing="3">1–4 ESCOLHER    R  REROLAR · 2 RESTANTES</text>
+    </g>
+    <g transform="translate(130, 220)">
+      <g transform="translate(18, 199.5)" filter="url(#fx2)">
+        <rect width="380" height="321" fill="#161C29"/>
+        <rect width="380" height="6" fill="#9AA3B5"/>
+        <g transform="translate(114, 18)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#E8ECF2" letter-spacing="4">1 · COMUM</text>
+        </g>
+        <g transform="translate(126, 57)">
+          <rect width="128" height="128" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+          <g transform="translate(50, 40)">
+            <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+          </g>
+        </g>
+        <g transform="translate(51.5, 197)">
+          <text x="0" y="28" font-family="Cinzel" font-size="28" font-weight="700" fill="#E8ECF2" letter-spacing="1">Lanchinho de Peixe</text>
+        </g>
+        <g transform="translate(16, 247)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">+0,5 de regeneração de HP por segundo</text>
+        </g>
+      </g>
+      <g transform="translate(426, 185.5)" filter="url(#fx3)">
+        <rect width="400" height="349" fill="#16263F" stroke="#FFD84A" stroke-width="2"/>
+        <rect width="400" height="6" fill="#4F9DFF"/>
+        <g transform="translate(139.5, 18)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#4F9DFF" letter-spacing="4">2 · RARA</text>
+        </g>
+        <g transform="translate(128, 57)">
+          <rect width="144" height="144" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+          <g transform="translate(58, 48)">
+            <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+          </g>
+        </g>
+        <g transform="translate(109.5, 213)">
+          <text x="0" y="30" font-family="Cinzel" font-size="30" font-weight="700" fill="#4F9DFF" letter-spacing="1">Olho Afiado</text>
+        </g>
+        <g transform="translate(16, 265)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">+2% de chance de crítico</text>
+        </g>
+        <g transform="translate(117.5, 306)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#FFD84A" letter-spacing="4">◆ ENTER ◆</text>
+        </g>
+      </g>
+      <g transform="translate(854, 214)" filter="url(#fx4)">
+        <rect width="380" height="292" fill="#161C29"/>
+        <rect width="380" height="6" fill="#B347FF"/>
+        <g transform="translate(124, 18)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#B347FF" letter-spacing="4">3 · ÉPICA</text>
+        </g>
+        <g transform="translate(126, 57)">
+          <rect width="128" height="128" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+          <g transform="translate(50, 40)">
+            <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+          </g>
+        </g>
+        <g transform="translate(41, 197)">
+          <text x="0" y="28" font-family="Cinzel" font-size="28" font-weight="700" fill="#B347FF" letter-spacing="1">Penas Escorregadias</text>
+        </g>
+        <g transform="translate(16, 247)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">+3% de esquiva</text>
+        </g>
+      </g>
+      <g transform="translate(1262, 199.5)" filter="url(#fx5)">
+        <rect width="380" height="321" fill="#161C29"/>
+        <rect width="380" height="6" fill="#FF8A1F"/>
+        <g transform="translate(96.5, 18)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="900" fill="#FF8A1F" letter-spacing="4">4 · LENDÁRIA</text>
+        </g>
+        <g transform="translate(126, 57)">
+          <rect width="128" height="128" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+          <g transform="translate(50, 40)">
+            <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+          </g>
+        </g>
+        <g transform="translate(32.5, 197)">
+          <text x="0" y="28" font-family="Cinzel" font-size="28" font-weight="700" fill="#FF8A1F" letter-spacing="1">Acumulador de Peixes</text>
+        </g>
+        <g transform="translate(16, 247)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">+8 de Fish no fim de cada round</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

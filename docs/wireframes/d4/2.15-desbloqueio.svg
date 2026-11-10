@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1100" viewBox="0 0 1920 1100">
+  <defs>
+    <filter id="fx0">
+      <feDropShadow dx="0" dy="0" stdDeviation="100" flood-color="#A8843A" flood-opacity="0.4"/>
+    </filter>
+    <filter id="fx1">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx1_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx1_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx1_is_off" operator="out" result="fx1_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx1_is_inv" operator="in" result="fx1_is_shadow"/>
+      <feComposite in="fx1_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <g transform="translate(0, 10)">
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(360, 190)" filter="url(#fx0)">
+      <rect width="700" height="700" rx="350" ry="350" fill="#A8843A"/>
+    </g>
+    <g filter="url(#fx1)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g>
+      <g transform="translate(140, 240)">
+        <rect width="600" height="600" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(286, 276)">
+          <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+        </g>
+      </g>
+      <g transform="translate(800, 272.5)">
+        <g>
+          <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="900" fill="#E0BB62" letter-spacing="8">NOVO PINGUIM  ·  1/3</text>
+        </g>
+        <g transform="translate(0, 50)">
+          <text x="0" y="88" font-family="Cinzel" font-size="88" font-weight="700" fill="#E8ECF2" letter-spacing="8">BOB</text>
+        </g>
+        <g transform="translate(0, 185)">
+          <text x="0" y="36" font-family="Cinzel" font-size="36" font-weight="700" fill="#E0BB62" letter-spacing="3">BOB DESBLOQUEADO!</text>
+        </g>
+        <g transform="translate(0, 250)">
+          <g transform="translate(0, 7.5)">
+            <rect width="130" height="1" fill="#A8843A"/>
+          </g>
+          <g transform="translate(130, 7)">
+            <rect width="170" height="2" fill="#A8843A"/>
+          </g>
+          <g transform="translate(300, 3) rotate(45, 5, 5)">
+            <rect width="10" height="10" fill="#E0BB62"/>
+          </g>
+          <g transform="translate(310, 7)">
+            <rect width="170" height="2" fill="#A8843A"/>
+          </g>
+          <g transform="translate(480, 7.5)">
+            <rect width="130" height="1" fill="#A8843A"/>
+          </g>
+        </g>
+        <g transform="translate(0, 282)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" fill="#E8ECF2">Armas de fogo, rápido e com críticos.</text>
+        </g>
+        <g transform="translate(0, 330)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Super magia: Bombardeio em Tapete</text>
+        </g>
+        <g transform="translate(0, 375)">
+          <rect width="284" height="64" fill="#E0BB62"/>
+          <g transform="translate(14, 25) rotate(45, 7, 7)">
+            <rect width="14" height="14" fill="#FFD84A"/>
+          </g>
+          <g transform="translate(42, 12.5)">
+            <text x="0" y="32" font-family="Roboto" font-size="32" font-weight="900" fill="#FFD84A" letter-spacing="4">CONTINUAR</text>
+          </g>
+        </g>
+        <g transform="translate(0, 455)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Arma: “NOVA ARMA · Escopeta de Cano Duplo” · Conquista: “CONQUISTA · Sobrevivente I · +1 ponto de conquista” (mesmo layout, ícone menor). Enter ou Esc fecham.</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

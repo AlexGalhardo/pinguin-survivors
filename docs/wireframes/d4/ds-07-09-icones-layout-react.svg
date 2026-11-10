@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1180" viewBox="0 0 1920 1180">
+  <g>
+    <rect width="1920" height="1180" fill="#0B0E14"/>
+    <g transform="translate(48, 48)">
+      <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">7 · ÍCONES E PIXEL ART</text>
+    </g>
+    <g transform="translate(48, 116)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Só múltiplos inteiros do pixel original (image-rendering: pixelated). Ícones 16 px de origem → 32/48/64; sprites de herói 80 → 160/240/320; lojista 96 → 192/288; slots 88/64/52/36 contêm o ícone a 2× ou 3× centrado. Posição sempre em pixel inteiro (sem translate fracionado).</text>
+    </g>
+    <g transform="translate(48, 184)">
+      <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">8 · REGRAS DE LAYOUT</text>
+    </g>
+    <g transform="translate(48, 252)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Hierarquia: título Cinzel no topo (y 36), filete, frase de contexto; conteúdo em 3 zonas (esquerda: lista/atributos; centro: herói/objeto com brilho; direita: detalhe/tooltip); rodapé de dicas em y ≈ 1010. Alinhamento: textos de lista alinhados à esquerda no mesmo x do item focado (+28 px depois do losango).</text>
+    </g>
+    <g transform="translate(48, 320)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Sem scroll: listas paginam (8–12 itens), ‹ › com contador; L1/R1 troca abas/categorias; tooltips aparecem por cima (elev-2) em vez de crescer a coluna. 1280×720: mesma composição escalada. 844×390: uma zona por vez (lista à esquerda, detalhe à direita), lista de 5 itens + paginador, sem herói grande, títulos 24–30, secundário 18.</text>
+    </g>
+    <g transform="translate(48, 388)">
+      <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">9 · REACT / TAILWIND V4</text>
+    </g>
+    <g transform="translate(48, 456)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">@theme: --color-night #0b0e14; --color-panel-top #161c29; --color-panel-bottom #0a0d13; --color-snow-dark #3a4152; --color-snow #5a6378; --color-text #e8ecf2; --color-text-dim #9aa3b5; --color-gold-aged #a8843a; --color-gold #e0bb62; --color-focus #ffd84a; --color-fish #ff9a3c; --color-gain #4fd06a; --color-loss #c4161c; --color-info #6fa3c7; --color-rarity-1…5.</text>
+    </g>
+    <g transform="translate(48, 551)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">--font-title "Cinzel", "Noto Serif SC", serif; --font-body "Roboto", "Noto Sans SC", sans-serif; --text-display 88px; --text-title 48px; --text-item 32px; --text-section 26px; --text-list 30px; --text-body 24px; --text-secondary 22px; --spacing 4px (p-3 = 12, p-4 = 16).</text>
+    </g>
+    <g transform="translate(48, 619)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">--shadow-inset inset 0 0 40px #000; --shadow-1 0 8px 24px #000c; --shadow-2 0 20px 60px #000; --shadow-focus 0 0 32px #e0bb6233. Utilitários: .d-vignette (pseudo-elemento fixo, pointer-events-none), .d-filet (bg-linear-to-r from-transparent via-gold to-transparent), .d-chamfer (clip-path polygon 12 px).</text>
+    </g>
+    <g transform="translate(48, 687)">
+      <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Componentes: DMenuItem, DCta, DTab, DPager, DStatRow, DAdjustRow, DSlot, DTooltip, DSection, DConfirm, DToast, DBar, DCurrency, DKeyHint, Ornament (SVG inline). Foco: :focus-visible → losango via ::before + text-focus + shadow-focus. Escala por altura: font-size raiz = 100vh / 1080 × 16, ou transform no root da UI.</text>
+    </g>
+  </g>
+</svg>

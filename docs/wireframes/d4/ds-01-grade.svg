@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="760" viewBox="0 0 1920 760">
+  <g>
+    <rect width="1920" height="760" fill="#0B0E14"/>
+    <g transform="translate(48, 48)">
+      <text x="0" y="40" font-family="Cinzel" font-size="40" font-weight="700" fill="#E0BB62" letter-spacing="8">1 · GRADE E UNIDADE</text>
+    </g>
+    <g transform="translate(48, 118)">
+      <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Unidade 4 px. Todo espaçamento, tamanho e posição é múltiplo de 4 (exceto filetes de 1–2 px).</text>
+    </g>
+    <g transform="translate(48, 163)">
+      <g transform="translate(0, 52)">
+        <g transform="translate(53, 0)">
+          <rect width="4" height="4" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 10)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-1 · 4</text>
+        </g>
+      </g>
+      <g transform="translate(138, 48)">
+        <g transform="translate(53, 0)">
+          <rect width="8" height="8" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 14)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-2 · 8</text>
+        </g>
+      </g>
+      <g transform="translate(280, 44)">
+        <g transform="translate(55.5, 0)">
+          <rect width="12" height="12" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 18)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-3 · 12</text>
+        </g>
+      </g>
+      <g transform="translate(431, 40)">
+        <g transform="translate(54, 0)">
+          <rect width="16" height="16" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 22)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-4 · 16</text>
+        </g>
+      </g>
+      <g transform="translate(583, 36)">
+        <g transform="translate(54, 0)">
+          <rect width="20" height="20" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 26)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-5 · 20</text>
+        </g>
+      </g>
+      <g transform="translate(739, 32)">
+        <g transform="translate(52, 0)">
+          <rect width="24" height="24" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 30)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-6 · 24</text>
+        </g>
+      </g>
+      <g transform="translate(895, 24)">
+        <g transform="translate(48, 0)">
+          <rect width="32" height="32" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 38)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-8 · 32</text>
+        </g>
+      </g>
+      <g transform="translate(1051, 16)">
+        <g transform="translate(49, 0)">
+          <rect width="40" height="40" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 46)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-10 · 40</text>
+        </g>
+      </g>
+      <g transform="translate(1217, 8)">
+        <g transform="translate(44.5, 0)">
+          <rect width="48" height="48" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 54)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-12 · 48</text>
+        </g>
+      </g>
+      <g transform="translate(1382, 0)">
+        <g transform="translate(40.5, 0)">
+          <rect width="56" height="56" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(0, 62)">
+          <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">space-14 · 56</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(48, 268)">
+      <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Uso: padding interno de painel/tooltip/item = space-3 a space-4 (12–16; máx. space-5 = 20). Gap entre itens de lista = 0 (a altura do item já dá o ritmo). Gap entre grupos = space-3 (12). Gap entre blocos de tela = space-6 a space-10.</text>
+    </g>
+    <g transform="translate(48, 342)">
+      <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#E0BB62" letter-spacing="3">MARGENS DE TELA (SAFE AREA) E COLUNAS</text>
+    </g>
+    <g transform="translate(48, 390)">
+      <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">1920×1080: margem lateral 56 · topo 36 · base 36 · 12 colunas de 112 com gutter 32 (conteúdo 1808). Telas usam 3 zonas: coluna esquerda 4 col (≈ 560–620), centro 4 col, direita 4 col.</text>
+    </g>
+    <g transform="translate(48, 464)">
+      <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">1280×720: mesmo layout escalado por 0,667 (margens ≈ 37/24); nenhum texto abaixo de 15 px reais (22 × 0,667).</text>
+    </g>
+    <g transform="translate(48, 509)">
+      <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">844×390 (celular paisagem, DPR 3): margem lateral 44 (notch) · topo/base 8 · 6 colunas de 112 com gutter 16; conteúdo 756. Em 2560×1080 (ultrawide) o conteúdo fica centrado em 1920 e o fundo/vinheta se estende.</text>
+    </g>
+  </g>
+</svg>

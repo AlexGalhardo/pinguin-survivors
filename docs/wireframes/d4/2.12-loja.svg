@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="fx0">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="140" result="fx0_is_blur"/>
+      <feOffset dx="0" dy="0" result="fx0_is_off"/>
+      <feComposite in="SourceAlpha" in2="fx0_is_off" operator="out" result="fx0_is_inv"/>
+      <feFlood flood-color="#000000" flood-opacity="1"/>
+      <feComposite in2="fx0_is_inv" operator="in" result="fx0_is_shadow"/>
+      <feComposite in="fx0_is_shadow" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="fx1">
+      <feDropShadow dx="0" dy="20" stdDeviation="30" flood-color="#000000" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <g>
+    <rect width="1920" height="1080" fill="#0B0E14"/>
+    <g transform="translate(40, 120)">
+      <rect width="660" height="560" rx="280" ry="280" fill="#161C29"/>
+    </g>
+    <g filter="url(#fx0)">
+      <rect width="1920" height="1080" fill="#000000"/>
+    </g>
+    <g transform="translate(56, 36)">
+      <g transform="translate(0, 21.5)">
+        <text x="0" y="42" font-family="Cinzel" font-size="42" font-weight="700" fill="#E0BB62" letter-spacing="10">LOJA · ROUND 7</text>
+      </g>
+      <g transform="translate(520, 32.5)">
+        <text x="0" y="28" font-family="Roboto" font-size="28" font-weight="900" fill="#FF9A3C" letter-spacing="2">🐟 120 PEIXES</text>
+      </g>
+      <g transform="translate(719, 0)"/>
+      <g transform="translate(1283, 36.5)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#C4161C" letter-spacing="1">AVISO: ONDA DE ELITES NO PRÓXIMO ROUND</text>
+      </g>
+    </g>
+    <g transform="translate(80, 130)">
+      <g transform="translate(180, 0)">
+        <rect width="240" height="240" fill="#3A4152" stroke="#5A6378" stroke-width="1"/>
+        <g transform="translate(106, 96)">
+          <text x="0" y="40" font-family="Roboto" font-size="40" font-weight="900" fill="#5A6378">X</text>
+        </g>
+      </g>
+      <g transform="translate(20, 252)">
+        <text x="0" y="26" font-family="Cinzel" font-size="26" fill="#E8ECF2">“Chegou de novo? Guardei o bom material.”</text>
+      </g>
+    </g>
+    <g transform="translate(56, 470)">
+      <g>
+        <rect width="660" height="72" fill="#4F9DFF"/>
+        <g transform="translate(14, 29) rotate(45, 7, 7)">
+          <rect width="14" height="14" fill="#FFD84A"/>
+        </g>
+        <g transform="translate(42, 10)">
+          <rect width="52" height="52" fill="#16263F" stroke="#4F9DFF" stroke-width="2"/>
+          <g transform="translate(22, 17.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#4F9DFF">II</text>
+          </g>
+        </g>
+        <g transform="translate(108, 20)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#4F9DFF" letter-spacing="1">FACAS DE ARREMESSO</text>
+        </g>
+        <g transform="translate(613, 20.5)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="900" fill="#FF9A3C">60</text>
+        </g>
+      </g>
+      <g transform="translate(0, 72)">
+        <g transform="translate(42, 10)">
+          <rect width="52" height="52" fill="#163222" stroke="#4FD06A" stroke-width="2"/>
+          <g transform="translate(20, 17.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#4FD06A">III</text>
+          </g>
+        </g>
+        <g transform="translate(108, 20)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#4FD06A" letter-spacing="1">ELMO VIKING · travado</text>
+        </g>
+        <g transform="translate(586, 20.5)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#FF9A3C">85</text>
+        </g>
+      </g>
+      <g transform="translate(0, 144)">
+        <g transform="translate(42, 10)">
+          <rect width="52" height="52" fill="#3A4152" stroke="#E8ECF2" stroke-width="2"/>
+          <g transform="translate(24, 17.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#E8ECF2">I</text>
+          </g>
+        </g>
+        <g transform="translate(108, 20)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#9AA3B5" letter-spacing="1">MAGNÉTICO 1/5 · sem Fish</text>
+        </g>
+        <g transform="translate(574, 20.5)">
+          <text x="0" y="26" font-family="Roboto" font-size="26" font-weight="700" fill="#9AA3B5">140</text>
+        </g>
+      </g>
+      <g transform="translate(0, 216)">
+        <g transform="translate(42, 21.5)">
+          <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#9AA3B5" letter-spacing="6">— VENDIDO —</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(760, 120)">
+      <g filter="url(#fx1)">
+        <rect width="580" height="289" fill="#0B0E14" stroke="#4F9DFF" stroke-width="1"/>
+        <g>
+          <rect width="580" height="96" fill="#4F9DFF"/>
+          <g transform="translate(14, 12)">
+            <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#4F9DFF" letter-spacing="1">Facas de Arremesso</text>
+          </g>
+          <g transform="translate(14, 57)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E8ECF2" letter-spacing="1">À VENDA · ARMA · II · LÂMINA / ARREMESSO</text>
+          </g>
+        </g>
+        <g transform="translate(0, 96)">
+          <g transform="translate(14, 12)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">◆ Dano 14 · 1,5/s</text>
+          </g>
+          <g transform="translate(14, 47)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#4FD06A">✦ +5% dano   ✦ +2% crítico</text>
+          </g>
+          <g transform="translate(14, 83)">
+            <rect width="552" height="1" fill="#A8843A"/>
+          </g>
+          <g transform="translate(14, 90)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#FFD84A">Nova arma no slot 4. Você pode fundi-la com o slot 2 (I → II).</text>
+          </g>
+          <g transform="translate(14, 154)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E0BB62" letter-spacing="2">ENTER COMPRAR · 60    T TRAVAR</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(600, 0)">
+        <rect width="500" height="214" fill="#0B0E14" stroke="#E8ECF2" stroke-width="1"/>
+        <g>
+          <rect width="500" height="91" fill="#E8ECF2"/>
+          <g transform="translate(14, 12)">
+            <text x="0" y="28" font-family="Cinzel" font-size="28" font-weight="700" fill="#E8ECF2">Facas de Arremesso</text>
+          </g>
+          <g transform="translate(14, 52)">
+            <text x="0" y="22" font-family="Roboto" font-size="22" font-weight="700" fill="#E8ECF2" letter-spacing="1">EQUIPADO · SLOT 2 · I</text>
+          </g>
+        </g>
+        <g transform="translate(0, 91)">
+          <g transform="translate(14, 12)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">◆ Dano 9 · 1,4/s · sem afixos</text>
+          </g>
+          <g transform="translate(14, 47)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#4FD06A">Dano 100% → 105%</text>
+          </g>
+          <g transform="translate(14, 82)">
+            <text x="0" y="24" font-family="Roboto" font-size="24" fill="#4FD06A">Crítico 5% → 7%</text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(760, 500)">
+      <g>
+        <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="900" fill="#E0BB62" letter-spacing="3">SEU PINGUIM — HP 140 · ARMADURA 12 · DANO 100%</text>
+      </g>
+      <g transform="translate(0, 39)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Regeneração 0,8 · Esquiva 3% · Parry 15% · Crítico 5% · Dano crítico 150% · Vel. ataque 100% · Vel. movimento 95 · Área 100% · Sorte 0%</text>
+      </g>
+      <g transform="translate(0, 103)">
+        <g transform="translate(0, 18)">
+          <rect width="64" height="64" fill="#3A4152" stroke="#E8ECF2" stroke-width="2"/>
+          <g transform="translate(30, 23.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#E8ECF2">I</text>
+          </g>
+        </g>
+        <g transform="translate(74, 18)">
+          <rect width="64" height="64" fill="#16263F" stroke="#4F9DFF" stroke-width="2"/>
+          <g transform="translate(28, 23.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#4F9DFF">II</text>
+          </g>
+        </g>
+        <g transform="translate(148, 18)">
+          <rect width="64" height="64" fill="#163222" stroke="#4FD06A" stroke-width="2"/>
+          <g transform="translate(26, 23.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#4FD06A">III</text>
+          </g>
+        </g>
+        <g transform="translate(222, 18)">
+          <rect width="64" height="64" fill="#2A1640" stroke="#B347FF" stroke-width="2"/>
+          <g transform="translate(25, 23.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#B347FF">IV</text>
+          </g>
+        </g>
+        <g transform="translate(296, 18)">
+          <rect width="64" height="64" fill="#3A2210" stroke="#FF8A1F" stroke-width="2"/>
+          <g transform="translate(27, 23.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#FF8A1F">V</text>
+          </g>
+        </g>
+        <g transform="translate(370, 18)">
+          <rect width="64" height="64" fill="none" stroke="#5A6378" stroke-width="2" stroke-dasharray="6 4"/>
+          <g transform="translate(19.5, 25.5)">
+            <text x="0" y="11" font-family="Roboto" font-size="11" fill="#9AA3B5">elmo</text>
+          </g>
+        </g>
+        <g transform="translate(444, 0)"/>
+        <g transform="translate(478, 18)">
+          <rect width="64" height="64" fill="#163222" stroke="#4FD06A" stroke-width="2"/>
+          <g transform="translate(26, 23.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#4FD06A">III</text>
+          </g>
+        </g>
+        <g transform="translate(552, 18)">
+          <rect width="64" height="64" fill="none" stroke="#5A6378" stroke-width="2" stroke-dasharray="6 4"/>
+          <g transform="translate(19.5, 25.5)">
+            <text x="0" y="11" font-family="Roboto" font-size="11" fill="#9AA3B5">elmo</text>
+          </g>
+        </g>
+        <g transform="translate(626, 18)">
+          <rect width="64" height="64" fill="none" stroke="#5A6378" stroke-width="2" stroke-dasharray="6 4"/>
+          <g transform="translate(19.5, 25.5)">
+            <text x="0" y="11" font-family="Roboto" font-size="11" fill="#9AA3B5">elmo</text>
+          </g>
+        </g>
+        <g transform="translate(700, 18)">
+          <rect width="64" height="64" fill="#16263F" stroke="#4F9DFF" stroke-width="2"/>
+          <g transform="translate(28, 23.5)">
+            <text x="0" y="14" font-family="Roboto" font-size="14" font-weight="900" fill="#4F9DFF">II</text>
+          </g>
+        </g>
+        <g transform="translate(774, 18)">
+          <rect width="64" height="64" fill="none" stroke="#5A6378" stroke-width="2" stroke-dasharray="6 4"/>
+          <g transform="translate(19.5, 25.5)">
+            <text x="0" y="11" font-family="Roboto" font-size="11" fill="#9AA3B5">elmo</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(0, 213)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" fill="#E8ECF2">Machete I ·  · </text>
+      </g>
+      <g transform="translate(0, 252)">
+        <text x="0" y="22" font-family="Roboto" font-size="22" fill="#E8ECF2">Suporte 1/4 · Magnético 2/5 · </text>
+      </g>
+    </g>
+    <g transform="translate(760, 980)">
+      <g transform="translate(0, 35.5)">
+        <text x="0" y="24" font-family="Roboto" font-size="24" font-weight="700" fill="#E0BB62" letter-spacing="3">R  REROLAR · 8</text>
+      </g>
+      <g transform="translate(242, 0)"/>
+      <g transform="translate(638, 18)">
+        <rect width="466" height="64" fill="#A8843A"/>
+        <g transform="translate(20, 26) rotate(45, 6, 6)">
+          <rect width="12" height="12" fill="#E0BB62"/>
+        </g>
+        <g transform="translate(46, 10.5)">
+          <text x="0" y="32" font-family="Cinzel" font-size="32" font-weight="700" fill="#E0BB62" letter-spacing="6">PRÓXIMO ROUND</text>
+        </g>
+        <g transform="translate(434, 26) rotate(45, 6, 6)">
+          <rect width="12" height="12" fill="#E0BB62"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
