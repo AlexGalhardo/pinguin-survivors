@@ -196,6 +196,7 @@
 
 	/* Focus of a list item: gold band, glow and a crit diamond on the left. The element needs `relative`. */
 	.d-focus {
+		background-color: transparent;
 		transition:
 			background-color 120ms ease-out,
 			box-shadow 120ms ease-out,
@@ -204,6 +205,11 @@
 
 	.d-focus:hover:not([aria-disabled="true"]) {
 		background-color: color-mix(in srgb, var(--color-gold-bright) 6%, transparent);
+		color: var(--color-gold-bright);
+	}
+
+	/* Current value of a choice list: gold text; focus (below) wins. */
+	.d-focus[data-selected="true"] {
 		color: var(--color-gold-bright);
 	}
 
@@ -227,6 +233,30 @@
 		transform: rotate(45deg);
 		background: var(--color-crit);
 		box-shadow: 0 0 12px var(--color-crit);
+	}
+
+	/* Inner padding of surfaces: 12 px at 1080 with an 8 px floor on phones. */
+	.d-pad {
+		padding: max(8px, calc(var(--spacing) * 3));
+	}
+
+	/* Main action: gold band, stronger on hover and focus (focus color comes from d-focus). */
+	.d-cta {
+		background-color: color-mix(in srgb, var(--color-gold-aged) 20%, transparent);
+		color: var(--color-gold-bright);
+	}
+
+	.d-cta.d-focus:hover:not([aria-disabled="true"]),
+	.d-cta.d-focus[data-focused="true"] {
+		background-color: color-mix(in srgb, var(--color-gold-aged) 25%, transparent);
+	}
+
+	/* Destructive action: stays blood red when focused, the diamond still marks the focus. */
+	.d-danger,
+	.d-danger.d-focus:hover:not([aria-disabled="true"]),
+	.d-danger.d-focus[data-focused="true"] {
+		color: var(--color-blood);
+		font-weight: 900;
 	}
 
 	/* Flashes off for players who ask for less motion (design-system section 12). */
