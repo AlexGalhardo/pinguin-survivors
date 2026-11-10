@@ -1,7 +1,13 @@
 import { describe, expect, test } from 'bun:test';
 import { HEROES } from '../src/data/heroes';
 import { HEAL_POTION, POTION_TYPES } from '../src/data/potions';
-import { MAGNETIC, SUPPORT_SLOTS } from '../src/data/support';
+import {
+	MAGNETIC,
+	SUPPORT_IDS,
+	SUPPORT_MAX_LEVEL,
+	SUPPORT_SLOTS,
+	SUPPORT_STATS,
+} from '../src/data/support';
 import { emptyBuild } from '../src/logic/build';
 import { emptyGear } from '../src/logic/equipment';
 import {
@@ -22,6 +28,7 @@ import {
 	shopPool,
 	supportCandidates,
 } from '../src/logic/run-state';
+import { reroll, rollOffers } from '../src/logic/shop';
 import { describeOffer } from '../src/logic/shop-describe';
 import { baseStats, getStat } from '../src/logic/stats';
 import {
@@ -235,5 +242,79 @@ describe('healing potion (SDD-014 RF-20)', () => {
 	test('the old heal potions are gone from the gambit stock', () => {
 		expect(POTION_TYPES as readonly string[]).not.toContain('heal');
 		expect(POTION_TYPES as readonly string[]).not.toContain('megaHeal');
+	});
+});
+
+describe('support shop rules (dev request)', () => {
+	const ctx = { hero: 'jack', buildSets: [], luck: 0 };
+
+	test('bonus grows strictly from level 1 to 5 for every support item', () => {
+		for (const id of SUPPORT_IDS)
+			for (let l = 2; l <= SUPPORT_MAX_LEVEL; l++)
+				expect(supportValue(id, l)).toBeGreaterThan(supportValue(id, l - 1));
+		for (const k of ['radius', 'pull'] as const)
+			for (let i = 1; i < SUPPORT_MAX_LEVEL; i++)
+				expect(MAGNETIC[k][i]).toBeGreaterThan(MAGNETIC[k][i - 1] as number);
+		for (const d of Object.values(SUPPORT_STATS))
+			for (let i = 1; i < d.values.length; i++)
+				expect(d.values[i]).toBeGreaterThan(d.values[i - 1] as number);
+	});
+
+	test.each([
+		[{}, 3],
+		[{ magnetic: 2 }, 3],
+		[{ magnetic: 5 }, 2],
+		[{ magnetic: 5, swift: 5, lucky: 5 }, 0],
+	] as [SupportLevels, number][])(
+		'owned %j: %i support ids on the shelf, none maxed, no repeats',
+		(owned, count) => {
+			const run = createRunState(HEROES.jack, { seed: 1 });
+			run.support = owned;
+			const pool = supportCandidates(run).filter((c) => c.kind === 'support');
+			for (let seed = 1; seed <= 20; seed++) {
+				const offers = rollOffers(new Rng(seed), 3, ctx, pool, [
+					false,
+					false,
+					false,
+					false,
+				]);
+				const ids = offers.flatMap((o) => (o ? [o.id] : []));
+				expect(new Set(ids).size).toBe(ids.length);
+				expect(ids.length).toBe(count);
+				for (const id of ids)
+					expect((owned as Record<string, number>)[id] ?? 0).toBeLessThan(5);
+			}
+		},
+	);
+
+	test('with slots full only owned items are offered', () => {
+		const full = { swift: 1, lucky: 1, a: 1, b: 1 } as SupportLevels;
+		expect(canBuySupport(full, 'magnetic')).toBe(false);
+		expect(canBuySupport(full, 'swift')).toBe(true);
+	});
+
+	test('a locked support offer gone stale is dropped on reroll and the owned level shows as an upgrade', () => {
+		const run = createRunState(HEROES.jack, { seed: 1 });
+		run.support = { magnetic: 5 };
+		run.fish = 999;
+		const stale = { kind: 'support', id: 'magnetic', tier: 1, price: 20 } as const;
+		const state = {
+			offers: [stale, null, null, null],
+			locks: [true, false, false, false],
+			rerolls: 0,
+		};
+		const pool = supportCandidates(run);
+		const r = reroll(state, run.fish, new Rng(3), 3, ctx, pool);
+		expect(r?.state.offers.some((o) => o?.id === 'magnetic')).toBe(false);
+		expect(r?.state.locks[0]).toBe(false);
+		run.support = { magnetic: 2 };
+		expect(
+			describeOffer(stale, {
+				build: emptyBuild(),
+				gear: emptyGear(),
+				stats: baseStats(HEROES.jack),
+				support: run.support,
+			}).outcome,
+		).toMatchObject({ type: 'support', from: 2, to: 3 });
 	});
 });

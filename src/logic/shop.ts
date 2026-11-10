@@ -112,16 +112,20 @@ export function rollOffers(
 	locks: readonly boolean[],
 	prev: readonly (Offer | null)[] = [],
 ): (Offer | null)[] {
-	const offers: (Offer | null)[] = Array.from({ length: SHOP.offers }, (_, i) =>
-		locks[i] ? (prev[i] ?? null) : null,
-	);
-	const used = new Set(offers.flatMap((o) => (o ? [o.id] : [])));
 	const open = pool.filter(
 		(c) =>
 			(!c.hero || c.hero === ctx.hero) &&
 			c.tier <= SHOP.maxRarity &&
 			round >= (SHOP.rarityFromRound[c.tier] ?? 0),
 	);
+	// A locked support offer that went stale (item maxed or slots full) is dropped, never kept.
+	const stillValid = (o: Offer): boolean =>
+		o.kind !== 'support' || open.some((c) => c.kind === 'support' && c.id === o.id);
+	const offers: (Offer | null)[] = Array.from({ length: SHOP.offers }, (_, i) => {
+		const kept = locks[i] ? prev[i] : null;
+		return kept && stillValid(kept) ? kept : null;
+	});
+	const used = new Set(offers.flatMap((o) => (o ? [o.id] : [])));
 	for (let i = 0; i < offers.length; i++) {
 		if (offers[i]) continue;
 		let avail = open.filter((c) => !used.has(c.id));
@@ -193,5 +197,6 @@ export function reroll(
 	const price = rerollPrice(round, state.rerolls);
 	if (fish < price) return null;
 	const offers = rollOffers(rng, round, ctx, pool, state.locks, state.offers);
-	return { state: { ...state, offers, rerolls: state.rerolls + 1 }, fish: fish - price };
+	const locks = state.locks.map((l, i) => l && offers[i] === state.offers[i]);
+	return { state: { ...state, offers, locks, rerolls: state.rerolls + 1 }, fish: fish - price };
 }

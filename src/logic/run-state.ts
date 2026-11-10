@@ -329,7 +329,11 @@ function openShop(state: RunState, roll: ShopRoll): void {
 		locks,
 		state.lockedOffers,
 	);
-	state.shop = { offers, locks, rerolls: 0 };
+	state.shop = {
+		offers,
+		locks: locks.map((l, i) => l && offers[i] === state.lockedOffers[i]),
+		rerolls: 0,
+	};
 	state.phase = 'shop';
 }
 
