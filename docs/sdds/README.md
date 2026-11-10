@@ -19,3 +19,4 @@ Regra: nenhuma tarefa de implementação começa sem a SDD correspondente em sta
 | [SDD-012](SDD-012-arte-topdown-e-vfx.md) | Produção de arte top-down (tiles, props, lojista, tiers, VFX) | SDD-001, SDD-002 | Aprovada |
 | [SDD-013](SDD-013-balanceamento-e-simulacao.md) | Ferramentas de balanceamento: sim, bot, telemetria pós-1.0 | SDD-002, SDD-003, SDD-005 | Aprovada |
 | [SDD-014](SDD-014-slots-de-save-suporte-e-pocao.md) | Três slots de save, itens de suporte nível 1–5 e poção de cura da run | SDD-003, SDD-005 | Aprovada |
+| [SDD-015](SDD-015-ui-diablo-4-organica.md) | UI Diablo 4 orgânica (Estilo D): tokens, primitivos e as 16 telas | SDD-004 | Aprovada |

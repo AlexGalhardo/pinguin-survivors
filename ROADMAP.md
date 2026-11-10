@@ -179,6 +179,13 @@ Specs: [SDD-004](docs/sdds/SDD-004-ui-react-tailwind.md), [SDD-005](docs/sdds/SD
 - [x] **T3.12** Release `0.1.0` (entra na fase beta: jogo completo jogável com UI React). · Evidência (2026-11-08): `bun scripts/release.ts 0.1.0` (clone limpo, gates verdes) → [release v0.1.0](https://github.com/AlexGalhardo/pinguin-survivors/releases/tag/v0.1.0); pre-release; `package.json` 0.1.0; 14 tags = 14 releases. O conteúdo do M3 já tinha saído em `v0.0.13` (release por marco feita com o código pronto); `v0.1.0` marca a entrada na fase beta.
   - [x] Auditoria: re-executar o assert e conferir a evidência anotada. · Conferido (2026-11-08, orquestrador): `gh release view v0.1.0` pre-release, título = tag.
 
+- [ ] **T3.13** Tokens e primitivos do Estilo D: `@theme` (espaçamento, tipografia, elevação, vinheta, filetes), `Ornament`, `Vignette`, `MenuList` e variantes D de `Panel`/`Btn`/`MenuScreen`/`StatRow`/`ItemCard`/`SlotIcon`/`Toast` (SDD-015 RF-01…RF-03, RF-08) · Resp.: senior · Dep.: aprovação da SDD-015 · Est.: 8 h · Assert: A1, A2 (`bun test tests/ui`; `rg -n "#[0-9a-fA-F]{3,8}" src/ui/components` vazio).
+- [ ] **T3.14** Fonte de títulos: `@fontsource/cinzel` 5.3.0 em `--font-title` (🛑 dependência nova: só com aprovação do ADR-022; senão Roboto 900 + tracking 0,25em) · Resp.: senior · Dep.: T3.13 · Est.: 1 h · Assert: `bun run build`; captura de 2.1 em PT-BR e ZH-CN.
+- [ ] **T3.15** Telas fora da run no Estilo D: 2.1 `MainMenu`, 2.2 `SaveSlots`, 2.3 `HeroSelect`, 2.4 `HeroScreen`, 2.8 `Settings`, 2.9 `Controls` (SDD-015 RF-04…RF-07, RF-10) · Resp.: senior · Dep.: T3.13 · Est.: 10 h · Assert: A3, A4 nessas telas; `bun run e2e` zero erros.
+- [ ] **T3.16** Coleções no Estilo D: 2.5 `SkillTree`, 2.6 `Achievements`/`Extras`, 2.7 `History` · Resp.: senior · Dep.: T3.13 · Est.: 8 h · Assert: A3, A4; `bun test tests/ui/menus.test.tsx tests/ui/skill-tree-touch.test.tsx`.
+- [ ] **T3.17** Telas da run no Estilo D: 2.11 `LevelUpCards`, 2.12 `Shop`/`PlayerPanel`/`ItemViews`, 2.13 `Pause`, 2.14 `GameOver`, 2.15 `Unlock`, 2.16 `DemoEnd` · Resp.: senior · Dep.: T3.13 · Est.: 12 h · Assert: A3, A4; `bun test tests/ui/shop.test.tsx tests/ui/screens.test.tsx`; `bun run e2e -- --demo`.
+- [ ] **T3.18** HUD 2.10 (`Hud`, `TouchControls`) no Estilo D e auditoria final (A5, A6) · Resp.: senior · Dep.: T3.15–T3.17 · Est.: 8 h · Assert: A5 (`bun run e2e`, `bun test`), A6 (`bun scripts/perf.ts` 60 FPS com 300 inimigos), capturas 1920×1080 / 1280×720 / 844×390.
+
 ### Auditoria do marco M3
 
 Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o que falta) · `[x]` feita (data e quem auditou).
