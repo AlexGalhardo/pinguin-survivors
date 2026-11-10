@@ -327,6 +327,17 @@ function OfferRow(props: {
 		offer.kind === 'weapon' || offer.kind === 'item' || offer.kind === 'gear'
 			? ` ${numeral(offer.tier)}`
 			: ''
+	}${
+		offer.description?.outcome.type === 'support'
+			? ` · ${
+					offer.description.outcome.from === 0
+						? t('shop.supportNew')
+						: t('shop.supportLevel', {
+								from: offer.description.outcome.from,
+								to: offer.description.outcome.to,
+							})
+				}`
+			: ''
 	}${sets ? ` · ${sets}` : ''}`;
 	return (
 		<div

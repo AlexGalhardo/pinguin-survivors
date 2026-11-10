@@ -2,6 +2,8 @@
 export const supportZhCN = {
 	'shop.kind.support': '辅助',
 	'shop.kind.healPotion': '治疗药水',
+	'shop.supportLevel': '{from} → {to} 级',
+	'shop.supportNew': '新',
 	'shop.outcome.supportNew': '新的辅助道具，1 级：{stat}。',
 	'shop.outcome.supportUp': '辅助道具 {from} 级升至 {to} 级：{stat}。',
 	'shop.outcome.healPotion':
