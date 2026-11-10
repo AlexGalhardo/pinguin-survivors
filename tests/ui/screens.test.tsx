@@ -120,6 +120,23 @@ describe('Pause', () => {
 	});
 });
 
+describe('Pause card', () => {
+	test('focusing a weapon slot shows its tooltip card', () => {
+		const data = {
+			weapons: [{ slot: 0, id: 'machete', tier: 2 as const }],
+			stats: [],
+			cards: [],
+			gear: { slots: [] },
+		};
+		const actions = { resume() {}, settings() {}, tree() {}, quit() {} };
+		const { container, getByLabelText } = render(<Pause data={data} actions={actions} />);
+		expect(container.textContent).toContain('Focus an item');
+		fireEvent.focus(getByLabelText('Machete'));
+		expect(container.textContent).toContain('Weapon · II');
+		cleanup();
+	});
+});
+
 describe('GameOver', () => {
 	test('shows the summary and fires play again / menu', () => {
 		const calls: string[] = [];
