@@ -62,7 +62,7 @@ export function AffixLines(props: { affixes?: readonly AffixView[] }): ReactElem
 	const list = props.affixes ?? [];
 	if (list.length === 0) return <Hint>{t('shop.noAffixes')}</Hint>;
 	return (
-		<ul className="m-0 list-none space-y-0.5 p-0 text-[0.9em]">
+		<ul className="m-0 list-none space-y-0.5 p-0 text-body">
 			{list.map((a) => (
 				<li key={a.stat} className="flex items-baseline gap-2 text-xp">
 					<span className="text-[0.7em]">✦</span>
@@ -82,7 +82,7 @@ export function WeaponCardView(props: { item: WeaponItem; footer?: ReactElement 
 			color={rarityCss(props.item.tier)}
 			kind={`${t('shop.kind.weapon')} · ${numeral(props.item.tier)}`}
 			lines={[
-				<span key="b" className="text-text-dim">
+				<span key="b" className="text-text-light">
 					{t(`weapon.behavior.${w.behavior}` as I18nKey)}
 				</span>,
 				<StatRow key="d" label={t('weapon.stat.damage')} value={w.damage} />,
@@ -111,7 +111,7 @@ export function GearCardView(props: { item: GearItem; footer?: ReactElement }): 
 			lines={[
 				...gearBaseLines(props.item.id).map((l) => (
 					<span key={l} className="flex items-baseline gap-2">
-						<span className="text-[0.6em] text-text-dim">◆</span>
+						<span className="text-[0.6em] text-gold-aged">◆</span>
 						{l}
 					</span>
 				)),
@@ -132,7 +132,7 @@ export function SlotIcon(props: {
 }): ReactElement {
 	return (
 		<span
-			className="flex shrink-0 items-center justify-center border-2"
+			className="flex shrink-0 items-center justify-center border-2 shadow-inset"
 			style={{
 				borderColor: rarityCss(props.rarity),
 				backgroundColor: `color-mix(in srgb, ${rarityCss(props.rarity)} 20%, var(--color-night))`,
