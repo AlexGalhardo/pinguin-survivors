@@ -275,7 +275,7 @@ export function PlayerPanel(props: {
 	return (
 		<div
 			onFocusCapture={track}
-			className="grid min-h-0 min-w-0 flex-1 grid-cols-[minmax(0,0.95fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-[2vw]"
+			className={`grid min-h-0 min-w-0 flex-1 gap-[2vw] ${compact ? 'grid-cols-[minmax(0,0.8fr)_auto_minmax(0,1fr)]' : 'grid-cols-[minmax(0,0.95fr)_minmax(0,0.9fr)_minmax(0,1fr)]'}`}
 		>
 			{/* Right column first in the DOM so the actions get the initial focus. */}
 			<div className="order-3 flex min-h-0 min-w-0 flex-col justify-between gap-2">
@@ -285,18 +285,30 @@ export function PlayerPanel(props: {
 				{props.footer}
 			</div>
 			<div className="order-1 flex min-h-0 min-w-0 flex-col gap-1.5">
-				<p className="m-0 text-cta font-black tracking-wider uppercase">{line}</p>
-				<div className={compact ? 'grid grid-cols-2 gap-x-4' : ''}>
-					{rest.map((s) => (
-						<StatRow
-							key={s.key}
-							label={
-								<span className="capitalize">{t(`gstat.${s.key}` as I18nKey)}</span>
-							}
-							value={s.value}
-						/>
-					))}
-				</div>
+				<p className="m-0 text-list font-black uppercase [@media(max-height:500px)]:text-body">
+					{line}
+				</p>
+				{compact ? (
+					<p className="m-0 text-secondary leading-snug">
+						{rest
+							.map((s) => `${t(`gstat.${s.key}` as I18nKey)} ${s.value}`)
+							.join(' · ')}
+					</p>
+				) : (
+					<div>
+						{rest.map((s) => (
+							<StatRow
+								key={s.key}
+								label={
+									<span className="capitalize">
+										{t(`gstat.${s.key}` as I18nKey)}
+									</span>
+								}
+								value={s.value}
+							/>
+						))}
+					</div>
+				)}
 				{data.cards && data.cards.length > 0 && !compact && (
 					<Block title={t('pause.cards')}>
 						<Hint>

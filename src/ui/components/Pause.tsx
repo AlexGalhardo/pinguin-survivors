@@ -4,9 +4,11 @@ import { LEGACY_GEAR_RARITY } from '../../data/rarity';
 import { MAX_WEAPON_SLOTS, type WeaponTier } from '../../data/weapons';
 import { t } from '../../i18n';
 import type { PlayerPanelView } from '../../logic/item-view';
+import { useCompact } from '../compact';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
-import { Heading, Panel } from './Panel';
+import { MenuList } from './MenuList';
+import { Heading } from './Panel';
 import { PlayerPanel, type PlayerPanelData, panelFromView } from './PlayerPanel';
 
 export interface PauseData {
@@ -49,7 +51,7 @@ function fallbackPanel(data: PauseData): PlayerPanelData {
 	};
 }
 
-/** Pause menu: the whole build as a big player sheet (stats, weapons, equipment; view only) and three actions. */
+/** Pause menu: the whole build as a three-zone player sheet (stats, slots, focused card; view only) and the actions as a text list. */
 export function Pause({
 	data,
 	actions,
@@ -61,18 +63,65 @@ export function Pause({
 	panel?: PlayerPanelView | null;
 }): ReactElement {
 	const [confirming, setConfirming] = useState(false);
+	const compact = useCompact();
+	const onSelect = (id: string): void => {
+		if (id === 'resume') actions.resume();
+		else if (id === 'tree') actions.tree();
+		else if (id === 'settings') actions.settings();
+		else setConfirming(true);
+	};
+	const menu = confirming ? (
+		<div className="flex flex-col gap-1">
+			<p className="m-0 text-body font-bold text-blood">{t('pause.confirm')}</p>
+			<div className="flex flex-wrap gap-2">
+				<Btn onActivate={actions.quit} variant="danger">
+					{t('pause.yes')}
+				</Btn>
+				<Btn onActivate={() => setConfirming(false)} variant="primary">
+					{t('pause.no')}
+				</Btn>
+			</div>
+		</div>
+	) : compact ? (
+		<>
+			<Btn onActivate={actions.resume} variant="primary">
+				{t('pause.resume')}
+			</Btn>
+			<Btn onActivate={actions.tree} variant="secondary">
+				{t('menu.workshop')}
+			</Btn>
+			<Btn onActivate={actions.settings} variant="secondary">
+				{t('menu.settings')}
+			</Btn>
+			<Btn onActivate={() => setConfirming(true)} variant="danger">
+				{t('pause.quit')}
+			</Btn>
+		</>
+	) : (
+		<MenuList
+			onSelect={onSelect}
+			items={[
+				{ id: 'resume', label: t('pause.resume') },
+				{ id: 'tree', label: t('menu.workshop') },
+				{ id: 'settings', label: t('menu.settings') },
+				{
+					id: 'quit',
+					label: <span className="font-black text-blood">{t('pause.quit')}</span>,
+				},
+			]}
+		/>
+	);
 	return (
 		<FocusScope
 			key={confirming ? 'confirm' : 'menu'}
 			onBack={confirming ? () => setConfirming(false) : actions.resume}
-			className="fixed inset-0 flex flex-col items-center gap-[1.4vh] overflow-hidden bg-night px-[3vw] py-[2vh] font-body text-[clamp(0.55rem,1.55vh,2.4rem)] text-text-light"
+			className="fixed inset-0 flex flex-col gap-[1.5vh] overflow-hidden bg-night px-[3vw] py-[2vh] font-body text-body text-text-light [@media(max-height:500px)]:gap-0 [@media(max-height:500px)]:py-0.5"
 		>
-			<header className="flex w-full max-w-[90rem] flex-col items-center gap-1">
-				<Heading>{t('pause.title')}</Heading>
-			</header>
-			<Panel fit className="w-full max-w-[90rem] flex-1">
+			<Heading>{t('pause.title')}</Heading>
+			<main className="flex min-h-0 flex-1 flex-col gap-1">
 				<PlayerPanel
 					wide
+					footer={compact ? undefined : menu}
 					data={
 						panel
 							? panelFromView(panel, {
@@ -82,45 +131,8 @@ export function Pause({
 							: fallbackPanel(data)
 					}
 				/>
-			</Panel>
-			<footer className="flex w-full max-w-[90rem] flex-wrap items-center justify-center gap-2">
-				{confirming ? (
-					<>
-						<p className="m-0 w-full text-center font-bold text-blood">
-							{t('pause.confirm')}
-						</p>
-						<Btn onActivate={actions.quit} variant="danger" className="min-w-48">
-							{t('pause.yes')}
-						</Btn>
-						<Btn
-							onActivate={() => setConfirming(false)}
-							variant="secondary"
-							className="min-w-48"
-						>
-							{t('pause.no')}
-						</Btn>
-					</>
-				) : (
-					<>
-						<Btn onActivate={actions.resume} variant="primary" className="min-w-48">
-							{t('pause.resume')}
-						</Btn>
-						<Btn onActivate={actions.tree} variant="secondary" className="min-w-48">
-							{t('menu.workshop')}
-						</Btn>
-						<Btn onActivate={actions.settings} variant="secondary" className="min-w-48">
-							{t('menu.settings')}
-						</Btn>
-						<Btn
-							onActivate={() => setConfirming(true)}
-							variant="danger"
-							className="min-w-48"
-						>
-							{t('pause.quit')}
-						</Btn>
-					</>
-				)}
-			</footer>
+			</main>
+			{compact && <footer className="flex flex-wrap items-center gap-2">{menu}</footer>}
 		</FocusScope>
 	);
 }
