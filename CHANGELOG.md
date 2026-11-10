@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-11-10
+
 ### Fixed
 
 - **audio:** Music no longer stacks: fades ran as tweens of the scene that started them, so going back to the menu or restarting a run killed the fade-out and the old track kept looping under the new one (two round themes at once, a round theme under the shop). Fades now run on the game clock and any other live music track is faded out when a new one starts.
+
+### Fixed
+
+- **audio:** Stop music tracks from stacking after a scene restart ([b97d8eb](https://github.com/AlexGalhardo/pinguin-survivors/commit/b97d8eb))
+
+### Maintenance
+
+- **release:** Mark 0.10.0 as the current release ([6a71b6a](https://github.com/AlexGalhardo/pinguin-survivors/commit/6a71b6a))
 
 ## [0.10.0] - 2026-11-10
 
@@ -631,7 +641,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.2...v0.8.0
