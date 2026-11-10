@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-10
+
 ### Changed
 
 - **game:** Boss HP comes from an explicit per-boss table (`BOSS_HP`, SDD-016 RF-10: 3000, 4000, 5500, 7500, 10000, 12500, 17000, 22000, 27000, 33000 for rounds 5-50, provisional) instead of doubling per boss (boss 50 was about 1.2M). Endless bosses multiply their table value by `endlessBossStep` 1.2 per boss after round 50. `scaling.bossHpPerBoss` removed.
@@ -36,6 +38,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **game:** Bosses telegraph four area attacks with red marks on the ground before they hurt: a rain of circles, expanding rings with a safe gap, beams in two volleys and a checkerboard floor (SDD-016).
 - **game:** Elites draw one of five red-mark area attacks at spawn (seeded) and use it every 6 s when the hero is within reach: nova, frontal cone, rotating cross, stomp trail and cage; at most 4 elite attacks on screen (SDD-016 RF-09).
 - **docs:** SDD-016, ADR-023 and roadmap tasks T7.16–T7.19; GDD and balancing docs updated for the 50-round campaign.
+
+### Added
+
+- **balance:** Set each boss's health from a per-boss table ([b298ef6](https://github.com/AlexGalhardo/pinguin-survivors/commit/b298ef6))
+- **sim:** Teach the bot to dodge red marks and add normal-round damage to the sim ([bbce6a1](https://github.com/AlexGalhardo/pinguin-survivors/commit/bbce6a1))
+- **sim:** Simulate the two clocks, area attacks and 50-round goals ([f28a496](https://github.com/AlexGalhardo/pinguin-survivors/commit/f28a496))
+- **balance:** Cut fish per kill and cap the boss timer at 10 minutes ([4c77e35](https://github.com/AlexGalhardo/pinguin-survivors/commit/4c77e35))
+- **art:** Animate the plague hierophant boss ([728228f](https://github.com/AlexGalhardo/pinguin-survivors/commit/728228f))
+- **art:** Animate the hive queen and drowned diver bosses ([89ead7d](https://github.com/AlexGalhardo/pinguin-survivors/commit/89ead7d))
+- **ui:** Split the shop right column into your gear and details ([dce7b57](https://github.com/AlexGalhardo/pinguin-survivors/commit/dce7b57))
+- **art:** Animate the leopard seal and rotten treant bosses ([5b71f24](https://github.com/AlexGalhardo/pinguin-survivors/commit/5b71f24))
+- **hud:** Show toasts on the right side between the fps and speed labels ([d0504ba](https://github.com/AlexGalhardo/pinguin-survivors/commit/d0504ba))
+- **arena:** Run game speed on two clocks, 1x to 2x ([28aa4a8](https://github.com/AlexGalhardo/pinguin-survivors/commit/28aa4a8))
+- **arena:** Add biome weather, campfires and per-biome lighting ([9089e34](https://github.com/AlexGalhardo/pinguin-survivors/commit/9089e34))
+- **art:** Give jack's super a ring of spinning blades ([c422f35](https://github.com/AlexGalhardo/pinguin-survivors/commit/c422f35))
+- **balance:** Start the first round at 30 seconds ([470e37d](https://github.com/AlexGalhardo/pinguin-survivors/commit/470e37d))
+- **arena:** Give each elite one of five telegraphed area attacks ([8e8df07](https://github.com/AlexGalhardo/pinguin-survivors/commit/8e8df07))
+- **balance:** Double elite health and size ([3bab43b](https://github.com/AlexGalhardo/pinguin-survivors/commit/3bab43b))
+- **art:** Draw the forest trees at twice their size ([a142d23](https://github.com/AlexGalhardo/pinguin-survivors/commit/a142d23))
+- **art:** Animate the abomination boss ([5d5b5c4](https://github.com/AlexGalhardo/pinguin-survivors/commit/5d5b5c4))
+- **art:** Animate the harbor kraken without the baked ground patch ([aadc3d6](https://github.com/AlexGalhardo/pinguin-survivors/commit/aadc3d6))
+- **shop:** Spell out support upgrades as upgrade to level N ([b427d4e](https://github.com/AlexGalhardo/pinguin-survivors/commit/b427d4e))
+- **shop:** Label support offers as new or as their next level ([77f3a0d](https://github.com/AlexGalhardo/pinguin-survivors/commit/77f3a0d))
+- **arena:** Telegraph boss area attacks with red ground marks ([31b1ac0](https://github.com/AlexGalhardo/pinguin-survivors/commit/31b1ac0))
+- **arena:** Run the campaign over five biomes with ten bosses ([96ea58b](https://github.com/AlexGalhardo/pinguin-survivors/commit/96ea58b))
+
+### Fixed
+
+- **arena:** Make the magnet felt and collect leftovers at round end ([30560ca](https://github.com/AlexGalhardo/pinguin-survivors/commit/30560ca))
+- **arena:** Make boss area marks read as danger on dark floors ([37875af](https://github.com/AlexGalhardo/pinguin-survivors/commit/37875af))
+- **shop:** Drop locked support offers that can no longer be bought ([d902807](https://github.com/AlexGalhardo/pinguin-survivors/commit/d902807))
+
+### Maintenance
+
+- **balance:** Add progression report 2 on the updated sim ([dd07d6f](https://github.com/AlexGalhardo/pinguin-survivors/commit/dd07d6f))
+- **docs:** Bring docs and site copy up to the current game ([324bbcd](https://github.com/AlexGalhardo/pinguin-survivors/commit/324bbcd))
+- **docs:** Describe the 50-round campaign in agents and add economy report 2 ([1501d79](https://github.com/AlexGalhardo/pinguin-survivors/commit/1501d79))
+- **balance:** Report boss, progression and economy balance for 50 rounds ([19bf9a3](https://github.com/AlexGalhardo/pinguin-survivors/commit/19bf9a3))
+- **art:** Catch neon green and cyan bursts in boss frame cleanup ([77a1b17](https://github.com/AlexGalhardo/pinguin-survivors/commit/77a1b17))
+- **art:** Pick clean boss frames from raw text animations ([4b998d2](https://github.com/AlexGalhardo/pinguin-survivors/commit/4b998d2))
+- **art:** Format the kraken-b atlas json ([396debf](https://github.com/AlexGalhardo/pinguin-survivors/commit/396debf))
+- **docs:** Specify ten bosses, five campaign biomes and area attacks ([c8330e4](https://github.com/AlexGalhardo/pinguin-survivors/commit/c8330e4))
 
 ## [0.8.0] - 2026-11-10
 
@@ -563,7 +607,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.2...v0.8.0
 [0.7.2]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.7.0...v0.7.1
