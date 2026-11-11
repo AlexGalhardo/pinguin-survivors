@@ -132,6 +132,8 @@ export interface SaveData {
 	activeRun: RunSnapshot | null;
 	/** Pearl unlocks (SDD-005 RF-05): extra starting weapons per hero. */
 	unlocks: { startingWeapons: Record<HeroId, WeaponId[]> };
+	/** Systems already announced and first-run tips already done (SDD-022 RF-04). */
+	onboarding: { seen: string[] };
 }
 
 export function defaultSave(lang: Lang = 'en'): SaveData {
@@ -171,6 +173,7 @@ export function defaultSave(lang: Lang = 'en'): SaveData {
 		telemetry: [],
 		activeRun: null,
 		unlocks: { startingWeapons: { jack: [], bob: [], lucia: [] } },
+		onboarding: { seen: [] },
 	};
 }
 
@@ -319,6 +322,12 @@ function parseSaveObject(raw: unknown, lang: Lang): SaveData {
 			.filter(isRunRecord)
 			.slice(0, HISTORY_SIZE),
 		telemetry: parseRunEndEvents(r.telemetry),
+		onboarding: {
+			seen:
+				isObj(r.onboarding) && Array.isArray(r.onboarding.seen)
+					? r.onboarding.seen.filter((x): x is string => typeof x === 'string')
+					: [],
+		},
 		activeRun: isRunSnapshot(r.activeRun) ? r.activeRun : null,
 		unlocks: parseUnlocks(r.unlocks),
 	};
