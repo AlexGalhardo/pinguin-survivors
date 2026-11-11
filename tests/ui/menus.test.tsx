@@ -381,7 +381,7 @@ describe('HeroScreen and lists', () => {
 				}}
 			/>,
 		);
-		fireEvent.click(getByText('SKILL TREE · 2 points'));
+		fireEvent.click(getByText('SKILL TREE · POINTS 2'));
 		fireEvent.click(getByText('Shield: 1 owned · buy 10'));
 		expect(container.textContent).toContain('SKILL TREE');
 		expect(log).toEqual(['openTree', 'buyPotion:shield']);
