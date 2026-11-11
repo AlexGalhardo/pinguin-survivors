@@ -9,7 +9,7 @@ Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini
 
 ## Fonte da verdade
 
-- **[ROADMAP.md](ROADMAP.md)**: marcos datados e tarefas com responsável, DoD, assert e auditoria (checkbox próprio). Leia primeiro, sempre.
+- **[ROADMAP.md](ROADMAP.md)**: fases F1–F8 do 0.10.1 ao 1.0.0, tarefas com DoD e assert, auditoria por fase e o loop de trabalho (seção 2). Toda fase termina numa release com o `.exe` e o `.apk` anexados. Leia primeiro, sempre.
 - **[docs/README.md](docs/README.md)**: índice da documentação.
 
 | Preciso de… | Leia |
@@ -44,7 +44,7 @@ Leia sempre [`.agents/rules/agents-workflow.md`](.agents/rules/agents-workflow.m
 
 Resumo das regras inegociáveis:
 
-1. Tarefas na ordem do ROADMAP; `[x]` só com o assert executado e a evidência anotada; auditoria é checkbox separado.
+1. Tarefas na ordem do ROADMAP (primeira `[ ]` livre da fase mais baixa); `[x]` só com o assert executado e a evidência anotada; a auditoria é um checkbox por fase e a fase fecha com release.
 2. Nenhuma implementação sem SDD aprovada; spec mudou → edite a SDD primeiro; decisão arquitetural → ADR novo.
 3. Phaser **4** só no mundo; toda UI em React; sem Arcade Physics; câmera top-down e arena quadrada (ADR-003).
 4. Lógica pura em `src/logic/` (testada); números em `src/data/`; textos em `src/i18n/` (4 idiomas juntos); cores em `src/config/palette.ts`; chaves de assets em `src/art/manifest.ts`.
