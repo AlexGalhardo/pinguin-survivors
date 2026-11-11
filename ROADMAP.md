@@ -66,10 +66,10 @@ Versão publicada: **0.10.1** (Latest). O que existe e funciona, conferido no c�
 | Área | Estado |
 |---|---|
 | Jogo | Arena top-down, 6 slots de arma com raridade I–V e afixos, loja no fim do round, cartas de level-up, campanha de 50 rounds em 5 biomas, 10 bosses com atlas próprio e ataques em área (`BOSS_ROUNDS`, `boss-hazard.ts`), endless a partir do 51, dificuldade Fácil/Normal/Difícil, árvore de habilidades por herói, 3 heróis |
-| UI | Toda em React + Tailwind v4, Estilo D plano (ADR-027), 4 idiomas (EN, PT-BR, ES, ZH-CN). Polimento da SDD-021 entregue em `main` depois da 0.10.1 |
+| UI | Toda em React + Tailwind v4, Estilo D plano (ADR-027), 4 idiomas (EN, PT-BR, ES, ZH-CN). Em `main` depois da 0.10.1: polimento (SDD-021), nome Penguin Survivors (ADR-028), onboarding (SDD-022), fundo da arena (SDD-023), classes (SDD-024), dicas por dispositivo, seta do boss |
 | Ports | `apps/desktop` (Electron, `.exe` completo e demo, sem App ID) e `apps/mobile` (Capacitor, AAB debug no CI) |
 | Site | Astro em GitHub Pages com `/demo/` e `/play/`; link da Steam ainda `app/TBD` |
-| QA | `bun test` 638 pass; `e2e` e `e2e -- --demo` passam; `qa-menus` e `qa-mobile` sem issues; `perf --round 40` 74 FPS |
+| QA | `bun test` 663 pass; `e2e` e `e2e -- --demo` passam; `qa-menus` (5 resoluções) e `qa-mobile` sem issues; `qa-browsers` 3/3; `perf --round 40` 74 FPS; CI verde em `main` |
 | Ainda marcado como pendente no roadmap antigo, mas presente no código | Campanha de 50 rounds, ataques em área, arte dos 5 bosses novos, kraken e abominação (antigas T7.3, T7.16–T7.18). A tarefa F7.1 audita e fecha |
 
 ## 4. F1 — Fechar a 0.11.0
@@ -79,7 +79,7 @@ Versão publicada: **0.10.1** (Latest). O que existe e funciona, conferido no c�
 - [x] **F1.3** `CHANGELOG.md` com grupos repetidos na mesma versão (`### Fixed` duas vezes em 0.10.1, `### Added` em 0.10.0 e 0.9.0): o `release.ts` anexa um segundo bloco em vez de fundir. Corrigir o script e as três seções. · Assert: `bunx markdownlint-cli2 CHANGELOG.md` → 0 erros; teste do `release-notes` cobrindo a fusão. · Evidência (2026-11-11): `mergeGroups` em `scripts/lib/release-notes.ts` funde os grupos; `bun test tests/release-notes.test.ts` 5 pass; `bunx markdownlint-cli2 CHANGELOG.md` → 0 issues; as seções 0.10.1, 0.10.0 e 0.9.0 foram fundidas sem perder linha (diff de conteúdo vazio).
 - [x] **F1.4** Nome da oferta truncado na loja do celular ("Ring …"): apertar o padding de COMPRAR e TRAVAR abaixo de 500 px de altura. · Assert: captura 800×360 com os 4 nomes legíveis até pelo menos 12 caracteres; `qa-mobile` sem issues. · Evidência (2026-11-11): botões COMPRAR e TRAVAR mais estreitos abaixo de 500 px de altura; captura 800×360 (DPR 3) mostra "Ring of Fire", "Backup Pistol", "Clover Charm" e "Lucky Charm" inteiros; `qa-mobile` → `issues none`.
 - [x] **F1.5** Gates de release: `bun scripts/qa-browsers.ts` (Chrome, Edge, Firefox, com `bun run dev`: o build de produção não expõe `window.__GAME__`) e `bun scripts/pack-atlas.ts --check`. · Assert: relatório em `docs/reports/qa-browsers-<data>.md` com 0 erros; `--check` com 0 faltando. · Evidência (2026-11-11): `bun scripts/qa-browsers.ts http://localhost:5173` → Chrome 157, Edge 157 e Firefox 159 completam o fluxo (menu → run → loja → round 2 → pausa → fim → menu) com 0 erros e 0 respostas 4xx/5xx; 6 resoluções sem scroll ([relatório](docs/reports/qa-browsers-2026-11-11.md)); `bun scripts/pack-atlas.ts --check` → 290 chaves, 0 faltando; `e2e` e `e2e -- --demo` passed; `perf --round 40` 74 FPS.
-- [~] **F1.6** Release `0.11.0` com o `.exe` e o `.apk` para download (passo 7 da seção 2). · Assert: `gh release view v0.11.0 --json assets,isPrerelease` Latest, com os dois zips do Windows e o APK; `package.json` 0.11.0; links entregues ao desenvolvedor. · Bloqueado (2026-11-11): o classificador de permissões do modo automático recusa a publicação ("Create Public Surface"). Gates já verdes; falta só o desenvolvedor rodar `! bun scripts/release.ts 0.11.0 --stable` no prompt (ou liberar o comando nas permissões) e conferir os assets com `gh release view v0.11.0 --json assets`. Enquanto isso, os builds locais ficam em `apps/desktop/dist/full/win-unpacked/Penguin Survivors.exe` e `apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk`.
+- [~] **F1.6** Release `0.11.0` com o `.exe` e o `.apk` para download (passo 7 da seção 2). · Assert: `gh release view v0.11.0 --json assets,isPrerelease` Latest, com os dois zips do Windows e o APK; `package.json` 0.11.0; links entregues ao desenvolvedor. · Bloqueado (2026-11-11): o classificador de permissões do modo automático recusa a publicação ("Create Public Surface"). Gates já verdes; falta só o desenvolvedor rodar `! bun scripts/release.ts 0.11.0 --stable` no prompt (ou liberar o comando nas permissões) e conferir os assets com `gh release view v0.11.0 --json assets`. Enquanto isso, os builds locais do commit `874dd3d` (jogo completo, demo e APK) estão em `apps/desktop/dist/local-874dd3d/`.
 - [x] **Auditoria F1**: reexecutar os asserts de F1.1–F1.5 e anotar a data aqui. · 2026-11-11 (orquestrador): `bun test` 639 pass, `qa-menus` e `qa-mobile` sem issues, `qa-browsers` 3/3, `pack-atlas --check` 0 faltando.
 
 ## 5. F2 — Penguin Survivors (rename)
@@ -178,18 +178,19 @@ Decisão B-34: 3 a 4 classes por herói com regra própria, sobre os 3 sprites a
 
 ## 13. Orçamento de assets
 
-Saldos lidos das APIs em 2026-11-11: **PixelLab 1.192 gerações** de 5.000 e **ElevenLabs 42.910 créditos** de 124.333. Os dois renovam em 2026-11-14.
+Saldos em 2026-11-11, depois do trabalho das fases F1 a F7: **PixelLab 1.160 gerações** de 5.000 (1.192 no início do dia; 32 gastas) e **ElevenLabs 42.910 créditos** de 124.333 (nada gasto). Os dois renovam em 2026-11-14.
 
 | Lote | Tarefa | Gerações | Créditos | Gate |
 |---|---|---|---|---|
-| Ícones de Marca e Núcleo | F3.7 | 2 | — | — |
-| Fundo da arena, se a SDD-023 pedir arte nova | F3.4 | ≤ 60 | — | — |
+| Ícones de Marca e Núcleo (feito) | F3.7 | 2 gastas | — | — |
+| Fundo da arena (feito com o tile do bioma) | F3.4 | 0 | — | — |
+| Tilesets da estação e das ruínas (feito; achado da auditoria) | F7.1 | 30 gastas | — | — |
 | Key art, 6 capsules e OG image | F4.3 | ~400 | — | 🛑 lote > 200 |
-| Ícones das classes (9 a 12) | F5.3 | ≤ 24 | — | — |
-| O que a auditoria F7.1 achar faltando nos bosses | F7.1 | ≤ 300 | — | 🛑 lote > 200 |
+| Ícones das classes, se a tela pedir | F5 | ≤ 24 | — | — |
+| Bosses: nada faltando na auditoria F7.1 | F7.1 | 0 | — | — |
 | Reserva para retries | — | ~100 | — | — |
 | Música do trailer e SFX de reserva | F8.3 | — | ~3.000 | 🛑 lote > 2.000 |
-| **Total** | | **~890 de 1.192** | **~3.000 de 42.910** | |
+| **Total que ainda falta gastar** | | **~525 de 1.160** | **~3.000 de 42.910** | |
 
 Tudo o que falta cabe no saldo de hoje, sem contar a renovação. Regras: ler o saldo antes de cada lote (`bun scripts/el-quota.ts`; `getBalance()` em `scripts/lib/pixellab.ts`), fazer um piloto, registrar o saldo depois em `docs/visual.md` §10 e `docs/audio.md` §7, e nunca apagar nem substituir arte existente.
 
