@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "xyz.lekzera.pinguinsurvivors"
+    namespace = "xyz.lekzera.penguinsurvivors"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "xyz.lekzera.pinguinsurvivors"
+        applicationId "xyz.lekzera.penguinsurvivors"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // CI passes the release version (SemVer of the game); local builds keep 1 / 0.0.0.

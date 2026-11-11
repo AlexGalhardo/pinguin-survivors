@@ -1,4 +1,4 @@
-package xyz.lekzera.pinguinsurvivors;
+package xyz.lekzera.penguinsurvivors;
 
 import android.os.Build;
 import android.os.Bundle;

@@ -6,8 +6,8 @@ import type { CapacitorConfig } from '@capacitor/cli';
  * immersive fullscreen are set natively (AndroidManifest, MainActivity).
  */
 const config: CapacitorConfig = {
-	appId: 'xyz.lekzera.pinguinsurvivors',
-	appName: 'Pinguin Survivors',
+	appId: 'xyz.lekzera.penguinsurvivors',
+	appName: 'Penguin Survivors',
 	webDir: 'www',
 	backgroundColor: '#0b0e14',
 	android: {

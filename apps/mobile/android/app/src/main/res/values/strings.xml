@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Pinguin Survivors</string>
-    <string name="title_activity_main">Pinguin Survivors</string>
-    <string name="package_name">xyz.lekzera.pinguinsurvivors</string>
-    <string name="custom_url_scheme">xyz.lekzera.pinguinsurvivors</string>
+    <string name="app_name">Penguin Survivors</string>
+    <string name="title_activity_main">Penguin Survivors</string>
+    <string name="package_name">xyz.lekzera.penguinsurvivors</string>
+    <string name="custom_url_scheme">xyz.lekzera.penguinsurvivors</string>
 </resources>
