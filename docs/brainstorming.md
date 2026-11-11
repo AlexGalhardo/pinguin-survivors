@@ -53,6 +53,11 @@
 | B-29 | Tags antigas | **Retag** das 11 tags `v0.1.0-alpha.1…v0.1.0-beta.8` como `v0.0.1…v0.0.11` (mesmos commits), apagar as antigas e criar releases retroativos como pre-release. Tags do Starfall (`v1.0.0-*`, `v0.1.0`, `pinguin-survivors-final`) apagadas (atualizado em 2026-11-08): o repositório tem exatamente uma tag por release. | Manter nomes antigos | ADR-015 |
 | B-30 | Prioridade | **Jogo completo em paridade**; a demo é um recorte do jogo completo, não um produto à parte. Se o tempo apertar, nada do jogo completo é cortado em favor da demo. | Demo polida acima de tudo | — |
 | B-31 | Agentes | Subagentes em **paralelo** (até 3), sem worktrees; trabalho inline em `main`. | Sequencial; worktrees | — |
+| B-32 | Direção do polimento de UI (2026-11-11) | **Plano + rico**: mantém o ADR-027 (sem sombras e molduras) e ganha por composição, ícones já existentes e correção de inconsistências; a árvore usa os ícones de atributo do atlas. Especificado e entregue na SDD-021. | Trazer profundidade de volta (novo ADR, molduras e texturas); só bugs; gerar ícones novos para a árvore | — |
+| B-33 | Nome (2026-11-11) | Renomear para **Penguin Survivors** (grafia em inglês) antes de a página da Steam existir: título do jogo, site, textos e docs. O repositório é renomeado pelo desenvolvedor. Ainda não executado: pede ADR e tarefa no ROADMAP. | Manter "Pinguin"; procurar outro nome sem "Survivors" | a criar |
+| B-34 | Variedade de personagens (2026-11-11) | **Classes por herói sem arte nova**: 3–4 classes com regra própria por herói (9–12 formas de jogar sobre os 3 sprites atuais). Pede SDD e passada de balance; fica fora da demo (só Jack). | 2–3 heróis novos com sprite próprio; manter 3 heróis no 1.0 | a criar |
+| B-35 | Primeiro contato (2026-11-11) | **Destravar sistemas aos poucos + dicas**: árvore, poções e gambits, Marcas e Núcleos aparecem por marcos, cada um com aviso de uma linha; 3 dicas contextuais na primeira run. Nada é removido. Pede SDD. | Só as dicas; deixar como está | a criar |
+| B-36 | Ordem das próximas frentes (2026-11-11) | Depois do rename: **onboarding (B-35) + fundo da arena por bioma** (as duas servem à demo e ao trailer); depois as classes (B-34). Steam Deck (1280×800, glifos) e idiomas novos (JP, KR, DE, FR, RU) ficam em seguida. | Classes primeiro; Steam Deck e idiomas primeiro | — |
 
 ## 3. Ideias descartadas
 
