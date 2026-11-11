@@ -1,5 +1,5 @@
 // Menu screens QA: screenshots of Achievements, Settings, Controls, Heroes, Workshop, History and
-// Hero select at 1280x720, 1920x1080 and 2560x1080, and a check that the page itself never scrolls.
+// Hero select at 1280x720, 1920x1080, 2560x1080 and 2560x1440, and a check that the page itself never scrolls.
 // Needs `bun run dev`. Usage: bun scripts/qa-menus.ts <outDir>
 import { chromium } from 'playwright';
 import { seedSaveScript } from './lib/seed-save';
@@ -11,6 +11,7 @@ const VP: [number, number][] = [
 	[1280, 720],
 	[1920, 1080],
 	[2560, 1080],
+	[2560, 1440],
 ];
 const errs: string[] = [];
 for (const [w, h] of VP) {
