@@ -121,6 +121,8 @@ Saldo em 2026-11-08: **2.320 gerações até 14/11**, depois 5.000/mês. Plano d
 
 **Saldo após os lotes T7.2, T7.4 e voadores (2026-11-08)**: **1.885 gerações** (2.022 antes; **137 gastas** nos três: T7.2 81, T7.4 34, voadores 22).
 
+**Saldo após os ícones de Marca e Núcleo (2026-11-11, ROADMAP F3.7)**: **1.190 gerações** (1.192 antes; **2 gastas**): `icon.currency.mark` e `icon.currency.core`, 32×32, seed 11, mesmo prompt-base dos `icon.currency.*`.
+
 ## 11. Inventário de assets e pendências
 
 **Prontos (0.3.0)**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), inimigos com walk (legados e 6 aliens), voadores com `fly`, atiradores, chargers e chefes (urso e Colosso) com `attack`, bosses kraken e abominação estáticos, 17 armas × 4 linhas de arte, VFX dos 3 superpoderes, lojista `npc.merchant` (idle), tiles top-down das 5 biomas, ícones de cartas, itens e poções (`tests/art-coverage.test.ts`), projéteis, pickups, 12+7 ícones, tiles iso removidos (frames `tile.*` iso, 129ad1b; tiles top-down em SDD-012), decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
