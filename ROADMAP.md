@@ -194,6 +194,8 @@ Specs: [SDD-004](docs/sdds/SDD-004-ui-react-tailwind.md), [SDD-005](docs/sdds/SD
 - [x] **T3.16** Coleções no Estilo D: 2.5 `SkillTree`, 2.6 `Achievements`/`Extras`, 2.7 `History` · Resp.: senior · Dep.: T3.13 · Est.: 8 h · Assert: A3, A4; `bun test tests/ui/menus.test.tsx tests/ui/skill-tree-touch.test.tsx`. · Evidência (2026-11-09): commits `2ba94e6` (2.5, tooltip D ancorado só no mouse, fixo no gamepad/toque), `4b82c09` (2.6/2.7, listas paginadas com PageUp/PageDown e selo de desfecho no histórico); `bun test tests/ui/menus.test.tsx tests/ui/skill-tree-touch.test.tsx` verde (484 no total); capturas en/es/zh-CN sem overflow. Não aplicado: filtros das conquistas (contrato).
 - [x] **T3.17** Telas da run no Estilo D: 2.11 `LevelUpCards`, 2.12 `Shop`/`PlayerPanel`/`ItemViews`, 2.13 `Pause`, 2.14 `GameOver`, 2.15 `Unlock`, 2.16 `DemoEnd` · Resp.: senior · Dep.: T3.13 · Est.: 12 h · Assert: A3, A4; `bun test tests/ui/shop.test.tsx tests/ui/screens.test.tsx`; `bun run e2e -- --demo`. · Evidência (2026-11-09): commits `b6838d6` (2.12, loja cabe em 1920×1080, 2560×1080, 1280×720 e 844×390), `2a87deb` (2.13), `a2d8e25` (2.11, sem leque, teclas 1–4 e R), `fca1384` (2.14, graça de 500 ms), `e4389f8` (2.15), 2.16 com graça de 500 ms; `bun test tests/ui/shop.test.tsx tests/ui/screens.test.tsx` verde; `bun run e2e -- --demo` passed. Não feitos: herói no centro da pausa (`PauseData` sem id do herói), sequência de entrada do 2.14 e pôster do 2.16.
 - [x] **T3.18** HUD 2.10 (`Hud`, `TouchControls`) no Estilo D e auditoria final (A5, A6) · Resp.: senior · Dep.: T3.15–T3.17 · Est.: 8 h · Assert: A5 (`bun run e2e`, `bun test`), A6 (`bun scripts/perf.ts` 60 FPS com 300 inimigos), capturas 1920×1080 / 1280×720 / 844×390. · Evidência (2026-11-09): commit `08186b2` (HUD: pilha ROUND → timer → faixa de elite → barra do chefe, sem blur, `tabular-nums`, 2 gambits no celular; controles de toque com tamanhos fixos); A5: `bun run e2e` e `bun run e2e -- --demo` passed, `bun test` 484 pass, typecheck/lint/lint:i18n/lint:md/build verdes; A6: `bun scripts/perf.ts` → avgFps 60, p95 16,8 ms, 300 inimigos, 0 erros; capturas `hud-1920x1080`, `hud-1280x720`, `hud-844x390`.
+- [x] **T3.19** Polimento de UI 1.0 (SDD-021): fim de run com números rotulados e título de desistência, HUD (boss, barras, Super Magia, FPS só em dev), `StatLine` com ícone na loja, na pausa e na escolha do pinguim, pausa em grade, heróis e poções com preço à direita, árvore com ícones nos nós, loja no celular de 360 px, scripts de QA e textos do site · Resp.: orquestrador · Dep.: T3.18 · Est.: 8 h · Assets: 0 · Assert: SDD-021 A1–A5. · Evidência (2026-11-11): `bun test` 638 pass, typecheck/lint/lint:i18n/`i18n-check` 0/0/0 verdes; `bun scripts/qa-menus.ts` → `issues []`; `bun scripts/qa-mobile.ts` → `issues none` (antes travava antes da loja); `bun run e2e` e `bun run e2e -- --demo` passed; `bun scripts/perf.ts --round 40` → 74 FPS, p95 13,4 ms, 298 inimigos; commits `a1239e6`…`5cfbfbb`. Não feito: ícones de Marcas/Núcleos (sem arte), herói no centro da pausa (`PauseData` sem id).
+  - [ ] Auditoria: re-executar o assert e conferir as capturas em 1920×1080, 2560×1440 e 844×390.
 
 ### Auditoria do marco M3
 
@@ -454,6 +456,21 @@ Marque conforme a auditoria avança: `[ ]` não feita · `[~]` parcial (anote o 
 | M7 músicas biomas + SFX restantes | M7 | — | ~1.200 | |
 | M7 key art + capsules Steam | M7 | 400 | — | |
 | **Total planejado** | | **~1.490** | **~1.620** | cabe em um único ciclo mensal; folga > 3.000 gerações e > 50.000 créditos |
+
+### 13.1 Saldo medido e plano do que falta (2026-11-11)
+
+Saldos lidos das APIs em 2026-11-11: **PixelLab 1.192 gerações** de 5.000 (renova em 2026-11-14) e **ElevenLabs 42.910 créditos** de 124.333 (renova em 2026-11-14). A tabela acima é o plano original; o que ainda falta gerar cabe no saldo de hoje, sem depender da renovação:
+
+| Lote que falta | Tarefa | Gerações | Créditos | Gate |
+|---|---|---|---|---|
+| Abominação (`walk` e `attack` v3) e kraken (concept `kraken-b` → `walk` e `attack`) | T7.3 | ~150 | — | 🛑 concept do kraken |
+| Arte dos 5 bosses novos (concept 4 direções → `walk` e `attack`) | T7.18 | ≤ 600 | — | 🛑 concepts; lote > 200 gerações |
+| Key art, 6 capsules da Steam e OG image do site | T7.9 | ~400 | — | 🛑 aprovação; lote > 200 gerações |
+| Reserva para retries | — | ~40 | — | — |
+| Música do trailer (≤ 2 min) e SFX de reserva | T9.3 | — | ~3.000 | 🛑 lote > 2.000 créditos |
+| **Total** | | **~1.190 de 1.192** | **~3.000 de 42.910** | |
+
+A UI não precisa de arte nova: a SDD-021 reaproveita os ícones que já estão no atlas. Se algum lote estourar a estimativa, o excedente espera a renovação do dia 14.
 
 Regras: `GET /balance` antes de cada lote; piloto; registrar saldo em `docs/visual.md` §10 e `docs/audio.md` §7; 🛑 qualquer lote > 200 gerações ou > 2.000 créditos fora desta tabela.
 
