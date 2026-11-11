@@ -91,13 +91,16 @@ describe('onboarding: systems hidden until they have a use (SDD-022)', () => {
 		);
 		expect(first.container.textContent).toContain('NEXT ROUND');
 		expect(first.container.textContent).not.toContain('SKILL TREE');
-		expect(first.container.textContent).not.toContain('Marks');
+		expect(first.container.querySelector('[title^="Marks"]')).toBeNull();
 		cleanup();
 		const later = render(
 			<Shop data={{ ...data, materials: { elite: 1, boss: 0 } }} actions={actions} />,
 		);
 		expect(later.container.textContent).toContain('SKILL TREE');
-		expect(later.container.textContent).toContain('Marks 1');
+		// Marks and Cores are drawn as icon and number; the sentence stays as the tooltip.
+		expect(later.container.querySelector('[title="Marks 1 · Cores 0"]')?.textContent).toBe(
+			'10',
+		);
 		cleanup();
 	});
 });

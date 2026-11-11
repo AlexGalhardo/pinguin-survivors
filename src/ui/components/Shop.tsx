@@ -493,8 +493,14 @@ export function Shop({
 					</span>
 					{/* Marks and Cores show once the run has one (SDD-022 RF-01). */}
 					{data.materials && data.materials.elite + data.materials.boss > 0 && (
-						<span className="text-gold-bright tabular-nums">
-							{t('shop.materials', data.materials)}
+						<span
+							className="flex items-center gap-1 text-gold-bright tabular-nums"
+							title={t('shop.materials', data.materials)}
+						>
+							<AtlasIcon frames={['icon.currency.mark']} size={32} />
+							{data.materials.elite}
+							<AtlasIcon frames={['icon.currency.core']} size={32} className="ml-2" />
+							{data.materials.boss}
 						</span>
 					)}
 				</div>
