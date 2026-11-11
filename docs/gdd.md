@@ -1,6 +1,6 @@
 # Game Design Document — Penguin Survivors
 
-> **Versão** 2.2 · **Data** 2026-11-10 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
+> **Versão** 2.3 · **Data** 2026-11-11 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
 > Substitui `game-design.md` e `ui-hud.md`. Números em [balancing-and-simulation.md](balancing-and-simulation.md) (Parte B); decisões em [brainstorming.md](brainstorming.md) (B-xx) e [adrs/](adrs/README.md); histórico anterior (P-xx) no `docs/decisions.md` removido, recuperável pelo git (`git log -- docs/decisions.md`). Arte em [visual.md](visual.md); som em [audio.md](audio.md); técnica em [architecture.md](architecture.md); especificações de implementação em [sdds/](sdds/README.md).
 > Onde este documento e o código atual divergem, **este documento é o alvo** e o [ROADMAP.md](../ROADMAP.md) lista o trabalho para alinhar o código.
 
@@ -78,6 +78,7 @@ Menu (árvore de habilidades · Pérolas: poções/gambits · arma inicial)
 - **Arena quadrada fechada**: `side(N) = min(10 + (N−1), 40)` tiles de **64 px**. Round 1 = 10×10 (640×640), round 2 = 11×11 … round 31+ = 40×40 (2.560×2.560). Parede visível nas bordas; nada sai da arena (voadores inclusos).
 - **Spawn**: anel interno de 1 tile junto à borda; fora da área visível quando a arena for maior que a tela; com telegraph de 0,5 s quando a borda estiver visível.
 - **Câmera** segue o herói com lerp, clampada à arena; arena menor que a tela fica centrada.
+- **Fora dos muros** ([SDD-023](sdds/SDD-023-fundo-da-arena.md)): o chão do bioma continua, escurecido, em volta da arena; a tela nunca mostra preto quando a arena é menor que ela. Com a arena maior que a tela, uma seta laranja na borda aponta para o boss enquanto ele está fora de vista.
 - **Obstáculos**: props sólidos por bioma, grandes de propósito (a arte `deco.*` é desenhada 2–3× e ocupa de 3 a 5 vezes a largura do herói), com colisão circular, faixas livres entre eles e no máximo 8% do chão (`src/data/obstacles.ts`); herói e inimigos terrestres deslizam em volta e os andarilhos contornam; voadores e bosses ignoram.
 - **Sangue persiste** na textura da arena durante a run inteira (teto de decalques; os mais antigos fundem numa mancha base).
 
@@ -104,6 +105,7 @@ Ataques 100% automáticos; sem dash (esquiva é stat). Teclas rebindáveis.
 - Cada herói tem **perfil de stats**, **multiplicadores por classe**, **6 cartas exclusivas** (§10) e **1 superpoder** (§13). Números em balancing-and-simulation.md Parte B §4.
 - **Arma inicial** escolhida na seleção (ADR-005): Jack machete / facas / bumerangue de peixe; Bob escopeta cano duplo / pistola / besta; Lucia cajado elemental / estilhaços de gelo / anel de chamas. Outras armas iniciais desbloqueiam com Pérolas.
 - **Dificuldade** por herói (§16) e **melhor round por herói e dificuldade** aparecem na seleção.
+- **Classes** ([SDD-024](sdds/SDD-024-classes-por-heroi.md)): cada herói tem 4 formas de jogar, escolhidas na seleção e destravadas nos níveis 1, 5, 10 e 20 do herói. A primeira é o herói como ele é; as outras trocam uma vantagem por um custo, só com modificadores de atributo no início da run. Jack: Sobrevivente, Berserker, Açougueiro, Baluarte. Bob: Artilheiro, Piromaníaco, Atirador de Elite, Catador. Lucia: Arcanista, Invocadora de Tempestades, Tecelã do Gelo, Canhão de Vidro. Números em `src/data/classes.ts` (provisórios). A demo joga só a classe base.
 
 ## 7. Atributos
 
@@ -293,6 +295,8 @@ MainMenu ─► HeroSelect (herói · dificuldade · arma inicial) ─► Game (
 **Linguagem visual e fundos** (ADR-018): Conquistas, Configurações, Árvore de habilidades, Histórico e Escolha seu Pinguim seguem a linguagem visual **Diablo 4** da loja (painéis escuros, moldura metálica, raridade por cor, Roboto). **Todos os menus, exceto o inicial, têm fundo preto ou neutro** (sem a arte do menu), responsivos, fáceis e didáticos. A **Pausa** usa o layout da loja (status do jogador e itens equipados), sem o NPC, com 3 botões: Continuar, Configurações e Sair.
 
 **HUD**: HP e XP grandes com número, Fish da run, round e timer, barra e timer do boss, aviso de elite, **SUPER MAGIA** no canto inferior esquerdo (a partir do level 5; as armas são vistas no herói, sem ícones na HUD), 3 gambits, velocidade 1×, 1,5× e 2× (TAB), FPS (opcional), rodapé com versão. A HUD some sob qualquer tela cheia (loja, cartas, pausa, resumo, menus).
+
+**Primeiro contato** ([SDD-022](sdds/SDD-022-onboarding.md)): a árvore de habilidades só aparece quando algum herói tem ponto para gastar, a tela de heróis e poções depois da primeira run, e o contador de Marcas e Núcleos quando a run tem um; cada sistema é anunciado uma vez por um aviso de uma linha. A primeira run mostra três dicas no HUD, uma por vez: como mover, que as armas atacam sozinhas e a Super Magia quando carrega. Com um controle em uso, as dicas de tecla mostram os botões do controle.
 
 ## 22. Demo
 
