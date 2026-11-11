@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **ui:** UI polish pass (SDD-021). Hero stats are drawn everywhere with their pixel icon, a capitalized label and the value (`StatLine`): the shop strip, the pause sheet and the hero select.
+- **ui:** Run summary shows one labeled number per block (kills, time, damage, XP, Fish, levels, Pearls) instead of two sentences, and quitting from the pause menu reads "RUN ENDED" instead of "YOU DIED".
+- **ui:** Pause sheet shows HP, armor and damage as three headline blocks and lines up equipment and weapon slots on one grid with column titles.
+- **ui:** Hero select lists the stats in one column, gives difficulty and starting weapon their own section with what each choice changes, and moves the Super Magic under the hero.
+- **ui:** Hero screen rows put the Pearl price at the right edge on one line and the gambit slots get a title and their explanation.
+- **ui:** Skill tree nodes show the icon of the stat they grant instead of two letters; locked nodes are gray.
+- **hud:** Boss name sits over its bar on one line and the bar shows the health share; empty bar tracks (XP, Super Magic) stay visible; the FPS counter only shows in development builds or with `?debug=1`.
+- **shop:** Offers spread over the column, the gear comparison puts "FOR SALE" and "EQUIPPED" on each card's type line with the stat changes in two columns, and free equipment slots share one line.
+- **site:** Landing and press kit describe the three difficulties instead of Danger 0-5, in the 4 languages.
+
+### Fixed
+
+- **shop:** On a 360 px tall phone (2400x1080 at DPR 3) the fourth offer ran under the action bar; the merchant line now stays on one line and the footer never wraps there.
+- **shop:** With a worn item compared, the before and after list ran over the stat strip at 1920x1080.
+- **i18n:** Skill tree point texts no longer read "Cost: 1 points" (reworded in EN, PT-BR and ES).
+- **qa:** `scripts/qa-mobile.ts` timed out before the shop (it used round 5, a boss round since 0.7.1) and `scripts/qa-menus.ts` looked for the match history inside the hero screen; both reach every screen again and report no issues.
+
 ## [0.10.1] - 2026-11-10
 
 ### Fixed
