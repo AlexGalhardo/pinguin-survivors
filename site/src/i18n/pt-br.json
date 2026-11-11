@@ -14,7 +14,7 @@
 		"pitch": "Três pinguins. Trezentos zumbis por round. Sangue na neve. Um arena survivor estilo Brotato em que seu progresso nunca morre.",
 		"bullet1": "Pinguins fofos, gore nível DOOM (dá para desligar, se precisar).",
 		"bullet2": "Seis armas automáticas, loja a cada round, builds que quebram o jogo.",
-		"bullet3": "Level 1–100 por herói, Danger 0–5, rounds sem fim."
+		"bullet3": "Level 1–100 por herói, três dificuldades, rounds sem fim."
 	},
 	"cta": {
 		"demo": "Jogar Demo",
@@ -37,8 +37,8 @@
 		"f2Text": "Entre os rounds, um lojista vende armas, itens e equipamentos. Rerrole, trave, venda e volte à luta.",
 		"f3Title": "Subidas de nível que importam",
 		"f3Text": "A cada subida de nível, escolha uma entre quatro cartas de atributo. Seu nível 1–100 vale em todas as partidas.",
-		"f4Title": "Danger 0–5",
-		"f4Text": "Suba o Danger para mais inimigos, ondas extras e recompensas melhores. Cada herói desbloqueia o seu."
+		"f4Title": "Três dificuldades",
+		"f4Text": "No Fácil os inimigos têm metade da vida e do dano; no Difícil, o dobro. Cada herói libera o Difícil por conta própria."
 	},
 	"heroes": {
 		"title": "Escolha seu pinguim",
@@ -105,14 +105,14 @@
 			"short": "Pinguin Survivors é um arena survivor com câmera de cima, pinguins, zumbis e gore estilo DOOM: sobreviva a rounds cronometrados, compre na loja entre eles e monte um arsenal de seis armas.",
 			"longTitle": "Descrição longa",
 			"long1": "Três pinguins, Jack, Bob e Lucia, seguram a linha contra trezentos zumbis por round. Cada round tem tempo; quando acaba, um mercador abre a loja e você compra, funde e vende armas, itens e equipamentos antes do próximo.",
-			"long2": "Seis slots atiram sozinhos enquanto você desvia. Cada level-up oferece quatro cartas de atributo, cada herói sobe do nível 1 ao 100 e mantém isso entre as partidas, o Danger 0–5 aumenta o risco e o modo endless não tem tela de vitória. O gore é nível DOOM, com opção de máximo, reduzido ou gosma verde."
+			"long2": "Seis slots atiram sozinhos enquanto você desvia. Cada level-up oferece quatro cartas de atributo, cada herói sobe do nível 1 ao 100 e mantém isso entre as partidas, a dificuldade Difícil aumenta o risco e o modo endless não tem tela de vitória. O gore é nível DOOM, com opção de máximo, reduzido ou gosma verde."
 		},
 		"features": {
 			"title": "Principais recursos",
 			"f1": "Três heróis com armas e superpoderes próprios: Jack (corpo a corpo), Bob (armas de fogo), Lucia (magia).",
 			"f2": "Seis slots de arma automáticos, quatro tiers cada, bônus de set e fusão.",
 			"f3": "Loja do mercador após cada round: reroll, lock, venda e fusão.",
-			"f4": "Nível 1–100 por herói que nunca reinicia, e Danger 0–5 liberado por herói.",
+			"f4": "Nível 1–100 por herói que nunca reinicia, e três dificuldades, com o Difícil liberado por herói.",
 			"f5": "Chefe a cada 5 rounds, campanha de 50 rounds e depois rounds infinitos, sem tela de vitória.",
 			"f6": "Controle, teclado e toque; quatro idiomas; sem dublagem."
 		},

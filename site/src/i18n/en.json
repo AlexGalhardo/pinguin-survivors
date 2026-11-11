@@ -14,7 +14,7 @@
 		"pitch": "Three penguins. Three hundred zombies a round. Blood on the snow. A Brotato-style arena survivor where your progress never dies.",
 		"bullet1": "Cute penguins, DOOM-grade gore (toggle it if you must).",
 		"bullet2": "Six auto-firing weapons, a shop every round, builds that break the game.",
-		"bullet3": "Level 1–100 per hero, Danger 0–5, endless rounds."
+		"bullet3": "Level 1–100 per hero, three difficulties, endless rounds."
 	},
 	"cta": {
 		"demo": "Play Demo",
@@ -37,8 +37,8 @@
 		"f2Text": "Between rounds, a merchant sells weapons, items and gear. Reroll, lock, sell, then fight again.",
 		"f3Title": "Level-ups that matter",
 		"f3Text": "Pick one of four stat cards at every level-up. Your level 1–100 carries over to every run.",
-		"f4Title": "Danger 0–5",
-		"f4Text": "Raise the danger for more enemies, extra waves and better rewards. Each hero unlocks its own."
+		"f4Title": "Three difficulties",
+		"f4Text": "Easy halves enemy health and damage, Hard doubles them. Each hero unlocks Hard on their own."
 	},
 	"heroes": {
 		"title": "Choose your penguin",
@@ -105,14 +105,14 @@
 			"short": "Pinguin Survivors is a top-down arena survivor with penguins, zombies and DOOM-style gore: survive timed rounds, shop between them and build a six-weapon arsenal.",
 			"longTitle": "Long description",
 			"long1": "Three penguins, Jack, Bob and Lucia, hold the line against three hundred zombies a round. Each round is timed; when it ends a merchant opens shop and you buy, fuse and sell weapons, items and gear before the next one.",
-			"long2": "Six slots fire on their own while you dodge. Level-ups offer four stat cards, every hero levels from 1 to 100 and keeps it between runs, Danger 0–5 raises the stakes, and the endless mode has no victory screen. The gore is DOOM-grade, with a toggle for maximum, reduced or green goo."
+			"long2": "Six slots fire on their own while you dodge. Level-ups offer four stat cards, every hero levels from 1 to 100 and keeps it between runs, Hard difficulty raises the stakes, and the endless mode has no victory screen. The gore is DOOM-grade, with a toggle for maximum, reduced or green goo."
 		},
 		"features": {
 			"title": "Key features",
 			"f1": "Three heroes with their own weapons and superpowers: Jack (melee), Bob (firearms), Lucia (magic).",
 			"f2": "Six auto-firing weapon slots, four tiers each, set bonuses and fusion.",
 			"f3": "A merchant shop after every round: reroll, lock, sell and fuse.",
-			"f4": "Level 1–100 per hero that never resets, plus Danger 0–5 unlocked per hero.",
+			"f4": "Level 1–100 per hero that never resets, plus Easy, Normal and Hard, with Hard unlocked per hero.",
 			"f5": "Boss every 5 rounds, a 50-round campaign, then endless rounds with no victory screen.",
 			"f6": "Controller, keyboard and touch; four languages; no voice acting."
 		},
