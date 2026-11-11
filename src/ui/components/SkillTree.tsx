@@ -7,7 +7,9 @@ import { canRefund, heroTree, pathTo, rankOf, treeStats } from '../../logic/skil
 import type { StatKey } from '../../logic/stats';
 import { useFocusable } from '../focus';
 import { BAND, type GridDir, layoutGrid, stepGrid } from '../skill-grid';
+import { AtlasIcon } from './AtlasIcon';
 import { Btn } from './Btn';
+import { statIconFrames } from './ItemViews';
 import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
 import { Hint, ItemCard, Panel } from './Panel';
 
@@ -81,6 +83,12 @@ function sigla(node: TreeNode): string {
 	return letters.join('').toUpperCase();
 }
 
+/** Atlas icon of the first stat a node grants (none for the start node and pure-effect nodes). */
+function nodeIconFrames(node: TreeNode): string[] {
+	const first = Object.keys(node.stats)[0];
+	return first ? statIconFrames(first) : [];
+}
+
 const STATE_STYLE: Record<CellState, string> = {
 	locked: 'border-snow-dark bg-night text-text-dim',
 	available: 'bg-night text-text-light',
@@ -127,9 +135,17 @@ function Square(props: {
 					: undefined
 			}
 		>
-			<span className="pointer-events-none text-[1.125rem]">{sigla(node)}</span>
+			{/* The stat it grants as its pixel icon; nodes without art (keystone effects) keep the initials. */}
+			<AtlasIcon
+				frames={nodeIconFrames(node)}
+				size={32}
+				className={`pointer-events-none ${state === 'locked' ? 'opacity-45 grayscale' : ''}`}
+				fallback={
+					<span className="pointer-events-none text-[1.125rem]">{sigla(node)}</span>
+				}
+			/>
 			{node.maxRank > 1 && (
-				<span className="pointer-events-none mt-0.5 text-[0.875rem] tabular-nums">
+				<span className="pointer-events-none absolute right-0 bottom-0 bg-night px-0.5 text-[0.875rem] text-text-light tabular-nums">
 					{props.rank}/{node.maxRank}
 				</span>
 			)}
