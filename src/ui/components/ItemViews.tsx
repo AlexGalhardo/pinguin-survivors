@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { rarityColor, toCss } from '../../config/palette';
 import { GEAR_BY_ID } from '../../data/equipment';
 import { RARITY_NUMERALS, type Rarity } from '../../data/rarity';
@@ -96,13 +96,18 @@ export function WeaponCardView(props: { item: WeaponItem; footer?: ReactElement 
 }
 
 /** Tooltip card of an equipment item: slot and rarity, base stats, affixes. */
-export function GearCardView(props: { item: GearItem; footer?: ReactElement }): ReactElement {
+export function GearCardView(props: {
+	item: GearItem;
+	footer?: ReactElement;
+	/** Short role of the card in a comparison ("for sale", "equipped"), appended to the type line. */
+	tag?: string;
+}): ReactElement {
 	const def = GEAR_BY_ID[props.item.id];
 	return (
 		<ItemCard
 			name={gearName(props.item.id)}
 			color={rarityCss(props.item.rarity)}
-			kind={`${def ? label(`gslot.${def.slot}`) : t('shop.kind.gear')} · ${numeral(props.item.rarity)}`}
+			kind={`${def ? label(`gslot.${def.slot}`) : t('shop.kind.gear')} · ${numeral(props.item.rarity)}${props.tag ? ` · ${props.tag}` : ''}`}
 			lines={[
 				...gearBaseLines(props.item.id).map((l) => (
 					<span key={l} className="flex items-baseline gap-2 text-secondary">
@@ -114,6 +119,39 @@ export function GearCardView(props: { item: GearItem; footer?: ReactElement }): 
 			]}
 			footer={props.footer}
 		/>
+	);
+}
+
+/** Atlas frame of a stat (`icon.maxHp`, `icon.resistFire`, `icon.meleeDamage`); stats without art draw none. */
+export function statIconFrames(stat: string): string[] {
+	const [group, sub] = stat.split('.');
+	if (!sub) return [`icon.${stat}`];
+	const cap = sub.charAt(0).toUpperCase() + sub.slice(1);
+	return [group === 'resist' ? `icon.resist${cap}` : `icon.${sub}Damage`];
+}
+
+/**
+ * One hero stat everywhere it is listed (shop strip, pause, hero select): pixel icon, capitalized
+ * label and the value on the right. `strong` marks the headline numbers.
+ */
+export function StatLine(props: {
+	stat: string;
+	value: ReactNode;
+	strong?: boolean;
+	/** False drops the icon where the row must stay one text line tall. */
+	icon?: boolean;
+	/** Value color class when it is not the neutral one (a bonus, a penalty). */
+	accent?: string;
+}): ReactElement {
+	return (
+		<div
+			data-stat={props.stat}
+			className={`flex min-w-0 items-center gap-2 text-secondary ${props.strong ? 'font-black text-gold-bright' : 'text-text-light'}`}
+		>
+			{props.icon !== false && <AtlasIcon frames={statIconFrames(props.stat)} size={32} />}
+			<span className="min-w-0 flex-1 truncate capitalize">{statLabel(props.stat)}</span>
+			<span className={`font-bold tabular-nums ${props.accent ?? ''}`}>{props.value}</span>
+		</div>
 	);
 }
 

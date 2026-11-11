@@ -12,6 +12,7 @@ import {
 	numeral,
 	rarityCss,
 	SlotIcon,
+	StatLine,
 	WeaponCardView,
 	type WeaponItem,
 	weaponFrames,
@@ -63,6 +64,10 @@ export function panelFromView(
 
 const slotLabel = (slot: string): string => t(`gslot.${slot}` as I18nKey);
 
+/** Column title over the pause slots. */
+const SLOT_HEAD =
+	'text-secondary font-black tracking-section whitespace-nowrap text-gold-bright uppercase';
+
 /** Tooltip card of the owned item a `Detail` points at, or null when the slot is empty. */
 export function detailCard(data: PlayerPanelData, detail: Detail | null): ReactElement | null {
 	if (detail?.kind === 'weapon') {
@@ -110,6 +115,7 @@ export function Block(props: { title: string; children: ReactNode }): ReactEleme
 
 /** The three headline numbers as one line, and the other stats. */
 function headlineOf(data: PlayerPanelData): {
+	head: { key: string; value: string }[];
 	line: string;
 	rest: { key: string; value: string }[];
 } {
@@ -117,6 +123,7 @@ function headlineOf(data: PlayerPanelData): {
 		.map((k) => data.stats.find((s) => s.key === k))
 		.filter((s): s is { key: string; value: string } => Boolean(s));
 	return {
+		head,
 		line: head.map((s) => `${t(`gstat.${s.key}` as I18nKey)} ${s.value}`).join(' · '),
 		rest: data.stats.filter((s) => !head.includes(s)),
 	};
@@ -135,7 +142,14 @@ export function SectionTitle(props: { children: ReactNode }): ReactElement {
 }
 
 /** Hero stats as a compact four-column strip (3 rows): the headline three first and bold, then the rest. */
-export function HeroStats({ data }: { data: PlayerPanelData }): ReactElement {
+export function HeroStats({
+	data,
+	icons = true,
+}: {
+	data: PlayerPanelData;
+	/** Off on short screens: the 32 px icons would make the three rows taller than the text. */
+	icons?: boolean;
+}): ReactElement {
 	const head = ['maxHp', 'armor', 'damage'];
 	const sorted = [...data.stats].sort((a, b) => {
 		const ia = head.indexOf(a.key);
@@ -145,13 +159,13 @@ export function HeroStats({ data }: { data: PlayerPanelData }): ReactElement {
 	return (
 		<div className="grid grid-cols-4 gap-x-4">
 			{sorted.map((s) => (
-				<div
+				<StatLine
 					key={s.key}
-					className={`flex items-baseline justify-between gap-2 text-secondary ${head.includes(s.key) ? 'font-black text-gold-bright' : 'text-text-light'}`}
-				>
-					<span>{t(`gstat.${s.key}` as I18nKey)}</span>
-					<span className="font-bold tabular-nums">{s.value}</span>
-				</div>
+					stat={s.key}
+					value={s.value}
+					strong={head.includes(s.key)}
+					icon={icons}
+				/>
 			))}
 		</div>
 	);
@@ -178,12 +192,12 @@ export function PlayerPanel(props: {
 	const { data } = props;
 	const scale = useUiScale();
 	const compact = useCompact();
-	const icon = compact ? 32 : Math.max(28, Math.round((props.wide ? 80 : 60) * scale));
+	const icon = compact ? 32 : Math.max(28, Math.round((props.wide ? 68 : 60) * scale));
 	const [detail, setDetail] = useState<Detail | null>(null);
 	// Phone: no slot is picked until the player taps one, then the action bar appears.
 	const [pickedWeapon, setPickedWeapon] = useState<number | null>(compact ? null : 0);
 	const slots = Array.from({ length: data.maxWeapons }, (_, i) => data.weapons[i]);
-	const { line, rest } = headlineOf(data);
+	const { head, line, rest } = headlineOf(data);
 
 	const pick = (d: Detail): void => {
 		setDetail(d);
@@ -226,12 +240,14 @@ export function PlayerPanel(props: {
 		</div>
 	);
 	const empty = (key: string, label?: string): ReactElement => (
-		<div
-			key={key}
-			title={label}
-			className="border border-dashed border-snow-dark bg-night/40"
-			style={{ width: icon + 8, height: icon + 8 }}
-		></div>
+		<div key={key} title={label} className="flex flex-col items-center">
+			<div
+				className="border border-dashed border-snow bg-night/40"
+				style={{ width: icon + 8, height: icon + 8 }}
+			/>
+			{/* Same footprint as a filled tile (icon plus its numeral line), so the two columns align. */}
+			{!compact && <span className="text-key leading-tight">&nbsp;</span>}
+		</div>
 	);
 	const weaponTiles = slots.map((w, i) =>
 		w
@@ -463,9 +479,22 @@ export function PlayerPanel(props: {
 				{props.footer}
 			</div>
 			<div className="order-1 flex min-h-0 min-w-0 flex-col gap-1.5">
-				<p className="m-0 text-list font-black uppercase [@media(max-height:500px)]:text-body">
-					{line}
-				</p>
+				{compact ? (
+					<p className="m-0 text-body font-black uppercase">{line}</p>
+				) : (
+					<div className="grid grid-cols-3 gap-2 border-b border-line pb-2">
+						{head.map((s) => (
+							<div key={s.key} className="flex flex-col items-center">
+								<span className="text-title leading-tight font-black text-gold-bright tabular-nums">
+									{s.value}
+								</span>
+								<span className="text-secondary font-bold tracking-section whitespace-nowrap uppercase">
+									{t(`gstat.${s.key}` as I18nKey)}
+								</span>
+							</div>
+						))}
+					</div>
+				)}
 				{compact ? (
 					<p className="m-0 text-secondary leading-snug">
 						{rest
@@ -473,17 +502,9 @@ export function PlayerPanel(props: {
 							.join(' · ')}
 					</p>
 				) : (
-					<div>
+					<div className="flex flex-col gap-1">
 						{rest.map((s) => (
-							<StatRow
-								key={s.key}
-								label={
-									<span className="capitalize">
-										{t(`gstat.${s.key}` as I18nKey)}
-									</span>
-								}
-								value={s.value}
-							/>
+							<StatLine key={s.key} stat={s.key} value={s.value} />
 						))}
 					</div>
 				)}
@@ -504,16 +525,29 @@ export function PlayerPanel(props: {
 					</Block>
 				)}
 			</div>
-			<div
-				className={`order-2 flex min-h-0 min-w-0 justify-center ${compact ? 'flex-col items-center gap-1.5' : 'items-start gap-[1.5vw]'}`}
-			>
-				<div className={`flex gap-1.5 ${compact ? 'flex-row' : 'flex-col'}`}>
-					{gearTiles}
+			{compact ? (
+				<div className="order-2 flex min-h-0 min-w-0 flex-col items-center justify-center gap-1.5">
+					<div className="flex gap-1.5">{gearTiles}</div>
+					<div className="flex gap-1.5">{weaponTiles}</div>
 				</div>
-				<div className={`flex gap-1.5 ${compact ? 'flex-row' : 'flex-col'}`}>
+			) : (
+				// One column-flow grid for both lists: a row is as tall as its tallest cell, so slots line up.
+				<div
+					className="order-2 grid min-h-0 min-w-0 grid-flow-col content-start items-start justify-center justify-items-center gap-x-[1.5vw] gap-y-1.5"
+					style={{ gridTemplateRows: `repeat(${data.maxWeapons + 1}, auto)` }}
+				>
+					<span className={SLOT_HEAD}>{t('shop.equipment')}</span>
+					{gearTiles}
+					{/* Fills the rest of the first column, so the weapons start at the top of the second. */}
+					{data.maxWeapons > data.gear.length && (
+						<span style={{ gridRow: `span ${data.maxWeapons - data.gear.length}` }} />
+					)}
+					<span className={SLOT_HEAD}>
+						{t('shop.weapons')} {data.weapons.length}/{data.maxWeapons}
+					</span>
 					{weaponTiles}
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }

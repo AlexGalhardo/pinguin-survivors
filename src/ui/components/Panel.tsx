@@ -24,7 +24,7 @@ export function Divider(props: { className?: string }): ReactElement {
 export function Heading(props: { children: ReactNode; className?: string }): ReactElement {
 	return (
 		<div className={`flex w-full flex-col items-center gap-1 ${props.className ?? ''}`}>
-			<h1 className="m-0 text-center font-title text-title leading-tight font-bold tracking-title text-gold-bright uppercase ">
+			<h1 className="m-0 text-center font-title text-title leading-[1.3] font-bold tracking-title text-gold-bright uppercase">
 				{props.children}
 			</h1>
 			<Ornament kind="filet" size="full" className="[@media(max-height:500px)]:hidden" />
@@ -105,7 +105,7 @@ export function ItemCard(props: {
 	const style = { borderColor: props.color ?? 'var(--color-line)' } as CSSProperties;
 	return (
 		<div className={props.className ?? ''}>
-			<div className="flex h-full flex-col border bg-night" style={style}>
+			<div className="box-border flex h-full flex-col border bg-night" style={style}>
 				<div
 					className="flex flex-col gap-1 px-3.5 py-3"
 					style={
@@ -117,7 +117,7 @@ export function ItemCard(props: {
 					}
 				>
 					<div
-						className="font-title text-item leading-tight font-bold tracking-[0.03em]"
+						className="font-title text-item leading-[1.3] font-bold tracking-[0.03em]"
 						style={props.color ? { color: props.color } : undefined}
 					>
 						{props.name}
