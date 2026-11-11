@@ -2,7 +2,5 @@
 	"key": "icon.currency.core",
 	"size": 32,
 	"prompt": "game UI icon: a glowing orange crystal core orb with cracks, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background",
-	"seeds": [
-		11
-	]
+	"seeds": [11]
 }
