@@ -29,4 +29,5 @@ export const screensEs = {
 		'Tus armas atacan solas: quédate cerca de los enemigos y fuera de las marcas rojas.',
 	'onboard.tip.super': 'Súper Magia lista: pulsa ESPACIO.',
 	'onboard.tip.super.touch': 'Súper Magia lista: toca la estrella.',
+	'onboard.tip.super.pad': 'Súper Magia lista: pulsa Y.',
 } as const;

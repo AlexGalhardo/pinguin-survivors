@@ -9,6 +9,7 @@ import { sfx } from './core/audio';
 import { setParams, setRunDifficulty, setRunHero, setRunWeapon, setSave } from './core/context';
 import { attachGame, currentRenderSize, initDisplay } from './core/display';
 import { installGamepad } from './core/gamepad';
+import { installInputKind } from './core/input-kind';
 import { refreshMusicVolume } from './core/music';
 import { platform } from './core/platform';
 import { loadSave } from './core/storage';
@@ -76,6 +77,7 @@ bindMenuCommands({
 attachGame(game);
 mountUi(document.getElementById('ui'));
 installGamepad(game, () => game.scene.isActive('Game'));
+installInputKind();
 
 if (import.meta.env.DEV) {
 	(window as unknown as { __GAME__: Phaser.Game }).__GAME__ = game;

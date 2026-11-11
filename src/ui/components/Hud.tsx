@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useSyncExternalStore } from 'react';
 import { rarityColor, toCss } from '../../config/palette';
+import { inputKind, subscribeInputKind } from '../../core/input-kind';
 import { platform } from '../../core/platform';
 import { touchControlsEnabled } from '../../core/touch-bridge';
 import { type I18nKey, t } from '../../i18n';
@@ -104,6 +105,9 @@ export function HudView({
 }): ReactElement {
 	// Touch screens have the 1x/2x button instead of the TAB hint, and the pause button sits there.
 	const touch = touchControlsEnabled(platform().kind, window.location.search);
+	// Pad in use: the hints name the pad button instead of the key (`<key>.pad`).
+	const pad = useSyncExternalStore(subscribeInputKind, inputKind) === 'gamepad';
+	const hint = (key: string): I18nKey => (pad ? `${key}.pad` : key) as I18nKey;
 	const boss = hud.boss;
 	const urgent = hud.timeLeft <= 5 || hud.bossRound;
 	const gambits = touch ? hud.gambits.slice(0, PHONE_GAMBITS) : hud.gambits;
@@ -227,7 +231,7 @@ export function HudView({
 									className={`text-section font-bold tracking-section whitespace-nowrap uppercase ${ready ? 'text-crit' : 'text-blood'}`}
 								>
 									{ready
-										? t('hud.superReady')
+										? t(hint('hud.superReady'))
 										: t('hud.super', { n: charge, max: cost })}
 								</div>
 								<Bar
@@ -250,7 +254,9 @@ export function HudView({
 					{t(
 						(hud.tip !== 'auto' && touch
 							? `onboard.tip.${hud.tip}.touch`
-							: `onboard.tip.${hud.tip}`) as I18nKey,
+							: hud.tip === 'super' && pad
+								? 'onboard.tip.super.pad'
+								: `onboard.tip.${hud.tip}`) as I18nKey,
 					)}
 				</div>
 			)}
@@ -265,7 +271,7 @@ export function HudView({
 				<div
 					className={`absolute right-[3vw] bottom-[3vh] text-key font-bold tracking-section uppercase ${hud.speed > 1 ? 'text-crit' : 'text-text-light'}`}
 				>
-					{t(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint', { n: hud.speed })}
+					{t(hint(hud.speed > 1 ? 'hud.speedOn' : 'hud.speedHint'), { n: hud.speed })}
 				</div>
 			)}
 		</div>

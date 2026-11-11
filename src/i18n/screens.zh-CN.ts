@@ -27,4 +27,5 @@ export const screensZhCN = {
 	'onboard.tip.auto': '武器会自动攻击：靠近敌人，避开红色标记。',
 	'onboard.tip.super': '超级魔法已就绪：按空格键。',
 	'onboard.tip.super.touch': '超级魔法已就绪：点击星星。',
+	'onboard.tip.super.pad': '超级魔法已就绪：按 Y 键。',
 } as const;

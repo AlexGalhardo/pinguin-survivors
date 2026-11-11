@@ -139,6 +139,23 @@ describe('onboarding: first-run hints in the HUD', () => {
 		tip,
 	});
 
+	test('with a pad in use the hints name the pad buttons (Steam Deck)', async () => {
+		const { noteInput } = await import('../../src/core/input-kind');
+		const { act } = await import('@testing-library/react');
+		const ready = { ...snapshot('super'), level: 6, superpower: { charge: 3, cost: 3 } };
+		const view = render(<HudView hud={ready} />);
+		expect(view.container.textContent).toContain('SUPER MAGIC · SPACE');
+		expect(view.container.textContent).toContain('press SPACE');
+		expect(view.container.textContent).toContain('TAB · speed');
+		act(() => noteInput('gamepad'));
+		expect(view.container.textContent).toContain('SUPER MAGIC · Y');
+		expect(view.container.textContent).toContain('press Y');
+		expect(view.container.textContent).toContain('X · speed');
+		act(() => noteInput('keyboard'));
+		expect(view.container.textContent).toContain('TAB · speed');
+		cleanup();
+	});
+
 	test('shows one line for the current tip and nothing when there is none', () => {
 		const move = render(<HudView hud={snapshot('move')} />);
 		expect(move.container.querySelector('[data-hud="tip"]')?.textContent).toBe(

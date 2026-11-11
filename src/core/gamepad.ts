@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { applyDeadzone, BUTTON_KEYS, buttonEdges, stickDirection } from '../logic/gamepad';
+import { noteInput } from './input-kind';
 import { keyEvent } from './synthetic-keys';
 
 const DEADZONE = 0.2;
@@ -41,6 +42,8 @@ export function installGamepad(game: Phaser.Game, isGameplay: () => boolean): vo
 
 		const cur = pad.buttons.map((b) => b.pressed);
 		const { pressed, released } = buttonEdges(prev, cur);
+		// The on-screen key hints follow the device in use (Steam Deck, couch play).
+		if (pressed.length > 0 || stick.x !== 0 || stick.y !== 0) noteInput('gamepad');
 		for (const b of pressed) {
 			const code = BUTTON_KEYS[b];
 			if (code) keyEvent('keydown', code);

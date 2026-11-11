@@ -29,4 +29,5 @@ export const screensPtBR = {
 		'Suas armas atacam sozinhas: fique perto dos inimigos e fora das marcas vermelhas.',
 	'onboard.tip.super': 'Super Magia pronta: aperte ESPAÇO.',
 	'onboard.tip.super.touch': 'Super Magia pronta: toque na estrela.',
+	'onboard.tip.super.pad': 'Super Magia pronta: aperte Y.',
 } as const;

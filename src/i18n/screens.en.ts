@@ -28,4 +28,5 @@ export const screensEn = {
 		'Your weapons attack on their own: stay close to enemies and off the red marks.',
 	'onboard.tip.super': 'Super Magic is ready: press SPACE.',
 	'onboard.tip.super.touch': 'Super Magic is ready: tap the star.',
+	'onboard.tip.super.pad': 'Super Magic is ready: press Y.',
 } as const;
