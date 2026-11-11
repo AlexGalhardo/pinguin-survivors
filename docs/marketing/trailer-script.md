@@ -1,4 +1,4 @@
-# Roteiro do trailer — Pinguin Survivors (T9.3)
+# Roteiro do trailer — Penguin Survivors (T9.3)
 
 > **Versão** 1.0 · **Data** 2026-11-08 · **Status** rascunho para aprovação do desenvolvedor · Segue [gdd.md](../gdd.md) e [site.md](../site.md) §6 (até 2 min; estrutura sugerida).
 
@@ -69,7 +69,7 @@ Todas as URLs usam a build de dev. Para o trailer final, a build deve ser a de r
 Curtos, em caixa-alta no título e em caixa normal na legenda. Máximo de 8 palavras por texto.
 
 1. (0–5 s) `THREE PENGUINS. THREE HUNDRED ZOMBIES.`
-2. (5–12 s) `PINGUIN SURVIVORS`
+2. (5–12 s) `PENGUIN SURVIVORS`
 3. (12–30 s) `SIX WEAPONS FIRE ON THEIR OWN.`
 4. (30–45 s) `A SHOP AFTER EVERY ROUND.`
 5. (45–52 s) `FUSE TWO WEAPONS. RARITY I TO V.`

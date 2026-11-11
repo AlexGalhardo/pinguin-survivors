@@ -1,4 +1,4 @@
-# Documentação — Pinguin Survivors
+# Documentação — Penguin Survivors
 
 Índice. O plano de execução é o [`../ROADMAP.md`](../ROADMAP.md) (o `PLAN.md` na raiz é histórico). Cada documento tem versão, data e índice próprios e referencia os outros em vez de duplicar.
 

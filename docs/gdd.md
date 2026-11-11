@@ -1,4 +1,4 @@
-# Game Design Document — Pinguin Survivors
+# Game Design Document — Penguin Survivors
 
 > **Versão** 2.2 · **Data** 2026-11-10 · **Status** fonte única de game design e mecânicas para a **1.0 comercial** (Steam + Android).
 > Substitui `game-design.md` e `ui-hud.md`. Números em [balancing-and-simulation.md](balancing-and-simulation.md) (Parte B); decisões em [brainstorming.md](brainstorming.md) (B-xx) e [adrs/](adrs/README.md); histórico anterior (P-xx) no `docs/decisions.md` removido, recuperável pelo git (`git log -- docs/decisions.md`). Arte em [visual.md](visual.md); som em [audio.md](audio.md); técnica em [architecture.md](architecture.md); especificações de implementação em [sdds/](sdds/README.md).

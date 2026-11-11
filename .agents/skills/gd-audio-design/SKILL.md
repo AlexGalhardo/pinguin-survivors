@@ -8,7 +8,7 @@ description: >
   variation, music layers, or syncing gameplay to the beat.
 ---
 
-> **Pinguin Survivors:** skill de terceiros (`gamedev-skills/awesome-gamedev-agent-skills`, Apache-2.0). Siga as regras do `CLAUDE.md`/`AGENTS.md` do projeto quando houver conflito (Phaser 4, Bun, lógica pura em `src/logic`, números em `src/data`, textos em `src/i18n`).
+> **Penguin Survivors:** skill de terceiros (`gamedev-skills/awesome-gamedev-agent-skills`, Apache-2.0). Siga as regras do `CLAUDE.md`/`AGENTS.md` do projeto quando houver conflito (Phaser 4, Bun, lógica pura em `src/logic`, números em `src/data`, textos em `src/i18n`).
 
 
 # Audio design

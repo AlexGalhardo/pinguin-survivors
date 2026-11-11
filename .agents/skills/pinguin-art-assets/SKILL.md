@@ -1,9 +1,9 @@
 ---
 name: pinguin-art-assets
-description: Use when creating, regenerating, animating or replacing any visual asset of Pinguin Survivors (hero Jack/Bob/Lucia, zombie enemy, boss, merchant NPC, weapon tier image, top-down tile or border, prop, projectile, VFX, blood/gibs, UI icon, Steam capsule) with PixelLab API v2, or when touching art-src/pixellab, scripts/pl-*.ts, scripts/lib/pixellab.ts, pack-* scripts or the atlases. Keeps every asset on the same style, size, view, direction set and key contract.
+description: Use when creating, regenerating, animating or replacing any visual asset of Penguin Survivors (hero Jack/Bob/Lucia, zombie enemy, boss, merchant NPC, weapon tier image, top-down tile or border, prop, projectile, VFX, blood/gibs, UI icon, Steam capsule) with PixelLab API v2, or when touching art-src/pixellab, scripts/pl-*.ts, scripts/lib/pixellab.ts, pack-* scripts or the atlases. Keeps every asset on the same style, size, view, direction set and key contract.
 ---
 
-# Pinguin Survivors — art assets with PixelLab
+# Penguin Survivors — art assets with PixelLab
 
 Read `docs/visual.md` first (Art Bible: style, sizes, keys, budget, production log) and `docs/sdds/SDD-012-arte-topdown-e-vfx.md` (what is pending and its budget). Every generation is logged in `art-src/pixellab/log.jsonl`; summarize each batch in `docs/visual.md` §13.
 

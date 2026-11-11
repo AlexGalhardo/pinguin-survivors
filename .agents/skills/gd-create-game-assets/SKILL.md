@@ -3,7 +3,7 @@ name: gd-create-game-assets
 description: Plan, generate, source, normalize, and validate cohesive visual game assets. Use for art direction, style bibles, sprites, tilesets, backgrounds, UI art, icons, textures, concept art, or 3D asset briefs.
 ---
 
-> **Pinguin Survivors:** skill de terceiros (`gamedev-skills/awesome-gamedev-agent-skills`, Apache-2.0). Siga as regras do `CLAUDE.md`/`AGENTS.md` do projeto quando houver conflito (Phaser 4, Bun, lógica pura em `src/logic`, números em `src/data`, textos em `src/i18n`).
+> **Penguin Survivors:** skill de terceiros (`gamedev-skills/awesome-gamedev-agent-skills`, Apache-2.0). Siga as regras do `CLAUDE.md`/`AGENTS.md` do projeto quando houver conflito (Phaser 4, Bun, lógica pura em `src/logic`, números em `src/data`, textos em `src/i18n`).
 
 
 # Create Game Assets

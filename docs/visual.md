@@ -1,4 +1,4 @@
-# Art Bible — Pinguin Survivors
+# Art Bible — Penguin Survivors
 
 > **Versão** 2.4 · **Data** 2026-11-08 · Substitui `art-and-assets.md`. Histórico de prompts na §13 deste documento; pipeline operacional na skill `.agents/skills/pinguin-art-assets`; decisões em [adrs/ADR-003](adrs/ADR-003-topdown-arena-quadrada.md) e [ADR-004](adrs/ADR-004-reaproveitar-arte-low-topdown.md); design em [gdd.md](gdd.md).
 

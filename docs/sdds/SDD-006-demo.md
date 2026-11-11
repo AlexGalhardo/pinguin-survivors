@@ -11,7 +11,7 @@
 - RF-03 `HeroSelect` mostra Bob e Lucia bloqueados com "Disponível no jogo completo"; danger limitado a 0–1.
 - RF-04 Oficina, gambits, conquistas e histórico funcionam; conquistas acima do round 10 ficam ocultas na demo.
 - RF-05 Save compartilhado: mesmo schema e mesma chave `localStorage`/arquivo; o jogo completo lê o save da demo (web: "Importar save da demo" na primeira abertura, via export/import; Steam: import automático do arquivo da demo).
-- RF-06 Rodapé mostra `DEMO` ao lado da versão; título da janela "Pinguin Survivors — Demo".
+- RF-06 Rodapé mostra `DEMO` ao lado da versão; título da janela "Penguin Survivors — Demo".
 - RF-07 Nenhum conteúdo exclusivo da demo: mesmo código com gating.
 
 ## Especificação

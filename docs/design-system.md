@@ -1,4 +1,4 @@
-# Design system da UI — Pinguin Survivors
+# Design system da UI — Penguin Survivors
 
 Versão 2.1 (Diablo IV orgânico, "Estilo D", regra plano) · 2026-11-10. A v2.1 emenda a v2.0 (2026-11-09) só em elevação, bordas e cards (ver §5 e ADR-027); a v2.0 substituiu a v1.0 de 2026-11-08. Vale para toda a UI React: menus, HUD, loja, pausa e telas de run.
 

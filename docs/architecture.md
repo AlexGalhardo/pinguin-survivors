@@ -1,4 +1,4 @@
-# Arquitetura técnica — Pinguin Survivors
+# Arquitetura técnica — Penguin Survivors
 
 > **Versão** 2.5 · **Data** 2026-11-10 · Estado atual do código (release 0.10.1: UI só React no Estilo D, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4, campanha de 50 rounds em 5 biomas, velocidade 1×/1,5×/2×). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
 

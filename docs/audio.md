@@ -1,4 +1,4 @@
-# Direção de Som — Pinguin Survivors
+# Direção de Som — Penguin Survivors
 
 > **Versão** 2.2 · **Data** 2026-11-08 · Ferramenta única: **ElevenLabs** (`ELEVENLABS_API_KEY` só no `.env`). Pipeline na skill `.agents/skills/pinguin-audio-assets`; log bruto em `art-src/elevenlabs/log.jsonl`; decisão de remover vozes em [adrs/ADR-009](adrs/ADR-009-remover-vozes.md).
 

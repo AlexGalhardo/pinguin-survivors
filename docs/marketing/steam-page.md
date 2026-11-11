@@ -14,7 +14,7 @@
 
 ## 1. Nome, preço e plataforma
 
-- **Nome**: `Pinguin Survivors` nos quatro idiomas (nome próprio, não traduzir).
+- **Nome**: `Penguin Survivors` nos quatro idiomas (nome próprio, não traduzir).
 - **Preço**: US$ 4,99 (ADR-011). Confirmar na publicação.
 - **Plataforma**: Windows, pela Steam (Electron, ADR-012). Android fica na Google Play, fora desta página.
 - **Demo**: prevista para o Steam Next Fest, 22/02 a 01/03/2027 (AGENTS.md). Marcar como planejado até a inscrição.
@@ -55,7 +55,7 @@ Three penguins against the zombie apocalypse. Six auto-firing weapons, a shop af
 
 ### Descrição longa
 
-Pinguin Survivors is a top-down arena survivor with pixel art. Jack, Bob and Lucia fight through hordes of zombies in rounds against the clock. Your weapons fire on their own, and you choose where to be.
+Penguin Survivors is a top-down arena survivor with pixel art. Jack, Bob and Lucia fight through hordes of zombies in rounds against the clock. Your weapons fire on their own, and you choose where to be.
 
 After each round, a shop opens with weapons, equipment and items. Fuse two identical weapons to raise their rarity. Each level-up offers stat cards. Each penguin has its own skill tree, and your progress carries from run to run.
 
@@ -82,7 +82,7 @@ Três pinguins contra o apocalipse zumbi. Seis armas automáticas, uma loja apó
 
 ### Descrição longa
 
-Pinguin Survivors é um arena survivor top-down em pixel art. Jack, Bob e Lucia enfrentam hordas de zumbis em rounds contra o relógio. Suas armas disparam sozinhas, e você escolhe onde ficar.
+Penguin Survivors é um arena survivor top-down em pixel art. Jack, Bob e Lucia enfrentam hordas de zumbis em rounds contra o relógio. Suas armas disparam sozinhas, e você escolhe onde ficar.
 
 Ao fim de cada round, abre uma loja com armas, equipamentos e itens. Funda duas armas iguais para subir a raridade. Cada subida de nível oferece cartas de atributo. Cada pinguim tem sua própria árvore de habilidades, e o progresso passa de uma partida para a outra.
 
@@ -109,7 +109,7 @@ Tres pingüinos contra la apocalipsis zombi. Seis armas automáticas, una tienda
 
 ### Descripción larga
 
-Pinguin Survivors es un arena survivor de vista cenital en pixel art. Jack, Bob y Lucia enfrentan oleadas de zombis en rounds contra el reloj. Tus armas disparan solas, y tú decides dónde estar.
+Penguin Survivors es un arena survivor de vista cenital en pixel art. Jack, Bob y Lucia enfrentan oleadas de zombis en rounds contra el reloj. Tus armas disparan solas, y tú decides dónde estar.
 
 Al final de cada round se abre una tienda con armas, equipo y objetos. Fusiona dos armas idénticas para subir su rareza. Cada subida de nivel ofrece cartas de estadísticas. Cada pingüino tiene su propio árbol de habilidades, y tu progreso pasa de una partida a otra.
 
@@ -136,7 +136,7 @@ Sube el Danger de 0 a 5 para enemigos más fuertes y mejores recompensas, o sigu
 
 ### 详细描述
 
-《Pinguin Survivors》是一款像素风俯视角竞技场生存游戏。Jack、Bob 和 Lucia 在限时回合中与成群的僵尸战斗。你的武器会自动开火，而你决定站在哪里。
+《Penguin Survivors》是一款像素风俯视角竞技场生存游戏。Jack、Bob 和 Lucia 在限时回合中与成群的僵尸战斗。你的武器会自动开火，而你决定站在哪里。
 
 每回合结束后，会打开一家商店，出售武器、装备和道具。合成两件相同的武器可提升其稀有度。每次升级会提供属性卡。每只企鹅都有自己的技能树，你的成长会延续到下一局。
 

@@ -1,4 +1,4 @@
-# AGENTS.md — Pinguin Survivors
+# AGENTS.md — Penguin Survivors
 
 Instruções para qualquer agente de código (Claude Code, Codex, Cursor, Gemini, Copilot, etc.). Regras detalhadas em [`.agents/rules/`](.agents/rules/README.md); skills em [`.agents/skills/`](.agents/skills/THIRD_PARTY.md). Nenhuma ferramenta carrega essas pastas sozinha: **leia os arquivos pelo caminho** conforme a tarefa.
 

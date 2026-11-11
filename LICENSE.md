@@ -1,6 +1,6 @@
 # License
 
-Pinguin Survivors uses two licenses: the **source code** is MIT; the **game assets** are proprietary.
+Penguin Survivors uses two licenses: the **source code** is MIT; the **game assets** are proprietary.
 
 ## Source code — MIT License
 
@@ -36,7 +36,7 @@ The following are **not** licensed under the MIT License and may not be copied, 
 
 - `public/assets/**` (sprites, atlases, tiles, icons, key art, sound effects, music);
 - `art-src/**` (source art, prompts, logs and intermediate files);
-- the name "Pinguin Survivors", the heroes Jack, Bob and Lucia, the enemy and boss designs, the logo, the key art and the story.
+- the name "Penguin Survivors", the heroes Jack, Bob and Lucia, the enemy and boss designs, the logo, the key art and the story.
 
 You may build and run the game from this repository for personal, non-commercial purposes using these assets. Forks that are distributed or sold must replace them.
 

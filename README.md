@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1><strong>Pinguin Survivors</strong></h1>
+<h1><strong>Penguin Survivors</strong></h1>
 
 [![CI](https://github.com/AlexGalhardo/pinguin-survivors/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexGalhardo/pinguin-survivors/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Pinguin Survivors is a Brotato-style arena survivor roguelite in pixel art. Jack (melee), Bob (firearms) and Lucia (magic) are the last three penguins of a zombie apocalypse in Antarctica. Rounds are timed, up to six weapons fire on their own, a shop opens after every round, a boss shows up every five rounds, and hero progress (level 1–100) never resets.
+Penguin Survivors is a Brotato-style arena survivor roguelite in pixel art. Jack (melee), Bob (firearms) and Lucia (magic) are the last three penguins of a zombie apocalypse in Antarctica. Rounds are timed, up to six weapons fire on their own, a shop opens after every round, a boss shows up every five rounds, and hero progress (level 1–100) never resets.
 
 The game is built with [Phaser 4](https://phaser.io), TypeScript, Vite, React and Tailwind CSS, and runs on Bun. It ships on Steam (Windows, via Electron) and Google Play (Android, via Capacitor), with a browser demo. Art is generated with [PixelLab](https://pixellab.ai) and audio with [ElevenLabs](https://elevenlabs.io).
 
@@ -79,7 +79,7 @@ Everything lives in [docs/](docs/README.md): the [Game Design Document](docs/gdd
 
 ## Stability
 
-Pinguin Survivors follows [Semantic Versioning](https://semver.org) and tags releases as `vX.Y.Z` on `main`: `0.0.x` while the game is in alpha, `0.1.x` from the public demo until launch, and `1.0.0` for the commercial release ([ADR-015](docs/adrs/ADR-015-versionamento-vukem.md)). Changes are listed in [CHANGELOG.md](CHANGELOG.md), which follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Each milestone ships as one release; from `0.2.0` on, releases are marked as Latest (`bun scripts/release.ts X.Y.Z --stable`). Every release carries the Windows builds (full and demo, as zip files) and the Android debug APK.
+Penguin Survivors follows [Semantic Versioning](https://semver.org) and tags releases as `vX.Y.Z` on `main`: `0.0.x` while the game is in alpha, `0.1.x` from the public demo until launch, and `1.0.0` for the commercial release ([ADR-015](docs/adrs/ADR-015-versionamento-vukem.md)). Changes are listed in [CHANGELOG.md](CHANGELOG.md), which follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Each milestone ships as one release; from `0.2.0` on, releases are marked as Latest (`bun scripts/release.ts X.Y.Z --stable`). Every release carries the Windows builds (full and demo, as zip files) and the Android debug APK.
 
 ## Contributing
 
@@ -112,4 +112,4 @@ If you discover a security vulnerability, please follow the [security policy](SE
 
 ## License
 
-The source code of Pinguin Survivors is open source software released under the [MIT license](LICENSE.md). The game assets (art, audio, key art, names and story) are **not** covered by the MIT license and remain all rights reserved; see [LICENSE.md](LICENSE.md) for the details.
+The source code of Penguin Survivors is open source software released under the [MIT license](LICENSE.md). The game assets (art, audio, key art, names and story) are **not** covered by the MIT license and remain all rights reserved; see [LICENSE.md](LICENSE.md) for the details.

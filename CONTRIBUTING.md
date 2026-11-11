@@ -1,6 +1,6 @@
-# Contributing to Pinguin Survivors
+# Contributing to Penguin Survivors
 
-Thank you for considering a contribution. Pinguin Survivors is a TypeScript game on [Phaser 4](https://phaser.io) with a React + Tailwind UI, built and tested with [Bun](https://bun.sh). The desktop (Electron) and Android (Capacitor) ports and the static site (Astro) live in `apps/` and `site/` once they land (see [ROADMAP.md](ROADMAP.md)).
+Thank you for considering a contribution. Penguin Survivors is a TypeScript game on [Phaser 4](https://phaser.io) with a React + Tailwind UI, built and tested with [Bun](https://bun.sh). The desktop (Electron) and Android (Capacitor) ports and the static site (Astro) live in `apps/` and `site/` once they land (see [ROADMAP.md](ROADMAP.md)).
 
 ## Before you start
 

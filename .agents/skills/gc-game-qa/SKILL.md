@@ -10,7 +10,7 @@ metadata:
   tags: [game, qa, testing, playwright]
 ---
 
-> **Pinguin Survivors:** skill de terceiros (`PlayableIntelligence/game-creator`, MIT). Use como checklist/guia; **não** gere scaffold, templates ou deploy próprios da skill: este projeto já tem estrutura (ver `docs/architecture.md`), usa **Phaser 4** (não 3), Bun, arte PixelLab e áudio ElevenLabs. Em conflito, vale o `CLAUDE.md`.
+> **Penguin Survivors:** skill de terceiros (`PlayableIntelligence/game-creator`, MIT). Use como checklist/guia; **não** gere scaffold, templates ou deploy próprios da skill: este projeto já tem estrutura (ver `docs/architecture.md`), usa **Phaser 4** (não 3), Bun, arte PixelLab e áudio ElevenLabs. Em conflito, vale o `CLAUDE.md`.
 
 
 # Game QA with Playwright

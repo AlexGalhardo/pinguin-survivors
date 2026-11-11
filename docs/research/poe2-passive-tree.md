@@ -1,4 +1,4 @@
-# Árvore de passivas do Path of Exile 2 — pesquisa para o Pinguin Survivors
+# Árvore de passivas do Path of Exile 2 — pesquisa para o Penguin Survivors
 
 > **Versão** 1.0 · **Data** 2026-11-08 · **Status** pesquisa; números marcados **(não verificado)** não foram confirmados em fonte oficial nem em página aberta. Nada aqui é decisão de design: a seção final propõe o que aplicar, para o desenvolvedor aprovar em [gdd.md](../gdd.md).
 
@@ -96,7 +96,7 @@ Com base no que as fontes descrevem e no que os jogadores de ARPG costumam pedir
 
 ## 10. O que aplicar num survivor roguelite com 3 heróis (árvore menor)
 
-Contexto: o Pinguin Survivors não precisa de uma árvore de centenas de nós. Cada run é curta, e o progresso já existe na Oficina (9 upgrades) e na Loja de extras. O que vale trazer é o padrão de decisão, não o tamanho.
+Contexto: o Penguin Survivors não precisa de uma árvore de centenas de nós. Cada run é curta, e o progresso já existe na Oficina (9 upgrades) e na Loja de extras. O que vale trazer é o padrão de decisão, não o tamanho.
 
 Propostas para o desenvolvedor aprovar (**(proposta)**, não são decisões):
 

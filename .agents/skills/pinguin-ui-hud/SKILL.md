@@ -1,6 +1,6 @@
 ---
 name: pinguin-ui-hud
-description: Builds or migrates any Pinguin Survivors menu, overlay or HUD in the Diablo 4 organic style (Style D, ADR-022, SDD-015). Use whenever you touch src/ui/ (MainMenu, SaveSlots, HeroSelect, HeroScreen, SkillTree, Achievements/Extras/History, Settings, Controls, Hud, TouchControls, LevelUpCards, Shop/PlayerPanel/ItemViews, Pause, GameOver, Unlock, DemoEnd, Toast), when the user mentions a menu, screen, HUD, wireframe, design system, font size, padding or "Diablo 4 look", or when reviewing a UI diff.
+description: Builds or migrates any Penguin Survivors menu, overlay or HUD in the Diablo 4 organic style (Style D, ADR-022, SDD-015). Use whenever you touch src/ui/ (MainMenu, SaveSlots, HeroSelect, HeroScreen, SkillTree, Achievements/Extras/History, Settings, Controls, Hud, TouchControls, LevelUpCards, Shop/PlayerPanel/ItemViews, Pause, GameOver, Unlock, DemoEnd, Toast), when the user mentions a menu, screen, HUD, wireframe, design system, font size, padding or "Diablo 4 look", or when reviewing a UI diff.
 ---
 
 # Pinguin UI/HUD — Estilo D (Diablo 4 orgânico)

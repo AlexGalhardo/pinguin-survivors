@@ -1,4 +1,4 @@
-# Balanceamento e simulação — Pinguin Survivors
+# Balanceamento e simulação — Penguin Survivors
 
 > **Versão** 2.11 · **Data** 2026-11-10 · Documento único de balanceamento: **metodologia** (Parte A), **números e fórmulas** (Parte B, fonte espelhada de `src/data/*.ts`) e **histórico de calibração** (Parte C). Substitui `balancing.md`. Ferramentas e asserts em [sdds/SDD-013](sdds/SDD-013-balanceamento-e-simulacao.md); design em [gdd.md](gdd.md).
 > Regra de ouro: **a fonte de verdade dos números é `src/data/`**; este arquivo espelha. Mudou um número, atualize os dois no mesmo commit (`balance:` no escopo).

@@ -15,7 +15,7 @@
 7. [Steam Next Fest de fevereiro de 2027](#7-steam-next-fest-de-fevereiro-de-2027)
 8. [Monetização, preço e plataformas](#8-monetização-preço-e-plataformas)
 9. [Tabela comparativa](#9-tabela-comparativa)
-10. [Lições aplicáveis ao Pinguin Survivors](#10-lições-aplicáveis-ao-pinguin-survivors)
+10. [Lições aplicáveis ao Penguin Survivors](#10-lições-aplicáveis-ao-pinguin-survivors)
 11. [Fontes](#11-fontes)
 12. [Portais web: itch.io, Poki e CrazyGames (herdado)](#12-portais-web-itchio-poki-e-crazygames-pesquisa-herdada-2026-09-25)
 
@@ -134,7 +134,7 @@ Benchmarks (survey de Chris Zukowski, How To Market A Game, edição fev/2026, 1
 
 ## 9. Tabela comparativa
 
-| Mecânica | Brotato | Vampire Survivors | Halls of Torment | Megabonk | **Pinguin Survivors (decidido)** |
+| Mecânica | Brotato | Vampire Survivors | Halls of Torment | Megabonk | **Penguin Survivors (decidido)** |
 |---|---|---|---|---|---|
 | Estrutura | 20 waves 20→60 s + loja | 30 min contínuos | ~30 min por hall | runs contínuas 3D | rounds 20→60 s + loja + boss a cada 10, endless |
 | Mira | automática | automática | automática | automática | automática |
@@ -148,7 +148,7 @@ Benchmarks (survey de Chris Zukowski, How To Market A Game, edição fev/2026, 1
 | Preço | US$ 4,99 | US$ 4,99 | ~US$ 6,66 | US$ 9,99 | **US$ 4,99** |
 | Mobile | F2P ads + IAP; Premium | F2P ads + DLC | — | — | **premium** |
 
-## 10. Lições aplicáveis ao Pinguin Survivors
+## 10. Lições aplicáveis ao Penguin Survivors
 
 1. **Copiar a espinha dorsal do Brotato sem vergonha** (waves, loja, 6 slots, danger) — é o padrão que o público do gênero já sabe jogar; diferenciar no tema, gore, RPG persistente, superpoder e gambits.
 2. **Sets/classes de arma** (melee/fogo/magia + subclasses) com bônus por quantidade: resolve a crítica "a arma não importa" e casa com os multiplicadores por herói.

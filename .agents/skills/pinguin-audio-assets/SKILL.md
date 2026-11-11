@@ -1,9 +1,9 @@
 ---
 name: pinguin-audio-assets
-description: Use when creating or replacing any sound of Pinguin Survivors (SFX, DOOM-style metal music) with the ElevenLabs API, or when touching scripts/el-*.ts, public/assets/audio or the audio keys in src/art/manifest.ts. Voices were removed (ADR-009); do not generate voice lines.
+description: Use when creating or replacing any sound of Penguin Survivors (SFX, DOOM-style metal music) with the ElevenLabs API, or when touching scripts/el-*.ts, public/assets/audio or the audio keys in src/art/manifest.ts. Voices were removed (ADR-009); do not generate voice lines.
 ---
 
-# Pinguin Survivors — audio with ElevenLabs
+# Penguin Survivors — audio with ElevenLabs
 
 Read `docs/audio.md` first (direction, engineering, catalog with prompts, pending list, budget).
 

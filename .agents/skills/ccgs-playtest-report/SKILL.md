@@ -7,7 +7,7 @@ allowed-tools: Read, Glob, Grep, Write, Agent, AskUserQuestion
 model: sonnet
 ---
 
-> **Pinguin Survivors:** skill de terceiros (`Donchitos/Claude-Code-Game-Studios`, MIT). Ela assume as pastas `design/` e `production/` do Claude-Code-Game-Studios. **Mapeie:** `design/gdd/*` → `docs/gdd.md` e `docs/balancing-and-simulation.md`; `design/art/*` → `docs/visual.md`; `production/*` (relatórios, planos, checklists) → `docs/reports/<skill>-<data>.md`; sprints/milestones → `ROADMAP.md`. Não invoque agentes que não existem aqui. Referências a `.claude/docs/*.md`, `project.yaml` e `yaml-helper.sh` são do CCGS e **não existem neste repositório**: ignore-as; nos pontos de decisão pergunte ao desenvolvedor (gates 🛑) e grave relatórios em `docs/reports/`.
+> **Penguin Survivors:** skill de terceiros (`Donchitos/Claude-Code-Game-Studios`, MIT). Ela assume as pastas `design/` e `production/` do Claude-Code-Game-Studios. **Mapeie:** `design/gdd/*` → `docs/gdd.md` e `docs/balancing-and-simulation.md`; `design/art/*` → `docs/visual.md`; `production/*` (relatórios, planos, checklists) → `docs/reports/<skill>-<data>.md`; sprints/milestones → `ROADMAP.md`. Não invoque agentes que não existem aqui. Referências a `.claude/docs/*.md`, `project.yaml` e `yaml-helper.sh` são do CCGS e **não existem neste repositório**: ignore-as; nos pontos de decisão pergunte ao desenvolvedor (gates 🛑) e grave relatórios em `docs/reports/`.
 
 
 > (Config automática do CCGS removida: este projeto não tem `production/` nem os hooks do CCGS; use os padrões da skill.)

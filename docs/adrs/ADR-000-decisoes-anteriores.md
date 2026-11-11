@@ -7,7 +7,7 @@ Registro das decisões de produto tomadas com o desenvolvedor (entrevista de 202
 | # | Decisão | Motivo / nota |
 |---|---|---|
 | P-01 | **Refundação**: manter a infraestrutura (Bun, Vite, Phaser 4, Biome, commitlint, `logic/` puro, RNG com seed, spatial grid, gamepad) e **reescrever a camada de jogo** | A fundação era sólida; iso + mapa infinito + RPG mudam todo o resto |
-| P-02 | Histórico do Starfall preservado na branch **`starfall-survivors-legacy`** (e tag `v1.0.0-rc.1`); Pinguin Survivors é desenvolvido na `main` | Pedido do usuário |
+| P-02 | Histórico do Starfall preservado na branch **`starfall-survivors-legacy`** (e tag `v1.0.0-rc.1`); Penguin Survivors é desenvolvido na `main` | Pedido do usuário |
 | P-03 | Repo renomeado para `git@github.com:AlexGalhardo/pinguin-survivors.git`; versão começa em **`0.1.0-alpha.N`** | Projeto novo; histórico do Starfall na branch legacy |
 | P-04 | Perspectiva **2.5D isométrica clássica 2:1** (estilo Diablo 2), tiles de **64×32**, sprites em vista **"low top-down"** | "Iso pixel estilo Diablo" |
 | P-05 | Herói com **~88 px de altura** (canvas 96, concepts aprovados), inimigos comuns ~56–64 px (canvas 64–80), elites ×1,25/×1,4, bosses 160–256 px | Meta inicial era ~64 px; o usuário aprovou os concepts v3 no tamanho gerado (2026-09-27) |

@@ -1,12 +1,12 @@
 # Code of conduct
 
-Pinguin Survivors is an open source game project: people contribute code, art feedback, balance reports, translations and bug reports. This code of conduct applies to every project space: the GitHub repository (issues, pull requests, discussions, reviews), the Steam community hub and store page discussions, and any other channel run for the project.
+Penguin Survivors is an open source game project: people contribute code, art feedback, balance reports, translations and bug reports. This code of conduct applies to every project space: the GitHub repository (issues, pull requests, discussions, reviews), the Steam community hub and store page discussions, and any other channel run for the project.
 
 It is adapted from the [Contributor Covenant](https://www.contributor-covenant.org/version/2/1/code_of_conduct/), version 2.1.
 
 ## Our pledge
 
-We want participation in Pinguin Survivors to be free of harassment for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
+We want participation in Penguin Survivors to be free of harassment for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
 ## Expected behaviour
 

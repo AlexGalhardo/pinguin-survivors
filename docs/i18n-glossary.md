@@ -1,4 +1,4 @@
-# Glossário i18n — Pinguin Survivors
+# Glossário i18n — Penguin Survivors
 
 > **Versão** 1.1 · **Data** 2026-11-10 · **Status** revisado pelo orquestrador (2026-11-08); biomas e bosses atualizados para a campanha de [ADR-023](adrs/ADR-023-campanha-50-rounds-10-bosses.md) (2026-11-10); termos marcados "proposta" aguardam o desenvolvedor (`questions-to-dev.md` #6). Tabelas em `src/i18n/` (`*.en.ts`, `*.pt-BR.ts`, `*.es.ts`, `*.zh-CN.ts`); paridade de chaves e placeholders com `bun scripts/i18n-check.ts`. Regras de tradução em [.agents/rules/game-data-and-i18n.md](../.agents/rules/game-data-and-i18n.md). Decisão de idiomas em [ADR-010](adrs/ADR-010-idiomas-en-ptbr-es-zh.md) e [SDD-009](sdds/SDD-009-i18n-es-zh.md).
 

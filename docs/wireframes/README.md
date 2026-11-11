@@ -1,4 +1,4 @@
-# Wireframes da UI — Pinguin Survivors
+# Wireframes da UI — Penguin Survivors
 
 Versão 1.0 · 2026-11-09. Índice dos wireframes das 16 telas e especificação de implementação do estilo escolhido (**Estilo D — Diablo IV orgânico**). Tokens, componentes `D*` e estados ficam no [design system v2](../design-system.md), e a decisão no [ADR-022](../adrs/ADR-022-ui-diablo-4-organica.md). Este arquivo diz **o que cada tela tem e onde**, sem repetir os valores do design system.
 

@@ -1,4 +1,4 @@
-# Site comercial — Pinguin Survivors
+# Site comercial — Penguin Survivors
 
 > **Versão** 1.0 · **Data** 2026-11-08 · Especificação de **conteúdo, marketing e estrutura** do site que vende o jogo. A especificação técnica (Astro 7.4, build, deploy) está em [sdds/SDD-008](sdds/SDD-008-site-astro-github-pages.md); a decisão em [adrs/ADR-014](adrs/ADR-014-site-github-pages.md). Nada aqui é implementado nesta sessão: o [ROADMAP.md](../ROADMAP.md) agenda a construção.
 
@@ -32,7 +32,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│ [logo] Pinguin Survivors            [EN ▾] [Steam] [Google Play] [GitHub] │  navbar 56 px
+│ [logo] Penguin Survivors            [EN ▾] [Steam] [Google Play] [GitHub] │  navbar 56 px
 ├────────────────────────────────┬─────────────────────────────────────┤
 │ TÍTULO (Roboto 900)            │                                     │
 │ Pitch 2–3 frases               │   [ trailer 16:9 / poster ]         │
@@ -56,7 +56,7 @@ Textos em `site/src/i18n/{en,pt-br,es,zh-cn}.json`, mesmas chaves. Glossário co
 
 | Chave | EN | PT-BR |
 |---|---|---|
-| `hero.title` | Pinguin Survivors | Pinguin Survivors |
+| `hero.title` | Penguin Survivors | Penguin Survivors |
 | `hero.pitch` | Three penguins. Three hundred zombies a round. Blood on the snow. A Brotato-style arena survivor where your progress never dies. | Três pinguins. Trezentos zumbis por round. Sangue na neve. Um arena survivor estilo Brotato em que seu progresso nunca morre. |
 | `hero.bullet1` | Cute penguins, DOOM-grade gore (toggle it if you must). | Pinguins fofos, gore nível DOOM (dá para desligar, se precisar). |
 | `hero.bullet2` | Six auto-firing weapons, a shop every round, builds that break the game. | Seis armas automáticas, loja a cada round, builds que quebram o jogo. |
@@ -88,7 +88,7 @@ Tokens de `src/config/palette.ts` exportados para CSS: fundo noite polar, painé
 
 ## 8. SEO, compartilhamento e legal
 
-- `title`: "Pinguin Survivors — Brotato-style arena survivor with penguins and DOOM gore"; `description` ≤ 155 caracteres por idioma; `hreflang` x4; Open Graph/Twitter card com key art 1200×630.
+- `title`: "Penguin Survivors — Brotato-style arena survivor with penguins and DOOM gore"; `description` ≤ 155 caracteres por idioma; `hreflang` x4; Open Graph/Twitter card com key art 1200×630.
 - Páginas estáticas adicionais (pós-1.0): `/press/` (press kit: logos, screenshots, fact sheet), `/privacy/` (sem coleta de dados; o jogo salva localmente; Steam/Google gerenciam compras).
 - Rodapé: © Alex Galhardo, ano; "Steam é marca da Valve Corporation; Google Play é marca do Google LLC".
 - Classificação etária visível na landing (16+/Mature) quando emitida.
