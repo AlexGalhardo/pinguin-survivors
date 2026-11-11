@@ -1997,6 +1997,7 @@ export class GameScene extends Phaser.Scene {
 		publishRunOver({
 			over: {
 				bossTimeout: this.outcome === 'bossTimeout',
+				quit: this.outcome === 'quit',
 				round: run.round,
 				kills: run.kills,
 				seconds: Math.round(run.elapsed),

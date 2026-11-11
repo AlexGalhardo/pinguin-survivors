@@ -249,8 +249,6 @@ export const en = {
 	'over.title': 'YOU DIED',
 	'over.bossTimeout': 'THE BOSS OUTLASTED YOU',
 	'over.round': 'Round {n}',
-	'over.stats': '{kills} kills · {time} · {damage} damage',
-	'over.rewards': '+{xp} XP · +{fish} fish · {levels} level ups',
 	'over.retry': 'ENTER  retry',
 	'over.newBest': 'NEW BEST!',
 	'unlock.bob': 'BOB UNLOCKED!',

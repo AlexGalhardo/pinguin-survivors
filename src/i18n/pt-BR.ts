@@ -254,8 +254,6 @@ export const ptBR: Record<I18nKey, string> = {
 	'over.title': 'VOCÊ MORREU',
 	'over.bossTimeout': 'O CHEFE SOBREVIVEU AO TEMPO',
 	'over.round': 'Round {n}',
-	'over.stats': '{kills} abates · {time} · {damage} de dano',
-	'over.rewards': '+{xp} XP · +{fish} peixes · {levels} níveis',
 	'over.retry': 'ENTER  tentar de novo',
 	'over.newBest': 'NOVO RECORDE!',
 	'unlock.bob': 'BOB DESBLOQUEADO!',

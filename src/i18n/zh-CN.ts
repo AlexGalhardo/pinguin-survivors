@@ -247,8 +247,6 @@ export const zhCN: Record<I18nKey, string> = {
 	'over.title': '你死了',
 	'over.bossTimeout': '首领撑到了最后',
 	'over.round': '第 {n} 回合',
-	'over.stats': '{kills} 击杀 · {time} · {damage} 伤害',
-	'over.rewards': '+{xp} 经验 · +{fish} 鱼 · {levels} 次升级',
 	'over.retry': 'ENTER 重试',
 	'over.newBest': '新纪录！',
 	'unlock.bob': 'Bob 已解锁！',

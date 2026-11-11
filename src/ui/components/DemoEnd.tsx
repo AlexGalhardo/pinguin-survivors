@@ -1,9 +1,9 @@
 import type { ReactElement } from 'react';
 import { t } from '../../i18n';
-import { formatTime } from '../../logic/format';
 import { FocusScope } from '../focus';
 import { useInputGrace } from '../input-grace';
 import { Btn } from './Btn';
+import { RunStats } from './GameOver';
 import { Ornament } from './Ornament';
 import { Vignette } from './Vignette';
 
@@ -51,13 +51,7 @@ export function DemoEnd({
 				<div className="font-title text-title font-bold [@media(max-height:500px)]:text-item">
 					{t('over.round', { n: data.round })}
 				</div>
-				<div className="text-item text-text-light [@media(max-height:500px)]:text-body">
-					{t('over.stats', {
-						kills: data.kills,
-						time: formatTime(data.seconds),
-						damage: data.damage.toLocaleString(),
-					})}
-				</div>
+				<RunStats kills={data.kills} seconds={data.seconds} damage={data.damage} />
 				{data.bobLocked && (
 					<div className="text-item font-bold text-gold-bright [@media(max-height:500px)]:text-body">
 						{t('demo.bob')}

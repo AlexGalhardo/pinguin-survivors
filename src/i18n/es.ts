@@ -255,8 +255,6 @@ export const es: Record<I18nKey, string> = {
 	'over.title': 'HAS MUERTO',
 	'over.bossTimeout': 'EL JEFE TE SOBREVIVIÓ',
 	'over.round': 'Round {n}',
-	'over.stats': '{kills} bajas · {time} · {damage} de daño',
-	'over.rewards': '+{xp} XP · +{fish} peces · {levels} subidas de nivel',
 	'over.retry': 'ENTER  reintentar',
 	'over.newBest': '¡NUEVO RÉCORD!',
 	'unlock.bob': '¡BOB DESBLOQUEADO!',

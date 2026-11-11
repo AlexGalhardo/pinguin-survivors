@@ -193,13 +193,41 @@ describe('GameOver', () => {
 		const text = container.textContent ?? '';
 		expect(text).toContain('YOU DIED');
 		expect(text).toContain('Round 12');
-		expect(text).toContain('340 kills');
+		expect(text).toContain('340KILLS');
 		expect(text).toContain('10:05');
-		expect(text).toContain('+6 Pearls');
+		expect(text).toContain('+6PEARLS');
 		expect(text).toContain('NEW BEST!');
 		fireEvent.click(getByText('PLAY AGAIN'));
 		key('Escape');
 		expect(calls).toEqual(['again', 'menu']);
+		cleanup();
+	});
+});
+
+describe('GameOver after quitting', () => {
+	test('says the run ended instead of "you died"', () => {
+		const { container } = render(
+			<GameOver
+				data={{
+					bossTimeout: false,
+					quit: true,
+					round: 3,
+					kills: 1,
+					seconds: 40,
+					damage: 90,
+					xp: 0,
+					fish: 0,
+					pearls: 0,
+					levels: 0,
+					newBest: false,
+				}}
+				actions={{ playAgain: () => {}, menu: () => {} }}
+			/>,
+		);
+		const text = container.textContent ?? '';
+		expect(text).toContain('RUN ENDED');
+		expect(text).not.toContain('YOU DIED');
+		expect(text).toContain('1KILLS');
 		cleanup();
 	});
 });
