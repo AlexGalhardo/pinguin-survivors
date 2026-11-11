@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **ui:** Step-by-step onboarding (SDD-022): the skill tree shows once a hero has a point to spend, the hero and potion screen after the first run, and the Marks and Cores counter once the run has one; each is announced once with a toast. The first run shows three one-line hints in the HUD: how to move, that the weapons attack on their own, and the Super Magic when it is charged.
+
 ### Changed
 
 - **game:** The game is now called **Penguin Survivors** (ADR-028): title in the 4 languages, page title, the Windows executable (`Penguin Survivors.exe`), the Android app name and application id (`xyz.lekzera.penguinsurvivors`), the release file names, the site and the docs. Saves, storage keys and the repository URL keep the old spelling.
