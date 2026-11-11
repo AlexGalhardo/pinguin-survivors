@@ -1558,6 +1558,7 @@ export class GameScene extends Phaser.Scene {
 			}),
 		);
 		publishPause({
+			hero: this.run.hero,
 			weapons: this.build.weapons.map((w, slot) => ({ slot, id: w.id, tier: w.tier })),
 			stats: PAUSE_STATS.map((key) => ({
 				key,

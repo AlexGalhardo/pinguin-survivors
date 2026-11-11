@@ -102,6 +102,16 @@ describe('onboarding: systems hidden until they have a use (SDD-022)', () => {
 	});
 });
 
+describe('pause sheet', () => {
+	test('names the hero being played beside the build', () => {
+		const actions = { resume: noop, settings: noop, tree: noop, quit: noop };
+		const data = { weapons: [], stats: [], cards: [], gear: { slots: [] } };
+		const { container } = render(<Pause data={{ ...data, hero: 'bob' }} actions={actions} />);
+		expect(container.textContent).toContain('Bob');
+		cleanup();
+	});
+});
+
 describe('onboarding: first-run hints in the HUD', () => {
 	const snapshot = (tip: Snapshot['tip']): Snapshot => ({
 		hp: 100,

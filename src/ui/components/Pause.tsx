@@ -1,17 +1,21 @@
 import { type ReactElement, useState } from 'react';
+import type { HeroId } from '../../config/constants';
 import { GEAR_BY_ID } from '../../data/equipment';
 import { LEGACY_GEAR_RARITY } from '../../data/rarity';
 import { MAX_WEAPON_SLOTS, type WeaponTier } from '../../data/weapons';
-import { t } from '../../i18n';
+import { type I18nKey, t } from '../../i18n';
 import type { PlayerPanelView } from '../../logic/item-view';
-import { useCompact } from '../compact';
+import { useCompact, useUiScale } from '../compact';
 import { FocusScope } from '../focus';
 import { Btn } from './Btn';
+import { HeroSprite } from './HeroSprite';
 import { MenuList } from './MenuList';
 import { Heading } from './Panel';
 import { PlayerPanel, type PlayerPanelData, panelFromView } from './PlayerPanel';
 
 export interface PauseData {
+	/** The hero being played: drawn beside the build while no item is focused. Absent in tests. */
+	hero?: HeroId;
 	weapons: readonly { slot: number; id: string; tier: WeaponTier }[];
 	/** Main stats already formatted for display (`gstat.<key>` is the label). */
 	stats: readonly { key: string; value: string }[];
@@ -66,6 +70,7 @@ export function Pause({
 }): ReactElement {
 	const [confirming, setConfirming] = useState(false);
 	const compact = useCompact();
+	const uiScale = useUiScale();
 	const tree = data.treeUnlocked !== false;
 	const onSelect = (id: string): void => {
 		if (id === 'resume') actions.resume();
@@ -128,6 +133,20 @@ export function Pause({
 				<PlayerPanel
 					wide
 					footer={compact ? undefined : menu}
+					idle={
+						data.hero && !compact ? (
+							<div className="flex flex-col items-center gap-1">
+								<HeroSprite
+									hero={data.hero}
+									scale={Math.max(2, Math.round(3 * uiScale))}
+									title={t(`hero.${data.hero}` as I18nKey)}
+								/>
+								<span className="font-title text-item font-bold text-gold-bright">
+									{t(`hero.${data.hero}` as I18nKey)}
+								</span>
+							</div>
+						) : undefined
+					}
 					data={
 						panel
 							? panelFromView(panel, {

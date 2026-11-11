@@ -186,6 +186,8 @@ export function PlayerPanel(props: {
 	wide?: boolean;
 	/** Pause: the actions under the card. */
 	footer?: ReactNode;
+	/** Pause: what fills the card area while no item is focused (the hero). */
+	idle?: ReactNode;
 	/** Called when focus or a click picks an owned item (the shop draws the card itself). */
 	onPick?: (d: Detail) => void;
 }): ReactElement {
@@ -480,7 +482,12 @@ export function PlayerPanel(props: {
 			{/* Right column first in the DOM so the actions get the initial focus. */}
 			<div className="order-3 flex min-h-0 min-w-0 flex-col justify-between gap-2">
 				<div className="min-h-0 overflow-hidden">
-					{detailCard(data, detail) ?? <Hint>{t('shop.pickItem')}</Hint>}
+					{detailCard(data, detail) ?? (
+						<div className="flex flex-col gap-2">
+							<Hint>{t('shop.pickItem')}</Hint>
+							{props.idle}
+						</div>
+					)}
 				</div>
 				{props.footer}
 			</div>
