@@ -15,10 +15,10 @@
 
 - **Duração**: 110–120 s, nunca mais de 2 min (site.md §6).
 - **Formato**: MP4 H.264 1080p60 + WebM (site.md §6). Legendas EN embutidas; PT-BR, ES e ZH-CN opcionais.
-- **Só o que existe**: a 0.10.1 tem árvore de habilidades por herói, três slots de save, raridade I–V, itens de suporte, poção de cura, três heróis, Danger 0–5 e endless. Nada de conteúdo prometido sem data.
+- **Só o que existe**: o jogo tem árvore de habilidades por herói, três slots de save, raridade I–V, itens de suporte, poção de cura, três heróis, campanha de 50 rounds em 5 biomas com 10 chefes, dificuldade Fácil/Normal/Difícil e endless a partir do 51 (conferido na 0.10.1 e mantido depois). Nada de conteúdo prometido sem data.
 - **Loja**: a loja vende só armas, equipamentos e poções de velocidade, com raridades **I a III** (ADR-017). Raridades IV e V aparecem em drops de elites e bosses. O trailer não deve mostrar compra de IV ou V.
-- **Chefes na campanha**: urso polar (round 10), alce-rei zumbi (round 20) e colosso biomecânico (round 30), os dois últimos propostos (ADR-016). Kraken do Porto e Abominação são **só do endless**; não mostrar como chefes da campanha.
-- **Biomas**: Antártida (1–10), floresta (11–20) e cidade destruída com aliens (21–30), nomes propostos em ADR-016 até aprovação. Confirmar antes de gravar.
+- **Chefes na campanha**: um diferente a cada 5 rounds (`BOSS_ROUNDS` em `src/data/enemies.ts`): foca-leopardo (5), urso polar (10), ent podre (15), alce-rei (20), rainha da colmeia (25), colosso biomecânico (30), mergulhador afogado (35), kraken (40), hierofante da praga (45) e abominação (50).
+- **Biomas**: Antártida (1–10), floresta (11–20), cidade destruída com aliens (21–30), estação (31–40) e ruínas (41–50); no endless (51+) o bioma é sorteado pela seed.
 - **Capturas**: usar a build com `god=1` para planos de ação. Em capturas finais, **não** usar `debug=1` (esconde o overlay de depuração).
 - **Só dev**: `window.__GAME__` existe apenas no dev server. Usar esse handle para abrir a loja (`finishRound()`) apenas em captura de dev, nunca em build de release.
 
@@ -35,9 +35,9 @@
 | 62–72 s | **Árvore de habilidades** | tela do herói com a árvore de passivas de Jack; zoom e destaque de caminho | `music.menu` |
 | 72–82 s | **Superpoderes** | Colheita Rubra (Jack), Bombardeio (Bob), Cataclismo Elemental (Lucia), um de cada | sfx de superpoder + ducking |
 | 82–92 s | **Biomas** | Antártida → floresta → cidade destruída, transição no round 11 e 21 | `music.forest` e `music.city` |
-| 92–104 s | **Chefes** | urso polar (10), alce-rei (20, proposto), colosso (30, proposto), um plano curto cada | `music.boss` |
+| 92–104 s | **Chefes** | foca-leopardo (5), urso polar (10), alce-rei (20), colosso (30), kraken (40) e abominação (50), 2 s cada, com a marca vermelha do ataque em área | `music.boss.<id>` |
 | 104–110 s | **Gore com toggle** | tela de configurações: máximo, reduzido, gosma verde, mesmo plano em cada modo | sfx de splat |
-| 110–115 s | **Endless e Danger** | round 35, sorteio de bioma por seed; seletor de Danger 0–5 | `music.late` |
+| 110–115 s | **Dificuldade e endless** | seletor Fácil/Normal/Difícil na escolha do pinguim; round 55, bioma sorteado por seed | `music.round.N` |
 | 115–120 s | **CTA** | logo, "Wishlist on Steam", "Demo: Steam Next Fest, 22 Feb – 1 Mar 2027" | `music.menu` (fim) |
 
 ## 3. Planos a capturar
@@ -55,12 +55,12 @@ Todas as URLs usam a build de dev. Para o trailer final, a build deve ser a de r
 | Árvore de habilidades | menu → herói → árvore (sem URL) | a árvore vem da save; usar save de teste com pontos |
 | Superpoderes | `/?skipMenu=1&hero=jack&round=12&seed=1&god=1` | superpoder exige nível 5: a URL não tem flag de nível; usar save de teste |
 | Antártida | `/?skipMenu=1&hero=jack&round=5&seed=1&god=1` | |
-| Floresta | `/?skipMenu=1&hero=jack&round=15&seed=1&god=1` | biomas 2 é proposta (ADR-016) |
-| Cidade destruída | `/?skipMenu=1&hero=jack&round=25&seed=1&god=1` | biomas 3 é proposta (ADR-016) |
+| Floresta | `/?skipMenu=1&hero=jack&round=15&seed=1&god=1` | rounds 11–20 |
+| Cidade destruída | `/?skipMenu=1&hero=jack&round=25&seed=1&god=1` | rounds 21–30 |
 | Urso polar | `/?skipMenu=1&hero=jack&round=10&seed=1&god=1` | |
-| Alce-rei e colosso | `/?skipMenu=1&hero=bob&round=20&seed=1&god=1` e `round=30` | propostos; checar se o boss aparece no round |
+| Demais chefes | `/?skipMenu=1&hero=bob&round=5&seed=1&god=1` e `round=20`, `30`, `40`, `50` | um chefe diferente a cada 5 rounds (`BOSS_ROUNDS`) |
 | Gore: máximo, reduzido, gosma | menu → configurações → gore | mesmo plano nos três modos |
-| Endless e Danger | `/?skipMenu=1&hero=bob&round=35&seed=1&god=1&danger=3` | `danger` é lido pela URL; o sorteio de bioma por seed |
+| Dificuldade e endless | `/?skipMenu=1&hero=bob&round=55&seed=1&god=1&difficulty=2` | `difficulty` (0, 1 ou 2) é lido pela URL; no endless o bioma é sorteado pela seed |
 | Arena grande | `/?skipMenu=1&hero=jack&round=5&seed=1&arena=40&god=1` | para planos de câmera aberta |
 | CTA | site (`site/`) ou poster | link da Steam com UTM (site.md §3) |
 
@@ -77,9 +77,9 @@ Curtos, em caixa-alta no título e em caixa normal na legenda. Máximo de 8 pala
 7. (62–72 s) `A SKILL TREE FOR EACH PENGUIN.`
 8. (72–82 s) `SUPERPOWERS, ONE PER PENGUIN.`
 9. (82–92 s) `THREE BIOMES. THEN ENDLESS.`
-10. (92–104 s) `BOSSES EVERY 10 ROUNDS.`
+10. (92–104 s) `A NEW BOSS EVERY 5 ROUNDS.`
 11. (104–110 s) `GORE: YOUR CHOICE.`
-12. (110–115 s) `DANGER 0–5. ENDLESS ROUNDS.`
+12. (110–115 s) `EASY. NORMAL. HARD. THEN ENDLESS.`
 13. (115–120 s) `WISHLIST ON STEAM.` / `DEMO AT STEAM NEXT FEST, 22 FEB – 1 MAR 2027.`
 
 **Atenção**: o texto 5 diz "rarity I to V", mas a loja vende só I–III. A frase é verdadeira para o jogo (V existe, vem de bosses), mas a imagem deve mostrar a loja com I–III e o drop de IV/V separado.
@@ -93,10 +93,10 @@ Faixas em `public/assets/audio/music/` (mesmos nomes das chaves):
 | `music.menu` | título, árvore de habilidades, CTA | lenta e sombria |
 | `music.round` | gancho, loop de round, heróis | intensidade média, 140 BPM |
 | `music.shop` | loja | ambiente calmo com vento polar |
-| `music.forest` | floresta | faixa proposta (ADR-016), confirmar arquivo |
-| `music.city` | cidade destruída | faixa proposta (ADR-016), confirmar arquivo |
+| `music.forest` | floresta | |
+| `music.city` | cidade destruída | |
 | `music.boss` | chefes | 170 BPM |
-| `music.late` | endless e Danger | rounds 21+, 155 BPM |
+| `music.round.N` | dificuldade e endless | um dos 9 temas de round, sorteado por seed |
 
 Mixagem: a música abaixa 6 dB durante o superpoder e o rugido do boss (audio.md §2). Não usar voz (ADR-009).
 

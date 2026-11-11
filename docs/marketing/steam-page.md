@@ -59,7 +59,7 @@ Penguin Survivors is a top-down arena survivor with pixel art. Jack, Bob and Luc
 
 After each round, a shop opens with weapons, equipment and items. Fuse two identical weapons to raise their rarity. Each level-up offers stat cards. Each penguin has its own skill tree, and your progress carries from run to run.
 
-Raise the danger from 0 to 5 for stronger enemies and better rewards, or keep going in endless rounds. Gore comes with an on/off toggle, from maximum to reduced to green goo.
+Fight through 50 rounds across five biomes, with a different boss every five rounds. Pick Easy, Normal or Hard, then keep going in endless rounds. Gore comes with an on/off toggle, from maximum to reduced to green goo.
 
 ### Features
 
@@ -68,7 +68,7 @@ Raise the danger from 0 to 5 for stronger enemies and better rewards, or keep go
 - Weapon rarity from I to V; fusion raises it up to level III in the shop, and IV and V come from elites and bosses.
 - A shop after every round, with weapons, equipment and healing items.
 - A skill tree for each penguin, and level-up cards during the run.
-- Danger 0–5, and endless rounds after the campaign.
+- A 50-round campaign in 5 biomes with 10 bosses, three difficulties and endless rounds after it.
 - Bosses every 5 rounds.
 - Three save slots.
 - Gore with a toggle: maximum, reduced or green goo.
@@ -86,7 +86,7 @@ Penguin Survivors é um arena survivor top-down em pixel art. Jack, Bob e Lucia 
 
 Ao fim de cada round, abre uma loja com armas, equipamentos e itens. Funda duas armas iguais para subir a raridade. Cada subida de nível oferece cartas de atributo. Cada pinguim tem sua própria árvore de habilidades, e o progresso passa de uma partida para a outra.
 
-Suba o Danger de 0 a 5 para inimigos mais fortes e recompensas melhores, ou continue nos rounds infinitos. O gore tem interruptor: do máximo ao reduzido, ou gosma verde.
+Atravesse 50 rounds em cinco biomas, com um chefe diferente a cada cinco rounds. Escolha Fácil, Normal ou Difícil e depois continue nos rounds infinitos. O gore tem interruptor: do máximo ao reduzido, ou gosma verde.
 
 ### Recursos
 
@@ -95,7 +95,7 @@ Suba o Danger de 0 a 5 para inimigos mais fortes e recompensas melhores, ou cont
 - Raridade de armas de I a V; a fusão sobe até o nível III na loja, e IV e V vêm de elites e chefes.
 - Uma loja após cada round, com armas, equipamentos e itens de cura.
 - Uma árvore de habilidades para cada pinguim, e cartas de subida de nível durante a partida.
-- Danger 0–5, e rounds infinitos depois da campanha.
+- Campanha de 50 rounds em 5 biomas com 10 chefes, três dificuldades e rounds infinitos depois dela.
 - Chefes a cada 5 rounds.
 - Três slots de save.
 - Gore com interruptor: máximo, reduzido ou gosma verde.
@@ -113,7 +113,7 @@ Penguin Survivors es un arena survivor de vista cenital en pixel art. Jack, Bob 
 
 Al final de cada round se abre una tienda con armas, equipo y objetos. Fusiona dos armas idénticas para subir su rareza. Cada subida de nivel ofrece cartas de estadísticas. Cada pingüino tiene su propio árbol de habilidades, y tu progreso pasa de una partida a otra.
 
-Sube el Danger de 0 a 5 para enemigos más fuertes y mejores recompensas, o sigue en rounds infinitos. El gore tiene interruptor: del máximo al reducido, o gosma verde.
+Supera 50 rounds en cinco biomas, con un jefe distinto cada cinco rounds. Elige Fácil, Normal o Difícil y luego sigue en rounds infinitos. El gore tiene interruptor: del máximo al reducido, o gosma verde.
 
 ### Características
 
@@ -122,7 +122,7 @@ Sube el Danger de 0 a 5 para enemigos más fuertes y mejores recompensas, o sigu
 - Rareza de armas de I a V; la fusión sube hasta el nivel III en la tienda, y IV y V vienen de élites y jefes.
 - Una tienda después de cada round, con armas, equipo y objetos de curación.
 - Un árbol de habilidades para cada pingüino, y cartas de subida de nivel durante la partida.
-- Danger 0–5, y rounds infinitos después de la campaña.
+- Campaña de 50 rounds en 5 biomas con 10 jefes, tres dificultades y rounds infinitos después.
 - Jefes cada 5 rounds.
 - Tres slots de guardado.
 - Gore con interruptor: máximo, reducido o gosma verde.
@@ -140,7 +140,7 @@ Sube el Danger de 0 a 5 para enemigos más fuertes y mejores recompensas, o sigu
 
 每回合结束后，会打开一家商店，出售武器、装备和道具。合成两件相同的武器可提升其稀有度。每次升级会提供属性卡。每只企鹅都有自己的技能树，你的成长会延续到下一局。
 
-将危险等级（Danger）从 0 提升到 5，可以面对更强的敌人，获得更好的奖励；你也可以继续挑战无尽回合。血腥效果有开关，可以选择最大、减少，或绿色黏液。
+穿越五个生态区的 50 个回合，每五回合迎战一位不同的首领。选择简单、普通或困难，然后继续挑战无尽回合。血腥效果有开关，可以选择最大、减少，或绿色黏液。
 
 ### 功能
 
@@ -149,7 +149,7 @@ Sube el Danger de 0 a 5 para enemigos más fuertes y mejores recompensas, o sigu
 - 武器稀有度从 I 到 V；商店中的合成最高升到 III 级，IV 和 V 来自精英怪和首领。
 - 每回合结束后的商店，出售武器、装备和治疗道具。
 - 每只企鹅一棵技能树，局内有升级属性卡。
-- 危险等级 0–5，战役之后有无尽回合。
+- 50 回合战役，5 个生态区，10 位首领，三种难度，战役之后有无尽回合。
 - 每 10 回合一个首领。
 - 三个存档槽位。
 - 血腥效果可开关：最大、减少或绿色黏液。
