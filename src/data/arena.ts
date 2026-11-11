@@ -12,4 +12,6 @@ export const ARENA = {
 	decalCap: 4000,
 	/** Props never closer than this many tiles to the hero spawn (arena center). */
 	propClearTiles: 2,
+	/** Tiles of biome ground drawn outside the walls on every side (SDD-023): covers a 32:9 screen at round 1. */
+	backdropTiles: 12,
 } as const;

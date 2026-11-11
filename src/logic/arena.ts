@@ -27,6 +27,12 @@ export function arenaBounds(round: number, sideOverride?: number): Bounds {
 	return { minX: -half, minY: -half, maxX: half, maxY: half };
 }
 
+/** The ground drawn around the arena (SDD-023): its bounds grown by whole tiles, so the tile grid lines up. */
+export function backdropBounds(b: Bounds): Bounds {
+	const pad = ARENA.backdropTiles * ARENA.tile;
+	return { minX: b.minX - pad, minY: b.minY - pad, maxX: b.maxX + pad, maxY: b.maxY + pad };
+}
+
 /** Keeps a circle of radius `r` inside the bounds (mutates and returns `p`). */
 export function clampToArena<T extends Point>(p: T, r: number, b: Bounds): T {
 	p.x = Math.min(Math.max(p.x, b.minX + r), b.maxX - r);

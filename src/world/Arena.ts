@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { BIOMES, KEYS } from '../art/manifest';
 import type { BiomeId } from '../config/constants';
+import { PALETTE } from '../config/palette';
 import { activeBudget } from '../core/tier';
 import { ARENA } from '../data/arena';
 import { OBSTACLES } from '../data/obstacles';
@@ -8,6 +9,7 @@ import {
 	arenaBounds,
 	arenaSide,
 	type Bounds,
+	backdropBounds,
 	type Prop,
 	propLayout,
 	tileVariant,
@@ -30,6 +32,8 @@ export class Arena {
 	readonly gore: GoreLayer;
 	private side: number;
 	private image: Phaser.GameObjects.Image | null = null;
+	/** Dimmed biome ground outside the walls, so a small arena is not framed by black (SDD-023). */
+	private backdrop: Phaser.GameObjects.TileSprite | null = null;
 	private readonly propImages: Phaser.GameObjects.Image[] = [];
 
 	constructor(
@@ -96,6 +100,8 @@ export class Arena {
 		this.gore.destroy();
 		this.image?.destroy();
 		this.image = null;
+		this.backdrop?.destroy();
+		this.backdrop = null;
 		if (this.scene.textures.exists(GROUND_KEY)) this.scene.textures.remove(GROUND_KEY);
 		for (const img of this.propImages) img.destroy();
 		this.propImages.length = 0;
@@ -103,8 +109,26 @@ export class Arena {
 
 	/** `previous` = bounds before growing: props inside its inner ring are kept as they are. */
 	private rebuild(previous?: Bounds): void {
+		this.rebuildBackdrop();
 		this.rebuildGround();
 		this.rebuildProps(previous);
+	}
+
+	/** One TileSprite, resized and retextured in place when the arena grows or the biome changes. */
+	private rebuildBackdrop(): void {
+		const b = backdropBounds(this.bounds);
+		const key = KEYS.tile(BIOMES[this.biome].id, 0);
+		const w = b.maxX - b.minX;
+		const h = b.maxY - b.minY;
+		if (!this.backdrop) {
+			this.backdrop = this.scene.add
+				.tileSprite(b.minX, b.minY, w, h, key)
+				.setOrigin(0, 0)
+				.setDepth(GROUND_DEPTH - 1)
+				.setTint(PALETTE.snow);
+			return;
+		}
+		this.backdrop.setTexture(key).setPosition(b.minX, b.minY).setSize(w, h);
 	}
 
 	private rebuildGround(): void {

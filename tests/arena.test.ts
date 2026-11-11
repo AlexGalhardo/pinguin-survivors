@@ -5,6 +5,7 @@ import {
 	arenaBounds,
 	arenaSide,
 	type Bounds,
+	backdropBounds,
 	clampCameraCenter,
 	clampToArena,
 	insideBounds,
@@ -159,4 +160,20 @@ it('big obstacles keep a free lane between them and leave most of the floor open
 			);
 		}
 	}
+});
+
+it('the backdrop is the arena grown by whole tiles on every side (SDD-023 A1)', () => {
+	const b = arenaBounds(1);
+	const out = backdropBounds(b);
+	const pad = ARENA.backdropTiles * ARENA.tile;
+	expect(out).toEqual({
+		minX: b.minX - pad,
+		minY: b.minY - pad,
+		maxX: b.maxX + pad,
+		maxY: b.maxY + pad,
+	});
+	// Same 64 px grid as the ground, so the pattern has no seam at the walls.
+	expect((b.minX - out.minX) % ARENA.tile).toBe(0);
+	// Covers a 32:9 view (1920 logical px wide) centered on the round 1 arena.
+	expect(out.maxX - out.minX).toBeGreaterThanOrEqual(1920);
 });
