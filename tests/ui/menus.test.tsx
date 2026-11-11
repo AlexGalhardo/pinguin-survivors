@@ -199,15 +199,19 @@ describe('HeroSelect', () => {
 				}}
 			/>,
 		);
-		expect(container.textContent).toContain('Difficulty: Normal');
+		// The choice sits under its own section title: the row shows the level and its best round.
+		const picked = (): string =>
+			container.querySelector('[data-pick="difficulty"]')?.textContent ?? '';
+		expect(picked()).toContain('Normal');
+		expect(picked()).toContain('best round 4');
 		const next = getAllByLabelText('+');
 		const difficultyNext = next[0] as HTMLElement;
 		fireEvent.click(difficultyNext);
-		expect(container.textContent).toContain('Difficulty: Hard');
+		expect(picked()).toContain('Hard');
 		fireEvent.click(difficultyNext);
-		expect(container.textContent).toContain('Difficulty: Easy');
+		expect(picked()).toContain('Easy');
 		fireEvent.click(difficultyNext);
-		expect(container.textContent).toContain('Difficulty: Normal');
+		expect(picked()).toContain('Normal');
 		fireEvent.click(next[1] as HTMLElement);
 		fireEvent.click(getByText('START RUN'));
 		expect(started).toEqual({ hero: 'jack', difficulty: 1, weapon: 'knives' });
@@ -382,7 +386,9 @@ describe('HeroScreen and lists', () => {
 			/>,
 		);
 		fireEvent.click(getByText('SKILL TREE · POINTS 2'));
-		fireEvent.click(getByText('Shield: 1 owned · buy 10'));
+		fireEvent.click(
+			container.querySelector('[aria-label="Shield: 1 owned · buy 10"]') as HTMLElement,
+		);
 		expect(container.textContent).toContain('SKILL TREE');
 		expect(log).toEqual(['openTree', 'buyPotion:shield']);
 		cleanup();

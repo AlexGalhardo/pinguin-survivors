@@ -12,6 +12,7 @@ import { AtlasIcon, weaponFrames } from './AtlasIcon';
 import { Btn } from './Btn';
 import { HeroSprite } from './HeroSprite';
 import { weaponName } from './Hud';
+import { StatLine } from './ItemViews';
 import { AdjustRow, BackBtn, MenuScreen } from './MenuScreen';
 import { Ornament } from './Ornament';
 import { Filet, Hint, StatRow } from './Panel';
@@ -83,32 +84,28 @@ function Section(props: { title: string; children: ReactNode; bare?: boolean }):
 /** Base stats of a hero (data/heroes), in compact pairs. */
 function StatsSection({ hero, bare }: { hero: HeroId; bare?: boolean }): ReactElement {
 	const def = HEROES[hero];
-	const row = (key: I18nKey, value: string, accent?: string): ReactElement => (
-		<StatRow
-			key={key}
-			label={<span className="capitalize">{t(key)}</span>}
-			value={value}
-			accent={accent}
-		/>
+	const row = (stat: string, value: string, accent?: string): ReactElement => (
+		<StatLine key={stat} stat={stat} value={value} accent={accent} icon={!bare} />
 	);
 	const tags = (['melee', 'firearm', 'magic'] as const).map((tag) => {
 		const b = bonus(def.tagMul[tag]);
-		return row(`gstat.tagMul.${tag}` as I18nKey, b.text, b.tone);
+		return row(`tagMul.${tag}`, b.text, b.tone);
 	});
 	return (
 		<Section title={t('select.sheet.stats')} bare={bare}>
-			<div className="grid grid-cols-2 gap-x-6">
-				{row('gstat.maxHp', String(def.hp))}
-				{row('gstat.regen', `${def.regen}/s`)}
-				{row('gstat.armor', String(def.armor))}
-				{row('gstat.moveSpeed', String(def.moveSpeed))}
-				{row('gstat.crit', pct(def.crit))}
-				{row('gstat.critDamage', pct(def.critDamage))}
-				{row('gstat.dodge', pct(def.dodge))}
-				{row('gstat.parry', pct(def.parry))}
+			{/* Desktop: one column, so no label wraps or truncates in any language; the phone keeps pairs. */}
+			<div className={bare ? 'grid grid-cols-2 gap-x-6' : 'flex flex-col gap-0.5'}>
+				{row('maxHp', String(def.hp))}
+				{row('regen', `${def.regen}/s`)}
+				{row('armor', String(def.armor))}
+				{row('moveSpeed', String(def.moveSpeed))}
+				{row('crit', pct(def.crit))}
+				{row('critDamage', pct(def.critDamage))}
+				{row('dodge', pct(def.dodge))}
+				{row('parry', pct(def.parry))}
 				{tags}
 				{(['fire', 'earth', 'ice', 'energy'] as const).map((el) =>
-					row(`gstat.resist.${el}` as I18nKey, pct(def.resist[el])),
+					row(`resist.${el}`, pct(def.resist[el])),
 				)}
 			</div>
 		</Section>
@@ -133,14 +130,17 @@ function SuperSection({ hero }: { hero: HeroId }): ReactElement {
 }
 
 /** The picked starting weapon: icon, what it does and its tier I numbers. */
-function WeaponSection({ weapon }: { weapon: string }): ReactElement {
+function WeaponSection({ weapon, bare }: { weapon: string; bare?: boolean }): ReactElement {
 	const w = resolveWeapon({ id: weapon as WeaponId, tier: 1 });
 	return (
-		<Section title={t('select.sheet.weapon')}>
+		<Section title={t('select.sheet.weapon')} bare={bare}>
 			<div className="flex items-center gap-3">
 				<AtlasIcon frames={weaponFrames(weapon, 1)} size={64} />
 				<div className="min-w-0">
-					<div className="font-title text-item font-bold">{weaponName(weapon)}</div>
+					{/* Desktop: the name is already the row above. */}
+					{!bare && (
+						<div className="font-title text-item font-bold">{weaponName(weapon)}</div>
+					)}
 					<Hint>{t(`weapon.behavior.${w.behavior}` as I18nKey)}</Hint>
 				</div>
 			</div>
@@ -157,13 +157,19 @@ function WeaponSection({ weapon }: { weapon: string }): ReactElement {
 const DIFFICULTY_ICON = { 0: 0, 1: 2, 2: 5 } as const;
 
 /** What a Difficulty level changes. */
-function DifficultySection({ difficulty }: { difficulty: Difficulty }): ReactElement {
+function DifficultySection({
+	difficulty,
+	bare,
+}: {
+	difficulty: Difficulty;
+	bare?: boolean;
+}): ReactElement {
 	const m = DIFFICULTY[difficulty];
 	const mul = (v: number): string => `×${v}`;
 	const worse = (v: number): string =>
 		v > 1 ? 'text-crit' : v < 1 ? 'text-xp' : 'text-text-light';
 	return (
-		<Section title={t('select.sheet.difficulty')}>
+		<Section title={t('select.sheet.difficulty')} bare={bare}>
 			<div className="grid grid-cols-2 gap-x-6">
 				<StatRow label={t('select.dm.hp')} value={mul(m.hp)} accent={worse(m.hp)} />
 				<StatRow label={t('select.dm.dmg')} value={mul(m.dmg)} accent={worse(m.dmg)} />
@@ -241,6 +247,7 @@ export function HeroSelect({
 		</div>
 	);
 
+	// Phone: both choices as one-line rows beside the portrait.
 	const picker = (
 		<>
 			<AdjustRow
@@ -340,12 +347,11 @@ export function HeroSelect({
 					</div>
 				</div>
 			) : (
-				<div className="grid min-h-0 w-full flex-1 grid-cols-[1fr_auto_1.2fr] gap-[2vw]">
+				<div className="grid min-h-0 w-full flex-1 grid-cols-[1fr_minmax(0,1.15fr)_1.15fr] gap-[2vw]">
 					<div className="flex min-w-0 flex-col gap-3">
 						<StatsSection hero={hero.id} />
-						<SuperSection hero={hero.id} />
 					</div>
-					<div className="flex flex-col items-center gap-1">
+					<div className="flex min-w-0 flex-col items-center gap-1">
 						{portrait}
 						{hero.unlocked && (
 							<>
@@ -357,11 +363,65 @@ export function HeroSelect({
 								</span>
 							</>
 						)}
+						<div className="mt-3 w-full">
+							<SuperSection hero={hero.id} />
+						</div>
 					</div>
+					{/* Each choice sits under its own title with what it changes, so no label needs two lines. */}
 					<div className="flex min-w-0 flex-col gap-3">
-						{picker}
-						<DifficultySection difficulty={shownDifficulty as Difficulty} />
-						{weapon && <WeaponSection weapon={weapon} />}
+						<Section title={t('select.sheet.difficulty')}>
+							<div data-pick="difficulty">
+								<AdjustRow
+									label={
+										<span className="inline-flex items-center gap-2">
+											<AtlasIcon
+												frames={[
+													`icon.danger.${DIFFICULTY_ICON[shownDifficulty as Difficulty]}`,
+												]}
+												size={32}
+											/>
+											{t(`difficulty.${shownDifficulty}` as I18nKey)}
+										</span>
+									}
+									hint={t('select.difficultyBest', {
+										n: hero.bestByDifficulty[shownDifficulty] ?? 0,
+									})}
+									onPrev={() =>
+										setDifficulty(
+											step(shownDifficulty, -1, hero.maxDifficulty + 1),
+										)
+									}
+									onNext={() =>
+										setDifficulty(
+											step(shownDifficulty, 1, hero.maxDifficulty + 1),
+										)
+									}
+									disabled={!hero.unlocked}
+								/>
+							</div>
+							<DifficultySection difficulty={shownDifficulty as Difficulty} bare />
+						</Section>
+						{weapon && (
+							<Section title={t('select.sheet.weapon')}>
+								<div data-pick="weapon">
+									<AdjustRow
+										label={weaponName(weapon)}
+										onPrev={() =>
+											setWeaponIndex(
+												step(weaponIndex, -1, hero.weapons.length),
+											)
+										}
+										onNext={() =>
+											setWeaponIndex(
+												step(weaponIndex, 1, hero.weapons.length),
+											)
+										}
+										disabled={!hero.unlocked}
+									/>
+								</div>
+								<WeaponSection weapon={weapon} bare />
+							</Section>
+						)}
 					</div>
 				</div>
 			)}
