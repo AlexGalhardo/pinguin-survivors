@@ -123,6 +123,8 @@ Saldo em 2026-11-08: **2.320 gerações até 14/11**, depois 5.000/mês. Plano d
 
 **Saldo após os ícones de Marca e Núcleo (2026-11-11, ROADMAP F3.7)**: **1.190 gerações** (1.192 antes; **2 gastas**): `icon.currency.mark` e `icon.currency.core`, 32×32, seed 11, mesmo prompt-base dos `icon.currency.*`.
 
+**Saldo após os tilesets da estação e das ruínas (2026-11-11, ROADMAP F7.1)**: **1.160 gerações** (1.190 antes; **30 gastas**, 15 por bioma, `/create-tiles-pro` `square_topdown`, seed 12, 4 famílias × 4 variantes). Estação: `tile.station.0..3` = chapas de aço rebitadas (1, 3, 2) e grade enferrujada sobre a água (9); borda a partir da chapa 0. Ruínas: `tile.ruins.0..3` = lajes de pedra escura com fuligem (4, 5, 6) e rocha com fendas de lava (13); borda a partir da laje 4. As duas bordas saíram de `scripts/make-borders.ts` (0 gerações). Antes disso os rounds 31–50 usavam o chão placeholder de código.
+
 ## 11. Inventário de assets e pendências
 
 **Prontos (0.3.0)**: 3 heróis sem arma (idle/walk/hurt/death × 8 dir), inimigos com walk (legados e 6 aliens), voadores com `fly`, atiradores, chargers e chefes (urso e Colosso) com `attack`, bosses kraken e abominação estáticos, 17 armas × 4 linhas de arte, VFX dos 3 superpoderes, lojista `npc.merchant` (idle), tiles top-down das 5 biomas, ícones de cartas, itens e poções (`tests/art-coverage.test.ts`), projéteis, pickups, 12+7 ícones, tiles iso removidos (frames `tile.*` iso, 129ad1b; tiles top-down em SDD-012), decorações iso (a substituir), badge de conquista, 2 key arts, retratos.
