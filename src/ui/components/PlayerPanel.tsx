@@ -387,21 +387,27 @@ export function PlayerPanel(props: {
 				</Block>
 				<Block title={t('shop.equipment')}>
 					{data.gear.map((g) =>
-						g.item ? (
-							row({
-								detail: `gear:${g.slot}`,
-								frames: [`item.${g.item.id}`],
-								rarity: g.item.rarity,
-								label: slotLabel(g.slot),
-								name: gearName(g.item.id),
-								active: false,
-								onClick: () => pick({ kind: 'gear', slot: g.slot }),
-							})
-						) : (
-							<span key={g.slot} className="text-secondary text-text-dim">
-								{slotLabel(g.slot)} · {t('shop.empty')}
-							</span>
-						),
+						g.item
+							? row({
+									detail: `gear:${g.slot}`,
+									frames: [`item.${g.item.id}`],
+									rarity: g.item.rarity,
+									label: slotLabel(g.slot),
+									name: gearName(g.item.id),
+									active: false,
+									onClick: () => pick({ kind: 'gear', slot: g.slot }),
+								})
+							: null,
+					)}
+					{/* One line for every free slot: a line per empty slot pushed the support rows off short screens. */}
+					{data.gear.some((g) => !g.item) && (
+						<span className="text-secondary text-text-dim">
+							{t('shop.empty')}:{' '}
+							{data.gear
+								.filter((g) => !g.item)
+								.map((g) => slotLabel(g.slot))
+								.join(' · ')}
+						</span>
 					)}
 				</Block>
 				{supportLines && (

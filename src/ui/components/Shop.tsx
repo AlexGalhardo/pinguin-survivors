@@ -510,7 +510,8 @@ export function Shop({
 						<div
 							role="status"
 							aria-live="polite"
-							className="min-w-0 flex-1 font-title text-item leading-snug italic"
+							// Phone: one line, or four offers and the action bar do not fit 360 px of height.
+							className={`min-w-0 flex-1 font-title text-item leading-snug italic ${compact ? 'truncate' : ''}`}
 						>
 							{speech}
 						</div>
@@ -640,7 +641,7 @@ export function Shop({
 				</section>
 			</main>
 
-			<footer className="flex flex-wrap items-center justify-between gap-2">
+			<footer className="flex flex-wrap items-center justify-between gap-2 [@media(max-height:500px)]:flex-nowrap [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:[&>button]:min-w-0 [@media(max-height:500px)]:[&>button]:pr-[8px] [@media(max-height:500px)]:[&>button]:pl-[20px] [@media(max-height:500px)]:[&>button]:whitespace-nowrap">
 				<Btn
 					onActivate={actions.reroll}
 					disabled={data.fish < data.rerollPrice}
