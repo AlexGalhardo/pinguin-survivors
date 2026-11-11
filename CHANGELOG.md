@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-11-11
+
 ### Added
 
 - **ui:** Rebinding an action to a key another action uses still swaps the two, and now a toast says which action moved and to which key.
@@ -17,6 +19,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ui:** The pause sheet shows the hero being played, and the shop header draws Elite Marks and Boss Cores with their own icons.
 - **arena:** The biome ground now continues, dimmed, outside the arena walls (SDD-023): a small arena is no longer framed by black bars, which took over a third of a 2560x1440 or ultrawide screen in the first rounds.
 - **ui:** Step-by-step onboarding (SDD-022): the skill tree shows once a hero has a point to spend, the hero and potion screen after the first run, and the Marks and Cores counter once the run has one; each is announced once with a toast. The first run shows three one-line hints in the HUD: how to move, that the weapons attack on their own, and the Super Magic when it is charged.
+- **ui:** Say which action moved when a rebind swaps two keys ([f0059f4](https://github.com/AlexGalhardo/pinguin-survivors/commit/f0059f4))
+- **hud:** Point at a boss that is outside the camera ([ccd864f](https://github.com/AlexGalhardo/pinguin-survivors/commit/ccd864f))
+- **art:** Give the station and ruins biomes their own ground and walls ([ec88425](https://github.com/AlexGalhardo/pinguin-survivors/commit/ec88425))
+- **sim:** Simulate hero classes and report each one against its base class ([2ff5540](https://github.com/AlexGalhardo/pinguin-survivors/commit/2ff5540))
+- **ui:** Pick the hero class on the hero select screen ([3ffdc31](https://github.com/AlexGalhardo/pinguin-survivors/commit/3ffdc31))
+- **game:** Add four classes per hero as start-of-run stat modifiers ([77441ae](https://github.com/AlexGalhardo/pinguin-survivors/commit/77441ae))
+- **hud:** Name the pad buttons in the key hints while a gamepad is in use ([b013fc4](https://github.com/AlexGalhardo/pinguin-survivors/commit/b013fc4))
+- **shop:** Draw Marks and Cores with their icons ([16fb313](https://github.com/AlexGalhardo/pinguin-survivors/commit/16fb313))
+- **art:** Add Elite Mark and Boss Core icons ([5a3674f](https://github.com/AlexGalhardo/pinguin-survivors/commit/5a3674f))
+- **ui:** Show the hero being played on the pause sheet ([c6f0c6d](https://github.com/AlexGalhardo/pinguin-survivors/commit/c6f0c6d))
+- **arena:** Draw the dimmed biome ground outside the walls instead of black ([44fea8f](https://github.com/AlexGalhardo/pinguin-survivors/commit/44fea8f))
+- **ui:** Unlock the skill tree and the hero screen step by step and hint the first run ([38af023](https://github.com/AlexGalhardo/pinguin-survivors/commit/38af023))
+- **save:** Derive unlocked systems and first-run tips from the save ([2351fb9](https://github.com/AlexGalhardo/pinguin-survivors/commit/2351fb9))
+- **site:** Rename the landing page and press kit to Penguin Survivors ([118e1d1](https://github.com/AlexGalhardo/pinguin-survivors/commit/118e1d1))
+- **ui:** Rename the game to Penguin Survivors ([c1dfd1a](https://github.com/AlexGalhardo/pinguin-survivors/commit/c1dfd1a))
+- **ui:** Show the stat icon of each skill tree node instead of two letters ([eef9ec6](https://github.com/AlexGalhardo/pinguin-survivors/commit/eef9ec6))
+- **ui:** Put prices at the row edge and title the gambit slots on the hero screen ([d110b7d](https://github.com/AlexGalhardo/pinguin-survivors/commit/d110b7d))
+- **ui:** Give each hero select choice its own section and stop stat labels from wrapping ([d62f4d2](https://github.com/AlexGalhardo/pinguin-survivors/commit/d62f4d2))
+- **ui:** List hero stats with their pixel icons and line up the pause slots ([b4f0d84](https://github.com/AlexGalhardo/pinguin-survivors/commit/b4f0d84))
+- **ui:** Show the run summary as labeled numbers and say when the run was quit ([a1239e6](https://github.com/AlexGalhardo/pinguin-survivors/commit/a1239e6))
 
 ### Changed
 
@@ -39,6 +61,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **qa:** `scripts/qa-mobile.ts` timed out before the shop (it used round 5, a boss round since 0.7.1) and `scripts/qa-menus.ts` looked for the match history inside the hero screen; both reach every screen again and report no issues.
 - **shop:** On phones the buy and lock buttons are narrower, so the offer name is no longer cut to "Ring ...".
 - **release:** A version in the changelog no longer repeats a group (`### Fixed` twice): `scripts/release.ts` merges the hand-written entries with the commit lines.
+- **shop:** Fit the Steam Deck screen and check 1280x800 in the menu QA ([fe84b76](https://github.com/AlexGalhardo/pinguin-survivors/commit/fe84b76))
+- **shop:** Keep the whole offer name beside narrower buttons on phones ([b14a1dd](https://github.com/AlexGalhardo/pinguin-survivors/commit/b14a1dd))
+- **release:** Merge changelog groups instead of repeating them in a version ([2b89511](https://github.com/AlexGalhardo/pinguin-survivors/commit/2b89511))
+- **site:** Describe the three difficulties instead of Danger 0-5 ([5cfbfbb](https://github.com/AlexGalhardo/pinguin-survivors/commit/5cfbfbb))
+- **shop:** Fit four offers and the action bar on a 360 px tall phone ([24c568b](https://github.com/AlexGalhardo/pinguin-survivors/commit/24c568b))
+- **shop:** Fit the gear comparison and spread the offers over the column ([798d969](https://github.com/AlexGalhardo/pinguin-survivors/commit/798d969))
+- **hud:** Keep the boss name on one line over its bar and show empty bar tracks ([8c3aaca](https://github.com/AlexGalhardo/pinguin-survivors/commit/8c3aaca))
+- **i18n:** Reword skill tree point texts that read wrong with one point ([71bb344](https://github.com/AlexGalhardo/pinguin-survivors/commit/71bb344))
+
+### Maintenance
+
+- **docs:** Refresh the roadmap state, budget and local build location ([7c42abe](https://github.com/AlexGalhardo/pinguin-survivors/commit/7c42abe))
+- **docs:** Document onboarding, classes and the backdrop in the architecture and balance docs ([73c73f5](https://github.com/AlexGalhardo/pinguin-survivors/commit/73c73f5))
+- **docs:** Update the work workflow for one release per phase with builds attached ([a2e6668](https://github.com/AlexGalhardo/pinguin-survivors/commit/a2e6668))
+- **docs:** Teach the UI and art skills what the polish phases changed ([3f6e74b](https://github.com/AlexGalhardo/pinguin-survivors/commit/3f6e74b))
+- **docs:** Align the agent rules with the phased roadmap and the new QA flow ([28798db](https://github.com/AlexGalhardo/pinguin-survivors/commit/28798db))
+- **docs:** Describe classes, onboarding and the arena backdrop in the GDD and close the accessibility task ([874dd3d](https://github.com/AlexGalhardo/pinguin-survivors/commit/874dd3d))
+- **docs:** Record the key conflict notice ([9cce523](https://github.com/AlexGalhardo/pinguin-survivors/commit/9cce523))
+- **docs:** Measure the 50-round campaign baseline and keep the balance task open ([a736fe1](https://github.com/AlexGalhardo/pinguin-survivors/commit/a736fe1))
+- **docs:** Record the off-screen boss pointer ([615e507](https://github.com/AlexGalhardo/pinguin-survivors/commit/615e507))
+- **docs:** Close the boss and campaign audit and log the PixelLab balance ([937e9fb](https://github.com/AlexGalhardo/pinguin-survivors/commit/937e9fb))
+- **docs:** Record the audit of the hero class phase ([58a5809](https://github.com/AlexGalhardo/pinguin-survivors/commit/58a5809))
+- **docs:** Record the hero class tasks and their balance pass ([1463f12](https://github.com/AlexGalhardo/pinguin-survivors/commit/1463f12))
+- **docs:** Add SDD-024 for hero classes ([c654f09](https://github.com/AlexGalhardo/pinguin-survivors/commit/c654f09))
+- **docs:** Record the Steam texts and Steam Deck tasks ([ab96983](https://github.com/AlexGalhardo/pinguin-survivors/commit/ab96983))
+- **docs:** Bring the Steam page texts and the trailer script up to the 50-round campaign ([008707b](https://github.com/AlexGalhardo/pinguin-survivors/commit/008707b))
+- **art:** Format the metadata of the new currency icons ([fa23359](https://github.com/AlexGalhardo/pinguin-survivors/commit/fa23359))
+- **docs:** Close phase F3 with evidence and log the PixelLab balance ([f7c1330](https://github.com/AlexGalhardo/pinguin-survivors/commit/f7c1330))
+- **docs:** Close the arena backdrop tasks with evidence ([b691cbb](https://github.com/AlexGalhardo/pinguin-survivors/commit/b691cbb))
+- **docs:** Add SDD-023 for the arena backdrop ([db0939e](https://github.com/AlexGalhardo/pinguin-survivors/commit/db0939e))
+- **docs:** Close the onboarding tasks with evidence ([a33e7a8](https://github.com/AlexGalhardo/pinguin-survivors/commit/a33e7a8))
+- **ui:** Seed QA with a played save and give the demo E2E its own port and Vite cache ([4297afe](https://github.com/AlexGalhardo/pinguin-survivors/commit/4297afe))
+- **docs:** Add SDD-022 for step-by-step onboarding ([7b6b8a0](https://github.com/AlexGalhardo/pinguin-survivors/commit/7b6b8a0))
+- **docs:** Close the rename tasks and flag the releases blocked by permissions ([64adb1c](https://github.com/AlexGalhardo/pinguin-survivors/commit/64adb1c))
+- **docs:** Use the name Penguin Survivors across the docs ([63d0281](https://github.com/AlexGalhardo/pinguin-survivors/commit/63d0281))
+- **repo:** Name release assets and artifacts penguin-survivors ([b2aab1d](https://github.com/AlexGalhardo/pinguin-survivors/commit/b2aab1d))
+- **mobile:** Use the application id xyz.lekzera.penguinsurvivors ([1fd2793](https://github.com/AlexGalhardo/pinguin-survivors/commit/1fd2793))
+- **desktop:** Ship the executable as Penguin Survivors.exe ([bd07e3e](https://github.com/AlexGalhardo/pinguin-survivors/commit/bd07e3e))
+- **docs:** Add ADR-028 renaming the game to Penguin Survivors ([56dd03b](https://github.com/AlexGalhardo/pinguin-survivors/commit/56dd03b))
+- **docs:** Close F1.2-F1.5 with evidence and fix the cross-browser QA instructions ([000e41f](https://github.com/AlexGalhardo/pinguin-survivors/commit/000e41f))
+- **ui:** Check the menus at 2560x1440 too ([ac33577](https://github.com/AlexGalhardo/pinguin-survivors/commit/ac33577))
+- **docs:** Rewrite the roadmap as phases F1-F8 that end in a downloadable release ([db59b10](https://github.com/AlexGalhardo/pinguin-survivors/commit/db59b10))
+- **docs:** Record the UI direction, rename and next-front decisions ([198f15d](https://github.com/AlexGalhardo/pinguin-survivors/commit/198f15d))
+- **docs:** Log the UI polish pass in the changelog ([06ba215](https://github.com/AlexGalhardo/pinguin-survivors/commit/06ba215))
+- **docs:** Add the UI polish task and the measured asset budget to the roadmap ([c27eb49](https://github.com/AlexGalhardo/pinguin-survivors/commit/c27eb49))
+- **docs:** Record what SDD-021 shipped and document StatLine and RunStat ([132713e](https://github.com/AlexGalhardo/pinguin-survivors/commit/132713e))
+- **ui:** Expect the quit title after quitting from the pause menu ([1880f12](https://github.com/AlexGalhardo/pinguin-survivors/commit/1880f12))
+- **ui:** Make the menu and mobile QA scripts reach every screen again ([08c963b](https://github.com/AlexGalhardo/pinguin-survivors/commit/08c963b))
+- **docs:** Add SDD-021 for the 1.0 UI polish pass ([30a70c3](https://github.com/AlexGalhardo/pinguin-survivors/commit/30a70c3))
+- **repo:** Ignore the local obscura browser notes ([29fbc68](https://github.com/AlexGalhardo/pinguin-survivors/commit/29fbc68))
+- **release:** Mark 0.10.1 as the current release ([cd7bb1b](https://github.com/AlexGalhardo/pinguin-survivors/commit/cd7bb1b))
 
 ## [0.10.1] - 2026-11-10
 
@@ -663,7 +736,8 @@ Playtest build **playdev-1** (the nickname is shown next to the version in the f
 
 - The previous game (Starfall Survivors) and its tooling: Retro Diffusion scripts, jsfxr sounds, top-down arena and code-drawn key art. Its full history lives in the `starfall-survivors-legacy` branch.
 
-[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/AlexGalhardo/pinguin-survivors/compare/v0.8.0...v0.9.0
