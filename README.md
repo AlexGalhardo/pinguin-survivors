@@ -33,7 +33,7 @@ The game is built with [Phaser 4](https://phaser.io), TypeScript, Vite, React an
 
 ## Play
 
-- **Demo (browser)**: rounds 1–10 with Jack, coming with the site at `https://alexgalhardo.github.io/pinguin-survivors/demo/` ([ROADMAP](ROADMAP.md) M5).
+- **Demo (browser)**: rounds 1–10 with Jack, coming with the site at `https://alexgalhardo.github.io/pinguin-survivors/demo/` ([ROADMAP](ROADMAP.md) F4).
 - **Steam**: demo at the Steam Next Fest of February 22 – March 1, 2027; full release 1.0 afterwards.
 - **Google Play**: Android premium after the Steam release.
 

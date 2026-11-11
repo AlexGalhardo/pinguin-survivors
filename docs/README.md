@@ -18,6 +18,6 @@
 | [site.md](site.md) | Site comercial: objetivo, mensagem, estrutura da landing, copy, demo, trailer, SEO, hospedagem, checklist |
 | [marketing/trailer-script.md](marketing/trailer-script.md) | Roteiro do trailer (≤ 2 min): beats, planos com URLs de debug, textos EN e música |
 | [marketing/steam-page.md](marketing/steam-page.md) | Página da Steam: descrição curta e longa, features, tags e requisitos (TBD) nos 4 idiomas |
-| [adrs/](adrs/README.md) | Architecture Decision Records (ADR-000 histórico, ADR-001…024) |
-| [sdds/](sdds/README.md) | Specs de implementação (SDD-001…018) com critérios de aceite verificáveis |
+| [adrs/](adrs/README.md) | Architecture Decision Records (ADR-000 histórico, ADR-001…028) |
+| [sdds/](sdds/README.md) | Specs de implementação (SDD-001…024) com critérios de aceite verificáveis |
 | `reports/` | Relatórios de balanceamento, QA e playtest gerados pelos scripts e pelas skills `ccgs-*` |

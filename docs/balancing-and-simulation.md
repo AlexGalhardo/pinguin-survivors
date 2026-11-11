@@ -520,6 +520,25 @@ A sim (`bun scripts/sim.ts`) é só apoio: serve para comparar mudanças antes d
 
 Preços (Fish, mais `2 × round`): arma I a V = 8, 20, 45, 90, 160; equipamento I a V = 12, 30, 70, 140, 250 (IV e V só valem na venda). Drops por abate: Elite dá arma IV com 0,08% e equipamento IV com 1%; Boss dá arma V com 10% e equipamento V com 100% (1 item V garantido por Boss). As chances de arma foram calibradas com a sim (drops de arma mais frequentes empurravam #1 e #3 para fora das metas); a sim modela só os drops de arma (a sim não tem equipamento).
 
+### 8d. Classes por herói (SDD-024, `src/data/classes.ts`) — provisório
+
+Somas na unidade do atributo; multiplicadores (`×`) aplicados depois das somas. Destravam nos níveis 1, 5, 10 e 20 do herói.
+
+| Classe | Nível | Vantagem | Custo |
+|---|---|---|---|
+| `jack.survivor`, `bob.gunner`, `lucia.arcanist` | 1 | — | — |
+| `jack.berserker` | 5 | dano +0,25; velocidade de ataque +0,10 | armadura ×0; vida máxima ×0,85 |
+| `jack.butcher` | 10 | roubo de vida +0,03; corpo a corpo +0,20 | arma de fogo −0,30; magia −0,30 |
+| `jack.bulwark` | 20 | vida máxima ×1,3; armadura +8 | dano −0,15; movimento −8 |
+| `bob.pyro` | 5 | chance de queimar +0,15; área +0,20 | velocidade de ataque −0,10 |
+| `bob.sharpshooter` | 10 | crítico +0,10; dano crítico +0,50 | velocidade de ataque −0,20 |
+| `bob.scavenger` | 20 | sorte +0,15; coleta +40; bônus de Fish +0,10 | dano −0,12 |
+| `lucia.stormcaller` | 5 | chance de choque +0,15; velocidade de ataque +0,15 | vida máxima ×0,8 |
+| `lucia.frostweaver` | 10 | chance de congelar +0,20; área +0,15 | movimento −6; dano −0,10 |
+| `lucia.glassCannon` | 20 | magia +0,35 | vida máxima ×0,7; regeneração ×0 |
+
+Medição: `bun scripts/sim.ts 200 --classes` → todas entre 0,89× e 1,13× da classe base no round médio ([relatório](reports/balance-classes-2026-11-11.md)).
+
 ## Parte C — Histórico de calibração
 
 ### C-2026-11-08b. Loja de evolução (ADR-021)

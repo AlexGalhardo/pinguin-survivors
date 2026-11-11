@@ -1,6 +1,6 @@
 # Arquitetura técnica — Penguin Survivors
 
-> **Versão** 2.5 · **Data** 2026-11-10 · Estado atual do código (release 0.10.1: UI só React no Estilo D, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4, campanha de 50 rounds em 5 biomas, velocidade 1×/1,5×/2×). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.6 · **Data** 2026-11-11 · Estado atual do código (`main` depois da 0.10.1, fases F1–F5 do ROADMAP: UI só React no Estilo D, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4, campanha de 50 rounds em 5 biomas, velocidade 1×/1,5×/2×). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 
@@ -76,6 +76,8 @@
 - **Feedback de combate** (`src/data/combat-fx.ts`): crítico, esquiva e aparo com número, cor, *pop* e tremor próprios; cor do tiro e do número por arma.
 - **Eventos tipados** (`src/core/events.ts`): `GameEvents` (mundo → UI) e `GameCommands` (UI → mundo); `RunState` serializável.
 
+- **Fundo da arena** (SDD-023): `Arena.rebuildBackdrop` mantém um `TileSprite` com o tile do bioma, escurecido, cobrindo `backdropBounds` (a arena mais 12 tiles por lado), abaixo do chão; redimensiona ao crescer e troca de textura ao mudar de bioma.
+
 ## 4. UI: React sobre o canvas
 
 - `index.html`: `<canvas>` + `<div id="ui">` (`position: fixed; inset: 0; pointer-events: none`); painéis abertos ativam `pointer-events`.
@@ -89,6 +91,10 @@
 - **Árvore de habilidades** (ADR-019): `src/data/skill-tree.ts` gera uma árvore por herói; lógica pura em `src/logic/skill-tree.ts` (`pathTo`, `allocate`, `canRefund`, `treeStats`, `autoAllocate`); tela `SkillTree.tsx` (nós como botões sobre SVG, câmera própria sem barra de rolagem). Substituiu a Oficina e os pontos de stat.
 - **Raridade e afixos** (ADR-017): `src/data/rarity.ts` e `src/data/affixes.ts` (+ `src/logic/affixes.ts`) definem a escala I–V; `src/logic/shop-describe.ts` (`describeOffer`) explica cada oferta; a cor vem só de `rarityColor` em `palette.ts`.
 - Não há mais telas Phaser de UI: menus, HUD, loja, cartas, pausa e fim de partida são React (T3.7). Restam em Phaser: `BootScene`, `GameScene` e `HudScene` (luz e overlay de debug). `installCrispText` e `src/scenes/ui-phaser/` foram removidos.
+- **Onboarding** (SDD-022): `src/logic/onboarding.ts` deriva do save o que já está destravado (`systemUnlocked`) e as dicas da primeira run (`tipStep`); `save.onboarding.seen` guarda o que já foi anunciado. `src/ui/onboarding-ui.ts` (`announceUnlocks`) dispara os avisos; o `HudScene` publica a dica atual em `HudSnapshot.tip`.
+- **Classes** (SDD-024): `src/data/classes.ts` e `src/logic/classes.ts`; a classe entra só em `heroStats(hero, level, tree, heroClass)`. A escolha viaja em `StartRunRequest.heroClass` → `setRunClass` (`src/core/context.ts`) → `resolveClass` no `GameScene`.
+- **Dispositivo em uso** (`src/core/input-kind.ts`): teclado ou controle, atualizado pela ponte do gamepad e por teclas reais; o HUD troca as dicas de tecla pela variante `.pad`.
+- **Seta do boss** (`src/logic/offscreen.ts`, `offscreenArrow`): posição e ângulo na borda da tela quando o boss está fora da câmera, publicado em `HudSnapshot.bossArrow`.
 - Tailwind v4 com `@theme` gerado de `palette.ts` (`bun scripts/export-palette-css.ts`); tipografia Roboto (+ Noto Sans SC sob demanda para ZH); sem zoom inteiro no overlay.
 
 ## 5. Estrutura de pastas

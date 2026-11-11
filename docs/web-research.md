@@ -15,7 +15,7 @@
 7. [Steam Next Fest de fevereiro de 2027](#7-steam-next-fest-de-fevereiro-de-2027)
 8. [Monetização, preço e plataformas](#8-monetização-preço-e-plataformas)
 9. [Tabela comparativa](#9-tabela-comparativa)
-10. [Lições aplicáveis ao Penguin Survivors](#10-lições-aplicáveis-ao-pinguin-survivors)
+10. [Lições aplicáveis ao Penguin Survivors](#10-lições-aplicáveis-ao-penguin-survivors)
 11. [Fontes](#11-fontes)
 12. [Portais web: itch.io, Poki e CrazyGames (herdado)](#12-portais-web-itchio-poki-e-crazygames-pesquisa-herdada-2026-09-25)
 
