@@ -33,3 +33,4 @@ Decisões de produto anteriores à virada comercial (P-01…P-68) estão em [ADR
 | [ADR-025](ADR-025-tres-dificuldades-e-teto-de-round.md) | Três dificuldades (Fácil/Normal/Difícil) no lugar do Danger 0–5 e teto de 2 min nos rounds comuns | Aceito |
 | [ADR-026](ADR-026-arvore-de-habilidades-em-grade.md) | Árvore de habilidades em grade de quadrados (emenda de apresentação do ADR-019) | Aceito |
 | [ADR-027](ADR-027-ui-plana.md) | UI plana: sem sombras nem molduras de card, grupos por borda fina de 1 px, um botão por função (emenda o ADR-022) | Aceito |
+| [ADR-028](ADR-028-nome-penguin-survivors.md) | O jogo passa a se chamar Penguin Survivors: muda o nome de exibição e o id do Android, ficam o repositório e os ids internos | Aceito |
