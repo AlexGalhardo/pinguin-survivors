@@ -137,6 +137,7 @@ export const ptBR: Record<I18nKey, string> = {
 	'controls.hint': 'ENTER e depois a nova tecla · ESC cancela · as setas sempre movem',
 	'controls.pad':
 		'Controle: analógico move · X/A confirma · Triângulo/Y superpoder · Quadrado/X ou View 1x-4x · Options pausa',
+	'controls.swapped': 'Essa tecla já estava em uso: "{action}" passou para {key}.',
 	'action.up': 'Mover para cima',
 	'action.down': 'Mover para baixo',
 	'action.left': 'Mover para a esquerda',

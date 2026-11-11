@@ -131,6 +131,7 @@ export const zhCN: Record<I18nKey, string> = {
 	'controls.hint': 'ENTER 后按一个键重新绑定 · ESC 取消 · 方向键始终可移动',
 	'controls.pad':
 		'手柄：摇杆移动 · ✕/A 确认 · △/Y 超能力 · □/X 或 View 切换 1x-4x · Options 暂停',
+	'controls.swapped': '该按键已被占用：“{action}”改为 {key}。',
 	'action.up': '上',
 	'action.down': '下',
 	'action.left': '左',

@@ -17,11 +17,18 @@ import { ACHIEVEMENT_SHOP, ACHIEVEMENTS } from '../data/achievements';
 import { isDemoBuild } from '../data/demo';
 import { RESOLUTION_IDS } from '../data/display';
 import { GAMBIT_CONDITIONS, POTION_PRICES, POTION_TYPES } from '../data/potions';
-import { LANGS, setLang } from '../i18n';
+import { type I18nKey, LANGS, setLang, t } from '../i18n';
 import { achievementProgress, availablePoints, buyExtra, extraLevel } from '../logic/achievements';
 import { demoAllowsHero, demoDifficulty, demoHidesAchievement } from '../logic/demo';
 import { maxSelectableDifficulty } from '../logic/difficulty';
-import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/keybinds';
+import {
+	ACTIONS,
+	type Action,
+	bindConflict,
+	DEFAULT_BINDS,
+	keyLabel,
+	rebind,
+} from '../logic/keybinds';
 import { systemUnlocked } from '../logic/onboarding';
 import { xpToNext } from '../logic/progression';
 import { type GoreMode, NUMBER_SIZES, type SaveData } from '../logic/save';
@@ -44,6 +51,7 @@ import type { MenuView } from './Router';
 import { publishUnlock } from './run-bridge';
 import { getUiSave, touchSave } from './save-bridge';
 import { uiStore } from './store';
+import { showToast } from './toast';
 
 /** Builds each menu screen's data from the save and wires its actions (save mutation + game commands). */
 export type MenuScreenId = MenuView['screen'];
@@ -450,7 +458,21 @@ function captureKey(save: SaveData, action: Action): void {
 		e.stopImmediatePropagation();
 		e.preventDefault();
 		window.removeEventListener('keydown', onKey, true);
-		if (e.code !== 'Escape' && rebind(save.settings.keys, action, e.code)) writeSave(save);
+		if (e.code !== 'Escape') {
+			// The key belonged to another action: the two swap, and the player is told which moved.
+			const other = bindConflict(save.settings.keys, action, e.code);
+			const freed = save.settings.keys[action];
+			if (rebind(save.settings.keys, action, e.code)) {
+				writeSave(save);
+				if (other)
+					showToast(
+						t('controls.swapped', {
+							action: t(`action.${other}` as I18nKey),
+							key: keyLabel(freed),
+						}),
+					);
+			}
+		}
 		state.waiting = null;
 		touchSave();
 	};

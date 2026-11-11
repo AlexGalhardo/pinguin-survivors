@@ -133,6 +133,7 @@ export const en = {
 	'controls.hint': 'ENTER then press a key to rebind · ESC cancel · arrow keys always move',
 	'controls.pad':
 		'Gamepad: stick move · Cross/A confirm · Triangle/Y superpower · Square/X or View 1x-4x · Options pause',
+	'controls.swapped': 'That key was in use: "{action}" is now on {key}.',
 	'action.up': 'Move up',
 	'action.down': 'Move down',
 	'action.left': 'Move left',

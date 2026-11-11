@@ -20,13 +20,18 @@ export const DEFAULT_BINDS: KeyBinds = {
 /** Keys that stay reserved for menus and can't be bound. */
 export const RESERVED = ['Escape', 'Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 
+/** The other action that already uses `code`, if any: binding it swaps the two keys. */
+export function bindConflict(binds: KeyBinds, action: Action, code: string): Action | null {
+	return ACTIONS.find((a) => a !== action && binds[a] === code) ?? null;
+}
+
 /**
  * Binds `code` to `action`. A key already used by another action swaps with it, so every action
  * always keeps exactly one distinct key. Returns false for reserved keys.
  */
 export function rebind(binds: KeyBinds, action: Action, code: string): boolean {
 	if (RESERVED.includes(code)) return false;
-	const other = ACTIONS.find((a) => a !== action && binds[a] === code);
+	const other = bindConflict(binds, action, code);
 	if (other) binds[other] = binds[action];
 	binds[action] = code;
 	return true;

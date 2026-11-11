@@ -139,6 +139,7 @@ export const es: Record<I18nKey, string> = {
 		'ENTER y luego una tecla para reasignar · ESC cancela · las flechas siempre mueven',
 	'controls.pad':
 		'Mando: stick mueve · Cruz/A confirma · Triángulo/Y superpoder · Cuadrado/X o View 1x-4x · Options pausa',
+	'controls.swapped': 'Esa tecla ya estaba en uso: "{action}" pasó a {key}.',
 	'action.up': 'Subir',
 	'action.down': 'Bajar',
 	'action.left': 'Izquierda',
