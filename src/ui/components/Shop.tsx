@@ -272,6 +272,9 @@ function OfferTooltips({
 	);
 }
 
+/** Phone: narrower buy and lock buttons, so the offer name keeps room beside them. */
+const TIGHT = 'pr-[8px]! pl-[20px]! tracking-normal!';
+
 /** One offer as a row of the list: icon, rarity-colored name and a line of numbers, then the buy and lock actions. */
 function OfferRow(props: {
 	offer: ShopOfferData | null;
@@ -372,14 +375,14 @@ function OfferRow(props: {
 				onActivate={() => actions.buy(index)}
 				disabled={!affordable}
 				variant="secondary"
-				className="text-fish"
+				className={`text-fish ${props.compact ? TIGHT : ''}`}
 			>
 				{t('shop.buy', { n: offer.price })}
 			</Btn>
 			<Btn
 				onActivate={() => actions.lock(index)}
 				variant="secondary"
-				className={props.locked ? 'text-gold-bright' : 'text-text-light'}
+				className={`${props.locked ? 'text-gold-bright' : 'text-text-light'} ${props.compact ? TIGHT : ''}`}
 			>
 				{t(props.locked ? 'shop.unlock' : 'shop.lock')}
 			</Btn>
