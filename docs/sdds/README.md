@@ -25,3 +25,4 @@ Regra: nenhuma tarefa de implementação começa sem a SDD correspondente em sta
 | [SDD-018](SDD-018-velocidade-de-jogo-dois-relogios.md) | Velocidade de jogo 1×/1,5×/2× com dois relógios (movimento e relógio do round) | SDD-001, SDD-016 | Aprovada |
 | [SDD-019](SDD-019-dificuldade-e-teto-de-round.md) | Dificuldade Fácil/Normal/Difícil (substitui o Danger 0–5) e teto de 120 s nos rounds comuns | SDD-005, SDD-006 | Aprovada |
 | [SDD-020](SDD-020-ui-plana.md) | UI plana (emenda a SDD-015): tokens, primitivos e telas sem sombra, bordas finas de grupo | SDD-015 | Aprovada |
+| [SDD-021](SDD-021-polimento-de-ui-1-0.md) | Polimento de UI 1.0: plurais, fim de run, HUD, atributos com ícone, loja, pausa, seleção, árvore com ícones | SDD-015, SDD-020 | Aprovada |
