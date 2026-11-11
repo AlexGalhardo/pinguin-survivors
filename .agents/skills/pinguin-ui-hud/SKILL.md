@@ -41,15 +41,15 @@ Skill própria do projeto. Para a arquitetura genérica de UI de jogos (âncoras
 
 ## Fluxo para migrar ou criar uma tela
 
-1. Confira no ROADMAP a tarefa (T3.13 a T3.18) e se a SDD-015 está **Aprovada**. Sem SDD aprovada, não implemente.
+1. Confira a tarefa no ROADMAP (fases F1–F8) e se a SDD da frente está **Aprovada** (SDD-015 Estilo D, SDD-020 UI plana, SDD-021 polimento, SDD-022 onboarding, SDD-024 classes). Sem SDD aprovada, não implemente.
 2. Abra a especificação da tela no `docs/wireframes/README.md` e o SVG dela. Liste as regiões, os componentes do design system e a ordem de foco.
-3. Use os primitivos D (`Panel`, `Heading`, `Filet`/`Divider`, `Ornament`, `Vignette`, `MenuList`, `StatRow`, `ItemCard`, `SlotIcon`, `Bar`, `AdjustRow`, `Btn`, `MenuScreen`, `Toast`). Faltou algum? Crie no design system primeiro (doc mais componente mais teste), não um estilo local na tela.
+3. Use os primitivos D (`Panel`, `Heading`, `Filet`/`Divider`, `Ornament`, `Vignette`, `MenuList`, `StatRow`, `StatLine`, `RunStat`, `ItemCard`, `SlotIcon`, `Bar`, `AdjustRow`, `Btn`, `MenuScreen`, `Toast`). Atributo em lista é sempre `StatLine` (ícone do atlas + rótulo + valor). Faltou algum? Crie no design system primeiro (doc mais componente mais teste), não um estilo local na tela.
 4. Mantenha os contratos: `store.ts`, as views (`ShopOfferView`, `PlayerPanelView`, `HudSnapshot`) e os comandos. A migração é visual e de layout, não de lógica.
 5. Aplique o ponto de feedback da tela (checklist no `docs/wireframes/README.md`) ou anote por que não aplicou.
 6. Verifique:
    - `bun run typecheck && bun run lint && bun run lint:i18n && bun test tests/ui`
    - `SOUND_MUTED=true bun run e2e` (e `-- --demo` nas telas da demo)
-   - Capturas em **1920×1080, 1280×720 e 844×390** (`agent-browser` ou o E2E), sem overflow (`scrollWidth/Height` igual ao viewport), comparadas ao SVG da tela.
+   - `bun scripts/qa-menus.ts <dir>` (1280×720, 1280×800 do Steam Deck, 1920×1080, 2560×1080 e 2560×1440) e `bun scripts/qa-mobile.ts <dir>` (844×390, 915×412, 1280×720 e 800×360 em DPR 3) com `issues` vazio, e as capturas conferidas (comparadas ao SVG da tela quando existir). Os scripts falham com scroll, corte de conteúdo ou HUD sobre os controles de toque.
    - Tamanho mínimo de fonte e contraste: no console, percorra os nós de texto visíveis com `getComputedStyle` e confira os pisos de 22 px (18 px no celular) e o AA.
 7. Faça um micro-commit por tela, com o teste e a evidência (comando e resultado) anotada na tarefa do ROADMAP.
 
@@ -60,6 +60,9 @@ Skill própria do projeto. Para a arquitetura genérica de UI de jogos (âncoras
   - Vida, XP e a poção ficam no canto superior esquerdo. Fish fica à direita.
   - No celular, limite os gambits visíveis a 2.
 - Os números usam `tabular-nums`. Contadores podem ficar abaixo de 22 px só onde o design system listar a exceção.
+- Chefe: o nome fica **acima** da barra, numa linha; a barra mostra a porcentagem. Com o chefe fora da tela, uma seta laranja na borda aponta para ele (`HudSnapshot.bossArrow`, `src/logic/offscreen.ts`).
+- Dicas da primeira run (`HudSnapshot.tip`, SDD-022) aparecem numa linha na parte de baixo, uma por vez, sem capturar entrada.
+- Dicas de tecla seguem o dispositivo: com controle em uso, a chave `<chave>.pad` troca SPACE/TAB pelos botões (`src/core/input-kind.ts`). O contador de FPS só aparece em build de desenvolvimento ou com `?debug=1`.
 - Sem blur no HUD (custa FPS). Sem sombras: a UI é plana (design system v2.1, ADR-027). Rode `bun scripts/perf.ts` (60 FPS com 300 inimigos) depois de mexer.
 
 ## Revisão de diff de UI (checklist rápido)
@@ -71,4 +74,6 @@ Skill própria do projeto. Para a arquitetura genérica de UI de jogos (âncoras
 - [ ] Foco visível; teclado, gamepad e toque equivalentes; alvos de 44 px
 - [ ] Sem scroll, paginação ok nas três resoluções
 - [ ] i18n nos quatro idiomas e `lint:i18n` verde
+- [ ] Nenhum número colado a substantivo no plural; texto com nome de tecla tem a variante `.pad` (e `.touch` no celular)
+- [ ] Entrada ou botão de sistema novo passa por `systemUnlocked` (onboarding, SDD-022)
 - [ ] Teste de componente e E2E verdes, capturas anexadas

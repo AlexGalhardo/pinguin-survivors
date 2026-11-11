@@ -35,3 +35,11 @@ Antes de gerar, monte o prompt por [prompts.md](prompts.md) (base fixa, blocos p
 2. Pick variants in `art-src/selection.json` → `bun scripts/pack-process.ts` → `bun scripts/pack-atlas.ts` / `bun scripts/pack-heroes.ts hero.<id>` → `public/assets/atlas/*`, `public/assets/heroes/*`. Tiles: `bun scripts/pack-tiles.ts` (top-down; the old `pack-iso-tile.ts` is removed with SDD-001).
 3. Register the key in `src/art/manifest.ts` (contract in `docs/visual.md` §9); the code placeholder for that key stops automatically. `bun scripts/pack-atlas.ts --check` must report no missing files.
 4. QA in the browser with `agent-browser`: `?skipMenu=1&hero=<id>&round=1&seed=1&debug=1` at 1920×1080 (zoom ×2); the debug overlay lists placeholders still in use.
+
+## Depois de gerar (aprendido em 2026-11-11)
+
+- `bun scripts/pack-process.ts && bun scripts/pack-atlas.ts` grava os JSON dos atlas minificados e o `meta.json` de cada imagem sem formatação. Rode `bunx biome format --write public/assets/atlas art-src` antes do `bun run lint`, depois `bun scripts/pack-atlas.ts --check` (0 faltando) e `git status --short | grep "^ D"` (vazio).
+- Ícone de UI de 32 px: `bun scripts/pl-image.ts <chave> 32 "game UI icon: …, dark fantasy RPG item icon, centered. pixel art, black outline, transparent background, no text, no background" 11` (1 geração por seed), entrada em `art-src/selection.json` no grupo `ui`.
+- Tileset de bioma: `bun scripts/pl-tiles.ts <bioma>-td "<4 descrições numeradas>" 64 12 square_topdown` (15 gerações, 16 tiles em 4 famílias). Monte uma prancha 4×4 para escolher, registre 4 tiles como `tile.<bioma>.0..3` e gere as bordas com `bun scripts/make-borders.ts <bioma> <tile>` (0 gerações). Os 5 biomas da campanha (Antártida, floresta, cidade, estação, ruínas) já têm chão e bordas.
+- Registre o saldo novo em `docs/visual.md` §10 e no ROADMAP §13 no mesmo conjunto de commits.
+
