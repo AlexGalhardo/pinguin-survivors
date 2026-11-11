@@ -23,7 +23,7 @@ export const zhCN: Record<I18nKey, string> = {
 	...slotsZhCN,
 	...supportZhCN,
 	...weaponsZhCN,
-	'game.title': 'Pinguin Survivors',
+	'game.title': 'Penguin Survivors',
 	'boot.loading': '加载中…',
 	'hud.round': 'ROUND {n}',
 	'hero.hint': 'TAB 切换列 · ↑↓ 选择 · ENTER 应用 · ←→ 更换药水 · ESC 返回',

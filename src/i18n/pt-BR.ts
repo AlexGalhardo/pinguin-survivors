@@ -23,7 +23,7 @@ export const ptBR: Record<I18nKey, string> = {
 	...slotsPtBR,
 	...supportPtBR,
 	...weaponsPtBR,
-	'game.title': 'Pinguin Survivors',
+	'game.title': 'Penguin Survivors',
 	'boot.loading': 'Carregando…',
 	'hud.round': 'ROUND {n}',
 	'hero.hint': 'TAB troca de coluna · ↑↓ escolher · ENTER aplicar · ←→ trocar poção · ESC voltar',

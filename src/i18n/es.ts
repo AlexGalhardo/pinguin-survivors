@@ -23,7 +23,7 @@ export const es: Record<I18nKey, string> = {
 	...slotsEs,
 	...supportEs,
 	...weaponsEs,
-	'game.title': 'Pinguin Survivors',
+	'game.title': 'Penguin Survivors',
 	'boot.loading': 'Cargando…',
 	'hud.round': 'ROUND {n}',
 	'hero.hint':

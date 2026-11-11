@@ -22,7 +22,7 @@ export const en = {
 	...slotsEn,
 	...supportEn,
 	...weaponsEn,
-	'game.title': 'Pinguin Survivors',
+	'game.title': 'Penguin Survivors',
 	'boot.loading': 'Loading…',
 	'hud.round': 'ROUND {n}',
 	'hero.hint': 'TAB switch column · ↑↓ choose · ENTER apply · ←→ change potion · ESC back',
