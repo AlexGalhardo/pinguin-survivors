@@ -12,3 +12,7 @@
 - Cada opção diz o que faz e cada compra mostra o antes → depois (`describeOffer`).
 - Componente com lógica tem teste (`tests/ui/*.test.tsx`, `@testing-library/react` + `happy-dom`); fluxo tem E2E (`bun run e2e`).
 - Nenhuma dependência além das listadas na SDD-004 sem aprovação.
+- **Atributos** em qualquer lista usam `StatLine` (`ItemViews.tsx`): ícone `icon.<stat>` do atlas, rótulo capitalizado que trunca em vez de quebrar e valor à direita. Números de resumo usam `RunStat` (valor grande sobre rótulo em caixa alta). Nunca escreva um número colado a um substantivo no plural ("1 kills"): use rótulo + número (SDD-021).
+- **Sistemas escondidos até terem uso** (SDD-022): entrada de menu, botão ou contador de um sistema passa por `systemUnlocked` (`src/logic/onboarding.ts`); o aviso de destrave sai por `announceUnlocks` (`src/ui/onboarding-ui.ts`), nunca de dentro de um render.
+- **Dicas de tecla** seguem o dispositivo em uso (`src/core/input-kind.ts`): a chave `<chave>.pad` traz o botão do controle. Texto novo com nome de tecla precisa da variante `.pad` (e `.touch` quando aparece no celular).
+- Resoluções de conferência: 1920×1080, 2560×1440, 1280×800 (Steam Deck), 1280×720 e celular paisagem (844×390 e 800×360 em DPR 3). `qa-menus` e `qa-mobile` cobrem todas.

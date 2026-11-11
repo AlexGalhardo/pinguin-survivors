@@ -6,3 +6,5 @@
 - **Toda textura, animação e som tem chave em `src/art/manifest.ts`** (contrato em `docs/visual.md` §9); placeholders por código e assets finais compartilham a chave.
 - Regras de design (loop, armas, loja, cartas, economia, danger) vêm do `docs/gdd.md`; se o código precisar divergir, edite o GDD/SDD antes.
 - RNG com seed em todo sorteio de gameplay (`src/logic/rng.ts`); `?seed=` reproduz a run.
+- **Classes por herói** (SDD-024): modificadores em `src/data/classes.ts` (`add` na unidade do atributo, `mul` só para `maxHp`, `armor` e `regen`); aplicação só em `heroStats(..., heroClass)`. O nome é `class.<id>` nos 4 idiomas; as linhas de vantagem e custo saem dos rótulos `gstat.*`, sem texto por classe.
+- Texto com contagem não depende de plural: prefira rótulo + número ("Point cost: 1") a frase com substantivo ("1 points"). O jogo não tem helper de plural de propósito (SDD-021 RF-01).

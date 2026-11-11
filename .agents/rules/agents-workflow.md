@@ -1,11 +1,14 @@
 # Fluxo de trabalho dos agentes
 
-- Fonte da verdade do trabalho: `ROADMAP.md` (marcos, tarefas com responsável, DoD, assert e auditoria). `PLAN.md` é histórico e não está versionado.
-- Ordem de leitura por sessão: `AGENTS.md` → `ROADMAP.md` (marco atual) → SDD da frente em `docs/sdds/` → docs citados por ela (`docs/gdd.md`, `docs/architecture.md`, `docs/visual.md`, `docs/audio.md`, `docs/balancing-and-simulation.md`).
-- Nenhuma implementação sem SDD em "Aprovada". Spec mudou → edite a SDD primeiro; decisão arquitetural → novo ADR em `docs/adrs/`; decisão de produto → registre em `docs/brainstorming.md` ou ADR.
-- Uma tarefa por vez, na ordem do marco. Ao terminar: rode o **assert** da tarefa, anote a evidência na linha, marque `[x]`; a auditoria tem checkbox próprio e é feita por quem revisa, não por quem implementou.
+- Fonte da verdade do trabalho: `ROADMAP.md` (fases F1–F8 do 0.10.1 ao 1.0.0, tarefas com DoD e assert, uma auditoria por fase e o loop de trabalho na seção 2). O roadmap antigo (M0–M9) e o `PLAN.md` são histórico.
+- Ordem de leitura por sessão: `AGENTS.md` → `ROADMAP.md` (primeira tarefa `[ ]` livre da fase mais baixa) → SDD da frente em `docs/sdds/` → docs citados por ela (`docs/gdd.md`, `docs/architecture.md`, `docs/visual.md`, `docs/audio.md`, `docs/balancing-and-simulation.md`).
+- Nenhuma implementação sem SDD em "Aprovada". Spec mudou → edite a SDD primeiro; decisão arquitetural → novo ADR em `docs/adrs/`; decisão de produto → pergunte ao desenvolvedor (`AskUserQuestion`, uma pergunta por vez, com recomendação) e registre em `docs/brainstorming.md`. Quando o desenvolvedor mandar seguir sem interrupções, aplique a opção recomendada e anote isso no status da SDD.
+- Uma tarefa por vez, na ordem da fase. Ao terminar: rode o **assert** da tarefa, anote a evidência na linha (comando e resultado) e marque `[x]`. Não fechou: `[~]` com o motivo e o que falta, nunca `[x]`.
+- Tarefa 🛑 (só o desenvolvedor faz ou aprova) **não bloqueia**: pule para a próxima tarefa livre e deixe a pendência na seção 12 do ROADMAP.
+- Fase sem tarefa livre: rode a **auditoria da fase** e publique a **release da fase** com o `.exe` do Windows e o `.apk` do Android anexados (ROADMAP §2, passo 7). Só a `1.0.0` tem gate. Se a ferramenta recusar a publicação, não contorne: marque `[~]`, deixe o comando pronto para o desenvolvedor e gere os builds locais em `apps/desktop/dist/`.
 - Papéis: orquestrador planeja, delega, **revisa todo diff**, corrige e faz push/release; `senior` implementa; `estagiario` faz i18n, testes, relatórios e pesquisa. Relatório de agente é alegação: confira antes de marcar.
-- Gates que exigem o desenvolvedor humano (🛑): aprovar concepts de arte, gastar > 200 gerações PixelLab ou > 2.000 créditos ElevenLabs, apagar/retaguear tags, publicar em loja, mudar escopo.
-- Valide no browser toda mudança visível (`agent-browser`, `?skipMenu=1&hero=jack&round=5&seed=1&debug=1`) em 1920×1080; UI também em 2400×1080.
-- Skills em `.agents/skills/` (Phaser 4, `pinguin-art-assets`, `pinguin-audio-assets`, `agent-browser`, gamedev de terceiros `gd-*`/`gc-*`/`ccgs-*`). Em conflito, `AGENTS.md` e `docs/` vencem.
+- Gates que exigem o desenvolvedor humano (🛑): aprovar concepts de arte, gastar > 200 gerações PixelLab ou > 2.000 créditos ElevenLabs num lote, apagar/retaguear tags, publicar em loja, mudar escopo, renomear o repositório.
+- Valide no browser toda mudança visível com os scripts de QA (precisam de `SOUND_MUTED=true bun run dev`): `bun scripts/qa-menus.ts <dir>` (1280×720, 1280×800 do Steam Deck, 1920×1080, 2560×1080 e 2560×1440) e `bun scripts/qa-mobile.ts <dir>` (844×390, 915×412, 1280×720 e 800×360 em DPR 3). Os dois têm que terminar com `issues` vazio. Para uma tela só, `?skipMenu=1&hero=jack&round=5&seed=1&debug=1`.
+- Processos e portas que não são desta sessão (outro projeto do desenvolvedor na mesma máquina) não se matam: troque a porta (`E2E_DEMO_PORT`) ou avise.
+- Skills em `.agents/skills/` (Phaser 4, `pinguin-art-assets`, `pinguin-audio-assets`, `pinguin-ui-hud`, `agent-browser`, gamedev de terceiros `gd-*`/`gc-*`/`ccgs-*`). Em conflito, `AGENTS.md` e `docs/` vencem.
 - Detalhes: `docs/workflow.md`.

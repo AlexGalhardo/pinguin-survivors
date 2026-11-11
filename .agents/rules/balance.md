@@ -7,3 +7,5 @@
 - Sim (`bun scripts/sim.ts`) é apoio para comparar variantes; o bot (`bun scripts/playtest-bot.ts`) aprova milestones. Build DEV congelado (`vite build --mode development` + `vite preview`), no máximo 2 Chromes em paralelo.
 - `tests/sim.test.ts` é gate: protege a curva contra mudanças de dados acidentais.
 - Pós-1.0: patch de balanceamento no máximo a cada 2 semanas; hotfix só para exploits; mudanças de dados nunca invalidam saves.
+- Classes (SDD-024): `bun scripts/sim.ts 200 --classes` compara cada classe com a base do herói pelo **round médio** (a mediana não distingue: as mortes se concentram nos rounds de boss). Meta: razão entre 0,67 e 1,5. Relatório em `docs/reports/balance-classes-<data>.md`.
+- Estado da campanha de 50 rounds: `docs/reports/balance-1.0.md` (linha de base de 2026-11-11, metas #1 a #3 fora da janela). Não mude a curva dos rounds comuns sem antes calibrar a sim contra o bot real (ROADMAP F7.2).
