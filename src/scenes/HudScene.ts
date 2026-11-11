@@ -11,6 +11,7 @@ import { HEAL_POTION } from '../data/potions';
 import { t } from '../i18n';
 import { lightingFor } from '../logic/ambient';
 import { biomeForRound } from '../logic/biome';
+import { offscreenArrow } from '../logic/offscreen';
 import { markSeen, tipStep } from '../logic/onboarding';
 import { xpToNext } from '../logic/progression';
 import { worldToScreen } from '../logic/projection';
@@ -109,6 +110,8 @@ export class HudScene extends Phaser.Scene {
 		);
 		publishHud({
 			tip: tips.show,
+			// In a large arena the boss spawns out of sight: point at it until it is on screen.
+			bossArrow: boss ? offscreenArrow(boss, game.cameras.main.worldView) : null,
 			hp: run.hp,
 			maxHp: run.maxHp,
 			level: game.level.level,

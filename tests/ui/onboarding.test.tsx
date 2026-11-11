@@ -156,6 +156,18 @@ describe('onboarding: first-run hints in the HUD', () => {
 		cleanup();
 	});
 
+	test('points at a boss that is off screen and hides the pointer otherwise', () => {
+		const away = { ...snapshot(null), bossArrow: { x: 0.94, y: 0.5, angle: 0 } };
+		const view = render(<HudView hud={away} />);
+		const arrow = view.container.querySelector('[data-hud="boss-arrow"]');
+		expect(arrow?.getAttribute('style')).toContain('left: 94%');
+		expect(arrow?.getAttribute('style')).toContain('rotate(0rad)');
+		cleanup();
+		const near = render(<HudView hud={snapshot(null)} />);
+		expect(near.container.querySelector('[data-hud="boss-arrow"]')).toBeNull();
+		cleanup();
+	});
+
 	test('shows one line for the current tip and nothing when there is none', () => {
 		const move = render(<HudView hud={snapshot('move')} />);
 		expect(move.container.querySelector('[data-hud="tip"]')?.textContent).toBe(

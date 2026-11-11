@@ -245,6 +245,27 @@ export function HudView({
 					})()}
 			</div>
 
+			{hud.bossArrow && (
+				<svg
+					data-hud="boss-arrow"
+					aria-hidden="true"
+					viewBox="-12 -12 24 24"
+					className="absolute h-[max(28px,4vh)] w-[max(28px,4vh)] -translate-x-1/2 -translate-y-1/2 text-aura-orange"
+					style={{
+						left: `${hud.bossArrow.x * 100}%`,
+						top: `${hud.bossArrow.y * 100}%`,
+						transform: `translate(-50%, -50%) rotate(${hud.bossArrow.angle}rad)`,
+					}}
+				>
+					<path
+						d="M10 0 -7 -9 -3 0 -7 9Z"
+						fill="currentColor"
+						stroke="var(--color-night)"
+						strokeWidth="1.5"
+					/>
+				</svg>
+			)}
+
 			{hud.tip && (
 				<div
 					data-hud="tip"

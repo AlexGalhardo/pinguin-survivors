@@ -47,6 +47,8 @@ export interface HudSnapshot {
 	} | null;
 	speed: number;
 	fps: number;
+	/** Pointer to a boss outside the camera: screen position as a share of the view and heading in radians. */
+	bossArrow?: { x: number; y: number; angle: number } | null;
 	/** First-run hint to show now (SDD-022 RF-03); absent or null = none. */
 	tip?: 'move' | 'auto' | 'super' | null;
 }
