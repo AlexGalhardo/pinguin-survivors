@@ -1,6 +1,9 @@
 // Balance table from the headless model (PLAN 2.6/3.2): death round per hero × level.
 // Usage: bun scripts/sim.ts [runs=40] [--rounds] [--report [runs]] [--difficulty 0-2] [--speed 1|1.5|2] [--jsonl file [runs]]  (--rounds prints damage taken per round)
+//        bun scripts/sim.ts [runs=40] --class <id>   one hero class against its base class (SDD-024 RF-07)
+//        bun scripts/sim.ts [runs=40] --classes      every class against its base class, as a Markdown table
 import { GAME_SPEEDS, type GameSpeed, HERO_IDS } from '../src/config/constants';
+import { HERO_CLASSES } from '../src/data/classes';
 import { DIFFICULTY_LEVELS, type Difficulty } from '../src/data/difficulty';
 import { STARTING_WEAPONS } from '../src/data/unlocks';
 import { WEAPON_LINE_BY_ID, type WeaponId } from '../src/data/weapons';
@@ -16,6 +19,34 @@ const speed = (
 	process.argv.includes('--speed') && GAME_SPEEDS.some((v) => v === speedArg) ? speedArg : 1
 ) as GameSpeed;
 const LEVELS = [1, 5, 10, 20, 30];
+
+/** Death round of a class at the level that unlocks it and at 30, next to the base class of the hero. */
+function classRows(def: (typeof HERO_CLASSES)[number]): string[] {
+	const base = HERO_CLASSES.find((c) => c.hero === def.hero) as (typeof HERO_CLASSES)[number];
+	return [def.unlockLevel, 30]
+		.filter((level, i, all) => all.indexOf(level) === i)
+		.map((level) => {
+			const own = simulateMany(def.hero, level, runs, 1, difficulty, speed, def.id);
+			const ref = simulateMany(def.hero, level, runs, 1, difficulty, speed, base.id);
+			// Deaths pile up on boss rounds, so the median barely moves: the mean is what tells classes apart.
+			const ratio = own.avgRound / ref.avgRound;
+			const verdict = ratio > 1.5 || ratio < 0.67 ? 'fora' : 'ok';
+			return `| ${def.id} | ${level} | ${own.avgRound.toFixed(1)} | ${ref.avgRound.toFixed(1)} | ${ratio.toFixed(2)} | ${own.medianRound} / ${ref.medianRound} | ${verdict} |`;
+		});
+}
+const classArg = process.argv[process.argv.indexOf('--class') + 1];
+if (process.argv.includes('--class') || process.argv.includes('--classes')) {
+	const picked = process.argv.includes('--classes')
+		? HERO_CLASSES.filter((c) => c.unlockLevel > 1)
+		: HERO_CLASSES.filter((c) => c.id === classArg);
+	if (picked.length === 0) throw new Error(`unknown class ${classArg}`);
+	console.log(
+		'| Classe | Nível | Round médio | Base | Razão | Mediana (classe / base) | Meta 0,67–1,5 |',
+	);
+	console.log('|---|---|---|---|---|---|---|');
+	for (const def of picked) for (const row of classRows(def)) console.log(row);
+	process.exit(0);
+}
 console.log(
 	'hero   lvl  avgRound  median  past50  bossHit  bossTime  avgKills  avgXp  pearls  fishSpent',
 );
