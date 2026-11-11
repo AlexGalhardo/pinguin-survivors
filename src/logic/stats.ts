@@ -1,4 +1,5 @@
 import type { HeroId } from '../config/constants';
+import type { ClassMulStat, HeroClassDef } from '../data/classes';
 import type { HeroDef } from '../data/heroes';
 import type { DamageTag, Element } from './combat';
 import { heroTree, treeStats } from './skill-tree';
@@ -121,12 +122,27 @@ export function getStat(stats: PlayerStats, key: StatKey): number {
 	return (stats as unknown as Record<string, number>)[key] as number;
 }
 
-/** Stats at the start of a run for a hero at `level` with the `tree` nodes allocated (ADR-019). */
-export function heroStats(hero: HeroDef, level: number, tree: readonly string[] = []): PlayerStats {
+/** Applies a class to freshly built stats: additions first, then the multipliers (SDD-024 RF-01). */
+export function applyClass(stats: PlayerStats, def: HeroClassDef): void {
+	for (const [key, value] of Object.entries(def.add)) addStat(stats, key as StatKey, value);
+	for (const [key, factor] of Object.entries(def.mul)) stats[key as ClassMulStat] *= factor;
+}
+
+/**
+ * Stats at the start of a run for a hero at `level` with the `tree` nodes allocated (ADR-019).
+ * `heroClass` (SDD-024) is applied last; without one the hero plays as the base class.
+ */
+export function heroStats(
+	hero: HeroDef,
+	level: number,
+	tree: readonly string[] = [],
+	heroClass?: HeroClassDef,
+): PlayerStats {
 	const s = baseStats(hero);
 	for (const [key, perLevel] of Object.entries(LEVEL_GROWTH[hero.id]))
 		addStat(s, key as StatKey, (perLevel as number) * (level - 1));
 	for (const [key, value] of Object.entries(treeStats(heroTree(hero.id), tree)))
 		addStat(s, key as StatKey, value as number);
+	if (heroClass) applyClass(s, heroClass);
 	return s;
 }
