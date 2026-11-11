@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
-	"description": "Static commercial site (Astro) for Pinguin Survivors; the demo is copied to /demo/ by scripts/build-site.ts.",
+	"description": "Static commercial site (Astro) for Penguin Survivors; the demo is copied to /demo/ by scripts/build-site.ts.",
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",

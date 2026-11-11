@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"title": "Pinguin Survivors — Brotato-style arena survivor with penguins and DOOM gore",
+		"title": "Penguin Survivors — Brotato-style arena survivor with penguins and DOOM gore",
 		"description": "Three penguins vs. zombies in a top-down arena survivor: 6 auto-firing weapons, a shop every round, and a level 1–100 that never resets."
 	},
 	"nav": {
@@ -10,7 +10,7 @@
 		"github": "GitHub"
 	},
 	"hero": {
-		"title": "Pinguin Survivors",
+		"title": "Penguin Survivors",
 		"pitch": "Three penguins. Three hundred zombies a round. Blood on the snow. A Brotato-style arena survivor where your progress never dies.",
 		"bullet1": "Cute penguins, DOOM-grade gore (toggle it if you must).",
 		"bullet2": "Six auto-firing weapons, a shop every round, builds that break the game.",
@@ -27,7 +27,7 @@
 	},
 	"trailer": {
 		"placeholder": "Trailer coming soon (date: TBD)",
-		"posterAlt": "Pinguin Survivors key art"
+		"posterAlt": "Penguin Survivors key art"
 	},
 	"features": {
 		"title": "What you get",
@@ -75,11 +75,11 @@
 	},
 	"press": {
 		"meta": {
-			"title": "Press kit — Pinguin Survivors",
-			"description": "Fact sheet, descriptions, screenshots and key art for Pinguin Survivors, the arena survivor with penguins, zombies and DOOM-style gore."
+			"title": "Press kit — Penguin Survivors",
+			"description": "Fact sheet, descriptions, screenshots and key art for Penguin Survivors, the arena survivor with penguins, zombies and DOOM-style gore."
 		},
 		"title": "Press kit",
-		"intro": "Everything you need to write about Pinguin Survivors. Screenshots are captured from the game at 1920×1080.",
+		"intro": "Everything you need to write about Penguin Survivors. Screenshots are captured from the game at 1920×1080.",
 		"back": "Back to the game page",
 		"facts": {
 			"title": "Fact sheet",
@@ -91,7 +91,7 @@
 			"genre": "Genre",
 			"languages": "Languages",
 			"website": "Website",
-			"gameValue": "Pinguin Survivors",
+			"gameValue": "Penguin Survivors",
 			"developerValue": "Alex Galhardo",
 			"platformsValue": "Windows (Steam) and Android (Google Play); a demo runs in desktop browsers",
 			"priceValue": "US$ 4.99 planned on Steam (final price TBD)",
@@ -102,7 +102,7 @@
 		},
 		"desc": {
 			"shortTitle": "Short description",
-			"short": "Pinguin Survivors is a top-down arena survivor with penguins, zombies and DOOM-style gore: survive timed rounds, shop between them and build a six-weapon arsenal.",
+			"short": "Penguin Survivors is a top-down arena survivor with penguins, zombies and DOOM-style gore: survive timed rounds, shop between them and build a six-weapon arsenal.",
 			"longTitle": "Long description",
 			"long1": "Three penguins, Jack, Bob and Lucia, hold the line against three hundred zombies a round. Each round is timed; when it ends a merchant opens shop and you buy, fuse and sell weapons, items and gear before the next one.",
 			"long2": "Six slots fire on their own while you dodge. Level-ups offer four stat cards, every hero levels from 1 to 100 and keeps it between runs, Hard difficulty raises the stakes, and the endless mode has no victory screen. The gore is DOOM-grade, with a toggle for maximum, reduced or green goo."

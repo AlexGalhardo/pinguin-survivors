@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"title": "Pinguin Survivors — 企鹅与 DOOM 式血腥的 Brotato 风格竞技场生存游戏",
+		"title": "Penguin Survivors — 企鹅与 DOOM 式血腥的 Brotato 风格竞技场生存游戏",
 		"description": "俯视角竞技场生存：三只企鹅对抗僵尸，6 件自动武器，每回合一次商店，1–100 级成长永不清零。"
 	},
 	"nav": {
@@ -10,7 +10,7 @@
 		"github": "GitHub"
 	},
 	"hero": {
-		"title": "Pinguin Survivors",
+		"title": "Penguin Survivors",
 		"pitch": "三只企鹅。每回合三百只僵尸。雪地上的血。一款 Brotato 风格的竞技场生存游戏，你的成长永不消失。",
 		"bullet1": "可爱的企鹅，DOOM 级别的血腥（需要的话可以关闭）。",
 		"bullet2": "6 件自动发射的武器，每回合一次商店，能打破游戏的构筑。",
@@ -27,7 +27,7 @@
 	},
 	"trailer": {
 		"placeholder": "预告片即将推出（日期：TBD）",
-		"posterAlt": "Pinguin Survivors 主视觉"
+		"posterAlt": "Penguin Survivors 主视觉"
 	},
 	"features": {
 		"title": "游戏特色",
@@ -75,11 +75,11 @@
 	},
 	"press": {
 		"meta": {
-			"title": "媒体资料 — Pinguin Survivors",
-			"description": "Pinguin Survivors 的资料表、简介、截图与主视觉：一款有企鹅、僵尸和 DOOM 式血腥的竞技场生存游戏。"
+			"title": "媒体资料 — Penguin Survivors",
+			"description": "Penguin Survivors 的资料表、简介、截图与主视觉：一款有企鹅、僵尸和 DOOM 式血腥的竞技场生存游戏。"
 		},
 		"title": "媒体资料",
-		"intro": "撰写 Pinguin Survivors 报道所需的一切。截图均来自游戏，分辨率为 1920×1080。",
+		"intro": "撰写 Penguin Survivors 报道所需的一切。截图均来自游戏，分辨率为 1920×1080。",
 		"back": "返回游戏页面",
 		"facts": {
 			"title": "资料表",
@@ -91,7 +91,7 @@
 			"genre": "类型",
 			"languages": "语言",
 			"website": "网站",
-			"gameValue": "Pinguin Survivors",
+			"gameValue": "Penguin Survivors",
 			"developerValue": "Alex Galhardo",
 			"platformsValue": "Windows（Steam）和 Android（Google Play）；桌面浏览器可玩试玩版",
 			"priceValue": "Steam 预计 4.99 美元（最终价格待定）",
@@ -102,7 +102,7 @@
 		},
 		"desc": {
 			"shortTitle": "简短介绍",
-			"short": "Pinguin Survivors 是一款俯视角竞技场生存游戏，有企鹅、僵尸和 DOOM 式血腥：在限时回合中求生，回合之间逛商店，打造六把武器的军械库。",
+			"short": "Penguin Survivors 是一款俯视角竞技场生存游戏，有企鹅、僵尸和 DOOM 式血腥：在限时回合中求生，回合之间逛商店，打造六把武器的军械库。",
 			"longTitle": "详细介绍",
 			"long1": "三只企鹅 Jack、Bob 和 Lucia 每回合要对抗三百只僵尸。每回合都有时限，结束后商人开店，你可以在下一回合前买入、融合和出售武器、道具与装备。",
 			"long2": "六个武器槽自动开火，你只管闪避。每次升级提供四张属性卡，每位英雄从 1 级升到 100 级并在对局之间保留，困难难度让挑战更大，无尽模式没有胜利画面。血腥程度堪比 DOOM，可切换为最大、减少或绿色黏液。"

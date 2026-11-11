@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"title": "Pinguin Survivors — arena survivor estilo Brotato com pinguins e gore DOOM",
+		"title": "Penguin Survivors — arena survivor estilo Brotato com pinguins e gore DOOM",
 		"description": "Três pinguins contra zumbis num arena survivor top-down: 6 armas automáticas, loja a cada round e level 1–100 que nunca zera."
 	},
 	"nav": {
@@ -10,7 +10,7 @@
 		"github": "GitHub"
 	},
 	"hero": {
-		"title": "Pinguin Survivors",
+		"title": "Penguin Survivors",
 		"pitch": "Três pinguins. Trezentos zumbis por round. Sangue na neve. Um arena survivor estilo Brotato em que seu progresso nunca morre.",
 		"bullet1": "Pinguins fofos, gore nível DOOM (dá para desligar, se precisar).",
 		"bullet2": "Seis armas automáticas, loja a cada round, builds que quebram o jogo.",
@@ -27,7 +27,7 @@
 	},
 	"trailer": {
 		"placeholder": "Trailer em breve (data: TBD)",
-		"posterAlt": "Arte-chave de Pinguin Survivors"
+		"posterAlt": "Arte-chave de Penguin Survivors"
 	},
 	"features": {
 		"title": "O que você encontra",
@@ -75,11 +75,11 @@
 	},
 	"press": {
 		"meta": {
-			"title": "Kit de imprensa — Pinguin Survivors",
-			"description": "Ficha técnica, descrições, screenshots e key art de Pinguin Survivors, o arena survivor com pinguins, zumbis e gore estilo DOOM."
+			"title": "Kit de imprensa — Penguin Survivors",
+			"description": "Ficha técnica, descrições, screenshots e key art de Penguin Survivors, o arena survivor com pinguins, zumbis e gore estilo DOOM."
 		},
 		"title": "Kit de imprensa",
-		"intro": "Tudo o que você precisa para escrever sobre Pinguin Survivors. As screenshots são capturadas do jogo em 1920×1080.",
+		"intro": "Tudo o que você precisa para escrever sobre Penguin Survivors. As screenshots são capturadas do jogo em 1920×1080.",
 		"back": "Voltar à página do jogo",
 		"facts": {
 			"title": "Ficha técnica",
@@ -91,7 +91,7 @@
 			"genre": "Gênero",
 			"languages": "Idiomas",
 			"website": "Site",
-			"gameValue": "Pinguin Survivors",
+			"gameValue": "Penguin Survivors",
 			"developerValue": "Alex Galhardo",
 			"platformsValue": "Windows (Steam) e Android (Google Play); a demo roda em navegadores de computador",
 			"priceValue": "US$ 4,99 previstos na Steam (preço final a definir)",
@@ -102,7 +102,7 @@
 		},
 		"desc": {
 			"shortTitle": "Descrição curta",
-			"short": "Pinguin Survivors é um arena survivor com câmera de cima, pinguins, zumbis e gore estilo DOOM: sobreviva a rounds cronometrados, compre na loja entre eles e monte um arsenal de seis armas.",
+			"short": "Penguin Survivors é um arena survivor com câmera de cima, pinguins, zumbis e gore estilo DOOM: sobreviva a rounds cronometrados, compre na loja entre eles e monte um arsenal de seis armas.",
 			"longTitle": "Descrição longa",
 			"long1": "Três pinguins, Jack, Bob e Lucia, seguram a linha contra trezentos zumbis por round. Cada round tem tempo; quando acaba, um mercador abre a loja e você compra, funde e vende armas, itens e equipamentos antes do próximo.",
 			"long2": "Seis slots atiram sozinhos enquanto você desvia. Cada level-up oferece quatro cartas de atributo, cada herói sobe do nível 1 ao 100 e mantém isso entre as partidas, a dificuldade Difícil aumenta o risco e o modo endless não tem tela de vitória. O gore é nível DOOM, com opção de máximo, reduzido ou gosma verde."
