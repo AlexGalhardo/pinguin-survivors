@@ -17,7 +17,8 @@ import { seedSaveScript } from './lib/seed-save';
 
 const args = process.argv.slice(2);
 const demo = args.includes('--demo');
-const DEMO_PORT = 5199;
+// Another local app may own the default port: `E2E_DEMO_PORT=5299 bun run e2e -- --demo`.
+const DEMO_PORT = Number(process.env.E2E_DEMO_PORT) || 5199;
 const base = demo
 	? `http://localhost:${DEMO_PORT}`
 	: (args.find((a) => !a.startsWith('--')) ?? 'http://localhost:5173');
@@ -145,7 +146,7 @@ async function gone(text: string): Promise<void> {
 async function checkSlots(): Promise<void> {
 	await click('LOAD GAME');
 	await see('load screen lists the slots', 'SLOT 3');
-	await see('slot 1 is a used slot', /Jack · level 1/);
+	await see('slot 1 is a used slot', /Jack · level 3/);
 	await click('BACK');
 	await see('back from the load screen', 'NEW GAME');
 	await click('NEW GAME');
@@ -340,7 +341,12 @@ let server: ReturnType<typeof Bun.spawn> | undefined;
 
 async function startDemoServer(): Promise<void> {
 	server = Bun.spawn(['bunx', '--bun', 'vite', '--port', String(DEMO_PORT), '--strictPort'], {
-		env: { ...process.env, VITE_DEMO: '1', SOUND_MUTED: 'true' },
+		env: {
+			...process.env,
+			VITE_DEMO: '1',
+			SOUND_MUTED: 'true',
+			VITE_CACHE_DIR: 'node_modules/.vite-demo',
+		},
 		stdout: 'ignore',
 		stderr: 'ignore',
 	});

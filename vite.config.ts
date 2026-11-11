@@ -21,6 +21,9 @@ function assetFiles(dir = 'public/assets'): string[] {
 export default defineConfig({
 	plugins: [tailwindcss()],
 	base: './',
+	// A second dev server (the demo E2E) gets its own dependency cache: two servers rewriting
+	// node_modules/.vite at once stall each other for a minute on Windows.
+	cacheDir: process.env.VITE_CACHE_DIR || 'node_modules/.vite',
 	// SOUND_* variables from .env are exposed to the game (import.meta.env.SOUND_MUTED).
 	envPrefix: ['VITE_', 'SOUND_'],
 	define: {
