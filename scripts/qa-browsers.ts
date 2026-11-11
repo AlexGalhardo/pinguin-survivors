@@ -193,7 +193,7 @@ async function runFlow(name: string, launch: () => Promise<Browser>): Promise<Re
 		await click(page, 'QUIT RUN');
 		await click(page, 'YES, QUIT');
 		await dismissUnlocks(page);
-		await see(page, 'YOU DIED');
+		await see(page, 'RUN ENDED');
 		step('game over');
 		await click(page, 'MAIN MENU');
 		await see(page, 'PLAY');

@@ -290,7 +290,7 @@ async function fullFlow(): Promise<void> {
 	await click('QUIT RUN');
 	await click('YES, QUIT');
 	await dismissUnlocks();
-	await see('React game over', 'YOU DIED');
+	await see('React game over', 'RUN ENDED');
 	await click('MAIN MENU');
 	await see('back on the React main menu', 'PLAY');
 	await click(/HISTORY/);

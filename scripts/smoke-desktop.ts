@@ -97,7 +97,7 @@ for (let i = 0; i < 6; i++) {
 	await next.click();
 	await page.waitForTimeout(400);
 }
-await see('game over', 'YOU DIED');
+await see('game over', 'RUN ENDED');
 await click('MAIN MENU');
 await see('back on the main menu', 'QUIT');
 await click('QUIT');
