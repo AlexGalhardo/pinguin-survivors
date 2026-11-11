@@ -9,6 +9,8 @@ if (!out) throw new Error('usage: bun scripts/qa-menus.ts <outDir>');
 const b = await chromium.launch({ args: ['--mute-audio'] });
 const VP: [number, number][] = [
 	[1280, 720],
+	// Steam Deck (16:10).
+	[1280, 800],
 	[1920, 1080],
 	[2560, 1080],
 	[2560, 1440],

@@ -209,10 +209,13 @@ function outcomeText(d: OfferDescription): string {
 function OfferOutcome({
 	offer,
 	sentenceOnly,
+	twoColumns,
 }: {
 	offer: ShopOfferData;
 	/** Phone landscape: just the sentence. */
 	sentenceOnly?: boolean;
+	/** Two columns of stat changes: only where two item cards are stacked above (tall screens). */
+	twoColumns?: boolean;
 }): ReactElement {
 	const d = offer.description;
 	if (!d) return <Hint>{t(`shop.kind.${offer.kind}` as I18nKey)}</Hint>;
@@ -220,7 +223,9 @@ function OfferOutcome({
 		<div className="flex min-w-0 flex-col gap-1">
 			<p className="m-0 text-body font-bold text-crit">{outcomeText(d)}</p>
 			{!sentenceOnly && (
-				<div className="grid grid-cols-2 gap-x-3 text-secondary">
+				<div
+					className={`grid gap-x-3 text-secondary ${twoColumns ? 'grid-cols-2' : 'grid-cols-1'}`}
+				>
 					{d.statChanges.map((c) => (
 						<div
 							key={c.stat}
@@ -639,7 +644,7 @@ export function Shop({
 										worn={labels ? wornFor(shown) : null}
 										labels={labels}
 									/>
-									<OfferOutcome offer={shown} />
+									<OfferOutcome offer={shown} twoColumns={labels} />
 								</>
 							) : null}
 						</section>
