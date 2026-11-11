@@ -132,7 +132,7 @@ for (const v of VIEWPORTS) {
 	await shot('select');
 
 	await page.goto(
-		`${base}/?touch=1&skipMenu=1&hero=jack&round=5&seed=1&god=1&weapons=machete:3,knives:2,auxPistol,iceShards:4,flameRing,molotov`,
+		`${base}/?touch=1&skipMenu=1&hero=jack&round=4&seed=1&god=1&weapons=machete:3,knives:2,auxPistol,iceShards:4,flameRing,molotov`,
 		{ waitUntil: 'load' },
 	);
 	await page.waitForFunction(`window.__GAME__ && ${G}.run`, null, { timeout: 30000 });

@@ -51,6 +51,8 @@ for (const [w, h] of VP) {
 	await p.keyboard.press('Escape');
 	await open(/HEROES/i);
 	await shot('hero');
+	// Match history is an entry of the main menu, not of the hero screen.
+	await p.keyboard.press('Escape');
 	await open('MATCH HISTORY');
 	await shot('history');
 	await p.keyboard.press('Escape');
