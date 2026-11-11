@@ -288,6 +288,8 @@ export class GameScene extends Phaser.Scene {
 	private startedAt = 0;
 	private achievementTimer = 0;
 	private moving = false;
+	/** The player has moved the hero in this scene run (first-run "move" hint, SDD-022). */
+	heroMoved = false;
 	private reflexTime = 0;
 	private barrierReady = false;
 	private barrierTimer = 0;
@@ -662,6 +664,7 @@ export class GameScene extends Phaser.Scene {
 
 		const intent = this.controls.move();
 		this.moving = intent.x !== 0 || intent.y !== 0;
+		if (this.moving) this.heroMoved = true;
 		const move = inputToWorld(intent.x, intent.y);
 		this.hero.update(dt, move, this.collideHero);
 		this.weaponRing.update(dt, this.build.weapons, this.hero.x, this.hero.y, this.enemies.grid);

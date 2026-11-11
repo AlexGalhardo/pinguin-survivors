@@ -47,6 +47,8 @@ export interface HudSnapshot {
 	} | null;
 	speed: number;
 	fps: number;
+	/** First-run hint to show now (SDD-022 RF-03); absent or null = none. */
+	tip?: 'move' | 'auto' | 'super' | null;
 }
 
 /** Publish rate: the HUD does not need every frame. */

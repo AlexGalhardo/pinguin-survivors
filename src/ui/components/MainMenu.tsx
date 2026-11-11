@@ -17,6 +17,8 @@ export interface MainMenuData {
 	hasSaves: boolean;
 	/** Desktop and mobile shells: shows "Quit" (the web build has nothing to close). */
 	canQuit: boolean;
+	/** Systems a new player has not reached yet stay out of the list (SDD-022); absent = all shown. */
+	systems?: { tree: boolean; heroes: boolean };
 }
 
 export interface MainMenuActions {
@@ -60,8 +62,12 @@ export function MainMenu({
 	];
 	const progression: Item[] = data.hasSlot
 		? [
-				{ id: 'hero', label: t('menu.hero'), run: actions.heroes },
-				{ id: 'workshop', label: t('menu.workshop'), run: actions.workshop },
+				...(data.systems?.heroes === false
+					? []
+					: [{ id: 'hero', label: t('menu.hero'), run: actions.heroes }]),
+				...(data.systems?.tree === false
+					? []
+					: [{ id: 'workshop', label: t('menu.workshop'), run: actions.workshop }]),
 				{ id: 'achievements', label: t('menu.achievements'), run: actions.achievements },
 				{ id: 'history', label: t('menu.history'), run: actions.history },
 			]

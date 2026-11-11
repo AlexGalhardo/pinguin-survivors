@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { PALETTE, toCss } from '../config/palette';
 import { sfx } from '../core/audio';
-import { getParams } from '../core/context';
+import { getParams, getSave } from '../core/context';
 import { GameEvents } from '../core/events';
 import { activeBudget } from '../core/tier';
 import { trackZoom } from '../core/viewport';
@@ -11,6 +11,7 @@ import { HEAL_POTION } from '../data/potions';
 import { t } from '../i18n';
 import { lightingFor } from '../logic/ambient';
 import { biomeForRound } from '../logic/biome';
+import { markSeen, tipStep } from '../logic/onboarding';
 import { xpToNext } from '../logic/progression';
 import { worldToScreen } from '../logic/projection';
 import { eliteTiers, isBossRound } from '../logic/round';
@@ -94,7 +95,20 @@ export class HudScene extends Phaser.Scene {
 		const run = game.run;
 		const tiers = eliteTiers(run.round);
 		const boss = game.enemies.boss;
+		// First-run hints (SDD-022 RF-03): what to show now, and what the player has just done.
+		const save = getSave(game);
+		const tips = tipStep(save.onboarding.seen, {
+			moved: game.heroMoved,
+			kills: run.kills,
+			superReady: game.superIsUnlocked && run.superCharge >= game.superCost,
+			superUsed: (run.counters.superUses ?? 0) > 0,
+		});
+		markSeen(
+			save,
+			tips.done.map((tip) => `tip.${tip}`),
+		);
 		publishHud({
+			tip: tips.show,
 			hp: run.hp,
 			maxHp: run.maxHp,
 			level: game.level.level,

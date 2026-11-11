@@ -20,4 +20,13 @@ export const screensPtBR = {
 	'unlock.weapon': 'NOVA ARMA',
 	'unlock.achievement': 'CONQUISTA',
 	'unlock.ok': 'CONTINUAR',
+	'onboard.unlock.tree':
+		'Árvore de habilidades liberada: gaste seus pontos em ÁRVORE DE HABILIDADES.',
+	'onboard.unlock.heroes': 'Poções e gatilhos liberados em HERÓIS E POÇÕES.',
+	'onboard.tip.move': 'Mova com WASD ou o analógico esquerdo.',
+	'onboard.tip.move.touch': 'Arraste no lado esquerdo para mover.',
+	'onboard.tip.auto':
+		'Suas armas atacam sozinhas: fique perto dos inimigos e fora das marcas vermelhas.',
+	'onboard.tip.super': 'Super Magia pronta: aperte ESPAÇO.',
+	'onboard.tip.super.touch': 'Super Magia pronta: toque na estrela.',
 } as const;

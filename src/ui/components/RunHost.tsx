@@ -1,15 +1,24 @@
 import { type ReactElement, useSyncExternalStore } from 'react';
 import { platform } from '../../core/platform';
 import { STEAM_URL } from '../../data/demo';
+import { systemUnlocked } from '../../logic/onboarding';
 import { commands } from '../commands';
+import { hudStore } from '../hud-bridge';
 import { playerStore } from '../player-bridge';
 import { dismissUnlock, publishUnlock, runUiStore } from '../run-bridge';
+import { getUiSave } from '../save-bridge';
 import { uiStore } from '../store';
 import { DemoEnd } from './DemoEnd';
 import { GameOver } from './GameOver';
 import { LevelUpCards } from './LevelUpCards';
 import { Pause } from './Pause';
 import { Unlock } from './Unlock';
+
+/** The tree shows in the run once the hero has a point: a level in the save or reached in this run (SDD-022). */
+export function treeUnlockedInRun(): boolean {
+	const save = getUiSave();
+	return !save || systemUnlocked(save, 'tree', hudStore.get().hud?.level ?? 1);
+}
 
 /** In-run React screens: level-up cards, pause, unlock notices and the run summary. */
 export function RunHost(): ReactElement | null {
@@ -57,7 +66,7 @@ export function RunHost(): ReactElement | null {
 	if (s.pause && screen === 'none')
 		return (
 			<Pause
-				data={s.pause}
+				data={{ ...s.pause, treeUnlocked: treeUnlockedInRun() }}
 				panel={panel}
 				actions={{
 					resume: commands.resume,

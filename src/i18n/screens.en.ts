@@ -20,4 +20,12 @@ export const screensEn = {
 	'unlock.weapon': 'NEW WEAPON',
 	'unlock.achievement': 'ACHIEVEMENT',
 	'unlock.ok': 'CONTINUE',
+	'onboard.unlock.tree': 'Skill tree unlocked: spend your points in SKILL TREE.',
+	'onboard.unlock.heroes': 'Potions and gambits unlocked in HEROES & POTIONS.',
+	'onboard.tip.move': 'Move with WASD or the left stick.',
+	'onboard.tip.move.touch': 'Drag on the left side to move.',
+	'onboard.tip.auto':
+		'Your weapons attack on their own: stay close to enemies and off the red marks.',
+	'onboard.tip.super': 'Super Magic is ready: press SPACE.',
+	'onboard.tip.super.touch': 'Super Magic is ready: tap the star.',
 } as const;

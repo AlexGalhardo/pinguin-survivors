@@ -80,6 +80,8 @@ export interface ShopData {
 	nextWaves?: readonly ('elite' | 'horde')[];
 	/** Elite Marks and Boss Cores of the run (ADR-021). */
 	materials?: { elite: number; boss: number };
+	/** False until the hero has a tree point to spend (SDD-022); absent = the button shows. */
+	treeUnlocked?: boolean;
 	/** Fixed "+1 potion" button once the first potion was bought; null/absent hides it. */
 	extraPotion?: { price: number; level: number; max: number; affordable: boolean } | null;
 }
@@ -489,7 +491,8 @@ export function Shop({
 						/>
 						{t('shop.fish', { n: data.fish })}
 					</span>
-					{data.materials && (
+					{/* Marks and Cores show once the run has one (SDD-022 RF-01). */}
+					{data.materials && data.materials.elite + data.materials.boss > 0 && (
 						<span className="text-gold-bright tabular-nums">
 							{t('shop.materials', data.materials)}
 						</span>
@@ -665,9 +668,11 @@ export function Shop({
 						})}
 					</Btn>
 				)}
-				<Btn onActivate={actions.tree} variant="secondary">
-					{t('menu.workshop')}
-				</Btn>
+				{data.treeUnlocked !== false && (
+					<Btn onActivate={actions.tree} variant="secondary">
+						{t('menu.workshop')}
+					</Btn>
+				)}
 				<Btn onActivate={actions.next} variant="primary" className="min-w-52">
 					{t('shop.next')}
 				</Btn>

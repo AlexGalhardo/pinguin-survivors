@@ -22,6 +22,7 @@ import { achievementProgress, availablePoints, buyExtra, extraLevel } from '../l
 import { demoAllowsHero, demoDifficulty, demoHidesAchievement } from '../logic/demo';
 import { maxSelectableDifficulty } from '../logic/difficulty';
 import { ACTIONS, type Action, DEFAULT_BINDS, keyLabel, rebind } from '../logic/keybinds';
+import { systemUnlocked } from '../logic/onboarding';
 import { xpToNext } from '../logic/progression';
 import { type GoreMode, NUMBER_SIZES, type SaveData } from '../logic/save';
 import {
@@ -38,6 +39,7 @@ import { achievementDescription, achievementName } from './achievement-text';
 import { menuCommands } from './commands';
 import type { SettingsRow } from './components/Settings';
 import { ensureLangFont } from './lang-font';
+import { announceUnlocks } from './onboarding-ui';
 import type { MenuView } from './Router';
 import { publishUnlock } from './run-bridge';
 import { getUiSave, touchSave } from './save-bridge';
@@ -114,9 +116,15 @@ function isFullscreen(): boolean {
 }
 
 function mainMenu(save: SaveData): MenuView {
+	// Back from a run: say what the progress just opened, once (SDD-022 RF-02).
+	if (hasActiveSlot()) announceUnlocks();
 	return {
 		screen: 'main-menu',
 		data: {
+			systems: {
+				tree: systemUnlocked(save, 'tree'),
+				heroes: systemUnlocked(save, 'heroes'),
+			},
 			hasSlot: hasActiveSlot(),
 			hasSaves: slotSummaries().some((s) => s !== null),
 			continueRound: hasActiveSlot() && save.activeRun ? save.activeRun.nextRound : null,

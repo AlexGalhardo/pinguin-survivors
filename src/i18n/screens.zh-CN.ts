@@ -20,4 +20,11 @@ export const screensZhCN = {
 	'unlock.weapon': '新武器',
 	'unlock.achievement': '成就',
 	'unlock.ok': '继续',
+	'onboard.unlock.tree': '技能树已解锁：在技能树中使用你的点数。',
+	'onboard.unlock.heroes': '药水和触发器已在英雄与药水中解锁。',
+	'onboard.tip.move': '用 WASD 或左摇杆移动。',
+	'onboard.tip.move.touch': '在屏幕左侧拖动来移动。',
+	'onboard.tip.auto': '武器会自动攻击：靠近敌人，避开红色标记。',
+	'onboard.tip.super': '超级魔法已就绪：按空格键。',
+	'onboard.tip.super.touch': '超级魔法已就绪：点击星星。',
 } as const;

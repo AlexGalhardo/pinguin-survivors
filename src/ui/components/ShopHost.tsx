@@ -1,7 +1,10 @@
-import { type ReactElement, useSyncExternalStore } from 'react';
+import { type ReactElement, useEffect, useSyncExternalStore } from 'react';
 import { commands } from '../commands';
+import { hudStore } from '../hud-bridge';
+import { announceUnlocks } from '../onboarding-ui';
 import { type ShopView, shopStore } from '../shop-bridge';
 import { useUiStore } from '../store';
+import { treeUnlockedInRun } from './RunHost';
 import { Shop, type ShopActions, type ShopData } from './Shop';
 
 const ACTIONS: ShopActions = {
@@ -53,6 +56,13 @@ export function ShopHost(): ReactElement | null {
 	const view = useSyncExternalStore(shopStore.subscribe, () => shopStore.get().shop);
 	// A menu opened from the shop (the skill tree) replaces it until Back.
 	const screen = useUiStore((s) => s.screen);
+	const open = view !== null;
+	// Opening the shop is where a level gained in the round first matters: announce the tree here (SDD-022 RF-02).
+	useEffect(() => {
+		if (open) announceUnlocks(hudStore.get().hud?.level ?? 1);
+	}, [open]);
 	if (!view || screen !== 'none') return null;
-	return <Shop data={toShopData(view)} actions={ACTIONS} />;
+	return (
+		<Shop data={{ ...toShopData(view), treeUnlocked: treeUnlockedInRun() }} actions={ACTIONS} />
+	);
 }

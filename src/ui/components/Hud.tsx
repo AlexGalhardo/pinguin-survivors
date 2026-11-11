@@ -241,6 +241,20 @@ export function HudView({
 					})()}
 			</div>
 
+			{hud.tip && (
+				<div
+					data-hud="tip"
+					role="status"
+					className="absolute bottom-[14vh] left-1/2 max-w-[80vw] -translate-x-1/2 border border-line bg-night/85 px-4 py-2 text-center text-body font-bold text-crit"
+				>
+					{t(
+						(hud.tip !== 'auto' && touch
+							? `onboard.tip.${hud.tip}.touch`
+							: `onboard.tip.${hud.tip}`) as I18nKey,
+					)}
+				</div>
+			)}
+
 			{version && !touch && (
 				<div className="absolute bottom-[0.6vh] left-1/2 -translate-x-1/2 text-[0.7rem] text-text-dim">
 					{version}

@@ -20,4 +20,13 @@ export const screensEs = {
 	'unlock.weapon': 'ARMA NUEVA',
 	'unlock.achievement': 'LOGRO',
 	'unlock.ok': 'CONTINUAR',
+	'onboard.unlock.tree':
+		'Árbol de habilidades desbloqueado: gasta tus puntos en ÁRBOL DE HABILIDADES.',
+	'onboard.unlock.heroes': 'Pociones y disparadores desbloqueados en HÉROES Y POCIONES.',
+	'onboard.tip.move': 'Muévete con WASD o el stick izquierdo.',
+	'onboard.tip.move.touch': 'Arrastra en el lado izquierdo para moverte.',
+	'onboard.tip.auto':
+		'Tus armas atacan solas: quédate cerca de los enemigos y fuera de las marcas rojas.',
+	'onboard.tip.super': 'Súper Magia lista: pulsa ESPACIO.',
+	'onboard.tip.super.touch': 'Súper Magia lista: toca la estrella.',
 } as const;

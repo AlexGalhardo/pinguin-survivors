@@ -21,6 +21,8 @@ export interface PauseData {
 	gear: {
 		slots: readonly { slot: string; id: string | null; detail?: string }[];
 	};
+	/** False until the hero has a tree point to spend (SDD-022); absent = the entry shows. */
+	treeUnlocked?: boolean;
 }
 
 export interface PauseActions {
@@ -64,6 +66,7 @@ export function Pause({
 }): ReactElement {
 	const [confirming, setConfirming] = useState(false);
 	const compact = useCompact();
+	const tree = data.treeUnlocked !== false;
 	const onSelect = (id: string): void => {
 		if (id === 'resume') actions.resume();
 		else if (id === 'tree') actions.tree();
@@ -87,9 +90,11 @@ export function Pause({
 			<Btn onActivate={actions.resume} variant="primary">
 				{t('pause.resume')}
 			</Btn>
-			<Btn onActivate={actions.tree} variant="secondary">
-				{t('menu.workshop')}
-			</Btn>
+			{tree && (
+				<Btn onActivate={actions.tree} variant="secondary">
+					{t('menu.workshop')}
+				</Btn>
+			)}
 			<Btn onActivate={actions.settings} variant="secondary">
 				{t('menu.settings')}
 			</Btn>
@@ -103,7 +108,7 @@ export function Pause({
 			onSelect={onSelect}
 			items={[
 				{ id: 'resume', label: t('pause.resume') },
-				{ id: 'tree', label: t('menu.workshop') },
+				...(tree ? [{ id: 'tree', label: t('menu.workshop') }] : []),
 				{ id: 'settings', label: t('menu.settings') },
 				{
 					id: 'quit',
