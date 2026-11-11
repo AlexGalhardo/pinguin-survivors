@@ -2,7 +2,7 @@
 	"name": "pinguin-survivors-desktop",
 	"version": "0.0.1",
 	"private": true,
-	"description": "Electron shell (Windows x64, Steam) for Pinguin Survivors: loads the game build and exposes window.platform.",
+	"description": "Electron shell (Windows x64, Steam) for Penguin Survivors: loads the game build and exposes window.platform.",
 	"author": "Alex Galhardo",
 	"main": "app/main.js",
 	"dependencies": {

@@ -84,7 +84,7 @@ for (const [entry, format] of [
 	]);
 }
 
-const productName = demo ? 'Pinguin Survivors Demo' : 'Pinguin Survivors';
+const productName = demo ? 'Penguin Survivors Demo' : 'Penguin Survivors';
 await run(
 	[
 		'bunx',

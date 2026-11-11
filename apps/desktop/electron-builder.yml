@@ -1,7 +1,7 @@
 # Windows x64 for Steam (SDD-007 RF-03): an unpacked folder that Steam uploads; Steam installs it.
 # Output goes to apps/desktop/dist/<full|demo>/ (scripts/build-desktop.ts overrides the folder).
 appId: xyz.lekzera.pinguin-survivors
-productName: Pinguin Survivors
+productName: Penguin Survivors
 directories:
     output: dist/full
 files:

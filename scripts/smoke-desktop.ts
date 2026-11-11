@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { chromium } from 'playwright';
 
 const flavor = process.argv[2] === 'demo' ? 'demo' : 'full';
-const exe = `apps/desktop/dist/${flavor}/win-unpacked/Pinguin Survivors${flavor === 'demo' ? ' Demo' : ''}.exe`;
+const exe = `apps/desktop/dist/${flavor}/win-unpacked/Penguin Survivors${flavor === 'demo' ? ' Demo' : ''}.exe`;
 if (!existsSync(exe)) throw new Error(`build first: ${exe} not found`);
 const port = 9333;
 // A fresh profile per run: no saved run or language leaks in from earlier launches.
