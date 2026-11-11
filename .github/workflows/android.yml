@@ -72,6 +72,6 @@ jobs:
               run: ./gradlew ${{ inputs.build_type == 'debug' && 'bundleDebug' || 'bundleRelease' }} --no-daemon
             - uses: actions/upload-artifact@v7.0.2
               with:
-                  name: pinguin-survivors-${{ inputs.build_type }}-aab
+                  name: penguin-survivors-${{ inputs.build_type }}-aab
                   path: apps/mobile/android/app/build/outputs/bundle/${{ inputs.build_type }}/*.aab
                   if-no-files-found: error

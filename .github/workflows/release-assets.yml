@@ -56,8 +56,8 @@ jobs:
               shell: pwsh
               run: |
                   New-Item -ItemType Directory -Force -Path out | Out-Null
-                  Compress-Archive -Path apps/desktop/dist/full/win-unpacked -DestinationPath "out/pinguin-survivors-$env:VERSION-windows-x64.zip"
-                  Compress-Archive -Path apps/desktop/dist/demo/win-unpacked -DestinationPath "out/pinguin-survivors-demo-$env:VERSION-windows-x64.zip"
+                  Compress-Archive -Path apps/desktop/dist/full/win-unpacked -DestinationPath "out/penguin-survivors-$env:VERSION-windows-x64.zip"
+                  Compress-Archive -Path apps/desktop/dist/demo/win-unpacked -DestinationPath "out/penguin-survivors-demo-$env:VERSION-windows-x64.zip"
             - uses: actions/upload-artifact@v7.0.2
               with:
                   name: windows-zips
@@ -103,7 +103,7 @@ jobs:
             - name: Name the APK
               run: |
                   mkdir out
-                  cp apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk "out/pinguin-survivors-$VERSION-android-debug.apk"
+                  cp apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk "out/penguin-survivors-$VERSION-android-debug.apk"
             - uses: actions/upload-artifact@v7.0.2
               with:
                   name: android-apk
