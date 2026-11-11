@@ -1,6 +1,6 @@
 # Arquitetura técnica — Penguin Survivors
 
-> **Versão** 2.6 · **Data** 2026-11-11 · Estado atual do código (`main` depois da 0.10.1, fases F1–F5 do ROADMAP: UI só React no Estilo D, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4, campanha de 50 rounds em 5 biomas, velocidade 1×/1,5×/2×). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.6 · **Data** 2026-11-11 · Estado atual do código (release 0.11.0, fases F1–F5 do ROADMAP: UI só React no Estilo D, árvore de habilidades, raridade I–V, loja e pausa estilo Diablo 4, campanha de 50 rounds em 5 biomas, velocidade 1×/1,5×/2×). Alvo da 1.0 e migrações pendentes em [sdds/](sdds/README.md) e no [ROADMAP.md](../ROADMAP.md). Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 
