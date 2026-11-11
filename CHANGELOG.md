@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **shop:** With a worn item compared, the before and after list ran over the stat strip at 1920x1080.
 - **i18n:** Skill tree point texts no longer read "Cost: 1 points" (reworded in EN, PT-BR and ES).
 - **qa:** `scripts/qa-mobile.ts` timed out before the shop (it used round 5, a boss round since 0.7.1) and `scripts/qa-menus.ts` looked for the match history inside the hero screen; both reach every screen again and report no issues.
+- **shop:** On phones the buy and lock buttons are narrower, so the offer name is no longer cut to "Ring ...".
+- **release:** A version in the changelog no longer repeats a group (`### Fixed` twice): `scripts/release.ts` merges the hand-written entries with the commit lines.
 
 ## [0.10.1] - 2026-11-10
 

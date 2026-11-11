@@ -96,7 +96,7 @@ Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 |---|---|
 | Antes de commitar | `bun run lint` → `bun run typecheck` → `bun test` |
 | Antes de pushar | `bun run lint` → `bun run typecheck` → `bun test` → `bun run build` |
-| Antes de release | tudo acima + `bun run e2e` e `bun run e2e -- --demo` + `bun scripts/qa-browsers.ts` (com `vite preview --port 4173`) + `bun scripts/perf.ts --round 40` (≥ 58 FPS) + `bun scripts/pack-atlas.ts --check` se a arte mudou |
+| Antes de release | tudo acima + `bun run e2e` e `bun run e2e -- --demo` + `bun scripts/qa-browsers.ts` (com `bun run dev` na porta 5173; o build de produção não expõe `window.__GAME__`, que o script usa) + `bun scripts/perf.ts --round 40` (≥ 58 FPS) + `bun scripts/pack-atlas.ts --check` se a arte mudou |
 | Site (`site/`) | `cd site && bun run build` + Lighthouse ≥ 95 |
 
 Nunca `--no-verify`. Gate falhou → corrigir a causa.
@@ -125,7 +125,7 @@ bun run build:desktop:demo       # Electron demo (apps/desktop/dist/demo/)
 bun run lint:i18n · bun scripts/i18n-check.ts   # textos JSX literais e paridade dos idiomas
 bun test · bun run typecheck · bun run lint (Biome) · bun run lint:fix
 bun run e2e                      # Playwright (com bun run dev)
-bun scripts/qa-browsers.ts       # Chrome/Edge/Firefox (com vite preview --port 4173)
+bun scripts/qa-browsers.ts       # Chrome/Edge/Firefox (com bun run dev; o build de produção não expõe __GAME__)
 bun scripts/perf.ts --round 40   # orçamento de performance
 bun scripts/sim.ts 20            # simulação headless
 bun scripts/playtest-bot.ts …    # bot no jogo real

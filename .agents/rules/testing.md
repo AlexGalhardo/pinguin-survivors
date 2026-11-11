@@ -8,4 +8,4 @@
 - Mudança em dados de gameplay: sim (`bun scripts/sim.ts`) e, para milestones, bot (`bun scripts/playtest-bot.ts`); ver `.agents/rules/balance.md`.
 - Toda tarefa do ROADMAP tem um **assert** (comando, teste ou métrica). A tarefa só é `[x]` com o assert executado e a evidência anotada na linha; a **auditoria** é um checkbox separado, feito por quem revisa.
 - Nunca desative, pule ou enfraqueça um teste para "passar"; corrija a causa.
-- QA cross-browser antes de release: `bun scripts/qa-browsers.ts` (Chrome, Edge, Firefox) com `vite preview --port 4173`.
+- QA cross-browser antes de release: `bun scripts/qa-browsers.ts` (Chrome, Edge, Firefox) com `bun run dev` na porta 5173; o build de produção não expõe `window.__GAME__`, que o script usa. O Firefox do Playwright precisa estar instalado (`bunx playwright install firefox`).
