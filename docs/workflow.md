@@ -1,6 +1,6 @@
 # Workflow — sessões de agentes, git, versionamento e ferramentas
 
-> **Versão** 2.1 · **Data** 2026-11-08 · Substitui `agent-workflow.md`, `git-and-versioning.md` e `tooling.md`. Plano de trabalho: [../ROADMAP.md](../ROADMAP.md) (o `PLAN.md` é histórico). Decisões: [adrs/](adrs/README.md).
+> **Versão** 2.2 · **Data** 2026-11-11 · Substitui `agent-workflow.md`, `git-and-versioning.md` e `tooling.md`. Plano de trabalho: [../ROADMAP.md](../ROADMAP.md) (o `PLAN.md` é histórico). Decisões: [adrs/](adrs/README.md).
 
 ## Índice
 
@@ -16,13 +16,13 @@
 
 ## 1. Protocolo de sessão
 
-1. Ler `CLAUDE.md` → **`ROADMAP.md`** (marco atual e próxima tarefa `[ ]`) → a SDD da frente → os docs citados por ela ([gdd.md](gdd.md), [visual.md](visual.md), [audio.md](audio.md), [architecture.md](architecture.md), [balancing-and-simulation.md](balancing-and-simulation.md)).
-2. Pegar **uma** tarefa do ROADMAP (ou um grupo coeso) na ordem do marco. Não pular marcos sem pedido do desenvolvedor.
+1. Ler `CLAUDE.md` → **`ROADMAP.md`** (primeira tarefa `[ ]` livre da fase mais baixa; o loop completo está na seção 2 dele) → a SDD da frente → os docs citados por ela ([gdd.md](gdd.md), [visual.md](visual.md), [audio.md](audio.md), [architecture.md](architecture.md), [balancing-and-simulation.md](balancing-and-simulation.md)).
+2. Pegar **uma** tarefa do ROADMAP (ou um grupo coeso) na ordem da fase. Tarefa 🛑 não bloqueia: pule para a próxima livre. Não pular fases sem pedido do desenvolvedor.
 3. Implementar seguindo a SDD; se a spec precisar mudar, **editar a SDD primeiro** e registrar a decisão (ADR novo se for arquitetural).
-4. **Verificar** com o assert da tarefa (comando/teste/métrica do ROADMAP) e os gates (§7). Mudança visível → `bun run dev` + agent-browser com os query params de debug.
+4. **Verificar** com o assert da tarefa (comando/teste/métrica do ROADMAP) e os gates (§7). Mudança visível → `SOUND_MUTED=true bun run dev` + `bun scripts/qa-menus.ts <dir>` e `bun scripts/qa-mobile.ts <dir>` (`issues` vazio) e as capturas conferidas.
 5. Atualizar o **ROADMAP.md**: `[x]` feito com a evidência (comando + resultado em uma linha) · `[~]` bloqueado com o motivo · `[ ]` pendente.
 6. `CHANGELOG.md` `[Unreleased]` para mudanças relevantes (Keep a Changelog 1.1.0). Números → `balancing-and-simulation.md` Parte B. Arte → `visual.md` §11. Áudio → `audio.md`.
-7. Micro-commits em Conventional Commits; **push após cada commit** (depois dos gates). Release ao fechar um marco (§6).
+7. Micro-commits em Conventional Commits; **push após cada commit** (depois dos gates). Ao fechar uma fase: auditoria da fase e release com `.exe` e `.apk` (§6).
 8. Gates de aprovação do desenvolvedor (🛑 no ROADMAP): concepts de arte, gasto de créditos > 200 gerações ou > 2.000 créditos ElevenLabs, retag/apagar tags, publicação em loja, mudança de escopo.
 
 ## 2. Papéis dos agentes
@@ -51,13 +51,13 @@ Relatório de agente é alegação, não evidência: conferir diff, testes e CI 
 
 - Assert da tarefa do ROADMAP passa (comando/teste/métrica) e a evidência está na linha da tarefa.
 - Lógica nova coberta por `bun:test`; componente React com lógica coberto por teste de componente.
-- Funciona no Chrome em 1920×1080 sem scroll e sem erros de console; mudanças de UI conferidas também em 1280×720 e 844×390 (celular paisagem) e comparadas ao wireframe da tela (`docs/wireframes/`), com texto ≥ 22 px (18 px no celular), contraste AA e padding ≤ 20 px (checklist da skill `pinguin-ui-hud`).
+- Funciona no Chrome em 1920×1080 sem scroll e sem erros de console; mudanças de UI conferidas também em 2560×1440, 1280×800 (Steam Deck), 1280×720 e celular paisagem (844×390 e 800×360 em DPR 3) pelos scripts `qa-menus` e `qa-mobile`, com texto ≥ 22 px (18 px no celular), contraste AA e padding ≤ 20 px (checklist da skill `pinguin-ui-hud`).
 - Textos nos 4 idiomas; chaves de assets no manifest; números espelhados na Parte B.
 - CHANGELOG e docs afetados atualizados; gates verdes; commit em Conventional Commits; push feito.
 
 ## 5. Git e Conventional Commits
 
-Remoto `origin` → `git@github.com:AlexGalhardo/pinguin-survivors.git`, branch principal **`main`**. Branches históricas: `legacy-voices` (iso + vozes, 2026-11-08), `starfall-survivors-legacy`, `pinguin-survivors-legacy`. Não commitar nelas.
+O jogo se chama **Penguin Survivors** (ADR-028); o repositório mantém o nome antigo até o desenvolvedor renomeá-lo. Remoto `origin` → `git@github.com:AlexGalhardo/pinguin-survivors.git`, branch principal **`main`**. Branches históricas: `legacy-voices` (iso + vozes, 2026-11-08), `starfall-survivors-legacy`, `pinguin-survivors-legacy`. Não commitar nelas.
 
 Conventional Commits 1.0.0 (`commitlint.config.js`; hooks Husky vazios por escolha do desenvolvedor, valide com `echo "<msg>" | bunx commitlint`):
 
@@ -65,7 +65,7 @@ Conventional Commits 1.0.0 (`commitlint.config.js`; hooks Husky vazios por escol
 <type>(<scope>)<!>: <descrição em inglês, imperativo, minúscula, sem ponto, ≤ 72 chars>
 ```
 
-Tipos: `feat` (MINOR), `fix` (PATCH), `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`; `!` ou `BREAKING CHANGE:` → MAJOR. Escopos: `arena`, `weapons`, `shop`, `cards`, `economy`, `danger`, `ui`, `hud`, `i18n`, `save`, `platform`, `desktop`, `mobile`, `site`, `art`, `audio`, `balance`, `sim`, `demo`, `release`, `docs`, `deps`. Um commit por mudança lógica; nada de "WIP".
+Tipos: `feat` (MINOR), `fix` (PATCH), `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`; `!` ou `BREAKING CHANGE:` → MAJOR. Escopos: `game`, `arena`, `weapons`, `shop`, `cards`, `economy`, `danger`, `ui`, `hud`, `i18n`, `save`, `platform`, `desktop`, `mobile`, `site`, `art`, `audio`, `balance`, `sim`, `demo`, `release`, `docs`, `deps`. Um commit por mudança lógica; nada de "WIP".
 
 **Micro-commits obrigatórios** (decisão do desenvolvedor, 2026-11-08): um commit por mudança lógica — uma feature, uma correção, um ajuste de dados, um lote de arte, um doc — com o teste dela no mesmo commit. **Nunca** um "super commit" que junta frentes diferentes (ex.: árvore + saves + loja + docs num commit só). Quando vários agentes entregam juntos, o orquestrador separa o working tree em commits por frente (`git add <arquivos>` ou `git add -p`), cada um com o código verde (typecheck e testes passando naquele ponto), e faz push após cada um. A release é o "merge rebase" desses commits: o corpo dela cita cada micro-commit (o `release.ts` gera uma linha por commit, com escopo, descrição e link), então o histórico precisa contar a história commit a commit.
 
@@ -74,11 +74,11 @@ Tipos: `feat` (MINOR), `fix` (PATCH), `docs`, `style`, `refactor`, `perf`, `test
 Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 
 - **SemVer sem pré-release**: `0.0.x` = alpha (refatoração top-down até a demo jogável), `0.1.x` = beta (demo pública, Next Fest, polimento), **`1.0.0`** = lançamento comercial; depois MAJOR (save incompatível ou remoção de conteúdo), MINOR (conteúdo/feature), PATCH (correções e balanceamento).
-- `package.json.version` = tag sem `v`. Versão atual: **0.10.1** publicada (Latest).
+- `package.json.version` = tag sem `v`. Versão publicada: **0.10.1** (Latest); as próximas saem uma por fase do ROADMAP (`0.11.0` em diante).
 - **Release como merge rebase**: o corpo da release lista **cada micro-commit** desde a tag anterior (uma linha por commit, agrupada por tipo), como se a branch tivesse sido integrada com rebase. Um super commit apaga essa história e é proibido.
 - **Release GitHub** por tag: título `vX.Y.Z`; corpo em grupos Keep a Changelog (`### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`, só os não vazios), linhas `- **escopo:** Descrição ([abc1234](…/commit/sha))`; `0.x` marcados **pre-release**.
 - **Fluxo ao fechar um marco**: micro-commits → `docs(roadmap): close <marco>` → `bun scripts/release.ts X.Y.Z` (gates, bump, CHANGELOG, commit `chore(release): X.Y.Z`, tag anotada, `git push --follow-tags`, `gh release create`). Detalhes em [sdds/SDD-011](sdds/SDD-011-releases-vukem.md).
-- **Uma release por marco** (decisão do desenvolvedor, 2026-11-08): o marco inteiro vai numa release só (M1 → `0.0.12`, M2 → `0.0.13`). Nunca uma release por tarefa.
+- **Uma release por fase do ROADMAP** (decisão do desenvolvedor, 2026-11-11; antes era uma por marco): a fase inteira vai numa release só, nunca uma por tarefa, e **toda release leva o `.exe` do Windows e o `.apk` do Android** para o desenvolvedor baixar e testar. A release de fase não espera "ok"; só a `1.0.0` tem gate. Se a ferramenta recusar a publicação, o agente não contorna: deixa o comando pronto e gera os builds locais em `apps/desktop/dist/local-<sha>/`.
 - **Latest**: releases `0.x` saem como pre-release. A partir da `0.2.0` o release sai com `--stable` (`bun scripts/release.ts 0.2.0 --stable`), e o GitHub marca como Latest.
 - **Cada release leva os assets** de Windows e Android:
   1. `bun run build:desktop` e `bun run build:desktop:demo` geram `apps/desktop/dist/full/win-unpacked/` e `apps/desktop/dist/demo/win-unpacked/`.
@@ -96,12 +96,12 @@ Referência: <https://github.com/AlexGalhardo/vukem/releases> (ADR-015).
 |---|---|
 | Antes de commitar | `bun run lint` → `bun run typecheck` → `bun test` |
 | Antes de pushar | `bun run lint` → `bun run typecheck` → `bun test` → `bun run build` |
-| Antes de release | tudo acima + `bun run e2e` e `bun run e2e -- --demo` + `bun scripts/qa-browsers.ts` (com `bun run dev` na porta 5173; o build de produção não expõe `window.__GAME__`, que o script usa) + `bun scripts/perf.ts --round 40` (≥ 58 FPS) + `bun scripts/pack-atlas.ts --check` se a arte mudou |
+| Antes de release | tudo acima + `bun run e2e` e `bun run e2e -- --demo` + `bun scripts/qa-menus.ts <dir>` e `bun scripts/qa-mobile.ts <dir>` (`issues` vazio) + `bun scripts/qa-browsers.ts` (com `bun run dev` na porta 5173; o build de produção não expõe `window.__GAME__`, que o script usa) + `bun scripts/perf.ts --round 40` (≥ 58 FPS) + `bun scripts/pack-atlas.ts --check` se a arte mudou |
 | Site (`site/`) | `cd site && bun run build` + Lighthouse ≥ 95 |
 
 Nunca `--no-verify`. Gate falhou → corrigir a causa.
 
-**Testes, E2E, sim, perf e bot rodam sem som** (`SOUND_MUTED=true bun run dev`; navegadores com `--mute-audio`, já nos scripts). `bun test tests/ui` roda isolado quando a suíte inteira mistura ambientes. `bun run e2e -- --demo` sobe o próprio servidor com `VITE_DEMO=1` (porta 5199).
+**Testes, E2E, sim, perf e bot rodam sem som** (`SOUND_MUTED=true bun run dev`; navegadores com `--mute-audio`, já nos scripts). `bun test tests/ui` roda isolado quando a suíte inteira mistura ambientes. `bun run e2e -- --demo` sobe o próprio servidor com `VITE_DEMO=1`, cache do Vite separado e porta 5199 (`E2E_DEMO_PORT=<porta>` quando ela for de outro processo). Os scripts de QA partem de um save que já jogou (`scripts/lib/seed-save.ts`).
 
 **Arte (regra permanente do desenvolvedor)**: nunca apague nem substitua frames ou atlas de heróis e inimigos existentes. Variantes e refações ficam em `art-src/pixellab/anim-v2/` sem ligação ao jogo; animação nova (`fly`, `attack`) entra como animação adicional no mesmo atlas `enemy.<id>`, e `bun scripts/pack-heroes.ts` só reempacota quando os frames antigos continuam idênticos (confira antes de commitar; `git status --short | grep '^ D'` deve ficar vazio). Detalhes em [visual.md](visual.md) e na skill `pinguin-art-assets`.
 
@@ -126,6 +126,9 @@ bun run lint:i18n · bun scripts/i18n-check.ts   # textos JSX literais e paridad
 bun test · bun run typecheck · bun run lint (Biome) · bun run lint:fix
 bun run e2e                      # Playwright (com bun run dev)
 bun scripts/qa-browsers.ts       # Chrome/Edge/Firefox (com bun run dev; o build de produção não expõe __GAME__)
+bun scripts/qa-menus.ts <dir>    # menus, loja e pausa em 5 resoluções (inclui Steam Deck e 2560×1440)
+bun scripts/qa-mobile.ts <dir>   # celular paisagem: scroll, corte e HUD × controles de toque
+bun scripts/sim.ts 200 --classes # cada classe contra a classe base do herói
 bun scripts/perf.ts --round 40   # orçamento de performance
 bun scripts/sim.ts 20            # simulação headless
 bun scripts/playtest-bot.ts …    # bot no jogo real
