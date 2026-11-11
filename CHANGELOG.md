@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **game:** The game is now called **Penguin Survivors** (ADR-028): title in the 4 languages, page title, the Windows executable (`Penguin Survivors.exe`), the Android app name and application id (`xyz.lekzera.penguinsurvivors`), the release file names, the site and the docs. Saves, storage keys and the repository URL keep the old spelling.
 - **ui:** UI polish pass (SDD-021). Hero stats are drawn everywhere with their pixel icon, a capitalized label and the value (`StatLine`): the shop strip, the pause sheet and the hero select.
 - **ui:** Run summary shows one labeled number per block (kills, time, damage, XP, Fish, levels, Pearls) instead of two sentences, and quitting from the pause menu reads "RUN ENDED" instead of "YOU DIED".
 - **ui:** Pause sheet shows HP, armor and damage as three headline blocks and lines up equipment and weapon slots on one grid with column titles.
