@@ -73,7 +73,9 @@ function Bar(props: {
 	label?: ReactNode;
 }): ReactElement {
 	return (
-		<div className={`relative w-full overflow-hidden bg-panel-bottom/80 ${props.height}`}>
+		<div
+			className={`relative w-full overflow-hidden border border-snow-dark bg-panel-bottom/80 ${props.height}`}
+		>
 			<div
 				className={`absolute inset-y-0 left-0 ${props.fill}`}
 				style={{ width: pct(props.value, props.max) }}
@@ -90,7 +92,16 @@ function Bar(props: {
 /** Phones show at most two gambits (wireframe 2.10); desktop shows them all. */
 const PHONE_GAMBITS = 2;
 
-export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }): ReactElement {
+export function HudView({
+	hud,
+	version,
+	showFps,
+}: {
+	hud: HudSnapshot;
+	version?: string;
+	/** Development builds and `?debug=1` only: players do not need the counter. */
+	showFps?: boolean;
+}): ReactElement {
 	// Touch screens have the 1x/2x button instead of the TAB hint, and the pause button sits there.
 	const touch = touchControlsEnabled(platform().kind, window.location.search);
 	const boss = hud.boss;
@@ -124,7 +135,7 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 						{t('hud.level', { n: hud.level })}
 					</span>
 				</div>
-				<div className="flex items-center gap-3 font-bold">
+				<div className="flex items-center gap-3 font-bold whitespace-nowrap">
 					<span className="flex items-center gap-1 text-fish">
 						<AtlasIcon frames={['icon.currency.fish']} size={24} />
 						{t('hud.fish', { n: hud.fish })}
@@ -171,20 +182,28 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 				)}
 				{boss && (
 					<div className="mt-1 w-[clamp(16rem,31vw,38rem)]">
+						{/* Name over the bar, one line: under it, it ran into the damage numbers of the fight. */}
+						<div
+							className={`text-center font-title leading-tight font-bold whitespace-nowrap text-aura-orange ${touch ? 'text-section' : 'text-item'}`}
+						>
+							{name(`boss.${boss.id}`)}
+						</div>
 						<Bar
 							value={boss.hp}
 							max={boss.maxHp}
 							fill="bg-aura-orange"
-							height="h-[max(12px,calc(var(--spacing)*4))]"
+							height={
+								touch
+									? 'h-[max(12px,calc(var(--spacing)*4))]'
+									: 'h-[max(24px,calc(var(--spacing)*7))]'
+							}
+							label={touch ? undefined : pct(boss.hp, boss.maxHp)}
 						/>
-						<div className="text-center font-title text-item font-bold text-aura-orange">
-							{name(`boss.${boss.id}`)}
-						</div>
 					</div>
 				)}
 			</div>
 
-			{!touch && (
+			{showFps && !touch && (
 				<div
 					data-hud="fps"
 					className="absolute top-[3vh] right-[3vw] font-bold text-text-dim"
@@ -205,7 +224,7 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 						return (
 							<div className="w-[clamp(12rem,18vw,22rem)]">
 								<div
-									className={`text-section font-bold tracking-section uppercase ${ready ? 'text-crit' : 'text-blood'}`}
+									className={`text-section font-bold tracking-section whitespace-nowrap uppercase ${ready ? 'text-crit' : 'text-blood'}`}
 								>
 									{ready
 										? t('hud.superReady')
@@ -239,9 +258,15 @@ export function HudView({ hud, version }: { hud: HudSnapshot; version?: string }
 	);
 }
 
-export function Hud({ version }: { version?: string }): ReactElement | null {
+export function Hud({
+	version,
+	showFps,
+}: {
+	version?: string;
+	showFps?: boolean;
+}): ReactElement | null {
 	const hud = useSyncExternalStore(hudStore.subscribe, () => hudStore.get().hud);
 	// Any full-screen menu or overlay (pause, settings, controls, shop, cards, summary) hides the HUD.
 	const covered = useOverlayOpen();
-	return hud && !covered ? <HudView hud={hud} version={version} /> : null;
+	return hud && !covered ? <HudView hud={hud} version={version} showFps={showFps} /> : null;
 }

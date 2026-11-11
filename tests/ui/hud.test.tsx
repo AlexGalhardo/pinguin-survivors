@@ -95,6 +95,18 @@ describe('HudView', () => {
 		expect(container.textContent).toContain('2x');
 		cleanup();
 	});
+
+	test('the boss bar shows the name over it and the health share, and the FPS counter is opt-in', () => {
+		const boss = { id: 'kraken', hp: 50, maxHp: 100 };
+		const { container } = render(<HudView hud={snapshot({ boss })} />);
+		const round = container.querySelector('[data-hud="round"]')?.textContent ?? '';
+		expect(round.indexOf('HARBOR KRAKEN')).toBeLessThan(round.indexOf('50%'));
+		expect(container.querySelector('[data-hud="fps"]')).toBeNull();
+		cleanup();
+		const dev = render(<HudView hud={snapshot({ boss })} showFps />);
+		expect(dev.container.querySelector('[data-hud="fps"]')?.textContent).toContain('60 FPS');
+		cleanup();
+	});
 });
 
 describe('hud bridge', () => {
