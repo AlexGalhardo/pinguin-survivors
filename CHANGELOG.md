@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **hud:** An orange pointer on the screen edge shows where the boss is while it is outside the camera (large arenas from round 30 on).
 - **art:** The station (rounds 31-40) and ruins (rounds 41-50) biomes have their own ground and walls: riveted steel deck with rusty gratings, and dark stone slabs with lava cracks. They used the flat code placeholder before.
 - **game:** Hero classes (SDD-024): each penguin has four ways to play, unlocked at hero levels 1, 5, 10 and 20. The first is the hero as before; the others trade a gain for a cost (Jack: Berserker, Butcher, Bulwark; Bob: Pyro, Sharpshooter, Scavenger; Lucia: Stormcaller, Frostweaver, Glass Cannon). Picked on the hero select screen; the demo plays the base class only. `bun scripts/sim.ts --classes` compares each one with its base class.
 - **hud:** With a gamepad in use the key hints name the pad buttons ("SUPER MAGIC · Y", "X · speed") instead of SPACE and TAB, and switch back on the first key press. The menus are checked at 1280x800 (Steam Deck).
