@@ -206,6 +206,8 @@ export const ptBR: Record<I18nKey, string> = {
 	'hero.title': 'HERÓIS E POÇÕES',
 	'hero.potions': 'POÇÕES  ({pearls} pérolas)',
 	'hero.buy': '{name}: {owned} no estoque · comprar {price}',
+	'hero.owned': 'tem {n}',
+	'hero.gambits': 'GATILHOS',
 	'hero.gambit': 'Slot {n}: {potion} quando {condition}',
 	'hero.none': '—',
 	'hero.xp': 'XP {xp}/{next}',

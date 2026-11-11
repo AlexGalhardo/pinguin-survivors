@@ -199,6 +199,8 @@ export const zhCN: Record<I18nKey, string> = {
 	'hero.title': '英雄与药水',
 	'hero.potions': '药水（{pearls} 珍珠）',
 	'hero.buy': '{name}：已拥有 {owned} · 购买 {price}',
+	'hero.owned': '拥有 {n}',
+	'hero.gambits': '触发器',
 	'hero.gambit': '槽 {n}：{condition} 时使用 {potion}',
 	'hero.none': '—',
 	'hero.xp': '经验 {xp}/{next}',

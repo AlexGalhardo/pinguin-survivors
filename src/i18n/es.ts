@@ -207,6 +207,8 @@ export const es: Record<I18nKey, string> = {
 	'hero.title': 'HÉROES Y POCIONES',
 	'hero.potions': 'POCIONES  ({pearls} perlas)',
 	'hero.buy': '{name}: {owned} en posesión · comprar {price}',
+	'hero.owned': 'tienes {n}',
+	'hero.gambits': 'DISPARADORES',
 	'hero.gambit': 'Slot {n}: {potion} cuando {condition}',
 	'hero.none': '—',
 	'hero.xp': 'XP {xp}/{next}',

@@ -57,6 +57,16 @@ function Block(props: { title: ReactNode; children: ReactNode }): ReactElement {
 
 type Tab = 'hero' | 'potions' | 'weapons';
 
+/** Pearl price at the right edge of a row: number and coin, never wrapped. */
+function Price({ n }: { n: number }): ReactElement {
+	return (
+		<span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-ice tabular-nums">
+			{n}
+			<AtlasIcon frames={['icon.currency.pearl']} size={32} />
+		</span>
+	);
+}
+
 /** Persistent progression hub: level, the passive tree entry, potions and gambits, weapon unlocks. */
 export function HeroScreen({
 	data,
@@ -160,19 +170,21 @@ export function HeroScreen({
 					key={p.type}
 					onActivate={() => actions.buyPotion(p.type)}
 					disabled={data.pearls < p.price}
+					label={t('hero.buy', {
+						name: label(`potion.${p.type}`),
+						owned: p.owned,
+						price: p.price,
+					})}
 					className="w-full justify-start text-left"
 				>
 					<AtlasIcon frames={[`icon.potion.${p.type}`]} size={40} />
-					<span className="text-left">
-						{t('hero.buy', {
-							name: label(`potion.${p.type}`),
-							owned: p.owned,
-							price: p.price,
-						})}
+					<span className="min-w-0 flex-1 truncate">{label(`potion.${p.type}`)}</span>
+					<span className="text-secondary font-medium tracking-normal whitespace-nowrap normal-case">
+						{t('hero.owned', { n: p.owned })}
 					</span>
+					<Price n={p.price} />
 				</Btn>
 			))}
-			{!compact && <Hint>{t('hero.gambitHint')}</Hint>}
 		</>
 	);
 
@@ -183,9 +195,11 @@ export function HeroScreen({
 					key={u.weapon}
 					onActivate={() => actions.buyWeapon(u.weapon)}
 					disabled={data.pearls < u.cost}
+					label={t('workshop.weaponRow', { name: weaponName(u.weapon), price: u.cost })}
 					className="w-full justify-start text-left"
 				>
-					{t('workshop.weaponRow', { name: weaponName(u.weapon), price: u.cost })}
+					<span className="min-w-0 flex-1 truncate">{weaponName(u.weapon)}</span>
+					<Price n={u.cost} />
 				</Btn>
 			))}
 		</>
@@ -249,7 +263,12 @@ export function HeroScreen({
 							scale={Math.max(1, Math.round(3 * uiScale))}
 							title={heroName}
 						/>
-						{gambits}
+						<div className="flex w-full flex-col gap-1">
+							<Block title={t('hero.gambits')}>
+								<Hint>{t('hero.gambitHint')}</Hint>
+							</Block>
+							{gambits}
+						</div>
 					</div>
 					<Block title={potionsTitle}>{potions}</Block>
 				</div>

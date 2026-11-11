@@ -201,6 +201,8 @@ export const en = {
 	'hero.title': 'HEROES & POTIONS',
 	'hero.potions': 'POTIONS  ({pearls} pearls)',
 	'hero.buy': '{name}: {owned} owned · buy {price}',
+	'hero.owned': '{n} owned',
+	'hero.gambits': 'GAMBITS',
 	'hero.gambit': 'Slot {n}: {potion} when {condition}',
 	'hero.none': '—',
 	'hero.xp': 'XP {xp}/{next}',
