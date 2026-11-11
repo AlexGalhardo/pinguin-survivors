@@ -129,6 +129,8 @@ export interface SimConfig {
 	tier?: 1 | 2 | 3;
 	/** Game speed (default 1, the standard 1x): only the wall seconds change, see `SIM`. */
 	speed?: GameSpeed;
+	/** Hero class id (SDD-024); validated like in the game, default the base class. */
+	heroClass?: string;
 }
 
 /** How the run ended: killed in a normal round, killed by a boss, boss time limit, or lived through `SIM.maxRound`. */
@@ -354,7 +356,12 @@ export function contactRate(alive: number, heroSpeed: number, enemySpeed: number
 export function simulateRun(config: SimConfig): SimResult {
 	const rng = new Rng(config.seed);
 	const hero = HEROES[config.hero];
-	const stats = heroStats(hero, config.level, config.tree ?? simTree(config.hero, config.level));
+	const stats = heroStats(
+		hero,
+		config.level,
+		config.tree ?? simTree(config.hero, config.level),
+		resolveClass(config.hero, config.level, config.heroClass),
+	);
 	const build = emptyBuild();
 	addWeapon(build, STARTING_WEAPONS[config.hero][0], config.tier ?? 1);
 	let eff = effectiveStats(stats, build);
@@ -594,9 +601,10 @@ export function simulateMany(
 	seed = 1,
 	difficulty: Difficulty = 1,
 	speed: GameSpeed = 1,
+	heroClass?: string,
 ): SimSummary {
 	const results = Array.from({ length: runs }, (_, i) =>
-		simulateRun({ hero, level, seed: seed + i, difficulty, speed }),
+		simulateRun({ hero, level, seed: seed + i, difficulty, speed, heroClass }),
 	);
 	const rounds = results.map((r) => r.round).sort((a, b) => a - b);
 	const avg = (f: (r: SimResult) => number) => results.reduce((a, r) => a + f(r), 0) / runs;
@@ -615,3 +623,5 @@ export function simulateMany(
 		avgFishSpent: avg((r) => r.fishSpent),
 	};
 }
+
+import { resolveClass } from '../classes';

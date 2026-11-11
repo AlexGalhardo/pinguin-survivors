@@ -1,11 +1,15 @@
 import { type ReactElement, type ReactNode, useState } from 'react';
 import type { HeroId } from '../../config/constants';
+import type { HeroClassDef } from '../../data/classes';
+import { DEMO } from '../../data/demo';
 import type { Difficulty } from '../../data/difficulty';
 import { DIFFICULTY } from '../../data/difficulty';
 import { HEROES } from '../../data/heroes';
 import { SUPER, SUPERPOWERS } from '../../data/superpowers';
 import type { WeaponId } from '../../data/weapons';
 import { type I18nKey, t } from '../../i18n';
+import { classesOf, classLines, classUnlocked } from '../../logic/classes';
+import { formatStat } from '../../logic/format';
 import { resolveWeapon } from '../../logic/weapons';
 import { useCompact, useUiScale } from '../compact';
 import { AtlasIcon, weaponFrames } from './AtlasIcon';
@@ -40,6 +44,8 @@ export interface StartRunRequest {
 	hero: HeroId;
 	difficulty: Difficulty;
 	weapon: string;
+	/** Hero class id (SDD-024); absent = the base class. */
+	heroClass?: string;
 }
 
 export interface HeroSelectActions {
@@ -153,6 +159,24 @@ function WeaponSection({ weapon, bare }: { weapon: string; bare?: boolean }): Re
 	);
 }
 
+/** What the picked class changes: gains in green, costs in orange, or one line for the base class. */
+function ClassSummary({ def }: { def: HeroClassDef }): ReactElement {
+	const lines = classLines(def);
+	if (lines.length === 0) return <Hint>{t('select.classBase')}</Hint>;
+	return (
+		<div className="grid grid-cols-2 gap-x-6 text-secondary font-bold">
+			{lines.map((l) => (
+				<span key={`${l.kind}.${l.stat}`} className={l.good ? 'text-xp' : 'text-crit'}>
+					{l.kind === 'mul'
+						? `${l.value >= 1 ? '+' : ''}${Math.round((l.value - 1) * 100)}%`
+						: formatStat(l.stat, l.value, true)}{' '}
+					{t(`gstat.${l.stat}` as I18nKey)}
+				</span>
+			))}
+		</div>
+	);
+}
+
 /** Atlas frames reused from the old Danger icons (Easy, Normal, Hard). */
 const DIFFICULTY_ICON = { 0: 0, 1: 2, 2: 5 } as const;
 
@@ -196,6 +220,7 @@ export function HeroSelect({
 	const [heroId, setHeroId] = useState<HeroId>(data.heroes[0]?.id ?? 'jack');
 	const [difficulty, setDifficulty] = useState(1);
 	const [weaponIndex, setWeaponIndex] = useState(0);
+	const [classIndex, setClassIndex] = useState(0);
 	const [tab, setTab] = useState<SheetTab>('stats');
 	const compact = useCompact();
 	const uiScale = useUiScale();
@@ -211,9 +236,15 @@ export function HeroSelect({
 		setHeroId(id);
 		setDifficulty(1);
 		setWeaponIndex(0);
+		setClassIndex(0);
 	};
 	const shownDifficulty = Math.min(difficulty, hero.maxDifficulty);
 	const weapon = hero.weapons[Math.min(weaponIndex, hero.weapons.length - 1)];
+	// Classes the hero level allows (the demo has only the base one, SDD-024 RF-05).
+	const allClasses = DEMO.enabled ? [] : classesOf(hero.id);
+	const classes = allClasses.filter((c) => classUnlocked(c, hero.level));
+	const heroClass = classes[Math.min(classIndex, classes.length - 1)];
+	const nextClass = allClasses.find((c) => !classUnlocked(c, hero.level));
 	const step = (value: number, d: -1 | 1, len: number): number => (value + d + len) % len;
 	// Whole-number sprite scale (pixel art): 320 px at 1080p, 80 px on the phone.
 	const sprite = compact ? 1 : Math.max(1, Math.round(4 * uiScale));
@@ -306,6 +337,7 @@ export function HeroSelect({
 								hero: hero.id,
 								difficulty: shownDifficulty as Difficulty,
 								weapon,
+								heroClass: heroClass?.id,
 							})
 						}
 						disabled={!hero.unlocked || !weapon}
@@ -420,6 +452,30 @@ export function HeroSelect({
 									/>
 								</div>
 								<WeaponSection weapon={weapon} bare />
+							</Section>
+						)}
+						{heroClass && hero.unlocked && (
+							<Section title={t('select.sheet.class')}>
+								<div data-pick="class">
+									<AdjustRow
+										label={t(`class.${heroClass.id}` as I18nKey)}
+										hint={
+											nextClass
+												? t('select.classNext', {
+														n: nextClass.unlockLevel,
+													})
+												: undefined
+										}
+										onPrev={() =>
+											setClassIndex(step(classIndex, -1, classes.length))
+										}
+										onNext={() =>
+											setClassIndex(step(classIndex, 1, classes.length))
+										}
+										disabled={classes.length < 2}
+									/>
+								</div>
+								<ClassSummary def={heroClass} />
 							</Section>
 						)}
 					</div>

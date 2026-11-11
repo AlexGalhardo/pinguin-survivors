@@ -11,6 +11,7 @@ const SAVE = 'save';
 const RUN_HERO = 'runHero';
 const RUN_DIFFICULTY = 'runDifficulty';
 const RUN_WEAPON = 'runWeapon';
+const RUN_CLASS = 'runClass';
 
 export function setParams(game: Phaser.Game, params: DebugParams): void {
 	game.registry.set(PARAMS, params);
@@ -58,4 +59,13 @@ export function setRunWeapon(game: Phaser.Game, weapon: WeaponId): void {
 
 export function getRunWeapon(scene: Phaser.Scene): WeaponId | undefined {
 	return scene.game.registry.get(RUN_WEAPON) as WeaponId | undefined;
+}
+
+/** Hero class picked for the next run (SDD-024); the game validates it against the hero and its level. */
+export function setRunClass(game: Phaser.Game, heroClass: string | undefined): void {
+	game.registry.set(RUN_CLASS, heroClass);
+}
+
+export function getRunClass(scene: Phaser.Scene): string | undefined {
+	return scene.game.registry.get(RUN_CLASS) as string | undefined;
 }

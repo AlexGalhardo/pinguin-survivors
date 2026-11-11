@@ -4,6 +4,7 @@ import { type GameSpeed, type HeroId, MAX_STEP } from '../config/constants';
 import { PALETTE } from '../config/palette';
 import {
 	getParams,
+	getRunClass,
 	getRunDifficulty,
 	getRunHero,
 	getRunWeapon,
@@ -67,6 +68,7 @@ import {
 	type WeaponInstance,
 } from '../logic/build';
 import { type CardOffer, drawCards } from '../logic/cards';
+import { resolveClass } from '../logic/classes';
 import type { Element } from '../logic/combat';
 import { demoEndReason, demoHero, demoHidesAchievement } from '../logic/demo';
 import {
@@ -387,7 +389,17 @@ export class GameScene extends Phaser.Scene {
 			startRound(this.run, this.run.round);
 		} else {
 			this.stats = applyExtras(
-				heroStats(heroDef, heroSave.level, heroSave.tree),
+				heroStats(
+					heroDef,
+					heroSave.level,
+					heroSave.tree,
+					// The demo plays the base class only (SDD-024 RF-05).
+					resolveClass(
+						heroId,
+						heroSave.level,
+						DEMO.enabled ? undefined : (params.heroClass ?? getRunClass(this)),
+					),
+				),
 				save.achievements,
 			);
 			this.build = emptyBuild(tier);

@@ -214,7 +214,47 @@ describe('HeroSelect', () => {
 		expect(picked()).toContain('Normal');
 		fireEvent.click(next[1] as HTMLElement);
 		fireEvent.click(getByText('START RUN'));
-		expect(started).toEqual({ hero: 'jack', difficulty: 1, weapon: 'knives' });
+		expect(started).toEqual({
+			hero: 'jack',
+			difficulty: 1,
+			weapon: 'knives',
+			heroClass: 'jack.survivor',
+		});
+
+		cleanup();
+	});
+
+	test('the class row cycles through the classes the hero level allows and goes in the request', () => {
+		let started: unknown;
+		const { getAllByLabelText, getByText, container } = render(
+			<Router
+				view={{
+					screen: 'hero-select',
+					data: { heroes },
+					actions: {
+						start: (r) => {
+							started = r;
+						},
+						back: () => {},
+					},
+				}}
+			/>,
+		);
+		const picked = (): string =>
+			container.querySelector('[data-pick="class"]')?.textContent ?? '';
+		// Level 5: the base class and the first unlock; the next one is announced.
+		expect(picked()).toContain('Survivor');
+		expect(picked()).toContain('Next class at hero level 10.');
+		expect(container.textContent).toContain('The hero as is: no changes.');
+		const next = getAllByLabelText('+');
+		fireEvent.click(next[2] as HTMLElement);
+		expect(picked()).toContain('Berserker');
+		expect(container.textContent).toContain('+25% damage');
+		expect(container.textContent).toContain('-15% max HP');
+		fireEvent.click(getByText('START RUN'));
+		expect((started as { heroClass?: string }).heroClass).toBe('jack.berserker');
+		fireEvent.click(next[2] as HTMLElement);
+		expect(picked()).toContain('Survivor');
 		cleanup();
 	});
 

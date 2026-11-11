@@ -23,6 +23,8 @@ export interface DebugParams {
 	difficulty?: Difficulty;
 	/** Starting weapon (QA); `weapons` forces the whole bar. */
 	weapon?: WeaponId;
+	/** Hero class id (QA, `?class=jack.berserker`); ignored when the hero level does not allow it. */
+	heroClass?: string;
 	/** Forces the arena side in tiles (QA). */
 	arena?: number;
 	/** Forces the run's weapons (QA): `?weapons=machete:2,knives`, up to 6 slots. */
@@ -72,6 +74,7 @@ export function parseDebugParams(search: string): DebugParams {
 		tier: tier === 1 || tier === 2 || tier === 3 ? tier : undefined,
 		difficulty: DIFFICULTY_LEVELS.find((d) => d === difficulty),
 		weapon: weapon && weapon in WEAPON_LINE_BY_ID ? (weapon as WeaponId) : undefined,
+		heroClass: p.get('class') ?? undefined,
 		arena: arena !== undefined && arena >= 1 ? Math.min(arena, ARENA.maxSide) : undefined,
 		weapons: weaponList(p.get('weapons')),
 		god: flag(p.get('god')),
