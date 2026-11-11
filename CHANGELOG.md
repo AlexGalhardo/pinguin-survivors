@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **arena:** The biome ground now continues, dimmed, outside the arena walls (SDD-023): a small arena is no longer framed by black bars, which took over a third of a 2560x1440 or ultrawide screen in the first rounds.
 - **ui:** Step-by-step onboarding (SDD-022): the skill tree shows once a hero has a point to spend, the hero and potion screen after the first run, and the Marks and Cores counter once the run has one; each is announced once with a toast. The first run shows three one-line hints in the HUD: how to move, that the weapons attack on their own, and the Super Magic when it is charged.
 
 ### Changed
