@@ -28,3 +28,4 @@ Regra: nenhuma tarefa de implementação começa sem a SDD correspondente em sta
 | [SDD-021](SDD-021-polimento-de-ui-1-0.md) | Polimento de UI 1.0: plurais, fim de run, HUD, atributos com ícone, loja, pausa, seleção, árvore com ícones | SDD-015, SDD-020 | Aprovada |
 | [SDD-022](SDD-022-onboarding.md) | Onboarding: árvore, tela de heróis e Marcas/Núcleos aparecem por marcos, com aviso; três dicas na primeira run | SDD-004, SDD-005 | Aprovada |
 | [SDD-023](SDD-023-fundo-da-arena.md) | Fundo da arena: o chão do bioma, escurecido, em volta dos muros no lugar do preto (um `TileSprite`) | SDD-001, SDD-017 | Aprovada |
+| [SDD-024](SDD-024-classes-por-heroi.md) | Classes por herói: 4 por herói (a base e 3 com vantagem e custo), modificadores de atributo aplicados no início da run | SDD-002, SDD-005, SDD-013 | Aprovada |
