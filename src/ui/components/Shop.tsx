@@ -218,7 +218,7 @@ function OfferOutcome({
 		<div className="flex min-w-0 flex-col gap-1">
 			<p className="m-0 text-body font-bold text-crit">{outcomeText(d)}</p>
 			{!sentenceOnly && (
-				<div className="grid grid-cols-1 text-secondary">
+				<div className="grid grid-cols-2 gap-x-3 text-secondary">
 					{d.statChanges.map((c) => (
 						<div
 							key={c.stat}
@@ -253,17 +253,13 @@ function OfferTooltips({
 		return <WeaponCardView item={{ id: offer.id, tier: rarity, affixes }} />;
 	if (offer.kind === 'gear')
 		return (
+			// The role of each card rides on its type line: a label row per card did not fit under two cards.
 			<div className="flex flex-col gap-2">
-				<div className="flex min-w-0 flex-col gap-0.5">
-					{labels && <Hint>{t('shop.offerLabel')}</Hint>}
-					<GearCardView item={{ id: offer.id, rarity, affixes }} />
-				</div>
-				{worn && (
-					<div className="flex min-w-0 flex-col gap-0.5">
-						{labels && <Hint>{t('shop.equipped')}</Hint>}
-						<GearCardView item={worn} />
-					</div>
-				)}
+				<GearCardView
+					item={{ id: offer.id, rarity, affixes }}
+					tag={labels ? t('shop.offerLabel') : undefined}
+				/>
+				{worn && <GearCardView item={worn} tag={labels ? t('shop.equipped') : undefined} />}
 			</div>
 		);
 	return (
@@ -338,7 +334,7 @@ function OfferRow(props: {
 		<div
 			data-offer={index}
 			data-picked={props.picked}
-			className="flex min-h-[max(52px,7vh)] min-w-0 items-center gap-2 py-0.5 pl-1 data-[picked=true]:bg-gold-bright/10"
+			className={`flex min-h-[max(52px,7vh)] min-w-0 items-center gap-2 border-b border-line py-0.5 pl-1 last:border-b-0 data-[picked=true]:bg-gold-bright/10 ${props.compact ? '' : 'max-h-[max(14vh,7.5rem)] flex-1'}`}
 		>
 			{offer.kind === 'potion' || offer.kind === 'healPotion' ? (
 				<AtlasIcon frames={offerFrames(offer)} size={props.icon} />
@@ -543,7 +539,8 @@ export function Shop({
 						</div>
 					)}
 					<div
-						className="flex flex-col gap-1"
+						// Desktop: the rows share the column height (capped), so the list is not a clump at the top.
+						className={`flex flex-col gap-1 ${compact ? '' : 'min-h-0 flex-1'}`}
 						onFocusCapture={(e) => {
 							const el = (e.target as HTMLElement).closest<HTMLElement>(
 								'[data-offer]',
@@ -616,7 +613,7 @@ export function Shop({
 					{!compact && (
 						<section
 							aria-label={t('shop.details')}
-							className="flex min-h-0 min-w-0 flex-col gap-2"
+							className="flex min-h-0 min-w-0 flex-col gap-2 overflow-hidden"
 						>
 							<SectionTitle>{t('shop.details')}</SectionTitle>
 							{target.kind === 'owned' ? (
@@ -625,7 +622,8 @@ export function Shop({
 								<>
 									<OfferTooltips
 										offer={shown}
-										worn={wornFor(shown)}
+										// Below ~970 px of height two cards do not fit: the sentence and the before/after list carry the comparison.
+										worn={labels ? wornFor(shown) : null}
 										labels={labels}
 									/>
 									<OfferOutcome offer={shown} />
@@ -636,7 +634,7 @@ export function Shop({
 					{!compact && (
 						// Full-width strip under both columns: the stats can never push into the action footer.
 						<div className="col-span-2 border-t border-line pt-1">
-							<HeroStats data={player} />
+							<HeroStats data={player} icons={labels} />
 						</div>
 					)}
 				</section>
