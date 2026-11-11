@@ -52,3 +52,18 @@ test('insertRelease never leaves the section empty', () => {
 	);
 	expect(out).toContain('## [0.2.0] - 2026-02-02\n\n_No notable changes._\n\n## [0.1.0]');
 });
+
+test('insertRelease merges a group that both the hand-written text and the commits have', () => {
+	const changelog =
+		'## [Unreleased]\n\n### Fixed\n\n- By hand\n\n### Added\n\n- New by hand\n\n## [0.1.0] - 2026-01-01\n';
+	const out = insertRelease(
+		changelog,
+		'0.2.0',
+		'2026-02-02',
+		'### Fixed\n\n- From a commit\n\n### Maintenance\n\n- Chore',
+	);
+	expect(out).toBe(
+		'## [Unreleased]\n\n## [0.2.0] - 2026-02-02\n\n### Added\n\n- New by hand\n\n### Fixed\n\n- By hand\n- From a commit\n\n### Maintenance\n\n- Chore\n\n## [0.1.0] - 2026-01-01\n',
+	);
+	expect(out.match(/### Fixed/g)).toHaveLength(1);
+});

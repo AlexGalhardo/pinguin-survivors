@@ -96,7 +96,34 @@ export function changelogSection(changelog: string, version: string): string | n
 	return body.replace(/^\[.*$/gm, '').trim() || null;
 }
 
-/** Moves what sits under [Unreleased] into a new version section and appends the generated notes. */
+/**
+ * Merges changelog bodies group by group, so a version never has the same `### Group` twice (the
+ * hand-written [Unreleased] entries come first, then the commit lines). Text before the first
+ * heading of a body is kept on top.
+ */
+export function mergeGroups(...bodies: string[]): string {
+	const intro: string[] = [];
+	const groups = new Map<string, string[]>();
+	for (const body of bodies) {
+		let current: string[] = intro;
+		for (const line of body.trim().split('\n')) {
+			const heading = /^### (.+)$/.exec(line.trim());
+			if (heading?.[1]) {
+				const name = heading[1].trim();
+				current = groups.get(name) ?? [];
+				groups.set(name, current);
+			} else if (line.trim()) current.push(line);
+		}
+	}
+	const known = GROUP_ORDER.filter((g) => groups.has(g)) as string[];
+	const others = [...groups.keys()].filter((g) => !known.includes(g));
+	const parts = intro.length > 0 ? [intro.join('\n')] : [];
+	for (const name of [...known, ...others])
+		parts.push(`### ${name}\n\n${(groups.get(name) ?? []).join('\n')}`);
+	return parts.join('\n\n');
+}
+
+/** Moves what sits under [Unreleased] into a new version section, merged with the generated notes. */
 export function insertRelease(
 	changelog: string,
 	version: string,
@@ -109,9 +136,7 @@ export function insertRelease(
 	const bodyStart = start + heading.length;
 	const next = changelog.slice(bodyStart).search(/^## \[/m);
 	const bodyEnd = next < 0 ? changelog.length : bodyStart + next;
-	const section = [changelog.slice(bodyStart, bodyEnd).trim(), notes.trim()]
-		.filter(Boolean)
-		.join('\n\n');
+	const section = mergeGroups(changelog.slice(bodyStart, bodyEnd), notes);
 	const tail = changelog.slice(bodyEnd);
 	return `${changelog.slice(0, bodyStart)}\n## [${version}] - ${date}\n\n${section}\n${tail ? `\n${tail}` : ''}`;
 }

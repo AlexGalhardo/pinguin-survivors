@@ -31,9 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **audio:** Music no longer stacks: fades ran as tweens of the scene that started them, so going back to the menu or restarting a run killed the fade-out and the old track kept looping under the new one (two round themes at once, a round theme under the shop). Fades now run on the game clock and any other live music track is faded out when a new one starts.
-
-### Fixed
-
 - **audio:** Stop music tracks from stacking after a scene restart ([b97d8eb](https://github.com/AlexGalhardo/pinguin-survivors/commit/b97d8eb))
 
 ### Maintenance
@@ -62,26 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.9.0] - 2026-11-10
 
-### Changed
-
-- **game:** Boss HP comes from an explicit per-boss table (`BOSS_HP`, SDD-016 RF-10: 3000, 4000, 5500, 7500, 10000, 12500, 17000, 22000, 27000, 33000 for rounds 5-50, provisional) instead of doubling per boss (boss 50 was about 1.2M). Endless bosses multiply their table value by `endlessBossStep` 1.2 per boss after round 50. `scaling.bossHpPerBoss` removed.
-- **sim:** Normal rounds now take damage below the safe crowd: `SIM.touchPerEnemy` (contact per enemy alive) and `SIM.shotLand` (ranged shots), fit to the playtest bot at a third of its value; the boss superpower damage uses `SIM.superBossShare` (Jack and Lucia 1, Bob 0.25, from SuperpowerSystem) instead of a fixed 0.5. L1 median 18 to 9-10, L10 24 to 18; see docs A2b.
-- **bot:** The playtest bot dodges the red marks of bosses and elites (`safePoint` in `src/logic/hazard-escape.ts`, `--ignore-marks` for the old behavior) and logs `damageBySource` per round.
-
-- **sim:** The headless sim models the two clocks (SDD-018): combat terms run `m = motion / clock = 2` times faster per round second, spawn budget, boss time limit and red marks follow the round clock (`--speed 1|1.5|2` only changes wall seconds). Boss red marks use the real `BOSS_HAZARD` damage and a landing chance (`SIM.hazardHit`); swipes, charges, volleys, acid pools and roars come from the boss profile; elite red marks are a separate damage term instead of a contact multiplier. Fish per kill (`ECONOMY.fishDrop`) now enters the income. Boss time-outs are counted apart from deaths by damage (`SimResult.cause`), `SIM.maxRound` is 70, `past30` became `past50`, and the balance-goal windows for 50 rounds are a proposal (`GOAL_ROUNDS`).
-- **game:** Fish per kill cut: common enemies drop 1 Fish with 0.5% chance (was 5%); elites drop Fish only 25% of the time (was guaranteed), 2 for purple and 4 for orange (was 3 and 6). Boss and end-of-round Fish are unchanged (`ECONOMY.fishDrop`, `rollFishDrop`). Bosses no longer roll the common drop.
-- **game:** Boss time limit is capped at 10 minutes (`ROUNDS.bossTimeMax` 600 s): bosses 45, 50 and the whole endless use 600 s.
-- **ui:** Shop right column split in two (wireframe 2.12): on the left "YOUR EQUIPMENT" (weapon rows with rarity and SELL/FUSE beside the picked one, five equipment rows, support items and potion, all focusable) and on the right "DETAILS" in a fixed spot (card of the focused item or offer, what buying does, the stat changes in green/red, and the hero stats as a compact two-column grid at the bottom). Offer rows no longer cut text with an ellipsis; phone landscape keeps its compact layout.
-- **game:** Magnetic now has a clear effect: extra pull radius 120/200/300/420/560 and pull speed x1.5/1.9/2.4/3/3.8 by level. Equipment and potion drops are pulled in by the pickup range too, and at the end of a round everything left on the ground (XP, Fish, gear, potions) flies to the hero before the cards or shop open. Fish on the ground are drawn at twice the size. Achievement and equipment toasts moved to the right edge, between the FPS meter and the speed hint.
-- **game:** The first round lasts 30 s instead of 20 s (`ROUNDS.firstDuration`; later normal rounds keep the +5 s step, so each is 10 s longer).
-- **game:** Darkness layer per biome: its own night tint and strength (never above 0.66), a screen-edge vignette, a soft wider halo around the hero and a light on rarity III+ drops (SDD-017).
-- **game:** Game speed is now 1x / 1.5x / 2x (default 1x). Movement and attacks run at twice the speed factor (the new 1x moves like the old 2x, the new 2x like the old 4x) while the round timer, the boss time limit, the spawn budget and the red boss/elite marks follow the plain factor, so a 30 s round lasts 30 s at 1x and 15 s at 2x with the same enemy count (SDD-018, ADR-024). Saved 3x/4x become 2x. Balance impact (more combat per round second) still needs a balance pass.
-
-- **game:** Elites have double HP (purple 2→4, orange 3→6) and double size (scale 1.25→2.5, 1.4→2.8); the hit radius grows with the sprite (SDD-016 RF-09).
-- **art:** Forest (biome 2) trees, the pine and the dry tree, are drawn at twice their size: packed 2x with nearest-neighbor in the `forest` atlas, and their collision circle doubles (`decoRadiusMul`); logs and rocks are unchanged.
-- **game:** The campaign now has 50 rounds and 5 biomes (research station 31–40 and ruined city 41–50 are no longer endless-only); the endless starts at round 51 and each loop is 50 rounds (ADR-023, SDD-016).
-- **game:** A distinct boss every 5 rounds up to 50 (ten in total); from round 51 the boss is random among the ten.
-
 ### Added
 
 - **game:** Ambient weather per biome with Phaser 4 particles: snow (Antarctica), wind-blown leaves and dust (forest), green spores (city), rain (station) and embers and ash (ruins); capped per tier (low 40%).
@@ -91,9 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **game:** Bosses telegraph four area attacks with red marks on the ground before they hurt: a rain of circles, expanding rings with a safe gap, beams in two volleys and a checkerboard floor (SDD-016).
 - **game:** Elites draw one of five red-mark area attacks at spawn (seeded) and use it every 6 s when the hero is within reach: nova, frontal cone, rotating cross, stomp trail and cage; at most 4 elite attacks on screen (SDD-016 RF-09).
 - **docs:** SDD-016, ADR-023 and roadmap tasks T7.16–T7.19; GDD and balancing docs updated for the 50-round campaign.
-
-### Added
-
 - **balance:** Set each boss's health from a per-boss table ([b298ef6](https://github.com/AlexGalhardo/pinguin-survivors/commit/b298ef6))
 - **sim:** Teach the bot to dodge red marks and add normal-round damage to the sim ([bbce6a1](https://github.com/AlexGalhardo/pinguin-survivors/commit/bbce6a1))
 - **sim:** Simulate the two clocks, area attacks and 50-round goals ([f28a496](https://github.com/AlexGalhardo/pinguin-survivors/commit/f28a496))
@@ -116,6 +90,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **shop:** Label support offers as new or as their next level ([77f3a0d](https://github.com/AlexGalhardo/pinguin-survivors/commit/77f3a0d))
 - **arena:** Telegraph boss area attacks with red ground marks ([31b1ac0](https://github.com/AlexGalhardo/pinguin-survivors/commit/31b1ac0))
 - **arena:** Run the campaign over five biomes with ten bosses ([96ea58b](https://github.com/AlexGalhardo/pinguin-survivors/commit/96ea58b))
+
+### Changed
+
+- **game:** Boss HP comes from an explicit per-boss table (`BOSS_HP`, SDD-016 RF-10: 3000, 4000, 5500, 7500, 10000, 12500, 17000, 22000, 27000, 33000 for rounds 5-50, provisional) instead of doubling per boss (boss 50 was about 1.2M). Endless bosses multiply their table value by `endlessBossStep` 1.2 per boss after round 50. `scaling.bossHpPerBoss` removed.
+- **sim:** Normal rounds now take damage below the safe crowd: `SIM.touchPerEnemy` (contact per enemy alive) and `SIM.shotLand` (ranged shots), fit to the playtest bot at a third of its value; the boss superpower damage uses `SIM.superBossShare` (Jack and Lucia 1, Bob 0.25, from SuperpowerSystem) instead of a fixed 0.5. L1 median 18 to 9-10, L10 24 to 18; see docs A2b.
+- **bot:** The playtest bot dodges the red marks of bosses and elites (`safePoint` in `src/logic/hazard-escape.ts`, `--ignore-marks` for the old behavior) and logs `damageBySource` per round.
+- **sim:** The headless sim models the two clocks (SDD-018): combat terms run `m = motion / clock = 2` times faster per round second, spawn budget, boss time limit and red marks follow the round clock (`--speed 1|1.5|2` only changes wall seconds). Boss red marks use the real `BOSS_HAZARD` damage and a landing chance (`SIM.hazardHit`); swipes, charges, volleys, acid pools and roars come from the boss profile; elite red marks are a separate damage term instead of a contact multiplier. Fish per kill (`ECONOMY.fishDrop`) now enters the income. Boss time-outs are counted apart from deaths by damage (`SimResult.cause`), `SIM.maxRound` is 70, `past30` became `past50`, and the balance-goal windows for 50 rounds are a proposal (`GOAL_ROUNDS`).
+- **game:** Fish per kill cut: common enemies drop 1 Fish with 0.5% chance (was 5%); elites drop Fish only 25% of the time (was guaranteed), 2 for purple and 4 for orange (was 3 and 6). Boss and end-of-round Fish are unchanged (`ECONOMY.fishDrop`, `rollFishDrop`). Bosses no longer roll the common drop.
+- **game:** Boss time limit is capped at 10 minutes (`ROUNDS.bossTimeMax` 600 s): bosses 45, 50 and the whole endless use 600 s.
+- **ui:** Shop right column split in two (wireframe 2.12): on the left "YOUR EQUIPMENT" (weapon rows with rarity and SELL/FUSE beside the picked one, five equipment rows, support items and potion, all focusable) and on the right "DETAILS" in a fixed spot (card of the focused item or offer, what buying does, the stat changes in green/red, and the hero stats as a compact two-column grid at the bottom). Offer rows no longer cut text with an ellipsis; phone landscape keeps its compact layout.
+- **game:** Magnetic now has a clear effect: extra pull radius 120/200/300/420/560 and pull speed x1.5/1.9/2.4/3/3.8 by level. Equipment and potion drops are pulled in by the pickup range too, and at the end of a round everything left on the ground (XP, Fish, gear, potions) flies to the hero before the cards or shop open. Fish on the ground are drawn at twice the size. Achievement and equipment toasts moved to the right edge, between the FPS meter and the speed hint.
+- **game:** The first round lasts 30 s instead of 20 s (`ROUNDS.firstDuration`; later normal rounds keep the +5 s step, so each is 10 s longer).
+- **game:** Darkness layer per biome: its own night tint and strength (never above 0.66), a screen-edge vignette, a soft wider halo around the hero and a light on rarity III+ drops (SDD-017).
+- **game:** Game speed is now 1x / 1.5x / 2x (default 1x). Movement and attacks run at twice the speed factor (the new 1x moves like the old 2x, the new 2x like the old 4x) while the round timer, the boss time limit, the spawn budget and the red boss/elite marks follow the plain factor, so a 30 s round lasts 30 s at 1x and 15 s at 2x with the same enemy count (SDD-018, ADR-024). Saved 3x/4x become 2x. Balance impact (more combat per round second) still needs a balance pass.
+- **game:** Elites have double HP (purple 2→4, orange 3→6) and double size (scale 1.25→2.5, 1.4→2.8); the hit radius grows with the sprite (SDD-016 RF-09).
+- **art:** Forest (biome 2) trees, the pine and the dry tree, are drawn at twice their size: packed 2x with nearest-neighbor in the `forest` atlas, and their collision circle doubles (`decoRadiusMul`); logs and rocks are unchanged.
+- **game:** The campaign now has 50 rounds and 5 biomes (research station 31–40 and ruined city 41–50 are no longer endless-only); the endless starts at round 51 and each loop is 50 rounds (ADR-023, SDD-016).
+- **game:** A distinct boss every 5 rounds up to 50 (ten in total); from round 51 the boss is random among the ten.
 
 ### Fixed
 
@@ -141,20 +133,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ui:** Style D foundations: type scale, 4 px spacing and elevation tokens, the `d-*` utilities (vignette, glow, filet, chamfer, worn border, focus) and the new `Ornament`, `Vignette` and `MenuList` components.
 - **ui:** Level-up cards can be picked with keys 1–4 and rerolled with R.
 - **ui:** The game over and demo end screens ignore input for half a second after opening, so a key mashed in combat does not confirm them.
-
-### Changed
-
-- **ui:** Screen and item titles use the Cinzel font (700 and 900); Chinese titles keep falling back to Noto Sans SC.
-- **ui:** `Panel`, `Heading`, `ItemCard`, `StatRow`, `Hint`, `Bar`, `Btn`, `MenuScreen`, `AdjustRow`, `SlotIcon` and `Toast` now look like the Diablo 4 organic style (text buttons with a diamond focus, borderless surfaces, glow and vignette behind menus, top-center toasts).
-- **ui:** Every menu and the HUD now use the organic Diablo 4 look (Style D): content floats over a dark vignette instead of web-style cards, option lists highlight with a gold diamond, secondary text is at least 22 px at 1080p and panels keep tight padding.
-- **ui:** The shop and the pause screen fit 1080p, ultrawide, 720p and phones without clipping; on phones, tapping a slot opens a sell/fuse bar.
-- **ui:** Settings are split into tabs with one hint line; achievements, extras and history are paged lists (PageUp/PageDown or L1/R1 jump a page); the match history shows an outcome seal.
-- **ui:** The skill tree detail is a tooltip anchored to the node with the mouse and fixed in a corner with keyboard, gamepad or touch, so it never hides neighbouring nodes.
-- **ui:** The HUD stacks round, timer, elite banner and boss bar at the top centre and shows at most two gambits on phones.
-- **docs:** The UI direction is now the organic Diablo 4 style (Style D): wireframes of every screen, design system v2, ADR-022, SDD-015, roadmap tasks T3.13–T3.18 and the `pinguin-ui-hud` skill for menus and HUD.
-
-### Added
-
 - **ui:** Restyle the HUD and touch controls in Style D with a fixed top stack ([915500a](https://github.com/AlexGalhardo/pinguin-survivors/commit/915500a))
 - **ui:** Restyle the demo end screen in Style D with an input grace window ([92a7b2c](https://github.com/AlexGalhardo/pinguin-survivors/commit/92a7b2c))
 - **ui:** Restyle the controls in Style D ([a72ecef](https://github.com/AlexGalhardo/pinguin-survivors/commit/a72ecef))
@@ -178,6 +156,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ui:** Add MenuList for focus-by-diamond option lists ([855bd3a](https://github.com/AlexGalhardo/pinguin-survivors/commit/855bd3a))
 - **ui:** Add Ornament and Vignette primitives ([fd03192](https://github.com/AlexGalhardo/pinguin-survivors/commit/fd03192))
 - **ui:** Add Style D tokens and d-* utilities to the theme ([b6650b4](https://github.com/AlexGalhardo/pinguin-survivors/commit/b6650b4))
+
+### Changed
+
+- **ui:** Screen and item titles use the Cinzel font (700 and 900); Chinese titles keep falling back to Noto Sans SC.
+- **ui:** `Panel`, `Heading`, `ItemCard`, `StatRow`, `Hint`, `Bar`, `Btn`, `MenuScreen`, `AdjustRow`, `SlotIcon` and `Toast` now look like the Diablo 4 organic style (text buttons with a diamond focus, borderless surfaces, glow and vignette behind menus, top-center toasts).
+- **ui:** Every menu and the HUD now use the organic Diablo 4 look (Style D): content floats over a dark vignette instead of web-style cards, option lists highlight with a gold diamond, secondary text is at least 22 px at 1080p and panels keep tight padding.
+- **ui:** The shop and the pause screen fit 1080p, ultrawide, 720p and phones without clipping; on phones, tapping a slot opens a sell/fuse bar.
+- **ui:** Settings are split into tabs with one hint line; achievements, extras and history are paged lists (PageUp/PageDown or L1/R1 jump a page); the match history shows an outcome seal.
+- **ui:** The skill tree detail is a tooltip anchored to the node with the mouse and fixed in a corner with keyboard, gamepad or touch, so it never hides neighbouring nodes.
+- **ui:** The HUD stacks round, timer, elite banner and boss bar at the top centre and shows at most two gambits on phones.
+- **docs:** The UI direction is now the organic Diablo 4 style (Style D): wireframes of every screen, design system v2, ADR-022, SDD-015, roadmap tasks T3.13–T3.18 and the `pinguin-ui-hud` skill for menus and HUD.
 
 ### Fixed
 
