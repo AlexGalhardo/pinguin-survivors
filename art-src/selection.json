@@ -549,6 +549,16 @@
 		"trim": false,
 		"src": "art-src/pixellab/images/icon.currency.pearl/11.png"
 	},
+	"icon.currency.mark": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.currency.mark/11.png"
+	},
+	"icon.currency.core": {
+		"group": "ui",
+		"trim": false,
+		"src": "art-src/pixellab/images/icon.currency.core/11.png"
+	},
 	"icon.danger.0": {
 		"group": "ui",
 		"trim": false,

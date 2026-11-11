@@ -56,715 +56,729 @@
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.currency.fish": {
+		"icon.currency.core": {
 			"frame": { "x": 264, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.currency.pearl": {
+		"icon.currency.fish": {
 			"frame": { "x": 297, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.damage": {
+		"icon.currency.mark": {
 			"frame": { "x": 330, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.danger.0": {
+		"icon.currency.pearl": {
 			"frame": { "x": 363, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.danger.1": {
+		"icon.damage": {
 			"frame": { "x": 396, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.danger.2": {
+		"icon.danger.0": {
 			"frame": { "x": 429, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.danger.3": {
+		"icon.danger.1": {
 			"frame": { "x": 462, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.danger.4": {
+		"icon.danger.2": {
 			"frame": { "x": 495, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.danger.5": {
+		"icon.danger.3": {
 			"frame": { "x": 528, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.dodge": {
+		"icon.danger.4": {
 			"frame": { "x": 561, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.firearmDamage": {
+		"icon.danger.5": {
 			"frame": { "x": 594, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.harvesting": {
+		"icon.dodge": {
 			"frame": { "x": 627, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.lifesteal": {
+		"icon.firearmDamage": {
 			"frame": { "x": 660, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.luck": {
+		"icon.harvesting": {
 			"frame": { "x": 693, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.magicDamage": {
+		"icon.lifesteal": {
 			"frame": { "x": 726, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.maxHp": {
+		"icon.luck": {
 			"frame": { "x": 759, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.meleeDamage": {
+		"icon.magicDamage": {
 			"frame": { "x": 792, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.moveSpeed": {
+		"icon.maxHp": {
 			"frame": { "x": 825, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.parry": {
+		"icon.meleeDamage": {
 			"frame": { "x": 858, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.arcaneBarrier": {
+		"icon.moveSpeed": {
 			"frame": { "x": 891, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.arcaneEcho": {
+		"icon.parry": {
 			"frame": { "x": 924, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.bloodlust": {
+		"icon.perk.arcaneBarrier": {
 			"frame": { "x": 957, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.butcher": {
+		"icon.perk.arcaneEcho": {
 			"frame": { "x": 990, "y": 0, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.counterAttack": {
+		"icon.perk.bloodlust": {
 			"frame": { "x": 0, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.elementalAttunement": {
+		"icon.perk.butcher": {
 			"frame": { "x": 33, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.hollowPoints": {
+		"icon.perk.counterAttack": {
 			"frame": { "x": 66, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.ironBreath": {
+		"icon.perk.elementalAttunement": {
 			"frame": { "x": 99, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.ironSkin": {
+		"icon.perk.hollowPoints": {
 			"frame": { "x": 132, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.quickReload": {
+		"icon.perk.ironBreath": {
 			"frame": { "x": 165, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.reflex": {
+		"icon.perk.ironSkin": {
 			"frame": { "x": 198, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.ricochet": {
+		"icon.perk.quickReload": {
 			"frame": { "x": 231, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.runAndGun": {
+		"icon.perk.reflex": {
 			"frame": { "x": 264, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.perk.toxicBloom": {
+		"icon.perk.ricochet": {
 			"frame": { "x": 297, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.pickupRange": {
+		"icon.perk.runAndGun": {
 			"frame": { "x": 330, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.poisonChance": {
+		"icon.perk.toxicBloom": {
 			"frame": { "x": 363, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.potion.antidote": {
+		"icon.pickupRange": {
 			"frame": { "x": 396, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.potion.haste": {
+		"icon.poisonChance": {
 			"frame": { "x": 429, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.potion.heal": {
+		"icon.potion.antidote": {
 			"frame": { "x": 462, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.potion.megaHeal": {
+		"icon.potion.haste": {
 			"frame": { "x": 495, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.potion.rage": {
+		"icon.potion.heal": {
 			"frame": { "x": 528, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.potion.shield": {
+		"icon.potion.megaHeal": {
 			"frame": { "x": 561, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.regen": {
+		"icon.potion.rage": {
 			"frame": { "x": 594, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.resistEarth": {
+		"icon.potion.shield": {
 			"frame": { "x": 627, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.resistEnergy": {
+		"icon.regen": {
 			"frame": { "x": 660, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.resistFire": {
+		"icon.resistEarth": {
 			"frame": { "x": 693, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.resistIce": {
+		"icon.resistEnergy": {
 			"frame": { "x": 726, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.shockChance": {
+		"icon.resistFire": {
 			"frame": { "x": 759, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.weapon.arcaneChain": {
+		"icon.resistIce": {
 			"frame": { "x": 792, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.weapon.frostNova": {
+		"icon.shockChance": {
 			"frame": { "x": 825, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.weapon.meteorShower": {
+		"icon.weapon.arcaneChain": {
 			"frame": { "x": 858, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.weapon.seismicStomp": {
+		"icon.weapon.frostNova": {
 			"frame": { "x": 891, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"icon.xpGain": {
+		"icon.weapon.meteorShower": {
 			"frame": { "x": 924, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.clover": {
+		"icon.weapon.seismicStomp": {
 			"frame": { "x": 957, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.ember": {
+		"icon.xpGain": {
 			"frame": { "x": 990, "y": 33, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.fortune": {
+		"item.amulet.clover": {
 			"frame": { "x": 0, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.frost": {
+		"item.amulet.ember": {
 			"frame": { "x": 33, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.magnet": {
+		"item.amulet.fortune": {
 			"frame": { "x": 66, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.phoenix": {
+		"item.amulet.frost": {
 			"frame": { "x": 99, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.shell": {
+		"item.amulet.magnet": {
 			"frame": { "x": 132, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.storm": {
+		"item.amulet.phoenix": {
 			"frame": { "x": 165, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.venom": {
+		"item.amulet.shell": {
 			"frame": { "x": 198, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.amulet.void": {
+		"item.amulet.storm": {
 			"frame": { "x": 231, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.bloodcoat": {
+		"item.amulet.venom": {
 			"frame": { "x": 264, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.chainmail": {
+		"item.amulet.void": {
 			"frame": { "x": 297, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.dragonscale": {
+		"item.armor.bloodcoat": {
 			"frame": { "x": 330, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.hazmat": {
+		"item.armor.chainmail": {
 			"frame": { "x": 363, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.juggernaut": {
+		"item.armor.dragonscale": {
 			"frame": { "x": 396, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.kevlar": {
+		"item.armor.hazmat": {
 			"frame": { "x": 429, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.leather": {
+		"item.armor.juggernaut": {
 			"frame": { "x": 462, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.lifevest": {
+		"item.armor.kevlar": {
 			"frame": { "x": 495, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.parka": {
+		"item.armor.leather": {
 			"frame": { "x": 528, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.armor.phantom": {
+		"item.armor.lifevest": {
 			"frame": { "x": 561, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.crown": {
+		"item.armor.parka": {
 			"frame": { "x": 594, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.diver": {
+		"item.armor.phantom": {
 			"frame": { "x": 627, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.goggles": {
+		"item.helmet.crown": {
 			"frame": { "x": 660, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.halo": {
+		"item.helmet.diver": {
 			"frame": { "x": 693, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.hood": {
+		"item.helmet.goggles": {
 			"frame": { "x": 726, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.miner": {
+		"item.helmet.halo": {
 			"frame": { "x": 759, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.pot": {
+		"item.helmet.hood": {
 			"frame": { "x": 792, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.skull": {
+		"item.helmet.miner": {
 			"frame": { "x": 825, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.viking": {
+		"item.helmet.pot": {
 			"frame": { "x": 858, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.helmet.wool": {
+		"item.helmet.skull": {
 			"frame": { "x": 891, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.boots": {
+		"item.helmet.viking": {
 			"frame": { "x": 924, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.cargo": {
+		"item.helmet.wool": {
 			"frame": { "x": 957, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.flippers": {
+		"item.legs.boots": {
 			"frame": { "x": 990, "y": 66, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.greaves": {
+		"item.legs.cargo": {
 			"frame": { "x": 0, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.hermes": {
+		"item.legs.flippers": {
 			"frame": { "x": 33, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.ninja": {
+		"item.legs.greaves": {
 			"frame": { "x": 66, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.padded": {
+		"item.legs.hermes": {
 			"frame": { "x": 99, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.skates": {
+		"item.legs.ninja": {
 			"frame": { "x": 132, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.titan": {
+		"item.legs.padded": {
 			"frame": { "x": 165, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.legs.windwalkers": {
+		"item.legs.skates": {
 			"frame": { "x": 198, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.berserker": {
+		"item.legs.titan": {
 			"frame": { "x": 231, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.bone": {
+		"item.legs.windwalkers": {
 			"frame": { "x": 264, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.copper": {
+		"item.ring.berserker": {
 			"frame": { "x": 297, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.doom": {
+		"item.ring.bone": {
 			"frame": { "x": 330, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.eclipse": {
+		"item.ring.copper": {
 			"frame": { "x": 363, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.fang": {
+		"item.ring.doom": {
 			"frame": { "x": 396, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.iron": {
+		"item.ring.eclipse": {
 			"frame": { "x": 429, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.onyx": {
+		"item.ring.fang": {
 			"frame": { "x": 462, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.ruby": {
+		"item.ring.iron": {
 			"frame": { "x": 495, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
 			"sourceSize": { "w": 32, "h": 32 }
 		},
-		"item.ring.silver": {
+		"item.ring.onyx": {
 			"frame": { "x": 528, "y": 99, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.ring.ruby": {
+			"frame": { "x": 561, "y": 99, "w": 32, "h": 32 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+			"sourceSize": { "w": 32, "h": 32 }
+		},
+		"item.ring.silver": {
+			"frame": { "x": 594, "y": 99, "w": 32, "h": 32 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
