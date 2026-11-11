@@ -1,26 +1,68 @@
 {
 	"frames": {
+		"border.station.0": {
+			"frame": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"border.station.1": {
+			"frame": { "x": 65, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.station.0": {
+			"frame": { "x": 130, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.station.1": {
+			"frame": { "x": 195, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.station.2": {
+			"frame": { "x": 260, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
+		"tile.station.3": {
+			"frame": { "x": 325, "y": 0, "w": 64, "h": 64 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+			"sourceSize": { "w": 64, "h": 64 }
+		},
 		"deco.station.2": {
-			"frame": { "x": 0, "y": 0, "w": 39, "h": 42 },
+			"frame": { "x": 390, "y": 0, "w": 39, "h": 42 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 39, "h": 42 },
 			"sourceSize": { "w": 39, "h": 42 }
 		},
 		"deco.station.1": {
-			"frame": { "x": 40, "y": 0, "w": 40, "h": 38 },
+			"frame": { "x": 430, "y": 0, "w": 40, "h": 38 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 38 },
 			"sourceSize": { "w": 40, "h": 38 }
 		},
 		"deco.station.0": {
-			"frame": { "x": 81, "y": 0, "w": 38, "h": 38 },
+			"frame": { "x": 471, "y": 0, "w": 38, "h": 38 },
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 38 },
 			"sourceSize": { "w": 38, "h": 38 }
 		}
 	},
-	"meta": { "image": "station.png", "size": { "w": 128, "h": 64 }, "scale": "1" }
+	"meta": { "image": "station.png", "size": { "w": 512, "h": 64 }, "scale": "1" }
 }

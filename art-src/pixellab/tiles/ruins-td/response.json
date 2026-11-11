@@ -1,0 +1,52 @@
+{
+	"seed": 12,
+	"type": "done",
+	"action": "Touching up pixels",
+	"tile_id": "730ec5da-716b-4355-9689-490976bd3d23",
+	"progress": 0.85,
+	"tile_name": "1). seamless tileable ground texture seen from dir",
+	"billing_usage": {
+		"usd": 0,
+		"type": "generations",
+		"generations": 15
+	},
+	"generation_id": "8643ad9e-33e0-4abb-9322-ab806614cb6a",
+	"usage_cost_usd": 0.115,
+	"billing_charged": true,
+	"tile_description": "1). seamless tileable ground texture seen from directly above, scorched dark red earth with ash and faint embers at night, uniform, no objects, lineless, high top-down 2). seamless tileable ground texture seen from directly above, cracked ancient dark stone slabs covered in soot at night, uniform, no objects, lineless, high top-down 3). seamless tileable ground texture seen from directly above, burnt rubble and charcoal dust with small broken stones at night, uniform, no objects, lineless, high top-down 4). seamless tileable ground texture seen from directly above, dark volcanic rock with thin glowing orange cracks at night, uniform, no objects, lineless, high top-down",
+	"saved_to_database": true,
+	"generation_started_at": "2026-11-11T18:23:57.184315+00:00",
+	"original_image_n_colors": 12248,
+	"experiment_art_direction": {
+		"side": ["#2e1a1a", "#1a1010"],
+		"palette": [
+			{
+				"hex": "#6e3333",
+				"role": "surface 0"
+			},
+			{
+				"hex": "#4c2121",
+				"role": "surface 1"
+			},
+			{
+				"hex": "#331818",
+				"role": "surface 2"
+			},
+			{
+				"hex": "#221010",
+				"role": "surface 3"
+			},
+			{
+				"hex": "#2e1a1a",
+				"role": "side 0"
+			},
+			{
+				"hex": "#1a1010",
+				"role": "side 1"
+			}
+		],
+		"surface": ["#6e3333", "#4c2121", "#331818", "#221010"],
+		"art_direction": "The scorched earth surface is characterized by a deep, dark red hue, suggesting intense heat and oxidation, with subtle variations to imply ash and faint embers. The texture should be soft and almost powdery, reflecting fine ash and burnt earth, with minimal distinct elements to maintain seamlessness. Lighting is from a faint, unseen source, casting a uniform, somber glow appropriate for a night scene, emphasizing the dark, burnt tones."
+	},
+	"quantized_image_n_colors": 73
+}

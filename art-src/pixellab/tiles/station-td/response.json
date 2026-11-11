@@ -1,0 +1,60 @@
+{
+	"seed": 12,
+	"type": "done",
+	"action": "Touching up pixels",
+	"tile_id": "53ca122d-0194-4705-8156-1ef3a6684847",
+	"progress": 0.85,
+	"tile_name": "1). seamless tileable ground texture seen from dir",
+	"billing_usage": {
+		"usd": 0,
+		"type": "generations",
+		"generations": 15
+	},
+	"generation_id": "fa2ad671-7cb8-417e-af77-6911d6299e2b",
+	"usage_cost_usd": 0.115,
+	"billing_charged": true,
+	"tile_description": "1). seamless tileable ground texture seen from directly above, wet dark steel deck plates with rivets at night, uniform, no objects, lineless, high top-down 2). seamless tileable ground texture seen from directly above, cracked wet concrete pier floor with small puddles at night, uniform, no objects, lineless, high top-down 3). seamless tileable ground texture seen from directly above, rusty metal grating over dark teal water at night, uniform, no objects, lineless, high top-down 4). seamless tileable ground texture seen from directly above, frozen dark teal harbor concrete with frost patches at night, uniform, no objects, lineless, high top-down",
+	"saved_to_database": true,
+	"generation_started_at": "2026-11-11T18:22:29.272099+00:00",
+	"original_image_n_colors": 17634,
+	"experiment_art_direction": {
+		"side": ["#1f3336", "#122528", "#07171a"],
+		"palette": [
+			{
+				"hex": "#8fa3b7",
+				"role": "surface 0"
+			},
+			{
+				"hex": "#6e839e",
+				"role": "surface 1"
+			},
+			{
+				"hex": "#4d607a",
+				"role": "surface 2"
+			},
+			{
+				"hex": "#32435b",
+				"role": "surface 3"
+			},
+			{
+				"hex": "#1e2b3f",
+				"role": "surface 4"
+			},
+			{
+				"hex": "#1f3336",
+				"role": "side 0"
+			},
+			{
+				"hex": "#122528",
+				"role": "side 1"
+			},
+			{
+				"hex": "#07171a",
+				"role": "side 2"
+			}
+		],
+		"surface": ["#8fa3b7", "#6e839e", "#4d607a", "#32435b", "#1e2b3f"],
+		"art_direction": "The primary surface material for the deck plates, concrete, and frozen concrete will utilize a cool, desaturated blue-grey palette to evoke the cold, metallic, and wet night-time industrial setting. Highlights will have a subtle warmth to suggest reflected artificial light, while shadows will deepen into the base hue. The metal grating will feature a distinct rusty accent on this base. The side faces, where visible for the grating, will be a deep, dark teal-green to represent the water beneath or the subsurface of the pier, contrasting with the surface material."
+	},
+	"quantized_image_n_colors": 94
+}
